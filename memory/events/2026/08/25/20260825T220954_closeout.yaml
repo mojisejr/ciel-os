@@ -1,0 +1,83 @@
+schema_version: ciel.event.v0.1
+id: evt_20260825T220954_public_repository_ready
+type: closeout
+recorded_at: 2026-08-25T22:09:54+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-genesis-continuity-proof-001
+  objective: >-
+    Publish the initial CIEL source checkpoint through a public repository
+    whose main branch requires pull requests, then leave a durable record for a
+    fresh agent session to reconstruct the exact release state.
+  scope:
+    - Create the public mojisejr/ciel-os repository.
+    - Enforce pull requests on main without a bypass actor.
+    - Publish the CIEL checkpoint through pull request #1.
+  out_of_scope:
+    - Merging pull request #1 without human review.
+    - Adding another agent client or automation surface.
+
+outcome:
+  status: awaiting_human_pr_review
+  completed:
+    - Created the public repository mojisejr/ciel-os with main as its default branch.
+    - Created active repository ruleset 21442973, named main requires pull requests.
+    - Verified that the ruleset applies to refs/heads/main and has no bypass actors.
+    - Pushed the source checkpoint to bootstrap/initial-ciel.
+    - Opened pull request #1 from bootstrap/initial-ciel into main.
+  not_completed:
+    - Pull request #1 has not been reviewed or merged by the human.
+    - The cross-session Wake evaluation has not yet been run from a fresh session.
+
+evidence:
+  repository:
+    local_branch: bootstrap/initial-ciel
+    local_head_before_this_event: 922b186
+    source_checkpoint: e413b9c
+    remote: https://github.com/mojisejr/ciel-os.git
+  github:
+    repository: mojisejr/ciel-os
+    visibility: public
+    default_branch: main
+    pull_request:
+      number: 1
+      url: https://github.com/mojisejr/ciel-os/pull/1
+      base: main
+      head: bootstrap/initial-ciel
+      merge_state: clean
+    ruleset:
+      id: 21442973
+      name: main requires pull requests
+      enforcement: active
+      target: refs/heads/main
+      bypass_actors: []
+      current_user_can_bypass: never
+      required_approving_review_count: 0
+      required_review_thread_resolution: true
+  prior_events:
+    - id: evt_20260825T220745_identity_and_publish_checkpoint
+      path: memory/events/2026/08/25/20260825T220745_closeout.yaml
+
+active_constraints:
+  - CIEL source changes must reach main through a pull request.
+  - A GitHub-generated README seed exists on main only to establish the remote branch before protection; it is not the CIEL source checkpoint.
+  - Human review and merge are required before treating pull request #1 as completed.
+  - Later session state must be checked against GitHub and Git, not trusted from this record alone.
+
+unresolved:
+  - The human must review and merge pull request #1.
+  - The first fresh Codex session must demonstrate Wake by reconstructing this state without prior chat history.
+  - The first evaluation rubric and its result have not been recorded yet.
+
+next_action:
+  action: >-
+    Human reviews and merges pull request #1; then open a fresh Codex session in
+    the merged main checkout and evaluate whether its mandatory Wake accurately
+    reconstructs the repository, protection rule, open/merged PR state, and next action.
+  acceptance_check:
+    - Pull request #1 is merged without any direct source push to main.
+    - Fresh-session output distinguishes observed Git/GitHub facts from the closeout event.
+    - Fresh-session output identifies the next proof action without the human retelling prior chat.

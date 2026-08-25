@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20260825T215458_ciel_genesis_checkpoint
+type: closeout
+recorded_at: 2026-08-25T21:54:58+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-genesis-continuity-proof-001
+  objective: >-
+    Establish the minimum durable artifacts needed to prove that a fresh Codex
+    session can reconstruct CIEL's current work without prior chat history.
+  scope:
+    - Update and promote the root AGENTS.md.
+    - Define the first append-only closeout event format.
+    - Prepare a local checkpoint for human review before the initial commit.
+  out_of_scope:
+    - Creating a remote repository or pushing to a remote.
+    - Configuring branch protection or other hosting rules.
+    - Adding a CLI, skill, database, MCP server, or another agent client.
+
+outcome:
+  status: ready_for_human_review
+  completed:
+    - Removed unused implementation placeholder directories.
+    - Kept Genesis artifacts under docs/genesis.
+    - Updated the AGENTS draft with mandatory automatic Wake and event conventions.
+    - Promoted the Codex-only operating contract to root AGENTS.md.
+    - Created this first closeout event as a human-readable, agent-parseable record.
+  not_completed:
+    - No Git checkpoint commit has been created.
+    - No remote repository exists or has been configured by this workstream.
+
+evidence:
+  repository:
+    branch: main
+    head: null
+    state: pre-initial-commit
+  artifacts:
+    - README.md
+    - AGENTS.md
+    - docs/genesis/AGENTS_DRAFT_v0.1.md
+    - docs/genesis/Agent HQ - Agent OS — Architecture Baseline v0.2.md
+    - docs/genesis/CIEL_GENESIS_CONTRACT_v0.2.md
+    - memory/events/2026/08/25/20260825T215458_closeout.yaml
+
+active_constraints:
+  - Main must later accept changes through pull requests only; do not create or configure the remote until the human has reviewed this checkpoint.
+  - The initial proof targets Codex only. Do not create CLAUDE.md yet.
+  - Semantic records are append-only after commit; corrections must be new linked events.
+
+unresolved:
+  - The human must approve or amend this first closeout format before the checkpoint commit.
+  - The remote hosting account and final public repository owner/name have not been selected or verified.
+  - The exact branch-protection mechanism must be verified against the chosen hosting provider before configuration.
+
+next_action:
+  action: Review the staged AGENTS.md and first closeout event, then approve or amend them before the initial Git checkpoint commit.
+  acceptance_check:
+    - The Wake rule is automatic from AGENTS.md and does not require an optional skill invocation.
+    - The closeout YAML is concise for a human and stable enough for a future agent to parse.
+    - No unsupported runtime structure has been added.
