@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20260825T220745_identity_and_publish_checkpoint
+type: closeout
+recorded_at: 2026-08-25T22:07:45+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-genesis-continuity-proof-001
+  objective: >-
+    Establish a public CIEL repository whose Codex sessions reconstruct work
+    from durable evidence, while main accepts CIEL source changes through pull
+    requests rather than direct pushes.
+  scope:
+    - Add CIEL's system identity to the root AGENTS.md.
+    - Preserve the identity decision in an append-only closeout event.
+    - Create and publish the initial repository checkpoint through a protected-main workflow.
+  out_of_scope:
+    - Defining a human-like persona for CIEL or any agent.
+    - Adding a second agent client, skill, CLI, database, or MCP server.
+    - Treating a host-generated repository seed as evidence of the CIEL source checkpoint.
+
+outcome:
+  status: ready_for_git_checkpoint
+  completed:
+    - Confirmed that AGENTS.md remains concise after the identity clarification.
+    - Defined CIEL as a system identity, distinct from a human and from each executing agent.
+    - Defined that agents work through CIEL and must not claim unrecorded memory, approval, or authority.
+    - Verified the authenticated GitHub owner and confirmed that mojisejr/ciel-os does not yet exist.
+  not_completed:
+    - The local Git checkpoint commit has not been created.
+    - The public GitHub repository and its main-branch ruleset have not been created.
+    - The first CIEL source change has not been opened as a pull request.
+
+evidence:
+  repository:
+    branch: main
+    head: null
+    state: pre-initial-commit
+  prior_events:
+    - id: evt_20260825T215458_ciel_genesis_checkpoint
+      path: memory/events/2026/08/25/20260825T215458_closeout.yaml
+  artifacts:
+    - AGENTS.md
+    - docs/genesis/AGENTS_DRAFT_v0.1.md
+    - memory/events/2026/08/25/20260825T215458_closeout.yaml
+    - memory/events/2026/08/25/20260825T220745_closeout.yaml
+
+active_constraints:
+  - CIEL's identity is system-level continuity, never a human or model persona.
+  - The public remote will be mojisejr/ciel-os unless the human changes the target before creation.
+  - After the remote main branch exists, its active ruleset must require pull requests and have no bypass actor for direct changes.
+  - The first CIEL source checkpoint must be submitted from bootstrap/initial-ciel through a pull request, not pushed directly to main.
+  - Semantic event records are append-only after commit; later corrections are new linked events.
+
+unresolved:
+  - Whether GitHub will accept the selected repository ruleset with the authenticated token must be verified on the new repository.
+  - The initial host-generated README seed is required to create main before it can be protected; it is not a CIEL source checkpoint.
+  - The initial pull request must be reviewed and merged by the human after the protection rule is verified.
+
+next_action:
+  action: >-
+    Commit this local checkpoint on bootstrap/initial-ciel, create the public
+    mojisejr/ciel-os repository with a host-generated README seed, apply and
+    verify the active main pull-request ruleset, then open the first pull request.
+  acceptance_check:
+    - The checkpoint commit contains AGENTS.md and both closeout events.
+    - GitHub reports main as the default branch and the ruleset as active for refs/heads/main.
+    - A direct push attempt to main is rejected or no direct source push to main is performed.
+    - The first CIEL source change is visible in a pull request from bootstrap/initial-ciel.
