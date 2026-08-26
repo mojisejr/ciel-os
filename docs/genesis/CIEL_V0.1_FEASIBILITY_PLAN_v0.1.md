@@ -1,6 +1,6 @@
 # CIEL v0.1 Feasibility Plan v0.1
 
-**Status:** Proposed — prepared for owner review
+**Status:** Active — TypeScript + Bun selected for implementation
 
 **Purpose:** Turn the completed Codex-only Genesis proof into one small,
 deterministic implementation feasibility slice without adopting the unratified
@@ -20,6 +20,19 @@ The feasibility slice is Codex-only, stateless, Git-aware, and YAML-first. It
 does not add a daemon, database, MCP server, global skill, second client bridge,
 or network dependency.
 
+### Selected implementation toolchain
+
+The owner selected TypeScript + Bun for CIEL core implementation. This choice
+applies to CIEL's own commands, validation, Git integration, and tests; it does
+not impose a language on workspaces managed through CIEL.
+
+- Bun is the runtime, package manager, and test runner.
+- TypeScript is the implementation language; a separate `tsc --noEmit` check
+  complements runtime tests.
+- Dependency versions are committed in `bun.lock`.
+- The tested runtime baseline is Bun 1.3.2; upgrades require a reviewable
+  compatibility check.
+
 ## 2. Question
 
 Can one small local implementation validate the event records and produce a
@@ -28,8 +41,8 @@ without treating a historical closeout as present state?
 
 ## 3. Candidate slice
 
-After the owner selects an implementation language and package layout, create
-only these two deterministic capabilities:
+With the selected Bun package layout, create only these two deterministic
+capabilities:
 
 1. **Event validation** — parse every event file, validate the required common
    fields, accept only the initially approved event types, and report
@@ -44,9 +57,9 @@ passed against a real workstream.
 
 ## 4. Required decisions before code
 
-The implementation language and package layout are owner-reserved in the
-proposed Contract. The feasibility assessment must therefore recommend one
-choice using these criteria before any source runtime is created:
+The implementation language and package layout were owner-reserved in the
+proposed Contract. The completed feasibility assessment selected TypeScript +
+Bun using these criteria:
 
 - reliable YAML parsing and clear diagnostics;
 - portable execution in the intended Codex workspace;
@@ -55,8 +68,7 @@ choice using these criteria before any source runtime is created:
 - a package layout that does not pre-commit CIEL to an IDE, model provider, or
   client bridge.
 
-The owner reviews and chooses the recommendation. No SQLite index or bridge is
-part of that choice.
+No SQLite index or bridge is part of that choice.
 
 ## 5. Acceptance tests for the first implementation slice
 
@@ -84,9 +96,8 @@ Stop and return to owner review if the slice requires any of the following:
 
 ## 7. Sequence
 
-1. Review and approve this plan.
-2. Run the bounded language/package feasibility assessment and present one recommendation.
-3. After owner selection, implement event validation with fixtures and tests.
-4. Add the read-only Wake report and its reconstruction tests.
-5. Run the slice on one real workstream and record the observed proof gap, if any.
-6. Only then consider a closeout writer, minimal knowledge, SQLite, or another client bridge.
+1. Establish the Bun + TypeScript foundation and its deterministic checks.
+2. Implement event validation with fixtures and tests.
+3. Add the read-only Wake report and its reconstruction tests.
+4. Run the slice on one real workstream and record the observed proof gap, if any.
+5. Only then consider a closeout writer, minimal knowledge, SQLite, or another client bridge.
