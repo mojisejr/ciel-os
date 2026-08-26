@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20260826T140604_genesis_session_c_proof
+type: closeout
+recorded_at: 2026-08-26T14:06:04+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-genesis-continuity-proof-001
+  objective: >-
+    Complete the repository-only Session-C check that a fresh Codex session can
+    reconstruct the Codex-only Genesis proof without prior chat history.
+  scope:
+    - Read repository artifacts, current Git state, and reachable Git history.
+    - Reconcile historical closeouts against current main.
+    - Classify traceable evolution separately from unexplained divergence.
+  out_of_scope:
+    - Creating runtime infrastructure, a CLI, skill, SQLite store, daemon, MCP server, or client bridge.
+    - Inferring human approval, hosting state, or cleanup authorization not established by repository evidence.
+
+outcome:
+  status: passed
+  completed:
+    - Reconstructed the Genesis workstream from AGENTS.md, Genesis artifacts, closeouts, and Git only.
+    - Verified clean main at eaf58a5b0c17b5dbfffcbee9034266e2a4cc760f before this closeout branch.
+    - Verified all five preceding closeout records and the Proof Charter are present on main.
+    - Verified the continuous history 7617aac to 1dd3382 to 7c988c5 to merge commit eaf58a5.
+    - Classified the merged proof lane and absent current proof worktree or branch as traceable expected evolution.
+  not_completed:
+    - This event does not establish unrecorded human approval for earlier commits, merges, or cleanup.
+    - This proof result does not itself authorize implementation work.
+
+evidence:
+  repository:
+    branch_before_closeout: main
+    head_before_closeout: eaf58a5b0c17b5dbfffcbee9034266e2a4cc760f
+    working_tree_before_closeout: clean
+    observed_worktrees_before_closeout:
+      - /Users/non/dev/ciel-os at main
+  git_history:
+    proof_base: 7617aaca6dd39b8aaedd5213b16df890d67a8313
+    charter_checkpoint: 1dd338236c0b6d04d8fcc5b1ce51d687ee533a08
+    reconciliation_checkpoint: 7c988c520ce865b74af5ce4baa8feb01cb1d296c
+    merge_checkpoint: eaf58a5b0c17b5dbfffcbee9034266e2a4cc760f
+  artifacts:
+    - AGENTS.md
+    - README.md
+    - docs/genesis/CIEL_GENESIS_PROOF_CHARTER_v0.1.md
+    - memory/events/2026/08/25/20260825T215458_closeout.yaml
+    - memory/events/2026/08/25/20260825T220745_closeout.yaml
+    - memory/events/2026/08/25/20260825T220954_closeout.yaml
+    - memory/events/2026/08/26/20260826T120208_closeout.yaml
+    - memory/events/2026/08/26/20260826T131154_closeout.yaml
+  checks:
+    - Git ancestry confirms every proof checkpoint is an ancestor of main.
+    - Git tree inspection confirms the charter and all preceding closeout files are present on main.
+    - YAML parsing validates all preceding closeout records with required keys and closeout type.
+    - Git integrity inspection reports no unreachable commit for a missing proof lane.
+
+unresolved:
+  - Local repository evidence does not establish explicit human approval for earlier commits, merges, or cleanup.
+  - External GitHub ruleset and review state are historical closeout claims, not reverified in this repository-only session.
+  - The Genesis Contract v0.2 remains proposed; its owner-reserved implementation decisions remain unresolved.
+
+next_action:
+  action: >-
+    Begin with an owner-approved implementation-entry decision that chooses the
+    initial Codex-only v0.1 scope and explicitly resolves the documented
+    contract-versus-baseline boundary before any runtime artifact is created.
+  acceptance_check:
+    - The first implementation slice remains stateless and Git-aware.
+    - The selected event schema, client-bridge scope, and storage boundary are owner-decided.
+    - No SQLite index, MCP server, daemon, or second client bridge is added before evidence justifies it.
