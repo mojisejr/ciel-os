@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20260826T214208_session_load_contract
+type: decision
+recorded_at: 2026-08-26T21:42:08+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Make the repository instructions and status documents accurately activate
+    the committed read-only continuity core before its fresh-session pilot.
+  scope:
+    - Align AGENTS.md, README.md, and the v0.1 feasibility plan with main.
+    - Make the local read-only Wake command the Codex session-start fast path.
+  out_of_scope:
+    - Adding a skill, daemon, database, MCP server, second client bridge, or event write path.
+    - Claiming that the fresh-session pilot has already passed.
+
+outcome:
+  status: decided
+  completed:
+    - The owner authorized the documentation and instruction-contract update before the pilot.
+    - bun run wake is the Codex-only, local, read-only Wake fast path for v0.1.
+    - bun run events:validate remains a focused diagnostic rather than a required duplicate session-start scan.
+  not_completed:
+    - The fresh-session pilot has not yet been run or evaluated.
+
+evidence:
+  implementation:
+    wake_command: bun run wake
+    wake_merge_commit: 3e3b92882b47e513462ad75fcfdde9619f7530ea
+  source_plan:
+    path: docs/genesis/CIEL_V0.1_FEASIBILITY_PLAN_v0.1.md
+    implementation_entry_decision: evt_20260826T141105_implementation_entry_boundary
+
+unresolved:
+  - The pilot must prove that a genuinely fresh session can use this contract without prior chat history.
+  - The report continues to treat human approval, review, and external rules as unknown unless repository evidence establishes them.
+
+next_action:
+  action: >-
+    Review the documentation and instruction-contract diff, then commit and
+    submit it through the pull-request workflow before beginning the pilot.
+  acceptance_check:
+    - AGENTS.md stays concise and contains no copied event history or CLI manual.
+    - README.md does not claim a daemon, write path, or passed pilot.

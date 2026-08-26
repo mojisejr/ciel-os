@@ -1,6 +1,6 @@
 # CIEL v0.1 Feasibility Plan v0.1
 
-**Status:** Active — TypeScript + Bun selected for implementation
+**Status:** Active — foundation, event validation, and read-only Wake implemented; fresh-session pilot pending
 
 **Purpose:** Turn the completed Codex-only Genesis proof into one small,
 deterministic implementation feasibility slice without adopting the unratified
@@ -55,6 +55,16 @@ Neither capability writes an event, changes Git state, contacts a remote, or
 infers human approval. A closeout writer is deferred until these read paths have
 passed against a real workstream.
 
+### Session-load contract
+
+Before the pilot, the repository's session-start instructions must point a fresh
+Codex session to the implemented Wake command without turning `AGENTS.md` into
+a history store or a CLI manual. `bun run wake` is the single fast path: it
+validates current event records and reports local Git evidence. A session reads
+the relevant plan or Genesis document afterwards, then deepens inspection only
+when the report or task requires it. `bun run events:validate` remains a
+focused diagnostic, not a mandatory duplicate scan.
+
 ## 4. Required decisions before code
 
 The implementation language and package layout were owner-reserved in the
@@ -83,13 +93,14 @@ The approved implementation must prove all of the following:
 | Historical snapshot | The report names the event checkpoint separately from current HEAD and identifies a traceable descendant as expected evolution. |
 | Missing authority | The report labels an unrecorded review, approval, or external rule as unknown rather than fact. |
 | Statelessness | Two fresh invocations from the same committed fixture produce equivalent semantic results without a local database or daemon. |
+| Session-load contract | `AGENTS.md` directs a fresh Codex session to the read-only Wake command without copying event history or implementation detail into the instruction file. |
 
 ## 6. Stop conditions
 
 Stop and return to owner review if the slice requires any of the following:
 
 - SQLite, caching, a background process, or a network service;
-- a second client bridge or an instruction-file rewrite;
+- an instruction change beyond the reviewed, Codex-only Wake invocation;
 - a schema expansion beyond the approved initial event types;
 - a package/toolchain decision without the required feasibility evidence; or
 - a result that cannot distinguish Git observation from event history.
@@ -99,5 +110,6 @@ Stop and return to owner review if the slice requires any of the following:
 1. Establish the Bun + TypeScript foundation and its deterministic checks.
 2. Implement event validation with fixtures and tests.
 3. Add the read-only Wake report and its reconstruction tests.
-4. Run the slice on one real workstream and record the observed proof gap, if any.
-5. Only then consider a closeout writer, minimal knowledge, SQLite, or another client bridge.
+4. Activate the reviewable session-load contract in `AGENTS.md` and align repository-facing status documentation with the committed read-only core.
+5. Run the slice in one genuinely fresh Codex session and record the observed proof gap, if any.
+6. Only then consider a closeout writer, minimal knowledge, SQLite, or another client bridge.

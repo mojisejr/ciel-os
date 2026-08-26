@@ -10,7 +10,7 @@ CIEL's primary integration is **workspace files plus a local CLI**, not a hosted
 
 ## Status
 
-Genesis proof in progress. No runtime, CLI, database, or client-specific integration exists yet. The root `AGENTS.md` and the first append-only closeout event are the minimum artifacts under evaluation.
+The Codex-only Genesis proof is complete. CIEL is now evaluating its v0.1 read-only continuity core: a local Bun + TypeScript CLI validates append-only event records and produces a Git-aware Wake report. A genuinely fresh-session pilot is pending; no event write path, database, daemon, MCP server, or second client bridge exists.
 
 The current proposed foundation is [CIEL Genesis Contract v0.2](docs/genesis/CIEL_GENESIS_CONTRACT_v0.2.md). It changes the earlier kernel-only framing into a coding-agent continuity system while preserving the local-first, owner-controlled truth model. [v0.1](docs/genesis/CIEL_GENESIS_CONTRACT_v0.1.md) remains as the superseded proposal.
 
@@ -32,22 +32,40 @@ Coding-agent CLI / IDE session ── reads context, performs work, records outc
 
 CIEL records durable work history and compiles a client-neutral resume packet. A bridge tells a particular client where that packet is, what rules apply, and how to report back. The agent's model credentials, chat history, and proprietary session store stay outside CIEL's truth boundary.
 
+The diagram is target architecture, not a claim that every component exists. The only current integration is the Codex-oriented, local read-only CLI described below.
+
 ## Current repository
 
 ```text
 README.md
 AGENTS.md             Codex bootstrap contract and mandatory Wake rule
+package.json          Bun commands and pinned local dependencies
+bin/
+  ciel.ts             Local CLI entry point
+src/
+  events/             Append-only event validation
+  wake/               Git-aware, read-only Wake report
+test/                 Deterministic validator and Wake tests
 docs/
-  genesis/        The only current artifacts: Genesis contracts and the architecture baseline
+  genesis/            Genesis evidence, baseline, and v0.1 feasibility plan
 memory/
-  events/         First justified runtime artifact: append-only semantic closeout records
+  events/             Append-only semantic records
 ```
 
-CIEL adds a new artifact only when the agreed proof requires it. `AGENTS.md` and `memory/events/` now exist because the first cross-session proof requires an automatic Wake rule and a durable semantic closeout. A runtime, index, client bridge, or automation remains out of scope.
+CIEL adds an artifact only when the agreed proof requires it. The local CLI is agent-facing: it gives a coding agent deterministic repository evidence, but it does not invoke, control, or retain an LLM. A human may run it to audit the same evidence.
 
-## First proof target
+```bash
+# Required fast path for a fresh coding-agent session
+bun run wake
 
-Without calling an LLM API, CIEL must let a new Codex session reconstruct and resume one workstream from Git-aware evidence, concise semantic records, and current knowledge—without the human retelling the previous session's chat history. Multi-client bridges and an index are later proofs, not initial structure.
+# Focused diagnostics
+bun run events:validate
+bun run check
+```
+
+## Current proof target
+
+Without calling an LLM API, CIEL must let a genuinely fresh Codex session reconstruct and resume one workstream from `bun run wake`, Git-aware evidence, and concise semantic records—without the human retelling the previous session's chat history. The v0.1 pilot evaluates this claim; multi-client bridges, an index, and event writing are later proofs, not initial structure.
 
 ## Deliberate non-goals for this stage
 
