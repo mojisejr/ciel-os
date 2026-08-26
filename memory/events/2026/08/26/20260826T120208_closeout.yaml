@@ -1,0 +1,80 @@
+schema_version: ciel.event.v0.1
+id: evt_20260826T120208_genesis_proof_charter_prepared
+type: closeout
+recorded_at: 2026-08-26T12:02:08+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-genesis-continuity-proof-001
+  objective: >-
+    Define a small, evidence-driven Genesis proof for Codex-to-Codex continuity
+    and leave a reviewable checkpoint that a genuinely fresh session can use.
+  scope:
+    - Create one isolated worktree and branch for the proof fixture.
+    - Draft a proposed Genesis Proof Charter and Session-B acceptance rubric.
+    - Record this session's outcome using the existing closeout-only convention.
+  out_of_scope:
+    - Ratifying or amending the proposed Genesis Contract v0.2.
+    - Creating a CLI, skill, SQLite store, index, daemon, MCP server, dashboard,
+      IDE bridge, or CLAUDE.md.
+    - Committing, pushing, opening a pull request, or merging without owner review.
+
+outcome:
+  status: awaiting_human_review
+  completed:
+    - Created isolated worktree /Users/non/dev/ciel-os-genesis-proof.
+    - Created branch docs/genesis-proof-charter from main at 7617aac.
+    - Drafted docs/genesis/CIEL_GENESIS_PROOF_CHARTER_v0.1.md.
+    - Defined a proposed receipt-and-reconcile recovery model and a Codex-only
+      Session-B rubric without adding permanent runtime infrastructure.
+  not_completed:
+    - The owner has not reviewed or approved the proposed charter or this event.
+    - No Git commit, remote push, pull request, or merge has occurred.
+    - A genuinely fresh Session B has not yet run the rubric.
+
+evidence:
+  repository:
+    remote: https://github.com/mojisejr/ciel-os.git
+    base_revision: 7617aaca6dd39b8aaedd5213b16df890d67a8313
+    branch: docs/genesis-proof-charter
+    worktree: /Users/non/dev/ciel-os-genesis-proof
+    worktree_status_at_closeout: >-
+      New proposed charter and this append-only closeout event are uncommitted.
+  artifacts:
+    - docs/genesis/CIEL_GENESIS_PROOF_CHARTER_v0.1.md
+    - memory/events/2026/08/26/20260826T120208_closeout.yaml
+  checks:
+    - git diff --check passed before this event was added.
+    - The worktree was created from clean main at 7617aac.
+  prior_event:
+    id: evt_20260825T220954_public_repository_ready
+    path: memory/events/2026/08/25/20260825T220954_closeout.yaml
+
+active_constraints:
+  - CIEL remains in Genesis and uses only the existing closeout event type.
+  - The Genesis Contract v0.2 remains proposed and awaits owner ratification.
+  - main requires a pull request and has no bypass actor.
+  - Wake must reconcile recorded context with current Git and worktree state.
+
+unresolved:
+  - AGENTS.md's closeout-only, Codex-first Genesis boundary conflicts with the
+    proposed Contract v0.2's two-bridge, multi-record V0 scenario.
+  - The Architecture Baseline delays SQLite until retrieval need is evidenced,
+    while the proposed Contract v0.2 lists a local SQLite event store as a
+    starting guardrail.
+  - The owner must decide whether to approve, amend, or reject the charter
+    before it becomes a Git checkpoint.
+
+next_action:
+  action: >-
+    Owner reviews the proposed charter and this closeout event. If approved,
+    commit the reviewed artifacts on docs/genesis-proof-charter and submit them
+    through the protected main PR workflow. Then start a genuinely fresh Codex
+    session and run the Session-B rubric from repository evidence only.
+  acceptance_check:
+    - Review explicitly distinguishes proposed design from owner-ratified policy.
+    - A committed checkpoint contains both the charter and this closeout event.
+    - Fresh Session B identifies the workstream, current Git/worktree state,
+      evidence, unresolved conflicts, and next action without prior chat history.
