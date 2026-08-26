@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20260826T141105_implementation_entry_boundary
+type: decision
+recorded_at: 2026-08-26T14:11:05+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Turn the completed Codex-only Genesis proof into a narrow, evidence-driven
+    implementation entry without importing unratified architecture choices.
+  scope:
+    - Choose the initial implementation boundary and its decision gates.
+    - Preserve the Codex-only, stateless, Git-aware proof boundary.
+    - Plan the first reviewable feasibility slice without creating runtime infrastructure.
+  out_of_scope:
+    - Ratifying CIEL Genesis Contract v0.2 in full.
+    - Choosing an implementation language or package layout without feasibility evidence.
+    - Adding a CLI, skill, SQLite store, daemon, MCP server, dashboard, or second client bridge.
+
+outcome:
+  status: decided
+  completed:
+    - The owner directed continuation from the completed Genesis proof into implementation entry.
+    - The initial boundary is Codex-only, stateless, Git-aware, and append-only YAML first.
+    - Current AGENTS.md constraints govern execution; the Architecture Baseline informs the target shape.
+    - The proposed Contract v0.2 remains unratified and is not silently adopted as implementation authority.
+  not_completed:
+    - No implementation language, package layout, event schema version, or client-bridge contract has been chosen.
+    - No runtime artifact has been created.
+
+evidence:
+  genesis_closeout:
+    commit: 8f03bf368de6336fcf869ca52c67141a702afd7f
+    event: memory/events/2026/08/26/20260826T140604_closeout.yaml
+    result: passed
+  governing_sources:
+    - AGENTS.md
+    - docs/genesis/Agent HQ - Agent OS — Architecture Baseline v0.2.md
+    - docs/genesis/CIEL_GENESIS_CONTRACT_v0.2.md
+  boundary_conflicts:
+    - The Architecture Baseline defers SQLite until retrieval use is evidenced; Contract v0.2 proposes it as a starting guardrail.
+    - The Architecture Baseline names Wakeup and Closeout skills; AGENTS.md prohibits adding skills before a concrete need is demonstrated.
+    - Contract v0.2 proposes two client bridges; the completed Genesis proof and current AGENTS.md are Codex-only.
+
+unresolved:
+  - The owner-reserved implementation language and package layout need a bounded feasibility decision.
+  - The exact v0.1 event schema and validation contract need reviewable acceptance tests before durable writes depend on them.
+  - A later owner decision must determine whether and when to ratify or amend Contract v0.2.
+
+next_action:
+  action: >-
+    Produce a reviewable feasibility plan for deterministic event validation and
+    read-only Wake reconstruction, including acceptance tests and a language or
+    package-layout recommendation; do not create a runtime until that plan is approved.
+  acceptance_check:
+    - The plan identifies one smallest executable slice and its deterministic evidence.
+    - The plan keeps Git authoritative for reconstructable state and events for semantic facts.
+    - The plan does not introduce SQLite, an MCP server, a daemon, a second client bridge, or a global skill.
