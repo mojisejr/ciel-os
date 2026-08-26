@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20260826T141301_v0_1_feasibility_plan_prepared
+type: closeout
+recorded_at: 2026-08-26T14:13:01+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Convert the implementation-entry boundary into a reviewable first slice
+    without creating a runtime before owner decisions and evidence permit it.
+  scope:
+    - Define deterministic event-validation and read-only Wake acceptance tests.
+    - Preserve the Codex-only, stateless, Git-aware, YAML-first boundary.
+  out_of_scope:
+    - Selecting an implementation language or package layout.
+    - Creating a CLI, skill, SQLite store, daemon, MCP server, dashboard, or second client bridge.
+
+outcome:
+  status: awaiting_owner_review
+  completed:
+    - Drafted the v0.1 feasibility plan and stop conditions.
+    - Defined a two-capability candidate slice: event validation and a read-only Wake report.
+    - Made the language and package-layout choice an explicit owner decision gate.
+  not_completed:
+    - The plan has not been approved or committed.
+    - No implementation source, fixture, test, or runtime has been created.
+
+evidence:
+  prior_decision:
+    event: memory/events/2026/08/26/20260826T141105_decision.yaml
+    commit: eac19cd
+  artifacts:
+    - AGENTS.md
+    - docs/genesis/Agent HQ - Agent OS — Architecture Baseline v0.2.md
+    - docs/genesis/CIEL_GENESIS_CONTRACT_v0.2.md
+    - docs/genesis/CIEL_V0.1_FEASIBILITY_PLAN_v0.1.md
+  checks:
+    - The plan introduces no runtime artifact or new implementation directory.
+    - The candidate slice has explicit deterministic acceptance tests and stop conditions.
+
+unresolved:
+  - The owner must select a language and package layout after the bounded feasibility assessment.
+  - Contract v0.2 remains proposed and its two-client and SQLite provisions are not adopted.
+
+next_action:
+  action: >-
+    Owner reviews this plan. If approved, commit the plan and closeout, then run
+    the bounded language and package feasibility assessment before source code is created.
+  acceptance_check:
+    - The approved plan retains the stated no-runtime boundary until language selection.
+    - The eventual implementation can be evaluated against the listed deterministic tests.
