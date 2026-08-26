@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20260826T211231_git_aware_wake_prepared
+type: closeout
+recorded_at: 2026-08-26T21:12:31+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Implement a read-only, Git-aware Wake report that separates current local
+    evidence from the latest historical event record.
+  scope:
+    - Read AGENTS.md and README.md presence, event records, and local Git facts.
+    - Report current HEAD, branch, working-tree entries, and worktrees.
+    - Reconcile a recorded checkpoint through local Git ancestry without inferring approval.
+  out_of_scope:
+    - Writing events, changing Git state, fetching remotes, or querying GitHub.
+    - Adding SQLite, a daemon, MCP server, skill, second client bridge, or closeout writer.
+
+outcome:
+  status: awaiting_owner_review
+  completed:
+    - Added the read-only `ciel wake [repository-directory]` command and `bun run wake` script.
+    - Reported observed repository facts separately from the latest event, reconciliation, and unknowns.
+    - Classified a reachable descendant checkpoint as expected evolution rather than divergence.
+    - Added fixtures for clean, dirty, historical-snapshot, missing-authority, and unrelated-history cases.
+  not_completed:
+    - This Wake checkpoint has not been committed or submitted for review.
+    - No event write path or pilot evaluation has been implemented.
+
+evidence:
+  issue: https://github.com/mojisejr/ciel-os/issues/8
+  base_revision: 46dc97ad91f7cee68f109309c405869649c69b00
+  command_surface:
+    - bin/ciel.ts wake
+    - bun run wake
+  checks:
+    - bun run typecheck passed.
+    - bun test passed with 10 tests and 0 failures.
+    - bun run events:validate passed with 12 event files before this closeout was added.
+    - bun run wake reported the current branch as dirty and 46dc97a as expected evolution from 33f2244.
+    - git diff --check passed before this closeout was added.
+
+unresolved:
+  - The current report recognizes only evidence.repository.head, evidence.repository.base_revision, and evidence.base_revision as checkpoint references.
+  - Human approval, review, and external rules remain unknown unless a repository record explicitly establishes them.
+  - The real-workstream pilot in issue #9 remains the next proof step.
+
+next_action:
+  action: >-
+    Owner reviews this Wake diff. If approved, commit and submit it through the
+    pull-request workflow, then run the issue #9 pilot against this workstream.
+  acceptance_check:
+    - The submitted command uses only local file reads and local Git read commands.
+    - A descendant checkpoint is reported as expected evolution, while unrelated history is needs-reconciliation.
+    - Dirty state is observed as current state and is not rewritten into a historical closeout.

@@ -11,7 +11,8 @@
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "check": "bun run typecheck && bun test",
-    "events:validate": "bun run bin/ciel.ts events validate"
+    "events:validate": "bun run bin/ciel.ts events validate",
+    "wake": "bun run bin/ciel.ts wake"
   },
   "bin": {
     "ciel": "./bin/ciel.ts"
