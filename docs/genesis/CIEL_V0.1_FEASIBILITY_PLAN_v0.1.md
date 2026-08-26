@@ -65,6 +65,13 @@ the relevant plan or Genesis document afterwards, then deepens inspection only
 when the report or task requires it. `bun run events:validate` remains a
 focused diagnostic, not a mandatory duplicate scan.
 
+A CIEL Wake claim uses repository files and local Git only. Global skills,
+global memory, prior chat, GitHub, and external services are excluded evidence.
+If a host injects or requires one, the session must report
+`environment-contaminated` rather than claim a CIEL Wake result. This policy
+does not itself enforce host capabilities; enforcement remains a later,
+separately justified test-environment concern.
+
 ## 4. Required decisions before code
 
 The implementation language and package layout were owner-reserved in the
@@ -94,6 +101,7 @@ The approved implementation must prove all of the following:
 | Missing authority | The report labels an unrecorded review, approval, or external rule as unknown rather than fact. |
 | Statelessness | Two fresh invocations from the same committed fixture produce equivalent semantic results without a local database or daemon. |
 | Session-load contract | `AGENTS.md` directs a fresh Codex session to the read-only Wake command without copying event history or implementation detail into the instruction file. |
+| Evidence boundary | A CIEL Wake claim excludes global skills, global memory, prior chat, GitHub, and external services; an injected source produces `environment-contaminated`, not a passing claim. |
 
 ## 6. Stop conditions
 
@@ -103,6 +111,7 @@ Stop and return to owner review if the slice requires any of the following:
 - an instruction change beyond the reviewed, Codex-only Wake invocation;
 - a schema expansion beyond the approved initial event types;
 - a package/toolchain decision without the required feasibility evidence; or
+- a pilot that cannot run without excluded host context; or
 - a result that cannot distinguish Git observation from event history.
 
 ## 7. Sequence
