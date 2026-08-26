@@ -44,7 +44,7 @@ cleanup mechanism.
 CIEL owns durable workstream records and evidence references. An agent owns no
 durable task claim: it reads, acts, and records an outcome.
 
-## 4. Evidence and reconciliation
+## 4. Evidence, expected evolution, and reconciliation
 
 Session B begins with the smallest sufficient context and deepens only when a
 question remains unanswered or sources disagree.
@@ -54,12 +54,35 @@ question remains unanswered or sources disagree.
 3. Inspect the referenced branch, worktree, revision, working-tree state, and
    any relevant Git history or PR state.
 4. Compare recorded claims with observed state.
-5. Report a discrepancy as uncertainty; do not rewrite or silently reinterpret
-   the historical closeout.
+5. Classify a difference as expected evolution, an unexplained divergence, or
+   an unknown; do not rewrite or silently reinterpret the historical closeout.
 
 For present Git state, direct observation is stronger than an older record. A
 closeout remains historical evidence of what Session A observed and intended at
-its checkpoint.
+its checkpoint; it is not a claim that the repository must remain unchanged.
+
+### Expected evolution
+
+A later commit, changed working-tree status, completed review step, or other
+new Git state is expected evolution when repository evidence supplies a
+continuous, non-contradictory explanation from the closeout checkpoint to the
+observed state. Session B must name that evidence chain (for example, the
+recorded base revision, descendant commit, and changed artifacts) and state the
+new current view. It must not label a point-in-time closeout stale merely
+because the work progressed after it was recorded.
+
+Expected evolution does not itself prove an unrecorded human approval or other
+authority. Where that authority matters and no repository evidence establishes
+it, Session B reports that as an unknown and limits its next action accordingly.
+
+### Unexplained divergence
+
+`needs-reconciliation` is reserved for a difference that repository evidence
+cannot explain: for example, a missing referenced lane, an absent closeout, a
+current revision with no traceable relationship to the recorded checkpoint, or
+an artifact/state conflict that Git history and the records do not account for.
+An ordinary later commit that is traceable from the checkpoint is not such a
+divergence.
 
 ## 5. Recovery states
 
@@ -67,8 +90,8 @@ The following labels are proposed views, not mutable task ownership:
 
 | View | Evidence condition | Required next behavior |
 |---|---|---|
-| `resumable` | Lane and recorded context agree sufficiently to take the listed next action. | Resume after normal preflight. |
-| `needs-reconciliation` | A closeout is missing, a referenced lane is absent, or live evidence conflicts with the record. | Inspect before modifying anything; state the uncertainty. |
+| `resumable` | Lane and recorded context, including any traceable expected evolution, support a safe next action. | Resume that action after normal preflight and within any recorded authority limits. |
+| `needs-reconciliation` | A closeout is missing, a referenced lane is absent, or a material difference remains unexplained after inspecting Git and records. | Preserve the lane, inspect before modifying anything, and state the unexplained uncertainty. |
 | `cleanup-eligible` | The workstream has terminal evidence, its lane is no longer needed for review/resume, and Git state has been checked. | Request or perform an explicit cleanup step; never remove during Wake. |
 | `orphaned` | Git exposes a worktree or branch with no matching CIEL record. | Preserve it and ask for reconciliation; never infer that it is disposable. |
 
@@ -96,13 +119,14 @@ Without relying on Session A's chat history, Session B must be able to report:
 2. the branch, worktree, base or checkpoint revision, and current Git status;
 3. what was completed, with source references rather than copied diffs;
 4. active constraints, unresolved risks, and any contradiction between record
-   and live state; and
+   and live state, distinguishing expected evolution from unexplained
+   divergence; and
 5. the next executable action and whether the lane is resumable,
    needs reconciliation, cleanup-eligible, or orphaned.
 
 The proof fails if Session B guesses any missing item, treats an old closeout as
-live state without checking Git, or cannot identify the next action from the
-artifacts.
+live state without checking Git, labels traceable evolution as a divergence, or
+cannot identify the next action from the artifacts.
 
 ## 8. Known boundary conflicts
 

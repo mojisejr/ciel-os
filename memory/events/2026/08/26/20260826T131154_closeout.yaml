@@ -1,0 +1,82 @@
+schema_version: ciel.event.v0.1
+id: evt_20260826T131154_session_b_snapshot_reconciliation_prepared
+type: closeout
+recorded_at: 2026-08-26T13:11:54+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-genesis-continuity-proof-001
+  objective: >-
+    Clarify the Codex-only Genesis proof so Session B treats closeouts as
+    historical snapshots and uses Git as current repository evidence.
+  scope:
+    - Refine the proposed Genesis Proof Charter's recovery-state criteria.
+    - Record the repository-only Session-B result for owner review.
+  out_of_scope:
+    - Ratifying or amending the proposed Genesis Contract v0.2.
+    - Creating a skill, CLI, SQLite store, index, daemon, MCP server, dashboard,
+      IDE bridge, CLAUDE.md, or other runtime.
+    - Committing, pushing, opening a pull request, or merging without owner review.
+
+outcome:
+  status: awaiting_human_review
+  completed:
+    - Ran the Session-B rubric from repository files, worktrees, and Git only.
+    - Confirmed that the prior closeout is a historical snapshot at its own
+      recorded checkpoint, not a statement of present repository state.
+    - Observed commit 1dd3382 as a descendant of recorded base 7617aac; it
+      contains the charter and prior closeout named by the Session-A fixture.
+    - Revised the proposed charter so traceable later Git state is expected
+      evolution and needs-reconciliation is limited to unexplained divergence.
+  not_completed:
+    - The owner has not reviewed or approved this charter revision or this event.
+    - No Git commit, remote push, pull request, or merge has occurred for this revision.
+
+evidence:
+  repository:
+    branch: docs/genesis-proof-charter
+    worktree: /Users/non/dev/ciel-os-genesis-proof
+    recorded_base_revision: 7617aaca6dd39b8aaedd5213b16df890d67a8313
+    observed_checkpoint: 1dd338236c0b6d04d8fcc5b1ce51d687ee533a08
+    observed_checkpoint_parent: 7617aaca6dd39b8aaedd5213b16df890d67a8313
+    worktree_status_before_this_event: clean
+  artifacts:
+    - docs/genesis/CIEL_GENESIS_PROOF_CHARTER_v0.1.md
+    - memory/events/2026/08/26/20260826T120208_closeout.yaml
+    - memory/events/2026/08/26/20260826T131154_closeout.yaml
+  checks:
+    - git ls-tree confirms checkpoint 1dd3382 contains the charter and prior closeout.
+    - git diff --check passes from 7617aac to 1dd3382.
+  prior_event:
+    id: evt_20260826T120208_genesis_proof_charter_prepared
+    path: memory/events/2026/08/26/20260826T120208_closeout.yaml
+
+active_constraints:
+  - CIEL remains in Genesis and uses only the existing closeout event type.
+  - The Genesis Contract v0.2 remains proposed and awaits owner ratification.
+  - main requires pull requests; no direct source change to main is authorized.
+  - Closeouts are historical records; current repository state must be observed
+    from Git and reconciled without rewriting the prior record.
+
+unresolved:
+  - Repository evidence does not establish an explicit owner approval between
+    the prior closeout and commit 1dd3382; this is an authority unknown, not by
+    itself an unexplained Git divergence.
+  - The owner must approve, amend, or reject the proposed charter revision and
+    this new closeout before they become a checkpoint.
+  - The closeout-only, Codex-first Genesis boundary still differs from the
+    proposed Contract v0.2 multi-record, two-bridge scenario.
+
+next_action:
+  action: >-
+    Owner reviews the charter revision and this new closeout. If approved,
+    commit the reviewed artifacts on docs/genesis-proof-charter and submit them
+    through the protected-main pull-request workflow.
+  acceptance_check:
+    - The review confirms that traceable Git evolution does not trigger
+      needs-reconciliation.
+    - Needs-reconciliation is used only for a material difference that remains
+      unexplained after inspecting records and Git history.
+    - No skill, CLI, SQLite store, or runtime is added.
