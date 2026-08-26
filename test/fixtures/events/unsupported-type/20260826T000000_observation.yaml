@@ -1,0 +1,14 @@
+schema_version: ciel.event.v0.1
+id: evt_fixture_unsupported_type
+type: observation
+recorded_at: 2026-08-26T00:00:00+07:00
+recorded_by:
+  agent: test
+workstream:
+  id: fixture
+outcome:
+  status: fixture
+evidence: {}
+unresolved: []
+next_action:
+  action: none

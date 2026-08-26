@@ -10,7 +10,11 @@
   "scripts": {
     "test": "bun test",
     "typecheck": "tsc --noEmit",
-    "check": "bun run typecheck && bun test"
+    "check": "bun run typecheck && bun test",
+    "events:validate": "bun run bin/ciel.ts events validate"
+  },
+  "bin": {
+    "ciel": "./bin/ciel.ts"
   },
   "dependencies": {
     "yaml": "2.9.0"

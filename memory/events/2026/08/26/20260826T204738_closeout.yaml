@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20260826T204738_foundation_type_alignment
+type: closeout
+recorded_at: 2026-08-26T20:47:38+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Preserve an accurate semantic record when the final Foundation dependency
+    alignment differs from its earlier uncommitted closeout snapshot.
+  scope:
+    - Reconcile the Foundation closeout with its committed package and lockfile.
+    - Record the otherwise untraceable pre-commit dependency adjustment.
+  out_of_scope:
+    - Rewriting or deleting the earlier closeout.
+    - Changing the selected Bun runtime baseline or implementation scope.
+
+outcome:
+  status: corrected
+  completed:
+    - Confirmed that the earlier closeout recorded its own pre-commit snapshot with @types/bun 1.4.0.
+    - Confirmed the final Foundation checkpoint 0e48c3f pins @types/bun 1.3.2 to match Bun 1.3.2.
+    - Recorded this correction instead of mutating the historical closeout.
+  not_completed:
+    - Event validation has not yet been checkpointed.
+
+evidence:
+  prior_event:
+    id: evt_20260826T203204_bun_typescript_foundation_prepared
+    path: memory/events/2026/08/26/20260826T203204_closeout.yaml
+  final_checkpoint:
+    commit: 0e48c3fec46b397d8917746bafe9aa38fd532135
+    files:
+      - package.json
+      - bun.lock
+  explanation: >-
+    The type-definition alignment occurred after the earlier closeout was
+    drafted and before its Foundation checkpoint commit; Git preserves the final
+    checkpoint but not that uncommitted adjustment.
+
+unresolved:
+  - The next checkpoint must validate that the correction and all existing events satisfy the initial validator boundary.
+
+next_action:
+  action: Implement and test the read-only event validator in issue #7.
+  acceptance_check:
+    - The validator accepts closeout and decision events with required common fields.
+    - The validator reports invalid fixtures without writing repository state.
