@@ -27,6 +27,12 @@ On every fresh session, before giving a substantive answer or changing a file, p
 
 `bun run events:validate` is a focused validation diagnostic; do not run it redundantly when `bun run wake` already succeeds. Git is first-class evidence for product changes. Reference Git revisions and authoritative sources instead of copying reconstructable diffs or status into a second memory store.
 
+### CIEL Wake evidence boundary
+
+- Use only repository files and local Git for a CIEL Wake claim.
+- Do not load or invoke global skills, global memory, prior chat history, GitHub, or another external service during Wake.
+- If the host injects or requires any excluded source, report `environment-contaminated` and stop the CIEL Wake claim. Do not substitute the external result for repository evidence.
+
 ## Work lifecycle
 
 Follow this order whenever applicable:
@@ -56,6 +62,7 @@ Wake → Align → Plan → Execute → Closeout
 CIEL has completed its Codex-only Genesis proof and is now in the v0.1 read-only continuity-core feasibility slice. The committed local CLI validates event records and produces a Git-aware Wake report; a fresh-session pilot remains pending.
 
 - Do not add a write path, daemon, API, MCP server, database, index, dashboard, agent team, or speculative directory structure.
+- Do not add a CIEL-specific global skill, host hook, or launcher until a reviewed proof gap establishes the need.
 - Do not make `AGENTS.md` a long-term memory database or a copy of project history.
 - Do not add `CLAUDE.md`, IDE-specific instructions, or nested instruction files until the Codex-only workflow reveals a concrete need.
 - Treat `docs/genesis/Agent HQ - Agent OS — Architecture Baseline v0.2.md` as the implementation baseline and `docs/genesis/CIEL_GENESIS_CONTRACT_v0.2.md` as the proposed authority/truth boundary. Surface any conflict; do not silently reconcile it.

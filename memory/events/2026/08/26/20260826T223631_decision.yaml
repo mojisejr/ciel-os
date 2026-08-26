@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20260826T223631_wake_evidence_boundary
+type: decision
+recorded_at: 2026-08-26T22:36:31+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Define the evidence boundary for a CIEL Wake claim after the fresh-session
+    pilot exposed host-provided global context.
+  scope:
+    - Define repository files and local Git as the only CIEL Wake evidence sources.
+    - Require fail-closed environment-contaminated reporting for excluded host context.
+  out_of_scope:
+    - Adding a global skill, host hook, launcher, isolated environment, or runtime capability.
+    - Declaring the fresh-session pilot passed.
+
+outcome:
+  status: decided
+  completed:
+    - The owner authorized an explicit CIEL Wake evidence boundary in AGENTS.md.
+    - Global skills, global memory, prior chat, GitHub, and external services are excluded from a CIEL Wake claim.
+    - A host-injected or required excluded source must produce environment-contaminated rather than a passing Wake claim.
+  not_completed:
+    - The repository policy does not enforce host-level capabilities.
+    - The fresh-session pilot has not yet produced an uncontaminated result.
+
+evidence:
+  observed_gap:
+    - A fresh-session pilot trace loaded global recap and where-we-are skills despite per-invocation feature-disable flags.
+    - The trace also accessed global memory and GitHub during attempted CIEL reconstruction.
+  affected_contracts:
+    - AGENTS.md
+    - docs/genesis/CIEL_V0.1_FEASIBILITY_PLAN_v0.1.md
+
+unresolved:
+  - A separately justified test environment may be needed if the host continues to inject excluded context.
+  - Issue #9 remains open until an uncontaminated fresh-session pilot is observed.
+
+next_action:
+  action: >-
+    Review and merge the evidence-boundary policy. Then run a fresh session and
+    classify any host-injected excluded context as environment-contaminated.
+  acceptance_check:
+    - The policy does not add a global skill or imply host-level enforcement.
+    - A future pilot cannot claim success while relying on an excluded source.

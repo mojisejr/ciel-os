@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20260826T223632_wake_evidence_boundary_prepared
+type: closeout
+recorded_at: 2026-08-26T22:36:32+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Prepare the reviewable CIEL Wake evidence-boundary update before another
+    fresh-session pilot attempt.
+  scope:
+    - Update the repository instruction contract and v0.1 acceptance plan.
+    - Record the owner-authorized boundary decision.
+  out_of_scope:
+    - Changing the Wake implementation or adding an enforcement mechanism.
+    - Closing Issue #9 or claiming an uncontaminated pilot.
+
+outcome:
+  status: awaiting_owner_review
+  completed:
+    - Added a concise fail-closed evidence boundary to AGENTS.md.
+    - Added an acceptance criterion and stop condition for excluded host context.
+    - Recorded the host-contamination gap without treating it as a CIEL core failure.
+  not_completed:
+    - This policy checkpoint has not been committed or submitted for review.
+    - A clean fresh-session pilot remains pending.
+
+evidence:
+  base_revision: b9ee8448293fa249a9cc22925d7ce069f2304ed6
+  decision_event: memory/events/2026/08/26/20260826T223631_decision.yaml
+  affected_documents:
+    - AGENTS.md
+    - docs/genesis/CIEL_V0.1_FEASIBILITY_PLAN_v0.1.md
+  checks:
+    - The policy change adds no command, external dependency, or write path.
+
+unresolved:
+  - Host-level global skills and memory cannot be disabled by repository policy alone.
+  - The next pilot must use the new fail-closed classification if excluded context appears.
+
+next_action:
+  action: >-
+    Owner reviews this policy diff. If approved, commit and submit it through the
+    pull-request workflow before starting the next fresh-session pilot.
+  acceptance_check:
+    - AGENTS.md remains a concise contract rather than a host-harness manual.
+    - The merged plan preserves the distinction between policy and host enforcement.
