@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20260826T204905_event_validator_prepared
+type: closeout
+recorded_at: 2026-08-26T20:49:05+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Implement the first deterministic CIEL capability: read-only validation of
+    append-only YAML events before any write path exists.
+  scope:
+    - Validate initial closeout and decision event types.
+    - Report event paths, count, and file-specific validation failures.
+    - Expose the validator through the local CIEL command entry point.
+  out_of_scope:
+    - Writing events, implementing Wake, or querying remote services.
+    - Adding SQLite, a daemon, MCP server, skill, or client bridge.
+
+outcome:
+  status: awaiting_owner_review
+  completed:
+    - Added typed event validation with required common fields and approved initial event types.
+    - Added a read-only `ciel events validate` command entry point.
+    - Added valid-current-record, missing-field, unsupported-type, and CLI exit-code tests.
+    - Added an append-only correction for the Foundation type-definition alignment.
+  not_completed:
+    - This validator checkpoint and closeout have not been committed or submitted for review.
+    - Read-only Wake and every event write path remain unimplemented.
+
+evidence:
+  issue: https://github.com/mojisejr/ciel-os/issues/7
+  base_revision: 33f2244c0b32769c5cab69c0b52428c9e04dd892
+  correction_event: memory/events/2026/08/26/20260826T204738_closeout.yaml
+  checks:
+    - bun install --frozen-lockfile passed.
+    - bun run typecheck passed.
+    - bun test passed with 5 tests and 0 failures.
+    - bun run events:validate passed with 11 event files before this closeout was added.
+    - git diff --check passed before this closeout was added.
+
+unresolved:
+  - The approved initial validator boundary supports only closeout and decision event types.
+  - Read-only Wake must independently prove Git reconciliation before it can consume this validator.
+  - Event creation remains intentionally deferred until read paths have been evaluated on a real workstream.
+
+next_action:
+  action: >-
+    Owner reviews this validator diff. If approved, commit and submit it through
+    the repository pull-request workflow, then begin issue #8 read-only Wake.
+  acceptance_check:
+    - The submitted diff makes no repository or network write during validation.
+    - The committed command reports current event paths and count, and invalid fixtures fail deterministically.
+    - The Foundation correction remains append-only and leaves the historical closeout unchanged.
