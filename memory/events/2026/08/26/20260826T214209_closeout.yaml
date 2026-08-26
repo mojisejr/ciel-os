@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20260826T214209_session_load_contract_prepared
+type: closeout
+recorded_at: 2026-08-26T21:42:09+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Prepare the reviewable documentation update that activates the implemented
+    read-only Wake path before the fresh-session pilot.
+  scope:
+    - Update AGENTS.md, README.md, and the v0.1 feasibility plan.
+    - Record the owner-authorized session-load decision.
+  out_of_scope:
+    - Changing CLI implementation or adding runtime infrastructure.
+    - Running or recording the fresh-session pilot.
+
+outcome:
+  status: awaiting_owner_review
+  completed:
+    - Replaced obsolete Genesis-only CLI prohibitions with the narrow v0.1 read-only-core boundary.
+    - Made bun run wake the concise Codex session-start fast path.
+    - Updated repository status, command surface, and plan sequence to show pilot pending.
+    - Kept event validation as an optional focused diagnostic to avoid duplicate session-start scans.
+  not_completed:
+    - This documentation checkpoint has not been committed or submitted for review.
+    - The fresh-session pilot remains pending.
+
+evidence:
+  base_revision: 3e3b92882b47e513462ad75fcfdde9619f7530ea
+  decision_event: memory/events/2026/08/26/20260826T214208_decision.yaml
+  affected_documents:
+    - AGENTS.md
+    - README.md
+    - docs/genesis/CIEL_V0.1_FEASIBILITY_PLAN_v0.1.md
+  checks:
+    - Documentation changes are limited to the session-load contract, current status, and plan sequence.
+
+unresolved:
+  - The current Wake report remains scoped to local Git and the newest event record.
+  - A fresh Codex session must still prove this instruction contract in issue #9.
+
+next_action:
+  action: >-
+    Owner reviews the documentation diff. If approved, commit and submit it
+    through the pull-request workflow, then start the fresh-session pilot.
+  acceptance_check:
+    - The merged instructions make the read-only Wake path discoverable without becoming a history store.
+    - The merged documentation distinguishes implemented read paths from the pending pilot and deferred write path.

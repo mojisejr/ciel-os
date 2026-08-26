@@ -20,13 +20,12 @@ CIEL preserves evidence, decisions, and reconstructable context across disposabl
 
 On every fresh session, before giving a substantive answer or changing a file, perform this read-only Wake procedure. Do not require the human to invoke a separate skill.
 
-1. Read `README.md` and the Genesis document relevant to the task.
-2. Inspect the current working tree and relevant Git history, code, tests, issues, or runtime state.
-3. Read the newest relevant event under `memory/events/`, if one exists.
-4. Identify the project/workstream explicitly. If multiple candidates fit, surface the ambiguity; do not choose silently.
-5. Reconcile recorded context against the current repository state. Separate observed facts, claims, inferences, decisions, and unknowns. State uncertainty rather than filling a gap with a confident guess.
+1. From the repository root, run `bun run wake`. Treat its output as local, read-only evidence; it validates events and reports current Git facts, the newest event, reconciliation, and unknowns.
+2. Read `README.md` and the task-relevant plan or Genesis document.
+3. Identify the project/workstream explicitly. If multiple candidates fit, surface the ambiguity; do not choose silently.
+4. Inspect further Git history, code, tests, or issues only where the report or task requires it. Separate observed facts, recorded claims, inferences, decisions, and unknowns. State uncertainty rather than filling a gap with a confident guess.
 
-Git is first-class evidence for product changes. Reference Git revisions and authoritative sources instead of copying reconstructable diffs or status into a second memory store.
+`bun run events:validate` is a focused validation diagnostic; do not run it redundantly when `bun run wake` already succeeds. Git is first-class evidence for product changes. Reference Git revisions and authoritative sources instead of copying reconstructable diffs or status into a second memory store.
 
 ## Work lifecycle
 
@@ -42,9 +41,9 @@ Wake → Align → Plan → Execute → Closeout
 - **Execute:** Keep changes narrow. Preserve unrelated work. Validate claims with the appropriate source or deterministic check.
 - **Closeout:** At a work checkpoint, record the actual outcome, evidence, unresolved risks, and next executable action in one append-only YAML event. Present a new event for human review before the commit that checkpoints it.
 
-## Semantic event convention: first proof
+## Semantic event convention
 
-The first justified runtime artifact is `memory/events/`: an append-only, Git-tracked record of semantic facts that Git cannot reconstruct reliably.
+`memory/events/` is the append-only, Git-tracked record of semantic facts that Git cannot reconstruct reliably. The current local CLI only reads and validates these records; it does not create or amend them.
 
 - Store each event at `memory/events/YYYY/MM/DD/YYYYMMDDTHHMMSS_type.yaml`.
 - Write timestamps in ISO 8601 with timezone; use a stable `id`; never overwrite a committed event.
@@ -54,9 +53,9 @@ The first justified runtime artifact is `memory/events/`: an append-only, Git-tr
 
 ## CIEL's current stage
 
-CIEL is in Genesis. `AGENTS.md` and the first append-only closeout event exist solely to prove cross-session continuity.
+CIEL has completed its Codex-only Genesis proof and is now in the v0.1 read-only continuity-core feasibility slice. The committed local CLI validates event records and produces a Git-aware Wake report; a fresh-session pilot remains pending.
 
-- Do not create runtimes, daemons, APIs, MCP servers, databases, indexes, dashboards, agent teams, or speculative directory structures.
+- Do not add a write path, daemon, API, MCP server, database, index, dashboard, agent team, or speculative directory structure.
 - Do not make `AGENTS.md` a long-term memory database or a copy of project history.
 - Do not add `CLAUDE.md`, IDE-specific instructions, or nested instruction files until the Codex-only workflow reveals a concrete need.
 - Treat `docs/genesis/Agent HQ - Agent OS — Architecture Baseline v0.2.md` as the implementation baseline and `docs/genesis/CIEL_GENESIS_CONTRACT_v0.2.md` as the proposed authority/truth boundary. Surface any conflict; do not silently reconcile it.
