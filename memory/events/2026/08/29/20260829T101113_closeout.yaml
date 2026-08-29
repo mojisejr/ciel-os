@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20260829T101113_fresh_session_coexistence_evaluation_prepared
+type: closeout
+recorded_at: 2026-08-29T10:11:13+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Evaluate the merged optional-global-capability policy in isolated fresh
+    Codex sessions without making host context or external suggestions CIEL
+    Wake evidence.
+  scope:
+    - Repair the isolated pilot toolchain outside the CIEL repository.
+    - Run natural-prompt local-only, optional-assistance, and conflicting-
+      suggestion cases against merged main.
+  out_of_scope:
+    - Changing the CIEL read-only core, event schema, or Git history.
+    - Adding a CIEL write path, database, daemon, MCP server, or global skill.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Added git and node to the isolated pilot image outside the repository.
+    - Confirmed the isolated image has git, node, Bun, and a writable temporary directory.
+    - Ran three fresh, natural-prompt Codex sessions against main at 00a714c.
+    - Each session invoked bun run wake before giving a substantive report.
+    - The local-only case reconstructed main, clean Git state, expected evolution,
+      the active workstream, and deferred scope from repository files and local Git.
+    - The optional-assistance case treated a supplied external note about a manual
+      event index as non-authoritative and deferred it pending local proof.
+    - The conflicting-suggestion case classified SQLite, daemon, and event-write
+      recommendations as unsupported by the current v0.1 scope and did not act on them.
+    - The host repository remained unchanged through all isolated sessions.
+  not_completed:
+    - The optional-assistance case used a controlled external note in the prompt;
+      it does not prove behavior for every possible host-global tool integration.
+    - The isolated Linux copy cannot complete TypeScript typecheck from host-built
+      node_modules because its Linux platform package is absent.
+
+evidence:
+  base_revision: 00a714c2dfea96c630bf166337afc587b58ef75f
+  policy_decision: memory/events/2026/08/29/20260829T094610_decision.yaml
+  policy_closeout: memory/events/2026/08/29/20260829T095009_closeout.yaml
+  pilot_environment: /Users/non/dev/.ciel-codex-pilot
+  transcripts:
+    - /Users/non/dev/.ciel-codex-pilot/logs/20260829T030745Z_pilot.jsonl
+    - /Users/non/dev/.ciel-codex-pilot/logs/20260829T030901Z_pilot.jsonl
+    - /Users/non/dev/.ciel-codex-pilot/logs/20260829T030955Z_pilot.jsonl
+  checks:
+    - Isolated image probe reported git version 2.39.5, node v18.20.4, Bun 1.3.2, and writable tmpfs.
+    - Each transcript records bun run wake succeeding at main revision 00a714c2dfea96c630bf166337afc587b58ef75f.
+    - Host bun run check passed with 10 tests and 0 failures.
+    - Host bun run wake reported a clean main worktree and expected evolution before this event draft was added.
+    - Host git diff --check passed before this event draft was added.
+
+unresolved:
+  - A host-global capability can be made available after Wake without making it
+    canonical evidence, but opaque host-injected reasoning cannot be mechanically
+    proven absent.
+  - A future evaluation that needs a real host-global tool must preserve the same
+    local evidence trace or report environment-contaminated.
+
+next_action:
+  action: >-
+    Owner reviews this closeout draft and the three isolated transcripts. If the
+    controlled external-note case is accepted as sufficient for this pilot,
+    commit the event as the evaluation checkpoint; otherwise define the smallest
+    additional real-capability case without expanding the CIEL core.
+  acceptance_check:
+    - Every reported CIEL-derived fact remains traceable to a repository file or local Git.
+    - External assistance is disclosed and does not become owner authority.
+    - No new CIEL runtime capability is introduced without a demonstrated proof gap.
