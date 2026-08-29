@@ -1,0 +1,388 @@
+import { existsSync } from "node:fs";
+import { join, resolve } from "node:path";
+
+import { parseDocument } from "yaml";
+
+import type {
+  PortfolioAttention,
+  PortfolioCheckpoint,
+  PortfolioProject,
+  PortfolioValidationError,
+  PortfolioWakeReport,
+  PortfolioWorkstream
+} from "./types.ts";
+
+interface ProjectIdentity {
+  id: string;
+  path: string;
+  repository: {
+    canonicalRemote: string;
+    defaultBranch: string;
+  };
+}
+
+interface LocalBinding {
+  path: string;
+}
+
+interface GitResult {
+  exitCode: number;
+  stderr: string;
+  stdout: string;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function readString(record: Record<string, unknown>, key: string): string | null {
+  const value = record[key];
+  return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+}
+
+function canonicalizeRemote(remote: string): string {
+  const withoutGitSuffix = remote.trim().replace(/\.git$/, "");
+  const urlMatch = withoutGitSuffix.match(/^[a-z]+:\/\/([^/]+)\/(.+)$/i);
+  if (urlMatch?.[1] !== undefined && urlMatch[2] !== undefined) {
+    return `${urlMatch[1]}/${urlMatch[2]}`;
+  }
+
+  const sshMatch = withoutGitSuffix.match(/^[^@]+@([^:]+):(.+)$/);
+  if (sshMatch?.[1] !== undefined && sshMatch[2] !== undefined) {
+    return `${sshMatch[1]}/${sshMatch[2]}`;
+  }
+
+  return withoutGitSuffix.replace(/^\/+/, "");
+}
+
+async function runGit(repositoryPath: string, arguments_: string[]): Promise<GitResult> {
+  const process = Bun.spawn(["git", "-C", repositoryPath, ...arguments_], {
+    stderr: "pipe",
+    stdout: "pipe"
+  });
+
+  return {
+    exitCode: await process.exited,
+    stderr: await new Response(process.stderr).text(),
+    stdout: await new Response(process.stdout).text()
+  };
+}
+
+function extractProjectIds(plan: string): string[] {
+  const projectLinksStart = plan.indexOf("## Project links");
+  if (projectLinksStart === -1) {
+    return [];
+  }
+  const afterProjectLinks = plan.slice(projectLinksStart);
+  const nextSection = afterProjectLinks.search(/\n## /);
+  const projectLinks = nextSection === -1 ? afterProjectLinks : afterProjectLinks.slice(0, nextSection);
+  return [...projectLinks.matchAll(/^\|\s*`([^`]+)`\s*\|/gm)].map((match) => match[1] ?? "");
+}
+
+function readPlanField(plan: string, name: string): string | null {
+  return plan.match(new RegExp(`^\\*\\*${name}:\\*\\*\\s*(.+?)\\s*$`, "m"))?.[1]?.trim() ?? null;
+}
+
+function parsePlan(path: string, text: string): { errors: PortfolioValidationError[]; workstream: PortfolioWorkstream | null } {
+  const errors: PortfolioValidationError[] = [];
+  const declaredId = readPlanField(text, "Workstream")?.replace(/^`|`$/g, "") ?? null;
+  const state = readPlanField(text, "State");
+  const lane = readPlanField(text, "Execution lane");
+  const directoryId = path.split("/").at(-2) ?? "";
+
+  if (declaredId === null) {
+    errors.push({ path, message: "missing required plan field: Workstream" });
+  } else if (declaredId !== directoryId) {
+    errors.push({ path, message: "workstream id must match its directory name" });
+  }
+
+  if (state !== "active" && state !== "blocked" && state !== "completed" && state !== "paused") {
+    errors.push({ path, message: "plan State must be active, blocked, completed, or paused" });
+  }
+
+  if (lane === null || !/^[a-z0-9][a-z0-9-]*$/.test(lane)) {
+    errors.push({ path, message: "plan Execution lane must be a lowercase lane identifier" });
+  }
+
+  const projectIds = extractProjectIds(text);
+  if (projectIds.length === 0) {
+    errors.push({ path, message: "plan must list at least one project under Project links" });
+  }
+
+  if (errors.length > 0 || declaredId === null || lane === null || state === null) {
+    return { errors, workstream: null };
+  }
+
+  return {
+    errors,
+    workstream: {
+      checkpointsByLane: {},
+      id: declaredId,
+      lane,
+      path,
+      projectIds,
+      state: state as PortfolioWorkstream["state"]
+    }
+  };
+}
+
+async function readProjectIdentities(repositoryPath: string): Promise<{ errors: PortfolioValidationError[]; projects: ProjectIdentity[] }> {
+  const projectsDirectory = join(repositoryPath, "projects");
+  if (!existsSync(projectsDirectory)) {
+    return { errors: [], projects: [] };
+  }
+  const paths = [...new Bun.Glob("**/project.yaml").scanSync(projectsDirectory)].sort();
+  const errors: PortfolioValidationError[] = [];
+  const projects: ProjectIdentity[] = [];
+
+  for (const relativePath of paths) {
+    const path = join(projectsDirectory, relativePath);
+    const document = parseDocument(await Bun.file(path).text(), { prettyErrors: false });
+    const value = document.toJS();
+
+    if (document.errors.length > 0 || !isRecord(value) || !isRecord(value.repository)) {
+      errors.push({ path, message: "project identity must be a valid project.yaml mapping" });
+      continue;
+    }
+
+    const id = readString(value, "id");
+    const canonicalRemote = readString(value.repository, "canonical_remote");
+    const defaultBranch = readString(value.repository, "default_branch");
+    if (id === null || canonicalRemote === null || defaultBranch === null) {
+      errors.push({ path, message: "project identity is missing a required stable field" });
+      continue;
+    }
+
+    projects.push({ id, path, repository: { canonicalRemote, defaultBranch } });
+  }
+
+  return { errors, projects };
+}
+
+async function readLocalBindings(repositoryPath: string): Promise<{ bindings: Map<string, LocalBinding>; errors: PortfolioValidationError[] }> {
+  const path = join(repositoryPath, "projects.local.yaml");
+  if (!existsSync(path)) {
+    return { bindings: new Map(), errors: [] };
+  }
+
+  const document = parseDocument(await Bun.file(path).text(), { prettyErrors: false });
+  const value = document.toJS();
+  if (document.errors.length > 0 || !isRecord(value) || !isRecord(value.bindings)) {
+    return { bindings: new Map(), errors: [{ path, message: "local bindings must contain a bindings mapping" }] };
+  }
+
+  const bindings = new Map<string, LocalBinding>();
+  const errors: PortfolioValidationError[] = [];
+  for (const [id, binding] of Object.entries(value.bindings)) {
+    if (!isRecord(binding) || readString(binding, "path") === null) {
+      errors.push({ path, message: `local binding for ${id} must contain a non-empty path` });
+      continue;
+    }
+    bindings.set(id, { path: readString(binding, "path") ?? "" });
+  }
+
+  return { bindings, errors };
+}
+
+async function observeProject(repositoryPath: string, project: ProjectIdentity, binding: LocalBinding | undefined): Promise<PortfolioProject> {
+  if (binding === undefined) {
+    return {
+      id: project.id,
+      observed: null,
+      repository: project.repository,
+      binding: { detail: "No machine-local binding is configured for this project.", path: null, status: "unavailable" }
+    };
+  }
+
+  const path = resolve(repositoryPath, binding.path);
+  if (!existsSync(path)) {
+    return {
+      id: project.id,
+      observed: null,
+      repository: project.repository,
+      binding: { detail: "The configured machine-local path does not exist.", path, status: "unavailable" }
+    };
+  }
+
+  const remote = await runGit(path, ["remote", "get-url", "origin"]);
+  if (remote.exitCode !== 0) {
+    return {
+      id: project.id,
+      observed: null,
+      repository: project.repository,
+      binding: { detail: "The configured path is not a Git checkout with an origin remote.", path, status: "unavailable" }
+    };
+  }
+
+  const observedRemote = canonicalizeRemote(remote.stdout);
+  if (observedRemote !== project.repository.canonicalRemote) {
+    return {
+      id: project.id,
+      observed: null,
+      repository: project.repository,
+      binding: {
+        detail: `The origin remote resolves to ${observedRemote}, not ${project.repository.canonicalRemote}.`,
+        path,
+        status: "mismatch"
+      }
+    };
+  }
+
+  const [head, branch, status] = await Promise.all([
+    runGit(path, ["rev-parse", "HEAD"]),
+    runGit(path, ["branch", "--show-current"]),
+    runGit(path, ["status", "--porcelain=v1"])
+  ]);
+  if (head.exitCode !== 0 || branch.exitCode !== 0 || status.exitCode !== 0) {
+    return {
+      id: project.id,
+      observed: null,
+      repository: project.repository,
+      binding: { detail: "The configured Git checkout could not provide its current state.", path, status: "unavailable" }
+    };
+  }
+
+  const entries = status.stdout.length === 0 ? [] : status.stdout.trimEnd().split("\n");
+
+  return {
+    id: project.id,
+    observed: {
+      branch: branch.stdout.trim().length > 0 ? branch.stdout.trim() : null,
+      head: head.stdout.trim(),
+      workingTree: { clean: entries.length === 0, entries }
+    },
+    repository: project.repository,
+    binding: { detail: "Local Git origin matches the committed project identity.", path, status: "available" }
+  };
+}
+
+function checkpointFromEvent(path: string, value: Record<string, unknown>): { checkpoint: PortfolioCheckpoint; lane: string; workstreamId: string | null } {
+  const workstream = isRecord(value.workstream) ? value.workstream : {};
+  const evidence = isRecord(value.evidence) ? value.evidence : {};
+  const repository = isRecord(evidence.repository) ? evidence.repository : {};
+  return {
+    checkpoint: {
+      eventId: readString(value, "id"),
+      eventPath: path,
+      recordedAt: readString(value, "recorded_at"),
+      revision: readString(repository, "head") ?? readString(repository, "base_revision") ?? readString(evidence, "base_revision"),
+      type: readString(value, "type")
+    },
+    lane: readString(workstream, "lane") ?? "single",
+    workstreamId: readString(workstream, "id")
+  };
+}
+
+async function groupCheckpoints(repositoryPath: string, workstreams: PortfolioWorkstream[]): Promise<PortfolioValidationError[]> {
+  const eventsDirectory = join(repositoryPath, "memory/events");
+  if (!existsSync(eventsDirectory)) {
+    return [];
+  }
+  const workstreamsById = new Map(workstreams.map((workstream) => [workstream.id, workstream]));
+  const errors: PortfolioValidationError[] = [];
+
+  for (const relativePath of [...new Bun.Glob("**/*.yaml").scanSync(eventsDirectory)].sort()) {
+    const path = join(eventsDirectory, relativePath);
+    const document = parseDocument(await Bun.file(path).text(), { prettyErrors: false });
+    const value = document.toJS();
+    if (document.errors.length > 0 || !isRecord(value)) {
+      continue;
+    }
+
+    const event = checkpointFromEvent(path, value);
+    const workstream = event.workstreamId === null ? undefined : workstreamsById.get(event.workstreamId);
+    if (workstream === undefined) {
+      continue;
+    }
+    const checkpoints = workstream.checkpointsByLane[event.lane] ?? [];
+    checkpoints.push(event.checkpoint);
+    workstream.checkpointsByLane[event.lane] = checkpoints;
+  }
+
+  return errors;
+}
+
+function deriveAttention(workstreams: PortfolioWorkstream[], projects: PortfolioProject[]): PortfolioAttention[] {
+  const projectById = new Map(projects.map((project) => [project.id, project]));
+  const activeByProject = new Map<string, string[]>();
+  for (const workstream of workstreams.filter((item) => item.state === "active")) {
+    for (const projectId of workstream.projectIds) {
+      const ids = activeByProject.get(projectId) ?? [];
+      ids.push(workstream.id);
+      activeByProject.set(projectId, ids);
+    }
+  }
+
+  return workstreams.flatMap<PortfolioAttention>((workstream) => {
+    if (workstream.state === "completed") {
+      return [];
+    }
+    if (workstream.state === "paused" || workstream.state === "blocked") {
+      return [{
+        detail: `Plan state is ${workstream.state}.`,
+        projectIds: workstream.projectIds,
+        state: workstream.state,
+        workstreamId: workstream.id
+      }];
+    }
+
+    const unavailable = workstream.projectIds.filter((id) => projectById.get(id)?.binding.status !== "available");
+    if (unavailable.length > 0) {
+      return [{
+        detail: `Local Git verification is unavailable or mismatched for: ${unavailable.join(", ")}.`,
+        projectIds: workstream.projectIds,
+        state: "unavailable",
+        workstreamId: workstream.id
+      }];
+    }
+
+    const conflictingProjects = workstream.projectIds.filter((id) => (activeByProject.get(id)?.length ?? 0) > 1);
+    if (conflictingProjects.length > 0) {
+      return [{
+        detail: `Active workstreams overlap on: ${conflictingProjects.join(", ")}; owner confirmation is required before parallel execution.`,
+        projectIds: workstream.projectIds,
+        state: "conflict",
+        workstreamId: workstream.id
+      }];
+    }
+
+    return [{
+      detail: "All referenced projects have verified machine-local Git bindings.",
+      projectIds: workstream.projectIds,
+      state: "active",
+      workstreamId: workstream.id
+    }];
+  });
+}
+
+export async function readPortfolioWakeReport(repositoryDirectory = "."): Promise<PortfolioWakeReport> {
+  const repositoryPath = resolve(repositoryDirectory);
+  const validationErrors: PortfolioValidationError[] = [];
+  const { errors: projectErrors, projects: projectIdentities } = await readProjectIdentities(repositoryPath);
+  validationErrors.push(...projectErrors);
+  const { bindings, errors: bindingErrors } = await readLocalBindings(repositoryPath);
+  validationErrors.push(...bindingErrors);
+
+  const projects = await Promise.all(projectIdentities.map((project) => observeProject(repositoryPath, project, bindings.get(project.id))));
+  const workstreams: PortfolioWorkstream[] = [];
+  const workstreamsDirectory = join(repositoryPath, "workstreams");
+  if (!existsSync(workstreamsDirectory)) {
+    return { attention: [], projects, validationErrors, workstreams };
+  }
+  for (const relativePath of [...new Bun.Glob("*/PLAN.md").scanSync(workstreamsDirectory)].sort()) {
+    const path = join(workstreamsDirectory, relativePath);
+    const parsed = parsePlan(path, await Bun.file(path).text());
+    validationErrors.push(...parsed.errors);
+    if (parsed.workstream !== null) {
+      workstreams.push(parsed.workstream);
+    }
+  }
+
+  validationErrors.push(...(await groupCheckpoints(repositoryPath, workstreams)));
+  return {
+    attention: deriveAttention(workstreams, projects),
+    projects,
+    validationErrors,
+    workstreams
+  };
+}

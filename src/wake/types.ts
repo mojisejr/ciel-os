@@ -1,4 +1,5 @@
 import type { EventValidationError } from "../events/types.ts";
+import type { PortfolioWakeReport } from "../portfolio/types.ts";
 
 export interface WakeReport {
   observed: {
@@ -31,6 +32,7 @@ export interface WakeReport {
       objective: string | null;
       checkpoint: string | null;
     };
+    portfolio: PortfolioWakeReport;
   };
   reconciliation: {
     status: "at-recorded-checkpoint" | "expected-evolution" | "needs-reconciliation" | "unknown";

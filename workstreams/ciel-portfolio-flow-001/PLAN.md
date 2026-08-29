@@ -3,8 +3,7 @@
 **Workstream:** `ciel-portfolio-flow-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 0.1  
-**Phase 1 checkpoint:** pending owner review
+**Plan revision:** 0.2
 
 ## Objective
 
@@ -43,7 +42,7 @@ create a successor lane.
 
 ### 1. Portfolio artifact contract
 
-**State:** complete, pending checkpoint commit  
+**State:** completed
 **DoD:** CIEL can validate committed project identities; machine-local bindings
 are ignored; this workstream has a plan that names its scope, lane, lifecycle,
 and recovery rule.
@@ -53,7 +52,7 @@ and `git check-ignore projects.local.yaml`.
 
 ### 2. Portfolio Wake
 
-**State:** planned  
+**State:** complete, pending owner review
 **DoD:** Wake discovers active workstreams, groups checkpoints by workstream and
 lane, verifies every available bound project through local Git, and reports
 active, paused, blocked, unavailable, and conflict attention states.

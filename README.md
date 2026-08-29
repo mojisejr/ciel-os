@@ -70,6 +70,12 @@ bun run bin/ciel.ts projects validate
 bun run check
 ```
 
+When `projects.local.yaml` is present, `wake` also reports the active
+workstreams in `workstreams/*/PLAN.md`, their event checkpoints grouped by
+lane, and local-Git verification for each bound project. The local file is a
+machine locator only: a missing, inaccessible, or mismatched binding is
+reported as attention, never inferred as a valid checkout.
+
 ## Current proof target
 
 Without calling an LLM API, CIEL must let a genuinely fresh Codex session reconstruct and resume active workstreams from repository plans, Git-aware evidence, and concise semantic records—without the human retelling previous chat history. Portfolio indexing, event writing, and client bridges remain later proofs, not initial structure.
