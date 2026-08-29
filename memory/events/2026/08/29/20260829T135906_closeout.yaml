@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20260829T135906_lifecycle_gates_prepared
+type: closeout
+recorded_at: 2026-08-29T13:59:06+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  lane: single
+  objective: >-
+    Give a fresh agent deterministic lifecycle gates for plan revision
+    authorization, interrupted work, reconciliation, and proposed parallelism
+    without treating a session as CIEL state.
+  scope:
+    - Parse lifecycle fields from active workstream plans.
+    - Derive read-only lifecycle gate state from plan, decision events, and local Git observations.
+    - Validate decision checkpoints through prior_checkpoint evidence.
+  out_of_scope:
+    - Event write command, automatic worktree creation, database, daemon, dashboard, or external synchronization.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Plan revisions, execution state, and parallelism proposal are explicit plan artifacts.
+    - Wake authorizes only a human-recorded decision whose plan path and quoted plan revision match the active plan.
+    - Wake reports a durable executing marker as interrupted, or needs-reconciliation when local Git is dirty or project identity is unavailable.
+    - Wake holds proposed parallelism and same-project overlap at owner-confirmation-required unless the matching decision explicitly approves parallelism.
+    - A latest decision can reconcile through prior_checkpoint evidence instead of losing Git traceability.
+  not_completed:
+    - The executing-marker recovery rule has only deterministic fixture proof; no real multi-project interrupted lane has been exercised.
+
+evidence:
+  base_revision: ea1ba4e5cdbf864abd3fd07c718cab7aabf6d8ad
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  decision_event: memory/events/2026/08/29/20260829T135759_decision.yaml
+  affected_artifacts:
+    - src/portfolio/read.ts
+    - src/portfolio/types.ts
+    - src/wake/read.ts
+    - test/portfolio/read.test.ts
+    - test/wake/read.test.ts
+  checks:
+    - bun run check passed with 17 tests and 0 failures.
+    - bun run events:validate validated 26 event files.
+    - bun run bin/ciel.ts projects validate validated projects/ciel-os/project.yaml.
+    - bun run wake reported plan revision 0.3 as authorized through the matching decision event.
+    - git diff --check passed.
+
+unresolved:
+  - Phase 4 must prove a real multi-project workstream and one real interrupted-lane recovery.
+  - The bootstrap execution that introduced this marker predates the marker itself; it is not falsely presented as a recovery proof.
+
+next_action:
+  action: >-
+    Owner reviews this lifecycle-gates checkpoint. After commit, create a
+    bounded real multi-project workstream that deliberately leaves one lane
+    interrupted, then verify fresh Wake recovery from repository and local Git.
+  acceptance_check:
+    - The pilot remains reversible and does not contact external services or use chat/session state as evidence.
+    - The interrupted lane requires reconciliation rather than automatic successor-lane creation.

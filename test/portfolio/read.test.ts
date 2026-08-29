@@ -37,13 +37,21 @@ function projectYaml(id: string): string {
   ].join("\n");
 }
 
-function plan(id: string, state: string, projectIds: string[]): string {
+function plan(
+  id: string,
+  state: string,
+  projectIds: string[],
+  options: { executionState?: "executing" | "idle"; parallelism?: "none" | "proposed"; revision?: string } = {}
+): string {
   return [
     `# ${id}`,
     "",
     `**Workstream:** \`${id}\`  `,
     `**State:** ${state}  `,
-    "**Execution lane:** single",
+    "**Execution lane:** single  ",
+    `**Plan revision:** ${options.revision ?? "1.0"}  `,
+    `**Execution state:** ${options.executionState ?? "idle"}  `,
+    `**Parallelism:** ${options.parallelism ?? "none"}`,
     "",
     "## Project links",
     "",
@@ -78,10 +86,44 @@ function event(id: string, workstreamId: string, revision: string): string {
   ].join("\n");
 }
 
-async function addPlan(root: string, id: string, state: string, projectIds: string[]): Promise<void> {
+function decision(id: string, workstreamId: string, planRevision: string, parallelism = "not-proposed"): string {
+  return [
+    "schema_version: ciel.event.v0.1",
+    `id: evt_${id}`,
+    "type: decision",
+    "recorded_at: 2026-08-29T00:00:00+07:00",
+    "recorded_by:",
+    "  human: owner",
+    "  agent: test",
+    "workstream:",
+    `  id: ${workstreamId}`,
+    "  lane: single",
+    "  objective: fixture",
+    "  scope: []",
+    "  out_of_scope: []",
+    "outcome:",
+    "  status: decided",
+    `  parallelism: ${parallelism}`,
+    "evidence:",
+    `  plan: workstreams/${workstreamId}/PLAN.md`,
+    `  plan_revision: "${planRevision}"`,
+    "unresolved: []",
+    "next_action:",
+    "  action: fixture",
+    ""
+  ].join("\n");
+}
+
+async function addPlan(
+  root: string,
+  id: string,
+  state: string,
+  projectIds: string[],
+  options: { executionState?: "executing" | "idle"; parallelism?: "none" | "proposed"; revision?: string } = {}
+): Promise<void> {
   const directory = join(root, "workstreams", id);
   await mkdir(directory, { recursive: true });
-  await writeFile(join(directory, "PLAN.md"), plan(id, state, projectIds));
+  await writeFile(join(directory, "PLAN.md"), plan(id, state, projectIds, options));
 }
 
 test("derives attention from plans, verified local projects, and per-lane checkpoints", async () => {
@@ -133,6 +175,51 @@ test("derives attention from plans, verified local projects, and per-lane checkp
       expect.objectContaining({ branch: "main", workingTree: { clean: true, entries: [] } })
     );
     expect(report.workstreams.find((workstream) => workstream.id === "active-ready")?.checkpointsByLane.single).toHaveLength(2);
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("requires a current owner decision, reconciles interrupted work, and holds proposed parallelism", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    const bindings: string[] = ["bindings:"];
+    const checkouts = new Map<string, string>();
+    for (const id of ["authorized-app", "stale-app", "interrupted-app", "clean-interrupted-app", "parallel-app"]) {
+      const checkout = join(root, "checkouts", id);
+      checkouts.set(id, checkout);
+      await createProject(checkout, id);
+      const projectDirectory = join(root, "projects", id);
+      await mkdir(projectDirectory, { recursive: true });
+      await writeFile(join(projectDirectory, "project.yaml"), projectYaml(id));
+      bindings.push(`  ${id}:`, `    path: ${checkout}`);
+    }
+    await writeFile(join(root, "projects.local.yaml"), [...bindings, ""].join("\n"));
+    await addPlan(root, "authorized", "active", ["authorized-app"], { revision: "2.0" });
+    await addPlan(root, "stale-decision", "active", ["stale-app"], { revision: "2.1" });
+    await addPlan(root, "interrupted", "active", ["interrupted-app"], { executionState: "executing", revision: "2.0" });
+    await addPlan(root, "clean-interrupted", "active", ["clean-interrupted-app"], { executionState: "executing", revision: "2.0" });
+    await addPlan(root, "parallel", "active", ["parallel-app"], { parallelism: "proposed", revision: "2.0" });
+    const eventsDirectory = join(root, "memory/events/2026/08/29");
+    await mkdir(eventsDirectory, { recursive: true });
+    await writeFile(join(eventsDirectory, "20260829T000000_decision.yaml"), decision("authorized", "authorized", "2.0"));
+    await writeFile(join(eventsDirectory, "20260829T000001_decision.yaml"), decision("stale", "stale-decision", "2.0"));
+    await writeFile(join(eventsDirectory, "20260829T000002_decision.yaml"), decision("interrupted", "interrupted", "2.0"));
+    await writeFile(join(checkouts.get("interrupted-app") ?? "", "README.md"), "# dirty interrupted fixture\n");
+
+    const report = await readPortfolioWakeReport(root);
+    const lifecycle = new Map(report.workstreams.map((workstream) => [workstream.id, workstream.lifecycle?.state]));
+
+    expect(report.validationErrors).toEqual([]);
+    expect(lifecycle).toEqual(
+      new Map([
+        ["authorized", "authorized"],
+        ["stale-decision", "needs-owner-decision"],
+        ["interrupted", "needs-reconciliation"],
+        ["clean-interrupted", "interrupted"],
+        ["parallel", "owner-confirmation-required"]
+      ])
+    );
   } finally {
     await rm(root, { force: true, recursive: true });
   }

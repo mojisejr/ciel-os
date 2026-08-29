@@ -3,7 +3,9 @@
 **Workstream:** `ciel-portfolio-flow-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 0.2
+**Plan revision:** 0.3
+**Execution state:** idle
+**Parallelism:** none
 
 ## Objective
 
@@ -38,6 +40,13 @@ If a session ends without a closeout, the next Wake treats the active lane as
 Git, and worktree before any further execution. It must not infer completion or
 create a successor lane.
 
+A decision authorizes execution only when it names this plan path and exact
+plan revision in its evidence. A proposed parallel lane, or overlap on a
+project with another active workstream, remains owner-confirmation-required
+unless that decision explicitly approves parallelism. Before an agent starts
+work it marks this plan `executing`; a later Wake treats that durable marker as
+an interrupted lane until reconciliation, never as a live session identity.
+
 ## Phases
 
 ### 1. Portfolio artifact contract
@@ -52,14 +61,14 @@ and `git check-ignore projects.local.yaml`.
 
 ### 2. Portfolio Wake
 
-**State:** complete, pending owner review
+**State:** completed
 **DoD:** Wake discovers active workstreams, groups checkpoints by workstream and
 lane, verifies every available bound project through local Git, and reports
 active, paused, blocked, unavailable, and conflict attention states.
 
 ### 3. Lifecycle gates
 
-**State:** planned  
+**State:** complete, pending owner review
 **DoD:** Plan revisions, owner decisions, interruption recovery, and proposed
 parallelism have deterministic artifacts and tests without adding a write path.
 

@@ -1,5 +1,12 @@
 export type AttentionState = "active" | "blocked" | "conflict" | "paused" | "unavailable";
 
+export type LifecycleGateState =
+  | "authorized"
+  | "interrupted"
+  | "needs-owner-decision"
+  | "needs-reconciliation"
+  | "owner-confirmation-required";
+
 export interface PortfolioValidationError {
   path: string;
   message: string;
@@ -36,9 +43,17 @@ export interface PortfolioProject {
 
 export interface PortfolioWorkstream {
   checkpointsByLane: Record<string, PortfolioCheckpoint[]>;
+  executionState: "executing" | "idle";
   id: string;
   lane: string;
+  lifecycle: {
+    decisionEventPath: string | null;
+    detail: string;
+    state: LifecycleGateState;
+  } | null;
   path: string;
+  planRevision: string;
+  parallelism: "none" | "proposed";
   projectIds: string[];
   state: "active" | "blocked" | "completed" | "paused";
 }

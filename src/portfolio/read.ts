@@ -31,6 +31,12 @@ interface GitResult {
   stdout: string;
 }
 
+interface WorkstreamEvent {
+  lane: string;
+  path: string;
+  value: Record<string, unknown>;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -88,6 +94,9 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
   const declaredId = readPlanField(text, "Workstream")?.replace(/^`|`$/g, "") ?? null;
   const state = readPlanField(text, "State");
   const lane = readPlanField(text, "Execution lane");
+  const planRevision = readPlanField(text, "Plan revision");
+  const executionState = readPlanField(text, "Execution state");
+  const parallelism = readPlanField(text, "Parallelism");
   const directoryId = path.split("/").at(-2) ?? "";
 
   if (declaredId === null) {
@@ -104,12 +113,32 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
     errors.push({ path, message: "plan Execution lane must be a lowercase lane identifier" });
   }
 
+  if (planRevision === null || !/^\d+\.\d+$/.test(planRevision)) {
+    errors.push({ path, message: "plan Plan revision must be a major.minor identifier" });
+  }
+
+  if (executionState !== "executing" && executionState !== "idle") {
+    errors.push({ path, message: "plan Execution state must be idle or executing" });
+  }
+
+  if (parallelism !== "none" && parallelism !== "proposed") {
+    errors.push({ path, message: "plan Parallelism must be none or proposed" });
+  }
+
   const projectIds = extractProjectIds(text);
   if (projectIds.length === 0) {
     errors.push({ path, message: "plan must list at least one project under Project links" });
   }
 
-  if (errors.length > 0 || declaredId === null || lane === null || state === null) {
+  if (
+    errors.length > 0 ||
+    declaredId === null ||
+    lane === null ||
+    state === null ||
+    planRevision === null ||
+    executionState === null ||
+    parallelism === null
+  ) {
     return { errors, workstream: null };
   }
 
@@ -117,9 +146,13 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
     errors,
     workstream: {
       checkpointsByLane: {},
+      executionState: executionState as PortfolioWorkstream["executionState"],
       id: declaredId,
       lane,
+      lifecycle: null,
       path,
+      planRevision,
+      parallelism: parallelism as PortfolioWorkstream["parallelism"],
       projectIds,
       state: state as PortfolioWorkstream["state"]
     }
@@ -273,13 +306,17 @@ function checkpointFromEvent(path: string, value: Record<string, unknown>): { ch
   };
 }
 
-async function groupCheckpoints(repositoryPath: string, workstreams: PortfolioWorkstream[]): Promise<PortfolioValidationError[]> {
+async function groupCheckpoints(
+  repositoryPath: string,
+  workstreams: PortfolioWorkstream[]
+): Promise<{ errors: PortfolioValidationError[]; events: Map<string, WorkstreamEvent[]> }> {
   const eventsDirectory = join(repositoryPath, "memory/events");
   if (!existsSync(eventsDirectory)) {
-    return [];
+    return { errors: [], events: new Map() };
   }
   const workstreamsById = new Map(workstreams.map((workstream) => [workstream.id, workstream]));
   const errors: PortfolioValidationError[] = [];
+  const events = new Map<string, WorkstreamEvent[]>();
 
   for (const relativePath of [...new Bun.Glob("**/*.yaml").scanSync(eventsDirectory)].sort()) {
     const path = join(eventsDirectory, relativePath);
@@ -297,9 +334,97 @@ async function groupCheckpoints(repositoryPath: string, workstreams: PortfolioWo
     const checkpoints = workstream.checkpointsByLane[event.lane] ?? [];
     checkpoints.push(event.checkpoint);
     workstream.checkpointsByLane[event.lane] = checkpoints;
+    const workstreamEvents = events.get(workstream.id) ?? [];
+    workstreamEvents.push({ lane: event.lane, path, value });
+    events.set(workstream.id, workstreamEvents);
   }
 
-  return errors;
+  return { errors, events };
+}
+
+function decisionAuthorizesPlan(event: WorkstreamEvent, workstream: PortfolioWorkstream): boolean {
+  const evidence = isRecord(event.value.evidence) ? event.value.evidence : {};
+  const outcome = isRecord(event.value.outcome) ? event.value.outcome : {};
+  const recordedBy = isRecord(event.value.recorded_by) ? event.value.recorded_by : {};
+  const relativePlanPath = `workstreams/${workstream.id}/PLAN.md`;
+  return (
+    event.lane === workstream.lane &&
+    readString(event.value, "type") === "decision" &&
+    readString(outcome, "status") === "decided" &&
+    readString(recordedBy, "human") !== null &&
+    readString(evidence, "plan") === relativePlanPath &&
+    readString(evidence, "plan_revision") === workstream.planRevision
+  );
+}
+
+function decisionAuthorizesParallelism(event: WorkstreamEvent): boolean {
+  const outcome = isRecord(event.value.outcome) ? event.value.outcome : {};
+  return readString(outcome, "parallelism") === "approved";
+}
+
+function deriveLifecycle(
+  workstreams: PortfolioWorkstream[],
+  projects: PortfolioProject[],
+  eventsByWorkstream: Map<string, WorkstreamEvent[]>
+): void {
+  const projectsById = new Map(projects.map((project) => [project.id, project]));
+  const activeByProject = new Map<string, string[]>();
+  for (const workstream of workstreams.filter((item) => item.state === "active")) {
+    for (const projectId of workstream.projectIds) {
+      const ids = activeByProject.get(projectId) ?? [];
+      ids.push(workstream.id);
+      activeByProject.set(projectId, ids);
+    }
+  }
+
+  for (const workstream of workstreams) {
+    if (workstream.state !== "active") {
+      continue;
+    }
+    const matchingDecisions = (eventsByWorkstream.get(workstream.id) ?? []).filter((event) => decisionAuthorizesPlan(event, workstream));
+    const decision = matchingDecisions.at(-1) ?? null;
+    const conflicts = workstream.projectIds.filter((projectId) => (activeByProject.get(projectId)?.length ?? 0) > 1);
+    const parallelismApproved = decision !== null && decisionAuthorizesParallelism(decision);
+    if ((workstream.parallelism === "proposed" || conflicts.length > 0) && !parallelismApproved) {
+      workstream.lifecycle = {
+        decisionEventPath: decision?.path ?? null,
+        detail: "Parallel execution or same-project overlap requires an explicit owner decision for parallelism.",
+        state: "owner-confirmation-required"
+      };
+      continue;
+    }
+    if (workstream.executionState === "executing") {
+      const reconciliationProblems = workstream.projectIds.filter((projectId) => {
+        const project = projectsById.get(projectId);
+        return project?.binding.status !== "available" || project.observed?.workingTree.clean !== true;
+      });
+      workstream.lifecycle = reconciliationProblems.length > 0
+        ? {
+            decisionEventPath: decision?.path ?? null,
+            detail: `A prior execution was left open and needs reconciliation for: ${reconciliationProblems.join(", ")}.`,
+            state: "needs-reconciliation"
+          }
+        : {
+            decisionEventPath: decision?.path ?? null,
+            detail: "A prior execution was left open without a closeout; inspect before continuing.",
+            state: "interrupted"
+          };
+      continue;
+    }
+    if (decision === null) {
+      workstream.lifecycle = {
+        decisionEventPath: null,
+        detail: `No owner decision authorizes plan revision ${workstream.planRevision}.`,
+        state: "needs-owner-decision"
+      };
+      continue;
+    }
+    workstream.lifecycle = {
+      decisionEventPath: decision.path,
+      detail: `Owner decision authorizes plan revision ${workstream.planRevision}.`,
+      state: "authorized"
+    };
+  }
 }
 
 function deriveAttention(workstreams: PortfolioWorkstream[], projects: PortfolioProject[]): PortfolioAttention[] {
@@ -378,7 +503,9 @@ export async function readPortfolioWakeReport(repositoryDirectory = "."): Promis
     }
   }
 
-  validationErrors.push(...(await groupCheckpoints(repositoryPath, workstreams)));
+  const checkpoints = await groupCheckpoints(repositoryPath, workstreams);
+  validationErrors.push(...checkpoints.errors);
+  deriveLifecycle(workstreams, projects, checkpoints.events);
   return {
     attention: deriveAttention(workstreams, projects),
     projects,

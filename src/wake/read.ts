@@ -89,7 +89,7 @@ function findCheckpoint(event: Record<string, unknown>): string | null {
     return readString(repository, "head") ?? readString(repository, "base_revision") ?? readString(evidence, "base_revision");
   }
 
-  return readString(evidence, "base_revision");
+  return readString(evidence, "base_revision") ?? readString(evidence, "prior_checkpoint");
 }
 
 async function readLatestEvent(eventsDirectory: string): Promise<LatestEvent | null> {
