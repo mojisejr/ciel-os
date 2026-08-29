@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20260829T095129_correct_optional_global_policy_checkpoint
+type: closeout
+recorded_at: 2026-08-29T09:51:29+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Correct the checkpoint reference for the optional-global-capability policy
+    closeout without rewriting its append-only history.
+  scope:
+    - Supersede the invalid checkpoint reference in the immediately prior closeout.
+  out_of_scope:
+    - Changing the optional-global-capability policy or its planned evaluation.
+    - Claiming the fresh-session coexistence evaluation passed.
+
+outcome:
+  status: corrected_checkpoint_prepared
+  completed:
+    - Recorded the actual policy commit as this closeout checkpoint.
+    - Preserved the prior closeout as historical evidence of the mistaken reference.
+  not_completed:
+    - The three planned coexistence evaluation cases have not been run.
+
+evidence:
+  base_revision: d444caa130a0ae6d60eca1eceb9f9bb94e24632a
+  corrects_event: evt_20260829T095009_optional_global_capability_policy_prepared
+  incorrect_reference: 88322d0b742f82604fecb1cbb3ff937a304c3b56
+  actual_prior_checkpoint: 88322d022b1e2f5bcc6e9565999e45118a1dbc69
+  checks:
+    - git rev-parse confirms d444caa130a0ae6d60eca1eceb9f9bb94e24632a as the policy commit.
+    - git rev-parse confirms 88322d022b1e2f5bcc6e9565999e45118a1dbc69 as the prior pilot closeout commit.
+
+unresolved:
+  - The coexistence evaluation remains pending in a new ordinary Codex session.
+
+next_action:
+  action: >-
+    Open a new ordinary Codex session, run bun run wake, and perform the three
+    coexistence evaluation cases recorded in the corrected policy closeout.
+  acceptance_check:
+    - Wake reports the current commit as expected evolution from this checkpoint after the correction commit.
+    - The evaluation preserves a local evidence trace for every CIEL-derived fact.

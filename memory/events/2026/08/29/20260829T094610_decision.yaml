@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20260829T094610_optional_global_capability_boundary
+type: decision
+recorded_at: 2026-08-29T09:46:10+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Let CIEL coexist with useful host-global capabilities without making them
+    part of CIEL's continuity authority or Wake evidence.
+  scope:
+    - Refine the CIEL Wake evidence boundary and its v0.1 evaluation criteria.
+    - Permit task-relevant global assistance after Wake under an explicit
+      local-verification rule.
+  out_of_scope:
+    - Adding a CIEL global skill, host hook, launcher, daemon, database, or network dependency.
+    - Changing the local Wake CLI or claiming the fresh-session pilot passed.
+
+outcome:
+  status: decided
+  completed:
+    - The owner authorized ambient host-global capabilities to coexist with CIEL.
+    - Repository files, local Git, and committed CIEL events remain the sole canonical evidence for CIEL Wake facts.
+    - A global capability may be used after Wake only as optional task assistance.
+    - A material claim suggested by optional assistance must be locally verified or labelled unverified.
+  not_completed:
+    - The coexistence policy has not yet been evaluated in a fresh Codex session.
+    - No host-level enforcement mechanism is being introduced.
+
+evidence:
+  owner_authorization: >-
+    Owner requested a coexistence model in the 2026-08-29 CIEL session: use
+    useful global capabilities without allowing them to overtake CIEL's own
+    truth boundary.
+  prior_policy_event: evt_20260826T223631_wake_evidence_boundary
+  affected_contracts:
+    - AGENTS.md
+    - docs/genesis/CIEL_V0.1_FEASIBILITY_PLAN_v0.1.md
+
+unresolved:
+  - Host-injected context cannot be mechanically proven absent from an agent's internal reasoning.
+  - The first evaluation must demonstrate a closed local evidence trace for Wake facts despite ambient global capabilities.
+
+next_action:
+  action: >-
+    Review the policy diff, then evaluate a natural-prompt session in three
+    cases: local-only Wake, optional global assistance after Wake, and a
+    conflicting or unsupported global suggestion.
+  acceptance_check:
+    - Every CIEL-derived fact in each case has a repository or local-Git source.
+    - Optional assistance is disclosed as assistance and is never recorded as owner authority.
+    - A Wake claim that actually relies on an excluded source is still reported as environment-contaminated.

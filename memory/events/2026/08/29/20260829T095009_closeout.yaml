@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20260829T095009_optional_global_capability_policy_prepared
+type: closeout
+recorded_at: 2026-08-29T09:50:09+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Prepare the owner-approved CIEL policy that permits useful global
+    capabilities without making them CIEL Wake evidence or authority.
+  scope:
+    - Update the CIEL operating contract and v0.1 feasibility plan.
+    - Record the owner decision and leave the first coexistence evaluation for
+      a subsequent fresh session.
+  out_of_scope:
+    - Adding a CIEL global skill, host hook, launcher, daemon, database, or network dependency.
+    - Changing the Wake CLI or claiming the coexistence evaluation passed.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Defined ambient host-global capability availability as distinct from CIEL evidence.
+    - Kept repository files and local Git as the sole sources for CIEL Wake facts.
+    - Allowed task-relevant global assistance only after Wake and only under local verification or unverified-labelling.
+    - Updated the v0.1 acceptance and stop conditions for the coexistence boundary.
+  not_completed:
+    - The three planned coexistence evaluation cases have not been run.
+    - No fresh-session pilot pass is claimed.
+
+evidence:
+  base_revision: 88322d0b742f82604fecb1cbb3ff937a304c3b56
+  decision_event: memory/events/2026/08/29/20260829T094610_decision.yaml
+  affected_documents:
+    - AGENTS.md
+    - docs/genesis/CIEL_V0.1_FEASIBILITY_PLAN_v0.1.md
+  checks:
+    - bun run check passed with 10 tests and 0 failures.
+    - bun run events:validate passed with 19 event files before this closeout was added.
+    - git diff --check passed before this closeout was added.
+
+unresolved:
+  - Ambient host context cannot be mechanically proven absent from an agent's internal reasoning.
+  - The next session must demonstrate an evidence trace that stays local despite optional global assistance.
+
+next_action:
+  action: >-
+    In a new ordinary Codex session, run bun run wake and complete the three
+    coexistence cases: local-only Wake, optional global assistance after Wake,
+    and a conflicting or unsupported global suggestion.
+  acceptance_check:
+    - Every reported CIEL-derived fact has a repository-file or local-Git source.
+    - Optional assistance is disclosed and does not become CIEL authority.
+    - A Wake claim that actually relies on an excluded source is reported as environment-contaminated.

@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20260829T085256_isolated_pilot_toolchain_gap
+type: closeout
+recorded_at: 2026-08-29T08:52:56+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-v0.1-implementation-entry-001
+  objective: >-
+    Evaluate whether an isolated fresh Codex session can reconstruct CIEL-OS
+    status from repository files and local Git only.
+  scope:
+    - Run one read-only isolated pilot against the current CIEL repository.
+    - Record the observed runtime blockers and evidence-boundary result.
+  out_of_scope:
+    - Changing the CIEL read-only core, event schema, or Git history.
+    - Declaring the fresh-session pilot passed or creating a CIEL write path.
+
+outcome:
+  status: awaiting_owner_review
+  completed:
+    - Ran an isolated, read-only Codex pilot with the repository bind-mounted read-only.
+    - The pilot invoked bun run wake before its substantive status report.
+    - The pilot did not substitute network, GitHub, or another external service when local Git was unavailable.
+    - The focused event validator passed for all 17 records present during the pilot.
+    - The pilot classified the host-provided context as environment-contaminated rather than claiming a passing CIEL Wake.
+  not_completed:
+    - The pilot could not produce a Git-aware Wake report because git was absent from its image PATH.
+    - bun run check could not complete because node was absent for the TypeScript executable.
+    - Five Wake tests could not create their temporary fixture directories; the transcript reports EROFS for /tmp.
+    - No uncontaminated fresh-session pilot has passed.
+
+evidence:
+  base_revision: 20506575f06d25ccc9ee17903df07b13f867e52f
+  pilot_transcript: /Users/non/dev/.ciel-codex-pilot/logs/20260829T013006Z_pilot.jsonl
+  attached_transcript: /Users/non/.codex/attachments/d12f2496-d211-4032-be2d-c12f23e69048/pasted-text.txt
+  checks:
+    - bun run wake exited 1 in the pilot with git ENOENT.
+    - bun run events:validate passed and validated 17 event files in the pilot.
+    - bun run check exited 127 because /usr/bin/env could not find node.
+    - bun test reported 5 pass and 5 fail; each failed Wake test reported EROFS from mkdtemp under /tmp.
+    - The current external runner omits the prior interactive stdin attachment; it has not been re-run after that change.
+
+unresolved:
+  - The isolated image currently installs ca-certificates and Codex but not git or node.
+  - The reported /tmp EROFS must be reproduced or disproved with a direct writable-temp probe before treating it as a CIEL test failure.
+  - The host must still be demonstrably free of excluded injected context for a passing CIEL Wake claim.
+
+next_action:
+  action: >-
+    Outside the CIEL repository, add git and node to the pilot image, verify a
+    writable temporary directory with the same read-only container settings,
+    rebuild it, and rerun the natural-prompt pilot with the current noninteractive
+    runner. Record either a local-Git-only result or environment-contaminated.
+  acceptance_check:
+    - git -C /workspace/ciel-os rev-parse HEAD succeeds inside the pilot image.
+    - node --version and a temporary-directory creation probe succeed inside the pilot container.
+    - The rerun completes bun run wake and distinguishes toolchain failure from excluded-context contamination.
