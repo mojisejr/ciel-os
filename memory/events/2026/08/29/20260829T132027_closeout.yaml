@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20260829T132027_portfolio_artifact_contract_prepared
+type: closeout
+recorded_at: 2026-08-29T13:20:27+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  objective: >-
+    Establish and validate the first CIEL project-registry and workstream-plan
+    artifacts before extending Wake to a portfolio view.
+  scope:
+    - Register CIEL-OS with a committed project identity.
+    - Define an ignored machine-local binding template.
+    - Add a plan artifact for the approved portfolio-flow workstream.
+    - Add deterministic project-registry validation and tests.
+  out_of_scope:
+    - Portfolio Wake aggregation, project Git inspection, lifecycle write commands, and external integration.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Added a versioned project.yaml contract and registered ciel-os using its local Git remote and main branch.
+    - Added a gitignored projects.local.yaml path and a committed example that labels bindings as locator input only.
+    - Added an active workstream plan with single-lane, owner-confirmation, interruption-recovery, and phase contracts.
+    - Added a read-only ciel projects validate command with invalid-registry fixtures.
+    - Updated current repository documentation and operating instructions to name the approved portfolio-flow proof.
+  not_completed:
+    - Wake still reports one repository and the globally newest event; it does not yet reconstruct a portfolio.
+    - Local project bindings are not yet parsed or verified against local Git.
+
+evidence:
+  base_revision: 329054211c3170bcf14c2c8771579447c9b24ad2
+  decision_event: memory/events/2026/08/29/20260829T132026_decision.yaml
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  affected_artifacts:
+    - projects/ciel-os/project.yaml
+    - projects.local.example.yaml
+    - src/projects/validate.ts
+    - test/projects/validate.test.ts
+  checks:
+    - bun run check passed with 13 tests and 0 failures.
+    - bun run bin/ciel.ts projects validate validated projects/ciel-os/project.yaml.
+    - git check-ignore confirms projects.local.yaml is excluded from Git tracking.
+    - git diff --check passed before this closeout was added.
+
+unresolved:
+  - Portfolio Wake must group events by workstream and lane instead of selecting one latest event.
+  - The binding format needs local-Git identity verification and unavailable/mismatch reporting.
+  - The first real multi-project workstream is deferred until portfolio Wake exists.
+
+next_action:
+  action: >-
+    Owner reviews this artifact-contract checkpoint. After commit, implement and
+    test portfolio Wake discovery, per-workstream checkpoint grouping, local
+    binding verification, and attention-only reporting.
+  acceptance_check:
+    - A fresh session can identify every active workstream without reading chat or client-session state.
+    - A missing or mismatched local binding is reported explicitly rather than silently omitted.
+    - Closed workstreams do not dominate the default attention summary.

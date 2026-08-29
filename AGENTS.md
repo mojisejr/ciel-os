@@ -61,9 +61,13 @@ Wake → Align → Plan → Execute → Closeout
 
 ## CIEL's current stage
 
-CIEL has completed its Codex-only Genesis proof and is now in the v0.1 read-only continuity-core feasibility slice. The committed local CLI validates event records and produces a Git-aware Wake report; a fresh-session pilot remains pending.
+CIEL has completed its Codex-only Genesis and read-only continuity-core proof.
+The current approved workstream is the plan-first portfolio-flow proof at
+`workstreams/ciel-portfolio-flow-001/PLAN.md`: project identities, local
+checkout bindings, and multi-workstream reconstruction must prove their need
+before CIEL adds a broader lifecycle capability.
 
-- Do not add a write path, daemon, API, MCP server, database, index, dashboard, agent team, or speculative directory structure.
+- Do not add a write path, daemon, API, MCP server, database, index, dashboard, agent team, or directory structure beyond the approved project registry and workstream-plan proof.
 - Do not add a CIEL-specific global skill, host hook, or launcher until a reviewed proof gap establishes the need.
 - Do not make `AGENTS.md` a long-term memory database or a copy of project history.
 - Do not add `CLAUDE.md`, IDE-specific instructions, or nested instruction files until the Codex-only workflow reveals a concrete need.

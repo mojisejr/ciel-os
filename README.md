@@ -10,7 +10,11 @@ CIEL's primary integration is **workspace files plus a local CLI**, not a hosted
 
 ## Status
 
-The Codex-only Genesis proof is complete. CIEL is now evaluating its v0.1 read-only continuity core: a local Bun + TypeScript CLI validates append-only event records and produces a Git-aware Wake report. A genuinely fresh-session pilot is pending; no event write path, database, daemon, MCP server, or second client bridge exists.
+The Codex-only Genesis and read-only continuity-core proof are complete: a
+local Bun + TypeScript CLI validates append-only event records and produces a
+Git-aware Wake report. CIEL is now proving a plan-first portfolio flow for
+multiple local projects and workstreams. No event write path, database, daemon,
+MCP server, or second client bridge exists.
 
 The current proposed foundation is [CIEL Genesis Contract v0.2](docs/genesis/CIEL_GENESIS_CONTRACT_v0.2.md). It changes the earlier kernel-only framing into a coding-agent continuity system while preserving the local-first, owner-controlled truth model. [v0.1](docs/genesis/CIEL_GENESIS_CONTRACT_v0.1.md) remains as the superseded proposal.
 
@@ -48,6 +52,8 @@ src/
 test/                 Deterministic validator and Wake tests
 docs/
   genesis/            Genesis evidence, baseline, and v0.1 feasibility plan
+projects/             Committed project identities
+workstreams/          Current plan artifacts for active workstreams
 memory/
   events/             Append-only semantic records
 ```
@@ -60,12 +66,13 @@ bun run wake
 
 # Focused diagnostics
 bun run events:validate
+bun run bin/ciel.ts projects validate
 bun run check
 ```
 
 ## Current proof target
 
-Without calling an LLM API, CIEL must let a genuinely fresh Codex session reconstruct and resume one workstream from `bun run wake`, Git-aware evidence, and concise semantic records—without the human retelling the previous session's chat history. The v0.1 pilot evaluates this claim; multi-client bridges, an index, and event writing are later proofs, not initial structure.
+Without calling an LLM API, CIEL must let a genuinely fresh Codex session reconstruct and resume active workstreams from repository plans, Git-aware evidence, and concise semantic records—without the human retelling previous chat history. Portfolio indexing, event writing, and client bridges remain later proofs, not initial structure.
 
 ## Deliberate non-goals for this stage
 

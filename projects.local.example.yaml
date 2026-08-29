@@ -1,0 +1,5 @@
+# Machine-local checkout bindings. Copy to projects.local.yaml and edit paths.
+# This file locates repositories only; Wake verifies all reported facts with local Git.
+bindings:
+  ciel-os:
+    path: .

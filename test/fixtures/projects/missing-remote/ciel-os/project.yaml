@@ -1,0 +1,5 @@
+schema_version: ciel.project.v0.1
+id: ciel-os
+repository:
+  vcs: git
+  default_branch: main
