@@ -67,10 +67,14 @@ focused diagnostic, not a mandatory duplicate scan.
 
 A CIEL Wake claim uses repository files and local Git only. Global skills,
 global memory, prior chat, GitHub, and external services are excluded evidence.
-If a host injects or requires one, the session must report
-`environment-contaminated` rather than claim a CIEL Wake result. This policy
-does not itself enforce host capabilities; enforcement remains a later,
-separately justified test-environment concern.
+Their ambient availability in a host does not itself invalidate Wake: the agent
+must not invoke them while establishing Wake facts, and every reported CIEL fact
+must remain traceable to a repository file or local Git output. After Wake, a
+task-relevant global capability may be used as optional assistance, never as
+CIEL authority; material claims must be verified locally or labelled as
+unverified suggestions. If a Wake claim requires or relies on an excluded
+source, the session must report `environment-contaminated` rather than claim a
+CIEL Wake result. This policy does not itself enforce host capabilities.
 
 ## 4. Required decisions before code
 
@@ -101,7 +105,8 @@ The approved implementation must prove all of the following:
 | Missing authority | The report labels an unrecorded review, approval, or external rule as unknown rather than fact. |
 | Statelessness | Two fresh invocations from the same committed fixture produce equivalent semantic results without a local database or daemon. |
 | Session-load contract | `AGENTS.md` directs a fresh Codex session to the read-only Wake command without copying event history or implementation detail into the instruction file. |
-| Evidence boundary | A CIEL Wake claim excludes global skills, global memory, prior chat, GitHub, and external services; an injected source produces `environment-contaminated`, not a passing claim. |
+| Evidence boundary | A CIEL Wake claim uses only repository files and local Git. Ambient global capabilities may exist without becoming evidence; invoking an excluded source for a Wake claim produces `environment-contaminated`, not a passing claim. |
+| Optional assistance | After Wake, a task-relevant global capability may assist execution, but any material CIEL claim remains locally verified or explicitly unverified. |
 
 ## 6. Stop conditions
 
@@ -111,7 +116,7 @@ Stop and return to owner review if the slice requires any of the following:
 - an instruction change beyond the reviewed, Codex-only Wake invocation;
 - a schema expansion beyond the approved initial event types;
 - a package/toolchain decision without the required feasibility evidence; or
-- a pilot that cannot run without excluded host context; or
+- a Wake claim that cannot establish its local evidence without invoking an excluded capability; or
 - a result that cannot distinguish Git observation from event history.
 
 ## 7. Sequence
@@ -120,5 +125,5 @@ Stop and return to owner review if the slice requires any of the following:
 2. Implement event validation with fixtures and tests.
 3. Add the read-only Wake report and its reconstruction tests.
 4. Activate the reviewable session-load contract in `AGENTS.md` and align repository-facing status documentation with the committed read-only core.
-5. Run the slice in one genuinely fresh Codex session and record the observed proof gap, if any.
+5. Run the slice in a fresh Codex session and record the observed proof gap, if any. Global capabilities may be ambient, but the Wake evidence trace remains local-only.
 6. Only then consider a closeout writer, minimal knowledge, SQLite, or another client bridge.

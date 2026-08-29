@@ -30,8 +30,10 @@ On every fresh session, before giving a substantive answer or changing a file, p
 ### CIEL Wake evidence boundary
 
 - Use only repository files and local Git for a CIEL Wake claim.
-- Do not load or invoke global skills, global memory, prior chat history, GitHub, or another external service during Wake.
-- If the host injects or requires any excluded source, report `environment-contaminated` and stop the CIEL Wake claim. Do not substitute the external result for repository evidence.
+- Do not invoke global skills, global memory, prior chat history, GitHub, or another external service while establishing Wake facts.
+- Ambient availability of a host capability is not itself CIEL evidence. A reported CIEL fact must remain traceable to a repository file or local Git output.
+- After Wake, an agent may use a task-relevant global capability as optional assistance. It has no CIEL authority: verify any material factual claim locally, or label it as an unverified suggestion.
+- If a Wake claim requires or relies on an excluded source, report `environment-contaminated` and stop that claim. Do not substitute the external result for repository evidence.
 
 ## Work lifecycle
 
