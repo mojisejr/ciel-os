@@ -3,7 +3,8 @@
 **Workstream:** `ciel-portfolio-flow-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 0.4
+**Plan revision:** 0.5
+**Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
 
@@ -40,8 +41,9 @@ If a session ends without a closeout, the next Wake treats the active lane as
 Git, and worktree before any further execution. It must not infer completion or
 create a successor lane.
 
-A decision authorizes execution only when it names this plan path and exact
-plan revision in its evidence. A proposed parallel lane, or overlap on a
+A decision authorizes execution only when it names this plan path, exact plan
+revision, and exact execution phase in its evidence. With `Execution phase: none`,
+no decision can authorize execution. A proposed parallel lane, or overlap on a
 project with another active workstream, remains owner-confirmation-required
 unless that decision explicitly approves parallelism. Before an agent starts
 work it marks this plan `executing`; a later Wake treats that durable marker as
@@ -74,7 +76,7 @@ parallelism have deterministic artifacts and tests without adding a write path.
 
 ### 4. HQ checkout convention
 
-**State:** complete, pending owner review
+**State:** completed
 **DoD:** The CIEL root has an ignored `checkouts/` directory for local child
 repositories. A human can open both pilot applications directly from the HQ
 IDE tree, while CIEL keeps only their identities, bindings, plans, and semantic
@@ -111,6 +113,10 @@ mismatched child checkouts.
 **State:** planned  
 **DoD:** Two small Bun + TypeScript CLI applications prove portfolio Wake and
 one interrupted-lane recovery using repository files and local Git evidence.
+
+**Entry gate:** Before any Phase 5 repository is created, reframe this plan to
+select `Execution phase: 5`, update its revision, and record a separate owner
+decision whose evidence names that same plan path, revision, and phase `5`.
 
 **Pilot applications:**
 

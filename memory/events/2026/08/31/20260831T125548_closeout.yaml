@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20260831T125548_phase_scoped_authorization_prepared
+type: closeout
+recorded_at: 2026-08-31T12:55:48+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  lane: single
+  objective: >-
+    Prevent an owner decision for one approved phase from mechanically
+    authorizing a later phase of the same workstream.
+  scope:
+    - Add phase-scoped lifecycle authorization and deterministic verification.
+    - Leave the plan without an execution phase after Phase 4 completes.
+  out_of_scope:
+    - Creating, cloning, initializing, or modifying either pilot child repository.
+    - Starting Phase 5 or any intentional-interruption recovery proof.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Added Execution phase to the plan contract; it accepts none or a positive integer.
+    - Required plan path, plan revision, and execution phase to match an owner decision before Wake reports authorization.
+    - Set the current plan to Execution phase none, so it cannot authorize execution until the owner selects a later phase.
+    - Added a deterministic test showing that a Phase 4 decision does not authorize Phase 5.
+  not_completed:
+    - No Phase 5 phase selection, owner decision, child repository, or pilot application exists.
+
+evidence:
+  base_revision: 91de309da613e054419a8562fbe3da530150784a
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  affected_artifacts:
+    - src/portfolio/read.ts
+    - src/portfolio/types.ts
+    - test/portfolio/read.test.ts
+    - workstreams/ciel-portfolio-flow-001/PLAN.md
+  checks:
+    - bun run check passed with 19 tests and 0 failures.
+    - bun run wake reported Execution phase none and lifecycle needs-owner-decision.
+    - git diff --check passed.
+
+unresolved:
+  - Phase 5 remains owner-gated: select phase 5 in a new plan revision and record a matching owner decision before creating either child repository.
+
+next_action:
+  action: >-
+    Review this closeout and, if accepted, commit this phase-scoped authorization
+    checkpoint without pushing. Then obtain an explicit Phase 5 decision before
+    creating the pilot repositories.
+  acceptance_check:
+    - A decision for phase 4 remains unable to authorize phase 5 in a deterministic Wake test.

@@ -95,6 +95,7 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
   const state = readPlanField(text, "State");
   const lane = readPlanField(text, "Execution lane");
   const planRevision = readPlanField(text, "Plan revision");
+  const executionPhase = readPlanField(text, "Execution phase");
   const executionState = readPlanField(text, "Execution state");
   const parallelism = readPlanField(text, "Parallelism");
   const directoryId = path.split("/").at(-2) ?? "";
@@ -121,6 +122,14 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
     errors.push({ path, message: "plan Execution state must be idle or executing" });
   }
 
+  if (executionPhase !== "none" && (executionPhase === null || !/^[1-9]\d*$/.test(executionPhase))) {
+    errors.push({ path, message: "plan Execution phase must be none or a positive integer" });
+  }
+
+  if (executionState === "executing" && executionPhase === "none") {
+    errors.push({ path, message: "plan Execution phase must name a phase while execution is executing" });
+  }
+
   if (parallelism !== "none" && parallelism !== "proposed") {
     errors.push({ path, message: "plan Parallelism must be none or proposed" });
   }
@@ -136,6 +145,7 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
     lane === null ||
     state === null ||
     planRevision === null ||
+    executionPhase === null ||
     executionState === null ||
     parallelism === null
   ) {
@@ -146,6 +156,7 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
     errors,
     workstream: {
       checkpointsByLane: {},
+      executionPhase: executionPhase === "none" ? null : executionPhase,
       executionState: executionState as PortfolioWorkstream["executionState"],
       id: declaredId,
       lane,
@@ -353,7 +364,9 @@ function decisionAuthorizesPlan(event: WorkstreamEvent, workstream: PortfolioWor
     readString(outcome, "status") === "decided" &&
     readString(recordedBy, "human") !== null &&
     readString(evidence, "plan") === relativePlanPath &&
-    readString(evidence, "plan_revision") === workstream.planRevision
+    readString(evidence, "plan_revision") === workstream.planRevision &&
+    workstream.executionPhase !== null &&
+    readString(evidence, "execution_phase") === workstream.executionPhase
   );
 }
 
@@ -414,14 +427,16 @@ function deriveLifecycle(
     if (decision === null) {
       workstream.lifecycle = {
         decisionEventPath: null,
-        detail: `No owner decision authorizes plan revision ${workstream.planRevision}.`,
+        detail: workstream.executionPhase === null
+          ? "No execution phase is selected; no owner decision can authorize execution."
+          : `No owner decision authorizes plan revision ${workstream.planRevision} phase ${workstream.executionPhase}.`,
         state: "needs-owner-decision"
       };
       continue;
     }
     workstream.lifecycle = {
       decisionEventPath: decision.path,
-      detail: `Owner decision authorizes plan revision ${workstream.planRevision}.`,
+      detail: `Owner decision authorizes plan revision ${workstream.planRevision} phase ${workstream.executionPhase}.`,
       state: "authorized"
     };
   }

@@ -41,7 +41,7 @@ function plan(
   id: string,
   state: string,
   projectIds: string[],
-  options: { executionState?: "executing" | "idle"; parallelism?: "none" | "proposed"; revision?: string } = {}
+  options: { executionPhase?: string; executionState?: "executing" | "idle"; parallelism?: "none" | "proposed"; revision?: string } = {}
 ): string {
   return [
     `# ${id}`,
@@ -50,6 +50,7 @@ function plan(
     `**State:** ${state}  `,
     "**Execution lane:** single  ",
     `**Plan revision:** ${options.revision ?? "1.0"}  `,
+    `**Execution phase:** ${options.executionPhase ?? "1"}  `,
     `**Execution state:** ${options.executionState ?? "idle"}  `,
     `**Parallelism:** ${options.parallelism ?? "none"}`,
     "",
@@ -86,7 +87,7 @@ function event(id: string, workstreamId: string, revision: string): string {
   ].join("\n");
 }
 
-function decision(id: string, workstreamId: string, planRevision: string, parallelism = "not-proposed"): string {
+function decision(id: string, workstreamId: string, planRevision: string, parallelism = "not-proposed", executionPhase = "1"): string {
   return [
     "schema_version: ciel.event.v0.1",
     `id: evt_${id}`,
@@ -107,6 +108,7 @@ function decision(id: string, workstreamId: string, planRevision: string, parall
     "evidence:",
     `  plan: workstreams/${workstreamId}/PLAN.md`,
     `  plan_revision: "${planRevision}"`,
+    `  execution_phase: "${executionPhase}"`,
     "unresolved: []",
     "next_action:",
     "  action: fixture",
@@ -119,7 +121,7 @@ async function addPlan(
   id: string,
   state: string,
   projectIds: string[],
-  options: { executionState?: "executing" | "idle"; parallelism?: "none" | "proposed"; revision?: string } = {}
+  options: { executionPhase?: string; executionState?: "executing" | "idle"; parallelism?: "none" | "proposed"; revision?: string } = {}
 ): Promise<void> {
   const directory = join(root, "workstreams", id);
   await mkdir(directory, { recursive: true });
@@ -229,6 +231,31 @@ test("requires a current owner decision, reconciles interrupted work, and holds 
         ["parallel", "owner-confirmation-required"]
       ])
     );
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("does not authorize a Phase 4 decision for Phase 5 execution", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    const checkout = join(root, "checkouts", "pilot-app");
+    await createProject(checkout, "pilot-app");
+    const projectDirectory = join(root, "projects", "pilot-app");
+    await mkdir(projectDirectory, { recursive: true });
+    await writeFile(join(projectDirectory, "project.yaml"), projectYaml("pilot-app"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  pilot-app:", "    path: checkouts/pilot-app", ""].join("\n"));
+    await addPlan(root, "pilot-phase-five", "active", ["pilot-app"], { executionPhase: "5", revision: "3.0" });
+    const eventsDirectory = join(root, "memory/events/2026/08/29");
+    await mkdir(eventsDirectory, { recursive: true });
+    await writeFile(join(eventsDirectory, "20260829T000000_decision.yaml"), decision("phase-four", "pilot-phase-five", "3.0", "not-proposed", "4"));
+
+    const report = await readPortfolioWakeReport(root);
+    const workstream = report.workstreams.find((item) => item.id === "pilot-phase-five");
+
+    expect(report.validationErrors).toEqual([]);
+    expect(workstream?.lifecycle).toEqual(expect.objectContaining({ state: "needs-owner-decision" }));
+    expect(workstream?.lifecycle?.detail).toContain("phase 5");
   } finally {
     await rm(root, { force: true, recursive: true });
   }
