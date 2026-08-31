@@ -74,7 +74,7 @@ parallelism have deterministic artifacts and tests without adding a write path.
 
 ### 4. HQ checkout convention
 
-**State:** planned
+**State:** complete, pending owner review
 **DoD:** The CIEL root has an ignored `checkouts/` directory for local child
 repositories. A human can open both pilot applications directly from the HQ
 IDE tree, while CIEL keeps only their identities, bindings, plans, and semantic

@@ -6,3 +6,8 @@
 node_modules/
 coverage/
 projects.local.yaml
+
+# Local child repositories stay visible under the HQ tree, but never become HQ content.
+/checkouts/*
+!/checkouts/.gitkeep
+!/checkouts/README.md

@@ -140,7 +140,16 @@ test("derives attention from plans, verified local projects, and per-lane checkp
     }
     await writeFile(
       join(root, "projects.local.yaml"),
-      ["bindings:", "  ready:", `    path: ${ready}`, "  shared:", `    path: ${shared}`, ""].join("\n")
+      [
+        "bindings:",
+        "  ready:",
+        "    path: checkouts/ready",
+        "  shared:",
+        "    path: checkouts/shared",
+        "  missing:",
+        "    path: checkouts/missing",
+        ""
+      ].join("\n")
     );
     await addPlan(root, "active-ready", "active", ["ready"]);
     await addPlan(root, "paused", "paused", ["ready"]);
@@ -192,7 +201,7 @@ test("requires a current owner decision, reconciles interrupted work, and holds 
       const projectDirectory = join(root, "projects", id);
       await mkdir(projectDirectory, { recursive: true });
       await writeFile(join(projectDirectory, "project.yaml"), projectYaml(id));
-      bindings.push(`  ${id}:`, `    path: ${checkout}`);
+      bindings.push(`  ${id}:`, `    path: checkouts/${id}`);
     }
     await writeFile(join(root, "projects.local.yaml"), [...bindings, ""].join("\n"));
     await addPlan(root, "authorized", "active", ["authorized-app"], { revision: "2.0" });
@@ -228,12 +237,15 @@ test("requires a current owner decision, reconciles interrupted work, and holds 
 test("reports a mismatched local Git remote without treating it as a valid binding", async () => {
   const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
   try {
-    const checkout = join(root, "checkout");
+    const checkout = join(root, "checkouts", "expected-project");
     await createProject(checkout, "other-project");
     const projectDirectory = join(root, "projects", "expected-project");
     await mkdir(projectDirectory, { recursive: true });
     await writeFile(join(projectDirectory, "project.yaml"), projectYaml("expected-project"));
-    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  expected-project:", `    path: ${checkout}`, ""].join("\n"));
+    await writeFile(
+      join(root, "projects.local.yaml"),
+      ["bindings:", "  expected-project:", "    path: checkouts/expected-project", ""].join("\n")
+    );
     await addPlan(root, "needs-expected", "active", ["expected-project"]);
 
     const report = await readPortfolioWakeReport(root);

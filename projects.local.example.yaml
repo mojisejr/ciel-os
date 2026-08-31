@@ -1,5 +1,8 @@
 # Machine-local checkout bindings. Copy to projects.local.yaml and edit paths.
 # This file locates repositories only; Wake verifies all reported facts with local Git.
+# Child checkouts under this HQ use a relative path, for example:
+#   pilot-task-ledger:
+#     path: checkouts/pilot-task-ledger
 bindings:
   ciel-os:
     path: .

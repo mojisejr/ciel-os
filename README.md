@@ -53,6 +53,7 @@ test/                 Deterministic validator and Wake tests
 docs/
   genesis/            Genesis evidence, baseline, and v0.1 feasibility plan
 projects/             Committed project identities
+checkouts/            Ignored local child repositories, visible from the HQ tree
 workstreams/          Current plan artifacts for active workstreams
 memory/
   events/             Append-only semantic records
@@ -75,6 +76,14 @@ workstreams in `workstreams/*/PLAN.md`, their event checkpoints grouped by
 lane, and local-Git verification for each bound project. The local file is a
 machine locator only: a missing, inaccessible, or mismatched binding is
 reported as attention, never inferred as a valid checkout.
+
+## Local child repositories
+
+`checkouts/` is the local, IDE-visible home for repositories operated through
+this HQ. Child repositories are intentionally ignored by the HQ Git repository:
+CIEL tracks their identities, bindings, plans, and semantic events, while each
+child retains its own Git history. See [checkouts/README.md](checkouts/README.md)
+before cloning or initializing a child project.
 
 ## Current proof target
 
