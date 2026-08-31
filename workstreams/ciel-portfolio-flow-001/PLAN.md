@@ -3,8 +3,8 @@
 **Workstream:** `ciel-portfolio-flow-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 0.5
-**Execution phase:** none
+**Plan revision:** 0.6
+**Execution phase:** 5
 **Execution state:** idle
 **Parallelism:** none
 
@@ -117,6 +117,19 @@ one interrupted-lane recovery using repository files and local Git evidence.
 **Entry gate:** Before any Phase 5 repository is created, reframe this plan to
 select `Execution phase: 5`, update its revision, and record a separate owner
 decision whose evidence names that same plan path, revision, and phase `5`.
+
+**Authorized scope for revision 0.6:** Slice 5.1 only. Establish the two local
+pilot checkouts, their honest local-only project identities and bindings, and
+their passing unit-test baselines. No cross-project `priority` change,
+intentional interruption, fresh-session recovery proof, remote repository, or
+push is included.
+
+**Local-only identity prerequisite:** The current project registry requires an
+`origin` remote, but these pilots are intentionally local-only. Slice 5.1 may
+minimally extend the committed registry and Wake verification to represent a
+local Git repository with no origin, rather than inventing a canonical remote.
+The extension must have deterministic tests and must not add a network call,
+database, service, or event write path.
 
 **Pilot applications:**
 
