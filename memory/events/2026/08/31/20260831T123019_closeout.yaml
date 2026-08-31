@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20260831T123019_phase4_plan_prepared
+type: closeout
+recorded_at: 2026-08-31T12:30:19+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  lane: single
+  objective: >-
+    Prepare the HQ checkout convention and bounded two-project pilot before
+    creating any child repository or executing its work.
+  scope:
+    - Record plan revision 0.4 and its IDE-visible checkout convention.
+    - Define the two pilot applications, unit-test responsibilities, and fresh-session proof sequence.
+  out_of_scope:
+    - Creating checkouts, cloning, initializing child Git repositories, or executing the pilot.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - The plan separates committed project identities from ignored child-repository checkouts under the HQ root.
+    - The plan assigns each pilot source file one practical responsibility and requires unit tests in both applications.
+    - The plan separates the checkout convention from the later real-workstream pilot so Phase 5 is not implied by Phase 4 approval.
+  not_completed:
+    - No checkouts directory, child repository, pilot source, or external remote has been created.
+
+evidence:
+  base_revision: 1031017d27f69b838e5f83488bc6a65e78c1048b
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  plan_decision: memory/events/2026/08/30/20260830T063254_decision.yaml
+  checks:
+    - bun run wake validated all event records and reported no validation errors before this closeout draft.
+    - git diff --check passed for the plan revision and plan decision.
+
+unresolved:
+  - A separate execution decision is needed before Phase 4 changes the HQ checkout layout.
+  - Phase 5 remains separately owner-gated after Phase 4 completes.
+
+next_action:
+  action: >-
+    Commit this planning checkpoint, then begin Phase 4 by adding only the
+    ignored HQ checkout convention and its local verification.
+  acceptance_check:
+    - The planning checkpoint creates no child repository or external artifact.
+    - Phase 5 is not executed as part of the Phase 4 checkout convention.

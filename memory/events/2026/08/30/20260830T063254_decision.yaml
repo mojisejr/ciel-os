@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20260830T063254_hq_checkout_convention_planned
+type: decision
+recorded_at: 2026-08-30T06:32:54+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  lane: single
+  objective: >-
+    Prepare an IDE-visible, HQ-contained local checkout convention before the
+    real multi-project continuity pilot.
+  scope:
+    - Reserve ignored checkouts/ for child Git repositories under the HQ root.
+    - Plan the two reversible Bun + TypeScript CLI pilot applications and their unit tests.
+  out_of_scope:
+    - Creating repositories, changing .gitignore, cloning, initializing child Git repositories, or executing the pilot.
+
+outcome:
+  status: planned
+  completed:
+    - The owner selected checkouts/ as the local, IDE-visible home for child project repositories.
+    - The committed projects/ registry remains separate from ignored physical checkouts.
+  not_completed:
+    - This plan decision does not authorize creation, cloning, initialization, interruption, recovery, or other pilot execution.
+
+evidence:
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  plan_revision: "0.4"
+  prior_checkpoint: 1031017d27f69b838e5f83488bc6a65e78c1048b
+
+unresolved:
+  - The owner must approve execution before child repositories or ignored checkout paths are created.
+  - The exact fresh-session isolation method remains a pilot execution detail.
+
+next_action:
+  action: >-
+    Review the updated Phase 4 plan. If approved for execution, first create
+    only the HQ checkout convention and verify its local-Git and Wake behavior
+    before creating either pilot application.
+  acceptance_check:
+    - A child repository can be reached from the HQ IDE tree without its files being tracked by the HQ Git repository.
+    - CIEL reports a missing child checkout explicitly rather than inferring its path.

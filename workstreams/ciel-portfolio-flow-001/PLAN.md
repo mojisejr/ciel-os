@@ -3,7 +3,7 @@
 **Workstream:** `ciel-portfolio-flow-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution state:** idle
 **Parallelism:** none
 
@@ -68,15 +68,88 @@ active, paused, blocked, unavailable, and conflict attention states.
 
 ### 3. Lifecycle gates
 
-**State:** complete, pending owner review
+**State:** completed
 **DoD:** Plan revisions, owner decisions, interruption recovery, and proposed
 parallelism have deterministic artifacts and tests without adding a write path.
 
-### 4. Real-workstream pilot
+### 4. HQ checkout convention
+
+**State:** planned
+**DoD:** The CIEL root has an ignored `checkouts/` directory for local child
+repositories. A human can open both pilot applications directly from the HQ
+IDE tree, while CIEL keeps only their identities, bindings, plans, and semantic
+events under version control.
+
+**Layout:**
+
+```text
+projects/<project-id>/project.yaml  committed identity registry
+checkouts/<project-id>/             ignored local Git checkout
+projects.local.yaml                 ignored relative checkout binding
+workstreams/<workstream-id>/        committed plan
+memory/events/                      committed decisions and closeouts
+```
+
+**Rules:**
+
+- `checkouts/` is a physical child of the HQ root so a normal IDE file tree can
+  open projects without discovering paths elsewhere.
+- The HQ ignores child repositories and their `.git` directories; it tracks
+  only a small `checkouts/README.md` and `.gitkeep` that explain the boundary.
+- Agents use `git -C checkouts/<project-id> ...` to inspect or work in a child
+  repository. `git -c` is reserved for temporary Git configuration, not for
+  changing directories.
+- Local bindings use `checkouts/<project-id>` relative to the HQ root. A
+  missing checkout remains `unavailable`; no path is inferred.
+
+**Evidence:** an IDE-visible layout check, `git check-ignore` for every child
+repository path, and deterministic Wake tests for present, missing, and
+mismatched child checkouts.
+
+### 5. Real-workstream pilot
 
 **State:** planned  
-**DoD:** A multi-project workstream proves portfolio Wake and one interrupted
-lane recovery using repository files and local Git evidence.
+**DoD:** Two small Bun + TypeScript CLI applications prove portfolio Wake and
+one interrupted-lane recovery using repository files and local Git evidence.
+
+**Pilot applications:**
+
+```text
+pilot-task-ledger/                 source of the task JSON contract
+  src/task.ts                      task shape and validation
+  src/task-file.ts                 JSON file reading
+  src/export-tasks.ts              validated export use case
+  src/cli.ts                       command boundary
+  data/tasks.json                  sample input
+  test/task.test.ts                task validation unit tests
+  test/export-tasks.test.ts        export unit tests
+
+pilot-task-report/                 consumer of the exported task JSON
+  src/task-input.ts                exported JSON validation
+  src/summary.ts                   priority/status summary rules
+  src/cli.ts                       command boundary
+  fixtures/tasks.json              Ledger-compatible sample input
+  test/task-input.test.ts          input validation unit tests
+  test/summary.test.ts             summary unit tests
+```
+
+**Pilot slices:**
+
+1. Set up the checkout convention and both repositories with passing unit tests.
+2. Add a `priority` field to Ledger's exported task contract and adapt Report's
+   input and summary tests; checkpoint the happy path.
+3. Mark the plan `executing`, make one small reversible Report change, and
+   intentionally leave it without closeout.
+4. Start a genuinely fresh agent/session with no prior chat context. It must
+   use Wake to find both child repositories and report the lane as
+   `needs-reconciliation` without creating a successor lane.
+5. After owner direction to keep, revise, or revert the scratch change,
+   close out the workstream with local-Git evidence.
+
+**Constraints:** no network service, browser, database, account, credential,
+user data, or irreversible operation. Unit tests are mandatory for both pilot
+applications; a separate end-to-end test is not required because the proof is
+the fresh-session reconstruction across the two real repositories.
 
 ## Explicit non-goals
 
