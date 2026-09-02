@@ -1,11 +1,11 @@
 # CIEL portfolio and workstream flow
 
 **Workstream:** `ciel-portfolio-flow-001`  
-**State:** active  
+**State:** completed
 **Execution lane:** single  
-**Plan revision:** 1.1
-**Execution phase:** 5
-**Execution state:** executing
+**Plan revision:** 1.2
+**Execution phase:** none
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective
@@ -117,7 +117,7 @@ mismatched child checkouts.
 
 ### 5. Real-workstream pilot
 
-**State:** active — Slices 5.1 and 5.2 completed; Slice 5.3 remains open for recovery before Slice 5.4
+**State:** completed
 **DoD:** Two small Bun + TypeScript CLI applications prove portfolio Wake and
 one interrupted-lane recovery using repository files and local Git evidence in
 a normal coding-agent environment that may have global harnesses available.
@@ -174,17 +174,17 @@ pilot-task-report/                 consumer of the exported task JSON
 1. **Completed:** Set up the checkout convention and both repositories with passing unit tests.
 2. **Completed:** Add a `priority` field to Ledger's exported task contract and adapt Report's
    input and summary tests; checkpoint the happy path.
-3. **Executing:** Mark the plan `executing`, make one small reversible Report change, and
+3. **Completed:** Mark the plan `executing`, make one small reversible Report change, and
    intentionally leave it without closeout.
-4. **Planned:** Start a new ordinary coding-agent session with a natural status
+4. **Completed:** Start a new ordinary coding-agent session with a natural status
    prompt and no human task-specific briefing of the workstream, checkpoints,
    or scratch change. The session may retain its normal host-provided global
    harness. It must first use Wake, then use repository and local-Git evidence
    to find both child repositories and report the lane as
    `needs-reconciliation` without creating a successor lane, modifying either
    child, or treating global context as CIEL evidence or authority.
-5. **Planned:** After owner direction to keep, revise, or revert the scratch change,
-   close out the workstream with local-Git evidence.
+5. **Completed:** After owner direction to revert the scratch change, restore Report
+   to its committed baseline and prepare this workstream closeout with local-Git evidence.
 
 **Constraints:** no network service, browser, database, account, credential,
 user data, or irreversible operation. Unit tests are mandatory for both pilot

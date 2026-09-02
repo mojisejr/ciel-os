@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20260903T052310_phase5_pilot_prepared
+type: closeout
+recorded_at: 2026-09-03T05:23:10+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  lane: single
+  objective: >-
+    Complete the local portfolio-flow pilot by proving that an ordinary new
+    coding-agent session can recover an intentionally interrupted Report change
+    from repository files and local Git evidence.
+  scope:
+    - Reconstruct the interrupted single lane through Wake, the plan, events, and local Git.
+    - Confirm the two locally bound pilot repositories and the dirty Report worktree.
+    - Revert the owner-selected Report scratch change and validate the clean baseline.
+  out_of_scope:
+    - A successor lane, remote, push, network, database, credential, browser, or user data.
+    - A CIEL event write command, daemon, dashboard, MCP server, or client bridge.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Wake reconstructed the active single lane and classified Report as needs-reconciliation.
+    - A new ordinary session found Ledger and Report from the committed local bindings and local Git.
+    - The session did not create a successor lane or modify either child while evaluating recovery.
+    - The owner selected revert for the Report task-summary.v1 scratch change.
+    - Report was restored to ed6f7c2125477efa1c932d3e3d2fa08be34e1674 and its tests pass.
+    - Ledger remains at 4d230711ff45f97b5eb92957d31f55bbee7c26d9 with a clean worktree.
+  not_completed:
+    - No remote, push, network service, database, credential, browser, user data, or new CIEL write path occurred.
+
+evidence:
+  base_revision: 839302c5e51bc2caa04d63439dfbe08becfe0e59
+  decisions:
+    - memory/events/2026/09/02/20260902T191117_decision.yaml
+    - memory/events/2026/09/03/20260903T045100_decision.yaml
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  plan_revision: "1.2"
+  child_commits:
+    pilot-task-ledger: 4d230711ff45f97b5eb92957d31f55bbee7c26d9
+    pilot-task-report: ed6f7c2125477efa1c932d3e3d2fa08be34e1674
+  checks:
+    - bun run wake reported both local bindings available and the interrupted Report lane as needs-reconciliation before the owner disposition.
+    - git diff --check passed for the Report scratch change before revert.
+    - Ledger bun run check passes with 4 tests after recovery evaluation.
+    - Report bun run check passes with 3 tests after the owner-selected revert.
+    - git status --short is empty in both child repositories after revert.
+
+unresolved: []
+
+next_action:
+  action: >-
+    Review and commit this Phase 5 closeout locally without pushing. A later
+    workstream requires a new owner-approved plan and decision.
+  acceptance_check:
+    - Wake validates this closeout and reports the workstream as idle with no selected execution phase.
