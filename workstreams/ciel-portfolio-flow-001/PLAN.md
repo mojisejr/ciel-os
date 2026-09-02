@@ -3,8 +3,8 @@
 **Workstream:** `ciel-portfolio-flow-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 0.7
-**Execution phase:** none
+**Plan revision:** 0.8
+**Execution phase:** 5
 **Execution state:** idle
 **Parallelism:** none
 
@@ -112,7 +112,7 @@ mismatched child checkouts.
 
 ### 5. Real-workstream pilot
 
-**State:** active — Slice 5.1 completed; later slices owner-gated
+**State:** active — Slice 5.1 completed; Slice 5.2 authorized
 **DoD:** Two small Bun + TypeScript CLI applications prove portfolio Wake and
 one interrupted-lane recovery using repository files and local Git evidence.
 
@@ -135,6 +135,12 @@ path.
 **HQ test boundary:** The HQ test command runs only `test/`; each ignored child
 repository owns and runs its own test command. This keeps child implementation
 failures from becoming accidental HQ test inputs.
+
+**Authorized scope for revision 0.8:** Slice 5.2 only. Add a required
+`priority` field with the exact values `low`, `normal`, or `high` to Ledger's
+exported task contract. Report must reject a task without a valid priority and
+produce separate count summaries by status and priority. No default priority,
+interruption, fresh-session proof, remote, or push is included.
 
 **Pilot applications:**
 
@@ -160,7 +166,7 @@ pilot-task-report/                 consumer of the exported task JSON
 **Pilot slices:**
 
 1. **Completed:** Set up the checkout convention and both repositories with passing unit tests.
-2. **Planned:** Add a `priority` field to Ledger's exported task contract and adapt Report's
+2. **Authorized:** Add a `priority` field to Ledger's exported task contract and adapt Report's
    input and summary tests; checkpoint the happy path.
 3. **Planned:** Mark the plan `executing`, make one small reversible Report change, and
    intentionally leave it without closeout.
