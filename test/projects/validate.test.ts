@@ -10,7 +10,17 @@ test("validates the committed project registry", async () => {
   const result = await validateProjectDirectory(resolve(import.meta.dir, "../../projects"));
 
   expect(result.errors).toEqual([]);
-  expect(result.files).toEqual([expect.stringContaining("projects/ciel-os/project.yaml")]);
+  expect(result.files).toEqual([
+    expect.stringContaining("projects/ciel-os/project.yaml"),
+    expect.stringContaining("projects/pilot-task-ledger/project.yaml"),
+    expect.stringContaining("projects/pilot-task-report/project.yaml")
+  ]);
+});
+
+test("accepts a declared local-only Git project identity", async () => {
+  const result = await validateProjectDirectory(fixtureDirectory("local-only"));
+
+  expect(result.errors).toEqual([]);
 });
 
 test("reports a missing stable repository field", async () => {

@@ -36,8 +36,9 @@ export interface PortfolioProject {
     };
   };
   repository: {
-    canonicalRemote: string;
+    canonicalRemote: string | null;
     defaultBranch: string;
+    identity: "local-only" | "remote";
   };
 }
 

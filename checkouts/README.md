@@ -17,3 +17,7 @@ Register the child's stable identity in `projects/<project-id>/project.yaml`
 and its machine-local path in the ignored `projects.local.yaml`. If the local
 checkout is missing, Wake reports it as unavailable rather than guessing where
 it moved.
+
+For a deliberately local-only child repository, declare `local_only: true` in
+its `repository` mapping and do not configure an `origin` remote. Wake then
+verifies the local Git checkout without inventing an external canonical remote.

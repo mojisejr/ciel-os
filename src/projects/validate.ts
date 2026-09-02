@@ -45,10 +45,22 @@ function validateProjectValue(path: string, value: unknown): ProjectValidationEr
     return errors;
   }
 
-  for (const field of ["vcs", "canonical_remote", "default_branch"] as const) {
+  for (const field of ["vcs", "default_branch"] as const) {
     if (!isNonEmptyString(value.repository[field])) {
       errors.push({ path, message: `repository field must be a non-empty string: ${field}` });
     }
+  }
+
+  if ("local_only" in value.repository && typeof value.repository.local_only !== "boolean") {
+    errors.push({ path, message: "repository field must be a boolean when present: local_only" });
+  }
+
+  if (value.repository.local_only === true) {
+    if (isNonEmptyString(value.repository.canonical_remote)) {
+      errors.push({ path, message: "local-only project must not declare canonical_remote" });
+    }
+  } else if (!isNonEmptyString(value.repository.canonical_remote)) {
+    errors.push({ path, message: "repository field must be a non-empty string: canonical_remote" });
   }
 
   if (value.repository.vcs !== "git") {

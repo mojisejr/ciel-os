@@ -16,8 +16,9 @@ interface ProjectIdentity {
   id: string;
   path: string;
   repository: {
-    canonicalRemote: string;
+    canonicalRemote: string | null;
     defaultBranch: string;
+    identity: "local-only" | "remote";
   };
 }
 
@@ -192,12 +193,17 @@ async function readProjectIdentities(repositoryPath: string): Promise<{ errors: 
     const id = readString(value, "id");
     const canonicalRemote = readString(value.repository, "canonical_remote");
     const defaultBranch = readString(value.repository, "default_branch");
-    if (id === null || canonicalRemote === null || defaultBranch === null) {
+    const localOnly = value.repository.local_only === true;
+    if (id === null || defaultBranch === null || (localOnly ? canonicalRemote !== null : canonicalRemote === null)) {
       errors.push({ path, message: "project identity is missing a required stable field" });
       continue;
     }
 
-    projects.push({ id, path, repository: { canonicalRemote, defaultBranch } });
+    projects.push({
+      id,
+      path,
+      repository: { canonicalRemote, defaultBranch, identity: localOnly ? "local-only" : "remote" }
+    });
   }
 
   return { errors, projects };
@@ -249,7 +255,16 @@ async function observeProject(repositoryPath: string, project: ProjectIdentity, 
   }
 
   const remote = await runGit(path, ["remote", "get-url", "origin"]);
-  if (remote.exitCode !== 0) {
+  if (project.repository.identity === "local-only" && remote.exitCode === 0) {
+    return {
+      id: project.id,
+      observed: null,
+      repository: project.repository,
+      binding: { detail: "The declared local-only project must not configure an origin remote.", path, status: "mismatch" }
+    };
+  }
+
+  if (project.repository.identity === "remote" && remote.exitCode !== 0) {
     return {
       id: project.id,
       observed: null,
@@ -258,8 +273,8 @@ async function observeProject(repositoryPath: string, project: ProjectIdentity, 
     };
   }
 
-  const observedRemote = canonicalizeRemote(remote.stdout);
-  if (observedRemote !== project.repository.canonicalRemote) {
+  const observedRemote = remote.exitCode === 0 ? canonicalizeRemote(remote.stdout) : null;
+  if (project.repository.identity === "remote" && observedRemote !== project.repository.canonicalRemote) {
     return {
       id: project.id,
       observed: null,
@@ -296,7 +311,13 @@ async function observeProject(repositoryPath: string, project: ProjectIdentity, 
       workingTree: { clean: entries.length === 0, entries }
     },
     repository: project.repository,
-    binding: { detail: "Local Git origin matches the committed project identity.", path, status: "available" }
+    binding: {
+      detail: project.repository.identity === "local-only"
+        ? "Local Git checkout matches the committed local-only identity."
+        : "Local Git origin matches the committed project identity.",
+      path,
+      status: "available"
+    }
   };
 }
 

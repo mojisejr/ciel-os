@@ -25,6 +25,16 @@ async function createProject(path: string, id: string): Promise<void> {
   git(path, ["remote", "add", "origin", `https://github.com/example/${id}.git`]);
 }
 
+async function createLocalProject(path: string, id: string): Promise<void> {
+  await mkdir(path, { recursive: true });
+  git(path, ["init", "--initial-branch=main"]);
+  git(path, ["config", "user.name", "CIEL test"]);
+  git(path, ["config", "user.email", "ciel-test@example.invalid"]);
+  await writeFile(join(path, "README.md"), `# ${id}\n`);
+  git(path, ["add", "README.md"]);
+  git(path, ["commit", "-m", "initial fixture"]);
+}
+
 function projectYaml(id: string): string {
   return [
     "schema_version: ciel.project.v0.1",
@@ -32,6 +42,18 @@ function projectYaml(id: string): string {
     "repository:",
     "  vcs: git",
     `  canonical_remote: github.com/example/${id}`,
+    "  default_branch: main",
+    ""
+  ].join("\n");
+}
+
+function localProjectYaml(id: string): string {
+  return [
+    "schema_version: ciel.project.v0.1",
+    `id: ${id}`,
+    "repository:",
+    "  vcs: git",
+    "  local_only: true",
     "  default_branch: main",
     ""
   ].join("\n");
@@ -256,6 +278,28 @@ test("does not authorize a Phase 4 decision for Phase 5 execution", async () => 
     expect(report.validationErrors).toEqual([]);
     expect(workstream?.lifecycle).toEqual(expect.objectContaining({ state: "needs-owner-decision" }));
     expect(workstream?.lifecycle?.detail).toContain("phase 5");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("verifies a declared local-only Git checkout without an origin remote", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    const checkout = join(root, "checkouts", "local-pilot");
+    await createLocalProject(checkout, "local-pilot");
+    const projectDirectory = join(root, "projects", "local-pilot");
+    await mkdir(projectDirectory, { recursive: true });
+    await writeFile(join(projectDirectory, "project.yaml"), localProjectYaml("local-pilot"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  local-pilot:", "    path: checkouts/local-pilot", ""].join("\n"));
+    await addPlan(root, "local-pilot-workstream", "active", ["local-pilot"]);
+
+    const report = await readPortfolioWakeReport(root);
+    const project = report.projects.find((item) => item.id === "local-pilot");
+
+    expect(report.validationErrors).toEqual([]);
+    expect(project?.binding).toEqual(expect.objectContaining({ status: "available" }));
+    expect(project?.repository).toEqual(expect.objectContaining({ canonicalRemote: null, identity: "local-only" }));
   } finally {
     await rm(root, { force: true, recursive: true });
   }

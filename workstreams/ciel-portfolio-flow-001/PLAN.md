@@ -3,8 +3,8 @@
 **Workstream:** `ciel-portfolio-flow-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 0.6
-**Execution phase:** 5
+**Plan revision:** 0.7
+**Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
 
@@ -29,6 +29,8 @@ or external-service state.
 | Project ID | Role | Local binding |
 |---|---|---|
 | `ciel-os` | CIEL portfolio proof | `projects.local.yaml` binding; `.` on this checkout |
+| `pilot-task-ledger` | task JSON producer | `projects.local.yaml` binding; `checkouts/pilot-task-ledger` |
+| `pilot-task-report` | task JSON consumer | `projects.local.yaml` binding; `checkouts/pilot-task-report` |
 
 ## Lifecycle
 
@@ -110,26 +112,29 @@ mismatched child checkouts.
 
 ### 5. Real-workstream pilot
 
-**State:** planned  
+**State:** active — Slice 5.1 completed; later slices owner-gated
 **DoD:** Two small Bun + TypeScript CLI applications prove portfolio Wake and
 one interrupted-lane recovery using repository files and local Git evidence.
 
-**Entry gate:** Before any Phase 5 repository is created, reframe this plan to
-select `Execution phase: 5`, update its revision, and record a separate owner
-decision whose evidence names that same plan path, revision, and phase `5`.
+**Entry gate (satisfied for Slice 5.1):** Revision 0.6 selected execution
+phase `5` and `evt_20260901T052652_phase5_slice1_authorized` recorded the
+owner decision before either child repository was created.
 
-**Authorized scope for revision 0.6:** Slice 5.1 only. Establish the two local
+**Completed scope from revision 0.6:** Slice 5.1 established the two local
 pilot checkouts, their honest local-only project identities and bindings, and
 their passing unit-test baselines. No cross-project `priority` change,
 intentional interruption, fresh-session recovery proof, remote repository, or
-push is included.
+push occurred.
 
-**Local-only identity prerequisite:** The current project registry requires an
-`origin` remote, but these pilots are intentionally local-only. Slice 5.1 may
-minimally extend the committed registry and Wake verification to represent a
-local Git repository with no origin, rather than inventing a canonical remote.
-The extension must have deterministic tests and must not add a network call,
-database, service, or event write path.
+**Local-only identity result:** Slice 5.1 minimally extended the committed
+registry and Wake verification to represent a local Git repository with no
+`origin`, rather than inventing a canonical remote. The extension has
+deterministic tests and adds no network call, database, service, or event write
+path.
+
+**HQ test boundary:** The HQ test command runs only `test/`; each ignored child
+repository owns and runs its own test command. This keeps child implementation
+failures from becoming accidental HQ test inputs.
 
 **Pilot applications:**
 
@@ -154,15 +159,15 @@ pilot-task-report/                 consumer of the exported task JSON
 
 **Pilot slices:**
 
-1. Set up the checkout convention and both repositories with passing unit tests.
-2. Add a `priority` field to Ledger's exported task contract and adapt Report's
+1. **Completed:** Set up the checkout convention and both repositories with passing unit tests.
+2. **Planned:** Add a `priority` field to Ledger's exported task contract and adapt Report's
    input and summary tests; checkpoint the happy path.
-3. Mark the plan `executing`, make one small reversible Report change, and
+3. **Planned:** Mark the plan `executing`, make one small reversible Report change, and
    intentionally leave it without closeout.
-4. Start a genuinely fresh agent/session with no prior chat context. It must
+4. **Planned:** Start a genuinely fresh agent/session with no prior chat context. It must
    use Wake to find both child repositories and report the lane as
    `needs-reconciliation` without creating a successor lane.
-5. After owner direction to keep, revise, or revert the scratch change,
+5. **Planned:** After owner direction to keep, revise, or revert the scratch change,
    close out the workstream with local-Git evidence.
 
 **Constraints:** no network service, browser, database, account, credential,
