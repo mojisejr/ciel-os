@@ -3,9 +3,9 @@
 **Workstream:** `ciel-portfolio-flow-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 0.9
-**Execution phase:** none
-**Execution state:** idle
+**Plan revision:** 1.0
+**Execution phase:** 5
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective
@@ -112,7 +112,7 @@ mismatched child checkouts.
 
 ### 5. Real-workstream pilot
 
-**State:** active — Slices 5.1 and 5.2 completed; later slices owner-gated
+**State:** active — Slices 5.1 and 5.2 completed; Slice 5.3 executing under owner authorization
 **DoD:** Two small Bun + TypeScript CLI applications prove portfolio Wake and
 one interrupted-lane recovery using repository files and local Git evidence.
 
@@ -168,7 +168,7 @@ pilot-task-report/                 consumer of the exported task JSON
 1. **Completed:** Set up the checkout convention and both repositories with passing unit tests.
 2. **Completed:** Add a `priority` field to Ledger's exported task contract and adapt Report's
    input and summary tests; checkpoint the happy path.
-3. **Planned:** Mark the plan `executing`, make one small reversible Report change, and
+3. **Executing:** Mark the plan `executing`, make one small reversible Report change, and
    intentionally leave it without closeout.
 4. **Planned:** Start a genuinely fresh agent/session with no prior chat context. It must
    use Wake to find both child repositories and report the lane as

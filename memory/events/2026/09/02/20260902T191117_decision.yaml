@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20260902T191117_phase5_slice3_authorized
+type: decision
+recorded_at: 2026-09-02T19:11:17+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  lane: single
+  objective: >-
+    Prove that a fresh CIEL Wake can reconstruct a deliberately interrupted
+    single-lane Report change from the plan, local Git, and event records.
+  scope:
+    - Mark plan revision 1.0 phase 5 as executing.
+    - Add one stable, reversible format marker to the Report task summary and its unit test.
+    - Leave the Report working tree changed without a child commit or CIEL closeout.
+  out_of_scope:
+    - Ledger changes, a new execution lane, remote, push, network, database, credential, browser, user data, or fresh-session evaluation.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner authorized Slice 5.3 after the Slice 5.2 checkpoint.
+  not_completed:
+    - The Report scratch change, fresh-session recovery proof, and final disposition remain incomplete.
+
+evidence:
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  plan_revision: "1.0"
+  execution_phase: "5"
+  prior_checkpoint: c4f457b2fe4fc7473f54d5334554bb29659145c4
+
+unresolved:
+  - The next fresh-session evaluation must discover this open execution without chat-derived evidence.
+  - The owner will later decide whether to keep, revise, or revert the scratch change.
+
+next_action:
+  action: >-
+    Make the authorized Report-only scratch change, run its local unit checks,
+    and stop without a child commit or CIEL closeout.
+  acceptance_check:
+    - Report tests pass while its Git working tree contains only the intentional reversible change.
+    - CIEL Wake reports phase 5 as open and needing reconciliation.
