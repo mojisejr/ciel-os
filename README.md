@@ -87,7 +87,13 @@ before cloning or initializing a child project.
 
 ## Current proof target
 
-Without calling an LLM API, CIEL must let a genuinely fresh Codex session reconstruct and resume active workstreams from repository plans, Git-aware evidence, and concise semantic records—without the human retelling previous chat history. Portfolio indexing, event writing, and client bridges remain later proofs, not initial structure.
+Without calling an LLM API, CIEL must let a new coding-agent session reconstruct
+and safely resume active workstreams from repository plans, Git-aware evidence,
+and concise semantic records—without the human retelling task-specific chat
+history. The session may coexist with normal host-provided global capabilities;
+after Wake they may assist the agent, but they are never CIEL evidence or
+authority. Portfolio indexing, event writing, and client bridges remain later
+proofs, not initial structure.
 
 ## Deliberate non-goals for this stage
 

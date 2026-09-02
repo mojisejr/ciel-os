@@ -3,7 +3,7 @@
 **Workstream:** `ciel-portfolio-flow-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 1.0
+**Plan revision:** 1.1
 **Execution phase:** 5
 **Execution state:** executing
 **Parallelism:** none
@@ -11,8 +11,10 @@
 ## Objective
 
 Make CIEL reconstruct the current attention state of active workstreams across
-multiple locally bound Git projects without relying on chat, client sessions,
-or external-service state.
+multiple locally bound Git projects without relying on task-specific chat,
+client-session memory, or external-service state as CIEL evidence. A session
+may coexist with normal host-provided global capabilities; after Wake they may
+assist execution but cannot establish CIEL facts or authority.
 
 ## Authority and scope
 
@@ -20,6 +22,9 @@ or external-service state.
 - The owner must explicitly decide irreversible, difficult, user-impacting,
   financial, or database-affecting work.
 - Agent sessions are disposable and are not stored as evidence or locators.
+- Global host capabilities are ambient assistance, not a reason to claim CIEL
+  owns, records, or depends on them. Material CIEL claims remain locally
+  verified or explicitly unverified.
 - A workstream defaults to one execution lane. Any proposed overlap, same-project
   concurrency, worktree split, or parallel execution must be surfaced for owner
   confirmation before it begins.
@@ -112,9 +117,10 @@ mismatched child checkouts.
 
 ### 5. Real-workstream pilot
 
-**State:** active — Slices 5.1 and 5.2 completed; Slice 5.3 executing under owner authorization
+**State:** active — Slices 5.1 and 5.2 completed; Slice 5.3 remains open for recovery before Slice 5.4
 **DoD:** Two small Bun + TypeScript CLI applications prove portfolio Wake and
-one interrupted-lane recovery using repository files and local Git evidence.
+one interrupted-lane recovery using repository files and local Git evidence in
+a normal coding-agent environment that may have global harnesses available.
 
 **Entry gate (satisfied for Slice 5.1):** Revision 0.6 selected execution
 phase `5` and `evt_20260901T052652_phase5_slice1_authorized` recorded the
@@ -170,16 +176,22 @@ pilot-task-report/                 consumer of the exported task JSON
    input and summary tests; checkpoint the happy path.
 3. **Executing:** Mark the plan `executing`, make one small reversible Report change, and
    intentionally leave it without closeout.
-4. **Planned:** Start a genuinely fresh agent/session with no prior chat context. It must
-   use Wake to find both child repositories and report the lane as
-   `needs-reconciliation` without creating a successor lane.
+4. **Planned:** Start a new ordinary coding-agent session with a natural status
+   prompt and no human task-specific briefing of the workstream, checkpoints,
+   or scratch change. The session may retain its normal host-provided global
+   harness. It must first use Wake, then use repository and local-Git evidence
+   to find both child repositories and report the lane as
+   `needs-reconciliation` without creating a successor lane, modifying either
+   child, or treating global context as CIEL evidence or authority.
 5. **Planned:** After owner direction to keep, revise, or revert the scratch change,
    close out the workstream with local-Git evidence.
 
 **Constraints:** no network service, browser, database, account, credential,
 user data, or irreversible operation. Unit tests are mandatory for both pilot
 applications; a separate end-to-end test is not required because the proof is
-the fresh-session reconstruction across the two real repositories.
+the operational reconstruction across the two real repositories. This is not a
+clean-room or zero-context claim: global assistance is allowed after Wake, but
+it cannot supply a CIEL fact or owner decision.
 
 ## Explicit non-goals
 
