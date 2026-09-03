@@ -1,0 +1,6 @@
+schema_version: ciel.project.v0.1
+id: cu12-simulator
+repository:
+  vcs: git
+  local_only: true
+  default_branch: main
