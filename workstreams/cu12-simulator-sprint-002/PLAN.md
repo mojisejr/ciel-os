@@ -1,11 +1,11 @@
 # CU12 Simulator — Sprint 2: virtual serial endpoint
 
 **Workstream:** `cu12-simulator-sprint-002`
-**State:** active
+**State:** completed
 **Execution lane:** single
-**Plan revision:** 0.2
-**Execution phase:** 1
-**Execution state:** executing
+**Plan revision:** 0.3
+**Execution phase:** none
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective
@@ -88,7 +88,7 @@ hardware authorization.
 
 ## Phase 1 — local virtual serial transport proof
 
-**State:** executing
+**State:** completed
 
 ### Definition of done
 

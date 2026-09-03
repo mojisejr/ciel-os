@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20260903T113858_cu12_sprint2_prepared
+type: closeout
+recorded_at: 2026-09-03T11:38:58+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: cu12-simulator-sprint-002
+  lane: single
+  objective: >-
+    Prove a macOS application can use a simulator-provided virtual serial
+    endpoint to exchange existing manual-derived CU12 frames without physical
+    RS485 hardware.
+  scope:
+    - A local macOS PTY endpoint with explicit client path and 19200/8N1/raw configuration.
+    - One shared stream/dispatch loop for loopback TCP and macOS PTY transports.
+    - Deterministic protocol, generic transport, TCP, and PTY black-box proofs.
+  out_of_scope:
+    - USB-to-RS485 adapters, real CU12 hardware, cabling, electrical bus behavior,
+      new commands, UI, persistence, production driver, remote, push, or CIEL platform infrastructure.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Child commit df032d3947d836e8f4a502ff4cdb4f200af787fb adds a macOS-only PTY mode selected with CU12_SIM_TRANSPORT=pty.
+    - The simulator prints a client-facing /dev/ttys path and holds it open until a client connects.
+    - The shared generic stream loop serves the existing TCP endpoint and the PTY endpoint without changing manual-derived frame/device semantics.
+    - The PTY black-box test opens the advertised path, configures raw 19200/8N1, sends fragmented and concatenated requests, and receives exact status and version response bytes.
+    - A live binary printed /dev/ttys000; an independent local client configured that path and received 02 00 00 80 10 02 03 99 02 00 02 00 00 8f 10 02 03 c8 10 12.
+  not_completed:
+    - No USB-to-RS485 adapter or physical CU12 device was connected.
+    - No electrical RS485, cabling, termination, biasing, multi-drop, or real-hardware behavior was tested.
+
+evidence:
+  base_revision: 39396d5bdf91f279150d3cd94210a6a39d17a378
+  decision: memory/events/2026/09/03/20260903T112838_decision.yaml
+  plan: workstreams/cu12-simulator-sprint-002/PLAN.md
+  plan_revision: "0.3"
+  child:
+    path: checkouts/cu12-simulator
+    commit: df032d3947d836e8f4a502ff4cdb4f200af787fb
+    identity: local-only
+  protocol_reference:
+    path: .assets/cu12-simulator/reference/CU12 Protocol and Introduction-12.08.2022.pdf
+    sha256: bec83d1819a919cbe7b1879d01cc672b240544a4eaf0f6c3ca4829643b1413b6
+  checks:
+    - cargo fmt --check passes in checkouts/cu12-simulator.
+    - cargo test passes with 9 tests in checkouts/cu12-simulator.
+    - cargo clippy --all-targets -- -D warnings passes in checkouts/cu12-simulator.
+    - A live PTY binary and independent local client exchanged exact documented responses.
+    - bun run check passes with 21 CIEL tests.
+
+unresolved:
+  - The manual gives conflicting 550ms and 500ms unlock-time defaults.
+  - The manual does not define the exact response behavior for push-door wait versus delayed unlock.
+  - macOS resets a PTY serial profile when a client opens its path; the client must explicitly set raw 19200/8N1.
+  - A virtual PTY proves application byte-stream behavior only, not electrical RS485 or real-CU12 behavior.
+
+next_action:
+  action: >-
+    Review and commit this closeout locally without pushing. A separate
+    owner-approved hardware sprint may define USB-to-RS485 and real-CU12 proof.
+  acceptance_check:
+    - Wake reports a clean available local-only CU12 checkout and this workstream as completed and idle.
