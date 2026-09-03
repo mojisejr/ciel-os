@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20260903T112838_cu12_sprint2_virtual_serial_authorized
+type: decision
+recorded_at: 2026-09-03T11:28:38+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: cu12-simulator-sprint-002
+  lane: single
+  objective: >-
+    Prove a macOS application can use a simulator-provided virtual serial
+    endpoint to exchange the existing manual-derived CU12 frames without
+    physical RS485 hardware.
+  scope:
+    - Create a local macOS PTY endpoint in the local-only cu12-simulator checkout.
+    - Share the existing CU12 stream decoder and virtual-device semantics across TCP and PTY transports.
+    - Prove exact selected responses through deterministic TCP and PTY black-box tests.
+  out_of_scope:
+    - USB-to-RS485 adapters, real CU12 hardware, cabling, RJ45 wiring, electrical bus behavior,
+      UI, persistence, new commands, production driver, remote, push, or CIEL platform infrastructure.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner selected a virtual-first serial foundation and deferred physical RS485 integration to a later sprint.
+    - The owner authorized execution of Phase 1 in plan revision 0.2.
+  not_completed:
+    - PTY implementation, tests, local proof, and closeout remain to be completed.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-002/PLAN.md
+  plan_revision: "0.2"
+  execution_phase: "1"
+  prior_checkpoint: f69b4f5bdb5db71f0072e1bf2541a0494a2a4333
+  protocol_reference:
+    path: .assets/cu12-simulator/reference/CU12 Protocol and Introduction-12.08.2022.pdf
+    sha256: bec83d1819a919cbe7b1879d01cc672b240544a4eaf0f6c3ca4829643b1413b6
+
+unresolved:
+  - The manual does not resolve the conflicting unlock-time defaults.
+  - The manual does not specify an exact conflict response for push-door wait and delayed unlock.
+  - PTY success will not establish electrical RS485 or real-CU12 behavior.
+
+next_action:
+  action: >-
+    Implement only Phase 1 in the local child checkout and hold the plan's
+    TCP and PTY hard gates before preparing a closeout.
+  acceptance_check:
+    - Wake recognizes this active local-only workstream as authorized for Phase 1.
