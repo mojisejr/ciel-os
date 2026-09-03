@@ -11,3 +11,4 @@ projects.local.yaml
 /checkouts/*
 !/checkouts/.gitkeep
 !/checkouts/README.md
+.assets
