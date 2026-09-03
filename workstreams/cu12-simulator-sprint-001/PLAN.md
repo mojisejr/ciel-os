@@ -1,11 +1,11 @@
 # CU12 Simulator — Sprint 1
 
 **Workstream:** `cu12-simulator-sprint-001`  
-**State:** active
+**State:** completed
 **Execution lane:** single  
-**Plan revision:** 0.1
-**Execution phase:** 1
-**Execution state:** executing
+**Plan revision:** 0.2
+**Execution phase:** none
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective
@@ -46,7 +46,7 @@ reconcile the plan, local Git, tests, and events before changing the simulator.
 
 ## Phase 1 — headless unicast protocol slice
 
-**State:** executing
+**State:** completed
 
 ### Definition of done
 
