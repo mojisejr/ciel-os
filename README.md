@@ -77,6 +77,13 @@ lane, and local-Git verification for each bound project. The local file is a
 machine locator only: a missing, inaccessible, or mismatched binding is
 reported as attention, never inferred as a valid checkout.
 
+## Windows recovery proof
+
+The tracked [Windows bootstrap guide](docs/portability/WINDOWS_BOOTSTRAP.md)
+documents the supported clone layout for CIEL HQ and CU12 Simulator. It names
+ordinary developer prerequisites and the exact local checks; it does not copy
+machine-specific harness state, ignored assets, or secrets into Git.
+
 ## Local child repositories
 
 `checkouts/` is the local, IDE-visible home for repositories operated through

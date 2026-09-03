@@ -1,8 +1,9 @@
 # Machine-local checkout bindings. Copy to projects.local.yaml and edit paths.
 # This file locates repositories only; Wake verifies all reported facts with local Git.
-# Child checkouts under this HQ use a relative path, for example:
-#   pilot-task-ledger:
-#     path: checkouts/pilot-task-ledger
+# Child checkouts under this HQ use relative paths. Clone the CU12 repository
+# under this HQ before using this example on another machine.
 bindings:
   ciel-os:
     path: .
+  cu12-simulator:
+    path: checkouts/cu12-simulator

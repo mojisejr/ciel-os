@@ -1,0 +1,11 @@
+schema_version: ciel.asset-manifest.v0.1
+assets:
+  - id: cu12-protocol-and-introduction-2022-08-12
+    local_path: .assets/cu12-simulator/reference/CU12 Protocol and Introduction-12.08.2022.pdf
+    sha256: bec83d1819a919cbe7b1879d01cc672b240544a4eaf0f6c3ca4829643b1413b6
+    secret: false
+    required_for:
+      - Reviewing or changing manual-derived CU12 protocol semantics.
+    not_required_for:
+      - Cloning, Wake, CIEL checks, or CU12 TCP tests.
+    transfer: Owner-controlled outside Git; verify the committed SHA-256 after transfer.

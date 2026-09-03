@@ -2,5 +2,5 @@ schema_version: ciel.project.v0.1
 id: cu12-simulator
 repository:
   vcs: git
-  local_only: true
+  canonical_remote: github.com/mojisejr/cu12-simulator
   default_branch: main

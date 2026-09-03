@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T054116_cu12_remote_binding_authorized
+type: decision
+recorded_at: 2026-09-04T05:41:16+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: cu12-simulator-remote-binding-001
+  lane: single
+  objective: >-
+    Promote the existing CU12 Simulator history to its owner-approved private
+    canonical remote and make the current CIEL HQ checkpoint recoverable from
+    its declared canonical remote.
+  scope:
+    - Create the private mojisejr/cu12-simulator repository and push the existing main history without rewrite.
+    - Bind the existing CU12 checkout and committed CIEL project identity to that canonical remote.
+    - Push the current CIEL HQ main checkpoint and verify both remotes with fetched local Git evidence.
+  out_of_scope:
+    - Secrets, .env files, ignored assets, databases, daemons, automatic push behavior, Windows COM, USB serial, RS485, and real CU12 hardware.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner authorized Phase 1 of plan revision 0.1, including the exact private repository creation and both approved pushes.
+  not_completed:
+    - Remote creation, binding, verification, closeout, and commit remain to be completed.
+
+evidence:
+  plan: workstreams/cu12-simulator-remote-binding-001/PLAN.md
+  plan_revision: "0.1"
+  execution_phase: "1"
+  child_commit_before_push: df032d3947d836e8f4a502ff4cdb4f200af787fb
+  canonical_remote: github.com/mojisejr/cu12-simulator
+  hq_canonical_remote: github.com/mojisejr/ciel-os
+
+unresolved:
+  - The Windows recovery proof has not yet run on an owner-provided Windows machine.
+  - Remote reachability does not prove Windows COM, RS485, or real hardware behavior.
+
+next_action:
+  action: >-
+    Create the private CU12 repository, push main, bind and validate the CIEL
+    project identity, then push and verify the current CIEL HQ checkpoint.
+  acceptance_check:
+    - Both canonical remotes report fetched main divergence 0 0 from their intended local checkouts.

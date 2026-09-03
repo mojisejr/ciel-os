@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T054458_cu12_remote_binding_prepared
+type: closeout
+recorded_at: 2026-09-04T05:44:58+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: cu12-simulator-remote-binding-001
+  lane: single
+  objective: >-
+    Promote the existing CU12 Simulator history to its private canonical remote
+    and make CIEL HQ recoverable through its declared canonical remote.
+  scope:
+    - Create and verify the private mojisejr/cu12-simulator remote without rewriting its existing history.
+    - Bind the committed CU12 project identity to that remote.
+    - Prepare portable Windows bootstrap artifacts and the final CIEL HQ checkpoint.
+  out_of_scope:
+    - Windows COM, USB serial, RS485, real CU12 hardware, secrets, .env transfer, ignored-asset commits, databases, daemons, and automatic background synchronization.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Private GitHub repository mojisejr/cu12-simulator exists with default branch main.
+    - The existing CU12 child commit df032d3947d836e8f4a502ff4cdb4f200af787fb was pushed without rewriting history; local and origin main divergence is 0 0.
+    - projects/cu12-simulator/project.yaml now declares github.com/mojisejr/cu12-simulator as its canonical remote, and Wake verifies the child binding against it.
+    - The tracked Windows bootstrap guide, relative local-binding example, non-secret asset manifest, and deterministic bootstrap-template test are prepared.
+    - CIEL typecheck and 22 deterministic tests pass; CU12 format, 9 tests, and clippy warnings-as-errors pass.
+  not_completed:
+    - The CIEL HQ checkpoint containing this event has not been committed or pushed yet, so its fetched remote divergence remains 0 20 before the requested final checkpoint.
+    - The owner-provided Windows clone and fresh-session proof have not yet run.
+
+evidence:
+  base_revision: 3d7c444e51041a387fa68f07015e24f11df9d58b
+  decision: memory/events/2026/09/04/20260904T054116_cu12_remote_binding_authorized.yaml
+  plan: workstreams/cu12-simulator-remote-binding-001/PLAN.md
+  plan_revision: "0.1"
+  child:
+    canonical_remote: github.com/mojisejr/cu12-simulator
+    commit: df032d3947d836e8f4a502ff4cdb4f200af787fb
+    fetched_main_divergence: "0 0"
+    remote_visibility: private
+  hq:
+    canonical_remote: github.com/mojisejr/ciel-os
+    remote_head_before_final_checkpoint: 00a714c2dfea96c630bf166337afc587b58ef75f
+    local_divergence_before_final_checkpoint: "0 20"
+  portability:
+    bootstrap_guide: docs/portability/WINDOWS_BOOTSTRAP.md
+    asset_manifest: docs/portability/assets-manifest.yaml
+    local_binding_template: projects.local.example.yaml
+  checks:
+    - bun run check passes with 22 tests.
+    - bun run wake validates event, plan, project, and available remote CU12 binding metadata.
+    - cargo fmt --check passes in checkouts/cu12-simulator.
+    - cargo test passes with 9 tests in checkouts/cu12-simulator.
+    - cargo clippy --all-targets -- -D warnings passes in checkouts/cu12-simulator.
+    - The CU12 protocol PDF remains ignored; no .assets, .env, or projects.local.yaml file is tracked by HQ Git.
+
+unresolved:
+  - Windows proof still requires the owner to clone both private remotes and run the documented commands on that machine.
+  - The macOS PTY transport is not a Windows COM/RS485 proof.
+  - Remote currency is an explicit checkpoint action, not an automatic synchronization service.
+
+next_action:
+  action: >-
+    Review this closeout event, commit the prepared CIEL HQ checkpoint, push
+    main to origin, fetch, and verify HQ divergence is 0 0; then give the
+    owner the Windows bootstrap commands for Phase 2.
+  acceptance_check:
+    - The final committed CIEL HQ main and origin/main resolve to the same head after fetch.

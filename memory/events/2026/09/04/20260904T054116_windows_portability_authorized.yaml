@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T054116_windows_portability_authorized
+type: decision
+recorded_at: 2026-09-04T05:41:16+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-windows-portability-001
+  lane: single
+  objective: >-
+    Prepare a portable bootstrap so an owner-provided Windows machine can
+    reconstruct CIEL HQ and CU12 from private remotes without hidden CIEL or
+    harness state.
+  scope:
+    - Add the tracked Windows bootstrap guide, non-secret asset manifest, and relative CU12 local-binding example.
+    - Add deterministic coverage where appropriate and prepare a Windows fresh-session proof handoff.
+  out_of_scope:
+    - Windows COM, ConPTY, USB serial, RS485, real CU12 hardware, secrets, .env transfer, databases, daemons, automatic synchronization, and provider-specific harness setup.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner authorized Phase 1 of plan revision 0.1 and asked to receive the Windows clone steps after the remote and closeout checkpoint are ready.
+  not_completed:
+    - Bootstrap artifacts, verification, Windows execution, and closeout remain to be completed.
+
+evidence:
+  plan: workstreams/ciel-windows-portability-001/PLAN.md
+  plan_revision: "0.1"
+  execution_phase: "1"
+  prerequisite_workstream: cu12-simulator-remote-binding-001
+
+unresolved:
+  - The Windows machine and its ordinary Git, Bun, and Rust toolchain state are not observable from this checkout.
+  - The owner must run the documented Windows proof before Phase 2 can be closed.
+
+next_action:
+  action: >-
+    Complete the remote-binding prerequisite, then add and verify the portable
+    bootstrap artifacts before handing the owner the exact Windows commands.
+  acceptance_check:
+    - The bootstrap artifact identifies all machine-local setup and no secret or ignored asset is implied to be in Git.
