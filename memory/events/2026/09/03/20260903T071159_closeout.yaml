@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20260903T071159_genesis_alignment_prepared
+type: closeout
+recorded_at: 2026-09-03T07:11:59+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-genesis-alignment-001
+  lane: single
+  objective: >-
+    Reconcile the Codex-first implementation sequence with CIEL's proposed
+    vendor-neutral Genesis direction before selecting the first real product
+    workstream.
+  scope:
+    - Commit the local-only .assets ignore rule.
+    - Prepare a proposed Genesis alignment note from current repository evidence.
+    - State the evidence gate that defers SQLite and broader platform features.
+  out_of_scope:
+    - Ratifying or superseding the Genesis Contract without owner review.
+    - Creating a CU12 repository, local binding, workstream plan, or product code.
+    - Adding a client bridge, SQLite, index, write path, daemon, MCP server,
+      dashboard, remote, push, credential, browser, or user data.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - The .assets ignore rule was committed locally at f55f9f70ba9b6a057f1abe39464af7b4710ec0e1.
+    - docs/genesis/CIEL_GENESIS_ALIGNMENT_v0.1.md was prepared as a proposed alignment note.
+    - The note keeps CIEL vendor-neutral while defining Codex-first as the current proof sequence.
+    - The note defers SQLite and other platform capabilities until a real-workstream proof demonstrates a need.
+  not_completed:
+    - The owner has not reviewed or accepted the proposed alignment note.
+    - No CU12 Simulator project identity, local binding, workstream plan, or implementation has begun.
+
+evidence:
+  base_revision: f55f9f70ba9b6a057f1abe39464af7b4710ec0e1
+  documents:
+    - AGENTS.md
+    - docs/genesis/CIEL_GENESIS_CONTRACT_v0.2.md
+    - docs/genesis/Agent HQ - Agent OS — Architecture Baseline v0.2.md
+    - docs/genesis/CIEL_GENESIS_ALIGNMENT_v0.1.md
+  checks:
+    - git diff --check must pass before this closeout is committed.
+    - bun run wake must validate the event and show the alignment work as traceable local evolution after commit.
+
+unresolved:
+  - Owner review and acceptance, amendment, or rejection of the proposed alignment note.
+  - Owner authorization of the exact CU12 Simulator project binding and first workstream plan.
+
+next_action:
+  action: >-
+    Review the proposed alignment note and this closeout. If accepted, commit
+    them locally without pushing, then prepare the CU12 Simulator project and
+    its first narrow workstream for separate owner review.
+  acceptance_check:
+    - The committed note preserves vendor neutrality, limits the present proof
+      to Codex-first, and does not authorize new platform infrastructure.
