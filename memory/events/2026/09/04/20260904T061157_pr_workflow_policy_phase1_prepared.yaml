@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T061157_pr_workflow_policy_phase1_prepared
+type: closeout
+recorded_at: 2026-09-04T06:11:57+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Establish a concise branch-first workflow for CIEL-bound projects and
+    prepare the existing unpushed CIEL HQ history for a protected-main pull
+    request without rewriting it.
+  scope:
+    - Record the durable startup rule in AGENTS.md and the complete workflow in README.md.
+    - Add deterministic policy-artifact coverage.
+    - Establish the local chore/adopt-local-main-history transition branch at the existing HQ head.
+  out_of_scope:
+    - Remote branch or PR creation, PR merge, force-pushing, resets, rebases, GitHub rule changes, hosted CI, review quotas, and CU12 transport changes.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Local transition branch chore/adopt-local-main-history was created at a3ee7dacf15c552ef0938141c777102b761bc00f without rewriting the 21 unpushed ancestors.
+    - AGENTS.md now carries one concise durable no-direct-main rule; README.md carries the local-only --ff-only path, canonical-remote PR path, and one-time empty-remote seed exception.
+    - test/git-workflow.test.ts verifies that AGENTS.md stays concise and that README.md exposes both command paths and the seed exception.
+    - bun run check passes with 23 tests, and bun run wake validates the policy plan and event records.
+  not_completed:
+    - The Phase 1 checkpoint has not been committed yet because this event is awaiting owner review.
+    - The transition branch has not been pushed and no pull request exists.
+    - The owner has not reviewed or merged an adoption PR; remote main is unchanged.
+
+evidence:
+  base_revision: a3ee7dacf15c552ef0938141c777102b761bc00f
+  decision: memory/events/2026/09/04/20260904T061050_pr_workflow_policy_authorized.yaml
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.1"
+  phase: "1"
+  branch: chore/adopt-local-main-history
+  checks:
+    - bun run check passes with 23 tests.
+    - bun run wake validates project, plan, and event metadata.
+    - git diff --cached --check passes before this checkpoint is prepared.
+
+unresolved:
+  - GitHub remote main remains at 00a714c2dfea96c630bf166337afc587b58ef75f until a later owner-reviewed PR merges.
+  - The policy's remote PR path is documented and tested as an artifact but is not yet proven by a pushed topic branch.
+  - Windows clone proof remains in the separate paused portability workstream.
+
+next_action:
+  action: >-
+    Review this Phase 1 closeout event, commit it on the transition branch,
+    then authorize Phase 2 to push chore/adopt-local-main-history and open the
+    adoption PR against main.
+  acceptance_check:
+    - The Phase 1 commit remains a descendant of a3ee7da and the future PR head preserves all 21 local-only ancestors.

@@ -49,6 +49,10 @@ Wake → Align → Plan → Execute → Closeout
 - **Execute:** Keep changes narrow. Preserve unrelated work. Validate claims with the appropriate source or deterministic check.
 - **Closeout:** At a work checkpoint, record the actual outcome, evidence, unresolved risks, and next executable action in one append-only YAML event. Present a new event for human review before the commit that checkpoints it.
 
+## Git workflow
+
+- Do not develop tracked changes directly on `main`. Use a short-lived topic branch; local-only projects merge locally after checks, while projects with a canonical remote merge through an owner-reviewed pull request.
+
 ## Semantic event convention
 
 `memory/events/` is the append-only, Git-tracked record of semantic facts that Git cannot reconstruct reliably. The current local CLI only reads and validates these records; it does not create or amend them.

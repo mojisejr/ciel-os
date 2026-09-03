@@ -92,6 +92,45 @@ CIEL tracks their identities, bindings, plans, and semantic events, while each
 child retains its own Git history. See [checkouts/README.md](checkouts/README.md)
 before cloning or initializing a child project.
 
+## Change workflow
+
+`main` is CIEL's verified integration and recovery branch, not a development
+branch. Every tracked code, plan, event, documentation, or test change starts
+on one bounded topic branch in one repository. Use
+`feat/<topic>`, `fix/<topic>`, `docs/<topic>`, or `chore/<topic>`.
+
+For a local-only project, start from `main`, run the applicable checks, then
+merge the topic branch locally without rewriting history:
+
+```bash
+git switch main
+git switch -c feat/<topic>
+# make the tracked change, run checks, and commit
+git switch main
+git merge --ff-only feat/<topic>
+git branch -d feat/<topic>
+```
+
+For a project with a canonical remote, first make the local `main` match its
+remote, then propose the checked change through a pull request:
+
+```bash
+git fetch origin --prune
+git switch main
+git pull --ff-only
+git switch -c feat/<topic>
+# make the tracked change, run checks, and commit
+git push -u origin feat/<topic>
+gh pr create --base main --head feat/<topic>
+```
+
+The owner reviews and authorizes each remote merge. Prefer a GitHub merge
+commit so CIEL events that name existing Git revisions remain traceable. A
+direct `main` push is allowed only once to seed an empty remote repository;
+after that remote exists, every tracked change follows the topic-branch and PR
+path. Read-only investigation and ignored machine-local material do not need a
+branch.
+
 ## Current proof target
 
 Without calling an LLM API, CIEL must let a new coding-agent session reconstruct

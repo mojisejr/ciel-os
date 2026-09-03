@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T061050_pr_workflow_policy_authorized
+type: decision
+recorded_at: 2026-09-04T06:10:50+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Establish a branch-first workflow for CIEL-bound projects and adopt the
+    existing unpushed CIEL HQ history through a pull request without rewriting
+    it.
+  scope:
+    - Record a concise durable Git rule in AGENTS.md and the full workflow in README.md.
+    - Add deterministic coverage for the policy artifacts.
+    - Prepare, but do not yet create, the one-time HQ history-adoption PR branch.
+  out_of_scope:
+    - Force-pushing, resetting, rebasing, or squashing the existing 21 local HQ commits.
+    - Changing GitHub rules, merging a PR, hosted CI, review quotas, CODEOWNERS, a merge queue, a database, a daemon, or CU12 transport behavior.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner authorized Phase 1 of plan revision 0.1 and requested phase-by-phase closeouts before reviewing the resulting PR.
+  not_completed:
+    - Policy artifacts, Phase 1 checks, closeout review, and the transition PR remain to be completed.
+
+evidence:
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.1"
+  execution_phase: "1"
+  transition_branch: chore/adopt-local-main-history
+  transition_head: a3ee7dacf15c552ef0938141c777102b761bc00f
+
+unresolved:
+  - The policy cannot retrospectively make the existing local main history reviewable; the history-adoption PR is the first review boundary.
+  - The owner must review and decide whether to merge the future PR.
+
+next_action:
+  action: >-
+    Complete the Phase 1 policy artifacts and deterministic checks, then
+    prepare its evidence-backed closeout event for owner review before the
+    phase checkpoint commit.
+  acceptance_check:
+    - AGENTS.md is concise, README.md states both local-only and remote paths, and bun run check passes.
