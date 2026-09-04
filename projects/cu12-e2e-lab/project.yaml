@@ -1,0 +1,6 @@
+schema_version: ciel.project.v0.1
+id: cu12-e2e-lab
+repository:
+  vcs: git
+  canonical_remote: github.com/mojisejr/cu12-e2e-lab
+  default_branch: main
