@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T145412_pr_review_surface_authorized
+type: decision
+recorded_at: 2026-09-04T14:54:12+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Make the final pull-request review surface concise, evidence-led, and
+    understandable without inspecting raw closeout YAML.
+  scope:
+    - Add one concise final-review PR template.
+    - Require the final PR description to use that template before readiness.
+    - Return PR #21 to draft, update its closeout for this plan revision, and return it to ready only after verification.
+  out_of_scope:
+    - GitHub review rules, automation, CI, CODEOWNERS, database, daemon, or any CU12 and Windows work.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner authorized this immediate remediation in the already-open PR #21 after observing that its final review body was insufficient.
+  not_completed:
+    - Template implementation, final closeout, owner review, merge, and clean-main verification remain pending.
+
+evidence:
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.7"
+  execution_phase: "7"
+  starting_main: 2ff1401626e5a76f09d5dde4c7c49aede29dd5d7
+  starting_divergence: "0 0"
+  topic_branch: fix/completed-lifecycle-conflict
+  pull_request:
+    number: 21
+    url: https://github.com/mojisejr/ciel-os/pull/21
+    observed_draft: true
+
+unresolved:
+  - The final Phase 7 closeout must be committed to PR #21 before it becomes ready for owner review again.
+
+next_action:
+  action: >-
+    Add the review template and proof, update PR #21's final body, then commit
+    and push the Phase 7 closeout before marking the same PR ready again.
+  acceptance_check:
+    - A final PR review states outcome, context, change, evidence, boundaries, and delivery in one readable surface.

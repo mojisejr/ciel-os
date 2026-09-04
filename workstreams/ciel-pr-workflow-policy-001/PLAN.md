@@ -3,8 +3,8 @@
 **Workstream:** `ciel-pr-workflow-policy-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.6
-**Execution phase:** 6
+**Plan revision:** 0.7
+**Execution phase:** 7
 **Execution state:** executing
 **Parallelism:** none
 
@@ -267,6 +267,21 @@ clean, current `main` with no obsolete topic-branch evidence left behind.
 3. A deterministic fixture proves the suppression; no plan completion
    writeback, event rewrite, GitHub API, or new persistence layer is added.
 
+## Phase 7 — final PR review surface (authorized)
+
+**State:** implementation in progress
+
+### Definition of done
+
+1. One concise GitHub PR template makes the final review surface state the
+   outcome, context, change, evidence, boundaries, and delivery reference.
+2. README requires an agent to replace draft wording with that final review
+   surface before marking a PR ready, without duplicating closeout YAML.
+3. A deterministic test protects the template headings and README reference.
+4. The remediation PR that exposed the gap returns to draft, adopts the final
+   review surface after its closeout is updated, and becomes ready again only
+   after the final closeout is on its head.
+
 ## Explicit non-goals
 
 - Rewriting the current local HQ history.
@@ -278,7 +293,9 @@ clean, current `main` with no obsolete topic-branch evidence left behind.
 
 ## Exit condition
 
-Prove Phase 6 through one final merge-ready PR. After it merges and local main
-is clean/current, completed workstreams must disappear from active attention
-without a plan writeback. Only then may the owner-provided Windows clone proof
-resume as its separate paused workstream.
+Prove Phases 6 and 7 through this one final merge-ready PR. After it merges and
+local main is clean/current, completed workstreams must disappear from active
+attention and conflict calculation without a plan writeback, and the review
+surface must explain the final result without requiring the owner to inspect
+raw event YAML. Only then may the owner-provided Windows clone proof resume as
+its separate paused workstream.
