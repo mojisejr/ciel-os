@@ -515,6 +515,16 @@ async function deriveLifecycle(
   projects: PortfolioProject[],
   eventsByWorkstream: Map<string, WorkstreamEvent[]>
 ): Promise<void> {
+  for (const workstream of workstreams) {
+    if (workstream.state !== "active") {
+      continue;
+    }
+    const terminalLifecycle = await deriveTerminalLifecycle(repositoryPath, workstream, eventsByWorkstream.get(workstream.id) ?? []);
+    if (terminalLifecycle !== null) {
+      workstream.lifecycle = terminalLifecycle;
+    }
+  }
+
   const projectsById = new Map(projects.map((project) => [project.id, project]));
   const activeByProject = new Map<string, string[]>();
   for (const workstream of workstreams.filter((item) => item.state === "active" && item.lifecycle?.state !== "completed")) {
@@ -529,9 +539,7 @@ async function deriveLifecycle(
     if (workstream.state !== "active") {
       continue;
     }
-    const terminalLifecycle = await deriveTerminalLifecycle(repositoryPath, workstream, eventsByWorkstream.get(workstream.id) ?? []);
-    if (terminalLifecycle !== null) {
-      workstream.lifecycle = terminalLifecycle;
+    if (workstream.lifecycle !== null) {
       continue;
     }
     const matchingDecisions = (eventsByWorkstream.get(workstream.id) ?? []).filter((event) => decisionAuthorizesPlan(event, workstream));
@@ -585,7 +593,7 @@ async function deriveLifecycle(
 function deriveAttention(workstreams: PortfolioWorkstream[], projects: PortfolioProject[]): PortfolioAttention[] {
   const projectById = new Map(projects.map((project) => [project.id, project]));
   const activeByProject = new Map<string, string[]>();
-  for (const workstream of workstreams.filter((item) => item.state === "active")) {
+  for (const workstream of workstreams.filter((item) => item.state === "active" && item.lifecycle?.state !== "completed")) {
     for (const projectId of workstream.projectIds) {
       const ids = activeByProject.get(projectId) ?? [];
       ids.push(workstream.id);
