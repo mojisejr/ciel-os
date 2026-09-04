@@ -3,8 +3,8 @@
 **Workstream:** `ciel-pr-workflow-policy-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.4
-**Execution phase:** 4
+**Plan revision:** 0.5
+**Execution phase:** 5
 **Execution state:** executing
 **Parallelism:** none
 
@@ -72,7 +72,7 @@ clean, current `main` with no obsolete topic-branch evidence left behind.
 | `ciel-os` | Policy home and one-time history-adoption PR target | `.` |
 | `cu12-simulator` | First child to follow the remote-project rule after its seed push | `checkouts/cu12-simulator` |
 
-## Policy v0.1 observed and v0.3 proposed for decision
+## Policy v0.1 observed and v0.4 proposed for decision
 
 1. `main` is not a development branch. Do not make normal tracked commits on
    it; use it only to start a topic branch, receive a completed merge, or
@@ -107,6 +107,10 @@ clean, current `main` with no obsolete topic-branch evidence left behind.
     only after the merge is verified, the candidate has no commits outside
     `origin/main`, no open PR references it, and local deletion precedes remote
     deletion.
+11. A plan records intended scope and acceptance criteria, not completion
+    history. Wake derives delivery completion from a final closeout-bearing
+    commit, fetched target-branch ancestry, clean current checkout evidence,
+    and branch-cleanup evidence.
 
 ## Authority and boundaries
 
@@ -230,6 +234,25 @@ clean, current `main` with no obsolete topic-branch evidence left behind.
 9. State the outcome per repository: HQ currentness is proven locally; any
    child project is called current only after its own independent gate passes.
 
+## Phase 5 — derive delivery lifecycle from Git (authorized)
+
+**State:** implementation in progress; no plan completion writeback is required
+
+### Definition of done
+
+1. A final closeout explicitly names its plan revision, execution phase, target
+   branch, and topic branch, but does not copy its own eventual commit ID.
+2. Wake finds the commit that contains that event from local Git, then derives
+   `awaiting-owner-merge`, `merged-needs-sync`, `merged-needs-cleanup`, or
+   `completed` without GitHub, a database, or chat history.
+3. A later decision for a different plan revision or phase cannot be closed by
+   an earlier closeout event.
+4. Deterministic fixture tests cover every derived state and the established
+   PR #18 regression: a clean synced checkout must not remain `interrupted`
+   merely because a historical plan field said `executing`.
+5. README and AGENTS state the plan-versus-derived-truth boundary once, without
+   turning either file into project history.
+
 ## Explicit non-goals
 
 - Rewriting the current local HQ history.
@@ -241,7 +264,7 @@ clean, current `main` with no obsolete topic-branch evidence left behind.
 
 ## Exit condition
 
-Commit and push the Phase 4 final closeout to draft PR #18; re-read its head
-and closeout ancestry, mark it ready for review, and report the final PR to the
-owner. Complete the proof through post-merge cleanup. Only then may the
-owner-provided Windows clone proof resume as its separate paused workstream.
+Prove Phase 5 through one final merge-ready PR. After it merges and local main
+is clean/current, Wake must derive completion without a plan writeback. Only
+then may the owner-provided Windows clone proof resume as its separate paused
+workstream.

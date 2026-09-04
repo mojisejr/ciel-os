@@ -150,6 +150,44 @@ async function addPlan(
   await writeFile(join(directory, "PLAN.md"), plan(id, state, projectIds, options));
 }
 
+function terminalCloseout(workstreamId: string, revision: string): string {
+  return [
+    "schema_version: ciel.event.v0.1",
+    "id: evt_20260904T000000_terminal_fixture",
+    "type: closeout",
+    "recorded_at: 2026-09-04T00:00:00+07:00",
+    "recorded_by:",
+    "  agent: test",
+    "workstream:",
+    `  id: ${workstreamId}`,
+    "  lane: single",
+    "  objective: fixture",
+    "outcome:",
+    "  status: ready-for-owner-merge",
+    "evidence:",
+    `  base_revision: ${revision}`,
+    "  plan_revision: \"4.0\"",
+    "  execution_phase: \"1\"",
+    "  delivery:",
+    "    target_branch: main",
+    "    topic_branch: feat/fixture",
+    "unresolved: []",
+    "next_action:",
+    "  action: owner merge",
+    ""
+  ].join("\n");
+}
+
+async function initializeWorkspace(root: string): Promise<void> {
+  git(root, ["init", "--initial-branch=main"]);
+  git(root, ["config", "user.name", "CIEL test"]);
+  git(root, ["config", "user.email", "ciel-test@example.invalid"]);
+  await writeFile(join(root, "README.md"), "# workspace\n");
+  await writeFile(join(root, "AGENTS.md"), "# instructions\n");
+  git(root, ["add", "README.md", "AGENTS.md"]);
+  git(root, ["commit", "-m", "workspace fixture"]);
+}
+
 test("derives attention from plans, verified local projects, and per-lane checkpoints", async () => {
   const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
   try {
@@ -278,6 +316,52 @@ test("does not authorize a Phase 4 decision for Phase 5 execution", async () => 
     expect(report.validationErrors).toEqual([]);
     expect(workstream?.lifecycle).toEqual(expect.objectContaining({ state: "needs-owner-decision" }));
     expect(workstream?.lifecycle?.detail).toContain("phase 5");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("derives remote delivery lifecycle from a closeout-bearing commit instead of plan execution state", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    await initializeWorkspace(root);
+    await addPlan(root, "delivery", "active", ["hq"], { executionState: "executing", revision: "4.0" });
+    git(root, ["add", "workstreams"]);
+    git(root, ["commit", "-m", "declare delivery plan"]);
+    const base = git(root, ["rev-parse", "HEAD"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", base]);
+
+    const eventsDirectory = join(root, "memory/events/2026/09/04");
+    await mkdir(eventsDirectory, { recursive: true });
+    await writeFile(join(eventsDirectory, "20260904T000000_terminal.yaml"), terminalCloseout("delivery", base));
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "record final closeout"]);
+    const closeoutCommit = git(root, ["rev-parse", "HEAD"]);
+
+    let report = await readPortfolioWakeReport(root);
+    expect(report.workstreams.find((item) => item.id === "delivery")?.lifecycle?.state).toBe("awaiting-owner-merge");
+
+    git(root, ["update-ref", "refs/remotes/origin/main", closeoutCommit]);
+    git(root, ["switch", "-c", "stale"]);
+    report = await readPortfolioWakeReport(root);
+    expect(report.workstreams.find((item) => item.id === "delivery")?.lifecycle?.state).toBe("merged-needs-sync");
+
+    git(root, ["switch", "main"]);
+    git(root, ["branch", "feat/fixture"]);
+    report = await readPortfolioWakeReport(root);
+    expect(report.workstreams.find((item) => item.id === "delivery")?.lifecycle?.state).toBe("merged-needs-cleanup");
+
+    git(root, ["branch", "-d", "feat/fixture"]);
+    report = await readPortfolioWakeReport(root);
+    expect(report.workstreams.find((item) => item.id === "delivery")?.lifecycle).toEqual(expect.objectContaining({ state: "completed" }));
+
+    git(root, ["switch", "-c", "feat/fixture"]);
+    await writeFile(join(root, "unmerged.md"), "# unmerged\n");
+    git(root, ["add", "unmerged.md"]);
+    git(root, ["commit", "-m", "unmerged fixture evidence"]);
+    git(root, ["switch", "main"]);
+    report = await readPortfolioWakeReport(root);
+    expect(report.workstreams.find((item) => item.id === "delivery")?.lifecycle?.state).toBe("needs-reconciliation");
   } finally {
     await rm(root, { force: true, recursive: true });
   }
