@@ -3,8 +3,8 @@
 **Workstream:** `ciel-pr-workflow-policy-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.5
-**Execution phase:** 5
+**Plan revision:** 0.6
+**Execution phase:** 6
 **Execution state:** executing
 **Parallelism:** none
 
@@ -253,6 +253,20 @@ clean, current `main` with no obsolete topic-branch evidence left behind.
 5. README and AGENTS state the plan-versus-derived-truth boundary once, without
    turning either file into project history.
 
+## Phase 6 — derive portfolio attention from lifecycle (authorized)
+
+**State:** implementation in progress
+
+### Definition of done
+
+1. A workstream whose lifecycle is derived as `completed` produces no active,
+   unavailable, or conflict attention, even if a historical plan field still
+   says `active`.
+2. A derived-completed workstream no longer makes another active workstream
+   appear to conflict merely through an overlapping project link.
+3. A deterministic fixture proves the suppression; no plan completion
+   writeback, event rewrite, GitHub API, or new persistence layer is added.
+
 ## Explicit non-goals
 
 - Rewriting the current local HQ history.
@@ -264,7 +278,7 @@ clean, current `main` with no obsolete topic-branch evidence left behind.
 
 ## Exit condition
 
-Prove Phase 5 through one final merge-ready PR. After it merges and local main
-is clean/current, Wake must derive completion without a plan writeback. Only
-then may the owner-provided Windows clone proof resume as its separate paused
-workstream.
+Prove Phase 6 through one final merge-ready PR. After it merges and local main
+is clean/current, completed workstreams must disappear from active attention
+without a plan writeback. Only then may the owner-provided Windows clone proof
+resume as its separate paused workstream.

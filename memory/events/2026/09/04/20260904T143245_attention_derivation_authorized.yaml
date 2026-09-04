@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T143245_attention_derivation_authorized
+type: decision
+recorded_at: 2026-09-04T14:32:45+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Make portfolio attention obey the already-derived lifecycle, so completed
+    work does not remain active merely because a plan retains historical intent.
+  scope:
+    - Suppress derived-completed workstreams from attention and conflict calculation.
+    - Add one deterministic regression fixture.
+  out_of_scope:
+    - Plan writeback, event rewrite, GitHub API, database, daemon, or Windows/CU12 work.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner authorized this narrow cleanup after Wake still surfaced completed PR work as active attention.
+  not_completed:
+    - Implementation, final closeout, PR review, merge, and clean-main verification remain pending.
+
+evidence:
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.6"
+  execution_phase: "6"
+  starting_main: 69dc89120615fbd6901300de58ec03bf8267c31c
+  starting_divergence: "0 0"
+  topic_branch: fix/completed-workstream-attention
+
+unresolved:
+  - The final Phase 6 closeout must be committed to a draft PR head before it becomes ready for owner review.
+
+next_action:
+  action: >-
+    Commit the narrow attention change, open one draft PR, then add its final
+    closeout and report the verified merge-ready PR.
+  acceptance_check:
+    - A clean main after merge has no active attention for the completed PR workflow.
