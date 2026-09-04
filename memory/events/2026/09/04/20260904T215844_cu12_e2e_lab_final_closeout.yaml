@@ -1,0 +1,86 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T215844_cu12_e2e_lab_final_closeout
+type: closeout
+recorded_at: 2026-09-04T21:58:44+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: cu12-e2e-lab-001
+  lane: single
+  objective: >-
+    Prove an independent native desktop client against the CU12 simulator's
+    macOS virtual serial endpoint.
+  scope:
+    - Complete the virtual-PTY application-to-simulator proof for Get Status, Unlock, and Query Version.
+    - Prepare the related desktop-lab and CIEL HQ pull requests for owner review.
+  out_of_scope:
+    - TCP application flow, simulator changes, USB, electrical RS485, Windows, Linux, real CU12 hardware, persistence, services, and production-driver claims.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - The owner manually connected the native UI to the simulator-provided /dev/ttys001 path at visible 19200/8N1/raw settings.
+    - The owner exercised Get Status (0x80), Unlock (0x81), and Query Version (0x8F) from the UI.
+    - The displayed RX/TX log shows each request and its exact committed manual-vector response.
+    - Query Version decoded as software 10 and hardware 12; the UI reported a golden-vector match.
+    - The separately implemented worker proof and simulator regression suite both passed without changing the simulator.
+  not_completed:
+    - This proof does not establish USB, electrical RS485, Windows COM, or real CU12 behavior.
+    - Owner review and merge remain pending.
+
+evidence:
+  repository:
+    head: d2ac5d40f9ea5f2e99a5c97e8efc3e1c1a4601f6
+    branch: docs/cu12-e2e-lab-plan
+    working_tree: clean-before-final-closeout
+  plan: workstreams/cu12-e2e-lab-001/PLAN.md
+  plan_revision: "0.1"
+  execution_phase: "1"
+  delivery:
+    target_branch: main
+    topic_branch: docs/cu12-e2e-lab-plan
+  hq_pull_request:
+    number: 22
+    url: https://github.com/mojisejr/ciel-os/pull/22
+    base: main
+    head: docs/cu12-e2e-lab-plan
+    observed_head: d2ac5d40f9ea5f2e99a5c97e8efc3e1c1a4601f6
+  lab_pull_request:
+    number: 1
+    url: https://github.com/mojisejr/cu12-e2e-lab/pull/1
+    base: main
+    head: feat/native-pty-client
+    revision: 9651ad7ca93b6ed20686d7a7a4090950c5892b16
+  owner_manual_observation:
+    artifact: Screenshot 2569-09-04 at 21.55.43.png
+    sha256: 9c24014bc0ecf4bbadda7b2b8903ad2dd4c80c58d955d9500e787f2affd0c2d3
+    observed:
+      - Connected to /dev/ttys001.
+      - "Get Status TX 02 00 00 80 00 00 03 85; RX 02 00 00 80 10 02 03 99 02 00."
+      - "Unlock TX 02 00 02 81 00 00 03 88; RX 02 00 02 81 10 00 03 98."
+      - "Query Version TX 02 00 00 8F 00 00 03 94; RX 02 00 00 8F 10 02 03 C8 10 12."
+      - Unlock is recorded only as an acknowledgement; no physical hook-state change is claimed.
+  checks:
+    lab:
+      - cargo fmt --check
+      - cargo test
+      - cargo clippy --all-targets -- -D warnings
+      - CU12_E2E_LAB_PTY=/dev/ttys001 cargo test --test virtual_pty -- --ignored
+    simulator:
+      revision: df032d3947d836e8f4a502ff4cdb4f200af787fb
+      modified: false
+      command: cargo test
+      result: 9 tests passed
+
+unresolved:
+  - The local screenshot is owner-provided manual evidence; it is not a portable or Git-tracked artifact.
+  - Hardware transport and device behavior require a separately authorized proof.
+
+next_action:
+  action: >-
+    Review and merge the desktop-lab PR first, then merge this HQ PR; afterward
+    synchronize each repository and clean up only fully merged topic branches.
+  acceptance_check:
+    - Both merge commits are reachable from their respective fetched origin/main branches before cleanup.
