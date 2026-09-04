@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T183705_cu12_e2e_lab_implementation_checkpoint
+type: closeout
+recorded_at: 2026-09-04T18:37:05+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: cu12-e2e-lab-001
+  lane: single
+  objective: >-
+    Prove an independent native desktop client against the CU12 simulator's
+    macOS virtual serial endpoint.
+  scope:
+    - Seed and bind the private CU12 E2E Lab repository.
+    - Implement the bounded native client and independent manual-vector tests.
+    - Establish a real-PTY worker proof without changing the simulator.
+  out_of_scope:
+    - A final visual/manual UI acceptance claim, TCP application flow, simulator changes, USB, RS485, Windows, Linux, real hardware, persistence, and services.
+
+outcome:
+  status: prepared
+  completed:
+    - Private github.com/mojisejr/cu12-e2e-lab was seeded once on main at 24f672f7b960c72ac3ca642f98379eee14006f6b.
+    - The draft client PR contains a native eframe UI, a bounded macOS PTY worker, independent CU12 framing, and RX/TX evidence surfaces.
+    - Independent deterministic golden-vector tests passed for Get Status, Unlock, and Query Version.
+    - The opt-in real-PTY worker test passed against an unmodified simulator at df032d3947d836e8f4a502ff4cdb4f200af787fb.
+  not_completed:
+    - A human-visible UI session has not yet pasted the PTY path and exercised the three controls for the final manual proof.
+    - No final closeout, ready-for-review transition, or merge is authorized.
+
+evidence:
+  plan: workstreams/cu12-e2e-lab-001/PLAN.md
+  plan_revision: "0.1"
+  execution_phase: "1"
+  lab_repository:
+    canonical_remote: github.com/mojisejr/cu12-e2e-lab
+    seed_main: 24f672f7b960c72ac3ca642f98379eee14006f6b
+    draft_pull_request:
+      number: 1
+      url: https://github.com/mojisejr/cu12-e2e-lab/pull/1
+      base: main
+      head: feat/native-pty-client
+      revision: 9651ad7ca93b6ed20686d7a7a4090950c5892b16
+  checks:
+    - cargo fmt --check
+    - cargo test
+    - cargo clippy --all-targets -- -D warnings
+    - CU12_E2E_LAB_PTY=/dev/ttys001 cargo test --test virtual_pty -- --ignored
+  dependency_evidence:
+    eframe:
+      version: 0.32.3
+      license: MIT OR Apache-2.0
+      reason: latest eframe compatible with installed Rust 1.86
+    nix:
+      version: 0.31.3
+      license: MIT
+      reason: macOS PTY termios configuration; serialport's IOSSIOSPEED path returned ENOTTY for the PTY
+  cu12_simulator:
+    revision: df032d3947d836e8f4a502ff4cdb4f200af787fb
+    modified: false
+
+unresolved:
+  - The host environment did not permit trustworthy capture or control inspection of the egui window, so visual/manual UI acceptance remains open rather than inferred from process startup.
+  - The virtual PTY does not prove USB, electrical RS485, Windows COM, or real CU12 behavior.
+
+next_action:
+  action: >-
+    Start the unmodified simulator, paste its printed PTY path into the native
+    UI, exercise Get Status, Unlock, and Query Version, then capture the
+    displayed RX/TX bytes and decoded outcomes for a final closeout.
+  acceptance_check:
+    - A human observes all three UI actions and confirms each displayed response matches its committed client golden vector.

@@ -18,12 +18,12 @@ The proof is application-to-simulator end to end. It does not use TCP at the
 application boundary and does not claim USB, electrical RS485, Windows COM, or
 real CU12 hardware behavior.
 
-## Proposed project identity
+## Project identity
 
-The prospective private repository is `mojisejr/cu12-e2e-lab`. It does not
-exist yet and is deliberately not listed as a CIEL project identity or local
-binding. Phase 1 may create and register it only after an owner decision names
-this plan revision and phase.
+The private repository is `mojisejr/cu12-e2e-lab`, seeded on `main` at
+`24f672f7b960c72ac3ca642f98379eee14006f6b`. It is registered as a CIEL project
+and bound locally at `checkouts/cu12-e2e-lab`. Phase 1 implementation happens
+on its ordinary feature branch.
 
 ## Known starting evidence
 
@@ -44,6 +44,7 @@ this plan revision and phase.
 |---|---|---|
 | `ciel-os` | plan, decisions, and closeout evidence | `.` |
 | `cu12-simulator` | independently launched virtual device | `checkouts/cu12-simulator` |
+| `cu12-e2e-lab` | independent native desktop client | `checkouts/cu12-e2e-lab` |
 
 ## Product boundary
 
@@ -63,7 +64,7 @@ manual-derived vectors, not shared source code.
 | Concern | Choice | Reason |
 |---|---|---|
 | Desktop UI | Rust `eframe` / `egui` | Native Rust window with a small immediate-mode UI; no web runtime or bridge. |
-| Serial I/O | Rust `serialport` | Explicit POSIX TTY configuration through one Rust API. |
+| Serial I/O | `std::fs` + Rust `nix` termios | Applies raw 19200/8N1 directly to the macOS PTY; the evaluated `serialport` macOS baud-rate path rejects pseudo terminals. |
 | Concurrency | `std::thread` + bounded channels | Keeps blocking serial reads off the UI thread without adding an async runtime. |
 | State | In-memory only | Connection state and byte log disappear when the lab closes. |
 | Build | Cargo lockfile | Reproducible local build; no service or database. |
