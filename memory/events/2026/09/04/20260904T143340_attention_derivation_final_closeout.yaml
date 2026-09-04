@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T143340_attention_derivation_final_closeout
+type: closeout
+recorded_at: 2026-09-04T14:33:40+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Make portfolio attention obey the already-derived lifecycle, so completed
+    work does not remain active merely because a plan retains historical intent.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Completed lifecycle state now suppresses active attention and project-conflict participation.
+    - Deterministic fixture proves a historical active plan no longer distracts after Git-derived completion.
+  not_completed:
+    - This final closeout has not yet been pushed to draft PR #20.
+    - Owner review, merge, and final clean-main attention proof remain pending.
+
+evidence:
+  base_revision: 69dc89120615fbd6901300de58ec03bf8267c31c
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.6"
+  execution_phase: "6"
+  delivery:
+    target_branch: main
+    topic_branch: fix/completed-workstream-attention
+  pull_request:
+    number: 20
+    url: https://github.com/mojisejr/ciel-os/pull/20
+    base: main
+    head: fix/completed-workstream-attention
+    observed_state: OPEN
+    observed_draft: true
+    observed_merge_state: CLEAN
+    observed_head: 121ce584a8bc2ab70ed99ea5d38b09cb5903cfee
+  checks:
+    - "bun run check: passed; 24 tests and 75 expectations"
+    - "gh pr view #20 reports OPEN, isDraft true, CLEAN, and head 121ce58"
+
+unresolved:
+  - The agent must push this final closeout and verify its containing commit on PR #20 before marking it ready.
+  - The owner retains final review and merge authority.
+
+next_action:
+  action: >-
+    Commit and push this closeout, verify it is on draft PR #20 head, mark the
+    PR ready, and report the one final review surface to the owner.
+  acceptance_check:
+    - A clean main after merge has no attention entry for the completed PR workflow.
