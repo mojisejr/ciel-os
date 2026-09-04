@@ -1,0 +1,69 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T065816_pr_workflow_phase2_prepared
+type: closeout
+recorded_at: 2026-09-04T06:58:16+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Adopt the existing unpushed CIEL HQ history through a protected-main pull
+    request without rewriting it, thereby proving the remote branch workflow.
+  scope:
+    - Push the policy and adopted local history only on chore/adopt-local-main-history.
+    - Open one pull request to main and record its actual state.
+    - Leave merge authority with the owner.
+  out_of_scope:
+    - Direct main push, force-push, reset, rebase, PR merge, GitHub rule changes, hosted CI, review quotas, and CU12 source or transport work.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Branch chore/adopt-local-main-history was pushed to github.com/mojisejr/ciel-os at 89f740286c5fd4399cb4b7061de198ab853603ca.
+    - Pull request #16 was opened from chore/adopt-local-main-history to main.
+    - At observation time, GitHub reported PR #16 as OPEN, non-draft, CLEAN, with no configured status-check results.
+    - The remote branch is 23 commits ahead of origin/main and retains a3ee7dacf15c552ef0938141c777102b761bc00f as an ancestor.
+  not_completed:
+    - The owner has not reviewed or merged PR #16; origin/main remains 00a714c2dfea96c630bf166337afc587b58ef75f.
+    - The Phase 2 closeout checkpoint has not been committed to the PR branch because this event is awaiting owner review.
+    - Phase 3 steady-state proof and the Windows clone proof have not run.
+
+evidence:
+  base_revision: 89f740286c5fd4399cb4b7061de198ab853603ca
+  decision: memory/events/2026/09/04/20260904T065706_pr_workflow_phase2_authorized.yaml
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.1"
+  phase: "2"
+  pull_request:
+    number: 16
+    url: https://github.com/mojisejr/ciel-os/pull/16
+    base: main
+    head: chore/adopt-local-main-history
+    head_revision: 89f740286c5fd4399cb4b7061de198ab853603ca
+    observed_state: OPEN
+    observed_merge_state: CLEAN
+    observed_status_checks: none-configured
+  ancestry:
+    adopted_local_history_head: a3ee7dacf15c552ef0938141c777102b761bc00f
+    origin_main_revision: 00a714c2dfea96c630bf166337afc587b58ef75f
+    origin_main_to_pr_head_divergence: "0 23"
+  checks:
+    - bun run check passes with 23 tests before branch push.
+    - git fetch origin --prune confirms local and origin topic heads match 89f7402.
+    - git merge-base --is-ancestor a3ee7da origin/chore/adopt-local-main-history passes.
+    - No direct or force push was made to origin/main.
+
+unresolved:
+  - PR state, merge eligibility, and checks may change after this observation and must be re-read before a merge decision.
+  - The owner must review and authorize the merge of PR #16.
+  - A subsequent remote-project change must still prove the steady-state topic-branch workflow after this adoption PR lands.
+
+next_action:
+  action: >-
+    Review this Phase 2 closeout event, commit and push it to PR #16, then
+    review the PR and decide whether to merge it with a merge commit.
+  acceptance_check:
+    - Before any merge, re-read PR #16 state and head revision; after an owner merge, fetch main and verify the intended history is present.

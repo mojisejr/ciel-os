@@ -1,11 +1,11 @@
 # CIEL — pull-request workflow policy and HQ transition
 
 **Workstream:** `ciel-pr-workflow-policy-001`
-**State:** active
+**State:** paused
 **Execution lane:** single
 **Plan revision:** 0.1
-**Execution phase:** 2
-**Execution state:** executing
+**Execution phase:** none
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective
@@ -88,7 +88,7 @@ pull request without rewriting or force-pushing any history.
 
 ## Phase 2 — one-time HQ history-adoption PR
 
-**State:** authorized by `evt_20260904T065706_pr_workflow_phase2_authorized`
+**State:** PR #16 opened; closeout checkpoint prepared for owner review
 
 ### Definition of done
 
@@ -104,7 +104,7 @@ pull request without rewriting or force-pushing any history.
 
 ## Phase 3 — prove the steady-state rule
 
-**State:** pending the adopted HQ PR
+**State:** pending the adopted HQ PR merge and fresh local fetch
 
 ### Definition of done
 
