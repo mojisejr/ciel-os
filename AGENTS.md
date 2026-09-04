@@ -53,6 +53,7 @@ Wake → Align → Plan → Execute → Closeout
 
 - Do not develop tracked changes directly on `main`. Use a short-lived topic branch; local-only projects merge locally after checks, while projects with a canonical remote merge through an owner-reviewed pull request.
 - Before starting tracked work in a remote project, and after its PR merges, return to a clean local `main` that matches fetched `origin/main`.
+- Keep every remote PR as a draft until its reviewed phase closeout is committed and pushed to that PR head.
 
 ## Semantic event convention
 
