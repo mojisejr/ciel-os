@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T141458_derived_lifecycle_final_closeout
+type: closeout
+recorded_at: 2026-09-04T14:14:58+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Derive remote delivery lifecycle from committed closeout evidence and local
+    Git, so a plan remains an intent contract rather than a mutable done-state.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Implemented a read-only lifecycle resolver that locates the final
+      closeout-bearing commit and reconciles it against fetched origin/main.
+    - >-
+      Added fixture evidence for awaiting owner merge, stale checkout,
+      cleanup-required, completed, and unmerged-branch reconciliation states.
+    - >-
+      Preserved plan files as intent contracts; completion is derived from the
+      closeout commit, Git ancestry, clean current main, and branch refs.
+  not_completed:
+    - This final closeout has not yet been committed or pushed to draft PR #19.
+    - Owner final PR review, merge, local synchronization, and the first real completed report remain pending.
+
+evidence:
+  base_revision: f34ff9ae1dab342c6e5b33f51f7217305f333ff2
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.5"
+  execution_phase: "5"
+  delivery:
+    target_branch: main
+    topic_branch: feat/derive-workstream-lifecycle
+  pull_request:
+    number: 19
+    url: https://github.com/mojisejr/ciel-os/pull/19
+    base: main
+    head: feat/derive-workstream-lifecycle
+    observed_state: OPEN
+    observed_draft: true
+    observed_merge_state: CLEAN
+    observed_head: 299ef86f40446809a5d4aec2cff523e8d2347c54
+  checks:
+    - "bun run check: passed; 24 tests and 74 expectations"
+    - "git diff --cached --check: passed before the implementation checkpoint commit"
+    - "gh pr view #19 reports OPEN, isDraft true, CLEAN, and head 299ef86"
+    - "No direct or force push was made to origin/main."
+
+unresolved:
+  - After this closeout is pushed, the agent must prove its containing commit is an ancestor of the draft PR head before marking PR #19 ready.
+  - The owner retains the final review and merge decision.
+
+next_action:
+  action: >-
+    Commit and push this closeout to feat/derive-workstream-lifecycle, verify
+    PR #19 remains draft with this closeout on its head, then mark it ready and
+    report the one final PR to the owner.
+  acceptance_check:
+    - The plan is not edited to say completed; a later clean main must derive that outcome from this event and local Git.
