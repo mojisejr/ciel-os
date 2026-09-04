@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20260829T132026_portfolio_flow_authorized
+type: decision
+recorded_at: 2026-08-29T13:20:26+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  objective: >-
+    Prove a plan-first portfolio flow that lets CIEL reconstruct active
+    multi-project workstreams without treating chat or client-session state as
+    CIEL evidence.
+  scope:
+    - Add project identity, machine-local binding, and workstream-plan artifacts.
+    - Build portfolio Wake and lifecycle-recovery proof only after the artifact contract.
+  out_of_scope:
+    - Database, index, daemon, dashboard, MCP server, event write command, or GitHub automation.
+    - Chat transcripts, client session identifiers, or model memory as CIEL state.
+
+outcome:
+  status: decided
+  completed:
+    - The owner approved the portfolio-flow implementation frame before execution.
+    - Project identity is committed in project.yaml; machine-local checkout paths are local bindings only.
+    - Workstreams default to one lane; agents must surface overlap or proposed parallelism for owner decision.
+    - An interrupted lane is reconciled from plans, events, local Git, and worktree state without relying on a session.
+  not_completed:
+    - No portfolio Wake or lifecycle write capability has been implemented by this decision alone.
+
+evidence:
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  prior_checkpoint: 329054211c3170bcf14c2c8771579447c9b24ad2
+
+unresolved:
+  - The exact portfolio Wake report and project-binding resolution behavior require deterministic implementation tests.
+  - External PR, issue, and board links remain references, not Wake authority.
+
+next_action:
+  action: >-
+    Complete the portfolio artifact contract, present its closeout for owner
+    review, then implement portfolio Wake as the next vertical slice.
+  acceptance_check:
+    - The artifact contract does not add an external-service dependency or a CIEL write command.
+    - Project identity, local binding, workstream lane, and recovery rules remain explicit.

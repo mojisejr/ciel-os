@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20260829T133239_portfolio_wake_prepared
+type: closeout
+recorded_at: 2026-08-29T13:32:39+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  lane: single
+  objective: >-
+    Make CIEL reconstruct the current attention state of active workstreams
+    across multiple locally bound Git projects from repository artifacts and
+    local Git alone.
+  scope:
+    - Extend read-only Wake with project-registry, local-binding, plan, event, and local-Git aggregation.
+    - Report active attention without surfacing completed workstreams by default.
+  out_of_scope:
+    - Event writing, database, daemon, dashboard, GitHub synchronization, or chat/session-derived state.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Wake discovers workstream plans, validates their declared state and lane, and groups matching event checkpoints by lane.
+    - Wake resolves machine-local bindings only as locators, then verifies each available checkout against its committed origin identity and observes HEAD, branch, and worktree state through local Git.
+    - Attention reports active, paused, blocked, unavailable, and same-project conflict states; completed workstreams are omitted from default attention.
+    - Deterministic fixtures prove missing bindings, remote mismatches, lane checkpoint grouping, and every attention state.
+  not_completed:
+    - No real multi-project workstream has yet exercised this report outside deterministic fixtures.
+
+evidence:
+  base_revision: 99a5806a577c4d92ce765ae73f8662bf467c14b5
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  affected_artifacts:
+    - src/portfolio/read.ts
+    - src/portfolio/types.ts
+    - src/wake/read.ts
+    - test/portfolio/read.test.ts
+  checks:
+    - bun run check passed with 15 tests and 0 failures.
+    - bun run wake reported the active ciel-portfolio-flow-001 workstream, its single-lane checkpoints, and a verified local ciel-os binding.
+    - git diff --check passed.
+
+unresolved:
+  - The real multi-project and interrupted-lane proofs remain Phase 4 work.
+  - Lifecycle gate artifacts and their tests remain Phase 3 work.
+
+next_action:
+  action: >-
+    Owner reviews this portfolio-Wake checkpoint. After its commit, implement
+    the explicit lifecycle gates for plan revisions, interruption recovery,
+    and proposed parallelism.
+  acceptance_check:
+    - No session identifier, chat transcript, or external-service state is used as Wake evidence.
+    - A missing or mismatched project binding is explicit rather than silently omitted.

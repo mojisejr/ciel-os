@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20260903T071800_cu12_sprint1_authorized
+type: decision
+recorded_at: 2026-09-03T07:18:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: cu12-simulator-sprint-001
+  lane: single
+  objective: >-
+    Start the first real CIEL product workstream as a local-only CU12
+    Simulator and prove a narrow headless CU12 TCP protocol slice.
+  scope:
+    - Bind cu12-simulator locally at checkouts/cu12-simulator with no origin.
+    - Create a Rust headless simulator for one board and the selected unicast commands.
+    - Prove manual-derived responses with deterministic protocol and TCP tests.
+  out_of_scope:
+    - A remote, push, second lane, UI, persistence, real hardware, Medical Cart,
+      production driver, or CIEL platform capability.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner selected local-only creation first and deferred remote binding.
+    - The owner authorized execution of Phase 1 in plan revision 0.1.
+  not_completed:
+    - The local CU12 repository, implementation, tests, and closeout remain to be completed.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-001/PLAN.md
+  plan_revision: "0.1"
+  execution_phase: "1"
+  prior_checkpoint: fa04f9098a361bb48626211af933f9e20fd7117c
+  protocol_reference:
+    path: .assets/cu12-simulator/reference/CU12 Protocol and Introduction-12.08.2022.pdf
+    sha256: bec83d1819a919cbe7b1879d01cc672b240544a4eaf0f6c3ca4829643b1413b6
+
+unresolved:
+  - The manual does not resolve the conflicting unlock-time defaults.
+  - The manual does not specify an exact conflict response for push-door wait and delayed unlock.
+
+next_action:
+  action: >-
+    Initialize the local Rust repository, implement only Phase 1, and validate
+    it with the plan's proof contract before preparing a closeout.
+  acceptance_check:
+    - Wake recognizes the available local-only CU12 binding and active single lane.

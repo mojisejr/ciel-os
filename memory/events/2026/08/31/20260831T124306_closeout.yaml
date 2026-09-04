@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20260831T124306_checkout_convention_prepared
+type: closeout
+recorded_at: 2026-08-31T12:43:06+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  lane: single
+  objective: >-
+    Establish an IDE-visible but HQ-ignored local checkout convention before
+    creating the real multi-project pilot.
+  scope:
+    - Add the checkout boundary, documentation, local-binding example, and deterministic verification.
+  out_of_scope:
+    - Creating, cloning, initializing, or modifying pilot child repositories.
+    - Executing Phase 5 or its intentional interruption.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Added a tracked checkouts/ boundary with README and .gitkeep while ignoring all child repositories under it.
+    - Documented direct IDE access, relative local bindings, and git -C child-repository commands.
+    - Added deterministic checks for ignored child content and tracked checkout-boundary files.
+    - Updated portfolio fixtures to resolve existing, missing, and mismatched child repositories through relative checkouts/<project-id> paths.
+  not_completed:
+    - No child repository or pilot application exists yet.
+    - Phase 5 is not authorized or started.
+
+evidence:
+  base_revision: b55d8a51e61be6a9e33d70494b0d61fe6565fa98
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  decision_event: memory/events/2026/08/31/20260831T123048_decision.yaml
+  affected_artifacts:
+    - .gitignore
+    - checkouts/README.md
+    - projects.local.example.yaml
+    - test/checkouts.test.ts
+    - test/portfolio/read.test.ts
+  checks:
+    - bun run check passed with 18 tests and 0 failures.
+    - git check-ignore confirmed checkouts/example-project/src/index.ts is ignored by /checkouts/*.
+    - git check-ignore confirmed checkouts/README.md is not ignored.
+    - git diff --check passed.
+
+unresolved:
+  - Lifecycle authorization currently matches a whole plan revision, not an explicit phase. A Phase 4 decision can therefore be mechanically read as authorizing the Phase 5 plan revision even though its recorded scope excludes Phase 5.
+
+next_action:
+  action: >-
+    Before Phase 5, add and test phase-scoped lifecycle authorization so a
+    decision for Phase 4 cannot authorize a later pilot phase. Then obtain a
+    separate owner decision before any child repository is created.
+  acceptance_check:
+    - A Phase 4 decision is rejected for Phase 5 execution by a deterministic Wake test.
+    - The next pilot decision names both its exact plan revision and execution phase.

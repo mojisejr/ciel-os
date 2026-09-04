@@ -1,6 +1,8 @@
 # CIEL v0.1 Feasibility Plan v0.1
 
-**Status:** Active — foundation, event validation, and read-only Wake implemented; fresh-session pilot pending
+**Status:** Completed — foundation, event validation, read-only Wake, and the
+first fresh-session coexistence evaluation are complete. Follow-on portfolio
+flow work is tracked in `workstreams/ciel-portfolio-flow-001/PLAN.md`.
 
 **Purpose:** Turn the completed Codex-only Genesis proof into one small,
 deterministic implementation feasibility slice without adopting the unratified
@@ -125,5 +127,5 @@ Stop and return to owner review if the slice requires any of the following:
 2. Implement event validation with fixtures and tests.
 3. Add the read-only Wake report and its reconstruction tests.
 4. Activate the reviewable session-load contract in `AGENTS.md` and align repository-facing status documentation with the committed read-only core.
-5. Run the slice in a fresh Codex session and record the observed proof gap, if any. Global capabilities may be ambient, but the Wake evidence trace remains local-only.
-6. Only then consider a closeout writer, minimal knowledge, SQLite, or another client bridge.
+5. Run the slice in a fresh Codex session and record the observed proof gap, if any. Global capabilities may be ambient, but the Wake evidence trace remains local-only. **Completed.**
+6. Only then consider the smallest next proof. The owner selected project identity and plan-first portfolio reconstruction; a closeout writer, minimal knowledge, SQLite, or another client bridge remain deferred.

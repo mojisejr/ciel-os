@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20260901T053939_phase5_slice1_prepared
+type: closeout
+recorded_at: 2026-09-01T05:39:39+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  lane: single
+  objective: >-
+    Prove that CIEL can register and reconstruct two actual, local-only child
+    Git repositories with small, independently tested Bun + TypeScript CLIs.
+  scope:
+    - Add local-only Git identity validation and Wake verification.
+    - Create, register, and locally commit pilot-task-ledger and pilot-task-report.
+    - Establish isolated HQ and child test-command boundaries.
+  out_of_scope:
+    - A priority contract change across child repositories.
+    - Intentional interruption or fresh-session recovery evaluation.
+    - Remote repository creation, push, network, database, credential, browser, or user data.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Added a local_only project identity that requires a Git checkout without an origin remote.
+    - Created and locally committed pilot-task-ledger at 7afa230a99a737fa15afdf95ea3c200a7e8696fb.
+    - Created and locally committed pilot-task-report at 8efee244581ba477e227868653b04b5fc79e4239.
+    - Added project registry identities, ignored local bindings, and workstream links for both pilots.
+    - Kept HQ tests scoped to the HQ test directory while each child owns its own test command.
+  not_completed:
+    - No priority contract change, intentional interruption, fresh-session recovery proof, remote, or push occurred.
+
+evidence:
+  base_revision: ca68d019496eac04ea620d48abded7ccd792564d
+  decision_event: memory/events/2026/09/01/20260901T052652_decision.yaml
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  child_commits:
+    pilot-task-ledger: 7afa230a99a737fa15afdf95ea3c200a7e8696fb
+    pilot-task-report: 8efee244581ba477e227868653b04b5fc79e4239
+  checks:
+    - HQ bun run check passes with only HQ tests selected.
+    - Each child bun run check passes independently.
+    - Wake verifies both children as available local-only Git identities with null canonicalRemote.
+    - git remote -v is empty and git status --short is empty in each child checkout.
+    - git check-ignore confirms pilot source is ignored by the HQ repository.
+
+unresolved:
+  - Slice 5.2 needs a separate owner decision before adding priority to the shared task contract.
+  - The strict fresh-session recovery proof remains unattempted and needs later isolated-environment preparation.
+
+next_action:
+  action: >-
+    Review and commit this Slice 5.1 closeout without pushing. Then align and
+    obtain a separate owner decision before beginning the cross-repository
+    priority-contract slice.
+  acceptance_check:
+    - The next decision names a new plan revision and explicitly limits the work to Slice 5.2.

@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20260903T072444_cu12_sprint1_prepared
+type: closeout
+recorded_at: 2026-09-03T07:24:44+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: cu12-simulator-sprint-001
+  lane: single
+  objective: >-
+    Prove that a real external TCP client can send selected CU12 V1.1 wire
+    frames to a headless local simulator and receive manual-derived responses.
+  scope:
+    - One local-only CU12 Simulator Git checkout with no origin remote.
+    - One virtual board at address 0x00 and unicast commands 0x80, 0x81, and 0x8F.
+    - Parser, checksum, virtual state, TCP server, golden vectors, and black-box tests.
+  out_of_scope:
+    - Broadcast, multi-board, remaining commands, UI, persistence, serial,
+      fault injection, real hardware, Medical Cart integration, production driver,
+      remote, push, or CIEL platform infrastructure.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - A local-only cu12-simulator checkout was initialized at checkouts/cu12-simulator on main with no origin remote.
+    - Child commit 9deab0d5021749970d6d66bf30977bc9d546ea71 adds the headless Rust simulator.
+    - Manual-derived unicast Get Status, Unlock, and Query Version responses match byte-for-byte in golden-vector tests.
+    - The stream parser accepts fragmented and concatenated valid frames and rejects invalid STX, ETX, DATALEN, and checksum values before dispatch.
+    - Unlock acknowledgement does not change manual hook status.
+    - A running binary on loopback port 51234 received a split Unlock frame and returned 02 00 02 81 10 00 03 98.
+  not_completed:
+    - No hardware conformance test has occurred.
+    - Broadcast, multi-board, commands 0x82 through 0x85 and 0x8E, UI, persistence, serial, monitor, and fault injection remain outside this completed workstream.
+
+evidence:
+  base_revision: 1ce1086b440dbcf3a80d783e975692a9d0c51344
+  decision: memory/events/2026/09/03/20260903T071800_decision.yaml
+  plan: workstreams/cu12-simulator-sprint-001/PLAN.md
+  plan_revision: "0.2"
+  child:
+    path: checkouts/cu12-simulator
+    commit: 9deab0d5021749970d6d66bf30977bc9d546ea71
+    identity: local-only
+  protocol_reference:
+    path: .assets/cu12-simulator/reference/CU12 Protocol and Introduction-12.08.2022.pdf
+    sha256: bec83d1819a919cbe7b1879d01cc672b240544a4eaf0f6c3ca4829643b1413b6
+  checks:
+    - cargo fmt --check passes in checkouts/cu12-simulator.
+    - cargo test passes with 7 tests in checkouts/cu12-simulator.
+    - A loopback TCP probe returned the documented Unlock response from the running binary.
+
+unresolved:
+  - SPEC-AMBIGUITY-001: the manual gives conflicting 550ms and 500ms unlock-time defaults.
+  - SPEC-AMBIGUITY-002: the manual does not define the exact response behavior for push-door wait versus delayed unlock.
+  - Real CU12 hardware behavior remains unverified.
+
+next_action:
+  action: >-
+    Review and commit this closeout locally without pushing. Any further CU12
+    capability requires a new owner-approved workstream plan and decision.
+  acceptance_check:
+    - Wake reports a clean available local-only CU12 checkout and this workstream as completed and idle.

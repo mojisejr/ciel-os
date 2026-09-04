@@ -4,6 +4,7 @@ import { join, resolve } from "node:path";
 import { parseDocument } from "yaml";
 
 import { validateEventDirectory } from "../events/validate.ts";
+import { readPortfolioWakeReport } from "../portfolio/read.ts";
 import type { WakeReport } from "./types.ts";
 
 interface GitResult {
@@ -88,7 +89,7 @@ function findCheckpoint(event: Record<string, unknown>): string | null {
     return readString(repository, "head") ?? readString(repository, "base_revision") ?? readString(evidence, "base_revision");
   }
 
-  return readString(evidence, "base_revision");
+  return readString(evidence, "base_revision") ?? readString(evidence, "prior_checkpoint");
 }
 
 async function readLatestEvent(eventsDirectory: string): Promise<LatestEvent | null> {
@@ -181,6 +182,7 @@ export async function readWakeReport(repositoryDirectory = "."): Promise<WakeRep
   const worktreeOutput = await requireGit(repositoryPath, ["worktree", "list", "--porcelain"]);
   const validation = await validateEventDirectory(eventsDirectory);
   const latestEvent = await readLatestEvent(eventsDirectory);
+  const portfolio = await readPortfolioWakeReport(repositoryPath);
   const statusEntries = statusOutput.length === 0 ? [] : statusOutput.trimEnd().split("\n");
 
   return {
@@ -200,11 +202,11 @@ export async function readWakeReport(repositoryDirectory = "."): Promise<WakeRep
         readmePresent: await readIfPresent(join(repositoryPath, "README.md"))
       }
     },
-    recorded: { latestEvent },
+    recorded: { latestEvent, portfolio },
     reconciliation: await reconcileCheckpoint(repositoryPath, head, latestEvent),
     unknowns: [
       "Human approval, review, and external rules are unknown unless a repository record explicitly establishes them."
     ],
-    validationErrors: validation.errors
+    validationErrors: [...validation.errors, ...portfolio.validationErrors]
   };
 }

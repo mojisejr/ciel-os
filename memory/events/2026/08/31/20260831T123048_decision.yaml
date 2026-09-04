@@ -1,0 +1,42 @@
+schema_version: ciel.event.v0.1
+id: evt_20260831T123048_checkout_convention_authorized
+type: decision
+recorded_at: 2026-08-31T12:30:48+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  lane: single
+  objective: >-
+    Create the ignored, IDE-visible HQ checkout convention for local child Git
+    repositories before any real-workstream pilot begins.
+  scope:
+    - Add the checkouts/ boundary, documentation, local-binding example, and deterministic verification.
+  out_of_scope:
+    - Creating, cloning, initializing, or modifying pilot-task-ledger or pilot-task-report.
+    - Executing the intentional interruption or fresh-session pilot recovery.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner authorized execution of Phase 4 only.
+  not_completed:
+    - Phase 5 remains owner-gated and is not authorized by this decision.
+
+evidence:
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  plan_revision: "0.4"
+  prior_checkpoint: b55d8a51e61be6a9e33d70494b0d61fe6565fa98
+
+unresolved:
+  - The Phase 5 pilot must receive a separate explicit owner decision before any child repository is created.
+
+next_action:
+  action: >-
+    Add and verify the ignored HQ checkout convention, then present a Phase 4
+    closeout for owner review.
+  acceptance_check:
+    - The implementation creates no pilot repository and no external artifact.

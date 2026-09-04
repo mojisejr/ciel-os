@@ -8,9 +8,9 @@
     "bun": ">=1.3.2 <2"
   },
   "scripts": {
-    "test": "bun test",
+    "test": "bun test test/*.test.ts test/**/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "check": "bun run typecheck && bun test",
+    "check": "bun run typecheck && bun run test",
     "events:validate": "bun run bin/ciel.ts events validate",
     "wake": "bun run bin/ciel.ts wake"
   },

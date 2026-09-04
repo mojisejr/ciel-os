@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20260902T143548_phase5_slice2_prepared
+type: closeout
+recorded_at: 2026-09-02T14:35:48+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  lane: single
+  objective: >-
+    Prove a small, explicit priority contract change flowing from Ledger into
+    Report across two independently committed local repositories.
+  scope:
+    - Require the exact priority values low, normal, or high in Ledger and Report.
+    - Summarize valid tasks independently by status and priority in Report.
+    - Update fixtures, unit tests, and child Git commits.
+  out_of_scope:
+    - A default or implicit priority value.
+    - Intentional interruption, fresh-session recovery evaluation, remote, push, network, database, credential, browser, or user data.
+
+outcome:
+  status: prepared_for_owner_review
+  completed:
+    - Ledger validates and exports explicit task priority values.
+    - Report rejects omitted or invalid priority values and summarizes by status and priority.
+    - Committed the Ledger contract change at 4d230711ff45f97b5eb92957d31f55bbee7c26d9.
+    - Committed the Report adaptation at ed6f7c2125477efa1c932d3e3d2fa08be34e1674.
+  not_completed:
+    - No default priority, interruption, fresh-session proof, remote, or push occurred.
+
+evidence:
+  base_revision: 96af94acef5563a96a4a7083b9bee41f16787ca5
+  decision_event: memory/events/2026/09/02/20260902T143337_decision.yaml
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  child_commits:
+    pilot-task-ledger: 4d230711ff45f97b5eb92957d31f55bbee7c26d9
+    pilot-task-report: ed6f7c2125477efa1c932d3e3d2fa08be34e1674
+  checks:
+    - Ledger bun run check passes with explicit-priority validation tests.
+    - Ledger CLI exports only tasks with explicit valid priority values.
+    - Report bun run check passes with priority-input and summary tests.
+    - Report CLI produces separate byStatus and byPriority counts.
+    - Both child Git worktrees are clean and have no origin remote.
+
+unresolved:
+  - Slice 5.3 needs a separate owner decision before marking the plan executing and intentionally leaving a reversible Report change without closeout.
+  - The strict fresh-session recovery proof remains unattempted.
+
+next_action:
+  action: >-
+    Review and commit this Slice 5.2 closeout without pushing. Then align and
+    obtain a separate owner decision before starting the intentional
+    interruption slice.
+  acceptance_check:
+    - The next decision names a new plan revision and explicitly limits work to Slice 5.3.

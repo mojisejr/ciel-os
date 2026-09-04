@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T065706_pr_workflow_phase2_authorized
+type: decision
+recorded_at: 2026-09-04T06:57:06+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Adopt the existing unpushed CIEL HQ history through a protected-main pull
+    request without rewriting it, thereby proving the remote branch workflow.
+  scope:
+    - Push chore/adopt-local-main-history to the declared CIEL HQ origin.
+    - Open one pull request from that topic branch to main with the passed local evidence.
+    - Prepare the Phase 2 closeout for owner review; do not merge the pull request.
+  out_of_scope:
+    - Direct main push, force-push, reset, rebase, PR merge, GitHub rule changes, CI, review quotas, and any CU12 source or transport work.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner approved the Phase 1 closeout checkpoint and authorized Phase 2 of plan revision 0.1.
+  not_completed:
+    - Topic-branch push, PR creation, Phase 2 closeout review, and owner PR review/merge remain to be completed.
+
+evidence:
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.1"
+  execution_phase: "2"
+  phase1_checkpoint: 73a060c7373b0e02254cc0ac6a5502fad7fd4600
+  topic_branch: chore/adopt-local-main-history
+  target_branch: main
+  target_remote: github.com/mojisejr/ciel-os
+
+unresolved:
+  - GitHub will determine the PR merge eligibility under the current main ruleset.
+  - Only the owner may review and authorize the future merge.
+
+next_action:
+  action: >-
+    Commit this decision on the topic branch, push that branch, open the
+    adoption PR, and prepare a closeout event that records the actual PR URL
+    and evidence without merging it.
+  acceptance_check:
+    - GitHub reports an open PR from chore/adopt-local-main-history to main, and origin/main remains unchanged.

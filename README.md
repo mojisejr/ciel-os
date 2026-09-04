@@ -10,7 +10,11 @@ CIEL's primary integration is **workspace files plus a local CLI**, not a hosted
 
 ## Status
 
-The Codex-only Genesis proof is complete. CIEL is now evaluating its v0.1 read-only continuity core: a local Bun + TypeScript CLI validates append-only event records and produces a Git-aware Wake report. A genuinely fresh-session pilot is pending; no event write path, database, daemon, MCP server, or second client bridge exists.
+The Codex-only Genesis and read-only continuity-core proof are complete: a
+local Bun + TypeScript CLI validates append-only event records and produces a
+Git-aware Wake report. CIEL is now proving a plan-first portfolio flow for
+multiple local projects and workstreams. No event write path, database, daemon,
+MCP server, or second client bridge exists.
 
 The current proposed foundation is [CIEL Genesis Contract v0.2](docs/genesis/CIEL_GENESIS_CONTRACT_v0.2.md). It changes the earlier kernel-only framing into a coding-agent continuity system while preserving the local-first, owner-controlled truth model. [v0.1](docs/genesis/CIEL_GENESIS_CONTRACT_v0.1.md) remains as the superseded proposal.
 
@@ -48,6 +52,9 @@ src/
 test/                 Deterministic validator and Wake tests
 docs/
   genesis/            Genesis evidence, baseline, and v0.1 feasibility plan
+projects/             Committed project identities
+checkouts/            Ignored local child repositories, visible from the HQ tree
+workstreams/          Current plan artifacts for active workstreams
 memory/
   events/             Append-only semantic records
 ```
@@ -60,12 +67,79 @@ bun run wake
 
 # Focused diagnostics
 bun run events:validate
+bun run bin/ciel.ts projects validate
 bun run check
 ```
 
+When `projects.local.yaml` is present, `wake` also reports the active
+workstreams in `workstreams/*/PLAN.md`, their event checkpoints grouped by
+lane, and local-Git verification for each bound project. The local file is a
+machine locator only: a missing, inaccessible, or mismatched binding is
+reported as attention, never inferred as a valid checkout.
+
+## Windows recovery proof
+
+The tracked [Windows bootstrap guide](docs/portability/WINDOWS_BOOTSTRAP.md)
+documents the supported clone layout for CIEL HQ and CU12 Simulator. It names
+ordinary developer prerequisites and the exact local checks; it does not copy
+machine-specific harness state, ignored assets, or secrets into Git.
+
+## Local child repositories
+
+`checkouts/` is the local, IDE-visible home for repositories operated through
+this HQ. Child repositories are intentionally ignored by the HQ Git repository:
+CIEL tracks their identities, bindings, plans, and semantic events, while each
+child retains its own Git history. See [checkouts/README.md](checkouts/README.md)
+before cloning or initializing a child project.
+
+## Change workflow
+
+`main` is CIEL's verified integration and recovery branch, not a development
+branch. Every tracked code, plan, event, documentation, or test change starts
+on one bounded topic branch in one repository. Use
+`feat/<topic>`, `fix/<topic>`, `docs/<topic>`, or `chore/<topic>`.
+
+For a local-only project, start from `main`, run the applicable checks, then
+merge the topic branch locally without rewriting history:
+
+```bash
+git switch main
+git switch -c feat/<topic>
+# make the tracked change, run checks, and commit
+git switch main
+git merge --ff-only feat/<topic>
+git branch -d feat/<topic>
+```
+
+For a project with a canonical remote, first make the local `main` match its
+remote, then propose the checked change through a pull request:
+
+```bash
+git fetch origin --prune
+git switch main
+git pull --ff-only
+git switch -c feat/<topic>
+# make the tracked change, run checks, and commit
+git push -u origin feat/<topic>
+gh pr create --base main --head feat/<topic>
+```
+
+The owner reviews and authorizes each remote merge. Prefer a GitHub merge
+commit so CIEL events that name existing Git revisions remain traceable. A
+direct `main` push is allowed only once to seed an empty remote repository;
+after that remote exists, every tracked change follows the topic-branch and PR
+path. Read-only investigation and ignored machine-local material do not need a
+branch.
+
 ## Current proof target
 
-Without calling an LLM API, CIEL must let a genuinely fresh Codex session reconstruct and resume one workstream from `bun run wake`, Git-aware evidence, and concise semantic records—without the human retelling the previous session's chat history. The v0.1 pilot evaluates this claim; multi-client bridges, an index, and event writing are later proofs, not initial structure.
+Without calling an LLM API, CIEL must let a new coding-agent session reconstruct
+and safely resume active workstreams from repository plans, Git-aware evidence,
+and concise semantic records—without the human retelling task-specific chat
+history. The session may coexist with normal host-provided global capabilities;
+after Wake they may assist the agent, but they are never CIEL evidence or
+authority. Portfolio indexing, event writing, and client bridges remain later
+proofs, not initial structure.
 
 ## Deliberate non-goals for this stage
 

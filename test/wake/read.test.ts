@@ -30,6 +30,30 @@ function eventYaml(baseRevision: string): string {
   ].join("\n");
 }
 
+function decisionYaml(priorCheckpoint: string): string {
+  return [
+    "schema_version: ciel.event.v0.1",
+    "id: evt_20260826T000001_decision",
+    "type: decision",
+    "recorded_at: 2026-08-26T00:00:01+07:00",
+    "recorded_by:",
+    "  human: owner",
+    "workstream:",
+    "  id: fixture-workstream",
+    "  objective: Reconstruct a Git-backed fixture.",
+    "  scope: []",
+    "  out_of_scope: []",
+    "outcome:",
+    "  status: decided",
+    "evidence:",
+    `  prior_checkpoint: ${priorCheckpoint}`,
+    "unresolved: []",
+    "next_action:",
+    "  action: Inspect current Git evidence.",
+    ""
+  ].join("\n");
+}
+
 function git(repositoryPath: string, arguments_: string[]): string {
   const process = Bun.spawnSync(["git", "-C", repositoryPath, ...arguments_], {
     stderr: "pipe",
@@ -90,6 +114,25 @@ test("reports a deliberate dirty change as observed current state", async () => 
 
     expect(report.observed.repository.workingTree.clean).toBe(false);
     expect(report.observed.repository.workingTree.entries).toEqual([" M README.md"]);
+    expect(report.reconciliation.status).toBe("expected-evolution");
+  } finally {
+    await rm(fixture.path, { force: true, recursive: true });
+  }
+});
+
+test("reconciles a latest decision through its prior checkpoint", async () => {
+  const fixture = await createRepositoryFixture();
+
+  try {
+    await writeFile(
+      join(fixture.path, "memory/events/2026/08/26/20260826T000001_decision.yaml"),
+      decisionYaml(fixture.baseRevision)
+    );
+    const report = await readWakeReport(fixture.path);
+
+    expect(report.recorded.latestEvent).toEqual(
+      expect.objectContaining({ id: "evt_20260826T000001_decision", checkpoint: fixture.baseRevision })
+    );
     expect(report.reconciliation.status).toBe("expected-evolution");
   } finally {
     await rm(fixture.path, { force: true, recursive: true });

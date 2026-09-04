@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20260903T045100_phase5_operational_continuity_reframed
+type: decision
+recorded_at: 2026-09-03T04:51:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  lane: single
+  objective: >-
+    Reframe the interrupted-lane recovery proof as operational continuity in a
+    normal coding-agent environment with ambient global capabilities.
+  scope:
+    - Revise the portfolio-flow plan from 1.0 to 1.1.
+    - Define Slice 5.4 as a natural-prompt recovery evaluation without a human
+      task-specific briefing, not as a zero-context or clean-room evaluation.
+    - Keep repository files and local Git as the only sources for CIEL facts
+      and owner authority during Wake.
+  out_of_scope:
+    - Starting the Slice 5.4 evaluation in this decision.
+    - Changing, committing, revising, or reverting the Report scratch change.
+    - A new lane, remote, push, network, database, credential, browser, or user data.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner approved the operational-continuity reframe for plan revision 1.1.
+  not_completed:
+    - The open Slice 5.3 execution still needs reconciliation.
+    - Slice 5.4 evaluation and the final scratch-change disposition remain owner-gated.
+
+evidence:
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  plan_revision: "1.1"
+  execution_phase: "5"
+  prior_checkpoint: 85f7c83a88fa37c35f214936374657c6604c462c
+  prior_decision: evt_20260902T191117_phase5_slice3_authorized
+
+unresolved:
+  - The next ordinary session must demonstrate reconstruction from local evidence.
+  - The owner will later decide whether to keep, revise, or revert the Report scratch change.
+
+next_action:
+  action: >-
+    Review this reframe, then conduct Slice 5.4 only after a separate owner
+    direction to begin that evaluation.
+  acceptance_check:
+    - The plan permits normal global coexistence without granting it CIEL authority.
+    - Wake still reports the open Report execution as needing reconciliation.

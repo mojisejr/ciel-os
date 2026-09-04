@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20260902T143337_phase5_slice2_authorized
+type: decision
+recorded_at: 2026-09-02T14:33:37+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-portfolio-flow-001
+  lane: single
+  objective: >-
+    Prove a small, explicit contract change flowing from the task Ledger into
+    the task Report across two independently committed local repositories.
+  scope:
+    - Require task priority to be low, normal, or high in Ledger validation and export.
+    - Require the same priority in Report input validation.
+    - Add deterministic Report summaries by status and by priority.
+    - Update fixtures, unit tests, and local commits in both child repositories.
+  out_of_scope:
+    - A default priority or any backward-compatible implicit value.
+    - Intentional interruption, fresh-session recovery evaluation, remote, push, network, database, credential, browser, or user data.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner authorized Slice 5.2 after the Slice 5.1 checkpoint.
+  not_completed:
+    - Slice 5.3 and later remain owner-gated.
+
+evidence:
+  plan: workstreams/ciel-portfolio-flow-001/PLAN.md
+  plan_revision: "0.8"
+  execution_phase: "5"
+  prior_checkpoint: e98f0b3dad92773036aea6ecbbee53c3ee615166
+
+unresolved:
+  - Fresh-session recovery is not part of this contract-change slice.
+
+next_action:
+  action: >-
+    Commit this entry checkpoint without pushing, then update the child task
+    contract and report summary only within this authorized scope.
+  acceptance_check:
+    - Ledger and Report independently reject an omitted or invalid priority.
+    - Report deterministically summarizes the same valid priority values exported by Ledger.
