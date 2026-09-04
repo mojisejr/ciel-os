@@ -52,6 +52,7 @@ Wake → Align → Plan → Execute → Closeout
 ## Git workflow
 
 - Do not develop tracked changes directly on `main`. Use a short-lived topic branch; local-only projects merge locally after checks, while projects with a canonical remote merge through an owner-reviewed pull request.
+- Before starting tracked work in a remote project, and after its PR merges, return to a clean local `main` that matches fetched `origin/main`.
 
 ## Semantic event convention
 

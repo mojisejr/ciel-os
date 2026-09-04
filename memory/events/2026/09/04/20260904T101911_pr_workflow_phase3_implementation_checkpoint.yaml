@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T101911_pr_workflow_phase3_implementation_checkpoint
+type: closeout
+recorded_at: 2026-09-04T10:19:11+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Reconcile the merged HQ adoption pull request and prove that future remote
+    work begins and ends at a clean, fetched main branch without losing closeout
+    evidence.
+
+outcome:
+  status: implementation-checkpoint-prepared
+  completed:
+    - >-
+      Preserved the recorded Phase 2 closeout by carrying commit 8c378cc onto
+      chore/reconcile-pr-workflow-adoption, based on clean, synced main
+      40071bf3a8481355e0cdc600c08972350fc771c9.
+    - >-
+      Added the concise remote-project clean-main requirement to AGENTS.md and
+      the detailed start, pre-merge closeout, post-merge return, and guarded
+      branch-cleanup procedure to README.md.
+    - Added deterministic policy assertions in test/git-workflow.test.ts.
+    - Updated plan revision 0.2 to record the Phase 3 proof contract.
+  not_completed:
+    - This checkpoint has not yet been reviewed, committed, pushed, or placed in a pull request.
+    - The PR-head closeout, owner merge, post-merge main synchronization, and safe branch cleanup remain unproven.
+
+evidence:
+  base_main: 40071bf3a8481355e0cdc600c08972350fc771c9
+  base_divergence: "0 0"
+  topic_branch: chore/reconcile-pr-workflow-adoption
+  carried_closeout_commit: 8c378cce566f2b6de07f1b2fa32b0394e7a8c304
+  authorization_event: memory/events/2026/09/04/20260904T101721_pr_workflow_phase3_authorized.yaml
+  changed_artifacts:
+    - AGENTS.md
+    - README.md
+    - test/git-workflow.test.ts
+    - workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  checks:
+    - "bun run check: passed; 23 tests and 65 expectations"
+    - "git diff --cached --check: passed"
+    - "bun run wake: event validation reported no errors"
+
+unresolved:
+  - Owner review is required before this event and the scoped artifacts are committed.
+  - A final closeout event must be committed and pushed on the PR head before an owner merge decision.
+  - Post-merge proof requires a future fetched, fast-forwarded, clean local main equal to origin/main.
+
+next_action:
+  action: >-
+    Obtain owner review of this implementation checkpoint. If approved, commit
+    the staged Phase 3 artifacts, push chore/reconcile-pr-workflow-adoption,
+    and open its one follow-up PR; do not request or perform a merge yet.
+  acceptance_check:
+    - The commit contains this reviewed checkpoint and the scoped policy artifacts.
+    - No direct push, force-push, or rewrite of main occurs.

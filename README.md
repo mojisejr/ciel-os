@@ -111,13 +111,23 @@ git merge --ff-only feat/<topic>
 git branch -d feat/<topic>
 ```
 
-For a project with a canonical remote, first make the local `main` match its
-remote, then propose the checked change through a pull request:
+For a project with a canonical remote, pass this start gate before creating a
+topic branch. Both `git status --short` commands must be empty and the two
+printed revisions must be identical:
 
 ```bash
+git status --short
 git fetch origin --prune
 git switch main
-git pull --ff-only
+git pull --ff-only origin main
+git rev-parse HEAD
+git rev-parse origin/main
+git status --short
+```
+
+Then propose the checked change through a pull request:
+
+```bash
 git switch -c feat/<topic>
 # make the tracked change, run checks, and commit
 git push -u origin feat/<topic>
@@ -128,8 +138,15 @@ The owner reviews and authorizes each remote merge. Prefer a GitHub merge
 commit so CIEL events that name existing Git revisions remain traceable. A
 direct `main` push is allowed only once to seed an empty remote repository;
 after that remote exists, every tracked change follows the topic-branch and PR
-path. Read-only investigation and ignored machine-local material do not need a
-branch.
+path. Before requesting a merge, prepare the phase closeout event, have the
+owner review it, commit and push it to the PR branch, then re-read the PR head
+before the owner decides to merge.
+
+After a merge, repeat the start gate before new tracked work. Clean up the
+merged branch only after fetching, confirming `git log origin/main..<branch>`
+is empty, and confirming no open PR still references it; delete the local
+branch before deleting its remote branch. Read-only investigation and ignored
+machine-local material do not need a branch.
 
 ## Current proof target
 
