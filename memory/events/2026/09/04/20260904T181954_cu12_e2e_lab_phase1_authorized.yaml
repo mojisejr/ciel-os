@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T181954_cu12_e2e_lab_phase1_authorized
+type: decision
+recorded_at: 2026-09-04T18:19:54+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: cu12-e2e-lab-001
+  lane: single
+  objective: >-
+    Prove that an independent native desktop client can use the CU12 simulator
+    through its macOS virtual serial endpoint.
+  scope:
+    - Authorize Phase 1 of plan revision 0.1.
+    - Create the private mojisejr/cu12-e2e-lab repository and seed its main branch once.
+    - Implement the bounded native Rust desktop client without changing cu12-simulator.
+  out_of_scope:
+    - TCP application flow, simulator changes, USB, RS485, Windows, Linux, real hardware, persistence, services, credentials, and copied manual assets.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner authorized Phase 1 of plan revision 0.1 and creation of the named private desktop-lab repository.
+  not_completed:
+    - Repository creation, implementation, end-to-end proof, closeout, and owner merge remain to be completed.
+
+evidence:
+  plan: workstreams/cu12-e2e-lab-001/PLAN.md
+  plan_revision: "0.1"
+  execution_phase: "1"
+  hq_starting_main: b4cb6950e72540af2610d5b64bef350c45b8fb60
+  cu12_simulator:
+    revision: df032d3947d836e8f4a502ff4cdb4f200af787fb
+    canonical_remote: github.com/mojisejr/cu12-simulator
+  proposed_lab_remote: github.com/mojisejr/cu12-e2e-lab
+
+unresolved:
+  - Current dependency versions and license compatibility must be reviewed before they are locked in the lab repository.
+  - Virtual-PTY success does not prove USB, electrical RS485, Windows COM, or real CU12 behavior.
+
+next_action:
+  action: >-
+    Checkpoint this authorization in CIEL HQ, create the private lab repository,
+    and implement the Phase 1 bounded native client on its ordinary feature branch.
+  acceptance_check:
+    - The new repository contains no simulator source or manual asset and opens a responsive native UI that reports PTY connection failure explicitly.
