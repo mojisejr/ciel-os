@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T105523_pr_workflow_phase4_compact_flow_authorized
+type: decision
+recorded_at: 2026-09-04T10:55:23+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Reduce a remote change to one final merge-ready PR review while retaining a
+    draft merge lock, closeout-on-head evidence, owner merge authority, and
+    verified post-merge cleanup.
+  scope:
+    - Review the remote closeout as part of the final ready-for-review PR instead of before its commit.
+    - Let the agent advance a verified draft PR to ready for review and report it once.
+    - Apply the compact flow to the existing draft PR #18.
+  out_of_scope:
+    - Automatic or unapproved merge, direct main push, force-push, GitHub rule changes, approval quotas, hosted CI, database, daemon, or CU12 work.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner approved the compact final-PR review flow after the Phase 4 draft workflow exposed excessive conversational gates.
+  not_completed:
+    - The contract update, PR #18 closeout commit, final ready-for-review report, owner merge, and post-merge cleanup remain to be completed.
+
+evidence:
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.4"
+  execution_phase: "4"
+  topic_branch: docs/revise-pr-lifecycle
+  draft_pull_request: https://github.com/mojisejr/ciel-os/pull/18
+  observed_draft_head: 3c42425bbb51acf96f8cb7690be06d74a6145a60
+
+unresolved:
+  - The agent must verify the closeout is on PR #18's draft head before making it ready for review.
+  - The owner retains the only merge decision.
+
+next_action:
+  action: >-
+    Commit and push the updated contract and Phase 4 closeout, verify the draft
+    PR head and closeout ancestry, mark PR #18 ready for review, then report it
+    as the single final review surface.
+  acceptance_check:
+    - No merge occurs; PR #18 becomes ready only after the closeout-on-head proof passes.

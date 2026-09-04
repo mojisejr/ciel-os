@@ -140,10 +140,11 @@ commit so CIEL events that name existing Git revisions remain traceable. A
 direct `main` push is allowed only once to seed an empty remote repository;
 after that remote exists, every tracked change follows the topic-branch and PR
 path. Against the actual draft PR, prepare the phase closeout event with its
-number, URL, and observed head revision. Have the owner review it, commit and
-push it to the PR branch, then fetch and prove that the closeout commit is an
-ancestor of the PR head. Only after that proof may the agent mark the PR ready
-for review; the owner then decides whether to merge it.
+number, URL, and observed head revision, then commit and push it to the PR
+branch. Fetch and prove that the closeout commit is an ancestor of the PR head.
+Only after that proof may the agent mark the PR ready for review and report one
+final, merge-ready PR to the owner. The owner reviews the closeout together with
+the change in that final PR, then decides whether to merge it.
 
 After a merge, repeat the start gate before new tracked work. Clean up the
 merged branch only after fetching, confirming `git log origin/main..<branch>`

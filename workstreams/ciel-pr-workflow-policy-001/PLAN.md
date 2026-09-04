@@ -3,7 +3,7 @@
 **Workstream:** `ciel-pr-workflow-policy-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution phase:** 4
 **Execution state:** executing
 **Parallelism:** none
@@ -72,7 +72,7 @@ clean, current `main` with no obsolete topic-branch evidence left behind.
 | `ciel-os` | Policy home and one-time history-adoption PR target | `.` |
 | `cu12-simulator` | First child to follow the remote-project rule after its seed push | `checkouts/cu12-simulator` |
 
-## Policy v0.1 observed and v0.2 proposed for decision
+## Policy v0.1 observed and v0.3 proposed for decision
 
 1. `main` is not a development branch. Do not make normal tracked commits on
    it; use it only to start a topic branch, receive a completed merge, or
@@ -98,13 +98,15 @@ clean, current `main` with no obsolete topic-branch evidence left behind.
 8. Create every remote PR as a **draft**. A draft is the merge lock while the
    PR's final closeout is being prepared; do not mark it ready for review yet.
 9. Prepare the phase closeout against the actual draft PR and head revision,
-   obtain owner review, commit and push it to that PR branch, then re-read the
-   PR head and prove the closeout commit is its ancestor. Only then may an
-   agent mark the PR ready for review and ask the owner for a merge decision.
-10. After any merge, repeat the clean-and-synced-main start gate before new
-    tracked work begins. Clean up only after the merge is verified, the
-    candidate has no commits outside `origin/main`, no open PR references it,
-    and local deletion precedes remote deletion.
+   commit and push it to that PR branch, then re-read the PR head and prove the
+   closeout commit is its ancestor. Only then may an agent mark the PR ready
+   for review and report that single final PR to the owner.
+10. The owner reviews the closeout and all proposed changes in the final PR,
+    then decides whether to merge. After any merge, repeat the
+    clean-and-synced-main start gate before new tracked work begins. Clean up
+    only after the merge is verified, the candidate has no commits outside
+    `origin/main`, no open PR references it, and local deletion precedes remote
+    deletion.
 
 ## Authority and boundaries
 
@@ -193,15 +195,15 @@ clean, current `main` with no obsolete topic-branch evidence left behind.
 | Protected `main` is respected | PR targets `main`; no direct or force push occurs | Hard Gate |
 | Local-only stays simple | documented `--ff-only` local merge path, with no remote/PR requirement | Hard Gate |
 | Remote work begins from canonical state | clean `main`, fetched `origin/main`, `--ff-only`, equal SHA, then topic-branch creation | Hard Gate |
-| A PR cannot merge during closeout | observed GitHub draft state before the closeout is reviewed and pushed | Hard Gate |
-| Closeout reaches review before merge | closeout event commit is an ancestor of the PR head re-read before merge | Hard Gate |
+| A PR cannot merge during closeout | observed GitHub draft state before the closeout is committed and pushed | Hard Gate |
+| Closeout reaches final PR review | closeout event commit is an ancestor of the PR head before it becomes ready for review | Hard Gate |
 | Post-merge local state is unambiguous | fetched `main`, equal SHA, clean status, and prior topic branch no longer active | Hard Gate |
 | Branch cleanup preserves evidence | empty `git log origin/main..<branch>`, no open PR reference, then local-before-remote deletion | Hard Gate |
 
 ## Phase 4 — draft-gated lifecycle proof (proposed; owner decision required)
 
-**State:** implementation checkpoint prepared; owner review pending
-**Authorization:** `evt_20260904T103716_pr_workflow_phase4_authorized`
+**State:** draft PR open; compact final-report gate in progress
+**Authorization:** `evt_20260904T105523_pr_workflow_phase4_compact_flow_authorized`
 
 ### Definition of done
 
@@ -212,13 +214,14 @@ clean, current `main` with no obsolete topic-branch evidence left behind.
    applicable checks.
 3. Push that branch and open exactly one **draft** PR to `main`; record the
    PR number, URL, draft state, and observed head revision in its closeout.
-4. Present the Phase 4 closeout event for owner review; after approval, commit
-   and push it to the draft PR head.
+4. Prepare the Phase 4 closeout event against the draft PR, commit and push it
+   to the draft PR head, without making the PR ready for review first.
 5. Re-read the remote PR and Git refs. Prove that it remains draft, its head
    includes the reviewed closeout commit, and the closeout commit is an
    ancestor of that head.
-6. Mark the PR ready for review only after step 5. The owner alone decides
-   whether and when to merge it.
+6. Mark the PR ready for review only after step 5, then report the one final
+   merge-ready PR to the owner. The owner reviews it and alone decides whether
+   and when to merge it.
 7. After an owner merge, fetch and fast-forward local `main`; prove `HEAD`
    equals `origin/main`, divergence is `0 0`, and the working tree is clean.
 8. Fetch again and clean only the finished proof branch: verify no commit lies
@@ -238,7 +241,7 @@ clean, current `main` with no obsolete topic-branch evidence left behind.
 
 ## Exit condition
 
-Review and commit the Phase 4 implementation checkpoint, then push the proof
-branch and open its one draft PR. Complete the draft-gated proof through
-post-merge cleanup. Only then may the owner-provided Windows clone proof resume
-as its separate paused workstream.
+Commit and push the Phase 4 final closeout to draft PR #18; re-read its head
+and closeout ancestry, mark it ready for review, and report the final PR to the
+owner. Complete the proof through post-merge cleanup. Only then may the
+owner-provided Windows clone proof resume as its separate paused workstream.

@@ -11,7 +11,7 @@ test("keeps the startup Git rule concise and the workflow discoverable", async (
   expect(agents).toContain("## Git workflow");
   expect(agents).toContain("Do not develop tracked changes directly on `main`.");
   expect(agents).toContain("return to a clean local `main` that matches fetched `origin/main`");
-  expect(agents).toContain("Keep every remote PR as a draft until its reviewed phase closeout");
+  expect(agents).toContain("Keep every remote PR as a draft until its phase closeout");
   expect(agents).not.toContain("git switch -c");
   expect(readme).toContain("## Change workflow");
   expect(readme).toContain("git merge --ff-only feat/<topic>");
@@ -19,6 +19,7 @@ test("keeps the startup Git rule concise and the workflow discoverable", async (
   expect(readme).toContain("gh pr create --draft --base main --head feat/<topic>");
   expect(readme).toContain("merge lock while CIEL prepares its final closeout");
   expect(readme).toContain("ancestor of the PR head");
+  expect(readme).toContain("final, merge-ready PR to the owner");
   expect(readme).toContain("git log origin/main..<branch>");
   expect(readme).toContain("CIEL currentness is per repository");
   expect(readme).toContain("only once to seed an empty remote repository");
