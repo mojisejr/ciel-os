@@ -157,6 +157,11 @@ equals fetched `origin/main`; a child project is current only after its own
 checkout independently passes that same gate. Do not infer that every project
 is current from HQ state alone.
 
+Plans state intended scope and acceptance criteria. A final closeout event on a
+PR head plus local Git ancestry determines whether that plan is awaiting an
+owner merge, needs synchronization or cleanup, or is complete; do not edit a
+plan merely to journal those derived outcomes.
+
 ## Current proof target
 
 Without calling an LLM API, CIEL must let a new coding-agent session reconstruct

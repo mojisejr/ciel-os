@@ -45,7 +45,7 @@ Wake → Align → Plan → Execute → Closeout
 
 - **Wake:** The mandatory session-start procedure above. It is an operating invariant, not an optional slash command.
 - **Align:** State the goal, scope, acceptance criteria, constraints, known evidence, unknowns, and what is explicitly out of scope.
-- **Plan:** Prefer the smallest vertical slice that can produce evidence. Do not create future infrastructure merely because it appears in an architecture diagram.
+- **Plan:** Prefer the smallest vertical slice that can produce evidence. A plan records intended scope and acceptance criteria, not a journal of Git-derived completion; do not create future infrastructure merely because it appears in an architecture diagram.
 - **Execute:** Keep changes narrow. Preserve unrelated work. Validate claims with the appropriate source or deterministic check.
 - **Closeout:** At a work checkpoint, record the actual outcome, evidence, unresolved risks, and next executable action in one append-only YAML event. For remote work, commit and push that event to the draft PR head, verify it there, and present it for owner review as part of the final ready-for-review PR; for local-only work, review it before the local merge.
 

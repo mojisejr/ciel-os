@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T141242_derived_lifecycle_authorized
+type: decision
+recorded_at: 2026-09-04T14:12:42+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Derive remote delivery lifecycle from committed closeout evidence and local
+    Git, so a plan remains an intent contract rather than a mutable done-state.
+  scope:
+    - Add a read-only resolver and deterministic lifecycle fixtures.
+    - Keep owner decisions and final closeouts as the sparse semantic evidence.
+    - Prove the result against the PR #18 stale-plan regression.
+  out_of_scope:
+    - Database, daemon, GitHub API, event write path, automatic merge, branch-rule changes, or CU12 work.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner approved the derived-lifecycle plan after identifying plan completion writeback as duplicated and drift-prone.
+  not_completed:
+    - Resolver implementation, final closeout, pull request, merge, and fresh clean-main proof remain to be completed.
+
+evidence:
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.5"
+  execution_phase: "5"
+  starting_main: f34ff9ae1dab342c6e5b33f51f7217305f333ff2
+  starting_divergence: "0 0"
+  topic_branch: feat/derive-workstream-lifecycle
+
+unresolved:
+  - The final Phase 5 closeout must carry delivery evidence that lets Wake locate and reconcile its containing commit.
+  - The owner remains the only merge authority.
+
+next_action:
+  action: >-
+    Implement and test the read-only resolver, then prepare one final closeout
+    on a draft PR head before reporting a single merge-ready PR.
+  acceptance_check:
+    - A clean fetched main derives completion without a PLAN.md status writeback.

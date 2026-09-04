@@ -2,7 +2,11 @@ export type AttentionState = "active" | "blocked" | "conflict" | "paused" | "una
 
 export type LifecycleGateState =
   | "authorized"
+  | "awaiting-owner-merge"
+  | "completed"
   | "interrupted"
+  | "merged-needs-cleanup"
+  | "merged-needs-sync"
   | "needs-owner-decision"
   | "needs-reconciliation"
   | "owner-confirmation-required";

@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join, relative, resolve } from "node:path";
 
 import { parseDocument } from "yaml";
 
@@ -396,11 +396,125 @@ function decisionAuthorizesParallelism(event: WorkstreamEvent): boolean {
   return readString(outcome, "parallelism") === "approved";
 }
 
-function deriveLifecycle(
+function isTerminalCloseout(event: WorkstreamEvent, workstream: PortfolioWorkstream): boolean {
+  const outcome = isRecord(event.value.outcome) ? event.value.outcome : {};
+  const evidence = isRecord(event.value.evidence) ? event.value.evidence : {};
+  const status = readString(outcome, "status");
+  return (
+    (status === "ready-for-owner-merge" || status === "draft-pr-closeout-prepared-for-final-pr-review") &&
+    readString(evidence, "plan_revision") === workstream.planRevision &&
+    readString(evidence, "execution_phase") === workstream.executionPhase
+  );
+}
+
+function readDelivery(event: WorkstreamEvent): { targetBranch: string; topicBranch: string | null } {
+  const evidence = isRecord(event.value.evidence) ? event.value.evidence : {};
+  const delivery = isRecord(evidence.delivery) ? evidence.delivery : {};
+  const pullRequest = isRecord(evidence.pull_request) ? evidence.pull_request : {};
+  return {
+    targetBranch: readString(delivery, "target_branch") ?? readString(pullRequest, "base") ?? "main",
+    topicBranch: readString(delivery, "topic_branch") ?? readString(pullRequest, "head")
+  };
+}
+
+async function deriveTerminalLifecycle(
+  repositoryPath: string,
+  workstream: PortfolioWorkstream,
+  events: WorkstreamEvent[]
+): Promise<PortfolioWorkstream["lifecycle"]> {
+  const event = [...events].reverse().find((candidate) => isTerminalCloseout(candidate, workstream));
+  if (event === undefined) {
+    return null;
+  }
+
+  const eventPath = relative(repositoryPath, event.path);
+  const eventCommit = await runGit(repositoryPath, ["log", "-1", "--format=%H", "--", eventPath]);
+  if (eventCommit.exitCode !== 0 || eventCommit.stdout.trim().length === 0) {
+    return {
+      decisionEventPath: null,
+      detail: "The final closeout is not present in local Git history; inspect before continuing.",
+      state: "needs-reconciliation"
+    };
+  }
+
+  const delivery = readDelivery(event);
+  const remoteTarget = `refs/remotes/origin/${delivery.targetBranch}`;
+  const remoteExists = await runGit(repositoryPath, ["show-ref", "--verify", "--quiet", remoteTarget]);
+  if (remoteExists.exitCode !== 0) {
+    return {
+      decisionEventPath: null,
+      detail: `No fetched ${remoteTarget} ref is available to reconcile the final closeout.`,
+      state: "needs-reconciliation"
+    };
+  }
+
+  const merged = await runGit(repositoryPath, ["merge-base", "--is-ancestor", eventCommit.stdout.trim(), remoteTarget]);
+  if (merged.exitCode === 1) {
+    return {
+      decisionEventPath: null,
+      detail: "The final closeout is committed locally but is not yet reachable from fetched origin/main.",
+      state: "awaiting-owner-merge"
+    };
+  }
+  if (merged.exitCode !== 0) {
+    return {
+      decisionEventPath: null,
+      detail: "Git could not reconcile the final closeout against the fetched target branch.",
+      state: "needs-reconciliation"
+    };
+  }
+
+  const [head, branch, status, targetHead] = await Promise.all([
+    runGit(repositoryPath, ["rev-parse", "HEAD"]),
+    runGit(repositoryPath, ["branch", "--show-current"]),
+    runGit(repositoryPath, ["status", "--porcelain=v1"]),
+    runGit(repositoryPath, ["rev-parse", remoteTarget])
+  ]);
+  if (
+    head.exitCode !== 0 || branch.exitCode !== 0 || status.exitCode !== 0 || targetHead.exitCode !== 0 ||
+    branch.stdout.trim() !== delivery.targetBranch || head.stdout.trim() !== targetHead.stdout.trim() || status.stdout.length > 0
+  ) {
+    return {
+      decisionEventPath: null,
+      detail: "The final closeout has merged, but this checkout has not returned to a clean, current target branch.",
+      state: "merged-needs-sync"
+    };
+  }
+
+  if (delivery.topicBranch !== null) {
+    for (const reference of [`refs/heads/${delivery.topicBranch}`, `refs/remotes/origin/${delivery.topicBranch}`]) {
+      const exists = await runGit(repositoryPath, ["show-ref", "--verify", "--quiet", reference]);
+      if (exists.exitCode === 0) {
+        const fullyMerged = await runGit(repositoryPath, ["merge-base", "--is-ancestor", reference, remoteTarget]);
+        if (fullyMerged.exitCode !== 0) {
+          return {
+            decisionEventPath: null,
+            detail: `The topic branch at ${reference} has commits outside the fetched target branch; do not clean it up.`,
+            state: "needs-reconciliation"
+          };
+        }
+        return {
+          decisionEventPath: null,
+          detail: `The merged topic branch still exists at ${reference}; clean it up after confirming no open PR references it.`,
+          state: "merged-needs-cleanup"
+        };
+      }
+    }
+  }
+
+  return {
+    decisionEventPath: null,
+    detail: "The final closeout is reachable from fetched origin/main and this checkout is clean, current, and branch-cleaned.",
+    state: "completed"
+  };
+}
+
+async function deriveLifecycle(
+  repositoryPath: string,
   workstreams: PortfolioWorkstream[],
   projects: PortfolioProject[],
   eventsByWorkstream: Map<string, WorkstreamEvent[]>
-): void {
+): Promise<void> {
   const projectsById = new Map(projects.map((project) => [project.id, project]));
   const activeByProject = new Map<string, string[]>();
   for (const workstream of workstreams.filter((item) => item.state === "active")) {
@@ -413,6 +527,11 @@ function deriveLifecycle(
 
   for (const workstream of workstreams) {
     if (workstream.state !== "active") {
+      continue;
+    }
+    const terminalLifecycle = await deriveTerminalLifecycle(repositoryPath, workstream, eventsByWorkstream.get(workstream.id) ?? []);
+    if (terminalLifecycle !== null) {
+      workstream.lifecycle = terminalLifecycle;
       continue;
     }
     const matchingDecisions = (eventsByWorkstream.get(workstream.id) ?? []).filter((event) => decisionAuthorizesPlan(event, workstream));
@@ -541,7 +660,7 @@ export async function readPortfolioWakeReport(repositoryDirectory = "."): Promis
 
   const checkpoints = await groupCheckpoints(repositoryPath, workstreams);
   validationErrors.push(...checkpoints.errors);
-  deriveLifecycle(workstreams, projects, checkpoints.events);
+  await deriveLifecycle(repositoryPath, workstreams, projects, checkpoints.events);
   return {
     attention: deriveAttention(workstreams, projects),
     projects,

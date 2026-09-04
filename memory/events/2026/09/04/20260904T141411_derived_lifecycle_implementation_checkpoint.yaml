@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T141411_derived_lifecycle_implementation_checkpoint
+type: closeout
+recorded_at: 2026-09-04T14:14:11+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Derive remote delivery lifecycle from committed closeout evidence and local
+    Git, so a plan remains an intent contract rather than a mutable done-state.
+
+outcome:
+  status: implementation-checkpoint-prepared
+  completed:
+    - Added a read-only resolver for final closeouts matching the current plan revision and phase.
+    - Derived awaiting-owner-merge, merged-needs-sync, merged-needs-cleanup, completed, and unsafe-cleanup reconciliation states from local Git.
+    - Added deterministic fixtures that prove every delivery state without GitHub or a database.
+    - Documented the plan-versus-derived-truth boundary once in AGENTS.md and README.md.
+  not_completed:
+    - This checkpoint is not committed or on a draft PR yet.
+    - Final closeout, owner PR review, merge, and clean-main completion proof remain pending.
+
+evidence:
+  base_revision: f34ff9ae1dab342c6e5b33f51f7217305f333ff2
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.5"
+  execution_phase: "5"
+  topic_branch: feat/derive-workstream-lifecycle
+  changed_artifacts:
+    - src/portfolio/read.ts
+    - src/portfolio/types.ts
+    - test/portfolio/read.test.ts
+    - AGENTS.md
+    - README.md
+    - workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  checks:
+    - "bun run check: passed; 24 tests and 74 expectations"
+    - "git diff --cached --check: passed"
+    - "bun run wake: validation reported no errors"
+
+unresolved:
+  - The final closeout must be committed and pushed to a draft PR head before that PR becomes ready for review.
+  - The owner retains the merge decision.
+
+next_action:
+  action: >-
+    Commit this checkpoint, push feat/derive-workstream-lifecycle, open one
+    draft PR, then commit its final closeout to that PR head before reporting
+    the final merge-ready PR.
+  acceptance_check:
+    - No direct main push, ready-for-review transition, or merge occurs before the final closeout gate.
