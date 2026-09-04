@@ -1,0 +1,42 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T143245_attention_derivation_checkpoint
+type: closeout
+recorded_at: 2026-09-04T14:32:45+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Make portfolio attention obey the already-derived lifecycle, so completed
+    work does not remain active merely because a plan retains historical intent.
+
+outcome:
+  status: implementation-checkpoint-prepared
+  completed:
+    - Suppressed derived-completed workstreams from attention and active-project conflict calculation.
+    - Added a deterministic completed-attention regression assertion.
+  not_completed:
+    - This checkpoint is not committed or on a draft PR; final closeout, merge, and clean-main proof remain pending.
+
+evidence:
+  base_revision: 69dc89120615fbd6901300de58ec03bf8267c31c
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.6"
+  execution_phase: "6"
+  topic_branch: fix/completed-workstream-attention
+  checks:
+    - "bun run check: passed; 24 tests and 75 expectations"
+    - "git diff --cached --check: passed"
+
+unresolved:
+  - The final closeout must be placed on a draft PR head before the PR is ready for review.
+
+next_action:
+  action: >-
+    Commit this checkpoint, push fix/completed-workstream-attention, open a
+    draft PR, then add the final closeout to that PR head.
+  acceptance_check:
+    - No direct main push, ready transition, or merge occurs before the final closeout gate.

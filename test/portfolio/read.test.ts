@@ -354,6 +354,7 @@ test("derives remote delivery lifecycle from a closeout-bearing commit instead o
     git(root, ["branch", "-d", "feat/fixture"]);
     report = await readPortfolioWakeReport(root);
     expect(report.workstreams.find((item) => item.id === "delivery")?.lifecycle).toEqual(expect.objectContaining({ state: "completed" }));
+    expect(report.attention.some((item) => item.workstreamId === "delivery")).toBe(false);
 
     git(root, ["switch", "-c", "feat/fixture"]);
     await writeFile(join(root, "unmerged.md"), "# unmerged\n");

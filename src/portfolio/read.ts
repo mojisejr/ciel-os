@@ -517,7 +517,7 @@ async function deriveLifecycle(
 ): Promise<void> {
   const projectsById = new Map(projects.map((project) => [project.id, project]));
   const activeByProject = new Map<string, string[]>();
-  for (const workstream of workstreams.filter((item) => item.state === "active")) {
+  for (const workstream of workstreams.filter((item) => item.state === "active" && item.lifecycle?.state !== "completed")) {
     for (const projectId of workstream.projectIds) {
       const ids = activeByProject.get(projectId) ?? [];
       ids.push(workstream.id);
@@ -594,7 +594,7 @@ function deriveAttention(workstreams: PortfolioWorkstream[], projects: Portfolio
   }
 
   return workstreams.flatMap<PortfolioAttention>((workstream) => {
-    if (workstream.state === "completed") {
+    if (workstream.state === "completed" || workstream.lifecycle?.state === "completed") {
       return [];
     }
     if (workstream.state === "paused" || workstream.state === "blocked") {
