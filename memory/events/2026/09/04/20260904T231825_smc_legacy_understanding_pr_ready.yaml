@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T231825_smc_legacy_understanding_pr_ready
+type: closeout
+recorded_at: 2026-09-04T23:18:25+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: smc-legacy-understanding-001
+  lane: single
+  objective: >-
+    Deliver a reviewed CIEL checkpoint for source-led understanding of the
+    legacy Smart Medication Cart, without creating a rebuild plan.
+  scope:
+    - append-only CIEL discovery record
+    - owner-controlled ignored local reference note
+    - merge-ready documentation-only pull request
+  out_of_scope:
+    - a workstream plan, new SMC repository, or implementation
+    - changes to legacy SMC, CU12 simulator, hardware, licensing, or deployment
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      The owner reviewed the discovery record and requested it be delivered as
+      a pull request before the next session.
+    - >-
+      Pull request #23 was opened from the topic branch with the discovery
+      event as its initial change.
+  not_completed:
+    - Owner review and merge remain required.
+    - No rebuild plan or implementation authority is created by this closeout.
+
+evidence:
+  repository:
+    base_branch: main
+    base_revision: b17940ee9a7b1dfce0794eb8f3e39203533c4c81
+    topic_branch: docs/smc-legacy-understanding
+    initial_change_revision: b43bf52431be2585e1af26c8c128fd254527cb81
+  pull_request:
+    number: 23
+    url: https://github.com/mojisejr/ciel-os/pull/23
+    base: main
+    observed_draft_head: b43bf52431be2585e1af26c8c128fd254527cb81
+  owner_reference:
+    path: .assets/smc-legacy/SMC_LEGACY_UNDERSTANDING.md
+    retention: ignored and owner-controlled
+  validation:
+    - bun run events:validate
+    - git diff --check
+
+unresolved:
+  - Owner merge and post-merge synchronization/branch cleanup.
+  - >-
+    Any SMC v2 product decisions, simulator state-transition work, and
+    implementation remain intentionally unplanned.
+
+next_action:
+  action: >-
+    Review and merge pull request #23. After merge, synchronize main and clean
+    up the topic branch under the normal CIEL protocol.
+  acceptance_check:
+    - The final closeout commit is an ancestor of the pull request head.
+    - The pull request review surface accurately states the discovery-only scope.

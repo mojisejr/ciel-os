@@ -1,0 +1,83 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T230000_smc_legacy_understanding
+type: closeout
+recorded_at: 2026-09-04T23:00:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: smc-legacy-understanding-001
+  lane: single
+  objective: >-
+    Capture source-led understanding of the legacy Smart Medication Cart before
+    any rebuild plan exists.
+  scope:
+    - read-only legacy source analysis
+    - owner-controlled ignored reference note
+    - no product, simulator, or CIEL implementation decision
+  out_of_scope:
+    - creating a workstream plan
+    - creating a repository
+    - changing the legacy SMC checkout or its data
+    - changing the CU12 simulator
+    - medical-device, hardware, license, or deployment claims
+
+outcome:
+  status: captured
+  completed:
+    - >-
+      The legacy product was identified as a medication-cart workflow for
+      loading and dispensing medication, not a generic lock-control application.
+    - >-
+      The source-backed core hardware exchange is Get Status (0x80) and Unlock
+      (0x81), matching the current CU12 simulator command scope.
+    - >-
+      An owner-controlled reference note records the observed install boundary,
+      user journey, stack, retained product ideas, and rebuild risks.
+  not_completed:
+    - No SMC rebuild plan, repository, design contract, or implementation exists.
+    - >-
+      Current simulator status is fixed and unlock does not mutate hook state,
+      so full load/dispense state transitions remain unproven.
+
+evidence:
+  legacy_checkout:
+    path: /Users/non/dev/smc/smc-app
+    revision: 7116171
+    branch: feature/esp-32-keygen-system
+    divergence_from_origin: "0 2"
+    working_tree: pre-existing .gitignore modification; untouched during discovery
+  observed_sources:
+    - main/background.ts
+    - main/ku-controllers/BuildTimeController.ts
+    - main/ku-controllers/ds12/DS12Controller.ts
+    - main/ku-controllers/protocols/parsers/DS12ProtocolParser.ts
+    - db/model/
+    - renderer/pages/home.tsx
+    - renderer/pages/management/index.tsx
+  checks:
+    - >-
+      npm test -- --runInBand --watch=false did not start because
+      jest-html-reporter could not be resolved; Jest also warned about
+      moduleNameMapping.
+  reference_note:
+    path: .assets/smc-legacy/SMC_LEGACY_UNDERSTANDING.md
+    retention: owner-controlled ignored local reference
+
+unresolved:
+  - Whether one patient HN may occupy more than one slot at a time.
+  - The intended operator authorization, audit-retention, and recovery requirements.
+  - >-
+    The smallest simulator state-control proof required before a full
+    load/dispense end-to-end claim.
+  - The future application stack and repository identity.
+
+next_action:
+  action: >-
+    When the owner is ready, align the real SMC v2 product boundary and then
+    prepare its first plan; do not infer implementation authority from this
+    discovery record.
+  acceptance_check:
+    - A future plan explicitly distinguishes observed legacy behavior from new product decisions.
+    - A future plan keeps simulator, application, and physical-hardware claims separate.
