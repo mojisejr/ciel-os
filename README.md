@@ -146,6 +146,12 @@ Only after that proof may the agent mark the PR ready for review and report one
 final, merge-ready PR to the owner. The owner reviews the closeout together with
 the change in that final PR, then decides whether to merge it.
 
+Before marking a PR ready, update its description using
+[the final-review template](.github/PULL_REQUEST_TEMPLATE.md). The description
+is the owner's review surface: state the outcome, context, scoped change,
+evidence, boundaries, and delivery reference in concise prose. It summarizes
+the closeout for review; it does not duplicate the event's full YAML.
+
 After a merge, repeat the start gate before new tracked work. Clean up the
 merged branch only after fetching, confirming `git log origin/main..<branch>`
 is empty, and confirming no open PR still references it; delete the local

@@ -3,9 +3,10 @@ import { resolve } from "node:path";
 import { expect, test } from "bun:test";
 
 test("keeps the startup Git rule concise and the workflow discoverable", async () => {
-  const [agents, readme] = await Promise.all([
+  const [agents, readme, template] = await Promise.all([
     Bun.file(resolve(import.meta.dir, "../AGENTS.md")).text(),
-    Bun.file(resolve(import.meta.dir, "../README.md")).text()
+    Bun.file(resolve(import.meta.dir, "../README.md")).text(),
+    Bun.file(resolve(import.meta.dir, "../.github/PULL_REQUEST_TEMPLATE.md")).text()
   ]);
 
   expect(agents).toContain("## Git workflow");
@@ -23,4 +24,12 @@ test("keeps the startup Git rule concise and the workflow discoverable", async (
   expect(readme).toContain("git log origin/main..<branch>");
   expect(readme).toContain("CIEL currentness is per repository");
   expect(readme).toContain("only once to seed an empty remote repository");
+  expect(readme).toContain("Before marking a PR ready");
+  expect(readme).toContain(".github/PULL_REQUEST_TEMPLATE.md");
+  expect(template).toContain("## Review in one minute");
+  expect(template).toContain("## Context");
+  expect(template).toContain("## Change");
+  expect(template).toContain("## Evidence");
+  expect(template).toContain("## Boundaries");
+  expect(template).toContain("## Delivery");
 });

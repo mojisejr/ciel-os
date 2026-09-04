@@ -325,8 +325,13 @@ test("derives remote delivery lifecycle from a closeout-bearing commit instead o
   const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
   try {
     await initializeWorkspace(root);
+    git(root, ["remote", "add", "origin", "https://github.com/example/hq.git"]);
+    await mkdir(join(root, "projects", "hq"), { recursive: true });
+    await writeFile(join(root, "projects", "hq", "project.yaml"), projectYaml("hq"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  hq:", "    path: .", ""].join("\n"));
     await addPlan(root, "delivery", "active", ["hq"], { executionState: "executing", revision: "4.0" });
-    git(root, ["add", "workstreams"]);
+    await addPlan(root, "new-work", "active", ["hq"], { executionState: "idle", revision: "4.0" });
+    git(root, ["add", "."]);
     git(root, ["commit", "-m", "declare delivery plan"]);
     const base = git(root, ["rev-parse", "HEAD"]);
     git(root, ["update-ref", "refs/remotes/origin/main", base]);
@@ -355,6 +360,7 @@ test("derives remote delivery lifecycle from a closeout-bearing commit instead o
     report = await readPortfolioWakeReport(root);
     expect(report.workstreams.find((item) => item.id === "delivery")?.lifecycle).toEqual(expect.objectContaining({ state: "completed" }));
     expect(report.attention.some((item) => item.workstreamId === "delivery")).toBe(false);
+    expect(report.attention).toEqual([expect.objectContaining({ state: "active", workstreamId: "new-work" })]);
 
     git(root, ["switch", "-c", "feat/fixture"]);
     await writeFile(join(root, "unmerged.md"), "# unmerged\n");

@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T145517_pr_review_surface_final_closeout
+type: closeout
+recorded_at: 2026-09-04T14:55:17+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Make the final pull-request review surface concise, evidence-led, and
+    understandable without inspecting raw closeout YAML.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Phase 6 now excludes derived-completed workstreams from both attention and same-project conflict calculations.
+    - Phase 7 adds one concise final-review PR template and requires the final PR description to use it before readiness.
+    - Deterministic coverage proves the shared-project regression and protects the template plus README reference.
+  not_completed:
+    - This final closeout has not yet been pushed to draft PR #21.
+    - Owner review, merge, and post-merge cleanup remain pending.
+
+evidence:
+  base_revision: 2ff1401626e5a76f09d5dde4c7c49aede29dd5d7
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.7"
+  execution_phase: "7"
+  delivery:
+    target_branch: main
+    topic_branch: fix/completed-lifecycle-conflict
+  pull_request:
+    number: 21
+    url: https://github.com/mojisejr/ciel-os/pull/21
+    base: main
+    head: fix/completed-lifecycle-conflict
+    observed_state: OPEN
+    observed_draft: true
+    observed_head: c276c795ee1ee110f6ae9fd83e2a8129d2ac991d
+  checks:
+    - "bun run check: passed; 24 tests and 84 expectations"
+    - "gh pr view #21 reports OPEN, isDraft true, and head c276c79"
+
+unresolved:
+  - The agent must push this final closeout and update PR #21's final review body before marking it ready.
+  - The owner retains final review and merge authority.
+
+next_action:
+  action: >-
+    Commit and push this closeout, update PR #21's final review body from the
+    template, verify the closeout is on the draft PR head, mark the PR ready,
+    and report the single final review surface to the owner.
+  acceptance_check:
+    - The ready PR states its outcome, context, change, evidence, boundaries, and delivery reference.
