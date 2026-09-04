@@ -47,12 +47,13 @@ Wake → Align → Plan → Execute → Closeout
 - **Align:** State the goal, scope, acceptance criteria, constraints, known evidence, unknowns, and what is explicitly out of scope.
 - **Plan:** Prefer the smallest vertical slice that can produce evidence. Do not create future infrastructure merely because it appears in an architecture diagram.
 - **Execute:** Keep changes narrow. Preserve unrelated work. Validate claims with the appropriate source or deterministic check.
-- **Closeout:** At a work checkpoint, record the actual outcome, evidence, unresolved risks, and next executable action in one append-only YAML event. Present a new event for human review before the commit that checkpoints it.
+- **Closeout:** At a work checkpoint, record the actual outcome, evidence, unresolved risks, and next executable action in one append-only YAML event. For remote work, commit and push that event to the draft PR head, verify it there, and present it for owner review as part of the final ready-for-review PR; for local-only work, review it before the local merge.
 
 ## Git workflow
 
 - Do not develop tracked changes directly on `main`. Use a short-lived topic branch; local-only projects merge locally after checks, while projects with a canonical remote merge through an owner-reviewed pull request.
 - Before starting tracked work in a remote project, and after its PR merges, return to a clean local `main` that matches fetched `origin/main`.
+- Keep every remote PR as a draft until its phase closeout is committed and pushed to that PR head; verify the head, then report the ready-for-review PR to the owner.
 
 ## Semantic event convention
 

@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T103834_pr_workflow_phase4_implementation_checkpoint
+type: closeout
+recorded_at: 2026-09-04T10:38:34+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Prove a draft-gated pull-request lifecycle in which the reviewed phase
+    closeout is on the PR head before the PR can become mergeable, then return
+    the repository to clean, current main with no obsolete proof branch.
+
+outcome:
+  status: implementation-checkpoint-prepared
+  completed:
+    - >-
+      Recorded the PR #17 exception in plan revision 0.3: post-merge local
+      synchronization passed, but the final Phase 3 closeout was not on the PR
+      head before merge.
+    - >-
+      Added the concise AGENTS.md requirement that remote PRs remain drafts
+      until their reviewed closeout is pushed to their head.
+    - >-
+      Updated README.md with the draft-PR command, closeout ancestry gate,
+      post-merge cleanup rule, and per-repository currentness semantics.
+    - >-
+      Extended deterministic policy assertions for the draft gate, closeout
+      ancestry, and per-repository currentness wording.
+  not_completed:
+    - This implementation checkpoint has not yet been reviewed, committed, pushed, or opened as a draft PR.
+    - Draft-state observation, closeout-on-PR-head proof, ready-for-review transition, owner merge, post-merge synchronization, and branch cleanup remain unproven.
+
+evidence:
+  authorization_event: memory/events/2026/09/04/20260904T103716_pr_workflow_phase4_authorized.yaml
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.3"
+  execution_phase: "4"
+  base_main: 3c8f67715b61d85a0d6c2ed2814db3404651deb5
+  base_divergence: "0 0"
+  topic_branch: docs/revise-pr-lifecycle
+  changed_artifacts:
+    - AGENTS.md
+    - README.md
+    - test/git-workflow.test.ts
+    - workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  checks:
+    - "bun run check: passed; 23 tests and 68 expectations"
+    - "git diff --cached --check: passed"
+    - "bun run wake: event validation reported no errors"
+
+unresolved:
+  - Owner review is required before this checkpoint and its scoped artifacts are committed.
+  - The future PR must be opened as a draft; it must remain draft until a final reviewed closeout commit is proven on its head.
+  - No claim that a child project is current is established by this HQ-only checkpoint.
+
+next_action:
+  action: >-
+    Obtain owner review of this checkpoint. If approved, commit the staged
+    Phase 4 artifacts, push docs/revise-pr-lifecycle, and open exactly one
+    draft PR to main; do not mark it ready for review or merge it.
+  acceptance_check:
+    - The commit contains this reviewed checkpoint and all scoped policy artifacts.
+    - No direct push, force-push, ready-for-review transition, or merge occurs.

@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T103716_pr_workflow_phase4_authorized
+type: decision
+recorded_at: 2026-09-04T10:37:16+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Prove a draft-gated pull-request lifecycle in which the reviewed phase
+    closeout is on the PR head before the PR can become mergeable, then return
+    the repository to clean, current main with no obsolete proof branch.
+  scope:
+    - Record PR #17 as a pre-merge-closeout exception without rewriting history.
+    - Add the concise draft gate, detailed README procedure, and deterministic policy assertions.
+    - Use exactly one future draft PR for the proof and verify post-merge cleanup.
+  out_of_scope:
+    - Direct main push, force-push, reset, rebase, GitHub rule changes, hosted CI, review quotas, database, daemon, CU12 source, or transport work.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner approved plan revision 0.3 and Phase 4 after reviewing the reordered draft-gated lifecycle.
+  not_completed:
+    - Durable policy artifacts, the draft PR, closeout-on-head proof, owner merge, post-merge synchronization, and branch cleanup remain to be completed.
+
+evidence:
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.3"
+  execution_phase: "4"
+  starting_main: 3c8f67715b61d85a0d6c2ed2814db3404651deb5
+  starting_divergence: "0 0"
+  topic_branch: docs/revise-pr-lifecycle
+  prior_exception: >-
+    PR #17 merged before its final Phase 3 closeout was pushed to the PR head;
+    post-merge synchronization passed but the pre-merge closeout claim did not.
+
+unresolved:
+  - The Phase 4 implementation checkpoint must be reviewed before its commit and before any draft PR is opened.
+  - The owner retains authority to approve the final closeout and decide whether to merge the future ready-for-review PR.
+
+next_action:
+  action: >-
+    Implement the scoped policy artifacts and tests, then present the Phase 4
+    implementation checkpoint for owner review before committing or pushing it.
+  acceptance_check:
+    - The draft gate is concise in AGENTS.md, explicit in README.md, and covered by deterministic tests.

@@ -3,8 +3,8 @@
 **Workstream:** `ciel-pr-workflow-policy-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
-**Execution phase:** 3
+**Plan revision:** 0.4
+**Execution phase:** 4
 **Execution state:** executing
 **Parallelism:** none
 
@@ -16,8 +16,10 @@ short-lived topic branch. Local-only projects merge locally after checks, and
 projects with a canonical remote merge through a reviewed pull request.
 
 Apply that workflow once to adopt the unpushed CIEL HQ history into a pull
-request without rewriting or force-pushing any history, then prove the
-post-merge return-to-main protocol before starting any subsequent tracked work.
+request without rewriting or force-pushing any history. Then prove a
+draft-gated remote lifecycle in which the required closeout is on the PR head
+before the PR can be made mergeable, and a merged repository returns to one
+clean, current `main` with no obsolete topic-branch evidence left behind.
 
 ## Historical starting point
 
@@ -42,6 +44,26 @@ post-merge return-to-main protocol before starting any subsequent tracked work.
   PR #16 merged, then carried unchanged onto
   `chore/reconcile-pr-workflow-adoption`. It needs one small follow-up PR to
   become part of canonical HQ history.
+- PR #17 merged at `3c8f67715b61d85a0d6c2ed2814db3404651deb5`, with parents
+  `40071bf` and `ec5abac`; local `main` then fetched and fast-forwarded to the
+  same revision with divergence `0 0` and a clean working tree.
+- PR #17 was merged before its final Phase 3 closeout was committed and pushed
+  to the PR head. It proves the post-merge return gate, but it does **not**
+  prove the pre-merge closeout gate. This is recorded as an exception, not
+  silently retrofitted as a passing proof.
+
+## Currentness semantics
+
+- **CIEL OS is current** only when this HQ checkout is on clean `main` and its
+  `HEAD` equals fetched `origin/main`.
+- **A project is current** only when its own bound checkout independently
+  passes the same clean-default-branch and fetched-remote equality gate.
+- Do not claim that every project is current from HQ state alone. CIEL reports
+  currentness per project; each project must pass its own gate before tracked
+  work starts or after its PR merges.
+- A finished remote change leaves no topic-branch residue only after its merge
+  is verified, its local and remote topic branches are either absent or proven
+  fully merged, and the repository has returned to clean current `main`.
 
 ## Project links
 
@@ -50,7 +72,7 @@ post-merge return-to-main protocol before starting any subsequent tracked work.
 | `ciel-os` | Policy home and one-time history-adoption PR target | `.` |
 | `cu12-simulator` | First child to follow the remote-project rule after its seed push | `checkouts/cu12-simulator` |
 
-## Policy v0.1 proposed for decision
+## Policy v0.1 observed and v0.3 proposed for decision
 
 1. `main` is not a development branch. Do not make normal tracked commits on
    it; use it only to start a topic branch, receive a completed merge, or
@@ -73,9 +95,18 @@ post-merge return-to-main protocol before starting any subsequent tracked work.
    A tracked plan, decision, closeout, documentation, or test change does.
 7. Do not add required reviewers, CODEOWNERS, merge queue, or hosted CI rules
    until a measured workflow need proves them necessary.
-8. Before the owner merges a PR, its phase closeout event must be committed and
-   pushed on that PR head. After any merge, repeat the clean-and-synced-main
-   start gate before new tracked work begins.
+8. Create every remote PR as a **draft**. A draft is the merge lock while the
+   PR's final closeout is being prepared; do not mark it ready for review yet.
+9. Prepare the phase closeout against the actual draft PR and head revision,
+   commit and push it to that PR branch, then re-read the PR head and prove the
+   closeout commit is its ancestor. Only then may an agent mark the PR ready
+   for review and report that single final PR to the owner.
+10. The owner reviews the closeout and all proposed changes in the final PR,
+    then decides whether to merge. After any merge, repeat the
+    clean-and-synced-main start gate before new tracked work begins. Clean up
+    only after the merge is verified, the candidate has no commits outside
+    `origin/main`, no open PR references it, and local deletion precedes remote
+    deletion.
 
 ## Authority and boundaries
 
@@ -120,7 +151,7 @@ post-merge return-to-main protocol before starting any subsequent tracked work.
 
 ## Phase 3 — reconcile the merge and prove the steady-state rule
 
-**State:** implementation checkpoint prepared; owner review pending
+**State:** partial; post-merge return passed, pre-merge closeout not proven
 
 ### Definition of done
 
@@ -146,6 +177,15 @@ post-merge return-to-main protocol before starting any subsequent tracked work.
    owner-approved work no longer needs it. Keep any branch that carries an
    unmerged closeout or other unique evidence.
 
+### Observed outcome
+
+- Passed: the branch began from clean, synced `40071bf`; the policy artifacts
+  and deterministic tests merged through PR #17; post-merge HQ `main` is
+  clean and equals `origin/main` at `3c8f677`.
+- Not passed: the final closeout was not on PR #17's head before the owner
+  merge. Phase 3 therefore cannot establish the pre-merge closeout claim or
+  branch-cleanup proof.
+
 ## Proof contract
 
 | Claim | Evidence | Lane |
@@ -155,9 +195,40 @@ post-merge return-to-main protocol before starting any subsequent tracked work.
 | Protected `main` is respected | PR targets `main`; no direct or force push occurs | Hard Gate |
 | Local-only stays simple | documented `--ff-only` local merge path, with no remote/PR requirement | Hard Gate |
 | Remote work begins from canonical state | clean `main`, fetched `origin/main`, `--ff-only`, equal SHA, then topic-branch creation | Hard Gate |
-| Closeout reaches review before merge | closeout event commit is an ancestor of the PR head re-read before merge | Hard Gate |
+| A PR cannot merge during closeout | observed GitHub draft state before the closeout is committed and pushed | Hard Gate |
+| Closeout reaches final PR review | closeout event commit is an ancestor of the PR head before it becomes ready for review | Hard Gate |
 | Post-merge local state is unambiguous | fetched `main`, equal SHA, clean status, and prior topic branch no longer active | Hard Gate |
 | Branch cleanup preserves evidence | empty `git log origin/main..<branch>`, no open PR reference, then local-before-remote deletion | Hard Gate |
+
+## Phase 4 — draft-gated lifecycle proof (proposed; owner decision required)
+
+**State:** draft PR open; compact final-report gate in progress
+**Authorization:** `evt_20260904T105523_pr_workflow_phase4_compact_flow_authorized`
+
+### Definition of done
+
+1. Record the PR #17 exception without changing historical claims, and update
+   the durable workflow wording and deterministic tests for the draft gate.
+2. From a clean, fetched `main` that equals `origin/main`, create one bounded
+   topic branch for this proof, make the scoped tracked changes, and pass its
+   applicable checks.
+3. Push that branch and open exactly one **draft** PR to `main`; record the
+   PR number, URL, draft state, and observed head revision in its closeout.
+4. Prepare the Phase 4 closeout event against the draft PR, commit and push it
+   to the draft PR head, without making the PR ready for review first.
+5. Re-read the remote PR and Git refs. Prove that it remains draft, its head
+   includes the reviewed closeout commit, and the closeout commit is an
+   ancestor of that head.
+6. Mark the PR ready for review only after step 5, then report the one final
+   merge-ready PR to the owner. The owner reviews it and alone decides whether
+   and when to merge it.
+7. After an owner merge, fetch and fast-forward local `main`; prove `HEAD`
+   equals `origin/main`, divergence is `0 0`, and the working tree is clean.
+8. Fetch again and clean only the finished proof branch: verify no commit lies
+   outside `origin/main` and no open PR references it; delete local first and
+   remote second when present. Verify clean, current `main` again afterward.
+9. State the outcome per repository: HQ currentness is proven locally; any
+   child project is called current only after its own independent gate passes.
 
 ## Explicit non-goals
 
@@ -170,8 +241,7 @@ post-merge return-to-main protocol before starting any subsequent tracked work.
 
 ## Exit condition
 
-Commit and push the reviewed implementation checkpoint, then open the one
-follow-up PR. Prepare, review, commit, and push the final Phase 3 closeout on
-that PR before owner merge. After the merge and verified local return to
-`main`, the owner-provided Windows clone proof may resume as its separate
-paused workstream.
+Commit and push the Phase 4 final closeout to draft PR #18; re-read its head
+and closeout ancestry, mark it ready for review, and report the final PR to the
+owner. Complete the proof through post-merge cleanup. Only then may the
+owner-provided Windows clone proof resume as its separate paused workstream.

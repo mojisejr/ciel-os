@@ -125,28 +125,37 @@ git rev-parse origin/main
 git status --short
 ```
 
-Then propose the checked change through a pull request:
+Then push the checked change and open a **draft** pull request. A draft is the
+merge lock while CIEL prepares its final closeout:
 
 ```bash
 git switch -c feat/<topic>
 # make the tracked change, run checks, and commit
 git push -u origin feat/<topic>
-gh pr create --base main --head feat/<topic>
+gh pr create --draft --base main --head feat/<topic>
 ```
 
 The owner reviews and authorizes each remote merge. Prefer a GitHub merge
 commit so CIEL events that name existing Git revisions remain traceable. A
 direct `main` push is allowed only once to seed an empty remote repository;
 after that remote exists, every tracked change follows the topic-branch and PR
-path. Before requesting a merge, prepare the phase closeout event, have the
-owner review it, commit and push it to the PR branch, then re-read the PR head
-before the owner decides to merge.
+path. Against the actual draft PR, prepare the phase closeout event with its
+number, URL, and observed head revision, then commit and push it to the PR
+branch. Fetch and prove that the closeout commit is an ancestor of the PR head.
+Only after that proof may the agent mark the PR ready for review and report one
+final, merge-ready PR to the owner. The owner reviews the closeout together with
+the change in that final PR, then decides whether to merge it.
 
 After a merge, repeat the start gate before new tracked work. Clean up the
 merged branch only after fetching, confirming `git log origin/main..<branch>`
 is empty, and confirming no open PR still references it; delete the local
 branch before deleting its remote branch. Read-only investigation and ignored
 machine-local material do not need a branch.
+
+CIEL currentness is per repository: HQ is current only when its clean `main`
+equals fetched `origin/main`; a child project is current only after its own
+checkout independently passes that same gate. Do not infer that every project
+is current from HQ state alone.
 
 ## Current proof target
 
