@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T101721_pr_workflow_phase3_authorized
+type: decision
+recorded_at: 2026-09-04T10:17:21+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Reconcile the merged HQ adoption pull request and prove that future remote
+    work begins and ends at a clean, fetched main branch without losing closeout
+    evidence.
+  scope:
+    - Carry the Phase 2 closeout into one follow-up PR without changing its recorded facts.
+    - Add concise start, pre-merge closeout, post-merge return, and safe branch-cleanup gates.
+    - Add deterministic checks for those policy artifacts and prepare one follow-up PR.
+  out_of_scope:
+    - Direct main push, force-push, reset, rebase, PR merge, GitHub rule changes, hosted CI, review quotas, and CU12 source or transport work.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  completed:
+    - The owner approved Phase 3 of plan revision 0.2 after local main was synced to origin/main.
+  not_completed:
+    - Policy artifacts, follow-up PR, Phase 3 closeout review, owner merge, and post-merge local verification remain to be completed.
+
+evidence:
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.2"
+  execution_phase: "3"
+  starting_main: 40071bf3a8481355e0cdc600c08972350fc771c9
+  starting_divergence: "0 0"
+  topic_branch: chore/reconcile-pr-workflow-adoption
+
+unresolved:
+  - The Phase 3 closeout must be committed and pushed on the future PR head before the owner merge decision.
+  - The owner must merge the future PR before post-merge local return can be proven.
+
+next_action:
+  action: >-
+    Implement the scoped policy artifacts and checks, then prepare the Phase 3
+    closeout event for owner review before committing it or opening the
+    follow-up PR.
+  acceptance_check:
+    - AGENTS.md remains concise, README.md exposes exact remote gates, and bun run check passes.
