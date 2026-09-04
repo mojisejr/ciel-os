@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T183830_cu12_e2e_lab_checkpoint_reconciled
+type: closeout
+recorded_at: 2026-09-04T18:38:30+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: cu12-e2e-lab-001
+  lane: single
+  objective: >-
+    Keep the CU12 E2E Lab implementation checkpoint reconstructable from local
+    Git and append-only semantic records.
+  scope:
+    - Add the missing HQ Git anchor for the prior implementation checkpoint.
+  out_of_scope:
+    - Any application, simulator, plan-scope, or delivery-state change.
+
+outcome:
+  status: prepared
+  completed:
+    - The implementation checkpoint is now anchored to the committed HQ revision that contains its plan, project identity, and evidence record.
+  not_completed:
+    - Final visual/manual UI acceptance, final closeout, ready-for-review transition, and owner merge remain pending.
+
+evidence:
+  repository:
+    head: a237ed403256d3c36f2084f7b7c11bca6339ebcd
+    branch: docs/cu12-e2e-lab-plan
+    working_tree: clean-before-correction-event
+  plan: workstreams/cu12-e2e-lab-001/PLAN.md
+  plan_revision: "0.1"
+  execution_phase: "1"
+  corrects_event: evt_20260904T183705_cu12_e2e_lab_implementation_checkpoint
+
+unresolved:
+  - The human-visible UI proof remains unobserved.
+  - Virtual PTY behavior remains distinct from USB, electrical RS485, Windows COM, and real CU12 behavior.
+
+next_action:
+  action: >-
+    Perform the visible native-UI PTY exercise, then append the final closeout
+    to the same draft delivery before readiness.
+  acceptance_check:
+    - Wake can state the current checkpoint relationship from the event's local-Git anchor.
