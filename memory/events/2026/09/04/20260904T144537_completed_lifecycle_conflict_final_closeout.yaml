@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20260904T144537_completed_lifecycle_conflict_final_closeout
+type: closeout
+recorded_at: 2026-09-04T14:45:37+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Make derived-completed workstreams disappear from both their own portfolio
+    attention and same-project conflict calculations.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Terminal lifecycle is derived before same-project conflicts are calculated.
+    - Derived-completed workstreams are excluded from lifecycle and attention conflict sets.
+    - A deterministic remote-delivery fixture proves a new active workstream sharing the project is active, not conflicted.
+  not_completed:
+    - This final closeout has not yet been pushed to draft PR #21.
+    - Owner review, merge, and post-merge cleanup remain pending.
+
+evidence:
+  base_revision: 2ff1401626e5a76f09d5dde4c7c49aede29dd5d7
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.6"
+  execution_phase: "6"
+  delivery:
+    target_branch: main
+    topic_branch: fix/completed-lifecycle-conflict
+  pull_request:
+    number: 21
+    url: https://github.com/mojisejr/ciel-os/pull/21
+    base: main
+    head: fix/completed-lifecycle-conflict
+    observed_state: OPEN
+    observed_draft: true
+    observed_head: 19dcef1377ae3ea39b2c4058b3f0c2859c350405
+  checks:
+    - "bun run check: passed; 24 tests and 76 expectations"
+    - "gh pr view #21 reports OPEN, isDraft true, and head 19dcef1"
+
+unresolved:
+  - The agent must push this final closeout and verify its containing commit on PR #21 before marking it ready.
+  - The owner retains final review and merge authority.
+
+next_action:
+  action: >-
+    Commit and push this closeout, prove it is on draft PR #21 head, mark the
+    PR ready, and report the single final review surface to the owner.
+  acceptance_check:
+    - A workstream derived as completed cannot create same-project conflict attention for a new active workstream.
