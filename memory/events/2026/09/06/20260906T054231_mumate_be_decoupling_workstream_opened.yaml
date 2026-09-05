@@ -45,6 +45,18 @@ evidence:
     branch: docs/mumate-be-decoupling-workstream
   plan: workstreams/mumate-be-decoupling-001/PLAN.md
   plan_revision: "0.1"
+  pull_request:
+    number: 34
+    url: https://github.com/mojisejr/ciel-os/pull/34
+    base: main
+    head: docs/mumate-be-decoupling-workstream
+    observed_head: 0353a4fe5fe08dd7c4003a778269f661e04cc28d
+    draft_when_observed: true
+    recorded_in_two_steps: >-
+      The branch had to exist before a pull request could, so the first commit
+      recorded the outcome and this second commit adds the pull-request reference
+      the procedure requires, against the observed draft head above. The event is
+      refined on its own pull-request head before any merge and never after one.
   changed:
     - projects/mootech-fe/project.yaml
     - projects/mootech-be/project.yaml
