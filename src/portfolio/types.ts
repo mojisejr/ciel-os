@@ -48,6 +48,7 @@ export interface PortfolioProject {
 
 export interface PortfolioWorkstream {
   checkpointsByLane: Record<string, PortfolioCheckpoint[]>;
+  declaredSlices: string[];
   executionPhase: string | null;
   executionState: "executing" | "idle";
   id: string;

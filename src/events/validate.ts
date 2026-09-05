@@ -2,10 +2,12 @@ import { join } from "node:path";
 
 import { parseDocument } from "yaml";
 
+import { findEventCheckpoint } from "./checkpoint.ts";
 import {
   supportedEventTypes,
   type EventValidationError,
-  type EventValidationResult
+  type EventValidationResult,
+  type EventValidationWarning
 } from "./types.ts";
 
 const requiredFields = [
@@ -88,9 +90,13 @@ export async function validateEventDirectory(eventsDirectory: string): Promise<E
   if (files.length === 0) {
     return {
       errors: [{ path: eventsDirectory, message: "no YAML event files found" }],
-      files
+      files,
+      warnings: []
     };
   }
+
+  const warnings: EventValidationWarning[] = [];
+  const newestPath = files.at(-1) ?? null;
 
   for (const path of files) {
     const document = parseDocument(await Bun.file(path).text(), { prettyErrors: false });
@@ -100,9 +106,21 @@ export async function validateEventDirectory(eventsDirectory: string): Promise<E
     }
 
     if (document.errors.length === 0) {
-      errors.push(...validateEventValue(path, document.toJS()));
+      const value = document.toJS();
+      errors.push(...validateEventValue(path, value));
+
+      // Wake reconciles through the newest event alone, so only that event can
+      // disable reconciliation by omitting its Git position. Warning about every
+      // historical omission would bury the one that currently matters.
+      if (path === newestPath && isRecord(value) && findEventCheckpoint(value) === null) {
+        warnings.push({
+          path,
+          message:
+            "newest event has no Git checkpoint reference; Wake will report reconciliation as unknown until a later event records one"
+        });
+      }
     }
   }
 
-  return { errors, files };
+  return { errors, files, warnings };
 }

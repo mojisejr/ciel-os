@@ -1,0 +1,144 @@
+schema_version: ciel.event.v0.1
+id: evt_20260905T133129_slice2_3_authorization_and_validator
+type: closeout
+recorded_at: 2026-09-05T13:31:29+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-multi-client-support-001
+  lane: single
+  objective: >-
+    Move authorization and terminal lifecycle off Execution phase, and make the
+    validator warn when an event would silently disable Wake reconciliation.
+  scope:
+    - Slice 2: decision authorization, terminal lifecycle, and the interrupted-lane decision.
+    - Slice 3: a validation warning for a missing checkpoint reference.
+  out_of_scope:
+    - The Claude bridge and the AGENTS.md rule that forbids it, which slice 4 carries.
+    - Any change to the Wake evidence boundary, the required event schema fields, or the plan policy.
+    - Editing or back-filling any historical event.
+
+outcome:
+  status: ready-for-owner-merge
+  owner_authorization: >-
+    The owner authorized slices 1 through 3 directly through confirmation of plan
+    revision 0.2, since slices 2 and 3 ship together and slice 3 cannot wait on
+    the mechanism slice 2 repairs.
+  completed:
+    - Extracted the checkpoint reader into src/events/checkpoint.ts so Wake and the validator read one definition instead of two copies.
+    - decisionAuthorizesPlan now accepts a decision that names a slice the plan declares, and still accepts an execution-phase decision against a plan that declares a phase.
+    - isTerminalCloseout no longer requires an execution phase, and scopes a slice-bearing closeout to the last slice the plan declares.
+    - The validator warns, and never fails, when the newest event records no checkpoint reference. The warning reaches both the CLI and the Wake report.
+    - Added four tests covering slice authorization, an undeclared slice, terminal scoping across slices, and the warning's presence and absence.
+  not_completed:
+    - Interrupted-lane detection is retained rather than re-derived. See interrupted_lane_decision.
+    - No proof that a second client follows the repaired mechanism. That is slices 4 and 5.
+
+evidence:
+  repository:
+    head: b1f158f33496eb937bb94de2cbde4fa02ef97781
+    branch: feat/slice2-3-authorization-and-validator
+  plan: workstreams/ciel-multi-client-support-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  slice_note: >-
+    This closeout delivers slices 2 and 3 together. It records slice 3 because
+    that is the later of the two, and the plan declares five slices, so this
+    delivery is correctly not terminal for the workstream.
+  changed:
+    - src/events/checkpoint.ts
+    - src/events/types.ts
+    - src/events/validate.ts
+    - src/portfolio/read.ts
+    - src/portfolio/types.ts
+    - src/wake/read.ts
+    - src/wake/types.ts
+    - src/cli.ts
+    - test/portfolio/read.test.ts
+    - test/events/validate.test.ts
+    - test/fixtures/events/newest-without-checkpoint/
+  live_proof:
+    method: >-
+      A temporary Git worktree checked out main and the modified CLI was run
+      against it, so the result reflects the merged state rather than the topic
+      branch. The worktree was removed afterwards.
+    result: >-
+      cu12-simulator-sprint-003 reports completed from evidence alone, with no
+      plan header edited and no event added to force it. Before this change it
+      reported needs-owner-decision with the detail that no execution phase was
+      selected.
+    unchanged: ciel-pr-workflow-policy-001 and cu12-e2e-lab-001 continue to report completed.
+  regression_found_and_fixed:
+    observed: >-
+      Removing the execution-phase join alone made every merged slice closeout
+      mark its whole workstream terminal. ciel-multi-client-support-001 reported
+      completed after slice 1 of five.
+    cause: >-
+      The execution-phase key had been doing two jobs. Besides binding a decision
+      to a plan it also scoped a terminal closeout to the phase then in progress.
+      Dropping it removed that scoping.
+    fix: >-
+      A closeout that names a slice is terminal only when it names the last slice
+      the plan declares. The plan states its slices as headings, so this is
+      derived from the acceptance contract and records no progress in the header.
+    verification: >-
+      ciel-multi-client-support-001 now reports needs-owner-decision, which is
+      accurate: slice 1 has merged and no decision event authorizes further work,
+      because the plan authorizes slices 1 to 3 by owner confirmation instead.
+  interrupted_lane_decision:
+    outcome: retained, not re-derived and not retired
+    reason: >-
+      The mechanism is correct and covered by two existing tests. It cannot fire
+      only because the plan policy no longer writes an executing marker. Re-deriving
+      it from evidence is not possible without distinguishing an abandoned lane
+      from one in progress, and CIEL deliberately does not track sessions, so no
+      repository evidence separates them. Retiring it would delete a working,
+      tested recovery state that Proof Charter section 5 names, and it would
+      return the moment a plan declares an execution phase again.
+    recorded_gap: >-
+      Under the current plan policy no interrupted lane will be detected. This is
+      stated rather than left as a branch of code that silently never runs.
+  warning_scope_decision:
+    outcome: warn when the newest event lacks a checkpoint reference, whatever its type
+    reason: >-
+      Wake calls findEventCheckpoint on the newest event alone, so only that event
+      can degrade reconciliation. Warning about all 29 historical omissions would
+      bury the one that currently matters and defeat the visibility the acceptance
+      asks for. The type is not filtered because a decision that happens to be
+      newest degrades reconciliation exactly as a closeout would.
+    decision_events: >-
+      15 of 26 decision events carry no Git position, which reads as deliberate
+      convention rather than error. That convention is left untouched, but it does
+      mean reconciliation degrades while a decision is the newest event.
+    never_fails: The warning does not affect the exit code, so an append-only ledger that cannot be back-filled keeps validating.
+  checks:
+    - bun run typecheck
+    - bun run test
+    - bun run bin/ciel.ts events validate
+    - bun run bin/ciel.ts wake
+  result: >-
+    Typecheck passed. 28 tests passed across 8 files, up from 24. All 79 events
+    validate with no warnings, and Wake reports validationErrors and
+    validationWarnings both empty.
+  additive_output_fields:
+    - PortfolioWorkstream.declaredSlices, required so a slice-keyed decision can be checked against the slices its plan actually declares.
+    - WakeReport.validationWarnings and EventValidationResult.warnings, required so the warning is visible where an agent already looks.
+
+unresolved:
+  - No interrupted lane can be detected under the current plan policy. Restoring that recovery state needs either a plan that declares a phase or a new evidence signal, and neither is proposed here.
+  - Reconciliation still degrades while a decision event is the newest event. The warning now says so, but the decision convention itself is unchanged.
+  - A decision naming a declared slice authorizes that slice, but nothing checks that earlier slices were delivered first. Slice order is the owner's judgement.
+  - Whether the last-declared-slice rule is the right terminal scope for a plan that later adds a slice is untested. Adding a slice to a plan should raise its revision, which already invalidates older closeouts.
+
+next_action:
+  action: >-
+    After this merges, execute slice 4: amend the AGENTS.md rule that forbids
+    CLAUDE.md, then add the bridge as one explicitly delimited CIEL-managed
+    section holding only pointers and client-specific mechanics. From this slice
+    onward a decision event naming plan revision 0.2 and its slice must authorize
+    the work, which is the proof that slice 2 succeeded.
+  acceptance_check:
+    - This closeout must be committed and pushed to its draft pull-request head and proven an ancestor of that head before the pull request is advanced for owner review.
+    - Slice 4 must not begin before a decision event authorizes it and Wake reports the workstream as authorized.

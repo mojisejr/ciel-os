@@ -42,3 +42,23 @@ test("CLI returns non-zero and names the failed field", async () => {
   expect(await process.exited).toBe(1);
   expect(await new Response(process.stderr).text()).toContain("missing required field: evidence");
 });
+
+test("warns when the newest event records no Git checkpoint", async () => {
+  const result = await validateEventDirectory(fixtureDirectory("newest-without-checkpoint"));
+
+  expect(result.errors).toEqual([]);
+  expect(result.warnings).toEqual([
+    {
+      path: join(fixtureDirectory("newest-without-checkpoint"), "20260827T000000_without_checkpoint.yaml"),
+      message:
+        "newest event has no Git checkpoint reference; Wake will report reconciliation as unknown until a later event records one"
+    }
+  ]);
+});
+
+test("does not warn about historical events that record no Git checkpoint", async () => {
+  const result = await validateEventDirectory(resolve(import.meta.dir, "../../memory/events"));
+
+  expect(result.errors).toEqual([]);
+  expect(result.warnings).toEqual([]);
+});

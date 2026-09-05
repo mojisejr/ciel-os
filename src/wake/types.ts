@@ -1,4 +1,4 @@
-import type { EventValidationError } from "../events/types.ts";
+import type { EventValidationError, EventValidationWarning } from "../events/types.ts";
 import type { PortfolioWakeReport } from "../portfolio/types.ts";
 
 export interface WakeReport {
@@ -40,4 +40,5 @@ export interface WakeReport {
   };
   unknowns: string[];
   validationErrors: EventValidationError[];
+  validationWarnings: EventValidationWarning[];
 }

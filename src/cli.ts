@@ -19,6 +19,10 @@ export async function runCli(arguments_: string[]): Promise<number> {
       console.log(`valid ${file}`);
     }
 
+    for (const warning of result.warnings) {
+      console.warn(`warning ${warning.path}: ${warning.message}`);
+    }
+
     if (result.errors.length > 0) {
       for (const error of result.errors) {
         console.error(`${error.path}: ${error.message}`);

@@ -138,6 +138,57 @@ function decision(id: string, workstreamId: string, planRevision: string, parall
   ].join("\n");
 }
 
+function sliceDecision(id: string, workstreamId: string, planRevision: string, slice: string): string {
+  return [
+    "schema_version: ciel.event.v0.1",
+    `id: evt_${id}`,
+    "type: decision",
+    "recorded_at: 2026-08-29T00:00:00+07:00",
+    "recorded_by:",
+    "  human: owner",
+    "  agent: test",
+    "workstream:",
+    `  id: ${workstreamId}`,
+    "  lane: single",
+    "  objective: fixture",
+    "outcome:",
+    "  status: decided",
+    "  parallelism: not-proposed",
+    "evidence:",
+    `  plan: workstreams/${workstreamId}/PLAN.md`,
+    `  plan_revision: "${planRevision}"`,
+    `  slice: "${slice}"`,
+    "unresolved: []",
+    "next_action:",
+    "  action: fixture",
+    ""
+  ].join("\n");
+}
+
+function slicedPlan(id: string, projectIds: string[], sliceCount: number, revision: string): string {
+  return [
+    `# ${id}`,
+    "",
+    `**Workstream:** \`${id}\`  `,
+    "**State:** active  ",
+    "**Execution lane:** single  ",
+    `**Plan revision:** ${revision}  `,
+    "**Execution phase:** none  ",
+    "**Execution state:** idle  ",
+    "**Parallelism:** none",
+    "",
+    "## Project links",
+    "",
+    "| Project ID | Role | Local binding |",
+    "|---|---|---|",
+    ...projectIds.map((projectId) => `| \`${projectId}\` | fixture | local |`),
+    "",
+    "## Execution slices and acceptance criteria",
+    "",
+    ...Array.from({ length: sliceCount }, (_, index) => [`### ${index + 1}. fixture slice`, ""]).flat()
+  ].join("\n");
+}
+
 async function addPlan(
   root: string,
   id: string,
@@ -168,6 +219,34 @@ function terminalCloseout(workstreamId: string, revision: string): string {
     `  base_revision: ${revision}`,
     "  plan_revision: \"4.0\"",
     "  execution_phase: \"1\"",
+    "  delivery:",
+    "    target_branch: main",
+    "    topic_branch: feat/fixture",
+    "unresolved: []",
+    "next_action:",
+    "  action: owner merge",
+    ""
+  ].join("\n");
+}
+
+function sliceCloseout(workstreamId: string, revision: string, planRevision: string, slice: string): string {
+  return [
+    "schema_version: ciel.event.v0.1",
+    `id: evt_20260904T000001_slice_${slice}`,
+    "type: closeout",
+    "recorded_at: 2026-09-04T00:00:01+07:00",
+    "recorded_by:",
+    "  agent: test",
+    "workstream:",
+    `  id: ${workstreamId}`,
+    "  lane: single",
+    "  objective: fixture",
+    "outcome:",
+    "  status: ready-for-owner-merge",
+    "evidence:",
+    `  base_revision: ${revision}`,
+    `  plan_revision: "${planRevision}"`,
+    `  slice: "${slice}"`,
     "  delivery:",
     "    target_branch: main",
     "    topic_branch: feat/fixture",
@@ -416,6 +495,83 @@ test("reports a mismatched local Git remote without treating it as a valid bindi
     expect(report.projects[0]?.binding).toEqual(expect.objectContaining({ status: "mismatch" }));
     expect(report.projects[0]?.observed).toBeNull();
     expect(report.attention).toEqual([expect.objectContaining({ state: "unavailable", workstreamId: "needs-expected" })]);
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("authorizes a plan that declares no execution phase when a decision names a declared slice", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    const bindings: string[] = ["bindings:"];
+    for (const id of ["sliced-app", "undeclared-app"]) {
+      const checkout = join(root, "checkouts", id);
+      await createProject(checkout, id);
+      const projectDirectory = join(root, "projects", id);
+      await mkdir(projectDirectory, { recursive: true });
+      await writeFile(join(projectDirectory, "project.yaml"), projectYaml(id));
+      bindings.push(`  ${id}:`, `    path: checkouts/${id}`);
+    }
+    await writeFile(join(root, "projects.local.yaml"), [...bindings, ""].join("\n"));
+
+    for (const [id, projectId] of [["sliced", "sliced-app"], ["undeclared", "undeclared-app"]] as const) {
+      const directory = join(root, "workstreams", id);
+      await mkdir(directory, { recursive: true });
+      await writeFile(join(directory, "PLAN.md"), slicedPlan(id, [projectId], 3, "5.0"));
+    }
+
+    const eventsDirectory = join(root, "memory/events/2026/08/29");
+    await mkdir(eventsDirectory, { recursive: true });
+    await writeFile(join(eventsDirectory, "20260829T000000_decision.yaml"), sliceDecision("sliced", "sliced", "5.0", "2"));
+    await writeFile(join(eventsDirectory, "20260829T000001_decision.yaml"), sliceDecision("undeclared", "undeclared", "5.0", "9"));
+
+    const report = await readPortfolioWakeReport(root);
+    const sliced = report.workstreams.find((item) => item.id === "sliced");
+    const undeclared = report.workstreams.find((item) => item.id === "undeclared");
+
+    expect(report.validationErrors).toEqual([]);
+    expect(sliced?.declaredSlices).toEqual(["1", "2", "3"]);
+    expect(sliced?.lifecycle?.state).toBe("authorized");
+    expect(sliced?.lifecycle?.detail).toContain("slice 2");
+    expect(undeclared?.lifecycle?.state).toBe("needs-owner-decision");
+    expect(undeclared?.lifecycle?.detail).toContain("declared slice");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("treats only a closeout for the last declared slice as a terminal delivery", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    await initializeWorkspace(root);
+    git(root, ["remote", "add", "origin", "https://github.com/example/hq.git"]);
+    await mkdir(join(root, "projects", "hq"), { recursive: true });
+    await writeFile(join(root, "projects", "hq", "project.yaml"), projectYaml("hq"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  hq:", "    path: .", ""].join("\n"));
+    const directory = join(root, "workstreams", "sliced-delivery");
+    await mkdir(directory, { recursive: true });
+    await writeFile(join(directory, "PLAN.md"), slicedPlan("sliced-delivery", ["hq"], 3, "6.0"));
+    git(root, ["add", "."]);
+    git(root, ["commit", "-m", "declare sliced plan"]);
+    const base = git(root, ["rev-parse", "HEAD"]);
+
+    const eventsDirectory = join(root, "memory/events/2026/09/04");
+    await mkdir(eventsDirectory, { recursive: true });
+    await writeFile(join(eventsDirectory, "20260904T000001_slice_one.yaml"), sliceCloseout("sliced-delivery", base, "6.0", "1"));
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "record slice 1 closeout"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", git(root, ["rev-parse", "HEAD"])]);
+
+    let report = await readPortfolioWakeReport(root);
+    expect(report.workstreams.find((item) => item.id === "sliced-delivery")?.lifecycle?.state).toBe("needs-owner-decision");
+
+    await writeFile(join(eventsDirectory, "20260904T000002_slice_three.yaml"), sliceCloseout("sliced-delivery", base, "6.0", "3"));
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "record slice 3 closeout"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", git(root, ["rev-parse", "HEAD"])]);
+
+    report = await readPortfolioWakeReport(root);
+    expect(report.workstreams.find((item) => item.id === "sliced-delivery")?.lifecycle?.state).toBe("completed");
   } finally {
     await rm(root, { force: true, recursive: true });
   }

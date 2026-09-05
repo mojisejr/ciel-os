@@ -135,6 +135,7 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
     errors.push({ path, message: "plan Parallelism must be none or proposed" });
   }
 
+  const declaredSlices = [...text.matchAll(/^### (\d+)\.\s/gm)].map((match) => match[1] as string);
   const projectIds = extractProjectIds(text);
   if (projectIds.length === 0) {
     errors.push({ path, message: "plan must list at least one project under Project links" });
@@ -157,6 +158,7 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
     errors,
     workstream: {
       checkpointsByLane: {},
+      declaredSlices,
       executionPhase: executionPhase === "none" ? null : executionPhase,
       executionState: executionState as PortfolioWorkstream["executionState"],
       id: declaredId,
@@ -374,21 +376,37 @@ async function groupCheckpoints(
   return { errors, events };
 }
 
+function decisionAuthorizedSlice(event: WorkstreamEvent, workstream: PortfolioWorkstream): string | null {
+  const evidence = isRecord(event.value.evidence) ? event.value.evidence : {};
+  const slice = readString(evidence, "slice");
+  return slice !== null && workstream.declaredSlices.includes(slice) ? slice : null;
+}
+
 function decisionAuthorizesPlan(event: WorkstreamEvent, workstream: PortfolioWorkstream): boolean {
   const evidence = isRecord(event.value.evidence) ? event.value.evidence : {};
   const outcome = isRecord(event.value.outcome) ? event.value.outcome : {};
   const recordedBy = isRecord(event.value.recorded_by) ? event.value.recorded_by : {};
   const relativePlanPath = `workstreams/${workstream.id}/PLAN.md`;
-  return (
-    event.lane === workstream.lane &&
-    readString(event.value, "type") === "decision" &&
-    readString(outcome, "status") === "decided" &&
-    readString(recordedBy, "human") !== null &&
-    readString(evidence, "plan") === relativePlanPath &&
-    readString(evidence, "plan_revision") === workstream.planRevision &&
-    workstream.executionPhase !== null &&
-    readString(evidence, "execution_phase") === workstream.executionPhase
-  );
+
+  if (
+    event.lane !== workstream.lane ||
+    readString(event.value, "type") !== "decision" ||
+    readString(outcome, "status") !== "decided" ||
+    readString(recordedBy, "human") === null ||
+    readString(evidence, "plan") !== relativePlanPath ||
+    readString(evidence, "plan_revision") !== workstream.planRevision
+  ) {
+    return false;
+  }
+
+  // A decision names the slice it authorizes, and that slice must be one the
+  // plan declares. The earlier execution-phase key is still honoured so every
+  // decision recorded against a phase-declaring plan keeps authorizing it.
+  if (decisionAuthorizedSlice(event, workstream) !== null) {
+    return true;
+  }
+
+  return workstream.executionPhase !== null && readString(evidence, "execution_phase") === workstream.executionPhase;
 }
 
 function decisionAuthorizesParallelism(event: WorkstreamEvent): boolean {
@@ -400,11 +418,31 @@ function isTerminalCloseout(event: WorkstreamEvent, workstream: PortfolioWorkstr
   const outcome = isRecord(event.value.outcome) ? event.value.outcome : {};
   const evidence = isRecord(event.value.evidence) ? event.value.evidence : {};
   const status = readString(outcome, "status");
-  return (
-    (status === "ready-for-owner-merge" || status === "draft-pr-closeout-prepared-for-final-pr-review") &&
-    readString(evidence, "plan_revision") === workstream.planRevision &&
-    readString(evidence, "execution_phase") === workstream.executionPhase
-  );
+
+  if (status !== "ready-for-owner-merge" && status !== "draft-pr-closeout-prepared-for-final-pr-review") {
+    return false;
+  }
+
+  if (readString(evidence, "plan_revision") !== workstream.planRevision) {
+    return false;
+  }
+
+  // A slice-scoped closeout delivers one slice, not the workstream. Only a
+  // closeout naming the last slice the plan declares can be terminal, which the
+  // plan states without recording any progress in its header.
+  const slice = readString(evidence, "slice");
+  if (slice !== null && workstream.declaredSlices.length > 0) {
+    return slice === workstream.declaredSlices.at(-1);
+  }
+
+  // A plan that still declares a numeric phase keeps the original strict join.
+  // A plan following the current policy declares no phase, so a closeout's phase
+  // cannot bind it; plan revision alone carries the match.
+  if (workstream.executionPhase === null) {
+    return true;
+  }
+
+  return readString(evidence, "execution_phase") === workstream.executionPhase;
 }
 
 function readDelivery(event: WorkstreamEvent): { targetBranch: string; topicBranch: string | null } {
@@ -576,15 +614,18 @@ async function deriveLifecycle(
       workstream.lifecycle = {
         decisionEventPath: null,
         detail: workstream.executionPhase === null
-          ? "No execution phase is selected; no owner decision can authorize execution."
+          ? `No owner decision names a declared slice of plan revision ${workstream.planRevision}.`
           : `No owner decision authorizes plan revision ${workstream.planRevision} phase ${workstream.executionPhase}.`,
         state: "needs-owner-decision"
       };
       continue;
     }
+    const authorizedSlice = decisionAuthorizedSlice(decision, workstream);
     workstream.lifecycle = {
       decisionEventPath: decision.path,
-      detail: `Owner decision authorizes plan revision ${workstream.planRevision} phase ${workstream.executionPhase}.`,
+      detail: authorizedSlice !== null
+        ? `Owner decision authorizes plan revision ${workstream.planRevision} slice ${authorizedSlice}.`
+        : `Owner decision authorizes plan revision ${workstream.planRevision} phase ${workstream.executionPhase}.`,
       state: "authorized"
     };
   }
