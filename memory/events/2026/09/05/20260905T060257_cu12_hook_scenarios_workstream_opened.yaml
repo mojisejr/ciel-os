@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20260905T060257_cu12_hook_scenarios_workstream_opened
+type: closeout
+recorded_at: 2026-09-05T06:02:57+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: cu12-simulator-sprint-003
+  lane: single
+  objective: Establish the agreed operator-controlled hook scenario workstream.
+outcome:
+  status: prepared
+  owner_agreement:
+    - Start a simulator workstream before the SMC application rebuild.
+    - Separate CU12 protocol, hook state, and tester CLI in one simulator.
+    - Unlock acknowledgement must not automatically change hook state.
+    - Tester input represents external physical inputs, not new CU12 commands.
+  completed:
+    - Prepared plan revision 0.1 with state, CLI, concurrency, and PTY proof criteria.
+  not_completed:
+    - Simulator implementation and scenario tests have not started.
+    - No application rebuild plan or hardware proof was created.
+evidence:
+  repository:
+    head: fdb03d2cfcc78324480cbac20bdf52d5e8192388
+    branch: docs/cu12-hook-scenarios-plan
+  plan: workstreams/cu12-simulator-sprint-003/PLAN.md
+  plan_revision: "0.1"
+  simulator:
+    revision: df032d3947d836e8f4a502ff4cdb4f200af787fb
+    sources:
+      - checkouts/cu12-simulator/src/device.rs
+      - checkouts/cu12-simulator/src/transport.rs
+      - checkouts/cu12-simulator/tests/protocol.rs
+  previous_discovery: memory/events/2026/09/04/20260904T230000_smc_legacy_understanding.yaml
+unresolved:
+  - Confirm full 12-hook bit mapping against the manual during implementation.
+  - Actual mechanical behavior remains unverified; CLI inputs are test scenarios.
+  - Stdin syntax and opt-in flag are proposed implementation details in the plan.
+next_action:
+  action: Review the concrete plan, then proceed with hook-state extraction and its tests under the agreed boundary.
+  acceptance_check:
+    - Manual golden vectors remain stable and Unlock ACK does not mutate hooks.
+    - A separate PTY client observes only explicitly controlled hook changes.

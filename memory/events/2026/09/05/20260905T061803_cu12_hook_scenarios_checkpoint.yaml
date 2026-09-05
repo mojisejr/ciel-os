@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20260905T061803_cu12_hook_scenarios_checkpoint
+type: closeout
+recorded_at: 2026-09-05T06:18:03+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: cu12-simulator-sprint-003
+  lane: single
+  objective: Implement and locally prove tester-controlled hook inputs through CU12 PTY.
+outcome:
+  status: prepared
+  owner_authorization: The owner requested committing the plan and starting implementation.
+  completed:
+    - Committed plan revision 0.1 before simulator changes.
+    - Added one shared atomic hook snapshot and a separate opt-in stdin control reader.
+    - Unlock ACK remains independent of hook changes; wire framing and opcodes are unchanged.
+    - Added independent separate-process PTY scenarios without any Desktop Lab dependency.
+    - Documented CLI use, fixture compatibility, state lifetime, and mechanical evidence limits.
+  not_completed:
+    - Owner manual trial and remote PR delivery/merge have not occurred.
+    - No hardware bit-map validation or physical-mechanics proof was performed.
+evidence:
+  repository:
+    head: eee3702
+    branch: docs/cu12-hook-scenarios-plan
+  plan: workstreams/cu12-simulator-sprint-003/PLAN.md
+  plan_revision: "0.1"
+  simulator:
+    revision: 11cb13c978a245259110d910de62fb19e51706e6
+    branch: feat/operator-hook-control
+    base_revision: df032d3947d836e8f4a502ff4cdb4f200af787fb
+    checks:
+      - cargo fmt --check passed
+      - cargo test passed all 15 tests on macOS, including 2 separate-process PTY scenarios
+      - cargo clippy --all-targets -- -D warnings passed
+      - git diff --check passed
+    coverage:
+      - Each of 12 hook bits, invalid CLI input, and concurrent non-overlapping updates.
+      - Individual and all-lock Unlock ACKs without state mutation.
+      - CLI mutation while the wire loop is idle; status and checksum changes over PTY.
+      - Repeated unlatched reads, re-latching, and changes across the two status bytes.
+      - EOF preserves state and service; restart restores fixture; stdin control is opt-in.
+      - Existing manual vectors, stream handling, TCP and PTY regressions pass.
+    dependencies_added: none
+unresolved:
+  - >-
+    Manual page 7 explicitly maps only examples 02 00 and 04 00. Full 12-hook
+    least-significant-bit-first mapping is documented as a simulator assumption,
+    including its second byte; hardware or vendor evidence must confirm it.
+  - Hook inputs do not establish physical door position, medicine presence, or actuator timing.
+  - Work is checkpointed locally on topic branches and has not been pushed or merged.
+next_action:
+  action: >-
+    Review or try the local implementation using the simulator README. Deliver
+    simulator and HQ changes through the normal draft-PR closeout flow when
+    remote delivery is requested; do not start the SMC rebuild from this event.
+  acceptance_check:
+    - The owner can control hook inputs locally and an independent client reads their CU12 status.
+    - Remote closeout must reference the actual PR heads before marking them ready for review.
