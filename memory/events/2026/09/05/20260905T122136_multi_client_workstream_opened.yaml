@@ -1,0 +1,97 @@
+schema_version: ciel.event.v0.1
+id: evt_20260905T122136_multi_client_workstream_opened
+type: closeout
+recorded_at: 2026-09-05T12:21:36+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-multi-client-support-001
+  lane: single
+  objective: >-
+    Let a Claude session and a Codex session operate CIEL from the same
+    repository foundation, with the same rules, evidence boundary, and
+    lifecycle, without either client becoming CIEL's identity.
+  scope:
+    - Establish the workstream and its acceptance contract at plan revision 0.1.
+    - Record the owner agreements that authorize its first two slices.
+  out_of_scope:
+    - Any slice implementation. No foundation edit, defect fix, bridge, or proof is performed here.
+    - Ratifying Genesis Contract v0.2 or adopting a permanent supported-client set.
+
+outcome:
+  status: prepared
+  owner_agreement:
+    - Upgrade ciel-os itself so both clients share one foundation, rather than compensating with an out-of-repository shim.
+    - This workstream may amend AGENTS.md, including the rule that forbids CLAUDE.md, for the duration of this work only.
+    - Close the recorded evidence-integrity defects here instead of deferring them to separate workstreams.
+    - A decision names the slice it authorizes; Execution phase becomes optional rather than load-bearing.
+    - Slices 1 and 2 are authorized by this plan confirmation directly, because the current code cannot authorize a plan whose execution phase is none.
+  completed:
+    - Prepared plan revision 0.1 with authority boundaries, eight invariants, five slices, and per-slice acceptance criteria.
+    - Recorded a third dependent on Execution phase that no prior event names.
+    - Superseded an earlier proposed fix after measuring the ledger against it.
+  not_completed:
+    - No slice has started. AGENTS.md, CLAUDE.md, src/, and every other artifact are unchanged.
+    - No cross-client proof has been attempted.
+
+evidence:
+  repository:
+    head: 62c981c81054b686287453796917de73e70a44b0
+    branch: docs/multi-client-support-workstream
+  plan: workstreams/ciel-multi-client-support-001/PLAN.md
+  plan_revision: "0.1"
+  prior_event: memory/events/2026/09/05/20260905T112800_cross_client_session_closeout.yaml
+  execution_phase_dependents:
+    summary: >-
+      Execution phase served two roles at once: a progress marker the owner
+      retired, and the key binding a decision or closeout to its plan, which the
+      code still requires. Retiring the first killed the second.
+    decision_authorization:
+      location: src/portfolio/read.ts decisionAuthorizesPlan line 389
+      effect: >-
+        The predicate requires a non-null execution phase, so under the current
+        plan policy no decision event can ever authorize execution. This
+        dependent was found while preparing this plan and is recorded here for
+        the first time.
+    terminal_lifecycle:
+      location: src/portfolio/read.ts isTerminalCloseout lines 399 to 408
+      effect: No workstream following the current plan policy can reach a terminal lifecycle.
+    interrupted_lane:
+      location: src/portfolio/read.ts deriveLifecycle line 554
+      effect: >-
+        Interrupted-lane detection reads an executing marker the policy no
+        longer writes, so it can never fire. Proof Charter section 5 treats an
+        interrupted lane as a real recovery state, so it must not be dropped
+        without a recorded decision.
+  checkpoint_validator_measurement:
+    measured: 29 of 77 committed events carry no checkpoint reference that findCheckpoint accepts.
+    breakdown: 15 of 26 decision events and 14 closeouts.
+    consequence: >-
+      The earlier proposal to make the validator fail is superseded. A hard
+      failure would break bun run wake against an append-only ledger that cannot
+      be back-filled. Slice 3 warns instead, and its exact scope is left open for
+      that slice to settle from evidence.
+  contract_references:
+    bridge_shape: Genesis Contract v0.2 section 4 requires an explicitly delimited CIEL-managed section that preserves human-authored content outside it.
+    two_bridge_proof: Genesis Contract v0.2 section 11 names AGENTS.md and CLAUDE.md as the two V0 bridges; Proof Charter section 8 records that requirement as deliberately deferred.
+    reserved_decision: Genesis Contract v0.2 section 14 reserves the supported-client set to the owner. This plan does not settle it.
+
+unresolved:
+  - Slice 3 must decide whether the checkpoint warning covers every event, closeouts only, or only the newest event, and whether a decision event legitimately carries no Git position.
+  - Slice 2 must decide whether interrupted-lane detection is re-derived from evidence or deliberately retired, and record the reason either way.
+  - Whether AGENTS.md should reference the operative procedure or absorb it is a slice 1 judgement, constrained by the rule against duplicating a rule in two places.
+  - A third client remains unproven and out of scope. Two clients on one foundation is the whole claim.
+  - The bridge is hand-authored. Whether CIEL must generate or verify it is a finding for slice 5, not an assumption.
+
+next_action:
+  action: >-
+    Review this plan and its authority boundaries. On confirmation, execute
+    slice 1 by making the operative procedure reachable from AGENTS.md without
+    duplicating any rule, then slice 2 to move authorization and lifecycle off
+    Execution phase so later slices can be authorized normally.
+  acceptance_check:
+    - This event must be committed and pushed to its draft pull-request head and proven an ancestor of that head before the pull request is advanced for owner review.
+    - No slice may begin before the owner confirms this plan.
+    - Slice 1 must leave every existing Codex rule unchanged in meaning.
