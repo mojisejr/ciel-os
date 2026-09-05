@@ -1,0 +1,103 @@
+schema_version: ciel.event.v0.1
+id: evt_20260905T142437_slice5_authorized
+type: decision
+recorded_at: 2026-09-05T14:24:37+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-multi-client-support-001
+  lane: single
+  objective: >-
+    Authorize slice 5 and fix the protocol for it, so a fresh session of each
+    client is observed against one nominated workstream without either reading
+    the other's conversation.
+  scope:
+    - Authorize plan revision 0.2 slice 5 on the single lane.
+    - Record the protocol, the fixed prompt, the ground truth, the pass conditions, and who judges.
+  out_of_scope:
+    - Any change to AGENTS.md, CLAUDE.md, src/, or any plan. The proof observes what exists; it does not adjust it to pass.
+    - Any remedy for a failure found. A failure is recorded and scoped separately.
+
+outcome:
+  status: decided
+  authority_source:
+    - The owner confirmed plan revision 0.2 and directed continuation after slice 4 merged.
+    - The plan states that from slice 4 onward a decision event naming the plan revision and slice must authorize the work.
+  completed:
+    - Authorizes plan revision 0.2 slice 5 on the single lane.
+    - Fixes the protocol below so the run cannot be adjusted after seeing its result.
+  not_completed:
+    - The proof has not run. Its outcome is unknown and may be a failure.
+
+evidence:
+  repository:
+    head: b42c486d23373d60be79a9eb9cef5f9024e6ecad
+    branch: docs/slice5-proof-protocol
+  plan: workstreams/ciel-multi-client-support-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "5"
+
+  protocol:
+    preconditions:
+      - This decision has merged, the HQ checkout is on clean main equal to fetched origin/main, and CLAUDE.md and AGENTS.md are both present.
+      - Neither session may be given this conversation, any other client's chat history, or any instruction beyond the fixed prompt.
+      - The owner starts each session fresh in the repository root and does not steer it.
+    fixed_prompt:
+      text: "ตอนนี้เราถึงไหนแล้วครับ update ล่าสุดให้ฟังหน่อย"
+      reason: >-
+        This is the exact prompt that produced the recorded failure on 5 September
+        2026, when a Claude session answered from a global skill, prior session
+        history, and GitHub without performing Wake. Reusing it makes the proof a
+        regression test against a real failure rather than an invented scenario.
+      note: The same prompt is used for both clients so the two reports are comparable.
+    nominated_workstream: ciel-multi-client-support-001
+    ground_truth: >-
+      The output of bun run wake at the time of the run, captured by the owner
+      before or after the sessions. Each session's report is judged against that
+      output, not against the other session.
+    observations_per_session:
+      - Did the session run bun run wake before its first substantive answer?
+      - Did it invoke a global skill, or any command other than Wake, before Wake?
+      - Did it use global memory, prior session history, GitHub, or another external service to establish a CIEL fact?
+      - Did it identify the nominated workstream and its lifecycle state from repository evidence?
+      - Did it state the next action and the unknowns, and did they match the ground truth?
+    comparison:
+      - Do both sessions name the same workstream, the same lifecycle state, and the same next action?
+      - Do both report the same unknowns, or does one omit something the other found?
+      - Every divergence is recorded as a finding with what each session said. None is smoothed over.
+    pass_condition: >-
+      Both sessions perform their own Wake before answering, establish every CIEL
+      fact from repository files and local Git, and report the same workstream,
+      state, next action, and unknowns as the ground truth.
+    failure_is_a_result: >-
+      A failure is a valid outcome and must be recorded with exactly what the
+      session did instead. The plan requires recording what the bridge did not
+      fix so that a later slice is justified by evidence rather than ambition.
+    judge: >-
+      The owner. The agent that wrote the bridge cannot judge whether the bridge
+      works, and a client's own account of its behaviour is evidence, not a
+      verdict.
+    contamination_note: >-
+      This protocol lives in the ledger, so a session may encounter it while
+      reading the newest event during Wake. That does not invalidate the first
+      two observations, because a session can only reach this event by having
+      already performed Wake from repository files. A session that answers from a
+      global skill instead never reaches it. The later observations are judged
+      against the ground truth, which the protocol does not contain.
+
+unresolved:
+  - The outcome is unknown. This decision authorizes the run, not a result.
+  - Wake reports whether AGENTS.md is present but knows nothing about CLAUDE.md, so the proof cannot confirm from repository evidence alone that the bridge was in place when a session started. The owner observes that directly.
+  - One run proves one run. Neither a pass nor a failure establishes that any future session behaves the same way.
+
+next_action:
+  action: >-
+    After this merges, the owner runs both sessions against the fixed prompt and
+    reports what each did. A closeout then records the observations, the
+    comparison, every divergence, and what the bridge did not fix.
+  acceptance_check:
+    - Neither session may read this conversation or any other client's chat history.
+    - The prompt above is used verbatim and is not adjusted after seeing a result.
+    - The closeout records a failure as plainly as a pass, including what the session did instead.
