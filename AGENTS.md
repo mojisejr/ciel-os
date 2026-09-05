@@ -1,6 +1,6 @@
 # CIEL Operating Contract
 
-**Initial client:** Codex only
+**Clients:** Codex and Claude. This file holds the shared operating contract; `CLAUDE.md` points to it and holds nothing else.
 
 ## CIEL's role
 
@@ -76,12 +76,13 @@ reported by `bun run wake`. This file does not track them.
 - Do not add a write path, daemon, API, MCP server, database, index, dashboard, agent team, or directory structure beyond the approved project registry and workstream-plan proof.
 - Do not add a CIEL-specific global skill, host hook, or launcher until a reviewed proof gap establishes the need.
 - Do not make `AGENTS.md` a long-term memory database or a copy of project history.
-- Do not add `CLAUDE.md`, IDE-specific instructions, or nested instruction files until the Codex-only workflow reveals a concrete need.
+- Do not add IDE-specific instructions, nested instruction files, or a third client bridge until a reviewed proof gap establishes the need.
 - Treat `docs/genesis/Agent HQ - Agent OS — Architecture Baseline v0.2.md` as the implementation baseline and `docs/genesis/CIEL_GENESIS_CONTRACT_v0.2.md` as the proposed authority/truth boundary. Surface any conflict; do not silently reconcile it.
 
 ## Instruction-file hygiene
 
 - Keep this file concise, specific, and non-conflicting. State each rule once.
+- A client bridge carries pointers and client-specific mechanics only, never the only copy of a rule. A rule that applies to any client belongs here, stated once.
 - Put universal, durable operating rules here. Put task-specific procedures in a future skill only after repeat use justifies it; put path-specific rules next to the affected code only when that code exists.
 - Review an instruction when a repeated failure, human correction, or measured evaluation shows that the instruction is needed or obsolete.
 
