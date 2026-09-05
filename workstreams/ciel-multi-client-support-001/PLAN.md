@@ -3,7 +3,7 @@
 **Workstream:** `ciel-multi-client-support-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -267,18 +267,51 @@ requirement, and it closes the conflict Proof Charter section 8 deferred.
 - Acceptance: record what the bridge did not fix, so a later slice is justified
   by evidence rather than ambition.
 
+### 6. Close the gaps the proof exposed
+
+The slice 5 run passed on the evidence boundary and failed on reporting parity.
+Its three findings are shared-foundation gaps rather than client defects, and
+each traces to a divergence recorded in that closeout.
+
+- `AGENTS.md` contradicts itself: Wake step 4 requires separating unknowns and
+  stating uncertainty, while the Required final report never says to carry them
+  into the answer. State that a report carries forward the unknowns Wake reports
+  and the unresolved items the relevant event records.
+- Nothing says what a status report must cover, so two clients chose differently.
+  State that a status report covers every workstream Wake places in `attention`,
+  which is derived rather than hand-maintained.
+- The rule that a client's account of its own behaviour is evidence and not a
+  verdict exists only in the slice 5 decision event. Move it to the shared
+  foundation, where slice 1 already had to move one universal rule out of a
+  workstream artifact.
+- Wake reports whether `AGENTS.md` is present but knows nothing about
+  `CLAUDE.md`, so a bridge that drifts or is deleted is invisible. The objective
+  claims a bridge CIEL can audit, and that is not true until Wake observes it.
+
+- Acceptance: `AGENTS.md` gains three lines and no more, each traceable to a
+  recorded divergence, and no existing rule is weakened or changed in intent.
+- Acceptance: Wake reports the bridge's presence beside `AGENTS.md` and
+  `README.md`, covered by a test, with no other output shape change.
+- Acceptance: reporting the bridge's presence grants no client authority and
+  states no rule. It is an observed fact about a file.
+- Acceptance: all events still validate, Wake still reports no errors, and every
+  existing test still passes.
+- Acceptance: whether the added report rules actually change client behaviour is
+  not claimed here. It would need another run, which this slice does not perform.
+
 ## Boundaries and delivery
 
 - No bridge generator, `ciel bridge sync` command, event write path, daemon,
   MCP server, database, index, dashboard, hook, launcher, or CIEL-specific
   global skill. If slice 5 shows hand-maintained bridges drift, that is a
   recorded finding and the input to a separate decision.
-- Slices 2 and 3 are the only changes to `src/`, and only for the recorded
+- Slices 2, 3 and 6 are the only changes to `src/`, and only for the recorded
   defects. No other derivation, schema field, command, or output shape changes.
 - No IDE instruction file, nested instruction file, or third client.
 - No change to the Wake evidence boundary, the required event schema fields,
   the plan policy, `projects/`, any other workstream, or any child project.
-- No historical event is edited or back-filled to satisfy slice 2 or 3.
+- No historical event is edited or back-filled to satisfy any slice, including
+  the slice 5 protocol event whose incorrect claim is recorded rather than fixed.
 - No SMC work, CU12 work, or hardware claim.
 - Record outcomes in append-only CIEL events. Deliver through a topic branch and
   a draft pull request whose head carries the phase closeout, verified before
@@ -286,9 +319,9 @@ requirement, and it closes the conflict Proof Charter section 8 deferred.
 
 ## Explicit non-goals
 
-- Proving that a client obeys its bridge in every future session. Slice 5 proves
+- Proving that a client obeys its bridge in every future session. Slice 5 proved
   one run, not a guarantee. A bridge sync is a rendering, never proof of
-  obedience.
+  obedience, and slice 6 does not re-run the proof.
 - Ratifying Genesis Contract v0.2, or resolving its remaining conflicts with the
   Proof Charter beyond the two-bridge item that slice 5 exercises.
 - Making CIEL client-agnostic in general. Two clients on one foundation is the

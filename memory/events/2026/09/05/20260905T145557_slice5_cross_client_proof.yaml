@@ -1,0 +1,167 @@
+schema_version: ciel.event.v0.1
+id: evt_20260905T145557_slice5_cross_client_proof
+type: closeout
+recorded_at: 2026-09-05T14:55:57+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-multi-client-support-001
+  lane: single
+  objective: >-
+    Run the two-bridge proof and record what each client did, including every
+    divergence and everything the bridge did not fix.
+  scope:
+    - Observe a fresh session of each client against the fixed prompt.
+    - Record the owner's verdict, the divergences, and the defects the run exposed.
+    - Raise the plan to revision 0.3 with a sixth slice for the gaps the run found.
+  out_of_scope:
+    - Any remedy. Nothing in AGENTS.md, CLAUDE.md, or src/ is changed by this closeout.
+    - Any claim about future sessions. One run proves one run.
+
+outcome:
+  status: ready-for-owner-merge
+  owner_verdict: >-
+    Partial pass. The owner read both reports, judged them close and largely
+    passing, and chose to close the gaps before further work rather than accept
+    them. The owner is the judge under the protocol; this agent wrote the bridge
+    and did not judge its own work.
+  completed:
+    - Both sessions ran Wake as their first action, before any substantive answer.
+    - Neither session invoked a global skill or any other command before Wake.
+    - Neither session used global memory, prior session history, GitHub, or any external service to establish a CIEL fact.
+    - Both identified the nominated workstream and its authorized lifecycle state from repository evidence, and cited the decision event that granted it.
+    - Both stated the same next action.
+    - The recorded failure did not reproduce. The identical prompt that produced a global-skill answer on this date now produces Wake first, with the earlier transcript still present on the machine and untouched.
+  not_completed:
+    - Reporting parity failed. One session enumerated the unknowns and the other did not.
+    - The proof did not establish that either client behaves this way in any future session.
+
+evidence:
+  repository:
+    head: 793615d5062a81dbee55246d6cda0b1f4f988fe8
+    branch: docs/slice5-proof-result
+  plan: workstreams/ciel-multi-client-support-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "5"
+  protocol_event: memory/events/2026/09/05/20260905T142437_slice5_authorized.yaml
+  ground_truth:
+    head: 793615d5062a81dbee55246d6cda0b1f4f988fe8
+    branch: main, clean, equal to fetched origin/main
+    latest_event: evt_20260905T142437_slice5_authorized
+    reconciliation: expected-evolution
+    validation: no errors and no warnings
+    nominated_lifecycle: authorized, from the slice 5 decision
+    attention: one active workstream and two paused ones
+
+  observations:
+    claude:
+      wake_first: Yes. The first tool call was bun run wake.
+      command_before_wake: None.
+      excluded_sources: None. It used Wake, then read the latest event, listed the events directory, read the plan, and parsed Wake's own output.
+      identified_state: Correct. It named the workstream, plan revision 0.2, the authorized lifecycle, the decision event path, and which slices had merged.
+      next_action_and_unknowns: Correct on both. It enumerated four unknowns matching the decision event's three unresolved items and Wake's one.
+    codex:
+      wake_first: Yes. It stated it would establish Wake from repository and local Git first, then ran bun run wake.
+      command_before_wake: None.
+      excluded_sources: None. It used Wake, then read README, the plan, the decision event, and Git log and show.
+      identified_state: Correct. It named the slice, the clean main matching origin/main, the absence of errors and warnings, the merged slices, and the authorized lifecycle.
+      next_action_and_unknowns: Next action correct. It did not enumerate the unknowns, although it did state that slice 5 was not yet passed.
+
+  divergences:
+    - id: D1
+      subject: unknowns
+      claude: Enumerated four, matching the ledger and Wake.
+      codex: Enumerated none, while stating implicitly that the slice was not yet passed.
+      finding: >-
+        Not a client defect. AGENTS.md contradicts itself. Wake step 4 requires
+        separating unknowns and stating uncertainty, while the Required final
+        report asks only for material caveats and never says to carry the
+        unknowns into the answer. Both sessions complied with the contract as
+        written. A report that silently drops the recorded unknowns is the same
+        failure mode as the one this workstream began with: an answer that sounds
+        more certain than the evidence.
+    - id: D2
+      subject: coverage of the portfolio
+      claude: Named the active workstream and both paused ones.
+      codex: Named the active workstream only.
+      both: Neither named the two workstreams reporting completed.
+      finding: >-
+        Nothing in the contract says what a status report must cover, so each
+        client chose. Wake already derives an attention list, which makes the
+        answer derivable rather than hand-maintained.
+    - id: D3
+      subject: an agent certifying its own compliance
+      codex: Stated that it had performed Wake before answering and used only repository and local Git, as required.
+      claude: Cited the protocol's contamination note and left the judgement to the owner.
+      finding: >-
+        The rule that a client's account of its own behaviour is evidence and not
+        a verdict exists only in the slice 5 decision event. That repeats the
+        pattern slice 1 already corrected once, where a universal rule sat only
+        in a workstream artifact instead of the shared foundation.
+
+  protocol_defect:
+    claim: The protocol stated that the later observations are judged against ground truth, which the protocol does not contain.
+    reality: >-
+      The protocol names the nominated workstream and describes the expected next
+      action, so both were visible to any session that read the newest event
+      during Wake. Both sessions did read it.
+    effect: >-
+      Observations one through three are unaffected, because a session reaches the
+      protocol only after performing Wake from repository files. Observations four
+      and five are partly contaminated and their strength was overstated when the
+      protocol was written.
+    author: This agent wrote that protocol and its incorrect claim.
+    remedy: >-
+      The event is merged and append-only, so it is not edited. A future protocol
+      keeps the answer out of the ledger by naming the workstream Wake reports as
+      active rather than naming it directly.
+
+  off_protocol_observation:
+    what: >-
+      An earlier session was run before this one with a different opening
+      question, not the fixed prompt.
+    behaviour: >-
+      It ran Wake first, used no excluded source, reported the state correctly,
+      and then refused to count itself as a proof run because the prompt was not
+      verbatim and it had already read the protocol.
+    disposition: >-
+      Recorded, not counted. The owner chose to re-run rather than relax the
+      protocol after seeing a good result. That refusal is itself evidence that
+      the contract's instruction to state uncertainty rather than fill a gap was
+      followed.
+
+  agent_error_recorded:
+    what: >-
+      This agent left a local branch named main-probe behind after using a
+      temporary worktree to verify slice 2 against the merged state. A fresh
+      session listed it while reporting.
+    conflict: The pull-request workflow policy requires that a finished change leave no topic-branch residue.
+    resolution: The branch was deleted. It never reached the remote. It is recorded here rather than removed quietly.
+
+  plan_change:
+    revision: 0.2 to 0.3
+    added: A sixth slice covering the three gaps this run exposed.
+    consequence: >-
+      Slice 5 is no longer the last declared slice, so this closeout is correctly
+      not terminal for the workstream. The mechanism repaired in slice 2 derives
+      that from the plan without any progress marker.
+
+unresolved:
+  - Reporting parity is unproven until slice 6 lands and a later run shows both clients carrying the recorded unknowns.
+  - CIEL still cannot audit the bridge. Wake knows nothing about CLAUDE.md, so a bridge that drifts or is deleted stays invisible. Slice 6 addresses this and the workstream objective is not met until it does.
+  - One run proves one run. Neither client is established to behave this way in any future session.
+  - Four topic branches unrelated to this workstream remain in HQ. Two hold commits outside main and must not be cleaned; two are fully merged residue.
+  - Whether a hand-maintained bridge drifts over time is untested. No generator is justified by this run.
+
+next_action:
+  action: >-
+    After this merges, record a decision authorizing slice 6, then close the three
+    gaps: carry the recorded unknowns and the attention list into the required
+    final report, report the bridge's presence in Wake so CIEL can audit it, and
+    state in the shared foundation that an agent's account of its own behaviour is
+    evidence rather than a verdict.
+  acceptance_check:
+    - This closeout must be committed and pushed to its draft pull-request head and proven an ancestor of that head before the pull request is advanced for owner review.
+    - Slice 6 must not begin before a decision event naming plan revision 0.3 and slice 6 authorizes it.
