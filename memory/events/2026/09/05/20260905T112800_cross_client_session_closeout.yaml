@@ -1,0 +1,162 @@
+schema_version: ciel.event.v0.1
+id: evt_20260905T112800_cross_client_session_closeout
+type: closeout
+recorded_at: 2026-09-05T11:28:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-003
+  lane: single
+  objective: >-
+    Complete the remote delivery of the CU12 hook-scenario proof from a second
+    coding-agent client, and record what operating CIEL from that client
+    actually required.
+  scope:
+    - Finish the delivery that the prior Codex session left unpushed.
+    - Verify the prior session's recorded claims against local evidence rather than accepting them.
+    - Record the friction a non-Codex client encountered against the current operating contract.
+  out_of_scope:
+    - Simulator source changes, CIEL runtime changes, AGENTS.md changes, and any new client bridge file.
+    - SMC rebuild, hardware operation, and every other active workstream.
+
+outcome:
+  status: delivery-completed
+  owner_authorization: >-
+    The owner approved parallel operation despite the recorded same-project
+    overlap, chose the commit format, authorized independent re-verification,
+    chose "claude" as this client's recorded agent value, and authorized the
+    branch cleanup and this record.
+  completed:
+    - Re-ran the prior session's simulator checks independently at 6988b8f and reproduced 15 of 15 passing tests, fmt, clippy with -D warnings, and a clean diff check.
+    - Committed the prior session's final closeout unchanged at e50bb02, preserving its recorded_by.agent value of codex.
+    - Proved that closeout commit is an ancestor of the pull-request head, then updated both pull-request descriptions to replace pending statements with observed results.
+    - Advanced both pull requests from draft to ready for review, and the owner merged the simulator pull request before the HQ pull request.
+    - Verified both merges are reachable from each fetched origin/main, returned each checkout independently to a clean current main, and removed the merged topic branches locally and remotely.
+    - Resumed and completed another client's interrupted workstream using only repository artifacts and local Git, without access to that client's conversation history.
+  not_completed:
+    - The lifecycle defect recorded below is diagnosed but not fixed.
+    - No client bridge, instruction file, or CIEL runtime change was made.
+
+evidence:
+  repository:
+    head: 201cbdfc0afd23780599155dc4eb3439af63b6e0
+    branch: docs/cross-client-session-closeout
+  plan: workstreams/cu12-simulator-sprint-003/PLAN.md
+  plan_revision: "0.1"
+  prior_closeout: memory/events/2026/09/05/20260905T071700_cu12_hook_scenarios_final_closeout.yaml
+  status_note: >-
+    This status deliberately avoids "ready-for-owner-merge". That value would
+    satisfy src/portfolio/read.ts isTerminalCloseout for this plan revision and
+    would make the workstream appear terminal by accident, concealing the defect
+    recorded under lifecycle_defect.
+  delivery:
+    target_branch: main
+    topic_branch: docs/cross-client-session-closeout
+  merged_delivery:
+    hq_pull_request: 24
+    hq_merge_commit: 201cbdfc0afd23780599155dc4eb3439af63b6e0
+    hq_closeout_commit: e50bb02
+    simulator_pull_request: 1
+    simulator_merge_commit: 6f0594b
+    simulator_revision: 6988b8f
+    branch_residue: none in either repository
+  independent_verification:
+    repository: checkouts/cu12-simulator at 6988b8f
+    commands:
+      - cargo fmt --check
+      - cargo test
+      - cargo clippy --all-targets -- -D warnings
+      - git diff --check
+    result: >-
+      All four passed. Test totals were 4 hook_control, 2 hook_scenarios_pty,
+      6 protocol, 1 pty_black_box, 1 tcp_black_box, and 1 transport.
+    limitation: >-
+      This reproduces the prior session's automated claims only. It does not
+      extend hardware, USB, Windows COM, or physical-mechanics evidence.
+  lifecycle_defect:
+    location: src/portfolio/read.ts isTerminalCloseout, lines 399 to 408
+    observed: >-
+      After both merges and full branch cleanup, Wake still reports
+      cu12-simulator-sprint-003 as needs-owner-decision with the detail
+      "No execution phase is selected; no owner decision can authorize execution",
+      while ciel-pr-workflow-policy-001 and cu12-e2e-lab-001 report completed.
+    cause: >-
+      isTerminalCloseout joins a closeout to its plan on execution_phase. The
+      sprint-003 closeout records execution_phase "1" while the plan header
+      records "none", which the reader parses as null. The comparison fails, so
+      deriveTerminalLifecycle returns null and the entire post-merge path of
+      awaiting-owner-merge, merged-needs-sync, merged-needs-cleanup, and
+      completed is skipped.
+    policy_conflict: >-
+      The owner's current policy is that a plan records intended scope and
+      acceptance criteria and never carries execution or implementation state.
+      The two workstreams that still report completed do so only because their
+      plan headers retain pre-policy execution markers. Under the current policy
+      no workstream can reach a terminal lifecycle.
+    proposed_fix: >-
+      Stop joining on execution_phase. Match a terminal closeout on workstream
+      id and plan_revision, and treat execution_phase as optional so a plan
+      header of "none" does not block the match. This requires an owner-approved
+      workstream against the CIEL runtime and was not attempted here.
+  cross_client_findings:
+    friction:
+      - Claude Code loads CLAUDE.md and does not read AGENTS.md, so this session began with no operating contract in context and answered from a global skill instead.
+      - A global skill matched a Thai status question and ran before the mandatory Wake procedure.
+      - This client's defaults reach for global memory, prior session transcripts, and GitHub, which are the three sources the Wake evidence boundary excludes.
+      - AGENTS.md carries no rule about commit trailers, while this client's host instructed a session-locator trailer that the portfolio-flow plan forbids. The owner resolved it by keeping the repository's no-trailer convention.
+      - The agent withheld the draft-to-ready transition although README.md line 143 assigns that action to the agent after proof.
+      - This event was first written without any checkpoint reference. It passed validation and was committed and pushed, yet it silently degraded Wake reconciliation to unknown. The owner's question about a fresh session exposed it before the merge.
+    root_cause: >-
+      AGENTS.md states the draft rule in one line, but the operative procedure,
+      including the ancestor proof, the review template, who advances a pull
+      request, and branch cleanup, lives in README.md and in decision events that
+      AGENTS.md does not reference. A client that reads only AGENTS.md fills the
+      gap with its own defaults and sounds correct while doing so.
+    worked_without_help:
+      - bun run wake was self-explanatory and needed no external instruction.
+      - The plan and event structure made the pending work identifiable without any prior conversation.
+      - Proof Charter section 1 was satisfied across two different clients rather than two sessions of one client.
+  checkpoint_defect:
+    location: src/events/validate.ts against src/wake/read.ts findCheckpoint
+    observed: >-
+      An event with no evidence.repository.head, evidence.repository.base_revision,
+      evidence.base_revision, or evidence.prior_checkpoint passes validation, but
+      Wake then reports reconciliation "unknown" and makes no ancestry claim.
+    cause: >-
+      The validator requires evidence to exist but never inspects its contents,
+      so the one field Wake needs to reconcile recorded history against live Git
+      is optional in practice. This is the same honor-system gap as recorded_by,
+      where a wrong or missing value is invisible to every automated check.
+    proposed_fix: >-
+      Have the validator warn or fail when a closeout carries no checkpoint
+      reference that findCheckpoint accepts, so a client cannot silently disable
+      reconciliation for every session that follows.
+  environment_note: >-
+    This session's first Wake was contaminated by a global skill, GitHub, and
+    prior session history. Every CIEL fact recorded here was re-established
+    afterwards from repository files and local Git. GitHub was used only after
+    Wake, for pull-request state, and is labelled as an external source rather
+    than CIEL evidence.
+
+unresolved:
+  - The lifecycle defect above remains open. Until it is fixed, any workstream following the current plan policy will stay non-terminal in Wake regardless of its real delivery state.
+  - The sprint-003 plan still records State active. Flipping it to completed would remove the workstream from attention, but that hides the defect rather than resolving it.
+  - Four topic branches unrelated to this work remain in HQ. backup/pr-workflow-phase2-closeout and chore/adopt-local-main-history each hold one commit outside main and must not be cleaned. chore/reconcile-pr-workflow-adoption and docs/ciel-wake-evidence-boundary are fully merged and are residue.
+  - No client bridge exists for this client. The friction above will recur in the next non-Codex session.
+  - The checkpoint defect above remains open. Any client can still commit an event that validates cleanly while leaving Wake unable to reconcile.
+  - The 12-hook mapping, hardware behaviour, and physical mechanics remain unproven exactly as the prior closeout recorded.
+
+next_action:
+  action: >-
+    The owner has directed that CIEL support Claude and Codex on one identical
+    system foundation, upgrading ciel-os itself rather than adding an
+    out-of-repository shim. Open a workstream that plans that upgrade from the
+    cross_client_findings above, deciding the client-bridge shape, whether
+    AGENTS.md should reference the operative procedure it currently omits, and
+    how a bridge is recorded so CIEL can audit it. Handle the lifecycle defect
+    as its own scoped decision.
+  acceptance_check:
+    - This record must be committed and pushed to its draft pull-request head, and proven as an ancestor of that head, before the pull request is advanced for owner review.
+    - No client bridge, AGENTS.md change, or CIEL runtime change may be made before the owner approves the upgrade workstream.
