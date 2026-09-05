@@ -1,9 +1,9 @@
 # MuMate — decouple v2 first-run from `mootech-be`
 
 **Workstream:** `mumate-be-decoupling-001`
-**State:** active
+**State:** paused
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -39,6 +39,36 @@ The two overlap only on `kind: 'pdpa'`. That overlap is recorded and accepted, n
 resolved.
 
 This plan does not launch v2 and does not retire `mootech-be`.
+
+## Why this plan is paused before any slice
+
+The owner asked the product team whether this work was needed now. The team's
+answer, relayed by the owner on 2026-09-06, is that nothing is required from us
+yet. No slice was started, so the plan is paused rather than withdrawn: the
+evidence behind it has a shelf life, and pausing keeps it readable instead of
+forcing whoever picks this up to measure it again.
+
+**Nothing in this plan is retracted.** The six dependencies, the two findings
+that contradict `docs/be-phase1-consolidation.md`, and the settled consent scope
+all still stand as measured on 2026-09-05 and 2026-09-06.
+
+**What would unpause it,** in the order that makes each one matter:
+
+- The product team asks for it, or `#247` moves and launching v2 becomes real.
+  Path 1 is the one every new user passes, so it becomes urgent the day the
+  preview gate comes off, not before.
+- Someone acts on `docs/be-phase1-consolidation.md` section I. That document
+  still says `src/consent/` is deletable because it has no FE caller. Slice 2
+  exists partly to correct it, and the correction is worth making even if
+  nothing else here is executed.
+- `mootech-be` stops being reliable. It has had no commit since 2026-08-18 and
+  carries `mootech-be#23`, so the day it needs work is the day these six
+  dependencies stop being a plan and start being an outage.
+
+**What goes stale first while paused.** Every measurement here is a snapshot of
+`mootech-fe` at `3c5e5bd`, and that repository moved 100 commits in the three
+days before this plan was written. Re-measure the six dependencies before acting
+on them; do not treat this plan's list as current.
 
 ## Starting evidence
 
