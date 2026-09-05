@@ -53,6 +53,19 @@ evidence:
     Proof contract row "Branch cleanup preserves evidence", whose stated
     evidence is an empty git log origin/main..<branch>, no open pull-request
     reference, then local-before-remote deletion.
+  pull_request:
+    number: 33
+    url: https://github.com/mojisejr/ciel-os/pull/33
+    base: main
+    head: chore/branch-residue-cleanup
+    observed_head: d86fcfea73ca5d204d7edaa79126fa70a38b8208
+    draft_when_observed: true
+    recorded_in_two_steps: >-
+      This closeout carries the only tracked change, so the branch had to exist
+      before a pull request could. The first commit recorded the outcome; this
+      second commit adds the pull-request reference the procedure requires,
+      against the observed draft head above. The event is refined on its own
+      pull-request head before any merge and is never touched after one.
   changed:
     - memory/events/2026/09/05/20260905T153814_branch_residue_cleanup.yaml
   preconditions:
