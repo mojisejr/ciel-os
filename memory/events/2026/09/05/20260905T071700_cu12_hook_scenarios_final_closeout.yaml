@@ -1,0 +1,84 @@
+schema_version: ciel.event.v0.1
+id: evt_20260905T071700_cu12_hook_scenarios_final_closeout
+type: closeout
+recorded_at: 2026-09-05T07:17:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: cu12-simulator-sprint-003
+  lane: single
+  objective: Prove tester-controlled hook scenarios through an independent CU12 PTY client.
+outcome:
+  status: ready-for-owner-merge
+  owner_authorization: The owner reported a satisfactory local trial and explicitly requested closeout.
+  completed:
+    - Implemented shared atomic hook inputs and a separate opt-in stdin control reader.
+    - Preserved CU12 framing, existing commands, and Unlock ACK without implicit hook mutation.
+    - Proved state changes, unchanged state after ACK, repeated unlatched reads, and re-latching through a separate-process PTY client without Desktop Lab.
+    - Added the owner-requested human-readable hook-number, bit, and hexadecimal display.
+    - Documented reproduction, state lifetime, numbering, and protocol evidence limitations.
+  not_completed:
+    - Owner review, remote merges, and post-merge main synchronization remain pending.
+    - No real hardware, USB, Windows COM, or physical-mechanics proof was performed.
+evidence:
+  repository:
+    head: 81e1700564ed0f9c29df125e49e6ebf502f89036
+    branch: docs/cu12-hook-scenarios-plan
+    working_tree: clean-before-final-closeout
+  plan: workstreams/cu12-simulator-sprint-003/PLAN.md
+  plan_revision: "0.1"
+  execution_phase: "1"
+  delivery:
+    target_branch: main
+    topic_branch: docs/cu12-hook-scenarios-plan
+  hq_pull_request:
+    number: 24
+    url: https://github.com/mojisejr/ciel-os/pull/24
+    base: main
+    head: docs/cu12-hook-scenarios-plan
+    observed_head: 81e1700564ed0f9c29df125e49e6ebf502f89036
+  simulator_pull_request:
+    number: 1
+    url: https://github.com/mojisejr/cu12-simulator/pull/1
+    base: main
+    head: feat/operator-hook-control
+    revision: 6988b8f577fe581659c75d3951100be39f084f05
+  simulator_checks:
+    platform: macOS
+    result: All 15 tests passed, including 2 independent separate-process PTY scenarios.
+    commands:
+      - cargo fmt --check
+      - cargo test
+      - cargo clippy --all-targets -- -D warnings
+      - git diff --check
+    coverage:
+      - Each of 12 hook bits, unused-bit preservation, invalid CLI input, and concurrent updates.
+      - Individual and all-lock Unlock ACKs without hook mutation.
+      - CLI operation during idle wire reads, status checksum changes, repeated unlatched reads, and re-latching.
+      - Two-byte boundary, human-readable show output, EOF, restart, and disabled control mode.
+      - Existing protocol vectors, stream parsing, TCP, and PTY regressions.
+    dependencies_added: none
+  owner_manual_observation:
+    report: The owner tried the simulator and described it as reasonably satisfactory before authorizing closeout.
+    coverage_limit: The owner did not enumerate manually exercised cases; complete manual coverage is not claimed.
+  proof_boundaries:
+    hard_gate: Closed through the simulator checks above.
+    local_wire: Closed through independent PTY request and response vectors.
+    cli_display: Verified by deterministic output assertions and supplemented by owner feedback.
+    physical_device: Not applicable to this virtual-only sprint; remains unproven.
+unresolved:
+  - Manual page 7 explicitly maps examples 02 00 and 04 00 only; full 12-hook least-significant-bit-first mapping remains a documented simulator assumption requiring vendor or hardware confirmation.
+  - Hook inputs do not establish door position, medicine presence, actuator timing, or a diagnosis of a real jam.
+  - The owner explicitly deferred response-suppression fault injection; it is not a missing acceptance criterion for this sprint.
+  - The Desktop Lab remains fixture-oriented and is not the correctness oracle for changed hook bytes; no Lab or SMC changes were made.
+next_action:
+  action: >-
+    Review and merge simulator PR 1 first, then HQ PR 24. After owner-confirmed
+    merges, fetch and verify both merges, synchronize clean local main branches,
+    and remove only verified fully merged topic branches. Do not start the SMC
+    rebuild or hardware proof without a separate owner-approved scope.
+  acceptance_check:
+    - This final closeout must be committed, pushed, and verified on the HQ PR head before readiness is reported.
+    - The simulator PR head must match the tested revision linked above.
+    - Both merged results must be reachable from their fetched origin/main before post-merge cleanup.
