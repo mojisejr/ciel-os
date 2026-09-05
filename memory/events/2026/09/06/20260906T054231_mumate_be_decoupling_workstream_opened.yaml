@@ -30,7 +30,7 @@ outcome:
     - Change lane from CIEL platform work to this product work for one set of slices.
     - The owner asked for the research to be preserved as evidence before the lane changed.
   completed:
-    - Prepared plan revision 0.1 with seven invariants, two slices, per-slice acceptance criteria, and one open question reserved for the owner.
+    - Prepared plan revision 0.2 with seven invariants, two slices, per-slice acceptance criteria, and the scope question settled by the owner.
     - Registered mootech-fe and mootech-be in projects/ and bound both machine-locally. Wake reports both as available with no validation error.
     - Recorded the six paths by which the v2 surface still reaches mootech-be, ranked by user impact.
     - Recorded two findings that contradict docs/be-phase1-consolidation.md, both reachable from the same file it cites.
@@ -44,7 +44,7 @@ evidence:
     head: 6531f85a6c861b1b2e57b3ab73633fb144e1d84a
     branch: docs/mumate-be-decoupling-workstream
   plan: workstreams/mumate-be-decoupling-001/PLAN.md
-  plan_revision: "0.1"
+  plan_revision: "0.2"
   pull_request:
     number: 34
     url: https://github.com/mojisejr/ciel-os/pull/34
@@ -63,6 +63,43 @@ evidence:
     - workstreams/mumate-be-decoupling-001/PLAN.md
     - test/projects/validate.test.ts
     - memory/events/2026/09/06/20260906T054231_mumate_be_decoupling_workstream_opened.yaml
+  reframe_before_confirmation:
+    what_changed: >-
+      Revision 0.1 reserved the consent scope for the owner. Reading
+      ConsentScreen.tsx showed the two surfaces are different models rather than
+      one record kept twice, the owner scoped the work to first-run only, and two
+      further facts were measured. Revision 0.2 records all of it. No slice had
+      started and the plan had not been confirmed, so this is a draft refined
+      before review, not a change to a ratified plan.
+    correction: >-
+      An earlier statement in this workstream, that MuMate holds two PDPA stores
+      of the same record, is wrong and is corrected here. BE consent is one row
+      per acceptance of the whole policy keyed by user_id. Engine bazi_consent is
+      insert-only, keyed by anon_id and kind, carries a switchable accepted
+      boolean, and covers five purposes. They overlap only on kind pdpa.
+    owner_decision: >-
+      Touch only what first-run touches. The five granular purposes and the
+      /v2/privacy/consent screen stay where they are.
+    new_evidence:
+      fe_already_writes_both_targets: >-
+        pages/api/v2/first-run-reset.ts already runs UPDATE "user" SET
+        onboarded_at = NULL, onboarding_goal = NULL and DELETE FROM consent WHERE
+        user_id, directly through the FE database in shipped code that runs
+        against production. Its header states the writes are the exact inverse of
+        what consent.service.ts does. The capability slice 1 needs is therefore
+        already present and exercised; only the insert direction is missing.
+        The file is team-preview gated and marked TEMPORARY for deletion by
+        mootech-fe#248 before launch, so it is a precedent, not a place to build on.
+      first_run_touches_be_twice: >-
+        Besides the consent write, useFirstRunSource calls ChineseHoroscopeGet,
+        which resolves to the hybrid BFF pages/api/chinese-horoscope.ts, which
+        reads the chart from mootech-be. Slice 1 closes the write only, so
+        first-run still needs mootech-be afterwards for a different reason.
+      engine_is_optional_for_first_run: >-
+        The same hybrid BFF also calls the engine at POST /api/reading/topic to
+        overlay consumer readings, but its header records that an unreachable
+        engine leaves each section with its be value and the page never breaks.
+        The engine can be down and first-run still completes. mootech-be cannot.
   registry_guard: >-
     test/projects/validate.test.ts asserts the exact contents of the committed
     project registry, so registering two projects turned it red until the two new
@@ -185,7 +222,8 @@ evidence:
     reports no validation error.
 
 unresolved:
-  - Where MuMate's PDPA record should live and under which key. Two stores exist under two identity keys and this plan deliberately does not choose.
+  - The kind pdpa overlap survives slice 1. A person's first-run acceptance will live in Supabase keyed by user_id while the pdpa switch on the settings screen reads the engine keyed by anon_id, and the two still will not see each other. The owner scoped this out rather than resolving it.
+  - first-run keeps a second dependency on mootech-be after slice 1, the chart read through the hybrid BFF, which is blocked on the engine reproducing analytic. Closing the consent write does not make first-run independent.
   - The accepted_at column is text and currently receives two shapes, a space-separated local time from the BE and an ISO 8601 instant from the FE fallback. Slice 1 must choose one and say what happens to existing rows.
   - Five of the six v2 dependencies on mootech-be are named but untouched. Rank two blocks a user who arrives from LINE, and no slice here addresses it.
   - Nothing in this research was verified by running either application. Every impact statement is read from a code comment or inferred from a call path.

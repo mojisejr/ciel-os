@@ -3,7 +3,7 @@
 **Workstream:** `mumate-be-decoupling-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -22,8 +22,23 @@ schema, and the engine's consent record is keyed by `anonId` while this one is
 keyed by `user_id` — moving it to the engine would place a `user_id`-scoped
 legal record in a different database from the `user` table it refers to.
 
-This plan does not launch v2, does not retire `mootech-be`, and does not settle
-where MuMate's PDPA record should ultimately live.
+The owner then settled the scope question this plan had reserved. MuMate's
+consent surface is two different models, not one record kept twice, and only the
+first-run half is ours to move:
+
+- **first-run's policy acceptance** — one row per acceptance of the policy as a
+  whole, keyed by `user_id`. This is the half we built and the half this plan
+  takes over.
+- **the five granular purposes** — `pdpa`, `history`, `analytics`, `marketing`,
+  `ads`, insert-only and keyed by `(anon_id, kind)`, each individually
+  switchable, rendered by `/v2/privacy/consent`. The owner's decision is that
+  this model stays where it is. This plan does not touch it, does not migrate it,
+  and does not claim it should move.
+
+The two overlap only on `kind: 'pdpa'`. That overlap is recorded and accepted, not
+resolved.
+
+This plan does not launch v2 and does not retire `mootech-be`.
 
 ## Starting evidence
 
@@ -69,10 +84,29 @@ produced by running either application.
   through `NEXT_PUBLIC_BACKEND_URL` directly rather than through `endpoint.ts`,
   which is where that document looked. Acting on that section as written would
   break v2 first-run.
-- MuMate holds **two** PDPA consent stores today: BE `consent` keyed by `user_id`
-  in Supabase, and engine `account/consent` keyed by `anonId` in Neon, reached
-  from `pages/api/consent.ts` and rendered by `/v2/privacy/consent`. Nothing
-  observed connects them.
+- MuMate's two consent surfaces are **different models**, not one record kept
+  twice. An earlier reading in this workstream called them two stores of the same
+  thing; reading `ConsentScreen.tsx` corrected it. BE `consent` is one row per
+  acceptance of the whole policy keyed by `user_id`. Engine `bazi_consent` is
+  insert-only, keyed by `(anon_id, kind)`, carries an `accepted` boolean that can
+  be switched off, and covers five purposes. They overlap only on `kind: 'pdpa'`.
+- 🔑 **`pages/api/v2/first-run-reset.ts` already writes both targets directly from
+  the FE**, in shipped code that runs against production:
+  `UPDATE "user" SET onboarded_at = NULL, onboarding_goal = NULL` followed by
+  `DELETE FROM consent WHERE user_id = ...`. Its header states the writes are
+  "the exact inverse of what `consent.service.ts` does". The capability slice 1
+  needs is therefore already present and already exercised; only the insert
+  direction is missing. That file is gated to the team preview and is marked
+  `🔴 TEMPORARY (#249)` for deletion by `#248` before launch, so it is a reference
+  and a precedent, never a place to build on.
+- first-run reaches `mootech-be` at **two** points, not one. Besides the consent
+  write, `useFirstRunSource` calls `ChineseHoroscopeGet`, which resolves to the
+  hybrid BFF `pages/api/chinese-horoscope.ts`, which reads the chart from BE.
+- first-run also reaches the **engine**, through that same hybrid BFF, which
+  overlays consumer readings from `POST /api/reading/topic`. That call is
+  **optional by design**: the BFF header records that if the engine is
+  unreachable "that section KEEPS its be value (graceful, page never breaks)".
+  So the engine can be down and first-run still completes; `mootech-be` cannot.
 
 ## Project links
 
@@ -161,6 +195,9 @@ model the FE already has and the append-only shape the record requires.
   is skipped by default and reports as passed when it is not run.
 - Acceptance: `CONSENT_SECRET` is no longer required by `mootech-fe`. Say whether
   it is removed from `.env.example` or retained, and why.
+- Acceptance: the insert and the delete agree on shape. `first-run-reset.ts`
+  already deletes exactly these rows; after slice 1 the two must remain exact
+  inverses, and that must hold until `#248` removes the reset route.
 
 ### 2. Prove the BE caller is gone, and hand off retirement
 
@@ -179,16 +216,27 @@ model the FE already has and the append-only shape the record requires.
   with their current status, so the next workstream starts from a measured list
   rather than this plan's snapshot.
 
-## Open question for the owner
+## The settled scope question, and what it leaves open
 
-MuMate stores PDPA acceptance in two places under two identity keys: BE
-`consent` by `user_id` in Supabase, and engine `account/consent` by `anonId` in
-Neon. Slice 1 moves the first one's writer without merging the two.
+Revision 0.1 reserved one question for the owner: where MuMate's consent record
+should live. The owner answered it after being shown that the two surfaces are
+different models rather than one record kept twice.
 
-The question is where a person's consent record should live and under which key.
-This plan deliberately does not answer it, because it is a decision about a legal
-record and about which service owns identity, not a refactor. It is surfaced here
-so the answer is not implied by whichever slice ships first.
+**Settled:** this workstream touches only what first-run touches. The five
+granular purposes behind `/v2/privacy/consent` are a separate model with a
+separate identity key, and they are not this workstream's to move.
+
+**Left open on purpose, and named so nobody has to rediscover it:**
+
+- `kind: 'pdpa'` exists on both sides. After slice 1, a person's acceptance of the
+  policy at first-run lives in Supabase keyed by `user_id`, while the `pdpa`
+  switch on the settings screen reads the engine keyed by `anon_id`. Those two
+  will still not see each other. This plan accepts that rather than hiding it.
+- Whether that matters is a question about a legal record, not a refactor, and it
+  is the owner's to answer in its own time.
+
+Slice 2 states the overlap in writing so the next reader inherits a measured fact
+instead of an assumption.
 
 ## Boundaries and delivery
 
@@ -196,6 +244,13 @@ so the answer is not implied by whichever slice ships first.
   `#247`.
 - No change to the other five BE dependencies, to the bazi engine, to payments,
   to authentication, or to any screen outside first-run.
+- **No change to the five granular consent purposes or to `/v2/privacy/consent`.**
+  That model stays where it is by owner decision.
+- **No change to the chart read.** first-run's other `mootech-be` dependency,
+  `ChineseHoroscopeGet` through the hybrid BFF, is blocked on the engine being
+  able to reproduce `analytic`, which no slice here attempts. first-run therefore
+  still needs `mootech-be` after slice 1 ships, for a different reason than
+  before, and this plan says so rather than implying the path is free.
 - No schema change, no migration, no data backfill, no production query.
 - No deletion in `mootech-be`.
 - No new service, generator, adapter layer, or dependency.
@@ -208,7 +263,10 @@ so the answer is not implied by whichever slice ships first.
 
 - Decoupling `mootech-fe` from `mootech-be` in general. Five paths remain and are
   named, not addressed.
-- Reconciling the two PDPA stores. The question is raised, not answered.
+- Reconciling the two consent models, or moving the five granular purposes. The
+  owner scoped them out; the `pdpa` overlap is recorded, not resolved.
+- Freeing first-run from `mootech-be` entirely. Slice 1 closes the write; the
+  chart read stays and is blocked elsewhere.
 - Proving that the bazi engine could host this record. It could; the owner chose
   otherwise and the reason is recorded.
 - Any claim about production behaviour. Nothing here is verified against
