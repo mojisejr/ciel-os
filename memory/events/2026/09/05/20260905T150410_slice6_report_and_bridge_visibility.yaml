@@ -1,0 +1,115 @@
+schema_version: ciel.event.v0.1
+id: evt_20260905T150410_slice6_report_and_bridge_visibility
+type: closeout
+recorded_at: 2026-09-05T15:04:10+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-multi-client-support-001
+  lane: single
+  objective: >-
+    Close the three shared-foundation gaps the cross-client proof exposed, and
+    make the client bridge observable to Wake so the workstream's own claim that
+    CIEL can audit it becomes true.
+  scope:
+    - Three report rules in AGENTS.md, each traceable to a recorded divergence.
+    - Wake observes the bridge file's presence beside the shared contract.
+  out_of_scope:
+    - Re-running the cross-client proof. This slice does not test whether the new rules change behaviour.
+    - Any bridge verifier, generator, or content check.
+    - Any change to CLAUDE.md, the Wake evidence boundary, the event schema, or the plan policy.
+
+outcome:
+  status: ready-for-owner-merge
+  owner_authorization: >-
+    Decision evt_20260905T150257_slice6_authorized authorizes plan revision 0.3
+    slice 6. It was committed before any change and Wake was observed reporting
+    the workstream as authorized for that slice.
+  completed:
+    - A report now carries forward the unknowns Wake reports and the unresolved items the relevant event records.
+    - A status report now covers every workstream Wake places in attention, which is derived rather than hand-maintained.
+    - An agent's account of its own behaviour is now stated in the shared foundation as evidence rather than a verdict.
+    - Wake reports claudeMdPresent beside agentsMdPresent and readmePresent, so a deleted or renamed bridge becomes visible to every client.
+    - Added a test asserting the bridge is reported absent in a fixture without it and present once it exists.
+  not_completed:
+    - Whether these rules change what a client actually reports is untested. Establishing it would need another proof run, which this slice deliberately does not perform.
+    - Presence is not verification. A bridge whose managed section drifts is still invisible.
+
+evidence:
+  repository:
+    head: 18194dd9e4ab2ef59e41a72de858b918c7af13e8
+    branch: feat/slice6-report-and-bridge-visibility
+  plan: workstreams/ciel-multi-client-support-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "6"
+  authorization_proof: >-
+    The decision was committed first, then a temporary clone was placed on a
+    branch named main with origin/main pointed at that commit. Wake reported the
+    workstream as authorized with the detail "Owner decision authorizes plan
+    revision 0.3 slice 6". The clone was removed. This is the second slice-keyed
+    authorization to take effect.
+  changed:
+    - AGENTS.md
+    - src/wake/types.ts
+    - src/wake/read.ts
+    - test/wake/read.test.ts
+  traceability:
+    - rule: Carry forward the unknowns Wake reports and the unresolved items the relevant event records.
+      answers: Divergence D1, where one session enumerated four unknowns and the other enumerated none, both while complying with the contract as written.
+      root: AGENTS.md required separating unknowns during Wake but never required carrying them into the answer.
+    - rule: A status report covers every workstream Wake places in attention.
+      answers: Divergence D2, where the two sessions covered different parts of the portfolio and both omitted the two completed workstreams.
+      why_attention: Attention is derived by Wake on every run, so the rule cannot go stale and does not ask anyone to maintain a list by hand.
+    - rule: An agent's account of its own behaviour is evidence, not a verdict.
+      answers: Divergence D3, where a session certified its own compliance with the protocol.
+      root: The rule existed only in the slice 5 decision event, repeating the pattern slice 1 corrected once, where a universal rule sat in a workstream artifact instead of the shared foundation.
+  size:
+    agents_md: 91 lines to 95
+    accounting: >-
+      Three rules were added as three lines, plus one blank line because a
+      markdown list requires separation from the paragraph above it. The
+      acceptance asked for three lines and no more; this is three rules in four
+      added lines, and the difference is stated rather than glossed.
+    src: Two lines of behaviour and one type field, with a comment recording the presence-only limit.
+  bridge_observation:
+    field: observed.instructions.claudeMdPresent
+    what_it_catches: A bridge that is deleted or renamed, visible to any client including the one that does not use it.
+    what_it_misses: A bridge whose managed section drifts while the file still exists.
+    why_not_verified: >-
+      A content check needs a verifier. Invariant 8 keeps that unbuilt until
+      evidence establishes the need, and no run has yet shown a hand-maintained
+      bridge drifting.
+    neutrality: >-
+      The field reports an observed fact about a file. It grants no client
+      authority and states no rule, so invariant 3 holds.
+  checks:
+    - bun run typecheck
+    - bun run test
+    - bun run bin/ciel.ts events validate
+    - bun run bin/ciel.ts wake
+  result: >-
+    Typecheck passed. 29 tests passed across 8 files, up from 28. All 86 events
+    validate with no warnings, and Wake reports no validation errors and
+    claudeMdPresent true against the live repository.
+
+unresolved:
+  - The three report rules are asserted, not demonstrated. No client has been observed following them, and this slice makes no claim that they work.
+  - Presence-only observation leaves a drifted bridge invisible.
+  - One proof run remains one proof run. Neither client is established to behave consistently in future sessions.
+  - Four topic branches unrelated to this workstream remain in HQ. Two hold commits outside main and must not be cleaned; two are fully merged residue.
+  - Genesis Contract v0.2 is still unratified, and the supported-client set under its section 14 is still the owner's to settle. Two bridges now exist and one run has exercised them; that is not a ratified roster.
+  - The minimum continuity packet of Contract section 10 remains unbuilt and unclaimed.
+
+next_action:
+  action: >-
+    This is the last declared slice, so this closeout completes the workstream
+    once merged and the checkout returns to clean main. Anything above that
+    remains open needs a new owner-approved workstream. The most concrete
+    candidates are a second proof run to test whether the new report rules change
+    behaviour, and a bridge content check if a hand-maintained bridge is ever
+    observed drifting.
+  acceptance_check:
+    - This closeout must be committed and pushed to its draft pull-request head and proven an ancestor of that head before the pull request is advanced for owner review.
+    - After the merge and the return to clean main, Wake must report this workstream as completed from evidence alone, with no plan header edited.

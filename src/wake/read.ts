@@ -185,6 +185,10 @@ export async function readWakeReport(repositoryDirectory = "."): Promise<WakeRep
       },
       instructions: {
         agentsMdPresent: await readIfPresent(join(repositoryPath, "AGENTS.md")),
+        // Presence only. A bridge that is deleted or renamed becomes visible to
+        // every client; a bridge whose content drifts does not. Verifying the
+        // managed section would need a checker that no evidence justifies yet.
+        claudeMdPresent: await readIfPresent(join(repositoryPath, "CLAUDE.md")),
         readmePresent: await readIfPresent(join(repositoryPath, "README.md"))
       }
     },

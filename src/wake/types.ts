@@ -20,6 +20,7 @@ export interface WakeReport {
     };
     instructions: {
       agentsMdPresent: boolean;
+      claudeMdPresent: boolean;
       readmePresent: boolean;
     };
   };
