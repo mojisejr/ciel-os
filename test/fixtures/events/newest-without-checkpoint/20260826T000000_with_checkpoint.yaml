@@ -1,0 +1,17 @@
+schema_version: ciel.event.v0.1
+id: evt_20260826T000000_with_checkpoint
+type: closeout
+recorded_at: 2026-08-26T00:00:00+07:00
+recorded_by:
+  agent: test
+workstream:
+  id: fixture
+  objective: fixture
+outcome:
+  status: prepared
+evidence:
+  repository:
+    head: 0000000000000000000000000000000000000000
+unresolved: []
+next_action:
+  action: fixture

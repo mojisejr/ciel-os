@@ -3,6 +3,7 @@ import { join, resolve } from "node:path";
 
 import { parseDocument } from "yaml";
 
+import { findEventCheckpoint } from "../events/checkpoint.ts";
 import { validateEventDirectory } from "../events/validate.ts";
 import { readPortfolioWakeReport } from "../portfolio/read.ts";
 import type { WakeReport } from "./types.ts";
@@ -77,21 +78,6 @@ function parseWorktrees(output: string): WakeReport["observed"]["repository"]["w
     });
 }
 
-function findCheckpoint(event: Record<string, unknown>): string | null {
-  const evidence = event.evidence;
-
-  if (!isRecord(evidence)) {
-    return null;
-  }
-
-  const repository = evidence.repository;
-  if (isRecord(repository)) {
-    return readString(repository, "head") ?? readString(repository, "base_revision") ?? readString(evidence, "base_revision");
-  }
-
-  return readString(evidence, "base_revision") ?? readString(evidence, "prior_checkpoint");
-}
-
 async function readLatestEvent(eventsDirectory: string): Promise<LatestEvent | null> {
   const relativePaths = [...new Bun.Glob("**/*.yaml").scanSync(eventsDirectory)].sort();
   const relativePath = relativePaths.at(-1);
@@ -115,7 +101,7 @@ async function readLatestEvent(eventsDirectory: string): Promise<LatestEvent | n
     recordedAt: readString(value, "recorded_at"),
     workstreamId: readString(workstream, "id"),
     objective: readString(workstream, "objective"),
-    checkpoint: findCheckpoint(value)
+    checkpoint: findEventCheckpoint(value)
   };
 }
 
@@ -207,6 +193,7 @@ export async function readWakeReport(repositoryDirectory = "."): Promise<WakeRep
     unknowns: [
       "Human approval, review, and external rules are unknown unless a repository record explicitly establishes them."
     ],
-    validationErrors: [...validation.errors, ...portfolio.validationErrors]
+    validationErrors: [...validation.errors, ...portfolio.validationErrors],
+    validationWarnings: validation.warnings
   };
 }

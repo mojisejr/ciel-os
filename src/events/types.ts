@@ -7,7 +7,13 @@ export interface EventValidationError {
   message: string;
 }
 
+export interface EventValidationWarning {
+  path: string;
+  message: string;
+}
+
 export interface EventValidationResult {
   errors: EventValidationError[];
   files: string[];
+  warnings: EventValidationWarning[];
 }
