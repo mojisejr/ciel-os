@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20260905T141744_slice4_authorized
+type: decision
+recorded_at: 2026-09-05T14:17:44+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-multi-client-support-001
+  lane: single
+  objective: >-
+    Authorize slice 4, which amends the rule forbidding CLAUDE.md and adds the
+    Claude bridge as one explicitly delimited CIEL-managed section.
+  scope:
+    - Amend the AGENTS.md rule that forbids CLAUDE.md, and the line that still calls Codex the only client.
+    - Add CLAUDE.md holding pointers and client-specific mechanics only.
+  out_of_scope:
+    - The cross-client proof, which slice 5 carries.
+    - Any bridge generator, verification command, or Wake awareness of the bridge file.
+    - Any IDE instruction file, nested instruction file, or third client.
+
+outcome:
+  status: decided
+  authority_source:
+    - The opened event evt_20260905T122136_multi_client_workstream_opened records the owner agreement that this workstream may amend AGENTS.md, including the rule forbidding CLAUDE.md, for the duration of this work only.
+    - The plan's Authority and scope carries the same grant and limits it to this workstream.
+    - The owner confirmed plan revision 0.2 and directed continuation after slices 2 and 3 merged.
+  completed:
+    - Authorizes plan revision 0.2 slice 4 on the single lane.
+  not_completed:
+    - Slice 5 is not authorized. It requires its own decision after this slice merges.
+
+evidence:
+  repository:
+    head: 6cef7c461b485ddb6a79bd6d0fc187e670103646
+    branch: feat/slice4-claude-bridge
+  plan: workstreams/ciel-multi-client-support-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "4"
+  mechanism_note: >-
+    This is the first decision event written since slice 2 moved authorization
+    off Execution phase. Wake reporting the workstream as authorized on this
+    slice is the working proof that slice 2 succeeded, and the reason this
+    decision is committed before any slice 4 change.
+
+unresolved:
+  - Whether this event accurately records the owner's authorization is the owner's to confirm at review. The agent recorded an authorization already given; it did not grant one.
+  - The supported-client set under Genesis Contract v0.2 section 14 is still not ratified. This decision authorizes one slice of work, not a permanent client roster.
+
+next_action:
+  action: >-
+    Execute slice 4: amend AGENTS.md, then add CLAUDE.md as one delimited
+    CIEL-managed section containing no rule that exists only there.
+  acceptance_check:
+    - Wake must report this workstream as authorized for plan revision 0.2 slice 4 before any slice 4 change is made.
+    - Removing CLAUDE.md must leave CIEL fully operable through AGENTS.md and README.md alone.
