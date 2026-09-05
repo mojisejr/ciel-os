@@ -1,0 +1,103 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T060417_mumate_be_decoupling_paused
+type: closeout
+recorded_at: 2026-09-06T06:04:17+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-decoupling-001
+  lane: single
+  objective: >-
+    Pause this workstream before any slice starts, because the product team
+    reported that nothing is required from us yet, and preserve the measured
+    evidence so whoever resumes does not have to rediscover it.
+  scope:
+    - Move plan state to paused at revision 0.3 and record why, what would unpause it, and what goes stale first.
+    - Close this lane so CIEL work can resume.
+  out_of_scope:
+    - Withdrawing the plan or retracting any finding. Nothing measured here is reversed.
+    - Any change in mootech-fe or mootech-be. Neither repository was touched at any point in this workstream.
+    - Correcting docs/be-phase1-consolidation.md, which remains slice 2's job whenever this resumes.
+
+outcome:
+  status: ready-for-owner-merge
+  owner_direction: >-
+    The owner asked the product team whether this work was needed now. The team's
+    answer, relayed by the owner on 2026-09-06, is that nothing is required from
+    us yet. The owner directed a closeout and a lane change back to CIEL work.
+  completed:
+    - Plan moved to paused at revision 0.3, with the reason, three named conditions that would unpause it, and an explicit staleness warning recorded in the plan itself.
+    - The research is preserved in the ledger rather than in a chat log, which was the owner's stated reason for opening this workstream at all.
+    - mootech-fe and mootech-be remain registered and bound, so a future session can audit them from repository evidence without repeating the registration.
+  not_completed:
+    - No slice ran. Not one file in mootech-fe or mootech-be was changed, and no database was touched.
+    - docs/be-phase1-consolidation.md section I still says the be consent module has no FE caller. The correction was slice 2's and slice 2 did not run.
+    - The kind pdpa overlap between the two consent models is unresolved, as the owner scoped it out.
+
+evidence:
+  repository:
+    head: 8851c6f72fdf9dfeceefe2874c01e40a5743e7ea
+    branch: docs/mumate-be-decoupling-workstream
+  plan: workstreams/mumate-be-decoupling-001/PLAN.md
+  plan_revision: "0.3"
+  prior_event: memory/events/2026/09/06/20260906T054231_mumate_be_decoupling_workstream_opened.yaml
+  pull_request:
+    number: 34
+    url: https://github.com/mojisejr/ciel-os/pull/34
+    base: main
+    head: docs/mumate-be-decoupling-workstream
+    observed_head_before_this_commit: 8851c6f72fdf9dfeceefe2874c01e40a5743e7ea
+    reviews_at_pause: 0
+    note: >-
+      The pull request was already marked ready for review when this pause was
+      recorded, and carried no review, so pushing the pause did not invalidate an
+      approval. It stays one pull request that opens and immediately pauses the
+      workstream, rather than two.
+  changed:
+    - workstreams/mumate-be-decoupling-001/PLAN.md
+    - memory/events/2026/09/06/20260906T060417_mumate_be_decoupling_paused.yaml
+  lifecycle_shape:
+    observed: >-
+      This workstream opened and paused without executing, so the ledger shows a
+      plan whose evidence was gathered and whose work was declined. That is a
+      real outcome, not a failure, and it is recorded as its own event rather
+      than by editing the opening one.
+    why_not_amend_the_opening_event: >-
+      The opening event was refined twice before merge, to add the pull-request
+      reference and to carry the owner's scope decision at revision 0.2. Changing
+      it a third time would replace its meaning rather than complete it. The
+      sequence opened then paused is what happened, so it is two records.
+  what_survives_the_pause:
+    - The six paths by which the v2 surface reaches mootech-be, ranked by user impact, with the file that carries each.
+    - That pages/api/v2/onboarding.ts is the only file among the twenty under pages/api/v2/ that reads NEXT_PUBLIC_BACKEND_URL, and that all five v2 payment routes carry none.
+    - That docs/be-phase1-consolidation.md section I would break first-run if executed as written, because the caller it says does not exist reaches be outside constants/api/endpoint.ts.
+    - That MuMate's two consent surfaces are different models overlapping only on kind pdpa, not one record kept twice.
+    - That pages/api/v2/first-run-reset.ts already writes both targets directly from the FE, so the capability a future slice 1 needs is present and exercised.
+    - That first-run reaches mootech-be twice and the engine optionally once, so closing the consent write alone would not make it independent.
+  checks:
+    - bun run bin/ciel.ts events validate
+    - bun run typecheck
+    - bun run test
+    - bun run bin/ciel.ts wake
+
+unresolved:
+  - Every measurement here is a snapshot of mootech-fe at 3c5e5bd. That repository moved one hundred commits in the three days before this plan was written, so the six dependencies must be re-measured before anyone acts on them.
+  - docs/be-phase1-consolidation.md still carries the claim that would break first-run. Nothing in this workstream corrected it, and the next reader of that document will be misled exactly as before.
+  - mootech-be has had no commit since 2026-08-18 and mootech-be#23, payment endpoints with no auth, has been open since 2026-08-13. Pausing this workstream does not touch that risk.
+  - The kind pdpa overlap survives, and the two consent models still cannot see each other.
+  - Nothing in this workstream was verified by running either application or querying either database. Every impact statement is read from a code comment or inferred from a call path.
+  - Human approval, review, and external rules are unknown unless a repository record explicitly establishes them.
+
+next_action:
+  action: >-
+    Review and merge this pull request, then return this checkout to clean
+    current main and delete the topic branch under the usual gate. The lane then
+    returns to CIEL work. Resuming this workstream needs a new owner decision and
+    a re-measurement of the six dependencies, not a continuation of this plan as
+    written.
+  acceptance_check:
+    - This closeout must be committed and pushed to the pull-request head and proven an ancestor of that head before the owner merges.
+    - After the merge and the return to clean main, Wake must report mumate-be-decoupling-001 as paused, alongside the two CIEL workstreams already in that state.
+    - No slice may begin without a new owner decision naming this plan, its revision, and its slice.

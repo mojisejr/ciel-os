@@ -1,0 +1,6 @@
+schema_version: ciel.project.v0.1
+id: mootech-fe
+repository:
+  vcs: git
+  canonical_remote: github.com/mojisejr/mootech-fe
+  default_branch: main
