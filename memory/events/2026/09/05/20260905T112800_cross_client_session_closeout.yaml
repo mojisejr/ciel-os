@@ -40,6 +40,9 @@ outcome:
     - No client bridge, instruction file, or CIEL runtime change was made.
 
 evidence:
+  repository:
+    head: 201cbdfc0afd23780599155dc4eb3439af63b6e0
+    branch: docs/cross-client-session-closeout
   plan: workstreams/cu12-simulator-sprint-003/PLAN.md
   plan_revision: "0.1"
   prior_closeout: memory/events/2026/09/05/20260905T071700_cu12_hook_scenarios_final_closeout.yaml
@@ -104,6 +107,7 @@ evidence:
       - This client's defaults reach for global memory, prior session transcripts, and GitHub, which are the three sources the Wake evidence boundary excludes.
       - AGENTS.md carries no rule about commit trailers, while this client's host instructed a session-locator trailer that the portfolio-flow plan forbids. The owner resolved it by keeping the repository's no-trailer convention.
       - The agent withheld the draft-to-ready transition although README.md line 143 assigns that action to the agent after proof.
+      - This event was first written without any checkpoint reference. It passed validation and was committed and pushed, yet it silently degraded Wake reconciliation to unknown. The owner's question about a fresh session exposed it before the merge.
     root_cause: >-
       AGENTS.md states the draft rule in one line, but the operative procedure,
       including the ancestor proof, the review template, who advances a pull
@@ -114,6 +118,21 @@ evidence:
       - bun run wake was self-explanatory and needed no external instruction.
       - The plan and event structure made the pending work identifiable without any prior conversation.
       - Proof Charter section 1 was satisfied across two different clients rather than two sessions of one client.
+  checkpoint_defect:
+    location: src/events/validate.ts against src/wake/read.ts findCheckpoint
+    observed: >-
+      An event with no evidence.repository.head, evidence.repository.base_revision,
+      evidence.base_revision, or evidence.prior_checkpoint passes validation, but
+      Wake then reports reconciliation "unknown" and makes no ancestry claim.
+    cause: >-
+      The validator requires evidence to exist but never inspects its contents,
+      so the one field Wake needs to reconcile recorded history against live Git
+      is optional in practice. This is the same honor-system gap as recorded_by,
+      where a wrong or missing value is invisible to every automated check.
+    proposed_fix: >-
+      Have the validator warn or fail when a closeout carries no checkpoint
+      reference that findCheckpoint accepts, so a client cannot silently disable
+      reconciliation for every session that follows.
   environment_note: >-
     This session's first Wake was contaminated by a global skill, GitHub, and
     prior session history. Every CIEL fact recorded here was re-established
@@ -126,6 +145,7 @@ unresolved:
   - The sprint-003 plan still records State active. Flipping it to completed would remove the workstream from attention, but that hides the defect rather than resolving it.
   - Four topic branches unrelated to this work remain in HQ. backup/pr-workflow-phase2-closeout and chore/adopt-local-main-history each hold one commit outside main and must not be cleaned. chore/reconcile-pr-workflow-adoption and docs/ciel-wake-evidence-boundary are fully merged and are residue.
   - No client bridge exists for this client. The friction above will recur in the next non-Codex session.
+  - The checkpoint defect above remains open. Any client can still commit an event that validates cleanly while leaving Wake unable to reconcile.
   - The 12-hook mapping, hardware behaviour, and physical mechanics remain unproven exactly as the prior closeout recorded.
 
 next_action:
