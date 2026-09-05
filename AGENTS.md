@@ -15,6 +15,7 @@ CIEL preserves evidence, decisions, and reconstructable context across disposabl
 - For an authorized local change, make only the necessary in-scope edits and run relevant non-destructive checks.
 - Ask before external writes, destructive actions, purchases, credentials, legal/policy attestations, or a material expansion of scope.
 - Never place secrets in repository files, events, evidence, or responses. Refer to an owner-controlled location instead.
+- Agent sessions are disposable. Never store a session id, URL, or other locator in a commit, event, or repository file. A client name is provenance, not authority.
 
 ## Mandatory session start: Wake
 
@@ -54,24 +55,23 @@ Wake → Align → Plan → Execute → Closeout
 - Do not develop tracked changes directly on `main`. Use a short-lived topic branch; local-only projects merge locally after checks, while projects with a canonical remote merge through an owner-reviewed pull request.
 - Before starting tracked work in a remote project, and after its PR merges, return to a clean local `main` that matches fetched `origin/main`.
 - Keep every remote PR as a draft until its phase closeout is committed and pushed to that PR head; verify the head, then report the ready-for-review PR to the owner.
+- `README.md` records the operative pull-request procedure and which steps the agent performs on its own after proof. Follow it, not a general rule.
 
 ## Semantic event convention
 
 `memory/events/` is the append-only, Git-tracked record of semantic facts that Git cannot reconstruct reliably. The current local CLI only reads and validates these records; it does not create or amend them.
 
-- Store each event at `memory/events/YYYY/MM/DD/YYYYMMDDTHHMMSS_type.yaml`.
+- Store each event at `memory/events/YYYY/MM/DD/YYYYMMDDTHHMMSS_<slug>.yaml`. The slug describes the event; the `type` field carries its type.
 - Write timestamps in ISO 8601 with timezone; use a stable `id`; never overwrite a committed event.
-- Start with only the `closeout` type. Add `decision`, `eval`, or `knowledge` only when the first proof demonstrates the need.
+- Use `closeout` and `decision`. Add `eval` or `knowledge` only when a recorded proof demonstrates the need.
 - Each event must include: `schema_version`, `id`, `type`, `recorded_at`, `recorded_by`, `workstream`, `outcome`, `evidence`, `unresolved`, and `next_action`.
+- Give each closeout a checkpoint at `evidence.repository.head`. Wake reconciles through it; an event without one validates but silently disables reconciliation.
 - Use concise YAML: stable keys for agents, plain prose values for humans, and source references instead of duplicated Git diffs.
 
 ## CIEL's current stage
 
-CIEL has completed its Codex-only Genesis and read-only continuity-core proof.
-The current approved workstream is the plan-first portfolio-flow proof at
-`workstreams/ciel-portfolio-flow-001/PLAN.md`: project identities, local
-checkout bindings, and multi-workstream reconstruction must prove their need
-before CIEL adds a broader lifecycle capability.
+Active workstreams and their state are the plans under `workstreams/`, as
+reported by `bun run wake`. This file does not track them.
 
 - Do not add a write path, daemon, API, MCP server, database, index, dashboard, agent team, or directory structure beyond the approved project registry and workstream-plan proof.
 - Do not add a CIEL-specific global skill, host hook, or launcher until a reviewed proof gap establishes the need.

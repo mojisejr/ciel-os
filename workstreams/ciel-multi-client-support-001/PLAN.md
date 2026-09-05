@@ -3,7 +3,7 @@
 **Workstream:** `ciel-multi-client-support-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -25,8 +25,11 @@ runtime capability beyond the slices below.
 
 Slice 2 must be executed before any decision event can authorize a later slice
 of this plan, because the current code cannot authorize a plan whose execution
-phase is `none`. The owner authorizes slice 1 and slice 2 directly through this
-plan's confirmation; from slice 3 onward the normal decision path applies.
+phase is `none`. The owner authorizes slices 1 through 3 directly through this
+plan's confirmation, since slices 2 and 3 are delivered together and slice 3
+cannot wait on a mechanism slice 2 is still repairing. From slice 4 onward the
+normal decision path applies and must be used, which is itself the proof that
+slice 2 succeeded.
 
 ## Starting evidence
 
@@ -53,7 +56,7 @@ plan's confirmation; from slice 3 onward the normal decision path applies.
   checkpoint reference that `findCheckpoint` accepts, including 15 of 26
   `decision` events. The proposed fix recorded in that event, which was to make
   the validator fail, would break the existing ledger and is superseded by the
-  warning-based approach in slice 2.
+  warning-based approach in slice 3.
 - `AGENTS.md` currently forbids adding `CLAUDE.md`, IDE instructions, or nested
   instruction files "until the Codex-only workflow reveals a concrete need". The
   event above is that recorded need, and the owner has authorized this
@@ -113,16 +116,19 @@ No child project is touched. No product repository changes.
 4. The Wake evidence boundary is unchanged. A bridge may not widen it, and must
    restate that global skills, global memory, prior chat history, and external
    services cannot establish a CIEL fact.
-5. Additive to Codex. No existing Codex behaviour, rule, or artifact regresses.
-   A Codex session after this workstream behaves as it does before it, except
-   where slice 1 makes an existing rule easier to reach and slice 2 makes a
-   broken derivation correct.
+5. Additive. No rule, artifact, or procedure the existing contract already
+   established regresses. Any client session that worked before this workstream
+   works the same after it, except where slice 1 makes an existing rule easier
+   to reach and slices 2 and 3 make a broken check correct.
 6. The ledger is append-only. No historical event is edited, back-filled, or
    invalidated to satisfy a stricter check introduced here.
 7. Bridges are rebuildable projections, not ledger entries. They may be
    rewritten; the events that record their existence may not.
 8. Earn every capability. Hand-authored bridges first. No generator, CLI write
    path, hook, launcher, or global skill unless a slice below proves the need.
+9. Every line added to a shared instruction file or bridge must trace to a
+   recorded failure. Prefer a reference over a restatement, and prefer deleting
+   hand-maintained state over updating it.
 
 ## Execution slices and acceptance criteria
 
@@ -138,11 +144,19 @@ adding any bridge, so both clients benefit from the same correction.
   draft to ready, post-merge synchronization, and branch cleanup.
 - No rule is duplicated. `AGENTS.md` gains references, not a second copy of
   `README.md`.
+- Correct any statement in `AGENTS.md` that the ledger has made factually false.
+  A stale instruction misleads more than a missing reference does, and the
+  file's own hygiene rule requires reviewing an obsolete instruction.
 - Acceptance: for each of the six recorded friction points, name the file and
   line a client would now reach, or record explicitly that the point is
   client-specific and deferred to slice 4.
-- Acceptance: a Codex session reading the amended `AGENTS.md` finds no rule
-  changed in meaning, only rules made reachable.
+- Acceptance: no rule is weakened or changed in intent. Every edit is either a
+  reference to a rule that already exists elsewhere in this repository, or a
+  correction of a statement the ledger contradicts. The owner confirms this. A
+  reading by any client is evidence, never the arbiter, and the agent that made
+  an edit is never the arbiter of that edit.
+- Acceptance: every added line traces to a recorded failure, and the file does
+  not grow beyond what those failures require.
 
 ### 2. Decouple authorization and lifecycle from `Execution phase`
 
@@ -227,8 +241,9 @@ caught it because the owner asked what a fresh session would see.
   global memory, prior session history, or an external service establish a Wake
   fact; the operative procedure continues in `README.md` and in events.
 - Acceptance: the bridge contains no rule that exists only there.
-- Acceptance: removing `CLAUDE.md` leaves CIEL fully operable for Codex, proving
-  the bridge holds no canonical state.
+- Acceptance: removing `CLAUDE.md` leaves CIEL fully operable through
+  `AGENTS.md` and `README.md` alone, proving the bridge holds no canonical
+  state.
 - Acceptance: the bridge names `claude` consistently with the ledger value the
   owner chose.
 

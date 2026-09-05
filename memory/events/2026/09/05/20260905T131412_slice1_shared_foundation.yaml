@@ -1,0 +1,122 @@
+schema_version: ciel.event.v0.1
+id: evt_20260905T131412_slice1_shared_foundation
+type: closeout
+recorded_at: 2026-09-05T13:14:12+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-multi-client-support-001
+  lane: single
+  objective: >-
+    Make the operative procedure reachable from AGENTS.md and correct the
+    statements the ledger had made false, so any client reading the operating
+    contract can find every rule it needs without guessing.
+  scope:
+    - Add the three references that close the recorded shared-foundation friction points.
+    - Correct the statements in AGENTS.md that no longer match the ledger.
+    - Raise the plan to revision 0.2 to cover correcting false statements.
+  out_of_scope:
+    - Any client bridge. CLAUDE.md is not created and the rule forbidding it is untouched.
+    - Any change to src/, the Wake evidence boundary, the event schema, or the plan policy.
+    - Both recorded defects, which slices 2 and 3 carry.
+
+outcome:
+  status: ready-for-owner-merge
+  owner_authorization: >-
+    The owner confirmed plan revision 0.1, authorized amending AGENTS.md for the
+    duration of this workstream, approved the compressed wording, and directed
+    that the two stale statements be corrected in this slice rather than
+    deferred.
+  completed:
+    - Added a Git-workflow reference to the operative pull-request procedure in README.md and to which steps the agent performs on its own after proof.
+    - Added the session-locator prohibition to Authority and scope, where a universal rule belongs, rather than leaving it only in a completed workstream's plan.
+    - Added the checkpoint requirement to the event convention so a closeout cannot silently disable Wake reconciliation.
+    - Corrected the event filename convention to describe the slug that events actually use.
+    - Corrected the event-type rule, which still said to use closeout only while 26 decision events exist under a recorded authorization.
+    - Replaced the hand-maintained current-stage paragraph with a pointer to the workstream plans and Wake, which already derive that state.
+    - Raised the plan to revision 0.2, added invariant 9, and widened the slice 1 acceptance to cover correcting a false statement.
+  not_completed:
+    - Three of the six recorded friction points are client-specific and remain open until slice 4.
+    - No proof that a client actually follows the now-reachable procedure. That is slice 5.
+
+evidence:
+  repository:
+    head: 546a37d86ddfc89e76e84ff888179e802091d26b
+    branch: docs/slice1-shared-foundation
+  plan: workstreams/ciel-multi-client-support-001/PLAN.md
+  plan_revision: "0.2"
+  client_neutrality_correction: >-
+    Revision 0.1 named a Codex session as the party that decides whether a rule
+    was weakened, and phrased two further criteria around Codex rather than
+    around the artifact. That made a client the arbiter of correctness, which
+    contradicts this plan's own invariant 3, Genesis Contract v0.2 section 6 on
+    owner authority, and section 7, which treats a client or model name as
+    evidence and never as authority. The owner caught it during review. Revision
+    0.2 moves the judgement to the owner and states the criteria against the
+    artifact instead of against a client.
+  plan_revision_note: >-
+    Revision 0.1 required that no rule change in meaning. Correcting a statement
+    the ledger had made false does change meaning, so the acceptance was widened
+    and the revision raised rather than stretching the earlier wording.
+  slice: "1"
+  size:
+    before: 90 lines
+    after: 90 lines
+    detail: >-
+      Seven insertions and seven deletions. Three references were added and
+      three stale statements were replaced, one of which shrank from five lines
+      to two. The file did not grow.
+  friction_disposition:
+    - point: A client that reads only AGENTS.md never sees the operative pull-request procedure.
+      resolved_by: AGENTS.md Git workflow now references README.md and states that the agent performs its own steps after proof.
+      status: closed in this slice
+    - point: The session-locator rule existed only in a completed workstream's plan, so AGENTS.md had no answer about commit trailers.
+      resolved_by: AGENTS.md Authority and scope now carries the rule directly.
+      status: closed in this slice
+    - point: An event without a checkpoint reference validates and silently disables reconciliation.
+      resolved_by: AGENTS.md event convention now requires evidence.repository.head on a closeout. The validator warning is slice 3.
+      status: documented here, enforcement deferred to slice 3
+    - point: Claude Code loads CLAUDE.md and never reads AGENTS.md.
+      resolved_by: null
+      status: client-specific, deferred to slice 4
+    - point: A global skill ran before the mandatory Wake procedure.
+      resolved_by: AGENTS.md already forbids this at the Wake procedure and the evidence boundary. The rule was correct and unreachable, not missing.
+      status: client-specific reachability, deferred to slice 4
+    - point: The client's defaults reach for global memory, prior session history, and GitHub.
+      resolved_by: AGENTS.md already excludes all three for Wake facts. The rule was correct and unreachable, not missing.
+      status: client-specific reachability, deferred to slice 4
+  corrections:
+    filename_convention:
+      was: memory/events/YYYY/MM/DD/YYYYMMDDTHHMMSS_type.yaml
+      observed: Events use a descriptive slug, for example 20260905T122136_multi_client_workstream_opened.yaml.
+      now: The rule describes the slug and states that the type field carries the type.
+    event_types:
+      was: Start with only the closeout type.
+      observed: 26 decision events exist, first authorized by evt_20260826T141105_implementation_entry_boundary.
+      now: The rule names closeout and decision as in use, and keeps eval and knowledge gated on recorded proof.
+    current_stage:
+      was: A five-line paragraph naming ciel-portfolio-flow-001 as the current approved workstream.
+      observed: That workstream is completed, so the paragraph was actively misleading, and AGENTS.md forbids itself from copying project history.
+      now: A two-line pointer to the plans under workstreams/ and to bun run wake, which already derive that state.
+  checks:
+    - bun run bin/ciel.ts events validate
+    - bun run wake
+  result: Validation passed and Wake reported validationErrors empty with the plan parsing at revision 0.2.
+
+unresolved:
+  - Whether any rule was weakened or changed in intent is the owner's call. The agent that made an edit cannot be the arbiter of that edit, and a reading by any client is evidence, never authority.
+  - The three client-specific friction points stay open until slice 4 adds the bridge.
+  - The checkpoint rule is documented but unenforced until slice 3.
+  - AGENTS.md still states "Initial client: Codex only" and still forbids CLAUDE.md. Both are correct today and are slice 4's to change.
+
+next_action:
+  action: >-
+    After this merges, execute slices 2 and 3 in one pull request: move
+    authorization and terminal lifecycle off Execution phase so a decision can
+    name a slice, re-derive or explicitly retire interrupted-lane detection, and
+    make the validator warn when a closeout carries no checkpoint reference.
+  acceptance_check:
+    - This closeout must be committed and pushed to its draft pull-request head and proven an ancestor of that head before the pull request is advanced for owner review.
+    - Slices 1 through 3 are authorized by the owner's plan confirmation. From slice 4 onward a decision event naming plan revision 0.2 and a slice must authorize the work, which is itself the proof that slice 2 succeeded.
