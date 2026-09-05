@@ -1,0 +1,195 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T054231_mumate_be_decoupling_workstream_opened
+type: closeout
+recorded_at: 2026-09-06T05:42:31+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-decoupling-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 first-run path independent of mootech-be, so the one route
+    every new user must pass cannot be broken by the legacy backend, and record
+    precisely what still binds the v2 surface to it.
+  scope:
+    - Register mootech-fe and mootech-be as CIEL projects so this work can be audited from repository evidence.
+    - Establish the workstream and its acceptance contract at plan revision 0.1.
+    - Preserve the research findings that justify it, including two that contradict a document already in mootech-fe.
+  out_of_scope:
+    - Any slice implementation. No file in mootech-fe or mootech-be is changed here.
+    - Launching v2, removing the preview gate, or anything depending on mootech-fe#247.
+    - Deciding where MuMate's PDPA record should ultimately live. That question is surfaced, not answered.
+    - Binding bazi-sft-dataset. This workstream changes nothing in it.
+
+outcome:
+  status: prepared
+  owner_agreement:
+    - Move first-run's write up into mootech-fe itself rather than sideways into the bazi engine.
+    - Change lane from CIEL platform work to this product work for one set of slices.
+    - The owner asked for the research to be preserved as evidence before the lane changed.
+  completed:
+    - Prepared plan revision 0.1 with seven invariants, two slices, per-slice acceptance criteria, and one open question reserved for the owner.
+    - Registered mootech-fe and mootech-be in projects/ and bound both machine-locally. Wake reports both as available with no validation error.
+    - Recorded the six paths by which the v2 surface still reaches mootech-be, ranked by user impact.
+    - Recorded two findings that contradict docs/be-phase1-consolidation.md, both reachable from the same file it cites.
+  not_completed:
+    - No slice has started. mootech-fe and mootech-be are unchanged.
+    - Nothing was verified by running either application. Every finding is static analysis of repository files and GitHub metadata.
+    - The two PDPA consent stores are not reconciled and this plan does not choose between them.
+
+evidence:
+  repository:
+    head: 6531f85a6c861b1b2e57b3ab73633fb144e1d84a
+    branch: docs/mumate-be-decoupling-workstream
+  plan: workstreams/mumate-be-decoupling-001/PLAN.md
+  plan_revision: "0.1"
+  changed:
+    - projects/mootech-fe/project.yaml
+    - projects/mootech-be/project.yaml
+    - workstreams/mumate-be-decoupling-001/PLAN.md
+    - test/projects/validate.test.ts
+    - memory/events/2026/09/06/20260906T054231_mumate_be_decoupling_workstream_opened.yaml
+  registry_guard: >-
+    test/projects/validate.test.ts asserts the exact contents of the committed
+    project registry, so registering two projects turned it red until the two new
+    entries were named there. The guard did its job: a registry entry cannot
+    appear without someone stating it in a test.
+  transient_attention_note: >-
+    Wake reports six workstreams in attention while this branch is checked out,
+    five of them as conflict. Those five derive merged-needs-sync only because
+    the checkout is on a topic branch rather than clean current main, and they
+    return to completed and drop out of attention after the merge. The genuine
+    entry is this workstream itself, reported as owner-confirmation-required
+    because it links ciel-os alongside other plans that are not yet derived
+    complete from this checkout.
+  method:
+    what_was_done: >-
+      Read the pinned handover issue mootech-fe#596 in full, all thirteen
+      comments and roughly 151,000 characters, then enumerated the v2 surface
+      and traced every path from it to mootech-be.
+    how_traced:
+      - grep for NEXT_PUBLIC_BACKEND_URL across mootech-fe, which found four source files plus the endpoint ledger.
+      - Read constants/api/endpoint.ts in full, 149 lines, to separate backendURLGenerator entries from localApi entries.
+      - Followed every constants/api import inside features/, pages/v2/, and lib/ to see which wrappers v2 code actually calls.
+      - Checked each of the twenty files under pages/api/v2/ for a BE reference individually.
+    boundary: >-
+      GitHub API and local read-only Git only. No application was run, no
+      endpoint was called, no database was queried, and roughly eight source
+      files were opened in full.
+  observed_repositories:
+    mootech_fe:
+      origin_main: 3c5e5bd18781b5075bcfdd4e02edbf86cefc2c5e
+      local_checkout: clean on main at 8c49f399a7ac, one hundred commits behind fetched origin/main
+      note: A second worktree named lamun-585-colleague is attached on feat/585-colleague-multi and belongs to another person's work.
+    mootech_be:
+      origin_main: 57da35941c803
+      local_checkout: clean and current, divergence zero zero
+      note: No commit since 2026-08-18.
+    bazi_sft_dataset:
+      real_branch: pdf-dev at 4a3bd5430438, two hundred eighty five ahead of main and twenty nine behind it
+      note: Not bound in CIEL. Its default branch has not carried the product work for three months.
+  v2_dependencies_on_be:
+    count: 6
+    ranked_by_user_impact:
+      - rank: 1
+        path: pages/api/v2/onboarding.ts
+        calls: BE POST /consent
+        breaks: Every new user. The route's own header says the BE call stamps user.onboarded_at, which is what stops the first-run gate from looping forever.
+        note: The only file among the twenty under pages/api/v2/ that reads NEXT_PUBLIC_BACKEND_URL.
+      - rank: 2
+        path: lib/auth/use-self-heal-identity.ts
+        calls: BE POST /user/register-login
+        breaks: Anyone deep-linking in, for example from a LINE rich menu, without a MEMBER_ID cookie. Mounted globally in _app.tsx, and around eleven pages share the gate it releases.
+      - rank: 3
+        path: features/v2-service/hooks/useCompatibility.ts
+        calls: BE POST /member-with-friend and /member-with-friend/profile
+        breaks: Adding or editing a friend. Reading the existing list still works because those two moved to localApi.
+        note: The engine has no friend model, so this is not a migration but new work.
+      - rank: 4
+        path: pages/api/chinese-horoscope.ts
+        calls: BE GET /chinese-horoscope
+        breaks: The v2 home chart and the first-run source read.
+        note: A hybrid that keeps the whole BE chart and overlays only engine text on four sections.
+      - rank: 5
+        path: features/auth/hooks/useV2ProfileForm.ts
+        calls: BE POST /chinese-horoscope
+        breaks: Editing one's own profile or birth details on the v2 settings screens.
+      - rank: 6
+        path: lib/credit/wallet-client.ts
+        calls: BE /ai/balance/:id and /ai/consume
+        breaks: The v2 chat lane, which cannot read or spend credit.
+    already_free: >-
+      All five routes under pages/api/v2/payment carry zero references to
+      NEXT_PUBLIC_BACKEND_URL, so the money lane no longer depends on
+      mootech-be. Umbrella mootech-fe#352 achieved what it set out to do.
+    security_note: >-
+      Ranks two, three and five are client-side calls, so the browser reaches
+      mootech-be directly rather than through a same-origin BFF. Launching v2
+      therefore requires mootech-be to be publicly reachable, and mootech-be#23
+      records that the repository contains no guard file at all.
+  findings_that_contradict_an_existing_document:
+    document: mootech-fe docs/be-phase1-consolidation.md, added 2026-09-04 in pull request 601, status PLAN
+    first:
+      section: I, and switch one of section 4
+      claim: The be consent module has no endpoint.ts reference and no other FE caller, is already dead from the FE side, and src/consent/ is deletable as the safest Phase 1 switch.
+      observed: pages/api/v2/onboarding.ts calls BE POST /consent through NEXT_PUBLIC_BACKEND_URL directly, not through endpoint.ts, which is the only place that document looked.
+      consequence: Executing switch one as written would delete the module that stamps onboarded_at, and every new user would loop in first-run.
+    second:
+      claim: The document treats consent as a single store.
+      observed: >-
+        Two stores exist. pages/api/consent.ts reaches the engine at
+        account/consent keyed by anonId from cookie-mumate-id and is rendered by
+        the settings screen, while pages/api/v2/onboarding.ts reaches
+        mootech-be keyed by the session user id and is used by first-run.
+      consequence: PDPA acceptance for one person can exist in two databases under two identity keys with nothing observed connecting them.
+    caveat: >-
+      Both findings are static analysis. Neither was confirmed by running the
+      application or by querying either database.
+  why_fe_rather_than_engine:
+    owner_choice: Move the write into mootech-fe.
+    supporting:
+      - mootech-fe and mootech-be already share one Supabase database, so the target table is already reachable and no data migration is implied.
+      - lib/db/schema.ts lines 1033 to 1038 already declare onboardedAt and onboardingGoal, citing the same BE migration that created them.
+      - The route already contains a non-production fallback that writes exactly those two columns through the FE database.
+      - The consent table is four columns with no PII beyond user_id, by its entity's own recorded intent.
+      - The engine's consent record is keyed by anonId, so moving there would place a user_id-scoped legal record in a different database from the user table it refers to.
+      - consent.service.ts records that the BE trusts user_id from the request body and has no user auth, while the FE route derives the subject from a signed session and no longer sends one.
+      - The BE performs two writes outside a transaction, so a failure between them leaves a consent row with the gate still looping. The FE can do both in one transaction.
+    superseded: >-
+      An earlier suggestion in the same session to move the write to the bazi
+      engine is superseded by the owner's choice and by the anonId key mismatch
+      recorded above.
+  checks:
+    - bun run bin/ciel.ts projects validate
+    - bun run bin/ciel.ts events validate
+    - bun run typecheck
+    - bun run test
+    - bun run bin/ciel.ts wake
+  result: >-
+    Seven project files validate. Wake reports mootech-fe and mootech-be as
+    available bindings whose local Git origin matches the committed identity, and
+    reports no validation error.
+
+unresolved:
+  - Where MuMate's PDPA record should live and under which key. Two stores exist under two identity keys and this plan deliberately does not choose.
+  - The accepted_at column is text and currently receives two shapes, a space-separated local time from the BE and an ISO 8601 instant from the FE fallback. Slice 1 must choose one and say what happens to existing rows.
+  - Five of the six v2 dependencies on mootech-be are named but untouched. Rank two blocks a user who arrives from LINE, and no slice here addresses it.
+  - Nothing in this research was verified by running either application. Every impact statement is read from a code comment or inferred from a call path.
+  - Whether any process inside mootech-be calls ConsentService directly, rather than through its HTTP route, is unknown until slice 2 measures it.
+  - mootech-fe has no CI on GitHub. The only enforced gate runs on the machine that pushes and can be bypassed, so a green pull request there proves less than it appears to.
+  - The local mootech-fe checkout is one hundred commits behind its origin. Any tracked change there must pass that repository's own start gate first.
+  - Human approval, review, and external rules are unknown unless a repository record explicitly establishes them.
+
+next_action:
+  action: >-
+    Review this plan and its authority boundaries, and answer whether slice 1 may
+    proceed under the recorded approach. On confirmation, execute slice 1 in
+    mootech-fe by adding the consent model to the FE schema and replacing the BE
+    call with one transaction, following that repository's own branch and
+    pull-request contract with the owner merging.
+  acceptance_check:
+    - This event must be committed and pushed to its draft pull-request head and proven an ancestor of that head before the pull request is advanced for owner review.
+    - No slice may begin before the owner confirms this plan.
+    - Slice 1 must not weaken the identity model or the fail-closed behaviour the current route already has.
