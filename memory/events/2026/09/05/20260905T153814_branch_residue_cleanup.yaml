@@ -1,0 +1,150 @@
+schema_version: ciel.event.v0.1
+id: evt_20260905T153814_branch_residue_cleanup
+type: closeout
+recorded_at: 2026-09-05T15:38:14+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-pr-workflow-policy-001
+  lane: single
+  objective: >-
+    Close the branch-cleanup Hard Gate this plan's proof contract declares and
+    Phase 3 recorded as not passed, by removing every topic-branch residue in
+    the CIEL HQ repository and recording why the gate as written could not
+    decide two of the four candidates.
+  scope:
+    - Delete the four topic branches remaining in the HQ repository, local and remote.
+    - Record the false-negative mode the gate's revision-range check has against a re-applied commit.
+    - Survey every bound child checkout for residue.
+  out_of_scope:
+    - Changing the cleanup rule in README.md or AGENTS.md. The finding is recorded here; amending the operative procedure is a separate owner decision.
+    - Any child project branch, since none carries residue.
+    - Any plan edit. Phase 3's recorded outcome stands unrevised.
+
+outcome:
+  status: ready-for-owner-merge
+  owner_authorization: >-
+    The owner directed the cleanup in session, then reviewed the evidence for
+    the two contested branches and directed their deletion. No decision event
+    authorizes a new execution phase, and this closeout claims none. It records
+    work performed under the standing rule in README.md that assigns branch
+    cleanup to the agent after proof.
+  completed:
+    - Deleted chore/reconcile-pr-workflow-adoption at ec5abac, local then remote. PR 17 merged and the branch held no commit outside origin/main.
+    - Deleted docs/ciel-wake-evidence-boundary at 7e1c5fb, local then remote. PRs 14 and 15 merged and the branch held no commit outside origin/main.
+    - Deleted chore/adopt-local-main-history at 7c0b126 local and its remote branch, measured at zero commits ahead of origin/main before deletion. PR 16 merged.
+    - Deleted backup/pr-workflow-phase2-closeout at 7c0b126, local only, which had no remote branch.
+    - Surveyed cu12-e2e-lab, cu12-simulator, pilot-task-ledger, and pilot-task-report. Each carries only main, so no child cleanup was required or performed.
+    - HQ now carries main alone, local and remote, clean and equal to fetched origin/main at eac3b5e.
+  not_completed:
+    - The gate in README.md is unchanged. It still decides by revision range and would stall on the same case again.
+    - No test covers the content-equivalence check used here. It was performed by hand and is reproducible only from the commands recorded below.
+
+evidence:
+  repository:
+    head: eac3b5e4198d981fee10ab5dc87cb4ff70a1bd3e
+    branch: chore/branch-residue-cleanup
+  plan: workstreams/ciel-pr-workflow-policy-001/PLAN.md
+  plan_revision: "0.7"
+  execution_phase: "3"
+  gate: >-
+    Proof contract row "Branch cleanup preserves evidence", whose stated
+    evidence is an empty git log origin/main..<branch>, no open pull-request
+    reference, then local-before-remote deletion.
+  pull_request:
+    number: 33
+    url: https://github.com/mojisejr/ciel-os/pull/33
+    base: main
+    head: chore/branch-residue-cleanup
+    observed_head: d86fcfea73ca5d204d7edaa79126fa70a38b8208
+    draft_when_observed: true
+    recorded_in_two_steps: >-
+      This closeout carries the only tracked change, so the branch had to exist
+      before a pull request could. The first commit recorded the outcome; this
+      second commit adds the pull-request reference the procedure requires,
+      against the observed draft head above. The event is refined on its own
+      pull-request head before any merge and is never touched after one.
+  changed:
+    - memory/events/2026/09/05/20260905T153814_branch_residue_cleanup.yaml
+  preconditions:
+    - git fetch origin --prune before every measurement.
+    - gh pr list --state open returned empty, so no open pull request referenced any candidate.
+    - Local deletion preceded remote deletion for every branch that had both.
+  decided_by_gate_as_written:
+    - branch: chore/reconcile-pr-workflow-adoption
+      revision: ec5abac
+      log_origin_main_to_branch: empty
+      pull_request: 17, merged
+    - branch: docs/ciel-wake-evidence-boundary
+      revision: 7e1c5fb
+      log_origin_main_to_branch: empty
+      pull_request: 14 and 15, merged
+  undecided_by_gate_as_written:
+    branches:
+      - backup/pr-workflow-phase2-closeout
+      - chore/adopt-local-main-history
+    revision: 7c0b1260b49e829a147660914eddad4b16f0a812
+    why_the_gate_stalled: >-
+      git log origin/main..7c0b126 reported one commit, so the gate as written
+      forbids deletion. The prior closeout evt_20260905T150410 recorded these as
+      commits outside main that must not be cleaned, which is what the gate
+      reports and is not what the repository contains.
+    what_the_repository_actually_contains: >-
+      7c0b126 was re-applied onto main as 8c378cc, the commit directly following
+      the PR 16 merge 40071bf. The two commits carry the same tree, so the
+      content is already in main under a different commit id.
+    proof:
+      - "git rev-parse 7c0b126^{tree} and 8c378cc^{tree} both report cb7df39716232a65a4a540dd40c24f63f921f563."
+      - "diff of the two patches is empty."
+      - "git cherry -v main 7c0b126 prints a leading minus, which is Git's own report that the change is already upstream."
+      - "git merge-base --is-ancestor 8c378cc main succeeds."
+      - "The event file 20260904T065816_pr_workflow_phase2_prepared.yaml is byte-identical between 7c0b126 and main."
+      - "workstreams/ciel-pr-workflow-policy-001/PLAN.md on main is six commits further evolved than the copy on 7c0b126, so the branch held the older state, not a newer one."
+    conclusion: >-
+      Deleting the two branches discarded no content. Only a duplicate commit id
+      was lost.
+  finding:
+    what: >-
+      An empty git log origin/main..<branch> proves a branch is merged, but a
+      non-empty one does not prove anything is unmerged. A commit re-applied
+      onto the target, as a rebase or a cherry-pick does, keeps its own id
+      forever and so keeps failing the range check while its content sits in
+      main.
+    consequence: >-
+      The gate has a false negative that preserves residue indefinitely and
+      cannot clear itself. It produced exactly that outcome here: two branches
+      survived a documented cleanup pass and were then recorded in a closeout as
+      unsafe to delete.
+    what_would_close_it: >-
+      git cherry <target> <branch> answers the content question directly and is
+      the check actually used above. Whether README.md should adopt it is an
+      owner decision, not a change this closeout makes.
+  checks:
+    - git status --short
+    - git fetch origin --prune
+    - git rev-parse HEAD and origin/main
+    - bun run bin/ciel.ts wake
+  result: >-
+    After the deletions, HQ reports main alone locally and origin/main alone
+    remotely, HEAD equals origin/main at eac3b5e, and the working tree is clean.
+    Wake reports validationErrors and validationWarnings empty, reconciliation
+    expected-evolution, and every bound checkout clean.
+
+unresolved:
+  - The prior closeout evt_20260905T150410 states that two branches held commits outside main and must not be cleaned. That statement is superseded by the proof above and is left in place, because the ledger is append-only.
+  - README.md still states the revision-range gate. Any client following it will stall on the next re-applied commit.
+  - The content-equivalence check is hand-run. Nothing prevents a future session from omitting it.
+  - Two workstreams remain paused in Wake attention, cu12-simulator-remote-binding-001 and ciel-windows-portability-001, and neither is advanced by this work.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them, as Wake reports on every run.
+
+next_action:
+  action: >-
+    The owner reviews this closeout in its pull request and decides whether to
+    merge. After a merge, return HQ to clean current main and delete this topic
+    branch under the same gate. If the recorded finding warrants amending the
+    cleanup rule, that is a separate owner decision and a separate change.
+  acceptance_check:
+    - This closeout must be committed and pushed to its draft pull-request head and proven an ancestor of that head before the pull request is advanced for owner review.
+    - After the merge and the return to clean main, HQ must again report main as its only local and remote branch.
