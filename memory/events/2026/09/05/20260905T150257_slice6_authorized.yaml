@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20260905T150257_slice6_authorized
+type: decision
+recorded_at: 2026-09-05T15:02:57+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-multi-client-support-001
+  lane: single
+  objective: >-
+    Authorize slice 6, which closes the three shared-foundation gaps the
+    cross-client proof exposed and makes the bridge observable to Wake.
+  scope:
+    - Add two report rules to AGENTS.md so a report carries the recorded unknowns and covers the attention list.
+    - Add one rule stating that an agent's account of its own behaviour is evidence, not a verdict.
+    - Report the bridge's presence in Wake beside AGENTS.md and README.md, with a test.
+  out_of_scope:
+    - Re-running the cross-client proof. Whether the new rules change client behaviour is not claimed by this slice.
+    - Any change to CLAUDE.md, the Wake evidence boundary, the event schema, or the plan policy.
+    - Any bridge verifier or generator. Presence is observed; content is not checked.
+
+outcome:
+  status: decided
+  authority_source:
+    - The owner judged the slice 5 run a partial pass and chose to close the gaps before further work rather than accept them.
+    - The owner selected all three remedies after reviewing each proposed change and its justification.
+    - The plan states that from slice 4 onward a decision event naming the plan revision and slice must authorize the work.
+  completed:
+    - Authorizes plan revision 0.3 slice 6 on the single lane.
+  not_completed:
+    - Nothing is changed by this decision. It records authority only.
+
+evidence:
+  repository:
+    head: 2da5c04d344d999144f5316fa9ee856e53693465
+    branch: feat/slice6-report-and-bridge-visibility
+  plan: workstreams/ciel-multi-client-support-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "6"
+  traceability:
+    - D1, the unknowns divergence, is answered by the rule that a report carries forward the unknowns Wake reports and the unresolved items the relevant event records.
+    - D2, the coverage divergence, is answered by the rule that a status report covers every workstream Wake places in attention, which is derived rather than hand-maintained.
+    - D3, an agent certifying its own compliance, is answered by moving that rule from the slice 5 decision event into the shared foundation.
+    - The unmet part of this workstream's objective, that CIEL can audit the bridge, is answered by Wake observing the bridge file's presence.
+  audit_limit: >-
+    Reporting presence is not verification. It shows that the file exists, not
+    that its managed section is intact. A content check would require a verifier,
+    which invariant 8 keeps unbuilt until evidence establishes the need.
+
+unresolved:
+  - Whether the added rules change client behaviour is unknown and is not claimed by this slice. Establishing it would need another proof run.
+  - Presence-only observation leaves a drifted bridge invisible. Only a deleted or renamed one is caught.
+  - This is the last declared slice, so its closeout will be terminal for the workstream. Anything left open after it needs a new workstream.
+
+next_action:
+  action: >-
+    Execute slice 6: add the three lines to AGENTS.md, report the bridge's
+    presence in Wake with a test, and record a closeout that states plainly what
+    is proven and what is only asserted.
+  acceptance_check:
+    - Wake must report this workstream as authorized for plan revision 0.3 slice 6 before any slice 6 change is made.
+    - AGENTS.md gains three lines and no more, each traceable to a recorded divergence.
+    - No existing test regresses and no other output shape changes.
