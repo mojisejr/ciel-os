@@ -89,3 +89,7 @@ reported by `bun run wake`. This file does not track them.
 ## Required final report
 
 For a completed task, lead with the result and include only the evidence needed to support it, material caveats, and the next action. Do not report unverified memory or an intended action as completed work.
+
+- Carry forward the unknowns Wake reports and the unresolved items the relevant event records. Dropping them turns a partial answer into a confident one.
+- A status report covers every workstream Wake places in `attention`, not only the one being worked on.
+- An agent's account of its own behaviour is evidence, not a verdict. Report what you did; do not certify that you complied.

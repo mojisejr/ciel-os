@@ -191,3 +191,25 @@ test("CLI returns the report without changing the fixture repository", async () 
     await rm(fixture.path, { force: true, recursive: true });
   }
 });
+
+test("observes whether the client bridge is present alongside the shared contract", async () => {
+  const fixture = await createRepositoryFixture();
+
+  try {
+    let report = await readWakeReport(fixture.path);
+
+    expect(report.observed.instructions).toEqual({
+      agentsMdPresent: true,
+      claudeMdPresent: false,
+      readmePresent: true
+    });
+
+    await writeFile(join(fixture.path, "CLAUDE.md"), "# fixture bridge\n");
+    report = await readWakeReport(fixture.path);
+
+    expect(report.observed.instructions.claudeMdPresent).toBe(true);
+    expect(report.observed.instructions.agentsMdPresent).toBe(true);
+  } finally {
+    await rm(fixture.path, { force: true, recursive: true });
+  }
+});
