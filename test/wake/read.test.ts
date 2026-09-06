@@ -246,3 +246,53 @@ test("dates a standing HQ branch from its name and reports nothing for an ordina
     await rm(fixture.path, { force: true, recursive: true });
   }
 });
+
+test("keeps a merged standing branch visible after the checkout returns to main", async () => {
+  const fixture = await createRepositoryFixture();
+
+  try {
+    git(fixture.path, ["update-ref", "refs/remotes/origin/main", git(fixture.path, ["rev-parse", "HEAD"])]);
+
+    // An ordinary topic branch is never a standing branch, merged or not.
+    git(fixture.path, ["branch", "docs/ordinary-topic", "main"]);
+    let report = await readWakeReport(fixture.path);
+    expect(report.observed.repository.mergedStandingBranches).toEqual([]);
+
+    const opened = new Date();
+    opened.setDate(opened.getDate() - 2);
+    const stamp = [
+      opened.getFullYear(),
+      String(opened.getMonth() + 1).padStart(2, "0"),
+      String(opened.getDate()).padStart(2, "0")
+    ].join("");
+
+    // A standing branch with work still on it is not finished, so it is not
+    // reported as a leftover.
+    git(fixture.path, ["switch", "-c", `hq/${stamp}`]);
+    await writeFile(join(fixture.path, "round.md"), "# a round of shared work\n");
+    git(fixture.path, ["add", "round.md"]);
+    git(fixture.path, ["commit", "-m", "shared round work"]);
+    report = await readWakeReport(fixture.path);
+    expect(report.observed.repository.mergedStandingBranches).toEqual([]);
+    expect(report.observed.repository.standingBranch?.name).toBe(`hq/${stamp}`);
+
+    // Once the round has merged and the checkout has returned to main, the
+    // branch's age stops being reported by standingBranch. Without this the
+    // leftover would become invisible at exactly the moment it is forgotten.
+    git(fixture.path, ["switch", "main"]);
+    git(fixture.path, ["merge", "--ff-only", `hq/${stamp}`]);
+    git(fixture.path, ["update-ref", "refs/remotes/origin/main", git(fixture.path, ["rev-parse", "HEAD"])]);
+    report = await readWakeReport(fixture.path);
+
+    expect(report.observed.repository.standingBranch).toBeNull();
+    expect(report.observed.repository.mergedStandingBranches).toEqual([
+      { ageDays: 2, name: `hq/${stamp}`, openedOn: `${stamp.slice(0, 4)}-${stamp.slice(4, 6)}-${stamp.slice(6, 8)}` }
+    ]);
+
+    git(fixture.path, ["branch", "-d", `hq/${stamp}`]);
+    report = await readWakeReport(fixture.path);
+    expect(report.observed.repository.mergedStandingBranches).toEqual([]);
+  } finally {
+    await rm(fixture.path, { force: true, recursive: true });
+  }
+});

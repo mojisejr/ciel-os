@@ -19,6 +19,15 @@ export interface WakeReport {
         name: string;
         openedOn: string;
       };
+      // Standing branches that still exist locally and have already reached
+      // fetched origin/main. A standing branch's age is reported only while the
+      // checkout sits on it, so without this a merged one left behind becomes
+      // invisible the moment the checkout returns to main.
+      mergedStandingBranches: Array<{
+        ageDays: number | null;
+        name: string;
+        openedOn: string | null;
+      }>;
       worktrees: Array<{
         path: string;
         head: string;
