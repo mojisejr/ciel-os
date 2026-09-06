@@ -810,3 +810,117 @@ test("does not attribute a topic branch that more than one workstream's closeout
     await rm(root, { force: true, recursive: true });
   }
 });
+
+function unsliceableCloseout(workstreamId: string, revision: string, planRevision: string, status: string): string {
+  return [
+    "schema_version: ciel.event.v0.1",
+    `id: evt_20260904T000003_unsliceable_${workstreamId.replace(/-/g, "_")}`,
+    "type: closeout",
+    "recorded_at: 2026-09-04T00:00:03+07:00",
+    "recorded_by:",
+    "  agent: test",
+    "workstream:",
+    `  id: ${workstreamId}`,
+    "  lane: single",
+    "  objective: fixture",
+    "outcome:",
+    `  status: ${status}`,
+    "evidence:",
+    `  base_revision: ${revision}`,
+    `  plan_revision: "${planRevision}"`,
+    "unresolved: []",
+    "next_action:",
+    "  action: owner merge",
+    ""
+  ].join("\n");
+}
+
+test("does not finish a plan that declares slices with a closeout naming none, and says why", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    await initializeWorkspace(root);
+    git(root, ["remote", "add", "origin", "https://github.com/example/hq.git"]);
+    await mkdir(join(root, "projects", "hq"), { recursive: true });
+    await writeFile(join(root, "projects", "hq", "project.yaml"), projectYaml("hq"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  hq:", "    path: .", ""].join("\n"));
+    const directory = join(root, "workstreams", "sliced-delivery");
+    await mkdir(directory, { recursive: true });
+    await writeFile(join(directory, "PLAN.md"), slicedPlan("sliced-delivery", ["hq"], 3, "6.0"));
+    git(root, ["add", "."]);
+    git(root, ["commit", "-m", "declare sliced plan"]);
+    const base = git(root, ["rev-parse", "HEAD"]);
+
+    const eventsDirectory = join(root, "memory/events/2026/09/04");
+    await mkdir(eventsDirectory, { recursive: true });
+    await writeFile(join(eventsDirectory, "20260904T000003_unsliceable.yaml"), unsliceableCloseout("sliced-delivery", base, "6.0", "ready-for-owner-merge"));
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "record a closeout naming no slice"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", git(root, ["rev-parse", "HEAD"])]);
+
+    const report = await readPortfolioWakeReport(root);
+    const workstream = report.workstreams.find((item) => item.id === "sliced-delivery");
+
+    // A closeout naming no slice is a record about the workstream, not its
+    // delivery. Letting one through reported a workstream as complete with
+    // three of its four slices unstarted.
+    expect(workstream?.lifecycle?.state).toBe("needs-owner-decision");
+    // The change to what this workstream derives is explained where it is read,
+    // rather than left for someone to work out from the code.
+    expect(workstream?.lifecycle?.detail).toContain("names no slice");
+    expect(workstream?.lifecycle?.detail).toContain("20260904T000003_unsliceable.yaml");
+    // It is not a validation warning: a plan-revision closeout takes this shape
+    // legitimately every time a plan is revised mid-flight.
+    expect(report.validationWarnings).toEqual([]);
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("warns about an unrecognised status on a closeout that would otherwise finish a workstream", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    await initializeWorkspace(root);
+    git(root, ["remote", "add", "origin", "https://github.com/example/hq.git"]);
+    await mkdir(join(root, "projects", "hq"), { recursive: true });
+    await writeFile(join(root, "projects", "hq", "project.yaml"), projectYaml("hq"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  hq:", "    path: .", ""].join("\n"));
+    const directory = join(root, "workstreams", "lost-delivery");
+    await mkdir(directory, { recursive: true });
+    await writeFile(join(directory, "PLAN.md"), slicedPlan("lost-delivery", ["hq"], 1, "6.0"));
+    git(root, ["add", "."]);
+    git(root, ["commit", "-m", "declare plan"]);
+    const base = git(root, ["rev-parse", "HEAD"]);
+
+    // The word a cold session actually chose. It is required, it reads as a
+    // completion, and the code ignores it.
+    const eventsDirectory = join(root, "memory/events/2026/09/04");
+    await mkdir(eventsDirectory, { recursive: true });
+    await writeFile(join(eventsDirectory, "20260904T000004_lost.yaml"), sliceCloseout("lost-delivery", base, "6.0", "1").replace("status: ready-for-owner-merge", "status: completed"));
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "record a closeout the code ignores"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", git(root, ["rev-parse", "HEAD"])]);
+
+    let report = await readPortfolioWakeReport(root);
+
+    // Reported, and reported as a warning naming the file. Failing would make
+    // an append-only record that cannot be corrected block every later read.
+    expect(report.validationErrors).toEqual([]);
+    expect(report.validationWarnings).toHaveLength(1);
+    expect(report.validationWarnings[0]?.path).toBe("memory/events/2026/09/04/20260904T000004_lost.yaml");
+    expect(report.validationWarnings[0]?.message).toContain("completed");
+    expect(report.workstreams.find((item) => item.id === "lost-delivery")?.lifecycle?.state).toBe("needs-owner-decision");
+
+    // The repair is a new record beside the original, never an edit to it. Once
+    // the machinery can read a delivery, the warning has nothing left to say.
+    await writeFile(join(eventsDirectory, "20260904T000005_repair.yaml"), sliceCloseout("lost-delivery", base, "6.0", "1").replace("evt_20260904T000001_slice_1", "evt_20260904T000005_repair"));
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "record the repair beside it"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", git(root, ["rev-parse", "HEAD"])]);
+
+    report = await readPortfolioWakeReport(root);
+    expect(report.validationWarnings).toEqual([]);
+    expect(report.workstreams.find((item) => item.id === "lost-delivery")?.lifecycle?.state).toBe("completed");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});

@@ -14,6 +14,14 @@ test("keeps the startup Git rule concise and the workflow discoverable", async (
   expect(agents).toContain("return to a clean local `main` that matches fetched `origin/main`");
   expect(agents).toContain("Keep every remote PR as a draft until its phase closeout");
   expect(agents).not.toContain("git switch -c");
+  // A word the code acts on must be visibly different from one it ignores.
+  // Requiring outcome.status while documenting no values is what let a cold
+  // session write a workstream out of the delivery machinery.
+  expect(agents).toContain("`outcome.status` is acted on, not free text");
+  expect(agents).toContain("`decided` on a decision authorizes the plan revision");
+  expect(agents).toContain("`ready-for-owner-merge` on a closeout offers it as the workstream's final delivery");
+  expect(agents).toContain("Every other value is recorded and ignored");
+  expect(agents).toContain("A plan that declares slices is finished by a closeout for its last declared slice.");
   expect(readme).toContain("## Change workflow");
   expect(readme).toContain("git merge --ff-only feat/<topic>");
   expect(readme).toContain("git pull --ff-only origin main");
