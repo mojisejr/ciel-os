@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T220000_report_fidelity_slice2_authorized
+type: decision
+recorded_at: 2026-09-06T22:00:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-report-fidelity-001
+  lane: single
+  objective: >-
+    Authorize plan revision 0.3 slice 2: define what a closeout may say about
+    its own outcome, so a workstream can neither disappear from the delivery
+    machinery by choosing an unrecognised word nor appear finished by recording
+    a closeout that delivers no slice.
+  scope:
+    - Document the statuses the code acts on and what each causes.
+    - Report an unrecognised status rather than ignoring it, warning rather than failing.
+    - Repair pilot-report-status-flag-001 by a new event and a plan correction.
+    - Stop a closeout naming no slice from counting as the final delivery of a plan that declares slices.
+    - One test per changed behaviour.
+  out_of_scope:
+    - Editing any committed event. The eighteen values already in the ledger stay as written.
+    - Failing validation on an existing event, which a previous workstream established would break the ledger.
+    - Slices 3 and 4, authorized separately.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  authority_source:
+    - The owner authorized slice 2 in session, and authorized continuing through the remaining slices without a further decision provided nothing important needs the owner's judgement.
+    - The owner asked to be shown the result as a pull request rather than slice by slice.
+    - The prediction recorded with plan revision 0.3 was checked on a clean current main at 78edd8e and held: the workstream reports completed with slices 2, 3 and 4 undelivered.
+  completed:
+    - Authorizes plan revision 0.3 slice 2 on the single lane.
+  not_completed:
+    - Nothing is changed by this decision. It records authority only.
+
+evidence:
+  repository:
+    head: 78edd8e54ee4e25baa2c4b049041f6e06a558cd6
+    branch: feat/report-fidelity-slices-2-4
+  plan: workstreams/ciel-report-fidelity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  start_gate: >-
+    Passed at 2026-09-06T21:59:49+07:00. Working tree clean and local HEAD equal
+    to fetched origin/main at 78edd8e.
+  ledger_survey: >-
+    107 committed events use eighteen distinct outcome.status values. The code
+    acts on three: decided for a decision, and ready-for-owner-merge or
+    draft-pr-closeout-prepared-for-final-pr-review for a terminal closeout.
+  delivery_plan: >-
+    Slices 2, 3 and 4 are delivered on one topic branch as one pull request,
+    each with its own decision and its own closeout, because slice 4 edits the
+    file slice 3 has just edited and a second branch cannot start from a clean
+    current main while the first is unmerged.
+
+unresolved:
+  - How widely an unrecognised status should be reported is undecided by the plan. Warning on every historical event would bury the signal the way the checkpoint warning already avoids; the scope chosen is recorded in the slice closeout with what was rejected.
+  - Whether a plan that declares no slices should still be closed by a closeout naming none is assumed, not established. That case is kept unchanged.
+  - Making a closeout with no slice non-terminal may change what other workstreams derive. Which ones, if any, is unknown until it is run.
+
+next_action:
+  action: >-
+    Implement the four items on feat/report-fidelity-slices-2-4 with a test
+    each, run bun run check, and record the slice 2 closeout before authorizing
+    slice 3 on the same branch.
+  acceptance_check:
+    - bun run wake must derive a delivery state for every workstream whose work has actually merged.
+    - A workstream with undelivered slices must not be reported as complete.
+    - An unrecognised status must be reported rather than ignored, and must not fail validation.
+    - Any change to what another workstream derives must be observed and recorded, not discovered later.
