@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T221000_report_status_flag_record_repaired
+type: closeout
+recorded_at: 2026-09-06T22:10:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: pilot-report-status-flag-001
+  lane: single
+  objective: >-
+    Restate this workstream's already merged delivery in a form the delivery
+    machinery reads, so that work which is genuinely finished stops being
+    invisible to it.
+  scope:
+    - One new closeout saying what the existing one says, in a status the code acts on.
+    - The plan header correction that accompanies it, recorded here rather than journalled in the plan.
+  out_of_scope:
+    - Any change to pilot-task-report. Its work is merged, tested, and correct.
+    - Editing the committed closeout. It stays as written.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Restates the delivery recorded at memory/events/2026/09/06/20260906T195541_report_status_flag_delivered.yaml, which merged feat/status-only-flag onto the child's main at 04e6630 as a fast-forward and deleted the topic branch.
+    - Corrects the plan header from State completed back to State active, so the delivery state is derived rather than journalled.
+  not_completed:
+    - Nothing about the child project changes. This repairs the HQ record only.
+
+evidence:
+  repository:
+    head: 78edd8e54ee4e25baa2c4b049041f6e06a558cd6
+    branch: feat/report-fidelity-slices-2-4
+    working_tree: clean-before-this-closeout
+  plan: workstreams/pilot-report-status-flag-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "1"
+  decision: memory/events/2026/09/06/20260906T191952_report_lane_authorized.yaml
+  restates: memory/events/2026/09/06/20260906T195541_report_status_flag_delivered.yaml
+  child:
+    project_id: pilot-task-report
+    binding: checkouts/pilot-task-report
+    target_branch: main
+    merge_commit: 04e6630653a5ba7ad04c0296697d7f56c26529a1
+    delivery: local_only
+  why_this_was_needed: >-
+    The original closeout said outcome.status completed. AGENTS.md required a
+    status and documented no values, so a cold session chose the plain word. The
+    code acts on two words and ignores every other, so this workstream left the
+    delivery machinery without anything reporting it. The lane also set the plan
+    State to completed, which README forbids because it journals a derived
+    outcome; that hid the workstream a second, independent way.
+  what_was_not_done: >-
+    The committed closeout is not edited and its wording is not corrected. An
+    event is append-only, so the repair is a new record beside it. Both are now
+    true; only this one is in a form the code reads.
+  repaired_under: >-
+    ciel-report-fidelity-001 plan revision 0.3 slice 2 item 3, authorized by
+    memory/events/2026/09/06/20260906T220000_report_fidelity_slice2_authorized.yaml.
+
+unresolved:
+  - This repair is only visible because the plan State was also corrected. A workstream hidden by the plan header alone would still be invisible, and nothing detects that.
+  - One cold session chose completed. Whether documenting the vocabulary is enough to stop the next one, or whether the word list needs to reach the writer at the moment of writing, is unmeasured.
+
+next_action:
+  action: >-
+    None for this workstream. Its child work is merged and its record now
+    derives a delivery state. It rides to main with the ciel-report-fidelity-001
+    slice 2 delivery.
+  acceptance_check:
+    - bun run wake must derive a delivery state for this workstream and must stop warning about its original closeout.
+    - No file under checkouts/pilot-task-report changes.

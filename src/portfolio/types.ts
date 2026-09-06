@@ -99,5 +99,10 @@ export interface PortfolioWakeReport {
   attention: PortfolioAttention[];
   projects: PortfolioProject[];
   validationErrors: PortfolioValidationError[];
+  // A closeout scoped to finish a workstream whose outcome.status the delivery
+  // machinery does not act on. It is a warning and never an error: the ledger
+  // is append-only, so failing on one would make an uncorrectable record block
+  // every later read.
+  validationWarnings: PortfolioValidationError[];
   workstreams: PortfolioWorkstream[];
 }

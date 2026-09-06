@@ -1,7 +1,7 @@
 # Pilot task report — status-only flag
 
 **Workstream:** `pilot-report-status-flag-001`
-**State:** completed
+**State:** active
 **Execution lane:** single
 **Plan revision:** 0.3
 **Execution phase:** none

@@ -255,6 +255,6 @@ export async function readWakeReport(repositoryDirectory = "."): Promise<WakeRep
       "Human approval, review, and external rules are unknown unless a repository record explicitly establishes them."
     ],
     validationErrors: [...validation.errors, ...portfolio.validationErrors],
-    validationWarnings: validation.warnings
+    validationWarnings: [...validation.warnings, ...portfolio.validationWarnings]
   };
 }
