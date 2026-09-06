@@ -3,8 +3,8 @@ export type AttentionState = "active" | "blocked" | "conflict" | "paused" | "una
 export type LifecycleGateState =
   | "authorized"
   | "awaiting-owner-merge"
+  | "claimed"
   | "completed"
-  | "interrupted"
   | "merged-needs-cleanup"
   | "merged-needs-sync"
   | "needs-owner-decision"
@@ -46,6 +46,17 @@ export interface PortfolioProject {
   };
 }
 
+// What the most recent record for a workstream says a person should do next,
+// and what it left open. Both are required in every event and were previously
+// unreadable without opening the file, which made "where are we and what now"
+// a question the owner had to ask instead of one Wake could answer.
+export interface PortfolioLatestRecord {
+  eventPath: string;
+  nextAction: string | null;
+  recordedAt: string | null;
+  unresolved: string[];
+}
+
 export interface PortfolioWorkstream {
   checkpointsByLane: Record<string, PortfolioCheckpoint[]>;
   declaredSlices: string[];
@@ -53,6 +64,7 @@ export interface PortfolioWorkstream {
   executionState: "executing" | "idle";
   id: string;
   lane: string;
+  latestRecord: PortfolioLatestRecord | null;
   lifecycle: {
     decisionEventPath: string | null;
     detail: string;

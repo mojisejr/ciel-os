@@ -55,6 +55,30 @@ async function requireGit(repositoryPath: string, arguments_: string[]): Promise
   return result.stdout;
 }
 
+// A standing HQ branch is named hq/<yyyymmdd>. The date in the name is the
+// only record of when the current round of shared work opened, so its age is
+// derived rather than stored. Reporting the age is deliberate; deciding that
+// the age is too high is not, and belongs to the owner.
+function parseStandingBranch(branch: string | null, today = new Date()): WakeReport["observed"]["repository"]["standingBranch"] {
+  const match = branch?.match(/^hq\/(\d{4})(\d{2})(\d{2})$/);
+  if (match?.[1] === undefined || match[2] === undefined || match[3] === undefined) {
+    return null;
+  }
+
+  const openedOn = `${match[1]}-${match[2]}-${match[3]}`;
+  const opened = Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  const current = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  if (Number.isNaN(opened)) {
+    return null;
+  }
+
+  return {
+    ageDays: Math.max(0, Math.round((current - opened) / 86_400_000)),
+    name: branch as string,
+    openedOn
+  };
+}
+
 function parseWorktrees(output: string): WakeReport["observed"]["repository"]["worktrees"] {
   return output
     .trim()
@@ -181,6 +205,7 @@ export async function readWakeReport(repositoryDirectory = "."): Promise<WakeRep
           clean: statusEntries.length === 0,
           entries: statusEntries
         },
+        standingBranch: parseStandingBranch(branchOutput.length > 0 ? branchOutput : null),
         worktrees: parseWorktrees(worktreeOutput)
       },
       instructions: {

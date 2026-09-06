@@ -330,7 +330,7 @@ test("derives attention from plans, verified local projects, and per-lane checkp
   }
 });
 
-test("requires a current owner decision, reconciles interrupted work, and holds proposed parallelism", async () => {
+test("requires a current owner decision, reports a claimed lane without judging it, and holds proposed parallelism", async () => {
   const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
   try {
     const bindings: string[] = ["bindings:"];
@@ -365,11 +365,20 @@ test("requires a current owner decision, reconciles interrupted work, and holds 
       new Map([
         ["authorized", "authorized"],
         ["stale-decision", "needs-owner-decision"],
-        ["interrupted", "needs-reconciliation"],
-        ["clean-interrupted", "interrupted"],
+        ["interrupted", "claimed"],
+        ["clean-interrupted", "claimed"],
         ["parallel", "owner-confirmation-required"]
       ])
     );
+
+    // A claimed lane must be described, not diagnosed: nothing here can tell a
+    // running session from an abandoned one, so neither detail may say so.
+    const detailOf = new Map(report.workstreams.map((workstream) => [workstream.id, workstream.lifecycle?.detail ?? ""]));
+    expect(detailOf.get("interrupted")).toContain("interrupted-app");
+    for (const id of ["interrupted", "clean-interrupted"]) {
+      expect(detailOf.get(id)).toContain("either running in another session or was interrupted");
+      expect(detailOf.get(id)).not.toContain("left open");
+    }
   } finally {
     await rm(root, { force: true, recursive: true });
   }
@@ -429,6 +438,10 @@ test("derives remote delivery lifecycle from a closeout-bearing commit instead o
     git(root, ["switch", "-c", "stale"]);
     report = await readPortfolioWakeReport(root);
     expect(report.workstreams.find((item) => item.id === "delivery")?.lifecycle?.state).toBe("merged-needs-sync");
+    // The work has reached origin/main; only this checkout is behind. That must
+    // not raise attention, and must not make the workstream occupy its projects.
+    expect(report.attention.some((item) => item.workstreamId === "delivery")).toBe(false);
+    expect(report.attention.every((item) => item.state !== "conflict")).toBe(true);
 
     git(root, ["switch", "main"]);
     git(root, ["branch", "feat/fixture"]);
@@ -572,6 +585,100 @@ test("treats only a closeout for the last declared slice as a terminal delivery"
 
     report = await readPortfolioWakeReport(root);
     expect(report.workstreams.find((item) => item.id === "sliced-delivery")?.lifecycle?.state).toBe("completed");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("counts an overlap on a child project but never on the HQ project every workstream lists", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    await initializeWorkspace(root);
+    git(root, ["remote", "add", "origin", "https://github.com/example/hq.git"]);
+    const bindings: string[] = ["bindings:", "  hq:", "    path: ."];
+    for (const id of ["child-a", "child-b"]) {
+      await createProject(join(root, "checkouts", id), id);
+      await mkdir(join(root, "projects", id), { recursive: true });
+      await writeFile(join(root, "projects", id, "project.yaml"), projectYaml(id));
+      bindings.push(`  ${id}:`, `    path: checkouts/${id}`);
+    }
+    await mkdir(join(root, "projects", "hq"), { recursive: true });
+    await writeFile(join(root, "projects", "hq", "project.yaml"), projectYaml("hq"));
+    await writeFile(join(root, "projects.local.yaml"), [...bindings, ""].join("\n"));
+
+    await addPlan(root, "alpha", "active", ["hq", "child-a"], { revision: "1.0" });
+    await addPlan(root, "beta", "active", ["hq", "child-b"], { revision: "1.0" });
+
+    let report = await readPortfolioWakeReport(root);
+    let lifecycle = new Map(report.workstreams.map((item) => [item.id, item.lifecycle?.state]));
+    expect(report.validationErrors).toEqual([]);
+    // Sharing only HQ is not an overlap. Every workstream keeps its plan and
+    // events there, so counting it would block all concurrent work outright.
+    expect(lifecycle.get("alpha")).toBe("needs-owner-decision");
+    expect(lifecycle.get("beta")).toBe("needs-owner-decision");
+    expect(report.attention.every((item) => item.state !== "conflict")).toBe(true);
+
+    await addPlan(root, "gamma", "active", ["hq", "child-a"], { revision: "1.0" });
+    report = await readPortfolioWakeReport(root);
+    lifecycle = new Map(report.workstreams.map((item) => [item.id, item.lifecycle?.state]));
+    // Sharing a child is a real collision and still needs an owner decision.
+    expect(lifecycle.get("alpha")).toBe("owner-confirmation-required");
+    expect(lifecycle.get("gamma")).toBe("owner-confirmation-required");
+    expect(lifecycle.get("beta")).toBe("needs-owner-decision");
+    const conflict = report.attention.find((item) => item.workstreamId === "alpha");
+    expect(conflict?.state).toBe("conflict");
+    expect(conflict?.detail).toContain("child-a");
+    expect(conflict?.detail).not.toContain("hq");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("reports what the latest record says to do next and what it left open", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    await createProject(join(root, "checkouts", "pilot-app"), "pilot-app");
+    await mkdir(join(root, "projects", "pilot-app"), { recursive: true });
+    await writeFile(join(root, "projects", "pilot-app", "project.yaml"), projectYaml("pilot-app"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  pilot-app:", "    path: checkouts/pilot-app", ""].join("\n"));
+    await addPlan(root, "recorded", "active", ["pilot-app"], { revision: "1.0" });
+    await addPlan(root, "unrecorded", "active", ["pilot-app"], { revision: "1.0" });
+
+    const eventsDirectory = join(root, "memory/events/2026/08/29");
+    await mkdir(eventsDirectory, { recursive: true });
+    await writeFile(join(eventsDirectory, "20260829T000000_first.yaml"), event("first", "recorded", "1.0"));
+    await writeFile(join(eventsDirectory, "20260829T000001_latest.yaml"), [
+      "schema_version: ciel.event.v0.1",
+      "id: evt_latest",
+      "type: closeout",
+      "recorded_at: 2026-08-29T09:00:00+07:00",
+      "recorded_by:",
+      "  agent: test",
+      "workstream:",
+      "  id: recorded",
+      "  objective: fixture",
+      "outcome:",
+      "  status: prepared",
+      "evidence:",
+      "  base_revision: 1.0",
+      "unresolved:",
+      "  - the vendor mapping is still an assumption",
+      "next_action:",
+      "  action: measure the mapping against hardware before relying on it",
+      ""
+    ].join("\n"));
+
+    const report = await readPortfolioWakeReport(root);
+    const recorded = report.workstreams.find((item) => item.id === "recorded");
+
+    expect(report.validationErrors).toEqual([]);
+    // The newest record wins, so a later change of direction can be read
+    // against what was last proposed rather than against nothing.
+    expect(recorded?.latestRecord?.nextAction).toBe("measure the mapping against hardware before relying on it");
+    expect(recorded?.latestRecord?.unresolved).toEqual(["the vendor mapping is still an assumption"]);
+    expect(recorded?.latestRecord?.recordedAt).toBe("2026-08-29T09:00:00+07:00");
+    expect(recorded?.latestRecord?.eventPath).toBe("memory/events/2026/08/29/20260829T000001_latest.yaml");
+    expect(report.workstreams.find((item) => item.id === "unrecorded")?.latestRecord).toBeNull();
   } finally {
     await rm(root, { force: true, recursive: true });
   }

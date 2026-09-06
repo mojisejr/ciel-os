@@ -11,6 +11,14 @@ export interface WakeReport {
         clean: boolean;
         entries: string[];
       };
+      // Set only while the checkout sits on a standing HQ branch. The name
+      // carries the date it was opened, so its age needs no stored state. Age
+      // is reported as an observation; when to merge stays the owner's call.
+      standingBranch: null | {
+        ageDays: number;
+        name: string;
+        openedOn: string;
+      };
       worktrees: Array<{
         path: string;
         head: string;
