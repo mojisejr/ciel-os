@@ -1,0 +1,75 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T053500_shared_file_hazard_deferred
+type: decision
+recorded_at: 2026-09-07T05:35:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-parallel-lanes-001
+  lane: single
+  objective: >-
+    Record the owner's decision not to build a mechanism against the
+    silent-overwrite hazard this workstream measured, and the working
+    constraints that make the hazard unreachable in practice, so a later
+    session reads a deliberate deferral rather than an open defect.
+  scope:
+    - The decision, its reasoning, and the conditions that would reopen it.
+  out_of_scope:
+    - Any code, hook, write path, or detection mechanism. That is what is being declined.
+    - Any change to the README rule already recorded, which stands unchanged.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  authority_source:
+    - The owner reviewed the hazard as measured and recorded, and decided that nothing is built against it now.
+  owner_reasoning:
+    - HQ is not edited while another project's lane is running. Work on CIEL itself takes its own session.
+    - Parallel lanes on the same project are avoided until CIEL supports them, which it does not.
+    - Under those two constraints the two writers the hazard needs never exist at the same time, so the loss it describes cannot occur.
+    - Nothing is added to CIEL until a measurement demands it, which is this workstream's own standing rule and applies to its own findings.
+  completed:
+    - Records that the silent-overwrite hazard is deferred by decision rather than left open by omission.
+  not_completed:
+    - The hazard is unmitigated and undetected, exactly as the slice 2 closeout recorded. This decision changes the reason it is unmitigated, not the fact.
+
+evidence:
+  repository:
+    head: d6fb8a7954358e7f5af19ab6af8c6cded7cbe561
+    branch: docs/sprint-003-record-repair
+  plan: workstreams/ciel-parallel-lanes-001/PLAN.md
+  plan_revision: "0.3"
+  hazard_record: memory/events/2026/09/06/20260906T201412_two_cold_sessions_proof.yaml
+  hazard_summary: >-
+    Under one standing branch the lanes never merge, so two writers to one file
+    in one working tree lose the first write silently: Git reports one modified
+    file and nothing indicates the earlier edit existed. Staging only your own
+    paths does not help, because the loss happens at the write.
+  standing_rule: >-
+    README already states that AGENTS.md, README.md and anything under src/ are
+    not edited while another lane is live. That rule stands and is the whole of
+    the mitigation.
+  options_declined:
+    detect_before_write: >-
+      Comparing a shared file's state before and after a read would need a write
+      path, which CIEL does not have and AGENTS.md forbids adding without a
+      reviewed proof gap.
+    separate_branch_for_shared_files: >-
+      Restoring a loud merge conflict for shared files would work and was not
+      taken, because it gives up part of the simplicity the arrangement exists
+      for while the hazard has never occurred.
+
+unresolved:
+  - This decision rests on two working constraints that nothing enforces. A session that edits HQ while another lane runs still loses work silently.
+  - The hazard has been demonstrated in a scratch repository and never observed in this one. That is the evidence for deferring, and it is also the reason the deferral could be wrong.
+
+next_action:
+  action: >-
+    None. Reopen this only if a shared-file overwrite is actually observed, or
+    if CIEL takes up parallel lanes on one project, which the owner has ruled
+    out for now. Until then the README rule is the mitigation and no work is
+    planned.
+  acceptance_check:
+    - A session finding the silent-overwrite hazard recorded as unresolved must read this decision before proposing work on it.
