@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T120858_pilot_report_lane_authorized
+type: decision
+recorded_at: 2026-09-06T12:08:58+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: pilot-report-status-flag-001
+  lane: single
+  objective: >-
+    Authorize slice 1, a status-only flag for the report CLI, so that this
+    workstream can serve as the cold-start lane in the parallel-lanes proof.
+  scope:
+    - Add a --status-only flag to the report CLI that prints just the status counts.
+    - Cover both flagged and unflagged output with tests and merge locally onto the child's main.
+  out_of_scope:
+    - Any change to TaskInput, TaskPriority, the summary return shape, or the accepted input format.
+    - Any new dependency, and any pull request for the child, which is local_only.
+    - Any change to CIEL code or contract; that belongs to ciel-parallel-lanes-001 slice 2.
+
+outcome:
+  status: decided
+  parallelism: approved
+  authority_source:
+    - The owner authorized the parallel-lanes proof, which requires two concurrent workstreams that share no child project.
+    - The owner directed that this lane be driven by a session that receives no context from the planning conversation, so that the contract's disposable-session claim is actually tested.
+  completed:
+    - Authorizes plan revision 0.1 slice 1 on the single lane.
+    - Approves parallel execution alongside pilot-ledger-count-command-001 and ciel-parallel-lanes-001.
+  not_completed:
+    - Nothing is changed by this decision. It records authority only.
+
+evidence:
+  repository:
+    head: e91316a99aecfdaf205f03acc1cb1a6c610112d1
+    branch: docs/parallel-lanes-dogfood
+  plan: workstreams/pilot-report-status-flag-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  parallel_with:
+    - pilot-ledger-count-command-001
+  overlap_justification: >-
+    This lane touches pilot-task-report only. The concurrent lane touches
+    pilot-task-ledger only. They overlap on ciel-os alone, which the owner's
+    rule does not count.
+  cold_start_condition: >-
+    The session driving this lane must receive no conversational context from
+    the session that prepared the plan. If it cannot proceed from Wake and the
+    repository alone, that is a recorded result of the proof, not a failure of
+    this lane.
+
+unresolved:
+  - The two pilots share a task JSON contract, so independence holds only while this lane leaves that contract untouched.
+  - Whether the plan carries enough for a cold session to execute it is unknown, and is one of the two things slice 1 measures.
+
+next_action:
+  action: >-
+    After the plans land on main, create this lane's worktree from the primary
+    worktree, bootstrap its local bindings with absolute child paths, then hand
+    the lane to a new session with no briefing beyond the workstream id.
+  acceptance_check:
+    - Wake must report this workstream as authorized for plan revision 0.1 slice 1 before the lane worktree is created.
+    - The child's default output without the flag must stay byte-identical.
