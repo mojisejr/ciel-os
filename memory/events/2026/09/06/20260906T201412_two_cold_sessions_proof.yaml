@@ -1,0 +1,180 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T201412_two_cold_sessions_proof
+type: closeout
+recorded_at: 2026-09-06T20:14:12+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-parallel-lanes-001
+  lane: single
+  objective: >-
+    Deliver slice 2: run two pilot lanes at the same time from two cold sessions
+    on one shared checkout, and record which of the owner's three requirements
+    the standing-branch arrangement actually holds.
+  scope:
+    - Two concurrent cold lanes, one pilot each, both driven from the ciel-os folder.
+    - Observation of interference, continuity gaps, stale advice, cross-lane visibility, and the shared-file hazard.
+  out_of_scope:
+    - Fixing what this slice exposed. Every defect found here is recorded and left for its own plan.
+    - Any change to CIEL source during the run.
+
+outcome:
+  status: ready-for-owner-merge
+  owner_participation: >-
+    The owner opened two fresh sessions, typed one line into each naming only
+    the workstream, and said nothing further to either for the duration.
+  completed:
+    - Both lanes implemented their change, tested it, merged it onto the child's main without rewriting history, deleted the topic branch, and recorded a closeout on the standing branch.
+    - Both children pass their tests, sit on main with no leftover branch, and left the shared task JSON contract untouched.
+    - Both lanes found the standing branch hq/20260906 without being told it existed.
+    - The deliberate shared-file test was run in a scratch repository rather than this one, for the reason recorded under deviations.
+  not_completed:
+    - Nothing is fixed. Two defects and one changed hazard are recorded below and belong to a later plan.
+    - The claimed-lane reporting added in slice 1 was never exercised, because neither lane marked its plan executing.
+
+evidence:
+  repository:
+    head: edda68cbfe0c3c78ae6631b40ab69def27470038
+    branch: hq/20260906
+    working_tree: clean-before-this-closeout
+  plan: workstreams/ciel-parallel-lanes-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  decision: memory/events/2026/09/06/20260906T191933_slice2_two_cold_sessions_authorized.yaml
+  delivery:
+    target_branch: main
+    topic_branch: hq/20260906
+  lanes:
+    ledger:
+      workstream: pilot-ledger-count-command-001
+      hq_commit: edda68cbfe0c3c78ae6631b40ab69def27470038
+      child_commit: 1ed8ccf
+      closeout: memory/events/2026/09/06/20260906T195900_ledger_count_command_delivered.yaml
+    report:
+      workstream: pilot-report-status-flag-001
+      hq_commit: d3f3f16
+      child_commit: 04e6630
+      closeout: memory/events/2026/09/06/20260906T195541_report_status_flag_delivered.yaml
+
+observations:
+  interference: >-
+    None. The report lane's commit touched its own event and its own plan; the
+    ledger lane's touched only its own event. Neither staged a path belonging to
+    the other, without being told the rule. The standing branch holds a linear
+    history, each commit with a single parent.
+  continuity_gaps: >-
+    Zero. The owner typed one line per session and answered nothing afterwards.
+    Both lanes reached a correct delivery from Wake and the repository alone.
+    This is the strongest evidence recorded so far for the claim that agent
+    sessions are disposable, and it was obtained without either lane being
+    driven by a session that had seen the design conversation.
+  next_action_usefulness: >-
+    Sufficient to drive the work. Each lane's latest record told it to run Wake,
+    read its plan, implement with a test, merge locally, and record a closeout
+    staging only its own paths, and both did exactly that.
+  stale_advice: >-
+    Did not mislead. Neither lane acted on this workstream's stale instruction
+    to review pull request 36. The ledger lane referred to this workstream
+    correctly, noting that judging collision between lanes belongs here rather
+    than in a lane. One run is weak evidence, but there is no sign of harm.
+  cross_lane_visibility: >-
+    Each lane could see nothing of the other and said so in its own closeout.
+    Neither marked its plan executing, so Wake reported no claimed lane at any
+    point. The reporting added in slice 1 for exactly this situation was never
+    reached, because nothing requires the marker to be set and neither cold
+    session inferred that it should.
+
+findings:
+  status_vocabulary_is_undefined:
+    severity: >-
+      The most serious thing this run exposed. It predates multi-session work
+      and was simply never met by a reader who had not been told the answer.
+    observed: >-
+      The two lanes recorded completion differently. The ledger lane used
+      outcome.status ready-for-owner-merge and left its plan alone, and Wake
+      derives it as awaiting-owner-merge. The report lane used outcome.status
+      completed and also set its plan State to completed, and Wake now derives
+      nothing for it at all.
+    cause: >-
+      outcome.status is required by AGENTS.md but its permitted values are
+      documented nowhere and validated nowhere. Ninety-eight committed events
+      use eighteen distinct values, mixing kebab-case and snake_case, while
+      isTerminalCloseout recognises exactly two. A reader choosing the plain
+      word "completed" is being reasonable; the contract gave no other signal.
+    consequence: >-
+      A workstream can write itself out of the delivery machinery in two
+      independent ways, silently. Had that lane not actually merged, nothing
+      would have reported it. README already says not to edit a plan to journal
+      a derived outcome, which one lane followed and the other did not, so the
+      rule exists but does not reach a reader who needs it.
+  attention_ignores_owner_decisions:
+    observed: >-
+      With both lanes active, Wake reports ciel-parallel-lanes-001 and
+      pilot-ledger-count-command-001 as conflicts, while their lifecycles read
+      authorized for the same revision and slice.
+    cause: >-
+      deriveAttention counts overlap without consulting decisions, which
+      deriveLifecycle does. Two halves of one report disagree: one says owner
+      confirmation is required and the other says it was already given.
+    consequence: >-
+      The overlap is real, since this workstream lists both pilots among its own
+      projects, but the attention entry is noise the owner has already answered.
+  the_shared_file_hazard_changed_shape:
+    observed: >-
+      Under one standing branch the lanes never merge, so a merge conflict
+      between them cannot occur. Demonstrated in a scratch repository: when two
+      writers edit the same file in one working tree, the second write replaces
+      the first, git reports one modified file, and nothing indicates that the
+      earlier edit existed.
+    consequence: >-
+      The arrangement trades a loud failure for a silent one. Separate branches
+      would have produced a merge conflict that is impossible to miss. This did
+      not occur during the run because both lanes wrote only workstream-scoped
+      files, whose names cannot collide. The exposure is confined to genuinely
+      shared files such as AGENTS.md, README.md, and src, and the rule this
+      suggests is that a shared file is not edited while another lane is live.
+      Staging only your own paths does not help here, because the loss happens
+      when the file is written rather than when it is staged.
+
+owner_requirements:
+  sessions_stay_disposable: >-
+    Held. Two sessions with no briefing produced correct deliveries, and neither
+    was recorded or addressed by anything in the repository.
+  continuity_at_least_as_good: >-
+    Held for driving work, and improved by per-workstream next_action, which
+    both lanes used as their only instruction. Not held for recording an
+    outcome, where an undefined status vocabulary let one lane disappear from
+    the machinery. That hole is older than this work; the run found it.
+  several_sessions_at_once: >-
+    Held. One standing branch, two writers, no contention, no lost work, and no
+    coordination beyond a rule neither lane needed to be told.
+
+deviations:
+  - item: Plan slice 2 item 6 asked for a deliberate conflict on a shared HQ file inside this repository.
+    reason: >-
+      The item was written while the design still gave each lane its own branch.
+      Under one standing branch there is no merge between lanes, so the conflict
+      it describes cannot be produced. The hazard that replaces it was tested
+      instead, in a scratch repository, because the real failure is a silent
+      overwrite rather than a conflict and demonstrating it here would have
+      meant deliberately destroying committed content.
+
+unresolved:
+  - Nothing requires a lane to mark its plan executing, so the claimed-lane reporting has still never run against real work. Whether it would have helped either lane see the other is untested.
+  - One run by two sessions of the same model is one sample. It does not establish that a different session, a different model, or a longer lane would behave the same way.
+  - The silent-overwrite hazard is unmitigated. No rule currently forbids editing a shared HQ file while another lane is live, and nothing would detect it if someone did.
+  - Whether the status vocabulary should be documented, validated, or both is not decided here. Validation would reject ninety-eight committed events unless it warns rather than fails, which is the same trap a previous workstream already met.
+
+next_action:
+  action: >-
+    Review the standing branch as one pull request covering the slice 2 setup,
+    both lane deliveries, and this closeout. On merge, return to a clean current
+    main and open the next standing branch at the next HQ write. Then decide
+    whether the three findings become a new workstream: the undefined status
+    vocabulary is the one with a live consequence and should be weighed first.
+  acceptance_check:
+    - This closeout must be committed, pushed, and verified on the pull request head before the pull request is reported ready.
+    - No CIEL source file changed during slice 2; the only source change in this branch's history is none.
+    - Both children must still pass their tests on main with no leftover branch.
