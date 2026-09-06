@@ -1,0 +1,121 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T214200_report_fidelity_plan_0_3
+type: closeout
+recorded_at: 2026-09-06T21:42:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-report-fidelity-001
+  lane: single
+  objective: >-
+    Record two defects found by delivering slice 1, and place them in the plan
+    at revision 0.3, so that neither is carried only in a session that is about
+    to end.
+  scope:
+    - Plan revision 0.3, adding item 4 to slice 2 and a new slice 4.
+    - The evidence for each, checked against the repository rather than recalled.
+  out_of_scope:
+    - Implementing any of it. No slice is authorized and no source file changes here.
+    - Editing slice 1, which is delivered. Its text is the record of what was done.
+    - Editing the genesis documents, which are historical records.
+
+outcome:
+  status: ready-for-owner-merge
+  owner_agreement:
+    - Fold the terminal-closeout defect into slice 2 rather than patch it outside a plan, chosen over authorizing slice 2 as written and opening the defect separately.
+    - Correct README as its own slice in this workstream, running last, rather than now or as a new workstream.
+  completed:
+    - Recorded that a closeout naming no slice counts as the final delivery of a plan that declares slices, with the observation that produced it and the reason it is worse than the defect slice 1 fixed.
+    - Placed that remedy in slice 2, because both ways a workstream can wrongly leave the delivery machinery are read from the same event.
+    - Recorded four claims in README that the repository contradicts, each named with its line and checked against the file.
+    - Placed the README correction in slice 4 and stated why it runs after slice 3, which already edits that file.
+  not_completed:
+    - Nothing is implemented. Slices 2, 3 and 4 all need a decision naming plan revision 0.3.
+
+evidence:
+  repository:
+    head: 6d2a7e37eb221595367fb3691cc0a982f8c7da9e
+    branch: docs/report-fidelity-plan-0-3
+    working_tree: clean-before-this-closeout
+  plan: workstreams/ciel-report-fidelity-001/PLAN.md
+  plan_revision: "0.3"
+  supersedes_plan_revision: >-
+    0.2, which declared three slices and knew of neither defect. The closeouts
+    for 0.1 and 0.2 are not edited; this event carries the addition.
+  delivery:
+    target_branch: main
+    topic_branch: docs/report-fidelity-plan-0-3
+  pull_request:
+    number: 40
+    url: https://github.com/mojisejr/ciel-os/pull/40
+    base: main
+    head: docs/report-fidelity-plan-0-3
+  terminal_closeout_defect:
+    observed_at: A clean, current main at 154b34e immediately after slice 1 merged.
+    observed: >-
+      Wake reported ciel-report-fidelity-001 as completed and raised no
+      attention for it, while the plan declared slices 1, 2 and 3 and only
+      slice 1 had been delivered.
+    cause: >-
+      isTerminalCloseout requires a slice-scoped closeout to name the last
+      declared slice, which correctly rejected the slice 1 closeout. A closeout
+      naming no slice skips that test and falls through to the phase test, which
+      a plan declaring no phase passes. This workstream's two opening closeouts
+      each therefore counted as its final delivery.
+    severity: >-
+      Worse than the defect slice 1 fixed, and in the opposite direction. That
+      one reported finished work as unfinished, which wastes a reader's time.
+      This reports unstarted work as finished, which is how a workstream gets
+      abandoned with nothing raising it.
+  readme_currency_defect:
+    checked_against: The files at 154b34e, line by line, rather than from impression.
+    claims:
+      - README.md:17 states that no second client bridge exists. CLAUDE.md exists and AGENTS.md:3 names Codex and Claude as its clients.
+      - README.md:39 states that the only current integration is the Codex-oriented CLI, which is the same claim in another place.
+      - README.md:45 describes AGENTS.md as the Codex bootstrap contract and omits CLAUDE.md from the repository listing.
+      - That listing shows src/ as events/ and wake/, while it also holds portfolio/, projects/, cli.ts, and index.ts.
+    why_it_matters: >-
+      AGENTS.md makes reading README.md step 2 of Wake, so a cold session meets
+      these claims before anything else. It is the same failure this workstream
+      is named for, in the document a session reads first.
+  lapsed_decision: >-
+    The slice 1 decision named plan revision 0.2 and lapses with this bump.
+    Slice 1 was delivered and merged at 154b34e before the bump, so nothing is
+    left unauthorized. This follows the precedent recorded when
+    ciel-parallel-lanes-001 moved from 0.2 to 0.3.
+
+prediction:
+  statement: >-
+    On the revision commit the workstream reported needs-owner-decision rather
+    than completed. That is not a repair. The opening closeouts record plan
+    revision 0.2 and no longer match the plan, so no terminal closeout is found
+    at all. This closeout records revision 0.3 and names no slice, so it will
+    take their place, and the false completed will return once this merges.
+  check: >-
+    Run bun run wake on a clean, current main after this merges. If the
+    workstream reports completed with slices 2, 3 and 4 undelivered, the defect
+    is reproduced by this very event and slice 2 item 4 is the remedy.
+  why_not_avoided: >-
+    Choosing a status word the code does not recognise would hide this while
+    changing nothing, which is exactly the failure that put
+    pilot-report-status-flag-001 outside the machinery. The status here is the
+    same one the 0.2 revision closeout used, and the consequence is recorded
+    instead of dodged.
+
+unresolved:
+  - Slices 2, 3 and 4 are all unauthorized. Slice 2 now carries the defect with a live consequence and should be weighed first.
+  - Whether a plan that declares no slices at all should still be closed by a closeout naming none is assumed rather than established. Slice 2 keeps that case, and no evidence yet says it is right.
+  - The four README claims are the ones found by looking at the sections a reader meets first. Nothing establishes that the rest of the file is current.
+  - This event will reproduce the defect it records. That is deliberate and stated above, but it means Wake's report of this workstream is wrong between this merge and slice 2.
+
+next_action:
+  action: >-
+    Review pull request 40. On merge, return to a clean current main, run wake
+    to check the prediction above, then authorize slice 2 with a decision naming
+    plan revision 0.3 slice 2.
+  acceptance_check:
+    - This closeout must be committed, pushed, and proven an ancestor of the pull request head before the pull request is reported ready.
+    - No committed event may be edited; the 0.1 and 0.2 closeouts stay as written.
+    - Only this workstream's own paths are staged.
