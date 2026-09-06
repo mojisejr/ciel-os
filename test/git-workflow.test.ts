@@ -30,6 +30,8 @@ test("keeps the startup Git rule concise and the workflow discoverable", async (
   expect(readme).toContain("ancestor of the PR head");
   expect(readme).toContain("final, merge-ready PR to the owner");
   expect(readme).toContain("git log origin/main..<branch>");
+  expect(readme).toContain("Do not edit a shared file while another lane is live");
+  expect(readme).toContain("the second write silently replaces the first");
   expect(readme).toContain("CIEL currentness is per repository");
   expect(readme).toContain("only once to seed an empty remote repository");
   expect(readme).toContain("Before marking a PR ready");

@@ -180,6 +180,13 @@ git switch -c hq/$(date +%Y%m%d)   # or simply commit, if already on hq/*
   runs. Nothing waits in a draft that can go stale, and the closeout rules above
   apply unchanged to the short-lived pull request that results. Visibility
   during the work comes from Wake, which reads the branch directly.
+- **Do not edit a shared file while another lane is live.** `AGENTS.md`,
+  `README.md`, and anything under `src/` belong to every lane. One shared branch
+  means the lanes never merge, so the loud conflict separate branches would
+  raise cannot happen: the second write silently replaces the first, and Git
+  reports one modified file with no sign that anything was lost. Staging only
+  your own paths does not help, because the loss happens at the write. A change
+  to a shared file waits until no other lane is running, or takes its own round.
 - **After a merge the next session to write HQ opens the next standing branch.**
 - Child projects need none of this. Each is a separate repository in its own
   directory, so their branches and pull requests are independent and merge at

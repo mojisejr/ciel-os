@@ -924,3 +924,36 @@ test("warns about an unrecognised status on a closeout that would otherwise fini
     await rm(root, { force: true, recursive: true });
   }
 });
+
+test("does not raise a conflict for an overlap the owner has already decided", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    await createProject(join(root, "checkouts", "shared-app"), "shared-app");
+    await mkdir(join(root, "projects", "shared-app"), { recursive: true });
+    await writeFile(join(root, "projects", "shared-app", "project.yaml"), projectYaml("shared-app"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  shared-app:", "    path: checkouts/shared-app", ""].join("\n"));
+    await addPlan(root, "first-lane", "active", ["shared-app"], { revision: "1.0" });
+    await addPlan(root, "second-lane", "active", ["shared-app"], { revision: "1.0" });
+
+    // Two active workstreams on one child project, with nothing decided yet.
+    let report = await readPortfolioWakeReport(root);
+    expect(report.attention.filter((item) => item.state === "conflict")).toHaveLength(2);
+    expect(report.workstreams.every((item) => item.lifecycle?.state === "owner-confirmation-required")).toBe(true);
+
+    // The owner decides. deriveLifecycle already consulted the decision and
+    // deriveAttention did not, so one report said confirmation was required
+    // while the other said it had been given, for the same two workstreams.
+    const eventsDirectory = join(root, "memory/events/2026/08/29");
+    await mkdir(eventsDirectory, { recursive: true });
+    for (const id of ["first-lane", "second-lane"]) {
+      await writeFile(join(eventsDirectory, `20260829T0000_${id}.yaml`), decision(id, id, "1.0", "approved"));
+    }
+
+    report = await readPortfolioWakeReport(root);
+    expect(report.workstreams.every((item) => item.lifecycle?.state === "authorized")).toBe(true);
+    expect(report.attention.filter((item) => item.state === "conflict")).toEqual([]);
+    expect(report.attention.every((item) => item.state === "active")).toBe(true);
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});

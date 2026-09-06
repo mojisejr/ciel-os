@@ -890,8 +890,14 @@ function deriveAttention(repositoryPath: string, workstreams: PortfolioWorkstrea
       }];
     }
 
+    // An overlap the owner has already decided is not a conflict. deriveLifecycle
+    // consults decisions and reports owner-confirmation-required only while the
+    // confirmation is missing, so attention follows that verdict instead of
+    // recounting the overlap on its own. During the two-session run the two
+    // halves of one report disagreed about the same two workstreams: one said
+    // confirmation was required, the other that it had been given.
     const conflictingProjects = workstream.projectIds.filter((id) => (activeByProject.get(id)?.length ?? 0) > 1);
-    if (conflictingProjects.length > 0) {
+    if (conflictingProjects.length > 0 && workstream.lifecycle?.state === "owner-confirmation-required") {
       return [{
         detail: `Active workstreams overlap on: ${conflictingProjects.join(", ")}; owner confirmation is required before parallel execution.`,
         projectIds: workstream.projectIds,
