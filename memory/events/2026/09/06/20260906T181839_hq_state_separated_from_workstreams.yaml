@@ -1,0 +1,136 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T181839_hq_state_separated_from_workstreams
+type: closeout
+recorded_at: 2026-09-06T18:18:39+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-parallel-lanes-001
+  lane: single
+  objective: >-
+    Deliver slice 1: stop HQ's own working state from deciding the status of
+    unrelated workstreams, and make Wake report what a person needs in order to
+    resume work, so that several sessions can run from one folder.
+  scope:
+    - Separate the HQ project from the overlap and claimed-lane calculations.
+    - Stop a merged workstream from occupying its projects while this checkout is behind.
+    - Report a claimed lane as observed instead of asserting it was abandoned.
+    - Report next_action and unresolved per workstream.
+    - Date a standing hq branch from its name.
+    - Record the arrangement in README.md.
+  out_of_scope:
+    - The two-session run. Slice 2 is unauthorized and both pilot workstreams stay blocked.
+    - Any pilot code, Git worktree, skill, hook, daemon, write path, event type, or schema change.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Identified HQ as the project whose binding resolves to the repository root, using the binding that already exists rather than a new field, and excluded it from the overlap count and from the claimed-lane project check.
+    - Excluded merged-needs-sync from the active-project map and from attention, while keeping it on the workstream so the pending sync stays visible.
+    - Replaced the interrupted lifecycle state with claimed, and rewrote both details so neither claims the work was left behind.
+    - Added a per-workstream latest record carrying next_action, unresolved, the recording time, and the event path.
+    - Added standing-branch dating for hq/<yyyymmdd>, reported as age in days with no advice attached.
+    - Recorded the arrangement in README.md as a new section, including the stage-your-own-paths rule and the meaning of a claimed lane.
+    - Revised the plan to 0.2 in the same branch, withdrawing the worktree layout and swapping the slices.
+  not_completed:
+    - Nothing is proven about two sessions actually running. That is slice 2 and needs its own decision.
+    - Wake still cannot tell a live lane from an abandoned one. This slice stops it pretending otherwise; it does not solve it.
+
+evidence:
+  repository:
+    head: 4f42beddffcc9e65ccf65398ea231e1f14c243d6
+    branch: docs/parallel-lanes-plan-0-2
+    working_tree: clean-before-this-closeout
+  plan: workstreams/ciel-parallel-lanes-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  decision: memory/events/2026/09/06/20260906T180858_many_sessions_one_hq_authorized.yaml
+  delivery:
+    target_branch: main
+    topic_branch: docs/parallel-lanes-plan-0-2
+  pull_request:
+    number: 36
+    url: https://github.com/mojisejr/ciel-os/pull/36
+    base: main
+    head: docs/parallel-lanes-plan-0-2
+  changed:
+    - src/portfolio/read.ts
+    - src/portfolio/types.ts
+    - src/wake/read.ts
+    - src/wake/types.ts
+    - test/portfolio/read.test.ts
+    - test/wake/read.test.ts
+    - README.md
+  checks:
+    - bun run check passes with 32 tests, up from 29.
+    - bun run bin/ciel.ts events validate accepts all event files.
+    - git diff --check reports nothing.
+  before_and_after:
+    condition: On the delivery topic branch with an uncommitted working tree, the condition that previously broke the report.
+    before: Four merged workstreams flipped from completed to merged-needs-sync and every active workstream was reported as a conflict.
+    after: The attention list holds one active workstream, three paused, and two blocked, with no conflict. The four merged workstreams still report merged-needs-sync on themselves and raise nothing.
+  tests_added:
+    - An overlap on a child project is counted and an overlap on the HQ project is not, asserted through the conflict detail naming the child and not HQ.
+    - A merged-needs-sync workstream raises no attention and produces no conflict.
+    - Both claimed-lane details say the lane may be running elsewhere and neither says the execution was left open.
+    - The latest record reports next_action, unresolved, the recording time, and the event path, and is null for a workstream with no events.
+    - A standing hq branch is dated from its name; an ordinary topic branch reports none.
+
+deviations:
+  - item: >-
+      Plan slice 1 item 1 says to exclude HQ from the terminal-lifecycle
+      currency check. The currency check was left as written.
+    reason: >-
+      That check reads the HQ checkout by nature, so excluding HQ from it would
+      mean deleting it and redefining what completed means. Item 2 already stops
+      the harm, because a merged-needs-sync workstream no longer occupies its
+      projects or raises attention. The smaller change was taken and the larger
+      one is not smuggled in. If a later measurement shows completed needs to
+      stop depending on the checkout, that is its own plan revision.
+  - item: >-
+      Plan slice 1 item 5 says to report whether any workstream is executing
+      alongside the branch age. Only the branch age was added.
+    reason: >-
+      A claimed lane is already reported on the workstream itself, so a second
+      summary would be a duplicate of derived data and a second place to keep
+      correct. The owner asked for as little new state as possible.
+  - item: The interrupted lifecycle state was renamed rather than supplemented.
+    reason: >-
+      Leaving the name while changing the text would keep the false claim in the
+      part most likely to be read. One test expectation changed with it.
+
+method_observation: >-
+  Recorded for the owner's review of whether the alignment method belongs in
+  CIEL. Across the whole session, sixteen questions were asked with the agent's
+  own answer written before each, and thirteen matched. The score is the less
+  useful half. Twice in round three the agent declared the question tree
+  exhausted, and both times it was not: the question that actually governed the
+  design, where the owner would sit while working, was never asked at all. The
+  worktree layout in revision 0.1 was built on the unasked assumption and was
+  withdrawn a few hours later. The method's own documentation warns of exactly
+  this, that the tree is drawn from the asker's understanding and so runs out
+  early when the understanding is thin. The score did not detect it, because
+  guessing well inside a small tree looks identical to understanding. Both
+  earlier misses ran the same way, the agent preferring to route around an
+  obstacle and the owner preferring to keep the system coherent over time.
+
+unresolved:
+  - Whether one standing branch actually holds up under two sessions is unproven. Slice 2 measures it, and the stage-your-own-paths rule is the single point where the arrangement can quietly go wrong.
+  - Whether per-workstream next_action is enough for a cold session to resume without asking is unproven, and is the other thing slice 2 measures.
+  - Nothing distinguishes a live lane from an abandoned one. A person remains the only way to establish which, and no measurement here suggests a way to change that without recording sessions, which the contract forbids.
+  - completed still requires the checkout to sit on a clean current main, so under a standing branch merged work will normally rest at merged-needs-sync. That is now harmless but it is not obviously right, and it is left alone deliberately.
+  - The standing-branch convention has not been used yet. This delivery followed the ordinary topic-branch path, because the convention it introduces is not merged.
+
+next_action:
+  action: >-
+    Review pull request 36, which carries the plan revision and this slice
+    together. On merge, return the primary checkout to a clean current main,
+    delete the topic branch, and open the first standing branch when the next HQ
+    write happens. Slice 2 needs its own decision naming plan revision 0.2 slice
+    2, and unblocking the two pilot workstreams needs one decision each.
+  acceptance_check:
+    - This closeout must be committed, pushed, and verified on the pull request head before the pull request is reported ready.
+    - Wake run on a branch with a dirty tree must report no conflict and must not raise the merged workstreams.
+    - No pilot file changed, and no event schema or new state store was introduced.

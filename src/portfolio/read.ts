@@ -6,6 +6,7 @@ import { parseDocument } from "yaml";
 import type {
   PortfolioAttention,
   PortfolioCheckpoint,
+  PortfolioLatestRecord,
   PortfolioProject,
   PortfolioValidationError,
   PortfolioWakeReport,
@@ -163,6 +164,7 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
       executionState: executionState as PortfolioWorkstream["executionState"],
       id: declaredId,
       lane,
+      latestRecord: null,
       lifecycle: null,
       path,
       planRevision,
@@ -547,6 +549,47 @@ async function deriveTerminalLifecycle(
   };
 }
 
+function readStringList(record: Record<string, unknown>, key: string): string[] {
+  const value = record[key];
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0).map((item) => item.trim()) : [];
+}
+
+// The most recent record for a workstream, read for what it tells a person to
+// do rather than for reconciliation. Knowing what was last proposed is what
+// makes a later change of direction legible instead of unexplained.
+function readLatestRecord(repositoryPath: string, events: WorkstreamEvent[]): PortfolioLatestRecord | null {
+  const event = events.at(-1);
+  if (event === undefined) {
+    return null;
+  }
+  const nextAction = isRecord(event.value.next_action) ? readString(event.value.next_action, "action") : null;
+  return {
+    eventPath: relative(repositoryPath, event.path),
+    nextAction,
+    recordedAt: readString(event.value, "recorded_at"),
+    unresolved: readStringList(event.value, "unresolved")
+  };
+}
+
+// HQ is the project bound to the repository root. Every workstream lists it,
+// because plans and events live there, so counting it would make each pair of
+// concurrent workstreams look like a collision and would let HQ's own working
+// state decide whether unrelated work needs reconciling. It is identified from
+// the binding that already exists rather than from a new field.
+function headquartersProjectIds(repositoryPath: string, projects: PortfolioProject[]): Set<string> {
+  return new Set(projects.filter((project) => project.binding.path === repositoryPath).map((project) => project.id));
+}
+
+// A workstream stops occupying its projects once its work has reached the
+// target branch. `completed` says the checkout has caught up as well;
+// `merged-needs-sync` says only that this checkout has not, which is a fact
+// about the desk rather than about the work.
+function occupiesItsProjects(workstream: PortfolioWorkstream): boolean {
+  return workstream.state === "active"
+    && workstream.lifecycle?.state !== "completed"
+    && workstream.lifecycle?.state !== "merged-needs-sync";
+}
+
 async function deriveLifecycle(
   repositoryPath: string,
   workstreams: PortfolioWorkstream[],
@@ -564,9 +607,10 @@ async function deriveLifecycle(
   }
 
   const projectsById = new Map(projects.map((project) => [project.id, project]));
+  const headquarters = headquartersProjectIds(repositoryPath, projects);
   const activeByProject = new Map<string, string[]>();
-  for (const workstream of workstreams.filter((item) => item.state === "active" && item.lifecycle?.state !== "completed")) {
-    for (const projectId of workstream.projectIds) {
+  for (const workstream of workstreams.filter(occupiesItsProjects)) {
+    for (const projectId of workstream.projectIds.filter((id) => !headquarters.has(id))) {
       const ids = activeByProject.get(projectId) ?? [];
       ids.push(workstream.id);
       activeByProject.set(projectId, ids);
@@ -592,22 +636,25 @@ async function deriveLifecycle(
       };
       continue;
     }
+    // A claimed lane cannot be told apart from an abandoned one. Sessions are
+    // not recorded, so nothing here can establish whether one is still running.
+    // Report the marker and what the projects look like; leave the conclusion
+    // to a person rather than asserting that the work was left behind.
     if (workstream.executionState === "executing") {
-      const reconciliationProblems = workstream.projectIds.filter((projectId) => {
+      const unsettledProjects = workstream.projectIds.filter((projectId) => {
+        if (headquarters.has(projectId)) {
+          return false;
+        }
         const project = projectsById.get(projectId);
         return project?.binding.status !== "available" || project.observed?.workingTree.clean !== true;
       });
-      workstream.lifecycle = reconciliationProblems.length > 0
-        ? {
-            decisionEventPath: decision?.path ?? null,
-            detail: `A prior execution was left open and needs reconciliation for: ${reconciliationProblems.join(", ")}.`,
-            state: "needs-reconciliation"
-          }
-        : {
-            decisionEventPath: decision?.path ?? null,
-            detail: "A prior execution was left open without a closeout; inspect before continuing.",
-            state: "interrupted"
-          };
+      workstream.lifecycle = {
+        decisionEventPath: decision?.path ?? null,
+        detail: unsettledProjects.length > 0
+          ? `This lane is claimed and has no closeout, and has uncommitted or unverified work in: ${unsettledProjects.join(", ")}. It is either running in another session or was interrupted; establish which with the owner before touching it.`
+          : "This lane is claimed and has no closeout, and its projects are clean. It is either running in another session or was interrupted; establish which with the owner before touching it.",
+        state: "claimed"
+      };
       continue;
     }
     if (decision === null) {
@@ -631,11 +678,12 @@ async function deriveLifecycle(
   }
 }
 
-function deriveAttention(workstreams: PortfolioWorkstream[], projects: PortfolioProject[]): PortfolioAttention[] {
+function deriveAttention(repositoryPath: string, workstreams: PortfolioWorkstream[], projects: PortfolioProject[]): PortfolioAttention[] {
   const projectById = new Map(projects.map((project) => [project.id, project]));
+  const headquarters = headquartersProjectIds(repositoryPath, projects);
   const activeByProject = new Map<string, string[]>();
-  for (const workstream of workstreams.filter((item) => item.state === "active" && item.lifecycle?.state !== "completed")) {
-    for (const projectId of workstream.projectIds) {
+  for (const workstream of workstreams.filter(occupiesItsProjects)) {
+    for (const projectId of workstream.projectIds.filter((id) => !headquarters.has(id))) {
       const ids = activeByProject.get(projectId) ?? [];
       ids.push(workstream.id);
       activeByProject.set(projectId, ids);
@@ -643,7 +691,10 @@ function deriveAttention(workstreams: PortfolioWorkstream[], projects: Portfolio
   }
 
   return workstreams.flatMap<PortfolioAttention>((workstream) => {
-    if (workstream.state === "completed" || workstream.lifecycle?.state === "completed") {
+    // Work that has reached the target branch needs no attention. Whether this
+    // checkout has caught up is reported on the workstream itself, so a lane
+    // that is merged but unsynced stays visible without being raised here.
+    if (workstream.state === "completed" || workstream.lifecycle?.state === "completed" || workstream.lifecycle?.state === "merged-needs-sync") {
       return [];
     }
     if (workstream.state === "paused" || workstream.state === "blocked") {
@@ -709,9 +760,12 @@ export async function readPortfolioWakeReport(repositoryDirectory = "."): Promis
 
   const checkpoints = await groupCheckpoints(repositoryPath, workstreams);
   validationErrors.push(...checkpoints.errors);
+  for (const workstream of workstreams) {
+    workstream.latestRecord = readLatestRecord(repositoryPath, checkpoints.events.get(workstream.id) ?? []);
+  }
   await deriveLifecycle(repositoryPath, workstreams, projects, checkpoints.events);
   return {
-    attention: deriveAttention(workstreams, projects),
+    attention: deriveAttention(repositoryPath, workstreams, projects),
     projects,
     validationErrors,
     workstreams

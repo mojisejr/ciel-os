@@ -152,6 +152,43 @@ is the owner's review surface: state the outcome, context, scoped change,
 evidence, boundaries, and delivery reference in concise prose. It summarizes
 the closeout for review; it does not duplicate the event's full YAML.
 
+## Several sessions at once
+
+Several coding-agent sessions may run at the same time, all of them started
+from the HQ folder. They share one checkout, so HQ keeps one **standing branch**
+named `hq/<yyyymmdd>` that every session commits to. Nobody switches branches
+during the work, so there is nothing to contend for, and the branch name is the
+only record the arrangement keeps: its date gives its age, which Wake reports.
+
+Pass the start gate above in the usual way, then open or join the standing
+branch:
+
+```bash
+# on main, gate passed
+git switch -c hq/$(date +%Y%m%d)   # or simply commit, if already on hq/*
+```
+
+- **Stage only your own paths.** Never `git add -A` while another session may
+  be working; it would sweep that session's work in progress into your commit.
+  This is the one rule the arrangement depends on.
+- **Open the pull request when the owner decides to merge**, not while the work
+  runs. Nothing waits in a draft that can go stale, and the closeout rules above
+  apply unchanged to the short-lived pull request that results. Visibility
+  during the work comes from Wake, which reads the branch directly.
+- **After a merge the next session to write HQ opens the next standing branch.**
+- Child projects need none of this. Each is a separate repository in its own
+  directory, so their branches and pull requests are independent and merge at
+  any time.
+
+Merge timing belongs to the owner. Wake reports the standing branch's age and
+which lanes are claimed; it does not advise, because a session that judges when
+to merge has started deciding rather than observing.
+
+A claimed lane is one whose plan says `executing` and that has no closeout.
+Nothing in the repository can tell a lane running in another session from one
+abandoned by a session that ended, because sessions are not recorded. Establish
+which with the owner before touching such a lane.
+
 After a merge, repeat the start gate before new tracked work. Clean up the
 merged branch only after fetching, confirming `git log origin/main..<branch>`
 is empty, and confirming no open PR still references it; delete the local

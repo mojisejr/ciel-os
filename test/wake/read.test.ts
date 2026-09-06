@@ -213,3 +213,36 @@ test("observes whether the client bridge is present alongside the shared contrac
     await rm(fixture.path, { force: true, recursive: true });
   }
 });
+
+test("dates a standing HQ branch from its name and reports nothing for an ordinary branch", async () => {
+  const fixture = await createRepositoryFixture();
+
+  try {
+    // An ordinary topic branch is not a standing branch and carries no age.
+    git(fixture.path, ["switch", "-c", "docs/ordinary-topic"]);
+    let report = await readWakeReport(fixture.path);
+    expect(report.observed.repository.standingBranch).toBeNull();
+
+    const opened = new Date();
+    opened.setDate(opened.getDate() - 3);
+    const stamp = [
+      opened.getFullYear(),
+      String(opened.getMonth() + 1).padStart(2, "0"),
+      String(opened.getDate()).padStart(2, "0")
+    ].join("");
+
+    git(fixture.path, ["switch", "-c", `hq/${stamp}`]);
+    report = await readWakeReport(fixture.path);
+
+    // The date in the name is the only record of when the round opened, so the
+    // age is derived. Wake states it; whether three days is too long is not
+    // Wake's call.
+    expect(report.observed.repository.standingBranch).toEqual({
+      ageDays: 3,
+      name: `hq/${stamp}`,
+      openedOn: `${stamp.slice(0, 4)}-${stamp.slice(4, 6)}-${stamp.slice(6, 8)}`
+    });
+  } finally {
+    await rm(fixture.path, { force: true, recursive: true });
+  }
+});
