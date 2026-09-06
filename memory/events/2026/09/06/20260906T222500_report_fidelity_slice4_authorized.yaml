@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T222500_report_fidelity_slice4_authorized
+type: decision
+recorded_at: 2026-09-06T22:25:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-report-fidelity-001
+  lane: single
+  objective: >-
+    Authorize plan revision 0.3 slice 4: make README say what CIEL currently
+    is, so the document AGENTS.md makes a session read at Wake stops
+    contradicting the repository it describes.
+  scope:
+    - The four claims plan revision 0.3 names, each checked against the file.
+    - Anything else in README contradicted by the repository, found by reading it through rather than by trusting that list.
+  out_of_scope:
+    - The genesis documents, which are historical records.
+    - Any change to what CIEL does. This slice changes description only.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  authority_source:
+    - The owner noticed the stale status paragraph and asked whether README should be brought current now or as its own slice, and accepted running it last.
+    - The owner authorized continuing through the remaining slices without a further decision, provided nothing important needs the owner's judgement.
+    - Slice 3 is delivered on this branch and its closeout is recorded, which is the order the plan requires because slice 3 edits the same file.
+  completed:
+    - Authorizes plan revision 0.3 slice 4 on the single lane.
+  not_completed:
+    - Nothing is changed by this decision. It records authority only.
+
+evidence:
+  repository:
+    head: 480e3ab6a09c2ff245a65507a3a35cdff271266b
+    branch: feat/report-fidelity-slices-2-4
+  plan: workstreams/ciel-report-fidelity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "4"
+  method: >-
+    A statement that was true when written and has since been overtaken is
+    corrected rather than deleted, so the direction stays legible. Nothing is
+    added that a repository file or local Git cannot establish.
+
+unresolved:
+  - The four claims are the ones a reader meets first. Whether the rest of the file is current is what this slice has to establish by reading it, and the answer is not known in advance.
+
+next_action:
+  action: >-
+    Correct README, run bun run check, record the slice 4 closeout, and open one
+    pull request carrying slices 2, 3 and 4.
+  acceptance_check:
+    - No claim in README about what exists may be contradicted by the repository, checked item by item.

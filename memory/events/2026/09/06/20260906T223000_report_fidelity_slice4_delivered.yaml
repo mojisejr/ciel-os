@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T223000_report_fidelity_slice4_delivered
+type: closeout
+recorded_at: 2026-09-06T22:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-report-fidelity-001
+  lane: single
+  objective: >-
+    Deliver plan revision 0.3 slice 4, the last declared slice: make README say
+    what CIEL currently is, so the document a session reads at Wake stops
+    contradicting the repository it describes.
+  scope:
+    - The four claims plan revision 0.3 named, and one more found by reading the rest of the file.
+  out_of_scope:
+    - The genesis documents, which are historical records and are not edited.
+    - Any change to what CIEL does.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - The status paragraph now says Genesis was proved with Codex alone and a Claude bridge has since been added, that the portfolio flow is proved, and that what is being proved now is several sessions at once and the fidelity of the report they read.
+    - The architecture note now names what exists: the read-only CLI and two hand-maintained client bridges.
+    - The repository listing now includes CLAUDE.md, src/cli.ts, src/portfolio, src/projects, and docs/portability, and describes AGENTS.md as the shared operating contract.
+    - The proof-target section no longer calls portfolio indexing and client bridges later proofs. Event writing still is, and is named as the one that remains.
+    - The reconstruction claim is stated with its evidence and its sample size: two cold sessions, one run, one model.
+  not_completed:
+    - Nothing outside README changed. This slice describes; it does not alter behaviour.
+
+evidence:
+  repository:
+    head: 7645993a98b9471a26627f5da585f7e70d9fbf4b
+    branch: feat/report-fidelity-slices-2-4
+    working_tree: clean-before-this-closeout
+  plan: workstreams/ciel-report-fidelity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "4"
+  decision: memory/events/2026/09/06/20260906T222500_report_fidelity_slice4_authorized.yaml
+  delivery:
+    target_branch: main
+    topic_branch: feat/report-fidelity-slices-2-4
+  checks:
+    command: bun run check
+    result: 38 tests pass, 166 assertions, typecheck clean.
+  negative_control: >-
+    With README restored and the assertions kept, the git-workflow test fails.
+  fifth_claim_found: >-
+    The proof-target section still called portfolio indexing, event writing and
+    client bridges later proofs. Two of the three now exist. It was found by
+    reading the file through rather than by working the list the plan gave,
+    which is why the slice asked for both.
+  method: >-
+    Each corrected sentence was checked against a file or a directory listing.
+    Nothing was added that a repository file or local Git cannot establish, and
+    an overtaken statement was rewritten rather than deleted.
+
+unresolved:
+  - The check was a reading, not a mechanism. Nothing prevents README from going stale again, and the test added only pins the specific claims corrected here.
+  - The reconstruction claim rests on one run. README now says so, which is honest but does not make the claim stronger.
+  - Prose outside the claims about what exists, such as the target architecture narrative, was left as written. Whether all of it still reflects the owner's intent is the owner's call, not a fact this slice can check.
+
+next_action:
+  action: >-
+    Review the pull request carrying slices 2, 3 and 4. On merge, return to a
+    clean current main; this workstream's last declared slice is delivered, so
+    it should then derive as a completed delivery rather than needing another
+    decision.
+  acceptance_check:
+    - This closeout must be committed, pushed, and proven an ancestor of the pull request head before the pull request is reported ready.
+    - bun run check must pass on the pull request head.
+    - Wake must derive a delivery state for this workstream from this closeout, since it names the last declared slice.

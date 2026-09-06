@@ -65,6 +65,8 @@ Wake → Align → Plan → Execute → Closeout
 - Write timestamps in ISO 8601 with timezone; use a stable `id`; never overwrite a committed event.
 - Use `closeout` and `decision`. Add `eval` or `knowledge` only when a recorded proof demonstrates the need.
 - Each event must include: `schema_version`, `id`, `type`, `recorded_at`, `recorded_by`, `workstream`, `outcome`, `evidence`, `unresolved`, and `next_action`.
+- `outcome.status` is acted on, not free text. `decided` on a decision authorizes the plan revision and slice its `evidence` names. `ready-for-owner-merge` on a closeout offers it as the workstream's final delivery, as does the earlier `draft-pr-closeout-prepared-for-final-pr-review`. Every other value is recorded and ignored, so use one deliberately when the event is a record rather than a delivery. Wake warns, naming the file, when an ignored word sits on a closeout that would otherwise finish the workstream; it never fails, because a committed event cannot be corrected in place.
+- A plan that declares slices is finished by a closeout for its last declared slice. A closeout naming no slice is a record about the workstream, not its delivery.
 - Give each closeout a checkpoint at `evidence.repository.head`. Wake reconciles through it; an event without one validates but silently disables reconciliation.
 - Use concise YAML: stable keys for agents, plain prose values for humans, and source references instead of duplicated Git diffs.
 

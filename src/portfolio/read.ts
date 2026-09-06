@@ -4,6 +4,7 @@ import { join, relative, resolve } from "node:path";
 import { parseDocument } from "yaml";
 
 import type {
+  LifecycleGateState,
   PortfolioAttention,
   PortfolioCheckpoint,
   PortfolioLatestRecord,
@@ -32,6 +33,22 @@ interface GitResult {
   stderr: string;
   stdout: string;
 }
+
+// The only outcome.status values the delivery machinery acts on. Everything
+// else in the ledger is recorded and ignored, which is stated in AGENTS.md so
+// that a word the code acts on is visibly different from one it does not.
+const deliveryStatuses = ["draft-pr-closeout-prepared-for-final-pr-review", "ready-for-owner-merge"] as const;
+
+// The lifecycle states deriveTerminalLifecycle produces. A workstream reporting
+// one of these has a delivery the machinery can see; a workstream reporting
+// anything else has none.
+const deliveryLifecycleStates: LifecycleGateState[] = [
+  "awaiting-owner-merge",
+  "completed",
+  "merged-needs-cleanup",
+  "merged-needs-sync",
+  "needs-reconciliation"
+];
 
 interface WorkstreamEvent {
   lane: string;
@@ -416,25 +433,26 @@ function decisionAuthorizesParallelism(event: WorkstreamEvent): boolean {
   return readString(outcome, "parallelism") === "approved";
 }
 
-function isTerminalCloseout(event: WorkstreamEvent, workstream: PortfolioWorkstream): boolean {
-  const outcome = isRecord(event.value.outcome) ? event.value.outcome : {};
+// Whether a closeout is scoped to deliver the whole workstream, ignoring what
+// it says about its own outcome. Separated from the status test so the same
+// join can find a closeout that claims to finish the work but words it in a way
+// the machinery does not act on, which is how one workstream left the machinery
+// without anything reporting it.
+function matchesTerminalScope(event: WorkstreamEvent, workstream: PortfolioWorkstream): boolean {
   const evidence = isRecord(event.value.evidence) ? event.value.evidence : {};
-  const status = readString(outcome, "status");
-
-  if (status !== "ready-for-owner-merge" && status !== "draft-pr-closeout-prepared-for-final-pr-review") {
-    return false;
-  }
 
   if (readString(evidence, "plan_revision") !== workstream.planRevision) {
     return false;
   }
 
-  // A slice-scoped closeout delivers one slice, not the workstream. Only a
-  // closeout naming the last slice the plan declares can be terminal, which the
-  // plan states without recording any progress in its header.
-  const slice = readString(evidence, "slice");
-  if (slice !== null && workstream.declaredSlices.length > 0) {
-    return slice === workstream.declaredSlices.at(-1);
+  // A plan that declares slices is finished by a closeout for its last slice. A
+  // closeout naming no slice is saying something about the workstream rather
+  // than delivering it, and letting one through reported ciel-report-fidelity-001
+  // as complete with three of its four slices unstarted. The permissive
+  // fall-through below is for a plan that declares no slices at all, and that
+  // case keeps it.
+  if (workstream.declaredSlices.length > 0) {
+    return readString(evidence, "slice") === workstream.declaredSlices.at(-1);
   }
 
   // A plan that still declares a numeric phase keeps the original strict join.
@@ -445,6 +463,73 @@ function isTerminalCloseout(event: WorkstreamEvent, workstream: PortfolioWorkstr
   }
 
   return readString(evidence, "execution_phase") === workstream.executionPhase;
+}
+
+function isTerminalCloseout(event: WorkstreamEvent, workstream: PortfolioWorkstream): boolean {
+  const outcome = isRecord(event.value.outcome) ? event.value.outcome : {};
+  const status = readString(outcome, "status");
+  return status !== null
+    && (deliveryStatuses as readonly string[]).includes(status)
+    && matchesTerminalScope(event, workstream);
+}
+
+// A closeout worded as a delivery of the whole workstream that names no slice
+// of a plan declaring them. It used to count as the final delivery and no
+// longer does, which is a change a reader would otherwise have to work out from
+// the code. Reported as context on the decision gate rather than as a warning,
+// because a plan-revision closeout takes this shape legitimately every time a
+// plan is revised mid-flight, and a warning that fires then would chatter.
+function unsliceableDeliveryCloseout(workstream: PortfolioWorkstream, events: WorkstreamEvent[]): WorkstreamEvent | null {
+  if (workstream.declaredSlices.length === 0) {
+    return null;
+  }
+  return [...events].reverse().find((event) => {
+    const outcome = isRecord(event.value.outcome) ? event.value.outcome : {};
+    const evidence = isRecord(event.value.evidence) ? event.value.evidence : {};
+    const status = readString(outcome, "status");
+    return readString(event.value, "type") === "closeout"
+      && status !== null && (deliveryStatuses as readonly string[]).includes(status)
+      && readString(evidence, "plan_revision") === workstream.planRevision
+      && readString(evidence, "slice") === null;
+  }) ?? null;
+}
+
+// An active workstream with no derived delivery state, holding a closeout that
+// almost finishes it, is the shape both known ways of leaving the delivery
+// machinery take: a word the code does not act on, or a delivery word on a
+// closeout that names no slice of a plan that declares them. Both are reported
+// only while no delivery state exists, so a workstream that has actually fallen
+// out is named rather than every historical wording. Append-only means such an
+// event can never be corrected in place; the warning clears when a closeout the
+// machinery reads is recorded beside it.
+function deriveCloseoutWarnings(
+  repositoryPath: string,
+  workstreams: PortfolioWorkstream[],
+  eventsByWorkstream: Map<string, WorkstreamEvent[]>
+): PortfolioValidationError[] {
+  const warnings: PortfolioValidationError[] = [];
+  for (const workstream of workstreams) {
+    const derived = workstream.lifecycle?.state ?? null;
+    if (workstream.state !== "active" || (derived !== null && deliveryLifecycleStates.includes(derived))) {
+      continue;
+    }
+    for (const event of eventsByWorkstream.get(workstream.id) ?? []) {
+      if (readString(event.value, "type") !== "closeout") {
+        continue;
+      }
+      const outcome = isRecord(event.value.outcome) ? event.value.outcome : {};
+      const status = readString(outcome, "status");
+      const carriesDeliveryStatus = status !== null && (deliveryStatuses as readonly string[]).includes(status);
+
+      if (!carriesDeliveryStatus && matchesTerminalScope(event, workstream)) {
+        warnings.push({
+          path: relative(repositoryPath, event.path),
+          message: `outcome.status ${String(status)} is not a status the delivery machinery acts on, and this closeout is otherwise scoped to finish ${workstream.id}; record a closeout saying one of ${deliveryStatuses.join(", ")} rather than editing this one`
+        });
+      }
+    }
+  }
+  return warnings;
 }
 
 function readDelivery(event: WorkstreamEvent): { targetBranch: string; topicBranch: string | null } {
@@ -743,11 +828,15 @@ async function deriveLifecycle(
       continue;
     }
     if (decision === null) {
+      const dangling = unsliceableDeliveryCloseout(workstream, eventsByWorkstream.get(workstream.id) ?? []);
+      const gateDetail = workstream.executionPhase === null
+        ? `No owner decision names a declared slice of plan revision ${workstream.planRevision}.`
+        : `No owner decision authorizes plan revision ${workstream.planRevision} phase ${workstream.executionPhase}.`;
       workstream.lifecycle = {
         decisionEventPath: null,
-        detail: workstream.executionPhase === null
-          ? `No owner decision names a declared slice of plan revision ${workstream.planRevision}.`
-          : `No owner decision authorizes plan revision ${workstream.planRevision} phase ${workstream.executionPhase}.`,
+        detail: dangling === null
+          ? gateDetail
+          : `${gateDetail} A closeout at ${relative(repositoryPath, dangling.path)} is worded as a delivery of this workstream but names no slice, so it does not finish a plan that declares ${workstream.declaredSlices.join(", ")}; either the plan revision or that closeout is out of date.`,
         state: "needs-owner-decision"
       };
       continue;
@@ -801,8 +890,14 @@ function deriveAttention(repositoryPath: string, workstreams: PortfolioWorkstrea
       }];
     }
 
+    // An overlap the owner has already decided is not a conflict. deriveLifecycle
+    // consults decisions and reports owner-confirmation-required only while the
+    // confirmation is missing, so attention follows that verdict instead of
+    // recounting the overlap on its own. During the two-session run the two
+    // halves of one report disagreed about the same two workstreams: one said
+    // confirmation was required, the other that it had been given.
     const conflictingProjects = workstream.projectIds.filter((id) => (activeByProject.get(id)?.length ?? 0) > 1);
-    if (conflictingProjects.length > 0) {
+    if (conflictingProjects.length > 0 && workstream.lifecycle?.state === "owner-confirmation-required") {
       return [{
         detail: `Active workstreams overlap on: ${conflictingProjects.join(", ")}; owner confirmation is required before parallel execution.`,
         projectIds: workstream.projectIds,
@@ -832,7 +927,7 @@ export async function readPortfolioWakeReport(repositoryDirectory = "."): Promis
   const workstreams: PortfolioWorkstream[] = [];
   const workstreamsDirectory = join(repositoryPath, "workstreams");
   if (!existsSync(workstreamsDirectory)) {
-    return { attention: [], projects, validationErrors, workstreams };
+    return { attention: [], projects, validationErrors, validationWarnings: [], workstreams };
   }
   for (const relativePath of [...new Bun.Glob("*/PLAN.md").scanSync(workstreamsDirectory)].sort()) {
     const path = join(workstreamsDirectory, relativePath);
@@ -853,6 +948,7 @@ export async function readPortfolioWakeReport(repositoryDirectory = "."): Promis
     attention: deriveAttention(repositoryPath, workstreams, projects),
     projects,
     validationErrors,
+    validationWarnings: deriveCloseoutWarnings(repositoryPath, workstreams, checkpoints.events),
     workstreams
   };
 }

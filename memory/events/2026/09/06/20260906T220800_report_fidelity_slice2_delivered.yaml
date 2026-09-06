@@ -1,0 +1,109 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T220800_report_fidelity_slice2_delivered
+type: closeout
+recorded_at: 2026-09-06T22:08:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-report-fidelity-001
+  lane: single
+  objective: >-
+    Deliver plan revision 0.3 slice 2: make what a closeout says about its own
+    outcome mean something, so a workstream can neither vanish from the delivery
+    machinery nor appear finished before it is.
+  scope:
+    - The documented status vocabulary, the warning that reports an unrecognised one, the repair of one workstream's record, and the sliced-plan join.
+  out_of_scope:
+    - Slices 3 and 4, authorized separately on this branch.
+    - Editing any committed event.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - AGENTS.md states which outcome.status values the code acts on and what each causes, and states that a plan declaring slices is finished by a closeout for its last declared slice.
+    - Wake warns, naming the file, when a status the code ignores sits on a closeout that would otherwise finish an active workstream, and only while that workstream has no delivery state at all. It is a warning and never an error.
+    - A closeout naming no slice no longer finishes a plan that declares slices. matchesTerminalScope is separated from the status test so the same join can find a closeout that claims to finish the work but words it in a way the machinery ignores.
+    - pilot-report-status-flag-001 is repaired by a new closeout beside the original and a plan header correction. It now derives awaiting-owner-merge, and the warning about its original closeout cleared by itself.
+  not_completed:
+    - Nothing about the pilot child project changed, which was the point.
+
+evidence:
+  repository:
+    head: e0ca156ea9be5c15b0b6e6a5c3ed0c92e0e79a05
+    branch: feat/report-fidelity-slices-2-4
+    working_tree: clean-before-this-closeout
+  plan: workstreams/ciel-report-fidelity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  decision: memory/events/2026/09/06/20260906T220000_report_fidelity_slice2_authorized.yaml
+  delivery:
+    target_branch: main
+    topic_branch: feat/report-fidelity-slices-2-4
+  checks:
+    command: bun run check
+    result: 37 tests pass, 153 assertions, typecheck clean.
+  negative_control: >-
+    With src/portfolio/read.ts restored to its pre-slice state and the tests
+    kept, both new portfolio tests fail. Neither passes vacuously.
+  observed_effects:
+    - ciel-report-fidelity-001 stopped reporting completed and now reports authorized for slice 2. The false completed recorded as a prediction with plan revision 0.3 is closed by this slice.
+    - pilot-report-status-flag-001 moved from deriving nothing to awaiting-owner-merge.
+    - cu12-simulator-sprint-003 moved from completed to needs-owner-decision. This is the only workstream the sliced-plan join changed, and it is recorded below rather than fixed here.
+  scope_decisions:
+    warning_scope: >-
+      Warning on every event whose status the code ignores would have produced
+      more than sixty entries, and warning on the newest event of every
+      workstream would have produced eight that can never be cleared, because an
+      event is append-only. The warning therefore fires only for an active
+      workstream that derives no delivery state at all, which names work that
+      has actually fallen out of the machinery and clears when a readable
+      closeout is recorded beside the original.
+    warning_placement: >-
+      Derived in the portfolio reader rather than the event validator, because
+      only the portfolio knows whether a workstream is active and whether it
+      derives a delivery. Surfaced through the existing Wake validationWarnings
+      channel, so no new output shape is introduced.
+    mirror_case_placement: >-
+      A closeout worded as a delivery that names no slice is reported in the
+      decision gate's own detail, not as a warning. Every plan revised
+      mid-flight produces exactly that shape, so a warning would have fired on
+      this workstream's own revision closeout on every run.
+    prepared_not_adopted: >-
+      A third documented word meaning a record rather than a delivery was
+      considered and not taken. Nothing in the code reads it, so documenting it
+      would assert a distinction the machinery does not make.
+
+findings:
+  cu12_simulator_sprint_003_record_is_inconsistent:
+    observed: >-
+      Its plan header says revision 0.1 and declares three slices, its final
+      closeout is recorded at revision 0.1 and names no slice, and a later
+      closeout at revision 0.2 names slice 3. Under the old permissive join the
+      no-slice closeout made it derive completed; it now derives
+      needs-owner-decision, and the gate detail names the closeout and says
+      either the plan revision or that closeout is out of date.
+    judgement: >-
+      Not a regression introduced here. The workstream's plan and its ledger
+      disagree, and the old join hid that. Wake now reports the disagreement
+      instead of resolving it in one direction.
+    not_fixed_here: >-
+      Correcting another workstream's plan header is outside this slice, which
+      scopes its one repair to pilot-report-status-flag-001. It belongs to
+      whoever owns that workstream.
+
+unresolved:
+  - The status vocabulary is documented and warned about, but nothing reaches the writer at the moment of writing. One cold session chose completed from reasonable instinct; whether a document it read at Wake prevents the next one is unmeasured.
+  - A workstream hidden by its plan header alone, as this pilot also was, is still undetectable. README forbids journalling a derived outcome in a plan, and nothing checks it.
+  - cu12-simulator-sprint-003 now reports needs-owner-decision and its record needs a correction that is not this workstream's to make.
+  - decisionEventPath is reported as an absolute path while every other path in the report is repository-relative. Observed while reading this slice's output; not in any slice, and not changed.
+  - The warning is scoped to active workstreams. A paused or blocked workstream whose record has fallen out of the machinery is not reported, and whether that matters is untested.
+
+next_action:
+  action: >-
+    Authorize slice 3 on this branch with a decision naming plan revision 0.3
+    slice 3, then slice 4, and deliver all three in one pull request.
+  acceptance_check:
+    - bun run check must pass on the pull request head.
+    - Only this workstream's own paths and the one pilot record it repairs are staged.

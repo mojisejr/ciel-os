@@ -10,11 +10,17 @@ CIEL's primary integration is **workspace files plus a local CLI**, not a hosted
 
 ## Status
 
-The Codex-only Genesis and read-only continuity-core proof are complete: a
-local Bun + TypeScript CLI validates append-only event records and produces a
-Git-aware Wake report. CIEL is now proving a plan-first portfolio flow for
-multiple local projects and workstreams. No event write path, database, daemon,
-MCP server, or second client bridge exists.
+Genesis and the read-only continuity-core proof are complete: a local Bun +
+TypeScript CLI validates append-only event records and produces a Git-aware
+Wake report over the projects and workstreams this HQ operates. Genesis was
+proved with Codex alone; a Claude bridge has since been added, so two clients
+now read the same contract. The plan-first portfolio flow is proved. What CIEL
+is proving now is several sessions working at once from one checkout, and
+whether the report they read tells the truth about work already done.
+
+No event write path, database, daemon, MCP server, or hosted service exists.
+The CLI is read-only: events and plans are written by a session as ordinary
+files and committed to Git.
 
 The current proposed foundation is [CIEL Genesis Contract v0.2](docs/genesis/CIEL_GENESIS_CONTRACT_v0.2.md). It changes the earlier kernel-only framing into a coding-agent continuity system while preserving the local-first, owner-controlled truth model. [v0.1](docs/genesis/CIEL_GENESIS_CONTRACT_v0.1.md) remains as the superseded proposal.
 
@@ -36,22 +42,27 @@ Coding-agent CLI / IDE session ── reads context, performs work, records outc
 
 CIEL records durable work history and compiles a client-neutral resume packet. A bridge tells a particular client where that packet is, what rules apply, and how to report back. The agent's model credentials, chat history, and proprietary session store stay outside CIEL's truth boundary.
 
-The diagram is target architecture, not a claim that every component exists. The only current integration is the Codex-oriented, local read-only CLI described below.
+The diagram is target architecture, not a claim that every component exists. What exists today is the local read-only CLI described below, plus two client bridges: `AGENTS.md`, which holds the operating contract, and `CLAUDE.md`, which points to it. Neither is generated; both are maintained by hand.
 
 ## Current repository
 
 ```text
 README.md
-AGENTS.md             Codex bootstrap contract and mandatory Wake rule
+AGENTS.md             Shared operating contract and mandatory Wake rule
+CLAUDE.md             Claude bridge; points to AGENTS.md and adds no rule
 package.json          Bun commands and pinned local dependencies
 bin/
   ciel.ts             Local CLI entry point
 src/
+  cli.ts              Command dispatch for the local CLI
   events/             Append-only event validation
+  portfolio/          Plans, checkpoints, and derived workstream lifecycle
+  projects/           Project identity validation
   wake/               Git-aware, read-only Wake report
-test/                 Deterministic validator and Wake tests
+test/                 Deterministic validator, portfolio, and Wake tests
 docs/
   genesis/            Genesis evidence, baseline, and v0.1 feasibility plan
+  portability/        Windows bootstrap guide and asset manifest
 projects/             Committed project identities
 checkouts/            Ignored local child repositories, visible from the HQ tree
 workstreams/          Current plan artifacts for active workstreams
@@ -180,6 +191,13 @@ git switch -c hq/$(date +%Y%m%d)   # or simply commit, if already on hq/*
   runs. Nothing waits in a draft that can go stale, and the closeout rules above
   apply unchanged to the short-lived pull request that results. Visibility
   during the work comes from Wake, which reads the branch directly.
+- **Do not edit a shared file while another lane is live.** `AGENTS.md`,
+  `README.md`, and anything under `src/` belong to every lane. One shared branch
+  means the lanes never merge, so the loud conflict separate branches would
+  raise cannot happen: the second write silently replaces the first, and Git
+  reports one modified file with no sign that anything was lost. Staging only
+  your own paths does not help, because the loss happens at the write. A change
+  to a shared file waits until no other lane is running, or takes its own round.
 - **After a merge the next session to write HQ opens the next standing branch.**
 - Child projects need none of this. Each is a separate repository in its own
   directory, so their branches and pull requests are independent and merge at
@@ -224,8 +242,14 @@ and safely resume active workstreams from repository plans, Git-aware evidence,
 and concise semantic records—without the human retelling task-specific chat
 history. The session may coexist with normal host-provided global capabilities;
 after Wake they may assist the agent, but they are never CIEL evidence or
-authority. Portfolio indexing, event writing, and client bridges remain later
-proofs, not initial structure.
+authority.
+
+Portfolio indexing and a second client bridge now exist. Event writing does
+not, and remains a later proof. The reconstruction claim above has been
+measured once: two sessions were each given a workstream id and nothing else,
+and both reached a correct delivery from Wake and the repository alone, with no
+question put to the owner. One run by two sessions of the same model is one
+sample, not a general result.
 
 ## Deliberate non-goals for this stage
 

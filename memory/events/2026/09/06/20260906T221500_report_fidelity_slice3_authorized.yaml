@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T221500_report_fidelity_slice3_authorized
+type: decision
+recorded_at: 2026-09-06T22:15:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-report-fidelity-001
+  lane: single
+  objective: >-
+    Authorize plan revision 0.3 slice 3: stop the two halves of the report
+    contradicting each other, and write down the working rule the standing
+    branch needs and does not have.
+  scope:
+    - Make attention respect a decision the owner has already recorded, which deriveLifecycle consults and deriveAttention does not.
+    - Record in README that a shared file is not edited while another lane is live.
+    - One test per changed behaviour.
+  out_of_scope:
+    - Slice 4, authorized separately.
+    - Any detection of a silent overwrite. The remedy recorded is a rule, not a mechanism.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  authority_source:
+    - The owner authorized continuing through the remaining slices without a further decision, provided nothing important needs the owner's judgement.
+    - Slice 2 is delivered on this branch and its closeout is recorded, which was the stated order.
+  completed:
+    - Authorizes plan revision 0.3 slice 3 on the single lane.
+  not_completed:
+    - Nothing is changed by this decision. It records authority only.
+
+evidence:
+  repository:
+    head: 219c15d8f835e9de7e46fb2cca56592b4eb71464
+    branch: feat/report-fidelity-slices-2-4
+  plan: workstreams/ciel-report-fidelity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  observed_defect: >-
+    During the two-session run, Wake reported ciel-parallel-lanes-001 and
+    pilot-ledger-count-command-001 as conflicts while their lifecycles read
+    authorized for the same revision and slice. deriveAttention counts overlap
+    without consulting decisions; deriveLifecycle does.
+  shared_file_hazard: >-
+    Under one standing branch the lanes never merge, so the loud merge conflict
+    separate branches would produce cannot occur. Demonstrated in a scratch
+    repository: the second write replaces the first and Git reports one modified
+    file with no indication anything was lost. Staging only your own paths does
+    not help, because the loss happens at the write.
+
+unresolved:
+  - Whether a workstream that proposes parallelism but overlaps nothing should raise attention at all is not settled here; the lifecycle already carries it.
+  - The shared-file rule is a rule and nothing enforces it. A session that ignores it still loses another's work silently.
+
+next_action:
+  action: >-
+    Implement both items with a test each, record the slice 3 closeout, then
+    authorize slice 4 on this branch.
+  acceptance_check:
+    - An owner-approved overlap must raise no conflict, checked by test.
+    - The shared-file rule must be written where a cold session will meet it.

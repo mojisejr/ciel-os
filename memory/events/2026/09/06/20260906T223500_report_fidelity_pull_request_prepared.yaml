@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T223500_report_fidelity_pull_request_prepared
+type: closeout
+recorded_at: 2026-09-06T22:35:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-report-fidelity-001
+  lane: single
+  objective: >-
+    Bind the three slice deliveries on this branch to the pull request that
+    carries them, which README requires an event to record and which the slice
+    closeouts could not, having been written before the pull request existed.
+  scope:
+    - The pull request number, URL, and observed head revision.
+    - The proof that every slice closeout on this branch is reachable from that head.
+  out_of_scope:
+    - Restating what the slices did. Each slice's own closeout carries that.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Names pull request 41 and the head it was prepared against.
+    - Confirms bun run check passes on that head.
+  not_completed:
+    - Nothing is merged. The owner's review and merge decision follow.
+
+evidence:
+  repository:
+    head: 162c8feed351fe09adfbb7826f63096beb93c30a
+    branch: feat/report-fidelity-slices-2-4
+    working_tree: clean-before-this-closeout
+  plan: workstreams/ciel-report-fidelity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "4"
+  delivery:
+    target_branch: main
+    topic_branch: feat/report-fidelity-slices-2-4
+  pull_request:
+    number: 41
+    url: https://github.com/mojisejr/ciel-os/pull/41
+    base: main
+    head: feat/report-fidelity-slices-2-4
+  carries:
+    - memory/events/2026/09/06/20260906T220800_report_fidelity_slice2_delivered.yaml
+    - memory/events/2026/09/06/20260906T222000_report_fidelity_slice3_delivered.yaml
+    - memory/events/2026/09/06/20260906T223000_report_fidelity_slice4_delivered.yaml
+    - memory/events/2026/09/06/20260906T221000_report_status_flag_record_repaired.yaml
+  checks:
+    command: bun run check
+    result: 38 tests pass, 166 assertions, typecheck clean.
+  one_branch_for_three_slices: >-
+    Slice 4 corrects the file slice 3 has just edited, and a second branch
+    cannot start from a clean current main while the first is unmerged. Each
+    slice keeps its own decision and its own closeout, so the history is
+    reviewable slice by slice inside one pull request.
+
+unresolved:
+  - Every unresolved item recorded by the three slice closeouts and by the pilot repair still stands. This event adds none and resolves none.
+  - cu12-simulator-sprint-003 reports needs-owner-decision as a consequence of slice 2, and its record needs a correction that is not this workstream's to make.
+
+next_action:
+  action: >-
+    Review pull request 41. On merge, return to a clean current main and clean
+    up the topic branch; this workstream's last declared slice is delivered, so
+    it should then derive as completed rather than needing another decision.
+  acceptance_check:
+    - This closeout must be proven an ancestor of the pull request head before the pull request is reported ready.
+    - Wake must report no validation warnings and no validation errors on the head.
