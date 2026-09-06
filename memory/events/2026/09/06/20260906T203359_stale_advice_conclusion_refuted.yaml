@@ -1,0 +1,112 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T203359_stale_advice_conclusion_refuted
+type: closeout
+recorded_at: 2026-09-06T20:33:59+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-parallel-lanes-001
+  lane: single
+  objective: >-
+    Record evidence that contradicts a conclusion this workstream already
+    committed, and two further defects found while acting on its next action.
+  scope:
+    - Correct the record. The slice 2 closeout is merged and is not edited.
+    - Record two defects observed after that closeout, one of them demonstrated deliberately.
+  out_of_scope:
+    - Fixing anything. The remedies belong to whichever workstream the owner opens next.
+
+outcome:
+  status: prepared
+  completed:
+    - Recorded that the slice 2 finding on stale advice was refuted by the next session to meet the condition.
+    - Recorded that reusing a standing-branch name on the same day makes completed work report as needing reconciliation, demonstrated and then reverted.
+    - Returned the checkout to a clean current main and removed the merged standing branch.
+  not_completed:
+    - Nothing is repaired. pilot-report-status-flag-001 is still outside the delivery machinery.
+
+evidence:
+  repository:
+    head: f03e7fb0897a169409cd39671c13c81af2156878
+    branch: docs/report-fidelity-workstream
+  plan: workstreams/ciel-parallel-lanes-001/PLAN.md
+  plan_revision: "0.3"
+  supersedes_conclusion:
+    event: memory/events/2026/09/06/20260906T201412_two_cold_sessions_proof.yaml
+    field: observations.stale_advice
+    said: >-
+      "Did not mislead. Neither lane acted on this workstream's stale
+      instruction to review pull request 36."
+    why_it_was_wrong: >-
+      Both lanes were reading their own latest record, and both of those records
+      were freshly written and unexecuted. Neither lane was ever exposed to
+      stale advice, so the observation was drawn from a sample that did not
+      contain the condition it claimed to measure. The closeout is merged and
+      stays as written; this event records the correction.
+
+  refutation:
+    observed_at: The next session started after that closeout merged, run cold by the owner.
+    condition: >-
+      Pull request 37 had been opened and merged. Wake reported this workstream
+      as merged-needs-sync with the detail "The final closeout has merged, but
+      this checkout has not returned to a clean, current target branch", while
+      the same report carried the latest record's next_action, which said to
+      review the standing branch as one pull request and then merge it.
+    what_happened: >-
+      The session reported that no pull request had been opened, citing an empty
+      gh pr list, and offered to open one. Accepting would have produced a
+      duplicate pull request for work already merged.
+    diagnosis: >-
+      This is not a gap in what the repository carries. The word "merged"
+      appeared in the lifecycle detail. Wake presented two statements that
+      contradicted each other, gave no indication which was current, and the
+      more prominent one was the stale instruction. An empty list of open pull
+      requests was then read as proof that none had ever existed.
+    attribution: >-
+      The condition was introduced by slice 1 of this workstream, which made
+      Wake report next_action at all. Before that, the contradiction could not
+      arise. The remedy was already named in plan revision 0.3: a record's own
+      commit can be tested for reachability from origin/main, which
+      deriveTerminalLifecycle already does for terminal closeouts.
+
+  branch_name_reuse:
+    observed: >-
+      With the checkout on a clean current main and a newly opened hq/20260906
+      holding one unmerged commit, ciel-parallel-lanes-001 and
+      pilot-ledger-count-command-001 both reported needs-reconciliation with the
+      detail "The topic branch at refs/heads/hq/20260906 has commits outside the
+      fetched target branch; do not clean it up". Both are merged and complete.
+      Deleting the new branch returned both to completed.
+    cause: >-
+      deriveTerminalLifecycle resolves a closeout's recorded topic branch by
+      name. The hq/<yyyymmdd> convention introduced in slice 1 guarantees the
+      same name recurs whenever two rounds happen on one day, so a new branch
+      inherits the identity of an old one.
+    consequence: >-
+      Completed work is reported as needing reconciliation on the strength of an
+      unrelated branch. The convention cannot be used twice in a day until this
+      is addressed.
+    also_noted: >-
+      README as written directs every HQ write to a standing branch. The
+      standing branch exists for rounds with several sessions; an ordinary
+      single-session change needs no such branch, and saying so would make the
+      collision rarer as well as the rule truer. This event was written on an
+      ordinary topic branch for that reason.
+
+unresolved:
+  - pilot-report-status-flag-001 remains outside the delivery machinery. Its plan says completed and its closeout status is a word the code does not recognise, so nothing verifies that its work reached origin/main. It has not been repaired because how to repair it is part of the decision the owner has not made yet.
+  - Whether the stale-advice remedy should mark a record as acted upon, hide it, or annotate it is undecided. Only the underlying test, reachability from origin/main, is settled as available without new state.
+  - The count of findings from the slice 2 run is now five rather than three, and their order of severity has changed. The stale-advice defect outranks the status vocabulary, because it caused a session to propose doing work that was already done, while the vocabulary defect so far only hides a workstream.
+  - One refutation is one observation. It establishes that stale advice can mislead, not how often.
+
+next_action:
+  action: >-
+    Open a workstream covering the five findings, ordered by whether they cause
+    a session to act wrongly rather than by how they look. Weigh the stale
+    advice and the branch-name collision first, since both make Wake state
+    something untrue about what has already been done.
+  acceptance_check:
+    - The slice 2 closeout must not be edited. This event carries the correction.
+    - Any remedy must be derivable from local Git and must not record sessions or add a state store.
