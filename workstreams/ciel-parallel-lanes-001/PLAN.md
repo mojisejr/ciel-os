@@ -1,203 +1,236 @@
-# CIEL — Parallel lanes across sessions
+# CIEL — Many sessions, one HQ
 
 **Workstream:** `ciel-parallel-lanes-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
 
 ## Objective and owner agreement
 
-Prove that two independent coding-agent sessions can each drive their own CIEL
-workstream at the same time from one HQ repository, and record honestly which
-parts of the current contract survive that and which do not.
+Let several coding-agent sessions work at the same time, all of them run from
+the `ciel-os` folder, without weakening the two properties CIEL exists for.
 
-The owner set the rule this proof must test: two workstreams may run in
-parallel only when they share no child project. Sharing `ciel-os` does not
-count, because every workstream keeps its plan and events there. Two lanes that
-touch the same child are not two lanes; they are one workstream with two slices.
+The owner set three requirements and one image:
 
-The owner also directed that no CIEL skill, hook, or machinery be added on the
-strength of this plan. Slice 1 changes nothing and only observes. Slice 2 may
-change CIEL only for gaps slice 1 actually demonstrated.
+1. **Sessions stay disposable.** No session is recorded, addressed, or depended
+   upon.
+2. **Continuity stays at least as good as it is now.** This is not one feature
+   among others; it is what CIEL is. Trading it for concurrency would destroy
+   the product to add a capability.
+3. **Several sessions run at once**, one project each, from the same folder.
 
-## Why the pilots
+The image the owner used governs the design: **one body, many souls.** The body
+is `ciel-os`; each session is a soul. Souls coordinate through the shared body,
+never by cutting the body into pieces. That is why this plan does not use Git
+worktrees, and revision 0.1's worktree layout is withdrawn.
 
-`pilot-task-ledger` and `pilot-task-report` are registered, bound, clean, and
-`local_only`, so a failed run cannot reach any remote. The contention this
-proof measures is in HQ, and HQ is exercised for real here: real plans, real
-events, real worktrees, real Wake, and two real draft pull requests against the
-canonical remote. Only the child work is deliberately trivial.
+The owner also asked that the arrangement stay as simple and as stateless as
+possible, and that nothing be added to CIEL until a measurement demands it.
+
+## What revision 0.1 got wrong
+
+Revision 0.1 designed a worktree per lane. It rested on an assumption never put
+to the owner: that a second session would be opened inside a worktree
+directory. The owner works only from `ciel-os`, so the whole layout addressed a
+problem no one had, while the real one went unexamined.
+
+That real problem is not Git. Two sessions working on two different child
+projects never collide, because each child is its own repository in its own
+directory. Contention exists only in HQ, and only for the few short moments a
+session writes a plan or an event there.
 
 ## Project links
 
 | Project ID | Role | Local binding |
 |---|---|---|
-| `ciel-os` | plan, decisions, proof evidence, and the code slice 2 may change | `.` |
-| `pilot-task-ledger` | child driven by the first lane | `checkouts/pilot-task-ledger` |
-| `pilot-task-report` | child driven by the second lane | `checkouts/pilot-task-report` |
+| `ciel-os` | the shared body: plans, events, and the code slice 1 changes | `.` |
+| `pilot-task-ledger` | child driven by the first session in slice 2 | `checkouts/pilot-task-ledger` |
+| `pilot-task-report` | child driven by the second session in slice 2 | `checkouts/pilot-task-report` |
 
 ## Starting evidence
 
-Measured while preparing this plan, on `e91316a`:
+Measured on `e91316a` and `ae1d0ba` while preparing revisions 0.1 and 0.2.
 
-- `decisionAuthorizesPlan` requires `event.lane === workstream.lane`
-  (`src/portfolio/read.ts:392`) and a plan declares exactly one lane
-  (`src/portfolio/read.ts:97,114`, a single token matched against
-  `/^[a-z0-9][a-z0-9-]*$/`). A decision recorded on a second lane can therefore
-  never authorize a plan. One workstream has exactly one authorizable lane, so
-  two parallel lanes must be two workstreams. `checkpointsByLane` groups
-  checkpoints by lane but cannot rescue a lane no decision can authorize.
-- All ten committed workstreams declare `lane: single`. The multi-lane grouping
-  has never carried real data.
-- All ten also list `ciel-os` in their project links. The overlap check at
-  `src/portfolio/read.ts:586` therefore fires for every pair of concurrent
-  workstreams, so it cannot distinguish a real child collision from the
-  unavoidable HQ overlap. This is the defect slice 2 is expected to fix.
-- A second, larger defect was measured while writing this plan rather than
-  predicted. `deriveTerminalLifecycle` only returns `completed` when the current
-  checkout is on the delivery target branch, at exactly fetched `origin/main`,
-  with an empty status (`src/portfolio/read.ts:504-518`). Otherwise it returns
-  `merged-needs-sync`, and both `deriveAttention` and `deriveLifecycle` count
-  any workstream that is not `completed` as still occupying its projects
-  (`src/portfolio/read.ts:568,637`).
+### The root cause
 
-  Observed: on clean `main` at `e91316a`, the four merged workstreams
-  `ciel-multi-client-support-001`, `ciel-pr-workflow-policy-001`,
-  `cu12-e2e-lab-001`, and `cu12-simulator-sprint-003` derive as `completed` and
-  raise nothing. After switching to this plan's topic branch and adding these
-  three plan files, all four flip to `merged-needs-sync` and every active
-  workstream reports a conflict.
+`ciel-os` is registered as an ordinary project and is bound to the repository
+root, and every workstream lists it because plans and events live there.
+Consequently HQ's transient working state leaks into the derived status of every
+workstream. What looked like three defects is one:
 
-  The trigger is following the contract. `AGENTS.md` requires a topic branch for
-  every tracked change, so the portfolio view degrades the moment any work
-  begins and is only accurate while nothing is happening. This matters more for
-  lanes than for single-session work: inside a lane worktree the checkout is
-  never on `main`, so under the worktree layout every merged workstream would
-  report `merged-needs-sync` permanently. Fixing the HQ overlap alone would not
-  be enough.
-- The start gate in `README.md:114-124` runs `git switch main`. Git refuses that
-  in a secondary worktree because `main` is checked out in the primary one, so
-  the documented procedure cannot be followed inside a lane worktree as written.
-- `tsconfig.json` includes only `src/**/*.ts` and `test/**/*.ts`, and the test
-  script scans only `test/`, so a `worktrees/` directory under the HQ root does
-  not affect `bun run check`.
-- `wake` already reads `git worktree list --porcelain` and reports each
-  worktree's path, head, branch, and bare flag (`src/wake/read.ts:58,168`). It
-  reports nothing about why a worktree is still present.
-- The two pilots share a data contract: the ledger produces task JSON that the
-  report consumes, and both define `TaskPriority`. Separate repositories do not
-  make them independent, so this proof deliberately picks features that leave
-  that contract untouched.
+| Symptom | Where | Leaks from |
+|---|---|---|
+| every concurrent pair reports a conflict | `src/portfolio/read.ts:586,637` | `ciel-os` present in every project list |
+| a merged workstream stops deriving as `completed` | `src/portfolio/read.ts:504-518` | HQ not sitting on a clean, current `main` |
+| an executing workstream reports `needs-reconciliation` | `src/portfolio/read.ts:596-599` | HQ's own working tree being dirty |
 
-## Invariants
+Observed for the second symptom: on clean `main` at `e91316a`, the four merged
+workstreams `ciel-multi-client-support-001`, `ciel-pr-workflow-policy-001`,
+`cu12-e2e-lab-001`, and `cu12-simulator-sprint-003` derive as `completed`. After
+switching to a topic branch and adding three plan files, all four flipped to
+`merged-needs-sync` and every active workstream reported a conflict. The trigger
+is obeying the contract's own rule that tracked work uses a topic branch.
 
-- No CIEL skill, hook, launcher, daemon, write path, or event type is added.
-- Local and fetched `origin/main` must match before any lane worktree is
-  created. Drift between them is the failure mode this rule exists to prevent.
-- A lane worktree is removed and its branch deleted after its merge is verified.
-  Cleanup is a required step, not a courtesy.
-- The child work stays trivial. If a pilot change starts to need design, the
-  proof has drifted and the change is reverted rather than grown.
-- Observations about the alignment method used to prepare this plan ride in
-  this workstream's closeout events. No new place to record them is created.
+The third symptom is worse under many sessions: any session that leaves HQ dirty
+makes every executing workstream elsewhere look like wreckage.
 
-## Lane layout
+### A live lane is indistinguishable from a dead one
 
-Lane worktrees live at `worktrees/<workstream-id>/` under the HQ root, ignored
-by Git, mirroring the existing `checkouts/` convention. A tracked
-`worktrees/README.md` states the convention and the cleanup rule.
+When a plan is marked `executing`, `src/portfolio/read.ts:595-611` reports
+either `interrupted` — "A prior execution was left open without a closeout" — or
+`needs-reconciliation`. `ciel-portfolio-flow-001` states this deliberately: the
+marker is to be read as an interrupted lane, "never as a live session identity".
 
-The known cost, accepted deliberately: `find`, `grep`, and glob runs from the HQ
-root will match files inside lane worktrees, because ignoring a directory in Git
-does not hide it from those tools. `checkouts/` already behaves this way without
-causing trouble. This is recorded so that a later session meeting duplicate
-search hits recognises a known trade-off instead of treating it as a new defect.
+With one session that is correct. With several it is a false statement wake
+cannot support, and it invites one session to clean up another's live work.
 
-The start-gate sequence runs in the primary worktree, where `main` actually
-lives, and the lane is created from the branch that gate just proved current:
+### Wake reports where, not what next or why
+
+`latestEvent` exposes only `path`, `id`, `recordedAt`, `workstreamId`,
+`objective`, and `checkpoint` (`src/wake/types.ts:26-35`). `next_action` and
+`unresolved` are required in every event and are never read back out; the string
+appears zero times in `src/wake/read.ts`. It is also a single latest event for
+the whole repository rather than one per workstream, which cannot serve several
+lanes at once.
+
+The owner's reason for wanting this is worth recording, because it is stronger
+than the feature: knowing what was proposed makes it possible to see **why a
+direction changed**. Without it the owner has to ask where things stand every
+time, which is precisely the continuity claim failing in practice.
+
+### Facts that still hold from revision 0.1
+
+- `decisionAuthorizesPlan` requires `event.lane === workstream.lane` and a plan
+  declares exactly one lane (`src/portfolio/read.ts:392,97,114`). Two parallel
+  lanes must be two workstreams. All ten prior workstreams declare `lane:
+  single`, so lane grouping has never carried real data.
+- Clearing the overlap gate needs one decision event per workstream. Predicted,
+  then confirmed: three overlapping workstreams needed three decisions.
+- The README start gate runs `git switch main`, which Git refuses in a secondary
+  worktree. Recorded as measured; no longer relevant now that worktrees are
+  withdrawn, and kept so a later session does not rediscover it.
+- The two pilots share a data contract: the ledger produces the task JSON the
+  report consumes and both define `TaskPriority`. Separate repositories do not
+  make two lanes independent.
+- One pull request may carry several workstreams. README's "one bounded topic
+  branch" binds a change, not a workstream, and PR 35 carried three plans.
+- `awaiting-owner-merge` already exists for a closeout committed but not yet
+  reachable from `origin/main` (`src/portfolio/read.ts:490-495`). Under the
+  arrangement below a finished lane falls into it by itself.
+
+## The arrangement
+
+**HQ keeps one standing working branch.** It is the ordinary state, not an
+exception. Every session commits to it. Nobody switches branches, so there is
+nothing to contend for.
 
 ```text
-git status --short && git fetch origin --prune
-git switch main && git pull --ff-only origin main
-git rev-parse HEAD && git rev-parse origin/main      # must match
-git worktree add worktrees/<workstream-id> -b <type>/<topic> main
+about to write HQ, on main          -> git switch -c hq/<yyyymmdd>
+about to write HQ, already on hq/*  -> just commit
 ```
+
+The branch name is the entire state. Its date gives its age, and Wake already
+reports the current branch, so no file, marker, or tracker is added.
+
+- **Stage only your own paths.** Never `git add -A`; it would sweep another
+  session's work in progress into your commit. This is the one rule the
+  arrangement depends on and the one place it can go wrong.
+- **The pull request is created when the owner decides to merge**, not held open
+  during the work. Nothing rots while waiting, and README's rule that a pull
+  request stays a draft until its closeout is on the head applies unchanged to a
+  short-lived pull request. Visibility during the work comes from Wake, which
+  does not need a pull request to see the branch.
+- **After a merge the next session to write HQ opens the next branch.** No
+  decision, no handover.
+- **`main` stays clean throughout**, so it remains the recovery anchor README
+  says it is, and the owner's rule that local and fetched `origin/main` must
+  match before starting still holds every time work begins.
+- Child projects need none of this. They are separate repositories in separate
+  directories and their pull requests merge independently at any time.
+
+Merge timing is the owner's, and Wake supports it by reporting facts rather than
+advice: the standing branch's age, and whether any workstream is currently
+`executing`. It must not tell the owner what to do; a derived judgement is where
+this would start inventing.
 
 ## Execution slices and acceptance criteria
 
-### 1. Run two lanes and record what actually happens
+### 1. Make the OS coherent under many sessions
 
-Open `pilot-ledger-count-command-001` and `pilot-report-status-flag-001` as
-concurrent workstreams and drive each from its own session. The second session
-must start cold: it runs Wake and reads the repository, and receives no context
-from the session that prepared this plan. Whether a cold session can pick up its
-lane from repository files alone is half of what this slice measures, because
-the contract already claims agent sessions are disposable and that claim has
-never been tested against a live parallel lane.
+This slice runs in one ordinary session. It must land before slice 2, because
+without it Wake's output is too noisy during parallel work to read a result
+from.
+
+1. Stop HQ's transient state from leaking into workstream status. HQ is the
+   project whose configured binding resolves to the repository root, so it is
+   identifiable without adding a field to any project identity. Exclude it from
+   the overlap calculation, from the terminal-lifecycle currency check, and from
+   the executing-lane reconciliation check. One change, three symptoms.
+2. Stop a merged workstream from occupying its projects because the checkout
+   sits elsewhere. `merged-needs-sync` means the work reached `origin/main` and
+   only the checkout is behind; exclude it from the active-project map alongside
+   `completed`, while still reporting it so the sync is not forgotten.
+3. Report an `executing` lane as what is actually observed. Wake cannot know
+   whether a session is alive, so it must stop asserting that execution "was
+   left open". It states that the lane is claimed and has no closeout, that this
+   is either live work in another session or an interrupted one, and that a
+   person must establish which.
+4. Report `next_action` and `unresolved` for each active workstream from its own
+   latest event, not one latest event for the repository.
+5. Report the standing branch's age and whether any workstream is `executing`.
+   Facts only. No recommendation, no threshold, no judgement.
+6. Record the arrangement in `README.md`: the `hq/<yyyymmdd>` convention, the
+   two-line rule, the stage-your-own-paths rule, and that the start gate runs
+   before the standing branch is opened.
+
+**Done when** `bun run check` passes with tests covering each changed behaviour,
+and Wake run on a standing branch with a dirty tree no longer reports merged
+workstreams as conflicts or executing lanes as wreckage.
+
+### 2. Prove it with two real sessions
+
+Run `pilot-ledger-count-command-001` and `pilot-report-status-flag-001` at the
+same time, both from `ciel-os`, one session each. The pilots are `local_only`,
+so if the arrangement is wrong nothing reaches a remote and the work is thrown
+away rather than repaired.
+
+The second session starts cold: it receives no context from the conversation
+that produced this plan and must proceed from Wake and the repository alone.
+That claim is the contract's own and has never been tested against a live
+parallel lane.
 
 Record, with commands and observed output rather than impressions:
 
-1. What Wake reports for each workstream once both are active, including how the
-   overlap check at `src/portfolio/read.ts:586` behaves and how many separate
-   decision events were needed to clear it. A decision authorizes one named
-   plan, so overlapping workstreams appear to need one approval each; confirm
-   or refute that.
-2. Whether the start-gate substitute above is sufficient in practice.
-3. What each lane's Wake can and cannot see of the other lane's in-flight
-   evidence, and whether that partial view misleads either session.
-4. The merge sequence with the second lane rebasing after the first lane merges:
-   child merge first, then the HQ pull request, then fetched verification, then
-   worktree removal and branch deletion. This ordering is where a parallel lane
-   is most likely to go wrong, so it is exercised on purpose rather than avoided.
-5. One deliberate conflict on a shared HQ file, introduced only after the steps
-   above have succeeded, so a failure there cannot be confused with a failure of
-   the lane mechanics.
+1. Whether the two sessions interfere at all, and where the stage-your-own-paths
+   rule was needed to prevent it.
+2. What the cold session could and could not work out for itself, and what it
+   had to ask. Anything it had to ask is a continuity gap, not a session fault.
+3. Whether Wake's per-workstream `next_action` answers "where are we and what
+   next" without the owner asking.
+4. What a session sees of another session's in-flight work, and whether that
+   view misleads it.
+5. One deliberate conflict on a shared HQ file, introduced only after the above
+   has succeeded, so that a failure there is not confused with a failure of the
+   arrangement.
 
-**Done when** both lanes have merged, both worktrees are removed, both branches
-are deleted, `git worktree list` shows only the primary worktree, and a closeout
-records each observation above together with every gap found. Nothing in CIEL
-is changed by this slice.
-
-### 2. Close only the gaps slice 1 demonstrated
-
-Expected from the starting evidence, but each item is delivered only if slice 1
-actually demonstrated it:
-
-1. Make the overlap check encode the owner's rule: overlap on a child project
-   blocks parallel execution, overlap on the HQ project does not. HQ is
-   identifiable as the project whose configured binding resolves to the
-   repository root, so no field is added to any project identity and no schema
-   changes.
-2. Stop a merged workstream from occupying its projects merely because the
-   current checkout sits elsewhere. A `merged-needs-sync` lifecycle means the
-   work reached `origin/main`; only the checkout is behind. Such a workstream
-   should be excluded from the active-project map alongside `completed` in both
-   `deriveAttention` and `deriveLifecycle`, while still being reported so the
-   sync is not forgotten. This item is already evidenced above and is a
-   prerequisite for the worktree layout rather than an optional improvement.
-3. Have Wake report, for each worktree it already lists, the workstream it
-   belongs to as read from its directory name, whether its tree is dirty, and
-   whether its branch is already reachable from fetched `origin/main`. Those
-   three answers distinguish a lane that was forgotten after merging, a lane
-   deliberately parked, and a lane with work still in it. All three derive from
-   local Git; none introduces stored state.
-4. Correct the `README.md` start gate to say that it runs in the primary
-   worktree and to give the lane-creation command that follows it.
-5. Add `worktrees/README.md` recording the layout, the cleanup rule, and the
-   accepted search-hit cost.
-
-**Done when** the deterministic checks pass, the changed behaviour has tests,
-and re-running the slice 1 scenario no longer produces the gaps it exposed.
+**Done when** both pilot changes are merged locally, both closeouts are
+recorded, the standing branch has been merged once and reopened, and a closeout
+states plainly which of the owner's three requirements held and which did not.
 
 ## Boundaries and delivery
 
-- No SMC, CU12, MuMate, hardware, or Windows work belongs here.
+- No CIEL skill, hook, launcher, daemon, write path, event type, or schema
+  change. The whole arrangement is a branch-naming convention plus reporting
+  what Git already knows.
+- No Git worktree. Revision 0.1's layout is withdrawn, and its measurements are
+  kept above as recorded fact.
 - No change to the pilots beyond the two trivial CLI additions their own plans
-  describe, and no change to their shared task contract.
-- If slice 1 shows the rule itself is wrong, this plan is revised before any
-  code changes; slice 2 does not proceed on a rule the proof contradicted.
-- HQ changes follow the topic-branch and owner-reviewed pull-request path.
-  Pilot changes are `local_only` and merge locally after their checks.
+  describe, and none to their shared task contract.
+- No SMC, CU12, MuMate, hardware, or Windows work.
+- If slice 2 shows the arrangement does not hold, this plan is revised before
+  any further code change rather than patched to fit the result.
+- Observations about the alignment method used to prepare this plan ride in this
+  workstream's closeout events. No new place to record them is created.

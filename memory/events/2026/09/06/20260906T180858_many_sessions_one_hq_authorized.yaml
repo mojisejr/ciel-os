@@ -1,0 +1,80 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T180858_many_sessions_one_hq_authorized
+type: decision
+recorded_at: 2026-09-06T18:08:58+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-parallel-lanes-001
+  lane: single
+  objective: >-
+    Authorize plan revision 0.2 slice 1, which stops HQ's transient state from
+    contaminating workstream status and makes Wake report what a person needs to
+    resume work, so that several sessions can run from one folder without
+    weakening continuity.
+  scope:
+    - Exclude the HQ project from the overlap, terminal-currency, and executing-lane reconciliation calculations.
+    - Exclude merged-needs-sync from the active-project map while still reporting it.
+    - Report a claimed lane as observed rather than asserting execution was left open.
+    - Report next_action and unresolved per active workstream.
+    - Report the standing branch age and whether any workstream is executing, as facts only.
+    - Record the standing-branch arrangement in README.md.
+  out_of_scope:
+    - Running two sessions. That is slice 2 and needs its own decision.
+    - Any pilot code. Both pilot workstreams are blocked until this slice lands.
+    - Any Git worktree. Revision 0.1's layout is withdrawn.
+    - Any skill, hook, launcher, daemon, write path, event type, or schema change.
+
+outcome:
+  status: decided
+  parallelism: approved
+  authority_source:
+    - The owner set three requirements this plan must not break: sessions stay disposable, continuity is at least as good as now, and several sessions run at once from the ciel-os folder.
+    - The owner gave the governing image, one body and many souls, which rules out cutting the repository into worktrees and settles the design.
+    - The owner directed that compatibility be fixed before the two-session run, because Wake's output is otherwise too noisy to read a result from.
+    - The owner asked that the arrangement stay simple and as stateless as possible, and that Wake report facts without judging, so it does not start inventing.
+  completed:
+    - Authorizes plan revision 0.2 slice 1 on the single lane.
+    - Approves the parallelism this plan proposes, which slice 2 will exercise.
+  not_completed:
+    - Nothing is changed by this decision. It records authority only.
+    - Slice 2 and the two pilot workstreams remain unauthorized.
+
+evidence:
+  repository:
+    head: ae1d0bae781f91327045bd33ca50de239d0bb1ef
+    branch: docs/parallel-lanes-plan-0-2
+  plan: workstreams/ciel-parallel-lanes-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  supersedes:
+    - memory/events/2026/09/06/20260906T120832_parallel_lanes_authorized.yaml
+    - memory/events/2026/09/06/20260906T120845_pilot_ledger_lane_authorized.yaml
+    - memory/events/2026/09/06/20260906T120858_pilot_report_lane_authorized.yaml
+  supersession_note: >-
+    Those three decisions authorized revision 0.1 and lapsed by themselves when
+    the plan moved to 0.2, because a decision must name the exact revision. They
+    are not deleted or amended. They remain a true record of what was decided
+    while the worktree design was believed correct.
+  root_cause_addressed: >-
+    ciel-os is registered as an ordinary project bound to the repository root
+    and appears in every workstream's project list, so HQ's branch, currency,
+    and cleanliness leak into the derived status of every workstream. The three
+    reported symptoms are one defect.
+
+unresolved:
+  - Whether excluding HQ from those three calculations breaks something that depends on the present behaviour is unknown; the existing tests are expected to answer it and a red test is the intended way to find out.
+  - Whether reporting per-workstream next_action is enough for a cold session to resume is not established by this slice. Slice 2 measures it.
+  - Wake still cannot tell a live lane from an abandoned one. This slice stops it claiming otherwise; it does not solve it, and a person remains the only way to establish which.
+
+next_action:
+  action: >-
+    Execute slice 1 as six changes in one ordinary session, with a test for each
+    changed behaviour, then record a closeout and open one pull request covering
+    the revision and the slice.
+  acceptance_check:
+    - Wake must report this workstream as authorized for plan revision 0.2 slice 1 before any source change is made.
+    - bun run check must pass, and Wake on a dirty standing branch must stop reporting merged workstreams as conflicts and executing lanes as wreckage.
+    - No pilot file, event schema, or new state store may change.
