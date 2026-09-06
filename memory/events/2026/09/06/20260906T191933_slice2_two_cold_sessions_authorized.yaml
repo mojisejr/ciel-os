@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T191933_slice2_two_cold_sessions_authorized
+type: decision
+recorded_at: 2026-09-06T19:19:33+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-parallel-lanes-001
+  lane: single
+  objective: >-
+    Authorize plan revision 0.3 slice 2: run the two pilot lanes at the same
+    time from two cold sessions and record which of the owner's three
+    requirements the arrangement actually holds.
+  scope:
+    - Drive both pilot workstreams concurrently from the ciel-os folder, one cold session each.
+    - Record interference, continuity gaps, stale next_action handling, cross-lane visibility, and one deliberate shared-file conflict.
+    - Merge the standing branch once and reopen it, then record a closeout naming every gap found.
+  out_of_scope:
+    - Any further CIEL source change. If slice 2 exposes more, it is recorded and planned, not fixed inside the run.
+    - Any pilot change beyond the two trivial CLI additions their plans describe.
+    - Any Git worktree, skill, hook, daemon, write path, event type, or schema change.
+
+outcome:
+  status: decided
+  parallelism: approved
+  authority_source:
+    - The owner chose to run both lanes from fresh sessions and keep the planning session as a reference, so that neither lane is driven by the session that designed the arrangement.
+    - The owner accepted that answering a stuck lane is allowed and that every such answer is recorded as a continuity gap rather than treated as a failure.
+    - Slice 1 has landed and merged, which was the stated precondition, because Wake's output was otherwise too noisy during parallel work to read a result from.
+  completed:
+    - Authorizes plan revision 0.3 slice 2 on the single lane.
+    - Approves the parallel execution the two pilot lanes will perform.
+  not_completed:
+    - Nothing is changed by this decision. It records authority only.
+
+evidence:
+  repository:
+    head: 4f6d1784c371cb1ea7e26bbde9ee975c15b33bcb
+    branch: hq/20260906
+  plan: workstreams/ciel-parallel-lanes-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  standing_branch: >-
+    hq/20260906, opened from a clean main equal to fetched origin/main. This is
+    the first use of the convention slice 1 introduced.
+  revision_change: >-
+    0.2 to 0.3 changes slice 2 only: both lanes start cold rather than one, the
+    reference role and its rules are written down, and a sixth observation is
+    added for what a lane does with a next_action that has already been carried
+    out. The slice 1 decision named 0.2 and lapsed by itself; slice 1 was
+    delivered and merged before the bump, so nothing is left unauthorized.
+
+unresolved:
+  - Whether one standing branch holds up under two writers is the central claim and is unproven. The stage-your-own-paths rule is the single point where it can quietly go wrong.
+  - Whether either cold session can resume from Wake and the repository alone is unproven, and is the reason both lanes are cold rather than one.
+  - The deliberate shared-file conflict has no predicted outcome; it is run to find out.
+  - How much a stale next_action misleads a cold reader is unknown. The remedy needs no new state if it turns out to matter.
+
+next_action:
+  action: >-
+    Record the two pilot lane decisions, commit this setup to hq/20260906, then
+    hand each lane to a fresh session with no briefing beyond its workstream id.
+    The reference session makes no HQ commit until both lanes finish.
+  acceptance_check:
+    - Wake must report all three workstreams as authorized for plan revision 0.3 before either lane starts.
+    - No context from the planning conversation may reach either lane; anything the owner must tell a lane is recorded as a continuity gap.

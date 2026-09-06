@@ -1,9 +1,9 @@
 # Pilot task report — status-only flag
 
 **Workstream:** `pilot-report-status-flag-001`
-**State:** blocked
+**State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -24,18 +24,19 @@ child project, not that the feature is wanted.
 | `ciel-os` | plan, decision, and closeout evidence | `.` |
 | `pilot-task-report` | the child this lane changes | `checkouts/pilot-task-report` |
 
-## Blocked until slice 1 lands
+## Cold start
 
-This lane cannot run before `ciel-parallel-lanes-001` slice 1 makes Wake usable
-during parallel work. It is recorded as blocked rather than active so that the
-portfolio does not report a lane as running when nothing can run, and so the
-decision authorizing it is recorded when it actually starts.
+`ciel-parallel-lanes-001` slice 1 has landed, so this lane can run. It is driven
+by a session that receives no context from the conversation that planned it: it
+runs Wake, reads this plan, and proceeds. Whatever it cannot work out for itself
+is a gap in what the repository carries, not a fault of the session, and is
+recorded as such.
 
 ## Parallel lane
 
 This workstream runs at the same time as `pilot-ledger-count-command-001`. The
 two share no child project, which is exactly the condition the parallel-lanes
-proof declares safe. Both are driven from separate sessions, both run from the
+proof declares safe. Both are driven from separate cold sessions, both run from the
 `ciel-os` folder itself and both committing HQ evidence to the same standing
 branch. No Git worktree is used.
 
