@@ -1,0 +1,69 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T212400_report_fidelity_slice1_authorized
+type: decision
+recorded_at: 2026-09-06T21:24:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-report-fidelity-001
+  lane: single
+  objective: >-
+    Authorize plan revision 0.2 slice 1: stop Wake reporting a finished
+    instruction as a current one, stop attributing a shared topic branch to one
+    workstream, keep a forgotten merged standing branch visible from main, and
+    say in README that a single-session change needs no standing branch.
+
+  scope:
+    - Mark a latest record whose own commit is already reachable from the fetched target branch, so advice that has been carried out is distinguishable from advice that has not.
+    - Skip the merged-topic-branch cleanup check for a branch that more than one workstream's closeout records, read from the existing event ledger.
+    - Report any local hq/* branch that is already reachable from fetched origin/main, so the reminder the skipped check provided does not disappear.
+    - Correct README so the standing branch is described as the arrangement for a round with several sessions rather than for every HQ write.
+    - One test per changed behaviour.
+  out_of_scope:
+    - Slices 2 and 3. The status vocabulary and the attention-versus-lifecycle contradiction are authorized separately.
+    - Recording a topic branch's tip at closeout time. Revision 0.2 holds that remedy in reserve until an ordinary topic-branch name is observed to collide.
+    - Any new state store, session identity, schema change, or event write path.
+
+outcome:
+  status: decided
+  parallelism: not-proposed
+  authority_source:
+    - The owner authorized slice 1 in session after reviewing where the workstream stood, having merged pull request 38 which carries plan revision 0.2.
+    - Plan revision 0.2 already settled the one question slice 1 had left open, so no further owner choice is pending for this slice.
+  completed:
+    - Authorizes plan revision 0.2 slice 1 on the single lane.
+  not_completed:
+    - Nothing is changed by this decision. It records authority only.
+
+evidence:
+  repository:
+    head: 059707a963dc7410a5024e89aa3858032a9b8637
+    branch: fix/report-fidelity-slice-1
+  plan: workstreams/ciel-report-fidelity-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  start_gate: >-
+    Passed on 2026-09-06T21:22:53+07:00. Both git status --short were empty and
+    local HEAD equalled fetched origin/main at 059707a.
+  branch_choice: >-
+    An ordinary topic branch, not a standing hq/ branch. One session is running
+    and this workstream declares no parallelism, which is the distinction slice
+    1 item 4 makes explicit in README.
+
+unresolved:
+  - How the merged-record marking should read is open. Revision 0.2 asks for the narrowest option that removes the contradiction, and which that is will only be settled by the implementation.
+  - Where a forgotten hq/ branch is reported was left undecided by the opening closeout; only that the reminder must not disappear.
+  - The shared-branch rule reads the ledger, so a branch used by exactly one workstream and later reused by name is still misidentified. That case is what the reserved remedy covers.
+
+next_action:
+  action: >-
+    Implement the four items on fix/report-fidelity-slice-1 with a test each,
+    run bun run check, push, and open a draft pull request. Prepare the slice
+    closeout against that pull request head before reporting it ready.
+  acceptance_check:
+    - A record whose commit has merged must not be presented as current advice, checked by test rather than by inspection.
+    - A merged workstream must stay completed while an unrelated branch of the same recorded name exists.
+    - A merged hq/ branch must still be reported when the checkout is on main.
+    - bun run check must pass.

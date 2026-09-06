@@ -155,10 +155,15 @@ the closeout for review; it does not duplicate the event's full YAML.
 ## Several sessions at once
 
 Several coding-agent sessions may run at the same time, all of them started
-from the HQ folder. They share one checkout, so HQ keeps one **standing branch**
-named `hq/<yyyymmdd>` that every session commits to. Nobody switches branches
-during the work, so there is nothing to contend for, and the branch name is the
-only record the arrangement keeps: its date gives its age, which Wake reports.
+from the HQ folder. They share one checkout, so a round of such work keeps one
+**standing branch** named `hq/<yyyymmdd>` that every session in the round
+commits to. Nobody switches branches during the work, so there is nothing to
+contend for, and the branch name is the only record the arrangement keeps: its
+date gives its age, which Wake reports.
+
+The standing branch is for the round, not for HQ. A change made by one session
+uses an ordinary topic branch from the workflow above; opening a standing branch
+for it adds a shared name that nothing is sharing.
 
 Pass the start gate above in the usual way, then open or join the standing
 branch:
@@ -188,6 +193,13 @@ A claimed lane is one whose plan says `executing` and that has no closeout.
 Nothing in the repository can tell a lane running in another session from one
 abandoned by a session that ended, because sessions are not recorded. Establish
 which with the owner before touching such a lane.
+
+A standing branch's age is reported only while the checkout sits on it, so Wake
+also lists any `hq/` branch that still exists locally and has already reached
+fetched `origin/main`. That keeps a finished round visible from a clean `main`
+instead of disappearing at the moment it is forgotten. Its cleanup belongs to no
+one workstream: a standing branch carries several by design, so no single
+closeout decides whether it may be removed.
 
 After a merge, repeat the start gate before new tracked work. Clean up the
 merged branch only after fetching, confirming `git log origin/main..<branch>`

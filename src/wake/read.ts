@@ -79,6 +79,37 @@ function parseStandingBranch(branch: string | null, today = new Date()): WakeRep
   };
 }
 
+// A standing branch that has merged is finished, but nothing points at it once
+// the checkout leaves it. Listing it keeps a forgotten one visible from a clean
+// main. Derived from local Git refs; nothing is stored, and no judgement is
+// attached, because deciding that a leftover branch matters is the owner's.
+async function readMergedStandingBranches(
+  repositoryPath: string,
+  today = new Date()
+): Promise<WakeReport["observed"]["repository"]["mergedStandingBranches"]> {
+  const remoteTarget = "refs/remotes/origin/main";
+  const remoteExists = await runGit(repositoryPath, ["show-ref", "--verify", "--quiet", remoteTarget]);
+  if (remoteExists.exitCode !== 0) {
+    return [];
+  }
+
+  const refs = await runGit(repositoryPath, ["for-each-ref", "--format=%(refname:short)", "refs/heads/hq"]);
+  if (refs.exitCode !== 0) {
+    return [];
+  }
+
+  const merged: WakeReport["observed"]["repository"]["mergedStandingBranches"] = [];
+  for (const name of refs.stdout.trim().split("\n").filter((line) => line.length > 0).sort()) {
+    const reachable = await runGit(repositoryPath, ["merge-base", "--is-ancestor", `refs/heads/${name}`, remoteTarget]);
+    if (reachable.exitCode !== 0) {
+      continue;
+    }
+    merged.push(parseStandingBranch(name, today) ?? { ageDays: null, name, openedOn: null });
+  }
+
+  return merged;
+}
+
 function parseWorktrees(output: string): WakeReport["observed"]["repository"]["worktrees"] {
   return output
     .trim()
@@ -206,6 +237,7 @@ export async function readWakeReport(repositoryDirectory = "."): Promise<WakeRep
           entries: statusEntries
         },
         standingBranch: parseStandingBranch(branchOutput.length > 0 ? branchOutput : null),
+        mergedStandingBranches: await readMergedStandingBranches(repositoryPath),
         worktrees: parseWorktrees(worktreeOutput)
       },
       instructions: {

@@ -457,10 +457,37 @@ function readDelivery(event: WorkstreamEvent): { targetBranch: string; topicBran
   };
 }
 
+// A topic branch recorded by more than one workstream's closeout is shared by
+// design: a standing HQ branch carries several workstreams at once. The cleanup
+// check assumes one branch belongs to one workstream's delivery, so no single
+// closeout can decide whether a shared branch may be removed. Read from the
+// ledger that already exists, which keeps working if the naming convention
+// changes; a branch used by exactly one workstream and later reused by name is
+// still misidentified, and that is the case a recorded branch tip would cover.
+function sharedTopicBranches(eventsByWorkstream: Map<string, WorkstreamEvent[]>): Set<string> {
+  const owners = new Map<string, Set<string>>();
+  for (const [workstreamId, events] of eventsByWorkstream) {
+    for (const event of events) {
+      if (readString(event.value, "type") !== "closeout") {
+        continue;
+      }
+      const topicBranch = readDelivery(event).topicBranch;
+      if (topicBranch === null) {
+        continue;
+      }
+      const ids = owners.get(topicBranch) ?? new Set<string>();
+      ids.add(workstreamId);
+      owners.set(topicBranch, ids);
+    }
+  }
+  return new Set([...owners].filter(([, ids]) => ids.size > 1).map(([branch]) => branch));
+}
+
 async function deriveTerminalLifecycle(
   repositoryPath: string,
   workstream: PortfolioWorkstream,
-  events: WorkstreamEvent[]
+  events: WorkstreamEvent[],
+  sharedBranches: Set<string>
 ): Promise<PortfolioWorkstream["lifecycle"]> {
   const event = [...events].reverse().find((candidate) => isTerminalCloseout(candidate, workstream));
   if (event === undefined) {
@@ -521,6 +548,14 @@ async function deriveTerminalLifecycle(
     };
   }
 
+  if (delivery.topicBranch !== null && sharedBranches.has(delivery.topicBranch)) {
+    return {
+      decisionEventPath: null,
+      detail: `The final closeout is reachable from fetched origin/main and this checkout is clean and current. The recorded topic branch ${delivery.topicBranch} is also recorded by another workstream, so its cleanup is not attributed here.`,
+      state: "completed"
+    };
+  }
+
   if (delivery.topicBranch !== null) {
     for (const reference of [`refs/heads/${delivery.topicBranch}`, `refs/remotes/origin/${delivery.topicBranch}`]) {
       const exists = await runGit(repositoryPath, ["show-ref", "--verify", "--quiet", reference]);
@@ -554,18 +589,67 @@ function readStringList(record: Record<string, unknown>, key: string): string[] 
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0).map((item) => item.trim()) : [];
 }
 
+// Whether the commit that added a record has itself reached the target branch.
+// This is the same reachability test deriveTerminalLifecycle already performs
+// for a terminal closeout, applied to the record carrying the advice, so it
+// needs no new evidence field and no stored state.
+async function deriveNextActionState(
+  repositoryPath: string,
+  event: WorkstreamEvent,
+  eventPath: string
+): Promise<PortfolioLatestRecord["nextActionState"]> {
+  const targetBranch = readDelivery(event).targetBranch;
+  const commit = await runGit(repositoryPath, ["log", "-1", "--format=%H", "--", eventPath]);
+  if (commit.exitCode !== 0 || commit.stdout.trim().length === 0) {
+    return {
+      detail: "This record is not committed in local Git history, so whether its next action has already been carried out cannot be established.",
+      state: "unknown"
+    };
+  }
+
+  const remoteTarget = `refs/remotes/origin/${targetBranch}`;
+  const remoteExists = await runGit(repositoryPath, ["show-ref", "--verify", "--quiet", remoteTarget]);
+  if (remoteExists.exitCode !== 0) {
+    return {
+      detail: `No fetched ${remoteTarget} ref is available, so whether this record's next action has already been carried out cannot be established.`,
+      state: "unknown"
+    };
+  }
+
+  const merged = await runGit(repositoryPath, ["merge-base", "--is-ancestor", commit.stdout.trim(), remoteTarget]);
+  if (merged.exitCode === 1) {
+    return {
+      detail: `This record has not reached origin/${targetBranch}, so its next action has not travelled through a merge.`,
+      state: "unmerged"
+    };
+  }
+  if (merged.exitCode !== 0) {
+    return {
+      detail: "Git could not reconcile this record against the fetched target branch.",
+      state: "unknown"
+    };
+  }
+
+  return {
+    detail: `This record has reached origin/${targetBranch}. Its next action may already have been carried out; check what is on origin/${targetBranch} before acting on it.`,
+    state: "merged"
+  };
+}
+
 // The most recent record for a workstream, read for what it tells a person to
 // do rather than for reconciliation. Knowing what was last proposed is what
 // makes a later change of direction legible instead of unexplained.
-function readLatestRecord(repositoryPath: string, events: WorkstreamEvent[]): PortfolioLatestRecord | null {
+async function readLatestRecord(repositoryPath: string, events: WorkstreamEvent[]): Promise<PortfolioLatestRecord | null> {
   const event = events.at(-1);
   if (event === undefined) {
     return null;
   }
+  const eventPath = relative(repositoryPath, event.path);
   const nextAction = isRecord(event.value.next_action) ? readString(event.value.next_action, "action") : null;
   return {
-    eventPath: relative(repositoryPath, event.path),
+    eventPath,
     nextAction,
+    nextActionState: await deriveNextActionState(repositoryPath, event, eventPath),
     recordedAt: readString(event.value, "recorded_at"),
     unresolved: readStringList(event.value, "unresolved")
   };
@@ -596,11 +680,12 @@ async function deriveLifecycle(
   projects: PortfolioProject[],
   eventsByWorkstream: Map<string, WorkstreamEvent[]>
 ): Promise<void> {
+  const shared = sharedTopicBranches(eventsByWorkstream);
   for (const workstream of workstreams) {
     if (workstream.state !== "active") {
       continue;
     }
-    const terminalLifecycle = await deriveTerminalLifecycle(repositoryPath, workstream, eventsByWorkstream.get(workstream.id) ?? []);
+    const terminalLifecycle = await deriveTerminalLifecycle(repositoryPath, workstream, eventsByWorkstream.get(workstream.id) ?? [], shared);
     if (terminalLifecycle !== null) {
       workstream.lifecycle = terminalLifecycle;
     }
@@ -761,7 +846,7 @@ export async function readPortfolioWakeReport(repositoryDirectory = "."): Promis
   const checkpoints = await groupCheckpoints(repositoryPath, workstreams);
   validationErrors.push(...checkpoints.errors);
   for (const workstream of workstreams) {
-    workstream.latestRecord = readLatestRecord(repositoryPath, checkpoints.events.get(workstream.id) ?? []);
+    workstream.latestRecord = await readLatestRecord(repositoryPath, checkpoints.events.get(workstream.id) ?? []);
   }
   await deriveLifecycle(repositoryPath, workstreams, projects, checkpoints.events);
   return {

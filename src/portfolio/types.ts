@@ -53,6 +53,17 @@ export interface PortfolioProject {
 export interface PortfolioLatestRecord {
   eventPath: string;
   nextAction: string | null;
+  // Whether the commit that added this record has itself reached the target
+  // branch. A record's advice goes stale the moment it is acted on, and a
+  // record that has merged has usually been acted on already: one session read
+  // a merged record telling it to open a pull request and nearly opened a
+  // duplicate for work that had merged. Reported beside the advice rather than
+  // replacing it, because only a person can tell whether the advice was
+  // carried out or merely travelled along with the merge.
+  nextActionState: {
+    detail: string;
+    state: "merged" | "unknown" | "unmerged";
+  };
   recordedAt: string | null;
   unresolved: string[];
 }

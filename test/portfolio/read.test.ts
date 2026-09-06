@@ -683,3 +683,130 @@ test("reports what the latest record says to do next and what it left open", asy
     await rm(root, { force: true, recursive: true });
   }
 });
+
+function terminalCloseoutOn(eventId: string, workstreamId: string, revision: string, topicBranch: string): string {
+  return [
+    "schema_version: ciel.event.v0.1",
+    `id: evt_${eventId}`,
+    "type: closeout",
+    "recorded_at: 2026-09-04T00:00:00+07:00",
+    "recorded_by:",
+    "  agent: test",
+    "workstream:",
+    `  id: ${workstreamId}`,
+    "  lane: single",
+    "  objective: fixture",
+    "outcome:",
+    "  status: ready-for-owner-merge",
+    "evidence:",
+    `  base_revision: ${revision}`,
+    "  plan_revision: \"4.0\"",
+    "  execution_phase: \"1\"",
+    "  delivery:",
+    "    target_branch: main",
+    `    topic_branch: ${topicBranch}`,
+    "unresolved: []",
+    "next_action:",
+    "  action: owner merge",
+    ""
+  ].join("\n");
+}
+
+test("reports whether a record's own advice has already travelled through a merge", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    await initializeWorkspace(root);
+    git(root, ["remote", "add", "origin", "https://github.com/example/hq.git"]);
+    await mkdir(join(root, "projects", "hq"), { recursive: true });
+    await writeFile(join(root, "projects", "hq", "project.yaml"), projectYaml("hq"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  hq:", "    path: .", ""].join("\n"));
+    await addPlan(root, "advised", "active", ["hq"], { revision: "1.0" });
+    git(root, ["add", "."]);
+    git(root, ["commit", "-m", "declare plan"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", git(root, ["rev-parse", "HEAD"])]);
+
+    const eventsDirectory = join(root, "memory/events/2026/08/29");
+    await mkdir(eventsDirectory, { recursive: true });
+    await writeFile(join(eventsDirectory, "20260829T000000_advice.yaml"), event("advice", "advised", "1.0"));
+
+    // An uncommitted record cannot be placed against the target branch at all,
+    // and saying so is truer than implying its advice is current.
+    let report = await readPortfolioWakeReport(root);
+    expect(report.workstreams.find((item) => item.id === "advised")?.latestRecord?.nextActionState.state).toBe("unknown");
+
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "record advice"]);
+    const adviceCommit = git(root, ["rev-parse", "HEAD"]);
+
+    // Committed but not merged: nothing has carried this advice through
+    // delivery, so it stands as written.
+    report = await readPortfolioWakeReport(root);
+    expect(report.workstreams.find((item) => item.id === "advised")?.latestRecord?.nextActionState.state).toBe("unmerged");
+
+    git(root, ["update-ref", "refs/remotes/origin/main", adviceCommit]);
+
+    // The record itself has merged. Its advice may already have been carried
+    // out, which is how a session was nearly led to open a pull request for
+    // work that had already merged. The advice is still reported; what changes
+    // is that the reader can tell the two cases apart.
+    report = await readPortfolioWakeReport(root);
+    const record = report.workstreams.find((item) => item.id === "advised")?.latestRecord;
+    expect(record?.nextActionState.state).toBe("merged");
+    expect(record?.nextAction).toBe("fixture");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("does not attribute a topic branch that more than one workstream's closeout records", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    await initializeWorkspace(root);
+    git(root, ["remote", "add", "origin", "https://github.com/example/hq.git"]);
+    await mkdir(join(root, "projects", "hq"), { recursive: true });
+    await writeFile(join(root, "projects", "hq", "project.yaml"), projectYaml("hq"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  hq:", "    path: .", ""].join("\n"));
+    await addPlan(root, "first-lane", "active", ["hq"], { revision: "4.0" });
+    await addPlan(root, "second-lane", "active", ["hq"], { revision: "4.0" });
+    await addPlan(root, "sole-lane", "active", ["hq"], { revision: "4.0" });
+    git(root, ["add", "."]);
+    git(root, ["commit", "-m", "declare plans"]);
+    const base = git(root, ["rev-parse", "HEAD"]);
+
+    const eventsDirectory = join(root, "memory/events/2026/09/04");
+    await mkdir(eventsDirectory, { recursive: true });
+    await writeFile(join(eventsDirectory, "20260904T000000_first.yaml"), terminalCloseoutOn("first", "first-lane", base, "hq/20260906"));
+    await writeFile(join(eventsDirectory, "20260904T000001_second.yaml"), terminalCloseoutOn("second", "second-lane", base, "hq/20260906"));
+    await writeFile(join(eventsDirectory, "20260904T000002_sole.yaml"), terminalCloseoutOn("sole", "sole-lane", base, "feat/sole"));
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "record closeouts"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", git(root, ["rev-parse", "HEAD"])]);
+
+    // A new round of shared work reuses the standing branch name. It carries a
+    // commit outside the target branch, which is what made two merged and
+    // complete workstreams both report needs-reconciliation.
+    git(root, ["switch", "-c", "hq/20260906"]);
+    await writeFile(join(root, "unrelated.md"), "# a later round\n");
+    git(root, ["add", "unrelated.md"]);
+    git(root, ["commit", "-m", "unrelated later work"]);
+    git(root, ["switch", "main"]);
+
+    const report = await readPortfolioWakeReport(root);
+    const lifecycleOf = (id: string): string | undefined => report.workstreams.find((item) => item.id === id)?.lifecycle?.state;
+
+    // A standing branch carries several workstreams by design, so no single
+    // closeout can decide whether it may be removed. Neither lane is told to
+    // reconcile a branch that is not its own to reconcile.
+    expect(lifecycleOf("first-lane")).toBe("completed");
+    expect(lifecycleOf("second-lane")).toBe("completed");
+
+    // A branch recorded by exactly one workstream is still that workstream's
+    // to clean up. The remedy narrows what is attributed; it does not remove
+    // the check.
+    git(root, ["branch", "feat/sole", "main"]);
+    const afterSole = await readPortfolioWakeReport(root);
+    expect(afterSole.workstreams.find((item) => item.id === "sole-lane")?.lifecycle?.state).toBe("merged-needs-cleanup");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});

@@ -1,0 +1,102 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T212900_report_fidelity_slice1_delivered
+type: closeout
+recorded_at: 2026-09-06T21:29:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-report-fidelity-001
+  lane: single
+  objective: >-
+    Deliver plan revision 0.2 slice 1: stop Wake stating something untrue about
+    work that is already done, so a session reading the report is not led to
+    repeat or abandon it.
+  scope:
+    - Mark whether a latest record's own commit has reached the target branch, and report it beside the advice rather than in place of it.
+    - Skip the merged-branch cleanup check for a topic branch that more than one workstream's closeout records.
+    - List any local hq/ branch already reachable from fetched origin/main.
+    - Scope the standing branch in README to a round with several sessions.
+  out_of_scope:
+    - Slices 2 and 3. The undefined outcome.status vocabulary and the attention-versus-lifecycle contradiction are untouched here.
+    - Recording a topic branch's tip at closeout time, held in reserve by plan revision 0.2.
+    - Any new state store, session identity, schema change, or event write path.
+
+outcome:
+  status: ready-for-owner-merge
+  owner_agreement:
+    - Take the recommended option now and adjust if it proves wrong, carried forward from the revision 0.2 closeout.
+  completed:
+    - A workstream's latest record carries nextActionState, derived from whether the commit that added the record is reachable from the fetched target branch. The advice is still reported; what changes is that a reader can tell the two cases apart.
+    - The merged-branch cleanup check is skipped for a topic branch the event ledger shows is recorded by more than one workstream. A branch recorded by exactly one workstream is still checked.
+    - Wake lists any local hq/ branch already reachable from fetched origin/main, under observed.repository.mergedStandingBranches.
+    - README scopes the standing branch to a round with several sessions, records that a single-session change uses an ordinary topic branch, and records that no one workstream owns a shared branch.
+  not_completed:
+    - Slices 2 and 3 remain unauthorized and unimplemented. pilot-report-status-flag-001 is still outside the delivery machinery.
+
+evidence:
+  repository:
+    head: e1db1b92b38631e60339fb861854c7ab993934a5
+    branch: fix/report-fidelity-slice-1
+    working_tree: clean-before-this-closeout
+  plan: workstreams/ciel-report-fidelity-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  decision: memory/events/2026/09/06/20260906T212400_report_fidelity_slice1_authorized.yaml
+  delivery:
+    target_branch: main
+    topic_branch: fix/report-fidelity-slice-1
+  pull_request:
+    number: 39
+    url: https://github.com/mojisejr/ciel-os/pull/39
+    base: main
+    head: fix/report-fidelity-slice-1
+  checks:
+    command: bun run check
+    result: 35 tests pass, 137 assertions, typecheck clean.
+  changed:
+    - src/portfolio/read.ts, src/portfolio/types.ts, for the record marking and the shared-branch rule.
+    - src/wake/read.ts, src/wake/types.ts, for the leftover standing-branch listing.
+    - test/portfolio/read.test.ts, test/wake/read.test.ts, one test per changed behaviour.
+    - README.md, for the standing-branch scope and the two rules above.
+  negative_control: >-
+    With src/portfolio/read.ts reverted and the tests kept, both new portfolio
+    tests fail, and the shared-branch test reports needs-reconciliation, which
+    is the state observed on the real repository. Neither test passes vacuously.
+  observed_effect: >-
+    On this branch, ciel-report-fidelity-001 is the only workstream whose latest
+    record reads unmerged; the other thirteen read merged. That is the
+    discriminator the refuted-conclusion event said was missing.
+  decisions:
+    record_marking_shape: >-
+      Revision 0.2 left three options open and asked for the narrowest that
+      removes the contradiction. Annotating was taken over suppressing, because
+      suppressing discards an instruction that may still be the right one; only
+      a person can tell whether merged advice was carried out or merely
+      travelled along with the merge.
+    leftover_branch_placement: >-
+      Reported in the repository observation beside standingBranch, which the
+      revision 0.2 closeout left undecided. It is a fact about the repository
+      rather than about any workstream, and it is the counterpart of the age
+      that standingBranch stops reporting once the checkout leaves the branch.
+    branch_choice: >-
+      An ordinary topic branch, not a standing hq/ branch, because one session
+      is running. This is the distinction item 4 makes explicit in README, and
+      it is the first change delivered under it.
+
+unresolved:
+  - A branch used by exactly one workstream and then reused by name is still misidentified. That is the case the reserved branch-tip remedy covers, and it is not taken.
+  - nextActionState reads unknown for a record that is not committed, which is correct but is also what a reader sees for any uncommitted work in progress. Whether that conflation misleads anyone is untested.
+  - While the checkout sits on a topic branch, terminal lifecycles still report merged-needs-sync. That is HQ's own transient state leaking into the currency check, it is older than this slice, and it is not in scope here.
+  - The state names merged and unmerged describe the record, not the advice. Whether a reader carries that distinction across is unmeasured; one run of one session is the only evidence either way.
+
+next_action:
+  action: >-
+    Review pull request 39. On merge, return to a clean current main, then
+    authorize slice 2 with a decision naming plan revision 0.2 slice 2, which
+    is the one with a workstream currently outside the delivery machinery.
+  acceptance_check:
+    - This closeout must be committed, pushed, and proven an ancestor of the pull request head before the pull request is reported ready.
+    - bun run check must pass on the pull request head.
+    - Only this workstream's own paths are staged.
