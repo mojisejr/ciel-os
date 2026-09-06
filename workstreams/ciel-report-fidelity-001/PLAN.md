@@ -3,7 +3,7 @@
 **Workstream:** `ciel-report-fidelity-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -67,15 +67,37 @@ done, and a session acted on it.
    reuses a name inherits the identity of an old one. Demonstrated: with a clean
    current `main` and a newly opened `hq/20260906` holding one unrelated commit,
    two merged and complete workstreams both reported `needs-reconciliation`.
-   Either the identity must be the commit rather than the name, or the recorded
-   branch must be disambiguated. Prefer whichever leaves existing events valid.
-3. `README.md` currently sends every HQ write to a standing branch. The standing
+
+   The name collision is how this surfaced, but it is not the defect. The
+   cleanup check assumes one branch belongs to one workstream's delivery, and a
+   standing branch carries several by design, so no single workstream's closeout
+   can decide whether it may be removed. Attributing it to one of them is a
+   category error that a unique name would only have hidden.
+
+   **Do not attribute a shared branch to one workstream.** When the topic branch
+   a closeout records is also recorded by another workstream's closeout, skip
+   the cleanup check for it. This is read from the event ledger that already
+   exists, needs no new evidence field, and does not depend on the `hq/` naming
+   convention, so it keeps working if the convention changes.
+
+   Recording the branch tip at closeout time, so that a ref no longer pointing
+   at it is recognised as a different branch, remains available and would also
+   cover an ordinary topic branch whose name is reused. It is deliberately not
+   taken now: ordinary branch names are topic-specific and no collision between
+   them has been observed. Take it if one is.
+3. Skipping the check above removes the only reminder that a merged standing
+   branch still exists, because Wake reports a standing branch's age only while
+   the checkout is on it. Report any `hq/*` branch that exists and is already
+   reachable from fetched `origin/main`, so a forgotten one stays visible from
+   `main`. Derived from local Git; nothing is stored.
+4. `README.md` currently sends every HQ write to a standing branch. The standing
    branch exists for rounds with several sessions; a single-session change needs
    no such branch. Saying so is both truer and makes the collision rarer.
 
 **Done when** a session that has just merged its own pull request is not told to
-open one, and a merged workstream stays `completed` while an unrelated branch of
-the same name exists. Both are checked by test rather than by inspection.
+open one; a merged workstream stays `completed` while an unrelated branch of the
+same name exists; and a forgotten merged standing branch is still reported from a
+clean `main`. All three are checked by test rather than by inspection.
 
 ### 2. Define what a closeout may say about its own outcome
 
