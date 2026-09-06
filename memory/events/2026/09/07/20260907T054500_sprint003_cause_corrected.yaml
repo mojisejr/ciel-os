@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T054500_sprint003_cause_corrected
+type: closeout
+recorded_at: 2026-09-07T05:45:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-003
+  lane: single
+  objective: >-
+    Correct the cause this workstream's repair event states, which was written
+    from an unchecked reading and is wrong. The repair itself stands; only its
+    explanation is corrected.
+  scope:
+    - The corrected cause, with the measurement that establishes it.
+  out_of_scope:
+    - The repair. Naming slice 3 remains correct for the reason given below.
+    - Editing the event being corrected, which stays as written.
+
+outcome:
+  status: prepared
+  completed:
+    - Records that the earlier explanation is wrong and what the cause actually is.
+    - Records the measurement across every plan, which the earlier claim was made without.
+  not_completed:
+    - Nothing is re-derived and nothing changes in the report. This corrects a written reason.
+
+evidence:
+  repository:
+    head: 19d4ff01a18098a87471e9507cad176c5c7215bd
+    branch: docs/sprint-003-record-repair
+  plan: workstreams/cu12-simulator-sprint-003/PLAN.md
+  plan_revision: "0.1"
+  corrects: memory/events/2026/09/07/20260907T053200_sprint003_record_repaired.yaml
+  corrected_claims:
+    said: >-
+      "its plan uses numbered section headings that the current plan reader
+      counts as declared slices", and under unresolved, "The plan's numbered
+      section headings were written as prose, not as a slice declaration, and
+      the plan reader cannot tell the two apart."
+    why_it_was_wrong: >-
+      The three headings sit under this plan's own "## Execution slices and
+      acceptance criteria" section, each with acceptance criteria beneath it.
+      They are a genuine slice declaration, not prose the reader misread. The
+      claim was made from the shape of the defect rather than from opening the
+      plan at that section, and it was repeated into a pull request description
+      before it was checked.
+  actual_cause: >-
+    The plan declares three slices correctly. Its final closeout was written
+    under the earlier event convention and names execution_phase 1 with no
+    slice, because authorization moved from Execution phase to slices later the
+    same day. The mismatch is between the plan's convention and the closeout's,
+    not inside the plan.
+  measurement: >-
+    Across all fourteen plans, the only one whose numbered headings sit outside
+    a slice section is ciel-portfolio-flow-001, whose five sit under "## Phases".
+    Its plan State is completed, so it is skipped before the headings are read.
+  consequence_for_a_proposed_remedy: >-
+    Scoping the plan reader's heading match to the slices section was proposed
+    to the owner as a remedy for this defect. The measurement shows it would
+    have changed nothing here and affects one completed workstream elsewhere.
+    It is withdrawn as a remedy for this and left as an observation.
+
+unresolved:
+  - ciel-portfolio-flow-001 would report differently if its plan State were set back to active, because its numbered headings are outside a slice section and would stop counting. Nothing depends on that today.
+  - The corrected cause is established by reading the plan and measuring every other plan. Whether other pre-slice-convention closeouts exist in workstreams that are not active is not checked.
+
+next_action:
+  action: >-
+    None. This corrects a record on the same pull request that introduced it,
+    before it merges, so both statements arrive together and the wrong one is
+    never the only thing on the target branch.
+  acceptance_check:
+    - The event being corrected must not be edited.
+    - The repair naming slice 3 must remain in force, which it does.

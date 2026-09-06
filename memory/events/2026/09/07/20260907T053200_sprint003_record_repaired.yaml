@@ -1,0 +1,80 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T053200_sprint003_record_repaired
+type: closeout
+recorded_at: 2026-09-07T05:32:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-003
+  lane: single
+  objective: >-
+    Restate this workstream's delivered and merged work in the slice convention
+    the contract now uses, so work finished under the earlier execution-phase
+    convention stops reading as work that never started.
+  scope:
+    - One closeout naming the last slice this plan declares, restating what the existing final closeout already recorded.
+  out_of_scope:
+    - Any change to cu12-simulator. Its work is merged and its checkout is on main.
+    - Editing the plan or any committed event. Both stay as written.
+    - Any further CU12, SMC, or hardware work.
+
+outcome:
+  status: ready-for-owner-merge
+  owner_authorization: >-
+    The owner reviewed the three options recorded in the report-fidelity slice 2
+    closeout and chose to restate the delivery in a new event rather than edit
+    the plan header or loosen the code, judging a repeat unlikely enough that
+    one file is the right size of remedy.
+  completed:
+    - Restates the delivery recorded at memory/events/2026/09/05/20260905T071700_cu12_hook_scenarios_final_closeout.yaml, naming slice 3, which is the last slice this plan declares.
+    - Records the verification that the work is genuinely merged on both sides.
+  not_completed:
+    - Nothing about the simulator changes, and no earlier record is altered.
+
+evidence:
+  repository:
+    head: a6ed0c5c2c54b70791997ad91652db0e0b9103aa
+    branch: docs/sprint-003-record-repair
+    working_tree: clean-before-this-closeout
+  plan: workstreams/cu12-simulator-sprint-003/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  restates: memory/events/2026/09/05/20260905T071700_cu12_hook_scenarios_final_closeout.yaml
+  also_recorded_at: memory/events/2026/09/05/20260905T112800_cross_client_session_closeout.yaml
+  verified_now:
+    hq_pull_request: 24, merged 2026-09-05T04:12:12Z.
+    simulator_pull_request: cu12-simulator 1, merged 2026-09-05T04:11:51Z.
+    simulator_checkout: checkouts/cu12-simulator is on main at 6f0594b, the merge commit of that pull request.
+    leftover_branch: No local or remote branch matching cu12-hook-scenarios remains in HQ.
+  slice_coverage: >-
+    The existing final closeout's completed list covers all three declared
+    slices: shared atomic hook inputs and preserved CU12 framing with no
+    implicit hook mutation on ACK for slice 1, the opt-in stdin control reader
+    for slice 2, and proof of state change, unchanged state after ACK, repeated
+    unlatched reads and re-latching through a separate-process PTY client
+    without Desktop Lab for slice 3. This event names slice 3 because that is
+    the last one declared, not because the earlier two were skipped.
+  why_this_was_needed: >-
+    This workstream was recorded before authorization moved from Execution phase
+    to slices, which ciel-multi-client-support-001 changed later the same day.
+    Its final closeout names execution_phase 1 and no slice, and its plan uses
+    numbered section headings that the current plan reader counts as declared
+    slices. Until ciel-report-fidelity-001 slice 2, a closeout naming no slice
+    finished any plan, so this derived completed. That rule was removed because
+    it also reported a workstream as complete with three of its four slices
+    unstarted, and this workstream is the only active one the removal changed.
+
+unresolved:
+  - The plan's numbered section headings were written as prose, not as a slice declaration, and the plan reader cannot tell the two apart. ciel-portfolio-flow-001 has the same shape and is masked only by its plan State being completed; setting it active would reproduce this.
+  - Whether a pre-slice workstream should be restated like this or its plan migrated to the current convention is settled here by one instance, not by a rule.
+  - Nothing was re-run on the simulator. This event verifies merge state and record consistency, not that the code still passes its tests today.
+
+next_action:
+  action: >-
+    None for this workstream. Its work is merged and its record now names the
+    last slice its plan declares, so Wake derives a delivery from it.
+  acceptance_check:
+    - bun run wake must derive a delivery state for cu12-simulator-sprint-003 and stop reporting it as needing an owner decision.
+    - No file under checkouts/cu12-simulator changes.
