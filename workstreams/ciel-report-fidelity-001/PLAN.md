@@ -3,16 +3,17 @@
 **Workstream:** `ciel-report-fidelity-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
 
 ## Objective
 
-Close the five defects the two-session run exposed, all of which concern the
-same thing: whether Wake's report, and the record behind it, tell the truth
-about work that has already happened.
+Close the defects the two-session run exposed, and the two found while acting on
+its results, all of which concern the same thing: whether the report a session
+reads, and the record behind it, tell the truth about work that has already
+happened.
 
 They are ordered here by whether they can make a session **act** wrongly, not by
 how visible they are. A report that is merely noisy wastes attention. A report
@@ -32,6 +33,28 @@ Two of the five were introduced by that workstream's own slice 1. That is stated
 plainly rather than softened: the reporting it added is what made the
 contradiction possible, and the branch convention it introduced is what makes
 the name collide.
+
+Revision 0.3 adds two more, both found by delivering slice 1 rather than by
+reasoning about it. Neither is a new kind of defect; both are the same failure
+this workstream is named for, found in places it had not looked.
+
+- **A closeout that names no slice is treated as this workstream's final
+  delivery.** Observed on a clean, current `main` at `154b34e`: this workstream
+  declares slices 1, 2 and 3, has delivered one of them, and Wake reports it as
+  `completed` and raises no attention for it. The cause is in
+  `isTerminalCloseout`: a closeout naming a slice must name the last declared
+  one, but a closeout naming no slice falls through to the phase test and passes
+  it, so this workstream's two opening closeouts each count as its last. This is
+  worse than the defect slice 1 fixed. That one said work was unfinished when it
+  was done; this one says work is done when two thirds of it has not started,
+  which is the direction that gets a workstream abandoned.
+- **`README.md` states things about CIEL that stopped being true.** It is not
+  incidental documentation: `AGENTS.md` makes reading it step 2 of Wake, so a
+  cold session meets it before anything else. Four claims were checked against
+  the repository and are false or incomplete, listed in slice 4.
+
+The first belongs in slice 2, which is already about what a closeout may say
+about its own outcome. The second is its own slice, because it changes no code.
 
 ## Project links
 
@@ -116,10 +139,20 @@ delivery machinery.
    Its work is genuinely merged, so the repair is to make the record say so in a
    form the code recognises, by a new event and a plan correction rather than by
    editing what is committed.
+4. Stop a closeout that names no slice from counting as the final delivery of a
+   plan that declares slices. A workstream that declares slices is finished by a
+   closeout for its last slice; a closeout that names none is saying something
+   about the workstream, not delivering it. The permissive fall-through exists
+   for a plan that declares no slices at all, and that case keeps it.
+
+   Two ways a workstream can wrongly leave the machinery are already known: the
+   undefined vocabulary above lets one disappear, and this lets one appear
+   finished. Both are read from the same event, so both are fixed where that
+   event is interpreted.
 
 **Done when** `bun run wake` derives a delivery state for every workstream whose
-work has actually merged, and an unrecognised status is reported rather than
-ignored.
+work has actually merged, an unrecognised status is reported rather than
+ignored, and a workstream with undelivered slices is not reported as complete.
 
 ### 3. Stop the two halves of the report contradicting each other
 
@@ -138,6 +171,33 @@ ignored.
 
 **Done when** an owner-approved overlap raises no conflict, and the shared-file
 rule is written where a cold session will meet it.
+
+### 4. Make `README.md` say what CIEL currently is
+
+Runs last, after slice 3 has made its own edit to the same file, so the file is
+rewritten once rather than twice. Every claim below was checked against the
+repository at `154b34e`; each is corrected to what the repository shows, and
+nothing is added that a file or local Git cannot establish.
+
+1. `README.md:17` says no second client bridge exists. `CLAUDE.md` exists, and
+   `AGENTS.md:3` names Codex and Claude as its clients. The same claim appears
+   again at `README.md:39` as "the only current integration is the
+   Codex-oriented, local read-only CLI".
+2. `README.md:45` describes `AGENTS.md` as the Codex bootstrap contract. It is
+   the shared contract for both clients, and `CLAUDE.md` is missing from the
+   repository listing entirely.
+3. That listing shows `src/` as `events/` and `wake/`. It also contains
+   `portfolio/`, `projects/`, `cli.ts`, and `index.ts`.
+4. The status paragraph names the plan-first portfolio flow as what CIEL is
+   currently proving. That proof is delivered; what is being proved now is
+   several sessions at once and the fidelity of the report they read.
+
+A statement that was true when written and has since been overtaken is
+corrected, not deleted, so the direction remains legible. The genesis documents
+are historical records and are not edited.
+
+**Done when** no claim in `README.md` about what exists is contradicted by the
+repository, checked item by item against the file rather than by impression.
 
 ## Boundaries and delivery
 
