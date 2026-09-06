@@ -1,0 +1,76 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T210232_shared_branch_identity_settled
+type: closeout
+recorded_at: 2026-09-06T21:02:32+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-report-fidelity-001
+  lane: single
+  objective: >-
+    Settle how a shared topic branch is identified before this workstream is
+    executed, so the choice is recorded rather than left for a later session to
+    rediscover from scratch.
+  scope:
+    - Plan revision 0.2, narrowing slice 1 item 2 from two open options to one decision, with the reasoning.
+    - One added item, so that skipping the cleanup check does not silently remove the only reminder it provided.
+  out_of_scope:
+    - Implementing any of it. No slice is authorized and no source file changes here.
+
+outcome:
+  status: ready-for-owner-merge
+  owner_agreement:
+    - Take the recommended option now and adjust if it proves wrong, rather than deciding more of it up front.
+  completed:
+    - Recorded that the name collision is the symptom and the category error is the defect: the cleanup check assumes one branch belongs to one workstream's delivery, while a standing branch carries several by design.
+    - Chose to skip the cleanup check for a topic branch that more than one workstream's closeout records, read from the existing ledger.
+    - Kept recording the branch tip as an available remedy for an ordinary topic branch whose name is reused, and stated why it is not taken yet.
+    - Added reporting for an hq branch that exists and is already reachable from origin/main, because the skipped check was the only thing that mentioned a forgotten one.
+  not_completed:
+    - Nothing is implemented. Slice 1 still needs a decision naming plan revision 0.2 slice 1.
+
+evidence:
+  repository:
+    head: 482a3ad8bd3a525e1e841ffa904b2338f4ac69ce
+    branch: docs/report-fidelity-workstream
+    working_tree: clean-before-this-closeout
+  plan: workstreams/ciel-report-fidelity-001/PLAN.md
+  plan_revision: "0.2"
+  delivery:
+    target_branch: main
+    topic_branch: docs/report-fidelity-workstream
+  pull_request:
+    number: 38
+    url: https://github.com/mojisejr/ciel-os/pull/38
+    base: main
+    head: docs/report-fidelity-workstream
+  supersedes_plan_revision: >-
+    0.1, whose slice 1 item 2 left the identification method open. The opening
+    closeout for 0.1 is not edited; this event carries the narrowing.
+  rejected_options:
+    unique_branch_names: >-
+      Naming the standing branch with a time rather than a date needs no code
+      and was rejected as a remedy on its own. It lowers the chance of a
+      collision without correcting the identifier, and the run that produced
+      this workstream showed that a defect described as unlikely appears
+      immediately once the thing is actually used.
+    branch_tip_recorded_now: >-
+      Correct in general and additive to the schema, but it addresses a
+      collision between ordinary topic branches that has never been observed,
+      whose names are topic-specific. Held in reserve rather than taken.
+
+unresolved:
+  - The decision rests on a shared branch being detectable from the ledger. A branch used by exactly one workstream and then reused by name would still be misidentified, which is precisely the case the reserved remedy covers.
+  - Whether reporting leftover hq branches belongs in the repository observation or beside the standing branch age is not decided, only that the reminder must not disappear.
+  - Nothing here is tested. The decision is recorded as intent and is only established once slice 1 implements it with tests.
+
+next_action:
+  action: >-
+    Review pull request 38, which now carries the correction, the workstream at
+    revision 0.2, and this closeout. On merge, authorize slice 1 with a decision
+    naming plan revision 0.2 slice 1.
+  acceptance_check:
+    - This closeout must be verified on the pull request head before the pull request is reported ready again.
+    - No committed event may be edited; the 0.1 opening closeout stays as written.
