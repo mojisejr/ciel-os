@@ -1,0 +1,86 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T195541_report_status_flag_delivered
+type: closeout
+recorded_at: 2026-09-06T19:55:41+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: pilot-report-status-flag-001
+  lane: single
+  objective: >-
+    Deliver plan revision 0.3 slice 1: a --status-only flag on the report CLI
+    that prints just the status counts, run from a cold session as one of the
+    two concurrent lanes in the many-sessions proof.
+  scope:
+    - Implement the flag in pilot-task-report with tests.
+    - Merge it locally onto the child's main and record this closeout in HQ.
+  out_of_scope:
+    - Any change to the task JSON contract the two pilots share.
+    - Any new dependency, and any pull request for the child, which is local_only.
+    - Any change to CIEL source or contract.
+
+outcome:
+  status: completed
+  completed:
+    - Parsed the CLI arguments so --status-only is recognised in either position and the remaining argument is the path, and printed summary.byStatus when the flag is present.
+    - Added test/cli.test.ts, which runs the built CLI against the existing fixture and asserts the unflagged summary, the flagged status counts, and that both argument orders produce the same output.
+    - Merged feat/status-only-flag onto the child's main as a fast-forward at 04e6630653a5ba7ad04c0296697d7f56c26529a1, without rewriting history, and deleted the topic branch.
+  not_completed:
+    - Nothing is proven here about whether the two lanes actually ran concurrently without colliding. That is the parallel-lanes workstream's measurement, not this one's.
+
+evidence:
+  repository:
+    head: 1559a9b242dbb16c5b916ae61d037593c5dd9712
+    branch: hq/20260906
+    working_tree: clean-before-this-closeout
+  plan: workstreams/pilot-report-status-flag-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "1"
+  decision: memory/events/2026/09/06/20260906T191952_report_lane_authorized.yaml
+  parallel_with:
+    - pilot-ledger-count-command-001
+  child:
+    project_id: pilot-task-report
+    binding: checkouts/pilot-task-report
+    target_branch: main
+    topic_branch: feat/status-only-flag
+    merge_commit: 04e6630653a5ba7ad04c0296697d7f56c26529a1
+    delivery: local_only
+  changed:
+    - src/cli.ts
+    - test/cli.test.ts
+  checks:
+    - bun test in pilot-task-report passes with 6 tests across 3 files, up from 3 tests across 2 files.
+    - The unflagged output was captured before and after the change against fixtures/tasks.json and diff reports no difference, so the byte-identical invariant holds by observation and not by assertion.
+    - git diff against main for src/task-input.ts and src/summary.ts is empty, so the shared contract is untouched.
+  cold_start_observation: >-
+    The session was given only the workstream id and proceeded from Wake, the
+    plan, and the repository. Nothing had to be asked. The plan's starting
+    evidence named the three source files and the invariant that the shared
+    contract must not move, which was what made the change decidable without
+    the planning conversation.
+
+deviations:
+  - item: >-
+      The usage error string changed from "Usage: bun run src/cli.ts <tasks.json>"
+      to include the optional flag.
+    reason: >-
+      The invariant fixes the default output, and this string is only reached
+      when no path is given at all. Leaving it would document the CLI wrongly
+      the moment the flag existed. It is noted rather than assumed harmless.
+
+unresolved:
+  - The two pilots share a task JSON contract. This lane left it untouched, which is checked above, but nothing prevents a future change from moving it, and no test guards that boundary.
+  - Whether this lane's HQ commit collides with the sibling lane's on the shared standing branch is still unproven from inside this session. Only this workstream's own paths were staged, which is the rule that is supposed to prevent it; whether it held is visible only to a session that sees both.
+  - This session cannot observe whether the sibling lane ran at the same time, so its account of concurrency is one half of the evidence.
+
+next_action:
+  action: >-
+    The parallel-lanes workstream reads this closeout and the sibling lane's
+    together to judge whether slice 2 held. No further work is required in this
+    workstream; its single declared slice is delivered.
+  acceptance_check:
+    - bun run wake must validate this event and reconcile through its checkpoint.
+    - The child's main must contain the merge commit named above with its tests passing.

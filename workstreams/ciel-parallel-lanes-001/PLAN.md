@@ -3,7 +3,7 @@
 **Workstream:** `ciel-parallel-lanes-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -190,35 +190,65 @@ from.
 and Wake run on a standing branch with a dirty tree no longer reports merged
 workstreams as conflicts or executing lanes as wreckage.
 
-### 2. Prove it with two real sessions
+### 2. Prove it with two cold sessions
 
 Run `pilot-ledger-count-command-001` and `pilot-report-status-flag-001` at the
 same time, both from `ciel-os`, one session each. The pilots are `local_only`,
 so if the arrangement is wrong nothing reaches a remote and the work is thrown
 away rather than repaired.
 
-The second session starts cold: it receives no context from the conversation
-that produced this plan and must proceed from Wake and the repository alone.
-That claim is the contract's own and has never been tested against a live
-parallel lane.
+**Both lanes start cold.** Neither receives any context from the conversation
+that produced this plan; each proceeds from Wake and the repository alone. An
+earlier draft of this slice had one lane driven by the session that designed the
+arrangement. That would have confounded the result twice over: a difference
+between the lanes could not be attributed to the arrangement rather than to one
+session's memory, and the session that built slice 1 would tend to step around
+its own gaps instead of falling into them. Two cold lanes give two independent
+samples of the same question, and match how the arrangement will actually be
+used, where no session carries the design conversation.
+
+The session that prepared this plan stays as a **reference** and does not drive
+a lane. Its rules for the duration:
+
+- It makes no HQ commit while either lane is running. A third writer would
+  change the very contention this slice measures. Everything it must write is
+  written before the lanes start or after both have finished.
+- The owner may ask it whether a lane did the right thing, because that is the
+  control this arrangement is for.
+- Nothing it says is relayed into a lane. Neither is anything discovered in one
+  lane relayed to the other.
+- When a lane is genuinely stuck the owner may answer it, so the run does not
+  stall. **Every such answer counts as one recorded continuity gap**, which is
+  the most valuable measurement this slice can produce: it names exactly what
+  the repository failed to carry.
 
 Record, with commands and observed output rather than impressions:
 
-1. Whether the two sessions interfere at all, and where the stage-your-own-paths
+1. Whether the two lanes interfere at all, and where the stage-your-own-paths
    rule was needed to prevent it.
-2. What the cold session could and could not work out for itself, and what it
-   had to ask. Anything it had to ask is a continuity gap, not a session fault.
+2. What each cold lane worked out for itself and what it had to be told. Every
+   answer the owner gave is a continuity gap, not a fault of the session.
 3. Whether Wake's per-workstream `next_action` answers "where are we and what
-   next" without the owner asking.
-4. What a session sees of another session's in-flight work, and whether that
-   view misleads it.
-5. One deliberate conflict on a shared HQ file, introduced only after the above
+   next" without the owner being asked.
+4. What each lane does with a `next_action` that has already been carried out.
+   Measured while preparing this revision: after slice 1 merged, this
+   workstream's latest record still told a reader to review a pull request that
+   was already merged, because a record's advice goes stale the moment it is
+   acted on and nothing marks it done. Whether that actually misleads a cold
+   session, or is obvious to it, is unknown. If it misleads, the remedy is
+   already available without new state — a record's own commit can be tested for
+   reachability from `origin/main`, which `deriveTerminalLifecycle` already does
+   for terminal closeouts.
+5. What a lane sees of the other lane's in-flight work, and whether that view
+   misleads it.
+6. One deliberate conflict on a shared HQ file, introduced only after the above
    has succeeded, so that a failure there is not confused with a failure of the
    arrangement.
 
-**Done when** both pilot changes are merged locally, both closeouts are
+**Done when** both pilot changes are merged locally, both lane closeouts are
 recorded, the standing branch has been merged once and reopened, and a closeout
-states plainly which of the owner's three requirements held and which did not.
+states plainly which of the owner's three requirements held and which did not,
+and lists every continuity gap the run exposed.
 
 ## Boundaries and delivery
 

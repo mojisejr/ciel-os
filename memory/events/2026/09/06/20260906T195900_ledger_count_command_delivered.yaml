@@ -1,0 +1,87 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T195900_ledger_count_command_delivered
+type: closeout
+recorded_at: 2026-09-06T19:59:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: pilot-ledger-count-command-001
+  lane: single
+  objective: >-
+    Deliver slice 1: a count command on the ledger CLI that prints how many
+    valid tasks a task file holds, as one of the two concurrent cold lanes in
+    the many-sessions proof.
+  scope:
+    - Add the count command to pilot-task-ledger with a test.
+    - Merge it locally onto the child's main and record this closeout in HQ.
+  out_of_scope:
+    - The shared task JSON contract and anything the sibling report project reads.
+    - Any new dependency, any pull request for the child, and any change to CIEL source or contract.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Added src/count-tasks.ts, whose countTasks reuses the validated array exportTasks already returns, so no new parsing and no change to src/task.ts.
+    - Extended src/cli.ts to dispatch export and count, leaving the export branch and its output untouched.
+    - Added test/count-tasks.test.ts, which counts a three-task fixture through a temporary file, matching the existing export test's shape.
+    - Merged the topic branch fast-forward onto the child's main at 1ed8ccf and deleted it; no history was rewritten.
+  not_completed:
+    - Nothing about the parallel-lanes proof itself. Whether this lane's HQ commit collides with the sibling lane's is for ciel-parallel-lanes-001 to judge once both are recorded.
+    - No package.json script for count. The plan authorizes one command and nothing beyond it; the acceptance criterion names the direct invocation.
+
+evidence:
+  repository:
+    head: 1559a9b242dbb16c5b916ae61d037593c5dd9712
+    branch: hq/20260906
+    working_tree: clean-before-this-closeout
+  plan: workstreams/pilot-ledger-count-command-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "1"
+  decision: memory/events/2026/09/06/20260906T191945_ledger_lane_authorized.yaml
+  delivery:
+    target_branch: main
+    topic_branch: hq/20260906
+  parallel_with:
+    - pilot-report-status-flag-001
+  child:
+    project_id: pilot-task-ledger
+    path: checkouts/pilot-task-ledger
+    delivery: local_only
+    target_branch: main
+    topic_branch: feat/count-command
+    merged_head: 1ed8ccf
+    merge: fast-forward, topic branch deleted after merge
+  changed:
+    - checkouts/pilot-task-ledger src/cli.ts
+    - checkouts/pilot-task-ledger src/count-tasks.ts
+    - checkouts/pilot-task-ledger test/count-tasks.test.ts
+  checks:
+    - bun test in the child passes with 5 tests, up from 4.
+    - bun run src/cli.ts count data/tasks.json prints 2 for the committed fixture.
+    - bun run src/cli.ts export data/tasks.json is byte-identical to its output before the change, compared by diff.
+    - An unrecognised command still throws the usage message, which now names both commands.
+  cold_start_observation: >-
+    The session was given the workstream id and nothing else. Wake, this plan,
+    and the decision event were sufficient to locate the child, the starting
+    evidence, the invariants, and the standing-branch staging rule without
+    asking the owner anything. The one judgement left open was whether a
+    package.json script counts as part of the one command; it was resolved
+    against adding one, on the plan's boundary line, and is recorded here rather
+    than assumed correct.
+
+unresolved:
+  - The two pilots share the task JSON contract. This lane left src/task.ts untouched, which is checkable, but nothing prevents a future change there from coupling the lanes again.
+  - Whether this HQ commit collides with the sibling lane's is unproven at the time of recording. Only this workstream's own paths were staged, which is the rule meant to prevent it.
+  - The count command has no test through the CLI itself, only through countTasks. The usage and dispatch paths were exercised by hand, not by a test.
+
+next_action:
+  action: >-
+    The child work is merged and needs nothing further. This closeout sits on
+    the standing HQ branch awaiting the owner's merge decision, which belongs
+    with the sibling lane's closeout and the ciel-parallel-lanes-001 slice 2
+    verdict rather than on its own.
+  acceptance_check:
+    - The child's main must hold 1ed8ccf with its tests passing and its export output unchanged.
+    - This HQ commit must contain only this event file.
