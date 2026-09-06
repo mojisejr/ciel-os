@@ -1,0 +1,79 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T203554_report_fidelity_workstream_opened
+type: closeout
+recorded_at: 2026-09-06T20:35:54+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-report-fidelity-001
+  lane: single
+  objective: >-
+    Open a workstream for the five defects the two-session run exposed, all of
+    which concern whether Wake and the record behind it tell the truth about
+    work that has already happened.
+  scope:
+    - One plan with three slices, ordered by whether a defect can make a session act wrongly.
+    - Delivery of the correction event that refutes a conclusion already committed elsewhere.
+  out_of_scope:
+    - Any repair. Nothing is fixed by opening this.
+    - Any pilot code, any schema change, any stored state, and anything that records a session.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Opened ciel-report-fidelity-001 at revision 0.1 with three slices and one project, ciel-os.
+    - Delivered the correction event for the refuted stale-advice conclusion in the same branch.
+    - Returned the checkout to a clean current main and removed the merged standing branch before starting.
+  not_completed:
+    - No slice is authorized and nothing is repaired. pilot-report-status-flag-001 is still outside the delivery machinery.
+
+evidence:
+  repository:
+    head: 2bdab3ef19b2f90509333dce2a283e732c6161bb
+    branch: docs/report-fidelity-workstream
+    working_tree: clean-before-this-closeout
+  plan: workstreams/ciel-report-fidelity-001/PLAN.md
+  plan_revision: "0.1"
+  delivery:
+    target_branch: main
+    topic_branch: docs/report-fidelity-workstream
+  pull_request:
+    number: 38
+    url: https://github.com/mojisejr/ciel-os/pull/38
+    base: main
+    head: docs/report-fidelity-workstream
+  correction: memory/events/2026/09/06/20260906T203359_stale_advice_conclusion_refuted.yaml
+  checks:
+    - bun run check passes with 32 tests.
+    - bun run bin/ciel.ts events validate accepts all event files.
+    - bun run wake reports no validation error or warning, and no conflict, since the new workstream lists only ciel-os.
+  findings_carried:
+    - Wake presents a record's next_action beside a lifecycle that may contradict it, with no indication which is current. Introduced by ciel-parallel-lanes-001 slice 1. Observed to mislead a cold session into proposing a duplicate pull request.
+    - A closeout's topic branch is resolved by name, so reusing hq/<yyyymmdd> on the same day makes merged and complete workstreams report needs-reconciliation. Introduced by the same slice's branch convention.
+    - outcome.status is required, undocumented, and unvalidated. Eighteen values are in use across ninety-eight events and the code recognises two, which let one workstream leave the delivery machinery silently.
+    - deriveAttention counts overlap without consulting decisions while deriveLifecycle does, so the two halves of one report contradict each other on approved parallel work.
+    - Under one standing branch there is no merge between lanes, so a second writer to a shared file silently replaces the first with no Git signal. No rule currently forbids it.
+  ordering_principle: >-
+    Severity here is whether a defect can make a session act wrongly, not how
+    visible it is. The stale advice and the branch-name collision are first
+    because both state something untrue about what is already done, and one of
+    them has already caused a session to propose repeating finished work. The
+    status vocabulary follows, because so far it only hides a workstream rather
+    than causing an action.
+
+unresolved:
+  - The remedy shape for stale advice is undecided. Only the underlying test, reachability from origin/main, is settled as available without new state.
+  - Whether to fix the branch-name collision by identifying a topic branch by commit or by disambiguating the recorded name is undecided; the plan asks for whichever keeps existing events valid.
+  - Validating outcome.status must warn rather than fail, because failing would reject the existing ledger. That constraint is inherited from an earlier workstream and is not re-litigated here.
+  - Two of the five defects were introduced by the workstream that found them. That is recorded rather than softened, and it is an argument for the dogfood having been worth running, not against it.
+
+next_action:
+  action: >-
+    Review pull request 38, which carries the correction and this plan. On
+    merge, authorize slice 1 with a decision naming plan revision 0.1 slice 1,
+    since it holds the two defects that can make a session act wrongly.
+  acceptance_check:
+    - This closeout must be committed, pushed, and verified on the pull request head before the pull request is reported ready.
+    - The slice 2 closeout of ciel-parallel-lanes-001 must remain unedited; its correction is a separate event.
