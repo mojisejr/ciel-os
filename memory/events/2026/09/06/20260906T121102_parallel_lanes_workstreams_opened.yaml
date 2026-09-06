@@ -1,0 +1,128 @@
+schema_version: ciel.event.v0.1
+id: evt_20260906T121102_parallel_lanes_workstreams_opened
+type: closeout
+recorded_at: 2026-09-06T12:11:02+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-parallel-lanes-001
+  lane: single
+  objective: >-
+    Open the parallel-lanes proof and the two pilot lanes it coordinates, and
+    deliver them for owner review before any lane worktree exists.
+  scope:
+    - Three plans and three decision events.
+    - The measured starting evidence a cold session needs to pick the work up.
+  out_of_scope:
+    - Any lane worktree, any pilot code, and any CIEL source, AGENTS.md, or README.md change.
+
+outcome:
+  status: prepared
+  owner_agreement:
+    - Two workstreams may run in parallel only when they share no child project; sharing ciel-os does not count.
+    - Two lanes that touch the same child are not two lanes but one workstream with two slices.
+    - Nothing is added to CIEL until a run demonstrates the need, so slice 1 observes and changes nothing.
+    - Lane worktrees are collected under one directory so a stale lane is visible and cleanup is easy.
+    - The known search-hit cost of that directory is recorded deliberately rather than discovered later.
+    - Local and fetched origin/main must match before any lane worktree is created.
+    - The second lane runs from a session given no context from this conversation.
+  completed:
+    - Opened ciel-parallel-lanes-001 at revision 0.1 with two slices, and the two pilot lanes at revision 0.1 with one slice each.
+    - Recorded three decision events approving parallelism, one per workstream.
+    - Recorded seven measured starting-evidence findings with file and line references.
+  not_completed:
+    - No lane worktree exists. No pilot file changed. No CIEL behaviour changed.
+    - Slice 2 is unauthorized and stays that way until slice 1 reports.
+
+evidence:
+  repository:
+    head: 4b76127f5816e8716c2ea1e2b7ffb0f1cb482f03
+    branch: docs/parallel-lanes-dogfood
+    working_tree: clean-before-this-closeout
+  plan: workstreams/ciel-parallel-lanes-001/PLAN.md
+  plan_revision: "0.1"
+  delivery:
+    target_branch: main
+    topic_branch: docs/parallel-lanes-dogfood
+  pull_request:
+    number: 35
+    url: https://github.com/mojisejr/ciel-os/pull/35
+    base: main
+    head: docs/parallel-lanes-dogfood
+  companion_plans:
+    - workstreams/pilot-ledger-count-command-001/PLAN.md
+    - workstreams/pilot-report-status-flag-001/PLAN.md
+  decisions:
+    - memory/events/2026/09/06/20260906T120832_parallel_lanes_authorized.yaml
+    - memory/events/2026/09/06/20260906T120845_pilot_ledger_lane_authorized.yaml
+    - memory/events/2026/09/06/20260906T120858_pilot_report_lane_authorized.yaml
+  checks:
+    - bun run check passes with 29 tests.
+    - bun run bin/ciel.ts events validate accepts all 92 event files.
+    - bun run wake reports no validation error or warning and derives all three workstreams as authorized for revision 0.1 slice 1.
+    - git diff --check reports nothing.
+  measured_findings:
+    lane_count: >-
+      decisionAuthorizesPlan requires event.lane to equal workstream.lane and a
+      plan declares exactly one lane, so a decision on a second lane can never
+      authorize a plan. Two parallel lanes must therefore be two workstreams.
+      All ten prior workstreams declare lane single, so the grouping by lane has
+      never carried real data.
+    overlap_counts_hq: >-
+      Every workstream lists ciel-os, so the overlap check fires for every
+      concurrent pair and cannot distinguish a real child collision from the
+      unavoidable HQ overlap.
+    completed_is_unstable: >-
+      deriveTerminalLifecycle returns completed only when the checkout sits on
+      the delivery target branch at exactly fetched origin/main with an empty
+      status. On clean main at e91316a the four merged workstreams derive as
+      completed. After switching to this topic branch and adding these files,
+      all four flipped to merged-needs-sync and every active workstream reported
+      a conflict. The trigger is obeying the contract's own topic-branch rule.
+      Inside a lane worktree the checkout is never on main, so this state would
+      be permanent under the worktree layout.
+    one_decision_per_workstream: >-
+      Predicted before the run and confirmed here. Three overlapping workstreams
+      needed three decision events; a single group approval does not exist,
+      because a decision names one plan path and revision.
+    start_gate_breaks_in_a_worktree: >-
+      The README start gate runs git switch main, which Git refuses in a
+      secondary worktree because main is checked out in the primary one.
+    worktrees_dir_is_safe_for_checks: >-
+      tsconfig includes only src and test, and the test script scans only test,
+      so a worktrees directory under the HQ root does not affect bun run check.
+    pilots_share_a_contract: >-
+      The ledger produces the task JSON the report consumes and both define
+      TaskPriority. Separate repositories do not make them independent, so both
+      lane plans forbid touching that contract.
+  method_observation: >-
+    This plan was prepared with the owner's alignment method rather than CIEL's
+    own procedure, at the owner's direction to try it a few rounds before
+    deciding whether it belongs here. Recorded for that review: ten questions
+    were asked across three rounds with the agent's own answer written before
+    each; eight matched. Both misses ran the same way, the agent preferring to
+    route around an obstacle and the owner preferring to keep the system
+    coherent over time. The method's own weakness is that it leaves no file, so
+    this paragraph exists because CIEL has somewhere durable to put it. No
+    skill, hook, or machinery was added.
+
+unresolved:
+  - Whether a cold session can execute its lane from Wake and the repository alone is the central claim under test and is not established by opening the plans.
+  - Whether the owner's rule is correct is what slice 1 may refute. If it does, the plan is revised before any code change.
+  - Whether the merged-needs-sync finding has consequences beyond the overlap map is unknown; only its effect on conflict reporting was measured.
+  - The deliberate shared-file conflict in slice 1 step 5 has no predicted outcome. It is run to find out, not to confirm.
+  - Slice 1 step 3, what each lane's Wake can see of the other lane's in-flight evidence, is the step with the least confident prediction.
+
+next_action:
+  action: >-
+    Review the three plans and this closeout on the pull request head, then
+    merge pull request 35. After the merge is reachable from fetched
+    origin/main, return the primary worktree to a clean current main, delete the
+    topic branch, and only then create the two lane worktrees and hand the
+    second lane to a session with no briefing beyond its workstream id.
+  acceptance_check:
+    - This closeout must be committed, pushed, and verified on the pull request head before the pull request is reported ready.
+    - Wake must report all three workstreams as authorized before any lane worktree is created.
+    - No lane worktree may be created while local main and fetched origin/main differ.
