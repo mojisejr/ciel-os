@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T131500_wake_blind_spots_slice2_authorized
+type: decision
+recorded_at: 2026-09-07T13:15:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-wake-blind-spots-001
+  objective: >-
+    Authorize slice 2, so that work which is committed and pushed but has not
+    reached origin/main is reported, and so that Wake states how old this
+    checkout's view of origin/main is instead of asserting merge state as though
+    the view were current.
+  scope:
+    - Authorize slice 2 of plan revision 0.1.
+    - Report refs under refs/heads and refs/remotes/origin that are not reachable
+      from refs/remotes/origin/main.
+    - Report the age of this checkout's view of origin/main, from a local signal.
+  out_of_scope:
+    - Any network call, gh invocation, fetch, or movement of the Wake evidence boundary.
+    - Reading real pull request state, which the plan excludes with the evidence
+      that would bring it back.
+    - Saying the words pull request in the report, because Wake cannot see one.
+
+outcome:
+  status: decided
+  completed:
+    - Slice 1 merged at 32bc9e6741e4df3c6b622f66e48f8a819133a72a.
+    - The owner authorized slice 2 to proceed on the same terms.
+  not_completed:
+    - Nothing yet reports unmerged delivered work; that is what this slice builds.
+
+evidence:
+  plan: workstreams/ciel-wake-blind-spots-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  prior_checkpoint: 32bc9e6741e4df3c6b622f66e48f8a819133a72a
+  motivating_case: >-
+    PR 42 sat ready for review and unmerged for roughly six hours while Wake
+    reported the workstream its records complete as unfinished. The branch existed
+    both as a local head and as a remote-tracking ref throughout, and
+    git merge-base --is-ancestor 01d4eff a6ed0c5 exits non-zero, so the query this
+    slice builds would have reported it.
+
+unresolved:
+  - Two local staleness signals exist and neither is obviously right. The plan
+    requires choosing from what each can support rather than asserting one.
+  - Whether reporting every unmerged ref is quiet enough in ordinary use is
+    unmeasured. If it is noisy, narrowing is a revision rather than a failure.
+
+next_action:
+  action: >-
+    Implement slice 2, then close out the workstream. This is the last declared
+    slice, so its closeout finishes plan revision 0.1.
+  acceptance_check:
+    - A branch ahead of origin/main is reported and a fully merged checkout reports nothing.
+    - The age of the view appears in the report.
+    - No network call, gh invocation, or fetch is added.
