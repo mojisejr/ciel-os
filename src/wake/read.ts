@@ -110,6 +110,121 @@ async function readMergedStandingBranches(
   return merged;
 }
 
+// Branches whose commits have not reached fetched origin/main. This is the
+// half of the report that PR 42 needed: it sat ready for review and unmerged
+// for roughly six hours while Wake reported as unfinished the very workstream
+// its records completed, and the owner found it by opening the forge for an
+// unrelated reason.
+//
+// Local heads and remote-tracking refs are both walked and then grouped by
+// branch name. Reading remote-tracking refs is what lets a branch pushed from
+// another machine appear at all, and whether a branch is pushed is the part
+// that says someone else may already be waiting on it. Nothing here says pull
+// request, because Wake cannot see one and must not imply otherwise.
+//
+// No judgement is attached, in keeping with the branch reporting beside it.
+// "This is not on origin/main" is a fact. "You forgot to merge it" is the
+// owner's to say, and the branch the checkout is standing on is marked rather
+// than hidden, so a reader can tell their own work from work left behind.
+async function readUnmergedWork(
+  repositoryPath: string,
+  currentBranch: string | null
+): Promise<WakeReport["observed"]["repository"]["unmergedWork"]> {
+  const remoteTarget = "refs/remotes/origin/main";
+  const remoteExists = await runGit(repositoryPath, ["show-ref", "--verify", "--quiet", remoteTarget]);
+  if (remoteExists.exitCode !== 0) {
+    return [];
+  }
+
+  const refs = await runGit(repositoryPath, [
+    "for-each-ref",
+    "--format=%(refname)%09%(committerdate:iso-strict)",
+    "refs/heads",
+    "refs/remotes/origin"
+  ]);
+  if (refs.exitCode !== 0) {
+    return [];
+  }
+
+  const grouped = new Map<string, { lastCommitAt: string | null; local: boolean; pushed: boolean; reference: string }>();
+
+  for (const line of refs.stdout.trim().split("\n").filter((entry) => entry.length > 0)) {
+    const [reference, committedAt] = line.split("\t");
+    if (reference === undefined || reference === remoteTarget || reference === "refs/remotes/origin/HEAD") {
+      continue;
+    }
+
+    const local = reference.startsWith("refs/heads/");
+    const name = local ? reference.slice("refs/heads/".length) : reference.slice("refs/remotes/origin/".length);
+    const reachable = await runGit(repositoryPath, ["merge-base", "--is-ancestor", reference, remoteTarget]);
+    if (reachable.exitCode === 0) {
+      continue;
+    }
+
+    const existing = grouped.get(name);
+    grouped.set(name, {
+      // The remote-tracking ref is what the forge holds, so it decides the
+      // count and the date when both exist.
+      lastCommitAt: local ? existing?.lastCommitAt ?? committedAt ?? null : committedAt ?? null,
+      local: local || existing?.local === true,
+      pushed: !local || existing?.pushed === true,
+      reference: local ? existing?.reference ?? reference : reference
+    });
+  }
+
+  const unmerged: WakeReport["observed"]["repository"]["unmergedWork"] = [];
+  for (const [name, entry] of [...grouped.entries()].sort(([left], [right]) => left.localeCompare(right))) {
+    const counted = await runGit(repositoryPath, ["rev-list", "--count", `${remoteTarget}..${entry.reference}`]);
+    unmerged.push({
+      name,
+      local: entry.local,
+      pushed: entry.pushed,
+      ahead: counted.exitCode === 0 ? Number.parseInt(counted.stdout.trim(), 10) || 0 : 0,
+      lastCommitAt: entry.lastCommitAt,
+      current: currentBranch !== null && currentBranch === name
+    });
+  }
+
+  return unmerged;
+}
+
+// How old this checkout's view of origin/main is. Wake never fetches, so every
+// merge-state claim it makes is only as fresh as the last time a human or agent
+// did. The wording already in this file concedes as much by saying "fetched
+// origin/main"; this says how long ago that was.
+//
+// Git resolves the path, which keeps this correct inside a linked worktree, and
+// the filesystem supplies the time. The reflog was the other candidate and
+// records when the ref last moved rather than when it was last looked at, so a
+// fetch that found nothing new would leave it reporting an alarming age for a
+// view that is current. Answering the wrong question confidently is worse than
+// reaching outside Git for a modification time.
+async function readRemoteView(repositoryPath: string): Promise<WakeReport["observed"]["repository"]["remoteView"]> {
+  const remoteExists = await runGit(repositoryPath, ["show-ref", "--verify", "--quiet", "refs/remotes/origin/main"]);
+  if (remoteExists.exitCode !== 0) {
+    return { fetchedAt: null, detail: "No origin/main ref exists in this checkout, so there is no view of it to age." };
+  }
+
+  const gitPath = await runGit(repositoryPath, ["rev-parse", "--git-path", "FETCH_HEAD"]);
+  if (gitPath.exitCode !== 0) {
+    return { fetchedAt: null, detail: "Git could not resolve where a fetch would record itself, so the age of this view is unknown." };
+  }
+
+  const marker = Bun.file(resolve(repositoryPath, gitPath.stdout.trim()));
+  if (!(await marker.exists())) {
+    return {
+      fetchedAt: null,
+      detail: "No fetch is recorded in this checkout, so every merge-state claim here rests on a view of origin/main of unknown age."
+    };
+  }
+
+  const fetchedAt = new Date(marker.lastModified).toISOString();
+  return {
+    fetchedAt,
+    detail: `Merge state here is read from origin/main as the last fetch left it, at ${fetchedAt}. Wake does not fetch.`
+  };
+}
+
 function parseWorktrees(output: string): WakeReport["observed"]["repository"]["worktrees"] {
   return output
     .trim()
@@ -238,6 +353,8 @@ export async function readWakeReport(repositoryDirectory = "."): Promise<WakeRep
         },
         standingBranch: parseStandingBranch(branchOutput.length > 0 ? branchOutput : null),
         mergedStandingBranches: await readMergedStandingBranches(repositoryPath),
+        unmergedWork: await readUnmergedWork(repositoryPath, branchOutput.length > 0 ? branchOutput : null),
+        remoteView: await readRemoteView(repositoryPath),
         worktrees: parseWorktrees(worktreeOutput)
       },
       instructions: {
