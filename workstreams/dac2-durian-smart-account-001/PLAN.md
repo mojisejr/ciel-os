@@ -3,7 +3,7 @@
 **Workstream:** `dac2-durian-smart-account-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -65,8 +65,10 @@ closes a branch that was open, not because it is derivable from the workbook.
 - **Every figure that carries meaning explains itself in place**, through an
   information affordance that answers four questions: what it is, what it is
   for, why it matters, and what happens if it is left out.
-- **No continuous integration.** The owner will decide what checks are worth
-  having after something actually breaks.
+- **No continuous integration.** Required automated tests run locally before a
+  pull request is offered for review. No GitHub Action, coverage service, or
+  hosted test runner is added; the owner will decide whether any of those earn
+  their cost after a concrete failure demonstrates the need.
 - **A mobile-first Thai interface described in `DESIGN.md`**, which is the
   owner's surface for deciding appearance and interaction. The owner corrected
   an early assumption during alignment: these orchard owners are in their
@@ -302,6 +304,29 @@ it. They are short on purpose.
 11. Every slice ends with a draft pull request whose head carries its closeout
     event, verified on that head before the pull request is marked ready.
 
+## Test strategy
+
+Tests follow the cost of a wrong answer, not a coverage percentage. There is no
+line-coverage target and no requirement to create one test per private helper.
+A calculation behaviour is complete only when its ordinary case and every
+boundary, missing-input, or invalid-input branch it implements are exercised by
+a deterministic test.
+
+Slice 2 carries the mandatory `calc` unit suite and one workbook golden
+regression suite. The unit suite isolates each calculation module; the golden
+suite proves that the modules still compose into the workbook's result. Neither
+substitutes for the other. Both run locally through `cargo test -p calc`, and
+slice 2 adds that command to `scripts/check.sh` so a review candidate cannot be
+prepared without it.
+
+Slice 3 adds integration tests against the real local PostgreSQL container for
+persistence, ownership, closed-plan enforcement, and duplication. Browser E2E
+automation, snapshot tests, property-test frameworks, mocks introduced only to
+support tests, hosted coverage, and CI are not authorized by this revision.
+The acceptance flows in slices 4 through 8 remain local functional proof; the
+owner may choose a small browser E2E suite later, once the real interface makes
+the costly flows visible.
+
 ## Execution slices and acceptance criteria
 
 ### 1. Prove the stack compiles together, and bind the project to CIEL
@@ -359,15 +384,43 @@ eight-bracket tax estimate under both the actual-expense and the sixty-percent
 flat-deduction methods, the five-by-five scenario matrix, the six completeness
 rules, and the health score.
 
+Every calculation module carries unit tests for its public behaviour. Together
+they cover at least:
+
+- zero, one, four, and ten grade rows; weighted price and sellable yield; and an
+  invalid grade proportion total;
+- every cost `kind`, including proof that `Other` contributes to cost but not to
+  a kind-specific efficiency KPI, plus the cash and non-cash fixed-cost split;
+- the derived harvest-labour, transport, and packing quantities following
+  sellable yield rather than a second input;
+- every ratio and payback denominator at zero or absent, producing an explicit
+  unavailable or incomplete result rather than a panic or invented number;
+- each boundary in all eight tax brackets, immediately below, exactly at, and
+  immediately above the boundary, under both deduction methods;
+- unset, exactly met, better, and worse KPI targets, with an unset target
+  producing no verdict;
+- each of the six completeness rules failing independently and all passing
+  together, plus the lowest and highest health-score boundaries;
+- all twenty-five price-by-yield scenario cells and the full-precision rule that
+  no rounded presentation value feeds another calculation; and
+- values rejected by the input contract, including negative quantities or money
+  wherever that contract forbids them.
+
+The workbook golden fixture asserts every derived output used by this release
+for which the workbook supplies an expected value, not only the headline
+figures. A module does not count as proved merely because its contribution can
+hide inside a matching total.
+
 No database, no interface, no authentication, no Docker. This slice is the
 reason the architecture was chosen and it must be deliverable without them.
 
-**Done when** a golden test constructs the workbook's own input values and
-asserts every figure listed under starting evidence, the scenario matrix
-reproduces all twenty-five cells, the completeness rules reproduce the
-workbook's overall status, a grade mix of ten grades computes correctly, an
-unset target yields no verdict rather than a false one, and `crates/calc` builds
-for `wasm32-unknown-unknown`.
+**Done when** `cargo test -p calc` passes the module unit suite and workbook
+golden regression suite described above; `scripts/check.sh` invokes that command;
+the golden fixture asserts every expected derived output available from the
+workbook; the scenario matrix reproduces all twenty-five cells; the completeness
+rules reproduce the workbook's overall status; a grade mix of ten grades
+computes correctly; an unset target yields no verdict rather than a false one;
+and `crates/calc` builds for `wasm32-unknown-unknown`.
 
 ### 3. Persistence, with ownership enforced before login exists
 

@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T134304_dac2_slice2_test_plan_ready
+type: closeout
+recorded_at: 2026-09-07T13:43:04+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Prepare a narrow plan revision that makes the required local automated test
+    contract explicit before slice 2 is authorized. This record names no slice
+    and does not authorize or deliver slice 2 implementation.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  completed:
+    - PLAN.md revision 0.2 separates module unit tests from the workbook golden regression suite and requires both.
+    - Slice 2 now names the calculation risks its deterministic unit tests must cover and requires cargo test -p calc in scripts/check.sh.
+    - The plan keeps browser E2E, CI, hosted coverage, and coverage quotas outside the current authorization.
+    - Slice 3 retains real-PostgreSQL integration tests while later interface flows remain local functional proof until the owner makes a separate E2E decision.
+  not_completed:
+    - No application repository file changed.
+    - No slice 2 calculation or test was implemented.
+    - Slice 2 remains unauthorized and idle.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: 00fd5bc1a3376f318c25b0e00c97476ce6f0e869
+    branch: docs/dac2-slice2-test-plan
+  pull_request:
+    number: 47
+    url: https://github.com/mojisejr/ciel-os/pull/47
+    observed_head: 00fd5bc1a3376f318c25b0e00c97476ce6f0e869
+  checks:
+    - git diff --check passes for the plan revision.
+    - bun run check passes with 44 tests and 188 assertions.
+    - The pull request was observed open and draft against main before this closeout was written.
+
+unresolved:
+  - The application scripts/check.sh does not yet invoke cargo test -p calc; slice 2 is responsible for adding it together with the tests.
+  - Browser E2E automation is deliberately undecided until the real interface exposes which flows justify it.
+  - The plan says seven consecutive slices but declares eight.
+  - The plan calls DESIGN.md's acceptance list seven rules while DESIGN.md contains eight.
+  - Source installation of cargo-leptos 0.3.7 with Rust 1.88 currently resolves transitive crates requiring Rust 1.89 and 1.90; the application README records the verified official-prebuilt path.
+  - Auth session extraction compiles, but authentication behaviour belongs to slice 4.
+  - GitHub requires a pull request but zero approving reviews; owner review remains a CIEL gate.
+  - Ten explanation drafts and four design questions remain owner work.
+  - Workbook parity proves agreement with the workbook, not that its Thai tax formulas are legally current or correct.
+
+next_action:
+  action: >-
+    Review and merge HQ pull request 47, then synchronize HQ to clean current
+    main and delete only the verified merged topic branch. Starting slice 2
+    still requires a separate owner decision for plan revision 0.2 slice 2.
+  acceptance_check:
+    - This closeout is reachable from the fetched pull-request head.
+    - After merge, this closeout is reachable from fetched origin/main and HQ is clean and current.
