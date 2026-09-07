@@ -409,6 +409,135 @@ test("does not authorize a Phase 4 decision for Phase 5 execution", async () => 
   }
 });
 
+test("names a decision recorded for the workstream that authorizes nothing", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    const checkout = join(root, "checkouts", "pilot-app");
+    await createProject(checkout, "pilot-app");
+    const projectDirectory = join(root, "projects", "pilot-app");
+    await mkdir(projectDirectory, { recursive: true });
+    await writeFile(join(projectDirectory, "project.yaml"), projectYaml("pilot-app"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  pilot-app:", "    path: checkouts/pilot-app", ""].join("\n"));
+    const directory = join(root, "workstreams", "pilot-unread");
+    await mkdir(directory, { recursive: true });
+    await writeFile(join(directory, "PLAN.md"), slicedPlan("pilot-unread", ["pilot-app"], 2, "0.1"));
+    const eventsDirectory = join(root, "memory/events/2026/08/29");
+    await mkdir(eventsDirectory, { recursive: true });
+    // Every field is right except that evidence.plan is a list, which is exactly
+    // how this was first got wrong in this repository.
+    await writeFile(join(eventsDirectory, "20260829T000000_decision.yaml"), [
+      "schema_version: ciel.event.v0.1",
+      "id: evt_unread",
+      "type: decision",
+      "recorded_at: 2026-08-29T00:00:00+07:00",
+      "recorded_by:",
+      "  human: owner",
+      "  agent: test",
+      "workstream:",
+      "  id: pilot-unread",
+      "  lane: single",
+      "  objective: fixture",
+      "  scope: []",
+      "  out_of_scope: []",
+      "outcome:",
+      "  status: decided",
+      "evidence:",
+      "  plan:",
+      "    - workstreams/pilot-unread/PLAN.md",
+      "  plan_revision: \"0.1\"",
+      "  slice: \"1\"",
+      "unresolved: []",
+      "next_action:",
+      "  action: fixture",
+      ""
+    ].join("\n"));
+
+    const report = await readPortfolioWakeReport(root);
+    const workstream = report.workstreams.find((item) => item.id === "pilot-unread");
+
+    expect(report.validationErrors).toEqual([]);
+    expect(workstream?.lifecycle?.state).toBe("needs-owner-decision");
+    expect(workstream?.lifecycle?.decisionEventPath).toBeNull();
+    expect(workstream?.lifecycle?.detail).toContain("memory/events/2026/08/29/20260829T000000_decision.yaml");
+    expect(workstream?.lifecycle?.detail).toContain("evidence.plan must be the single value workstreams/pilot-unread/PLAN.md");
+    expect(workstream?.lifecycle?.detail).toContain("Record a corrected decision beside it");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("names the slices a decision could have authorized when it names none", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    const checkout = join(root, "checkouts", "pilot-app");
+    await createProject(checkout, "pilot-app");
+    const projectDirectory = join(root, "projects", "pilot-app");
+    await mkdir(projectDirectory, { recursive: true });
+    await writeFile(join(projectDirectory, "project.yaml"), projectYaml("pilot-app"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  pilot-app:", "    path: checkouts/pilot-app", ""].join("\n"));
+    const directory = join(root, "workstreams", "pilot-nosl");
+    await mkdir(directory, { recursive: true });
+    await writeFile(join(directory, "PLAN.md"), slicedPlan("pilot-nosl", ["pilot-app"], 2, "0.1"));
+    const eventsDirectory = join(root, "memory/events/2026/08/29");
+    await mkdir(eventsDirectory, { recursive: true });
+    await writeFile(join(eventsDirectory, "20260829T000000_decision.yaml"), [
+      "schema_version: ciel.event.v0.1",
+      "id: evt_nosl",
+      "type: decision",
+      "recorded_at: 2026-08-29T00:00:00+07:00",
+      "recorded_by:",
+      "  human: owner",
+      "  agent: test",
+      "workstream:",
+      "  id: pilot-nosl",
+      "  lane: single",
+      "  objective: fixture",
+      "  scope: []",
+      "  out_of_scope: []",
+      "outcome:",
+      "  status: decided",
+      "evidence:",
+      "  plan: workstreams/pilot-nosl/PLAN.md",
+      "  plan_revision: \"0.1\"",
+      "unresolved: []",
+      "next_action:",
+      "  action: fixture",
+      ""
+    ].join("\n"));
+
+    const report = await readPortfolioWakeReport(root);
+    const workstream = report.workstreams.find((item) => item.id === "pilot-nosl");
+
+    expect(workstream?.lifecycle?.state).toBe("needs-owner-decision");
+    expect(workstream?.lifecycle?.detail).toContain("evidence.slice must be one of 1, 2");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("says only that no decision exists when the workstream has none", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    const checkout = join(root, "checkouts", "pilot-app");
+    await createProject(checkout, "pilot-app");
+    const projectDirectory = join(root, "projects", "pilot-app");
+    await mkdir(projectDirectory, { recursive: true });
+    await writeFile(join(projectDirectory, "project.yaml"), projectYaml("pilot-app"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  pilot-app:", "    path: checkouts/pilot-app", ""].join("\n"));
+    const directory = join(root, "workstreams", "pilot-silent");
+    await mkdir(directory, { recursive: true });
+    await writeFile(join(directory, "PLAN.md"), slicedPlan("pilot-silent", ["pilot-app"], 1, "0.1"));
+
+    const report = await readPortfolioWakeReport(root);
+    const workstream = report.workstreams.find((item) => item.id === "pilot-silent");
+
+    expect(workstream?.lifecycle?.state).toBe("needs-owner-decision");
+    expect(workstream?.lifecycle?.detail).toBe("No owner decision names a declared slice of plan revision 0.1.");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
 test("derives remote delivery lifecycle from a closeout-bearing commit instead of plan execution state", async () => {
   const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
   try {

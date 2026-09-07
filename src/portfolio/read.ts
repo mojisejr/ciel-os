@@ -428,6 +428,62 @@ function decisionAuthorizesPlan(event: WorkstreamEvent, workstream: PortfolioWor
   return workstream.executionPhase !== null && readString(evidence, "execution_phase") === workstream.executionPhase;
 }
 
+// A decision that names this workstream but misses a requirement authorizes
+// nothing, and the join that drops it leaves needs-owner-decision saying no
+// decision exists. That is true of the join and false of the repository: the
+// event is sitting beside the plan, and the only signal its writer gets is a
+// lifecycle that fails to change. Name it and what it missed instead.
+//
+// Kept to a decision, decided, recorded for this workstream. Anything looser
+// starts guessing which event someone meant, and a wrong guess here is worse
+// than silence because it sends a reader to the wrong file.
+function unreadDecision(
+  workstream: PortfolioWorkstream,
+  events: WorkstreamEvent[]
+): { event: WorkstreamEvent; unmet: string[] } | null {
+  const relativePlanPath = `workstreams/${workstream.id}/PLAN.md`;
+
+  for (const event of [...events].reverse()) {
+    const outcome = isRecord(event.value.outcome) ? event.value.outcome : {};
+    if (readString(event.value, "type") !== "decision" || readString(outcome, "status") !== "decided") {
+      continue;
+    }
+
+    const evidence = isRecord(event.value.evidence) ? event.value.evidence : {};
+    const recordedBy = isRecord(event.value.recorded_by) ? event.value.recorded_by : {};
+    const unmet: string[] = [];
+
+    if (event.lane !== workstream.lane) {
+      unmet.push(`it is recorded on lane ${event.lane} and this workstream runs on ${workstream.lane}`);
+    }
+    if (readString(recordedBy, "human") === null) {
+      unmet.push("recorded_by.human names nobody, so no owner is recorded as deciding");
+    }
+    // readString rejects a list as well as a missing key, which is why the
+    // wording says single value: writing evidence.plan as a list is the way
+    // this was first got wrong.
+    if (readString(evidence, "plan") !== relativePlanPath) {
+      unmet.push(`evidence.plan must be the single value ${relativePlanPath}`);
+    }
+    if (readString(evidence, "plan_revision") !== workstream.planRevision) {
+      unmet.push(`evidence.plan_revision must be the single value ${workstream.planRevision}`);
+    }
+    const namesPhase = workstream.executionPhase !== null
+      && readString(evidence, "execution_phase") === workstream.executionPhase;
+    if (decisionAuthorizedSlice(event, workstream) === null && !namesPhase) {
+      unmet.push(workstream.declaredSlices.length > 0
+        ? `evidence.slice must be one of ${workstream.declaredSlices.join(", ")}`
+        : `evidence.execution_phase must be ${String(workstream.executionPhase)}`);
+    }
+
+    if (unmet.length > 0) {
+      return { event, unmet };
+    }
+  }
+
+  return null;
+}
+
 function decisionAuthorizesParallelism(event: WorkstreamEvent): boolean {
   const outcome = isRecord(event.value.outcome) ? event.value.outcome : {};
   return readString(outcome, "parallelism") === "approved";
@@ -828,15 +884,23 @@ async function deriveLifecycle(
       continue;
     }
     if (decision === null) {
-      const dangling = unsliceableDeliveryCloseout(workstream, eventsByWorkstream.get(workstream.id) ?? []);
-      const gateDetail = workstream.executionPhase === null
-        ? `No owner decision names a declared slice of plan revision ${workstream.planRevision}.`
-        : `No owner decision authorizes plan revision ${workstream.planRevision} phase ${workstream.executionPhase}.`;
+      const workstreamEvents = eventsByWorkstream.get(workstream.id) ?? [];
+      const dangling = unsliceableDeliveryCloseout(workstream, workstreamEvents);
+      const unread = unreadDecision(workstream, workstreamEvents);
+      const clauses = [
+        workstream.executionPhase === null
+          ? `No owner decision names a declared slice of plan revision ${workstream.planRevision}.`
+          : `No owner decision authorizes plan revision ${workstream.planRevision} phase ${workstream.executionPhase}.`
+      ];
+      if (unread !== null) {
+        clauses.push(`A decision at ${relative(repositoryPath, unread.event.path)} is recorded for this workstream but authorizes nothing: ${unread.unmet.join("; ")}. Record a corrected decision beside it rather than editing it.`);
+      }
+      if (dangling !== null) {
+        clauses.push(`A closeout at ${relative(repositoryPath, dangling.path)} is worded as a delivery of this workstream but names no slice, so it does not finish a plan that declares ${workstream.declaredSlices.join(", ")}; either the plan revision or that closeout is out of date.`);
+      }
       workstream.lifecycle = {
         decisionEventPath: null,
-        detail: dangling === null
-          ? gateDetail
-          : `${gateDetail} A closeout at ${relative(repositoryPath, dangling.path)} is worded as a delivery of this workstream but names no slice, so it does not finish a plan that declares ${workstream.declaredSlices.join(", ")}; either the plan revision or that closeout is out of date.`,
+        detail: clauses.join(" "),
         state: "needs-owner-decision"
       };
       continue;
