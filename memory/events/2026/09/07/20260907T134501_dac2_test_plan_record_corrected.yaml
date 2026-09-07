@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T134501_dac2_test_plan_record_corrected
+type: closeout
+recorded_at: 2026-09-07T13:45:01+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Correct the delivery meaning of the preceding plan-maintenance record. This
+    record names no slice because plan revision 0.2 is ready for owner review
+    while slice 2 remains a separate, unauthorized implementation decision.
+
+outcome:
+  status: plan-revision-prepared-for-owner-review
+  completed:
+    - PLAN.md revision 0.2 defines the required local unit and workbook golden test contract described by the preceding record.
+    - The record now uses a non-delivery status so it does not offer the eight-slice workstream as finished.
+  not_completed:
+    - No application repository file changed.
+    - No slice 2 calculation or test was implemented.
+    - Slice 2 remains unauthorized and idle.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: 46ef25e871d83258878df9cb029ab73c714b3a26
+    branch: docs/dac2-slice2-test-plan
+  pull_request:
+    number: 47
+    url: https://github.com/mojisejr/ciel-os/pull/47
+    observed_head: 46ef25e871d83258878df9cb029ab73c714b3a26
+  supersedes: memory/events/2026/09/07/20260907T134304_dac2_slice2_test_plan_ready.yaml
+  reason_corrected: >-
+    The preceding closeout used a delivery status reserved for a workstream
+    delivery. Wake correctly reported that such a status without a slice cannot
+    finish an eight-slice plan. Append-only history keeps that record and this
+    later record states the intended plan-maintenance meaning.
+  checks:
+    - git diff --check passes for the plan revision.
+    - bun run check passes with 44 tests and 188 assertions.
+    - Wake reports plan revision 0.2 idle and requiring a new owner decision.
+
+unresolved:
+  - The application scripts/check.sh does not yet invoke cargo test -p calc; slice 2 is responsible for adding it together with the tests.
+  - Browser E2E automation is deliberately undecided until the real interface exposes which flows justify it.
+  - The plan says seven consecutive slices but declares eight.
+  - The plan calls DESIGN.md's acceptance list seven rules while DESIGN.md contains eight.
+  - Source installation of cargo-leptos 0.3.7 with Rust 1.88 currently resolves transitive crates requiring Rust 1.89 and 1.90; the application README records the verified official-prebuilt path.
+  - Auth session extraction compiles, but authentication behaviour belongs to slice 4.
+  - GitHub requires a pull request but zero approving reviews; owner review remains a CIEL gate.
+  - Ten explanation drafts and four design questions remain owner work.
+  - Workbook parity proves agreement with the workbook, not that its Thai tax formulas are legally current or correct.
+
+next_action:
+  action: >-
+    Review and merge HQ pull request 47, then synchronize HQ to clean current
+    main and delete only the verified merged topic branch. Starting slice 2
+    still requires a separate owner decision for plan revision 0.2 slice 2.
+  acceptance_check:
+    - This corrective record is reachable from the fetched pull-request head.
+    - After merge, this record is reachable from fetched origin/main and HQ is clean and current.
