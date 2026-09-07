@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T112500_dac2_plan_ready_for_merge
+type: closeout
+recorded_at: 2026-09-07T11:25:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-durian-smart-account-001
+  objective: >-
+    Present the DAC2 plan, design, and authorization for owner merge. This
+    closeout names no slice. The plan is not the delivery, and all eight declared
+    slices remain undelivered.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  completed:
+    - PLAN.md at revision 0.1 declares eight slices and carries the workbook facts
+      it needs, so it does not depend on the owner-held asset being in a clone.
+    - DESIGN.md at revision 0.2 records the interface, its measured contrast, its
+      user flow, and the explanation affordance the owner asked for.
+    - The workstream lifecycle derives authorized at plan revision 0.1 slice 1.
+  not_completed:
+    - No application code exists and no repository has been created.
+    - Nothing in the pinned stack has been compiled together.
+    - Slice 1 is authorized and deliberately not started, by the owner's ordering.
+
+evidence:
+  repository:
+    head: 0f4fa4d269d030cf4238fb65c9a5b920e3899530
+    branch: feat/dac2-durian-smart-account-plan
+    pull_request: https://github.com/mojisejr/ciel-os/pull/43
+  checks:
+    - bun run wake reports no validation errors, eight declared slices at revision
+      0.1, and lifecycle authorized.
+    - bun run check passes with 38 tests and 166 assertions.
+  events_on_this_branch:
+    - 20260907T104500_dac2_plan_authorized.yaml is the owner's decision as first
+      written. It is inert and is kept as written.
+    - 20260907T105500_dac2_plan_delivered.yaml was prepared before the inert
+      decision was noticed, so its record of this branch is incomplete rather than
+      wrong. This event is the branch's final closeout.
+    - 20260907T111500_dac2_decision_reshaped.yaml restates the same authorization
+      in the shape the plan reader acts on.
+
+unresolved:
+  - Wake cannot see a pull request. Found by the owner noticing PR 42 unmerged for
+    six hours, not by any report.
+  - Wake cannot see a decision event it fails to parse. Found by an agent watching a
+    lifecycle fail to change, not by any report. AGENTS.md does not state that
+    evidence.plan, evidence.plan_revision, and evidence.slice are required scalars.
+  - Ten of the fourteen explanations in DESIGN.md have no wording. The wording is the
+    owner's domain knowledge.
+  - Four open questions remain in DESIGN.md.
+  - This branch produced two closeouts because the first was prepared too early. The
+    ordering the README states, closeout last against the observed head, exists to
+    prevent exactly that, and it was not followed.
+
+next_action:
+  action: >-
+    Merge this pull request. Then open a CIEL workstream covering both blind spots
+    this session found, before DAC2 slice 1 opens a branch.
+  acceptance_check:
+    - This closeout is reachable from origin/main.
+    - The Wake workstream plan names both the pull-request blindness and the
+      unreadable-decision blindness.
