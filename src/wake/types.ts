@@ -28,6 +28,29 @@ export interface WakeReport {
         name: string;
         openedOn: string | null;
       }>;
+      // Branches carrying commits that have not reached fetched origin/main.
+      // Work that is finished and pushed leaves no other trace in any report,
+      // so a review waiting on the owner is invisible until someone opens the
+      // forge and looks. Wake cannot see a pull request and does not pretend to;
+      // it reports branches, which local Git can observe. Local heads and
+      // remote-tracking refs are grouped by name, because whether the work is
+      // pushed is the part that says someone else may be waiting on it.
+      unmergedWork: Array<{
+        name: string;
+        local: boolean;
+        pushed: boolean;
+        ahead: number;
+        lastCommitAt: string | null;
+        current: boolean;
+      }>;
+      // Every merge-state claim above reads refs/remotes/origin/main exactly as
+      // the last fetch left it, and Wake never fetches. Reporting how old that
+      // view is separates a report honest about its own age from one that
+      // asserts merge state as though the view were current.
+      remoteView: {
+        fetchedAt: string | null;
+        detail: string;
+      };
       worktrees: Array<{
         path: string;
         head: string;

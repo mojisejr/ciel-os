@@ -1,0 +1,84 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T134500_wake_blind_spots_slice2_delivered
+type: closeout
+recorded_at: 2026-09-07T13:45:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-wake-blind-spots-001
+  objective: >-
+    Report work that is committed, possibly pushed, and not yet on origin/main,
+    and state how old this checkout's view of origin/main is. Slice 2 is the last
+    declared slice, so this closeout finishes plan revision 0.1.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  completed:
+    - observed.repository.unmergedWork reports branches carrying commits not
+      reachable from fetched origin/main, grouped by name across local heads and
+      remote-tracking refs, with how far ahead each is, when it last moved,
+      whether it is pushed, and whether it is the branch the checkout stands on.
+    - observed.repository.remoteView states when a fetch last recorded itself in
+      this checkout, and says plainly when none has, so a merge-state claim is no
+      longer made as though the view were current.
+    - Three tests were added and all three fail with src/wake reverted.
+    - Slice 1 delivered the other half, naming a decision event that authorizes
+      nothing rather than dropping it.
+  not_completed:
+    - Nothing reads real pull request state. That was excluded by the plan with
+      the evidence that would bring it back, and remains excluded.
+
+evidence:
+  plan: workstreams/ciel-wake-blind-spots-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: f8af22e5589f11b4a6338e621d8d19d3686bfb6a
+    branch: feat/wake-unmerged-work
+    pull_request: https://github.com/mojisejr/ciel-os/pull/45
+  delivery:
+    target_branch: main
+    topic_branch: feat/wake-unmerged-work
+  checks:
+    - bun run check passes with 44 tests and 188 assertions, up from 41 and 176.
+    - With src/wake reverted to 32bc9e6741e4df3c6b622f66e48f8a819133a72a and the
+      tests left in place, all three new tests fail.
+    - Running wake on this branch reports this branch as pushed, two commits ahead,
+      and marked current. The feature demonstrates itself on the change that adds it.
+  boundary:
+    - No network call, no gh invocation, and no fetch was added. Every fact comes
+      from git for-each-ref, merge-base, rev-list, and rev-parse.
+  framing_check: >-
+    The plan asserted both defects share one shape and asked whether that was
+    rhetoric. It held only partly. Both are the same failure to report a thing
+    that is present but unread, and both were found by a person rather than a
+    report. The machinery is unrelated: slice 1 reads events already in memory and
+    adds no Git command, slice 2 adds four and touches no event. The shared shape
+    is real and the shared implementation was never there.
+
+unresolved:
+  - Whether reporting every unmerged ref stays quiet in ordinary use is still
+    unmeasured. This HQ keeps few branches; a checkout that keeps many will see
+    more. Narrowing would be a revision, not a failure.
+  - Neither slice helps a session that never fetches. Wake cannot fetch without
+    leaving the evidence boundary, so the age report is the whole of the answer
+    and it depends on a human reading it.
+  - The age comes from the modification time of the file a fetch writes, which is
+    a filesystem observation rather than a Git one. It is correct for the question
+    asked, and it would be wrong if something other than a fetch touched that file.
+  - A decision whose workstream id is mistyped is still invisible, as slice 1 recorded.
+  - This closeout was first written with a colon inside two list entries, which made
+    it unparseable YAML. It recorded nothing while in that state, so it was repaired
+    in place before merge rather than superseded; the append-only rule protects a
+    committed record, and a file that parses as nothing is not yet one.
+
+next_action:
+  action: >-
+    Merge this pull request. The workstream is then finished, and DAC2 slice 1 is
+    the next authorized work; its decision is already recorded on main.
+  acceptance_check:
+    - This closeout is reachable from origin/main.
+    - Wake derives this workstream as completed once the checkout is clean, current,
+      and branch-cleaned.

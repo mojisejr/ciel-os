@@ -296,3 +296,100 @@ test("keeps a merged standing branch visible after the checkout returns to main"
     await rm(fixture.path, { force: true, recursive: true });
   }
 });
+
+test("reports work that has not reached origin/main, and says whether it is pushed", async () => {
+  const fixture = await createRepositoryFixture();
+
+  try {
+    git(fixture.path, ["update-ref", "refs/remotes/origin/main", git(fixture.path, ["rev-parse", "HEAD"])]);
+
+    // Everything merged: the report is silent, so a clean checkout gains no noise.
+    let report = await readWakeReport(fixture.path);
+    expect(report.observed.repository.unmergedWork).toEqual([]);
+
+    // A branch with a commit on it, not pushed. This is the shape of work in
+    // progress, and it is marked as the branch the checkout stands on.
+    git(fixture.path, ["switch", "-c", "feat/in-progress"]);
+    await writeFile(join(fixture.path, "work.md"), "# work\n");
+    git(fixture.path, ["add", "work.md"]);
+    git(fixture.path, ["commit", "-m", "work in progress"]);
+
+    report = await readWakeReport(fixture.path);
+    expect(report.observed.repository.unmergedWork).toEqual([
+      expect.objectContaining({ ahead: 1, current: true, local: true, name: "feat/in-progress", pushed: false })
+    ]);
+
+    // The same branch, now pushed. This is the case the owner found by opening
+    // the forge: work handed over and waiting, with nothing in any report
+    // saying so. Standing somewhere else must not hide it.
+    git(fixture.path, ["update-ref", "refs/remotes/origin/feat/in-progress", git(fixture.path, ["rev-parse", "HEAD"])]);
+    git(fixture.path, ["switch", "main"]);
+
+    report = await readWakeReport(fixture.path);
+    expect(report.observed.repository.unmergedWork).toEqual([
+      expect.objectContaining({ ahead: 1, current: false, local: true, name: "feat/in-progress", pushed: true })
+    ]);
+
+    // Pushed from another machine and never checked out here: visible only
+    // because remote-tracking refs are walked as well as local heads.
+    git(fixture.path, ["branch", "-D", "feat/in-progress"]);
+    report = await readWakeReport(fixture.path);
+    expect(report.observed.repository.unmergedWork).toEqual([
+      expect.objectContaining({ current: false, local: false, name: "feat/in-progress", pushed: true })
+    ]);
+
+    // Merged: it stops being reported without anything being deleted.
+    git(fixture.path, ["update-ref", "refs/remotes/origin/main", git(fixture.path, ["rev-parse", "refs/remotes/origin/feat/in-progress"])]);
+    report = await readWakeReport(fixture.path);
+    expect(report.observed.repository.unmergedWork).toEqual([]);
+  } finally {
+    await rm(fixture.path, { force: true, recursive: true });
+  }
+});
+
+test("reports unpushed commits on main itself, which the workflow forbids", async () => {
+  const fixture = await createRepositoryFixture();
+
+  try {
+    git(fixture.path, ["update-ref", "refs/remotes/origin/main", git(fixture.path, ["rev-parse", "HEAD"])]);
+    await writeFile(join(fixture.path, "direct.md"), "# committed straight to main\n");
+    git(fixture.path, ["add", "direct.md"]);
+    git(fixture.path, ["commit", "-m", "tracked change made directly on main"]);
+
+    const report = await readWakeReport(fixture.path);
+
+    expect(report.observed.repository.unmergedWork).toEqual([
+      expect.objectContaining({ ahead: 1, current: true, name: "main", pushed: false })
+    ]);
+  } finally {
+    await rm(fixture.path, { force: true, recursive: true });
+  }
+});
+
+test("says how old this checkout's view of origin/main is, and says so plainly when no fetch is recorded", async () => {
+  const fixture = await createRepositoryFixture();
+
+  try {
+    // No origin/main at all: there is no view to age, and Wake says that rather
+    // than reporting an age it cannot support.
+    let report = await readWakeReport(fixture.path);
+    expect(report.observed.repository.remoteView.fetchedAt).toBeNull();
+    expect(report.observed.repository.remoteView.detail).toContain("no view of it to age");
+
+    // origin/main exists but nothing has fetched in this checkout. Every
+    // merge-state claim then rests on a view of unknown age, and the report
+    // says so instead of implying the view is current.
+    git(fixture.path, ["update-ref", "refs/remotes/origin/main", git(fixture.path, ["rev-parse", "HEAD"])]);
+    report = await readWakeReport(fixture.path);
+    expect(report.observed.repository.remoteView.fetchedAt).toBeNull();
+    expect(report.observed.repository.remoteView.detail).toContain("unknown age");
+
+    // Once a fetch has recorded itself, the age is reported as an observation.
+    await writeFile(join(fixture.path, ".git", "FETCH_HEAD"), "");
+    report = await readWakeReport(fixture.path);
+    expect(report.observed.repository.remoteView.fetchedAt).not.toBeNull();
+    expect(report.observed.repository.remoteView.detail).toContain("Wake does not fetch");
+  } finally {
+    await rm(fixture.path, { force: true, recursive: true });
+  }
+});
