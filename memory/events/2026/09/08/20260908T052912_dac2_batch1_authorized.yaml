@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20260908T052912_dac2_batch1_authorized
+type: decision
+recorded_at: 2026-09-08T05:29:12+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-durian-smart-account-001
+  objective: >-
+    Consolidate the five remaining implementation slices into three delivery
+    batches and authorize the first batch, account and trust, to proceed under
+    the existing owner-reviewed remote workflow.
+  scope:
+    - Implement registration, verified activation, login, logout, and server-side sessions.
+    - Implement password reset and local Mailpit delivery without an external mail provider or SaaS.
+    - Add the plan-mandated unit, PostgreSQL integration, and Mailpit integration tests.
+    - Update the simple authentication screens and DESIGN.md registration flow without adding profile fields or an avatar.
+  out_of_scope:
+    - Plan input, dashboard, KPI, completeness, tax, or scenario interfaces.
+    - Deployment, real outbound mail, rate limiting, CI, or browser E2E automation.
+    - Authorization to begin slices 5 or 6.
+
+outcome:
+  status: decided
+  completed:
+    - The owner selected three application delivery batches and authorized the first to begin.
+    - Plan revision 0.4 maps the old slices 4 and 5 to slice 4, the old slice 6 to slice 5, and the old slices 7 and 8 to slice 6.
+    - Each application batch retains a companion HQ evidence pull request and an owner merge gate before the next batch.
+  not_completed:
+    - No batch 1 application implementation or test result is claimed by this decision.
+    - Slices 5 and 6 remain unauthorized.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "4"
+  repository:
+    head: 068d80a08e1e3bbc79fb2d37d22b03858db1f1e1
+    branch: feat/dac2-batch-1
+
+unresolved:
+  - The existing users table enforces only exact-text uniqueness; batch 1 must migrate and prove the canonical identity constraint.
+  - Mailpit delivery and both token lifecycles remain unproved until batch 1 runs their integration suites.
+  - Real outbound mail, deployment, HTTPS, secure production cookies, and rate limiting remain outside this plan.
+  - Browser E2E automation remains deferred until a real interface shows which flows justify it.
+  - Ten explanation drafts and the icon set remain owner work before the plan-workspace and analysis batches.
+
+next_action:
+  action: >-
+    Implement and prove plan revision 0.4 slice 4 in the application repository,
+    then prepare its application delivery pull request and companion HQ closeout
+    pull request for owner review.
+  acceptance_check:
+    - All slice 4 unit, PostgreSQL, and Mailpit integration suites pass locally.
+    - The application and HQ pull-request heads each contain their required evidence before review.
