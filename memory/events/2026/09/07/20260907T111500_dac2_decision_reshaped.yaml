@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T111500_dac2_decision_reshaped
+type: decision
+recorded_at: 2026-09-07T11:15:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-durian-smart-account-001
+  objective: >-
+    Restate the owner's authorization of plan revision 0.1 and slice 1 in the
+    shape the plan reader acts on. The authorization itself is unchanged; the
+    earlier event recorded it in a form the machinery does not read.
+  scope:
+    - Authorize plan revision 0.1 and its slice 1.
+  out_of_scope:
+    - Changing what the owner authorized.
+    - Editing the earlier event, which stays as written.
+
+outcome:
+  status: decided
+  completed:
+    - The owner authorized plan revision 0.1, its eight declared slices, and slice 1.
+    - DESIGN.md revision 0.2 is authorized as the owner's surface for appearance
+      and interaction.
+  not_completed:
+    - Slices 2 through 8 are not authorized by this event.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  supersedes: memory/events/2026/09/07/20260907T104500_dac2_plan_authorized.yaml
+  why_restated: >-
+    The earlier event carries the same decision but wrote evidence.plan as a list
+    and named neither plan_revision nor slice. decisionAuthorizesPlan in
+    src/portfolio/read.ts requires all three as scalars, so the event validated,
+    was committed, and authorized nothing. Wake continued to report
+    needs-owner-decision and said nothing about the event sitting beside the plan.
+
+unresolved:
+  - A malformed decision event is silently inert. Wake reports the absence of a
+    decision, never the presence of one it cannot read, so the only signal is a
+    lifecycle that does not change when the owner has in fact decided. This is the
+    same shape of defect as Wake's inability to see a pull request, found the same
+    way, by a human noticing rather than by a report.
+  - AGENTS.md states that a decision authorizes the plan revision and slice its
+    evidence names, but does not state that evidence.plan, evidence.plan_revision,
+    and evidence.slice are required scalar keys. Nothing tells a writer the shape.
+
+next_action:
+  action: >-
+    Carry both findings into the Wake workstream the owner has asked for next: a
+    pull request Wake cannot see, and a decision event Wake cannot read. Neither
+    is reported today.
+  acceptance_check:
+    - The DAC2 workstream lifecycle leaves needs-owner-decision on this branch.
+    - The Wake workstream plan names both findings.

@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T104500_dac2_plan_authorized
+type: decision
+recorded_at: 2026-09-07T10:45:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-durian-smart-account-001
+  objective: >-
+    Authorize plan revision 0.1 and its slice 1, so that the DAC2 application
+    repository may be created and the pinned Rust stack proved to compile
+    together.
+  scope:
+    - Authorize plan revision 0.1 as written, including its eight declared slices.
+    - Authorize slice 1 to create the public GitHub repository, its local checkout,
+      its project identity, and a workspace that proves the pinned versions coexist.
+    - Authorize DESIGN.md revision 0.2 as the owner's surface for appearance and interaction.
+  out_of_scope:
+    - Slices 2 through 8, which are authorized separately.
+    - Deployment, hosting, a managed database, and any external service beyond GitHub.
+    - Recording actual results, file export, backup, and continuous integration,
+      each excluded by an owner decision recorded in the plan with its reopening condition.
+
+outcome:
+  status: decided
+  completed:
+    - The owner reviewed the plan and design and stated they are ready to proceed.
+    - The stack is fixed at leptos 0.8.20, axum 0.8.9, sqlx 0.8.6, axum-login 0.18.0,
+      and postgres 17-alpine, with the sqlx pin chosen so that authentication is not
+      hand-written to escape a version mismatch.
+    - The repository is three crates named for what they hold, after the build tool's
+      own templates showed that two of the five first proposed were not required.
+    - Cost lines carry a kind, because four efficiency KPIs read specific rows and a
+      free label would have made the calculation match on a Thai string.
+    - No KPI target is a constant, no closed plan is writable, and no screen shows a
+      verdict against a target nobody set.
+  not_completed:
+    - Nothing in the pinned stack has been compiled together. Slice 1 exists to establish it.
+    - Ten of the fourteen explanations in DESIGN.md have no wording yet; the owner writes them.
+
+evidence:
+  plan:
+    - workstreams/dac2-durian-smart-account-001/PLAN.md at revision 0.1
+    - workstreams/dac2-durian-smart-account-001/DESIGN.md at revision 0.2
+  source_material:
+    - The owner-held workbook, sha256
+      49296f67fae536733593350f3ee493811e9231763229ff5c4faded319cbb479e, read directly.
+      Its cached results were recomputed independently and agree; they become the
+      golden fixture in slice 2.
+  version_checks:
+    - Crate versions and dependency requirements were read from the crates.io API.
+    - The Leptos templates and the cargo-leptos README were read from their repositories.
+    - Local Docker images were listed on this machine; postgres:17-alpine is cached at 17.10.
+
+unresolved:
+  - Whether Leptos server functions extract the axum-login session cleanly is untested.
+  - axum-login 0.18.0 has not been published since July 2025.
+  - Whether lettre reaches Mailpit without extra configuration is untested.
+  - Address verification and rate limiting are deferred with one shared reopening condition.
+  - Parity with the workbook proves agreement with the workbook, not correctness under Thai tax law.
+
+next_action:
+  action: >-
+    Do not begin slice 1 yet. The owner directed that the Wake pull-request
+    blindness be addressed first, because DAC2 will produce many pull requests
+    and Wake cannot see any of them.
+  acceptance_check:
+    - Slice 1 starts only after the Wake work has its own plan and owner decision.
+    - The start gate passes in both repositories before slice 1 opens a branch.

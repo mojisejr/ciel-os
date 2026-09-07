@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T105500_dac2_plan_delivered
+type: closeout
+recorded_at: 2026-09-07T10:55:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-durian-smart-account-001
+  objective: >-
+    Land the plan and design for the DAC2 dogfood on main, so that slice 1 has an
+    authorized plan to execute against. This closeout names no slice: the plan is
+    not the delivery, and the eight declared slices remain undelivered.
+
+outcome:
+  status: plan-landed
+  completed:
+    - PLAN.md at revision 0.1 declares eight slices, records the owner's alignment
+      decisions, and carries the workbook facts it needs so it does not depend on
+      the owner-held asset being present in a clone.
+    - DESIGN.md at revision 0.2 records the interface, its measured contrast, its user
+      flow, and the explanation affordance, and is the owner's surface for changing them.
+    - A decision event authorizes revision 0.1 and slice 1.
+  not_completed:
+    - No application code exists and no repository has been created.
+    - Nothing in the pinned stack has been compiled together.
+    - Slice 1 is authorized but deliberately not started.
+
+evidence:
+  repository:
+    head: 023853d1bb8b5a1b4acd80c98ceaf1d637b6ce1b
+    branch: feat/dac2-durian-smart-account-plan
+    pull_request: https://github.com/mojisejr/ciel-os/pull/43
+  checks:
+    - bun run wake reports no validation errors and no validation warnings,
+      and reads eight declared slices at plan revision 0.1.
+    - bun run check passes with 38 tests and 166 assertions.
+  decision:
+    - memory/events/2026/09/07/20260907T104500_dac2_plan_authorized.yaml
+  corrections_during_planning:
+    - An earlier draft proposed five crates. Reading the Leptos and cargo-leptos
+      templates removed two, and dropping repository traits with a single
+      implementor removed a third layer.
+    - An earlier draft modelled cost lines as free rows. Reading the workbook again
+      showed four efficiency KPIs read specific rows by position, so cost lines now
+      carry a kind.
+    - An earlier draft assumed orchard owners aged forty and up. The owner corrected
+      this to thirty and up and application-fluent, which changed the interface's
+      density but not its contrast, target size, or one-thumb requirement.
+
+unresolved:
+  - Wake cannot see a pull request. This was found during this planning session, by
+    the owner noticing PR 42 unmerged rather than by any report, and it is the reason
+    this workstream's next action is not slice 1.
+  - Ten of the fourteen explanations in DESIGN.md have no wording, and the wording is
+    the owner's domain knowledge rather than the implementer's.
+  - Four open questions remain in DESIGN.md, including whether two decimal places on
+    the dashboard hero survive contact with a real phone.
+
+next_action:
+  action: >-
+    Merge this pull request, then open a CIEL workstream for Wake's pull-request
+    blindness before starting DAC2 slice 1. The owner directed that ordering.
+  acceptance_check:
+    - This closeout is reachable from origin/main.
+    - The Wake workstream has a plan and an owner decision before slice 1 opens a branch.
