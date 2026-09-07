@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T192320_dac2_slice3_authorized
+type: decision
+recorded_at: 2026-09-07T19:23:20+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Authorize slice 3 after verifying the slice 2 merges, synchronizing and
+    cleaning both repositories, and confirming that the persistence acceptance
+    criteria and required integration tests are already settled in plan revision 0.2.
+
+outcome:
+  status: decided
+  decision: >-
+    Proceed with slice 3 without another owner checkpoint. Keep the work to
+    PostgreSQL persistence, ownership enforcement, closed-plan enforcement,
+    deep duplication, and the real-database integration tests named by the plan.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: d6ad44114e2924bfbdeee3d17bc44b41c1a5d8c8
+    branch: main
+  merged_delivery:
+    hq_pull_request: 48
+    hq_merge: d6ad44114e2924bfbdeee3d17bc44b41c1a5d8c8
+    application_pull_request: 2
+    application_merge: e47502ecc21fdd9317222bb24852da6e81b870de
+  readiness:
+    - Both clean local main branches matched their fetched origin/main revisions.
+    - Both merged topic branches had no commits outside origin/main and no open pull request before deletion.
+    - Wake reported no validation error or warning after cleanup.
+    - The PostgreSQL 17 container reached healthy state.
+    - The existing application check passed before slice 3 work began.
+    - Plan revision 0.2 already specifies the slice 3 schema boundary and real-PostgreSQL integration tests.
+
+unresolved:
+  - Authentication and password semantics remain slice 4 work; a user row in slice 3 is ownership identity only.
+  - Browser E2E automation remains deferred until an interface exists.
+  - The plan says seven consecutive slices while declaring eight.
+  - The plan calls DESIGN.md's acceptance list seven rules while DESIGN.md contains eight.
+  - Human review and merge remain owner actions even though GitHub requires zero approving reviews.
+
+next_action:
+  action: >-
+    Implement slice 3 on the application topic branch, prove it against isolated
+    databases created on the real local PostgreSQL container, then prepare the
+    application and HQ draft pull requests with the closeout committed last.
+  acceptance_check:
+    - A complete ten-grade plan round-trips without loss.
+    - A second user cannot read or mutate another user's plan through any exposed store operation.
+    - Every mutation of a closed plan is refused by the store.
+    - A duplicated plan is independent of its source.
