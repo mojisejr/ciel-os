@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T134946_dac2_slice2_authorized
+type: decision
+recorded_at: 2026-09-07T13:49:46+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-durian-smart-account-001
+  objective: >-
+    Authorize slice 2 of plan revision 0.2 after the owner reviewed and merged
+    the local automated test contract.
+  scope:
+    - Implement the pure Rust calculation engine and its risk-based module unit tests.
+    - Add the workbook golden regression suite and local cargo test gate.
+    - Prove native tests, dependency purity, and wasm32 compilation.
+  out_of_scope:
+    - Database persistence, user accounts, authentication, or Docker runtime work.
+    - User interface implementation, browser E2E automation, GitHub Actions, or CI.
+
+outcome:
+  status: decided
+  completed:
+    - The owner authorized plan revision 0.2 slice 2 to begin.
+    - The owner kept browser E2E and CI outside this slice.
+  not_completed:
+    - No slice 2 implementation claim is made by this decision.
+    - Slices 3 through 8 remain unauthorized.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: 53848c695e9c2c63f60ae00c0db951032a2e00cc
+    branch: feat/dac2-slice-2
+
+unresolved:
+  - Workbook parity proves agreement with the workbook, not that its Thai tax formulas are legally current or correct.
+  - Browser E2E automation remains an owner decision for a later interface slice.
+  - The plan says seven consecutive slices but declares eight.
+  - The plan calls DESIGN.md's acceptance list seven rules while DESIGN.md contains eight.
+
+next_action:
+  action: >-
+    Implement and prove slice 2 on the application topic branch, then prepare
+    the application and HQ draft pull requests with the slice closeout last.
+  acceptance_check:
+    - cargo test -p calc passes the module unit and workbook golden suites.
+    - crates/calc builds for wasm32-unknown-unknown and remains free of I/O dependencies.
