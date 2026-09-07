@@ -1,0 +1,75 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T132301_dac2_slice1_closeout_resequenced
+type: closeout
+recorded_at: 2026-09-07T13:23:01+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Restate the slice 1 delivery after releasing its execution marker, so a
+    finished intermediate slice is not reported as a live or abandoned session.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  completed:
+    - Slice 1 remains delivered exactly as recorded in the earlier closeout.
+    - The plan execution phase and state are now none and idle, because no
+      session is executing the lane while the two pull requests await review.
+    - This append-only record restores the required ordering with the closeout
+      after the plan-state change rather than editing the committed event.
+  not_completed:
+    - No slice 1 implementation or proof changed after the earlier closeout.
+    - Slices 2 through 8 remain untouched and unauthorized.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 98e40e264d86acb11f2189584984da77479b8ad8
+    branch: feat/dac2-slice-1
+  delivery:
+    target_branch: main
+    topic_branch: feat/dac2-slice-1
+  hq_pull_request:
+    number: 46
+    url: https://github.com/mojisejr/ciel-os/pull/46
+  application_pull_request:
+    number: 1
+    url: https://github.com/mojisejr/dac2-durian-smart-account/pull/1
+    observed_head: a49134d8b5e5425f81418e87ef7aa11e533271c2
+  supersedes: memory/events/2026/09/07/20260907T131827_dac2_slice1_stack_proof.yaml
+  reason_resequenced: >-
+    The earlier closeout was written while the plan still said executing. Wake
+    uses executing as a live-lane claim and only derives terminal delivery from
+    the last declared slice, so slice 1 would have stayed reported as claimed.
+    Releasing the lane required a plan commit, and append-only history then
+    required this closeout to follow it.
+  checks:
+    - The earlier closeout records the complete stack, runtime, database, dependency-boundary, and CIEL proof.
+    - After the plan-state change, bun run check passes with 44 tests and 188 assertions.
+    - Wake validates both closeouts and reports the DAC2 binding available with no validation error or warning.
+
+unresolved:
+  - The plan says seven consecutive slices but declares eight.
+  - The plan calls DESIGN.md's acceptance list seven rules while DESIGN.md contains eight.
+  - Source installation of cargo-leptos 0.3.7 with Rust 1.88 currently resolves
+    transitive crates requiring Rust 1.89 and 1.90; the application README records
+    the verified official-prebuilt path.
+  - Auth session extraction compiles, but authentication behaviour belongs to slice 4.
+  - GitHub requires a pull request but zero approving reviews; owner review remains a CIEL gate.
+  - Ten explanation drafts and four design questions remain owner work.
+
+next_action:
+  action: >-
+    Review and merge application PR 1 first, then HQ PR 46. After both merges,
+    synchronize clean main branches and remove only verified merged topic branches.
+    Slice 2 requires a new owner decision.
+  acceptance_check:
+    - Application revision a49134d is reachable from its fetched origin/main.
+    - This closeout is reachable from CIEL's fetched origin/main.
+    - Wake reports both repositories clean and current after branch cleanup.

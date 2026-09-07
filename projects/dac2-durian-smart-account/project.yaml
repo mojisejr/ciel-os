@@ -1,0 +1,6 @@
+schema_version: ciel.project.v0.1
+id: dac2-durian-smart-account
+repository:
+  vcs: git
+  canonical_remote: github.com/mojisejr/dac2-durian-smart-account
+  default_branch: main

@@ -1,0 +1,123 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T131827_dac2_slice1_stack_proof
+type: closeout
+recorded_at: 2026-09-07T13:18:27+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Deliver plan revision 0.1 slice 1 by creating and binding the DAC2 repository,
+    then proving the pinned Rust full-stack layout against native, WebAssembly,
+    PostgreSQL, and offline SQLx builds.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  completed:
+    - Created the public DAC2 repository and protected main so pull requests are
+      required for the owner as administrator; force pushes and deletion are disabled.
+    - >-
+      Created the three planned crates: pure calc, PostgreSQL store, and one Leptos
+      package that builds an SSR binary and hydration library.
+    - Compiled a Leptos server function that extracts the axum-login session type,
+      so the integration boundary is exercised rather than merely named as dependencies.
+    - Ran the migration and startup query against PostgreSQL 17.10, served the SSR
+      page, and fetched its JavaScript and WebAssembly assets successfully.
+    - Generated and committed SQLx offline query metadata, then ran the complete
+      check with the database stopped.
+    - Proved calc has no sqlx, axum, leptos, or tokio dependency, and proved both
+      the hydration graph and generated browser bundle contain no sqlx.
+    - Moved DESIGN.md into the application repository and registered a verified
+      CIEL project identity and machine-local binding.
+  not_completed:
+    - Slices 2 through 8 are untouched and remain unauthorized.
+    - No calculation engine, product persistence, login behaviour, product UI,
+      deployment, hosted service, or continuous integration was built.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 1fc4dd5c930b0c4470605a1237eb8f4283359a6f
+    branch: feat/dac2-slice-1
+  delivery:
+    target_branch: main
+    topic_branch: feat/dac2-slice-1
+  hq_pull_request:
+    number: 46
+    url: https://github.com/mojisejr/ciel-os/pull/46
+    base: main
+    head: feat/dac2-slice-1
+    observed_head: 1fc4dd5c930b0c4470605a1237eb8f4283359a6f
+  application_repository:
+    id: dac2-durian-smart-account
+    url: https://github.com/mojisejr/dac2-durian-smart-account
+    visibility: public
+    revision: a49134d8b5e5425f81418e87ef7aa11e533271c2
+    branch_protection:
+      require_pull_request: true
+      enforce_admins: true
+      required_approving_review_count: 0
+      allow_force_pushes: false
+      allow_deletions: false
+  application_pull_request:
+    number: 1
+    url: https://github.com/mojisejr/dac2-durian-smart-account/pull/1
+    base: main
+    head: feat/dac2-stack-proof
+    observed_head: a49134d8b5e5425f81418e87ef7aa11e533271c2
+  stack_checks:
+    toolchain:
+      rust: 1.88.0
+      cargo_leptos: 0.3.7
+      wasm_target: wasm32-unknown-unknown
+    dependency_resolution:
+      tokio: 1.49.0
+      wasm_bindgen: 0.2.108
+      reason: >-
+        These are the minimum exact versions that satisfy the current transitive
+        constraints of the owner-pinned Leptos stack. Neither was pinned by the plan.
+    commands:
+      - ./scripts/check.sh with the database stopped
+      - docker compose up -d --wait
+      - cargo sqlx migrate run against PostgreSQL 17.10
+      - cargo leptos serve followed by HTTP requests for the SSR page, JS, and Wasm
+      - bun run check in CIEL HQ
+      - bun run wake in CIEL HQ
+    result:
+      - cargo leptos build passed for SSR and hydration.
+      - cargo check and clippy passed for every target and feature with SQLX_OFFLINE=true.
+      - The calc crate built for wasm32-unknown-unknown and its forbidden dependency search was empty.
+      - The hydration dependency graph and generated Wasm and JS symbol search contained no sqlx.
+      - The database migration, startup probe, SSR page, JS, and Wasm requests succeeded.
+      - CIEL passed 44 tests with 188 assertions and Wake reported the DAC2 binding available.
+
+unresolved:
+  - The plan objective says seven consecutive slices while the same plan declares eight.
+    This did not change slice 1, and no plan wording was silently revised.
+  - The plan twice calls DESIGN.md's acceptance list seven non-negotiable rules,
+    while DESIGN.md contains eight. UI work does not begin until slice 6, but the
+    mismatch should be resolved deliberately before then.
+  - Building cargo-leptos 0.3.7 itself from source with Rust 1.88 currently resolves
+    transitive crates that require Rust 1.89 and 1.90. The verified official prebuilt
+    release was used and the application README records this reproducibility detail.
+  - The auth session extraction compiles but no authentication behaviour is claimed;
+    registration, session semantics, and ownership enforcement belong to later slices.
+  - GitHub enforces that a pull request is used but requires zero approving reviews.
+    Owner review remains a CIEL workflow gate rather than a hosting-enforced approval count.
+  - Ten explanation drafts and four design questions remain owner work, as recorded
+    before this slice; none is needed for the stack proof.
+
+next_action:
+  action: >-
+    Review and merge application PR 1 first, then HQ PR 46. After both merges,
+    fetch and verify both clean main branches and remove only the merged topic
+    branches. Slice 2 must not begin without a new owner decision.
+  acceptance_check:
+    - The application revision is reachable from its fetched origin/main.
+    - This closeout is reachable from CIEL's fetched origin/main.
+    - Wake reports both repositories clean and current after branch cleanup.
