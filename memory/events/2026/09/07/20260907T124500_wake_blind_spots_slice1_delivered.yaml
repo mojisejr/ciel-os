@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T124500_wake_blind_spots_slice1_delivered
+type: closeout
+recorded_at: 2026-09-07T12:45:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-wake-blind-spots-001
+  objective: >-
+    Report a decision event that names its workstream but authorizes nothing,
+    rather than dropping it and reporting that no decision exists, and state in
+    AGENTS.md the shape a decision must take.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  completed:
+    - needs-owner-decision now names the file and every requirement the decision
+      missed, composed as clauses so it sits alongside the existing near-miss
+      closeout report rather than replacing it.
+    - AGENTS.md names evidence.plan, evidence.plan_revision, and evidence.slice as
+      single values and states that missing or reshaping one authorizes nothing.
+      The existing sentence was replaced, not joined; the file is 97 lines before
+      and after.
+    - Three tests were added. Two fail without the change; the third is a
+      regression guard asserting the wording is unchanged when no decision exists
+      at all, and passes either way by design.
+  not_completed:
+    - Slice 2 is planned and not authorized. Delivered work that has not reached
+      origin/main is still invisible, which is the half of this workstream the
+      owner found first.
+
+evidence:
+  plan: workstreams/ciel-wake-blind-spots-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 1a487ec7404ffe60956904f7ba00fd11050d7972
+    branch: feat/wake-blind-spots
+    pull_request: https://github.com/mojisejr/ciel-os/pull/44
+  delivery:
+    target_branch: main
+    topic_branch: feat/wake-blind-spots
+  checks:
+    - bun run check passes with 41 tests and 176 assertions, up from 38 and 166.
+    - With src/portfolio/read.ts reverted to HEAD and the tests left in place, the
+      two behavioural tests fail and the regression guard passes, which is the
+      shape invariant 5 asks for.
+    - bun run wake reports no validation errors and no validation warnings.
+  boundary:
+    - No network call, no gh invocation, and no fetch was added. The change reads
+      events already loaded from disk and adds no Git command at all.
+
+unresolved:
+  - A malformed decision is reported only while nothing else authorizes the
+    workstream, matching how a near-miss closeout is already handled. A workstream
+    that later records a valid decision goes quiet about the inert one, which is
+    deliberate and means the ledger keeps the only lasting trace.
+  - The narrow near-miss test cannot see a decision whose workstream id is
+    mistyped, because it would no longer name this workstream. That case still
+    reports as no decision existing, and nothing detects it.
+  - AGENTS.md now states the decision keys but no equivalent sentence states the
+    keys a closeout needs. Whether that asymmetry matters is untested; it was left
+    alone rather than widened, on the owner's instruction not to bloat the file.
+
+next_action:
+  action: >-
+    Merge this pull request, then authorize and deliver slice 2, which reports
+    branches carrying work that has not reached origin/main along with how old
+    this checkout's view of origin/main is.
+  acceptance_check:
+    - This closeout is reachable from origin/main.
+    - Slice 2 has an owner decision before its branch opens.
