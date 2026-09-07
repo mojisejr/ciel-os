@@ -1,0 +1,136 @@
+schema_version: ciel.event.v0.1
+id: evt_20260907T193909_dac2_slice3_persistence
+type: closeout
+recorded_at: 2026-09-07T19:39:09+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Deliver plan revision 0.2 slice 3 as owner-scoped PostgreSQL persistence,
+    proved against isolated databases on the real local PostgreSQL 17 container.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  completed:
+    - >-
+      Added users and plans plus seven section-specific child tables for market,
+      yield, grade mix, variable costs, fixed costs, health answers, and KPI targets.
+      No JSONB document or farms table was introduced.
+    - >-
+      Added transactional create, load, save, close, delete, and deep-duplicate
+      operations over one complete calc::Plan aggregate.
+    - >-
+      Carried owner_id through every plan and child-table query and backed the
+      child relationship with composite owner-aware foreign keys.
+    - >-
+      Refused save, repeated close, and delete after a plan closes. A closed plan
+      remains readable and may seed a new open duplicate without mutating its source.
+    - >-
+      Proved complete ten-grade and empty in-progress plans round-trip without loss,
+      including preserving missing values as missing rather than inventing zeroes.
+    - >-
+      Proved a second user cannot load, save, close, duplicate, or delete another
+      user's plan through any plan operation exposed by the store.
+    - Proved an edited duplicate is independent across scalar and child-row sections.
+    - Added one local integration-test script and documented its PostgreSQL prerequisite.
+    - Returned the workstream execution marker to none and idle after proof completed.
+  not_completed:
+    - Slices 4 through 8 remain unauthorized and untouched.
+    - User passwords, authentication, sessions, password reset, and email behaviour were not added.
+    - No interface, user avatar, browser E2E, continuous integration, GitHub Action,
+      deployment, hosted database, or hosted service was added.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: 8096671b185098ef1868696d86884dfdf0596e3f
+    branch: feat/dac2-slice-3
+  delivery:
+    target_branch: main
+    topic_branch: feat/dac2-slice-3
+  hq_pull_request:
+    number: 49
+    url: https://github.com/mojisejr/ciel-os/pull/49
+    base: main
+    head: feat/dac2-slice-3
+    observed_head: 8096671b185098ef1868696d86884dfdf0596e3f
+  application_repository:
+    id: dac2-durian-smart-account
+    revision: 3cbead05dc6a33634e9215954a66675096615e9b
+    branch: feat/dac2-persistence
+  application_pull_request:
+    number: 3
+    url: https://github.com/mojisejr/dac2-durian-smart-account/pull/3
+    base: main
+    head: feat/dac2-persistence
+    observed_head: 3cbead05dc6a33634e9215954a66675096615e9b
+  database:
+    engine: PostgreSQL 17
+    migration: migrations/202609070002_persistence.sql
+    tables:
+      - users
+      - plans
+      - market_plans
+      - yield_estimates
+      - grade_mix
+      - variable_cost_lines
+      - fixed_cost_lines
+      - health_answers
+      - kpi_targets
+  checks:
+    commands:
+      - docker compose up -d --wait
+      - ./scripts/test-store.sh
+      - DATABASE_URL=owner-controlled-local-value cargo sqlx migrate run
+      - cargo clippy -p store --all-targets -- -D warnings
+      - ./scripts/check.sh
+      - bun run check in CIEL HQ
+    result:
+      - Five SQLx integration tests passed on fresh isolated PostgreSQL databases.
+      - The persistence migration applied to the local stack.
+      - The web binary ran the full migration and connectivity startup path and reached listening state before being stopped.
+      - Store Clippy and the full formatting, workspace, Leptos, native calc, Wasm, and dependency-boundary check passed.
+      - CIEL passed forty-four tests with one hundred eighty-eight assertions.
+
+unresolved:
+  - >-
+    The users table is ownership identity only. Password hashes, session-auth hashes,
+    registration behaviour, and login behaviour remain slice 4 work.
+  - >-
+    A closed plan may be duplicated because duplication reads the source and writes
+    a distinct open plan; it does not mutate the closed source. Later UI wording
+    must preserve that distinction.
+  - >-
+    The integration tests require a privileged local PostgreSQL connection so SQLx
+    can create and clean isolated databases. There is deliberately no hosted runner or CI.
+  - >-
+    The workbook's first price-scenario header says minus twenty percent while its
+    controlling cell and cached results use minus fifty percent; calculation parity follows the latter.
+  - >-
+    Owner-defined grade names require the explicit counts-as-quality-grade marker
+    added in slice 2; a later UI must explain it rather than infer it from name or position.
+  - Workbook parity does not establish that the Thai tax formulas are legally current or correct.
+  - Browser E2E automation remains deferred for an owner decision after a real interface exists.
+  - The plan says seven consecutive slices while the same plan declares eight.
+  - The plan calls DESIGN.md's acceptance list seven rules while DESIGN.md contains eight.
+  - >-
+    Building cargo-leptos 0.3.7 from source with Rust 1.88 resolves transitive crates
+    requiring newer Rust versions; the application README records the verified official-binary path.
+  - GitHub requires a pull request but zero approving reviews; owner review remains a CIEL gate.
+  - Ten explanation drafts and four design questions remain owner work before their interface slices.
+
+next_action:
+  action: >-
+    Review and merge application PR 3 first, then HQ PR 49. After both merges,
+    fetch and verify both clean main branches and remove only the merged topic branches.
+    Slice 4 must not begin without a new owner decision.
+  acceptance_check:
+    - Application revision 3cbead0 is reachable from its fetched origin/main.
+    - This closeout is reachable from CIEL's fetched origin/main.
+    - Wake reports both repositories clean and current after branch cleanup.
