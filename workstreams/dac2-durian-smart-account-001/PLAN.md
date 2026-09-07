@@ -3,7 +3,7 @@
 **Workstream:** `dac2-durian-smart-account-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -13,7 +13,7 @@
 Rebuild an owner-held Thai durian-orchard business calculator, currently a
 twelve-sheet Excel workbook, as a local web application written in Rust on both
 sides, and use the build to exercise the CIEL operating contract end to end over
-seven consecutive slices.
+eight consecutive slices.
 
 The owner's stated purpose is to dogfood CIEL on a project that is allowed to be
 damaged. Both goals are real and neither subordinates the other: the application
@@ -39,8 +39,9 @@ closes a branch that was open, not because it is derivable from the workbook.
   The owner asked for a structure a person and a cold agent can both navigate on
   first sight, idiomatic to Rust rather than to a diagram. Where a layer would
   exist only to be complete, it is not created.
-- **Email and password sign-in with password reset by email**, and nothing more
-  for now. No third-party identity provider, no social login, and no second
+- **Email and password sign-in with email verification and password reset by
+  email**, and nothing more for now. The registration form asks only for those
+  two fields. No third-party identity provider, no social login, and no second
   factor.
 - **PostgreSQL 17**, chosen to match what Supabase runs, so that a later move to
   a managed instance is a change of host rather than of major version.
@@ -179,8 +180,9 @@ matched here is the major version, which is what constrains a later migration.
 **Mail and token crates, confirmed against crates.io and Docker Hub.** `lettre`
 0.11.23, `rand` 0.10.2, `sha2` 0.11.0, and the `axllent/mailpit` image at
 v1.31.1. Mailpit is a local SMTP sink: it accepts mail on 1025 and shows it on a
-web interface at 8025, so a password reset can be exercised end to end without
-any message leaving the machine and without a mail provider account.
+web interface at 8025, so email verification and password reset can be
+exercised end to end without any message leaving the machine and without a mail
+provider account.
 
 Nothing in this stack has been compiled together yet. Slice 1 exists to
 establish that before any feature depends on it.
@@ -243,7 +245,8 @@ store/src/            web/src/
   users.rs              main.rs      Axum binary, ssr only
   plans.rs              state.rs     shared server state, ssr only
   sessions.rs           auth.rs      registration, login, session guard
-  reset_tokens.rs       reset.rs     password reset request and completion
+  verification_tokens.rs verify.rs   email verification request and completion
+  reset_tokens.rs        reset.rs    password reset request and completion
                         explain.rs   the information affordance and its content
                         mail.rs      lettre client, ssr only
                         plans.rs     server functions over a plan
@@ -284,24 +287,37 @@ it. They are short on purpose.
 5. The workbook's own disclaimer, that the tax figures are an estimate and not
    tax advice, is carried into the interface where the tax figures appear. It is
    not moved to a page nobody opens.
-6. A password reset token is at least thirty-two bytes from a cryptographically
+6. Email identity uses one comparison policy everywhere: registration, login,
+   verification, and password reset parse the address with the same library,
+   trim surrounding whitespace, and compare the full address without ASCII
+   case distinctions. The original spelling is retained for display and mail.
+   Provider-specific rewriting such as removing Gmail dots or `+tag` text is
+   forbidden. A database uniqueness constraint, not an application pre-check,
+   is the final guard against duplicates and concurrent registration.
+7. An email verification token is at least thirty-two bytes from a
+   cryptographically secure generator, is stored only as a hash, is single-use,
+   and expires within twenty-four hours. The raw token is never persisted or
+   logged; after its brief creation in server memory, only the message delivered
+   to Mailpit retains it. A user is marked verified only after presenting the
+   token; syntax or domain checks never make that claim.
+8. A password reset token is at least thirty-two bytes from a cryptographically
    secure generator, is stored only as a hash, is single-use, and expires within
    one hour. The request form answers identically whether or not the address is
    registered, so it cannot be used to discover who has an account. Completing a
    reset invalidates every existing session for that user.
-7. Slices 6, 7, and 8 conform to `DESIGN.md`. Where it is silent, the question
+9. Slices 6, 7, and 8 conform to `DESIGN.md`. Where it is silent, the question
    is added to its open questions rather than answered by whoever is writing the
-   screen. Its seven non-negotiable rules are acceptance criteria for every
+   screen. Its eight non-negotiable rules are acceptance criteria for every
    interface slice, not aspirations.
-8. Calculation keeps full precision; only presentation rounds, and it rounds to
+10. Calculation keeps full precision; only presentation rounds, and it rounds to
    two decimal places. A figure is never rounded and then used in another
    calculation.
-9. No KPI target is a constant in code. A target the owner has not set produces
+11. No KPI target is a constant in code. A target the owner has not set produces
    `ยังไม่ได้ตั้งเป้า` and a route to the screen that sets it, never a verdict
    against a number nobody chose.
-10. A closed plan is read-only, and `store` refuses to write it. Hiding the edit
+12. A closed plan is read-only, and `store` refuses to write it. Hiding the edit
     controls is not the enforcement.
-11. Every slice ends with a draft pull request whose head carries its closeout
+13. Every slice ends with a draft pull request whose head carries its closeout
     event, verified on that head before the pull request is marked ready.
 
 ## Test strategy
@@ -320,12 +336,32 @@ slice 2 adds that command to `scripts/check.sh` so a review candidate cannot be
 prepared without it.
 
 Slice 3 adds integration tests against the real local PostgreSQL container for
-persistence, ownership, closed-plan enforcement, and duplication. Browser E2E
-automation, snapshot tests, property-test frameworks, mocks introduced only to
-support tests, hosted coverage, and CI are not authorized by this revision.
-The acceptance flows in slices 4 through 8 remain local functional proof; the
-owner may choose a small browser E2E suite later, once the real interface makes
-the costly flows visible.
+persistence, ownership, closed-plan enforcement, and duplication.
+
+Slice 4 adds mandatory unit tests for email parsing and canonical comparison,
+password-policy boundaries, password hashing and verification, and
+authentication responses that must not reveal whether an account exists. Its
+PostgreSQL integration suite proves that
+case variants and concurrent registration cannot create duplicate identities;
+that malformed addresses are rejected; and that registration, login, session
+rotation, route protection, and server-side logout work together. Database and
+session properties do not count as proved by a mocked unit test.
+
+Slice 5 adds mandatory unit tests for verification and reset token hashing,
+expiry boundaries, single-use state, and altered-token rejection. Its
+PostgreSQL and Mailpit integration suite proves delivery and both complete
+flows, including resend invalidation, refusal of an unverified account after
+verification becomes available, indistinguishable requests for existing and
+unknown addresses, and invalidation of every session after a password reset.
+The local check entry points for each slice must invoke these tests before its
+pull request is offered for review.
+
+Browser E2E automation, snapshot tests, property-test frameworks, mocks
+introduced only to support tests, hosted coverage, and CI are not authorized by
+this revision. The acceptance flows in slices 4 through 8 retain local
+functional proof in addition to the unit and integration suites; the owner may
+choose a small browser E2E suite later, once the real interface makes the costly
+flows visible.
 
 ## Execution slices and acceptance criteria
 
@@ -451,45 +487,76 @@ whose later edits do not touch the original.
 
 ### 4. Sign-in
 
-Registration, login, logout, and session handling with `argon2id` password
-hashing, an HttpOnly SameSite cookie session, session rotation on login, and a
-login failure message that does not reveal whether an account exists.
+Registration asks only for email and password. It stores the original address
+for display and a canonical comparison value under a database uniqueness
+constraint. Format validation uses a maintained parser rather than a custom
+regular expression; it rejects a malformed address but does not pretend that a
+syntax, DNS, or SMTP probe proves control of a mailbox. Duplicate registration
+returns a response that does not reveal whether the canonical address already
+exists.
 
-An address is not verified at registration. That is a deliberate deferral, not
-an oversight: without it a person can register an address they do not control,
-and the real holder of that address is then unable to register because the
-address is unique. It is acceptable while this runs on one machine for one
-owner. **It stops being acceptable the moment this application is reachable by
-anyone the owner did not hand the URL to**, and the token machinery slice 5
-builds is what a verification step would reuse.
+Login, logout, and session handling use `argon2id` password hashing, an
+HttpOnly SameSite cookie session, session rotation on login, and a login failure
+message that does not reveal whether an account exists. A password has at least
+fifteen characters; the input accepts lengths of at least sixty-four; spaces
+and Unicode are permitted; and no mixture of uppercase, lowercase, numbers, or
+symbols is required. Slice 4 has no mail transport yet, so its local-only
+checkpoint logs a newly registered user in immediately. This temporary
+behaviour exists only so the slice is independently usable on the owner's
+machine; slice 5 replaces it with verified activation, and deployment remains
+unauthorized.
 
-**Done when** an unauthenticated request to a plan route is refused, a
-registered user can log in and reach only their own plans, logging out
-invalidates the session server-side, and no password or session token is
-written to a log.
+**Done when** the mandatory unit and PostgreSQL integration tests in the test
+strategy pass; malformed addresses are rejected; case variants, surrounding
+whitespace, and concurrent attempts cannot create duplicate identities; an
+unauthenticated request to a plan route is refused; a registered local user can
+log in and reach only their own plans; logging in rotates the session; logging
+out invalidates it server-side; duplicate registration and login failures do
+not disclose account existence; and no password or session token is written to
+a log.
 
-### 5. Password reset by email
+### 5. Email verification and password reset
 
-Add Mailpit to `compose.yaml`, a `password_reset_tokens` table, and the two
-halves of the flow: request a reset from an address, and complete it from the
-link. `lettre` sends the message to Mailpit over SMTP on 1025 and the operator
-reads it at 8025. Nothing is sent to a real mail provider, and no provider
-account exists.
+Add Mailpit to `compose.yaml`, an `email_verification_tokens` table, a
+`password_reset_tokens` table, and a nullable verification timestamp on the
+user. Registration still asks for only email and password, but now creates an
+unverified account and sends a verification link. The account cannot
+authenticate or reach a plan until that link is completed. Resending a
+verification link invalidates earlier verification tokens for the account.
+Existing slice 4 accounts also begin unverified and use resend; none is silently
+grandfathered as verified.
 
-This is its own slice rather than part of sign-in because its failure modes are
-its own, and each of them is silent. Invariant 6 states them; this slice is
-where they are proved rather than intended.
+The verification and reset token types remain separate so one cannot be used in
+the other flow. `lettre` sends both messages to Mailpit over SMTP on 1025 and
+the operator reads them at 8025. Nothing is sent to a real mail provider, no
+provider account exists, and no SaaS is introduced. Slice 5 also updates the
+registration flow in `DESIGN.md` from immediate entry to the verification step.
+
+Password reset retains two halves: request a reset from an address, and
+complete it from the link. Verification and reset have different expiry rules,
+but both store only token hashes, consume tokens once, reject altered tokens,
+and keep raw tokens and complete token-bearing URLs out of logs.
+
+This remains its own slice rather than part of sign-in because mail delivery and
+token lifecycle have failure modes separate from password authentication.
+Invariants 7 and 8 state them; this slice is where they are proved rather than
+intended.
 
 Rate limiting is not built here. `tower-governor` 0.8.0 has not been published
 since August 2025, and an application reachable only from this machine does not
-need it. This is recorded as a deferral with its reopening condition, which is
-the same one slice 4 records: the application becoming reachable by anyone else.
+need it. Registration, login, verification resend, and reset request all require
+rate limiting before the application becomes reachable by anyone else. Real
+SMTP delivery, HTTPS, and secure production cookies belong to that same future
+deployment gate; no deployment is authorized by this plan.
 
-**Done when** a reset requested for a registered address produces a working
-single-use link in Mailpit; the same request for an unregistered address
-produces an identical response and no message; a used, expired, or altered token
-is refused; the stored token cannot be replayed because only its hash is stored;
-and completing a reset ends every session that user already had.
+**Done when** the mandatory unit, PostgreSQL, and Mailpit integration tests in
+the test strategy pass; registration produces a working single-use verification
+link; an account cannot authenticate before verification and can authenticate
+after it; a resent link invalidates its predecessor; used, expired, altered, or
+wrong-purpose tokens are refused; the database and logs contain no raw token;
+a reset requested for a registered address produces a working single-use link;
+the same request for an unregistered address produces an identical response and
+no message; and completing a reset ends every session that user already had.
 
 ### 6. Input capture
 
@@ -498,7 +565,7 @@ validation from `calc` surfaced as the operator types. Identifiers and code
 remain in English.
 
 Six, not five: targets join the market plan, yield estimate, cost lines, fixed
-costs, and health check as something the owner fills in, because invariant 9
+costs, and health check as something the owner fills in, because invariant 11
 forbids inventing them. The grade mix is an add-and-remove list that shows its
 running total, since a year may carry ten grades.
 
@@ -521,7 +588,7 @@ rejects proportions that do not sum to one; the live total bar updates without a
 round trip; the sample plan can be cleared in one action and the resulting empty
 state is usable; a season can be duplicated from the interface; a closed season
 cannot be edited from it; every figure named in `DESIGN.md` has its explanation;
-and the seven non-negotiable rules in `DESIGN.md` hold on every screen this
+and the eight non-negotiable rules in `DESIGN.md` hold on every screen this
 slice adds.
 
 ### 7. Dashboard, efficiency, and completeness
@@ -572,10 +639,10 @@ instead of an oversight.
   stability or abandonment is not established by its version history alone.
 - Whether `lettre` 0.11.23 talks to Mailpit v1.31.1 without configuration beyond
   a plaintext local SMTP transport is untested; slice 5 answers it.
-- Two deferrals carry the same reopening condition, and neither is a discovery:
-  address verification at registration, and rate limiting on the reset request.
-  Both are acceptable only while this application is reachable from one machine
-  by its owner. Whoever first deploys it owes both.
+- Rate limiting for registration, login, verification resend, and password
+  reset remains deferred only while the application is reachable from one
+  machine by its owner. Whoever first deploys it owes that control together
+  with real SMTP delivery, HTTPS, and secure production cookies.
 - Dropping the repository traits is a deliberate simplification, not a
   discovery. If a second storage implementation or a unit test that cannot reach
   a database is ever needed, the trait goes back in, and that reversal is

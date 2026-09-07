@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20260908T051422_dac2_auth_verification_plan
+type: closeout
+recorded_at: 2026-09-08T05:14:22+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Prepare a narrow plan revision for email registration, verified activation,
+    and their mandatory local tests before slice 4 is authorized. This record
+    names no slice and does not authorize or deliver authentication code.
+
+outcome:
+  status: plan-revision-prepared-for-owner-review
+  completed:
+    - PLAN.md revision 0.3 keeps registration to email and password and keeps the slice 4 checkpoint immediately usable on the owner's machine.
+    - One canonical email comparison policy and a database uniqueness constraint now define duplicate prevention, including case variants and concurrent registration.
+    - Slice 5 now adds verified activation through hashed, expiring, single-use tokens delivered only to local Mailpit, with no SaaS or mail-provider account.
+    - Slice 4 and slice 5 now require unit tests plus PostgreSQL and Mailpit integration tests for the security properties each boundary owns.
+    - The stale counts of seven slices and seven DESIGN.md rules were corrected to eight without changing their scope.
+  not_completed:
+    - No application repository file or database migration changed.
+    - No registration, authentication, verification, password-reset, or rate-limiting code was implemented.
+    - Slice 4 remains idle and requires a separate owner decision after this plan revision merges.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.3"
+  repository:
+    head: 619c7f85aed24265a5be83032e02630061e585e2
+    branch: docs/dac2-auth-verification-plan
+  pull_request:
+    number: 50
+    url: https://github.com/mojisejr/ciel-os/pull/50
+    observed_head: 619c7f85aed24265a5be83032e02630061e585e2
+  checks:
+    - git diff --check passes for the plan revision.
+    - bun run check passes with 44 tests and 188 assertions.
+    - Wake reports plan revision 0.3 idle and requiring a new owner decision.
+    - The pull request was observed open and draft against main before this closeout was written.
+
+unresolved:
+  - The existing users table still enforces only exact-text uniqueness. Slice 4 must add the canonical identity migration and prove it against the real local PostgreSQL container.
+  - Mailpit delivery and both token lifecycles are plan requirements, not implemented proof; slice 5 must establish them.
+  - Real outbound mail, deployment, HTTPS, secure production cookies, and rate limiting remain outside this plan. The application must not become reachable by other people without those decisions and controls.
+  - Browser E2E automation remains deferred for an owner decision after a real interface exists.
+  - The workbook's first price-scenario header says minus twenty percent while its controlling cell and cached results use minus fifty percent; calculation parity follows the latter.
+  - Owner-defined grade names require the explicit counts-as-quality-grade marker added in slice 2; a later UI must explain it rather than infer it from name or position.
+  - Workbook parity does not establish that the Thai tax formulas are legally current or correct.
+  - Building cargo-leptos 0.3.7 from source with Rust 1.88 resolves transitive crates requiring newer Rust versions; the application README records the verified official-binary path.
+  - GitHub requires a pull request but zero approving reviews; owner review remains a CIEL gate.
+  - Ten explanation drafts and four design questions remain owner work before their interface slices.
+
+next_action:
+  action: >-
+    Review and merge HQ pull request 50, then synchronize HQ to clean current
+    main and delete only the verified merged topic branch. Starting slice 4
+    still requires a separate owner decision for plan revision 0.3 slice 4.
+  acceptance_check:
+    - This closeout is reachable from the fetched pull-request head.
+    - After merge, this closeout is reachable from fetched origin/main and HQ is clean and current.
