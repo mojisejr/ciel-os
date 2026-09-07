@@ -1,0 +1,136 @@
+schema_version: ciel.event.v0.1
+id: evt_20260908T063329_dac2_batch1_account_trust
+type: closeout
+recorded_at: 2026-09-08T06:33:29+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Deliver plan revision 0.4 slice 4 as the first owner-selected batch:
+    a local email-and-password account flow with verified activation,
+    signed database-backed sessions, and password recovery through Mailpit.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  completed:
+    - >-
+      Added registration with two inputs only, one canonical email comparison
+      policy, a database uniqueness constraint, and Argon2id password hashes.
+    - >-
+      Added single-use hashed verification and reset tokens with separate tables,
+      twenty-four-hour and one-hour expiries, altered-token rejection, and resend
+      invalidation of the earlier verification token.
+    - >-
+      Added local Mailpit SMTP delivery and a working one-click verification link.
+      No real message provider, provider account, or SaaS was introduced.
+    - >-
+      Added signed HttpOnly SameSite=Lax database-backed sessions. Successful login
+      rotates the session ID, logout flushes it server-side, and a password reset
+      changes the auth hash so every older session is rejected and flushed on reuse.
+    - >-
+      Added server-side protection for the plan route and simple Thai registration,
+      login, verification, recovery, and account screens. User information is only
+      the email address; no name, image, avatar, social login, or second factor exists.
+    - >-
+      Kept the already-applied account migration stable and added a following
+      additive migration for ASCII-only canonicalization, so both fresh databases
+      and the existing localhost volume migrate without deletion or checksum repair.
+    - >-
+      Added mandatory local unit, PostgreSQL, HTTP session, and Mailpit integration
+      entry points and kept the existing calculation, persistence, SSR, hydration,
+      Clippy, Wasm, and dependency-boundary gates passing.
+    - Returned the workstream execution marker to none and idle after proof completed.
+  not_completed:
+    - Slices 5 and 6 remain unauthorized and untouched.
+    - The plan creation and editing workspace remains Batch 2.
+    - No real SMTP, network deployment, HTTPS, rate limiting, browser E2E, CI,
+      GitHub Action, hosted database, or hosted service was added.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "4"
+  repository:
+    head: 171e5aa8af218270af93019fad19375f857bcf0c
+    branch: feat/dac2-batch-1
+  delivery:
+    target_branch: main
+    topic_branch: feat/dac2-batch-1
+  hq_pull_request:
+    number: 51
+    url: https://github.com/mojisejr/ciel-os/pull/51
+    base: main
+    head: feat/dac2-batch-1
+    observed_head: 171e5aa8af218270af93019fad19375f857bcf0c
+  application_repository:
+    id: dac2-durian-smart-account
+    revision: 7aef48037f796304108e8d22c2657acf06c7374f
+    branch: feat/account-trust
+  application_pull_request:
+    number: 4
+    url: https://github.com/mojisejr/dac2-durian-smart-account/pull/4
+    base: main
+    head: feat/account-trust
+    observed_head: 7aef48037f796304108e8d22c2657acf06c7374f
+  database:
+    engine: PostgreSQL 17
+    migrations:
+      - migrations/202609080003_account_trust.sql
+      - migrations/202609080004_ascii_email_canonical.sql
+  mail:
+    sink: axllent/mailpit:v1.31.1
+    smtp: localhost port 1025
+    inbox: localhost port 8025
+  checks:
+    commands:
+      - docker compose up -d --wait
+      - ./scripts/test-store.sh
+      - ./scripts/test-auth.sh
+      - ./scripts/check.sh
+      - DATABASE_URL=owner-controlled-local-value cargo sqlx migrate run
+      - bun run check in CIEL HQ
+    result:
+      - Seven store unit tests, four account PostgreSQL tests, and five plan persistence tests passed.
+      - Three web unit tests, one full server-function and HTTP session test, and one Mailpit delivery test passed.
+      - Thirty-eight calculation unit tests and the workbook golden regression remained passing.
+      - >-
+        Formatting, all-target workspace compilation, warning-free Clippy,
+        Leptos SSR and hydration builds, calc Wasm, and dependency boundaries passed.
+      - >-
+        A localhost smoke completed registration, Mailpit delivery, one-use link
+        verification, case-insensitive login, authenticated plan access, and logout.
+      - The existing localhost database accepted the additive canonicalization migration without data deletion.
+
+unresolved:
+  - >-
+    The application remains localhost-only. Registration, login, verification resend,
+    and reset request require rate limiting before any network deployment, together
+    with real SMTP, HTTPS, and Secure cookies.
+  - >-
+    Mail delivery proof covers only the local Mailpit sink. Deliverability through a
+    real provider and control of a real mailbox are deliberately unproved.
+  - >-
+    Browser E2E automation and CI remain deferred for later owner decisions; the
+    current proof is unit, PostgreSQL, HTTP integration, Mailpit integration, build,
+    and a manual localhost smoke.
+  - >-
+    Password-reset invalidation is effective immediately through the changed session
+    auth hash; persisted old session rows are flushed when they are next presented.
+  - >-
+    Building cargo-leptos 0.3.7 from source with Rust 1.88 still resolves newer
+    transitive packages; the application README retains the official-binary path.
+  - Workbook parity still does not establish that its Thai tax formulas are legally current or correct.
+
+next_action:
+  action: >-
+    Review and merge application PR 4 first, then HQ PR 51. After both merge,
+    fetch and verify both clean main branches and remove only the merged topic
+    branches. Slice 5 must receive a separate owner decision before execution.
+  acceptance_check:
+    - Application revision 7aef480 is reachable from its fetched origin/main.
+    - This closeout is reachable from CIEL's fetched origin/main.
+    - Wake reports both repositories clean and current after branch cleanup.
