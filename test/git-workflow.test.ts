@@ -3,8 +3,10 @@ import { resolve } from "node:path";
 import { expect, test } from "bun:test";
 
 test("keeps the startup Git rule concise and the workflow discoverable", async () => {
-  const [agents, readme, template] = await Promise.all([
+  const [agents, claude, owner, readme, template] = await Promise.all([
     Bun.file(resolve(import.meta.dir, "../AGENTS.md")).text(),
+    Bun.file(resolve(import.meta.dir, "../CLAUDE.md")).text(),
+    Bun.file(resolve(import.meta.dir, "../OWNER.md")).text(),
     Bun.file(resolve(import.meta.dir, "../README.md")).text(),
     Bun.file(resolve(import.meta.dir, "../.github/PULL_REQUEST_TEMPLATE.md")).text()
   ]);
@@ -13,6 +15,14 @@ test("keeps the startup Git rule concise and the workflow discoverable", async (
   expect(agents).toContain("Do not develop tracked changes directly on `main`.");
   expect(agents).toContain("return to a clean local `main` that matches fetched `origin/main`");
   expect(agents).toContain("Keep every remote PR as a draft until its phase closeout");
+  expect(agents).toContain("Read `README.md`, `OWNER.md`, and the task-relevant plan or Genesis document.");
+  expect(agents).toContain("`OWNER.md` is mandatory Wake input before Align.");
+  expect(agents).toContain("confirmed owner-specific response rules in `OWNER.md`");
+  expect(owner).toContain("**Version:** 0.1");
+  expect(owner).toContain("**Status:** Experimental");
+  expect(owner).toContain("Observe -> suggest interpretation -> owner explicitly confirms -> record");
+  expect(owner).toContain("Do not create a `PARK` state, command");
+  expect(claude).not.toContain("Progress before meta-optimization");
   expect(agents).not.toContain("git switch -c");
   // A word the code acts on must be visibly different from one it ignores.
   // Requiring outcome.status while documenting no values is what let a cold
@@ -36,6 +46,7 @@ test("keeps the startup Git rule concise and the workflow discoverable", async (
   expect(readme).not.toContain("Codex bootstrap contract");
   expect(readme).not.toContain("the only current integration is the Codex-oriented");
   expect(readme).toContain("CLAUDE.md             Claude bridge");
+  expect(readme).toContain("OWNER.md              Confirmed owner response rules");
   expect(readme).toContain("  portfolio/          Plans, checkpoints, and derived workstream lifecycle");
   expect(readme).toContain("Portfolio indexing and a second client bridge now exist");
   expect(readme).toContain("Do not edit a shared file while another lane is live");

@@ -42,6 +42,10 @@ Coding-agent CLI / IDE session ── reads context, performs work, records outc
 
 CIEL records durable work history and compiles a client-neutral resume packet. A bridge tells a particular client where that packet is, what rules apply, and how to report back. The agent's model credentials, chat history, and proprietary session store stay outside CIEL's truth boundary.
 
+`OWNER.md` is the experimental, owner-controlled operating contract read by
+both supported clients during Wake. It holds confirmed response rules, not a
+biography, inferred profile, or personal-memory store.
+
 The diagram is target architecture, not a claim that every component exists. What exists today is the local read-only CLI described below, plus two client bridges: `AGENTS.md`, which holds the operating contract, and `CLAUDE.md`, which points to it. Neither is generated; both are maintained by hand.
 
 ## Current repository
@@ -49,6 +53,7 @@ The diagram is target architecture, not a claim that every component exists. Wha
 ```text
 README.md
 AGENTS.md             Shared operating contract and mandatory Wake rule
+OWNER.md              Confirmed owner response rules; currently experimental
 CLAUDE.md             Claude bridge; points to AGENTS.md and adds no rule
 package.json          Bun commands and pinned local dependencies
 bin/

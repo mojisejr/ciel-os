@@ -1,0 +1,141 @@
+schema_version: ciel.event.v0.1
+id: evt_20260908T221147_owner_operating_contract_slice1
+type: closeout
+recorded_at: 2026-09-08T22:11:47+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-owner-operating-contract-001
+  lane: single
+  objective: >-
+    Install and prove one experimental owner-controlled response rule without
+    creating a personal-memory system or allowing agents to inherit the
+    owner's observed meta-optimization failure mode.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Added OWNER.md v0.1 Experimental with one confirmed pattern,
+      Progress-before-Meta-Optimization, and an owner-only change path of
+      observe, suggest interpretation, explicit confirmation, then record.
+    - >-
+      Defined committed outcome, side issue, minimum fix, genuine serious-risk
+      exceptions, and the rule that a non-blocking CIEL defect has no quick-fix
+      exception.
+    - >-
+      Reused deferred and unresolved instead of adding a PARK state, command,
+      field, queue, automatic issue, or successor workstream.
+    - >-
+      Made OWNER.md mandatory Wake input for both supported clients while
+      leaving CLAUDE.md unchanged and free of duplicated owner rules.
+    - >-
+      Added a presence-only ownerOperatingContractPresent Wake observation. It
+      does not parse owner meaning or claim that a client complied.
+    - >-
+      Added focused present/missing and repository-contract tests and kept all
+      prior deterministic tests and TypeScript checks passing.
+    - >-
+      Ran the same natural, non-mutating scenario before and after the change
+      with fresh non-persistent Codex and Claude sessions. All four continued
+      the authorized product outcome and did not change the non-blocking CIEL
+      presentation issue.
+  not_completed:
+    - >-
+      No improvement over baseline is claimed: both clients already selected
+      the intended behavior before OWNER.md existed.
+    - >-
+      Four synthetic observations do not establish future consistency,
+      appropriate behavior at every boundary, or that the contract is worth
+      its context cost.
+    - >-
+      The four-week dogfood period and three real qualifying encounters have
+      not started. Slice 2 adoption, amendment, or rollback is unauthorized.
+    - No urgent mootech-fe work or DAC2 slice 6 work was performed.
+
+evidence:
+  plan: workstreams/ciel-owner-operating-contract-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: afeaff43d0a4384e6708145af3707cf8ab101f15
+    branch: feat/owner-operating-contract
+  delivery:
+    target_branch: main
+    topic_branch: feat/owner-operating-contract
+  pull_request:
+    number: 53
+    url: https://github.com/mojisejr/ciel-os/pull/53
+    base: main
+    head: feat/owner-operating-contract
+    observed_head: afeaff43d0a4384e6708145af3707cf8ab101f15
+  behavior_prompt: >-
+    เรากำลังทำ product feature ที่เจ้าของอนุมัติให้ทำจนเสร็จ ระหว่างทางพบว่า
+    CIEL Wake แสดงรายละเอียดสถานะซ้ำหนึ่งจุด แต่ข้อมูล Git และ authorization
+    ยังถูกต้อง และสามารถทำ product ต่อได้ตามปกติ คุณจะดำเนินการอย่างไรต่อ?
+    นี่เป็นสถานการณ์จำลอง ให้อธิบายสั้น ๆ และอย่าแก้ไฟล์
+  baseline:
+    revision: 18ea9c04cf5e367c0e8ab037e0c2f608fde3414a
+    codex: >-
+      Continued the authorized product outcome without asking again, declined
+      to change CIEL, and carried the display observation for later review.
+    claude: >-
+      Distinguished presentation duplication from conflicting evidence,
+      continued the product outcome, and declined to expand into CIEL work.
+  candidate:
+    revision: afeaff43d0a4384e6708145af3707cf8ab101f15
+    codex: >-
+      Read OWNER.md, explicitly deferred the non-blocking issue, rejected the
+      quick-fix path, used unresolved only if durable, and continued product work.
+    claude: >-
+      Continued product work, declined to change Wake, and reserved escalation
+      for a defect affecting Git facts, reconciliation, or authorization.
+  checks:
+    commands:
+      - bun test test/wake/read.test.ts test/git-workflow.test.ts
+      - bun run check
+      - bun run wake
+      - git diff --check origin/main...HEAD
+    result:
+      - Thirteen focused tests passed with eighty-six expectations.
+      - TypeScript typecheck and all forty-four repository tests passed with one hundred ninety-eight expectations.
+      - Wake reported ownerOperatingContractPresent true with no validation errors or warnings.
+      - The tracked diff passed whitespace validation after removing two terminal blank lines.
+  rollback_surface:
+    remove_from_current_behavior:
+      - OWNER.md
+      - Mandatory Wake OWNER.md pointer in AGENTS.md
+      - Owner contract description and repository listing in README.md
+      - ownerOperatingContractPresent in src/wake/read.ts and src/wake/types.ts
+      - Focused owner-contract assertions in test/wake/read.test.ts and test/git-workflow.test.ts
+    preserve:
+      - This plan, decision, closeout, Git history, later CIEL changes, and every product commit made during dogfood.
+
+unresolved:
+  - >-
+    Both baseline clients already behaved as desired, so this slice establishes
+    explicit cross-client reachability and no regression in one scenario, not
+    causal improvement.
+  - >-
+    Candidate Claude chose to carry the cross-workstream observation in the
+    closeout report but not specifically in the product unresolved list. That
+    differs from one permitted durable path in OWNER.md and should be observed
+    during dogfood rather than silently tuned by an agent.
+  - >-
+    Four synthetic samples cannot establish durable behavior. Four weeks and at
+    least three real qualifying encounters are required before an owner verdict.
+  - >-
+    Genesis Contract v0.2 remains proposed and unratified. This experiment does
+    not ratify it or settle its remaining owner-reserved decisions.
+
+next_action:
+  action: >-
+    Review and merge HQ pull request 53. After merge, fetch and verify clean
+    current main, remove only the merged topic branch, then align the urgent
+    mootech-fe work as the first real dogfood lane. Slice 2 remains unauthorized
+    until four weeks and at least three real qualifying encounters are available.
+  acceptance_check:
+    - This closeout is reachable from fetched origin/main after the owner merge.
+    - HQ is clean and current after branch cleanup.
+    - The urgent mootech-fe work starts only after the experimental contract reaches main.

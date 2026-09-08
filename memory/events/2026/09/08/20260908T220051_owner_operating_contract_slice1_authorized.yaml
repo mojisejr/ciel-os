@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20260908T220051_owner_operating_contract_slice1_authorized
+type: decision
+recorded_at: 2026-09-08T22:00:51+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-owner-operating-contract-001
+  objective: >-
+    Install and prove one experimental owner-controlled response rule without
+    creating a personal-memory system or allowing agents to inherit the
+    owner's observed meta-optimization failure mode.
+  scope:
+    - Implement plan revision 0.1 slice 1 only in the CIEL HQ repository.
+    - Prove the candidate with fresh Codex and Claude sessions against a before-change baseline.
+    - Preserve a forward rollback path that leaves later product work intact.
+  excluded:
+    - Slice 2 adoption, amendment, or rollback verdict after dogfood.
+    - The urgent mootech-fe implementation and DAC2 slice 6.
+    - Personal memory, profile inference, infrastructure, or a new PARK mechanism.
+
+outcome:
+  status: decided
+  completed:
+    - The owner explicitly approved plan revision 0.1 after two rounds of alignment.
+    - The owner authorized slice 1 implementation, deterministic tests, cross-client behavioral proof, and its draft PR.
+  not_completed:
+    - No Owner Operating Contract implementation or candidate behavior is claimed by this decision.
+    - Slice 2 remains unauthorized until four weeks and at least three real qualifying encounters provide evidence.
+
+evidence:
+  plan: workstreams/ciel-owner-operating-contract-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 18ea9c04cf5e367c0e8ab037e0c2f608fde3414a
+    branch: feat/owner-operating-contract
+  owner_confirmed:
+    - The contract applies across projects, with urgent mootech-fe as the first live dogfood lane.
+    - A commitment comes from explicit owner intent, never agent feeling.
+    - Non-blocking CIEL defects have no quick-fix exception; the agent defers them and continues the main line.
+    - Existing deferred and unresolved vocabulary is sufficient; no PARK state or queue is added.
+    - Only serious security, data, privacy, destructive, irreversible, or authority risks override deferral.
+    - Activation, amendment, adoption, and rollback remain owner decisions.
+
+unresolved:
+  - Both baseline clients already selected the intended behavior without OWNER.md, so improvement over baseline is not established.
+  - Four fresh-session observations cannot establish consistent future behavior; real dogfood is still required.
+  - Slice 2 remains unauthorized and its eventual verdict belongs to the owner.
+
+next_action:
+  action: >-
+    Implement plan revision 0.1 slice 1, run deterministic and cross-client
+    candidate proof, and prepare one final-review HQ pull request with its
+    closeout on the verified head.

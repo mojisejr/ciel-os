@@ -363,6 +363,9 @@ export async function readWakeReport(repositoryDirectory = "."): Promise<WakeRep
         // every client; a bridge whose content drifts does not. Verifying the
         // managed section would need a checker that no evidence justifies yet.
         claudeMdPresent: await readIfPresent(join(repositoryPath, "CLAUDE.md")),
+        // Presence only. OWNER.md is human-authored meaning, so Wake must not
+        // parse it into a profile or claim that a client followed its rules.
+        ownerOperatingContractPresent: await readIfPresent(join(repositoryPath, "OWNER.md")),
         readmePresent: await readIfPresent(join(repositoryPath, "README.md"))
       }
     },
