@@ -1,0 +1,134 @@
+schema_version: ciel.event.v0.1
+id: evt_20260908T231500_payment_lane_slice1_gate_restored
+type: closeout
+recorded_at: 2026-09-08T23:15:00+07:00
+recorded_by:
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Established that the /v2 preview gate had been removed and was live on
+      production. The removal shipped inside mootech-fe commit c959aa8
+      ("rebuild /v2/destiny to Figma parity") as one bullet among twelve files
+      and reached production at 2026-09-08 20:24 +07 via pull requests 607 and 608.
+    - >-
+      Established the exposure it created. Omise v2 on production is still in
+      test mode, and nothing in lib/payment, lib/qi, or the payment routes
+      checks the gateway mode, so any visitor who could sign in with Google or
+      LINE could pay with an Omise test card and receive a real
+      member_subscription row or real engine QI, written into the same tables
+      as paying customers. lib/v2/resolve-user.ts holds no allowlist.
+    - >-
+      Established that nobody used it. A read-only production query returned
+      zero v2_payment rows created after the deploy, and the newest v2 row
+      belongs to the team on 2026-09-07.
+    - >-
+      Restored the gate to its pre-c959aa8 state in middleware.ts,
+      lib/v2/gate.ts, pages/v2/index.tsx and the two gate test files, kept the
+      later unrelated fix 00f026e that hides the first-run reset badge on
+      production, and added a note above guardV2 recording why the next removal
+      must go through issue 606 B3 rather than by hand.
+    - >-
+      The owner merged pull request 609 himself, which deployed it, and the
+      restored gate was then verified on production.
+  not_completed:
+    - >-
+      No claim is made that the payment lane can take real money. No live key
+      is installed, no real charge has ever settled, and no QI purchase has
+      ever been made on this system.
+    - >-
+      The agent could not merge or deploy. The merge was blocked by a host
+      permission gate and required the owner's hand.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: cb547d3de918f192b3640d0b0cf9d619debf9272
+    branch: feat/mootech-fe-payment-lane
+  delivery:
+    target_branch: main
+    topic_branch: feat/mootech-fe-payment-lane
+  pull_request:
+    number: 54
+    url: https://github.com/mojisejr/ciel-os/pull/54
+    base: main
+    head: feat/mootech-fe-payment-lane
+    observed_head: 9396b2e
+  product_repository:
+    project: mootech-fe
+    default_branch_head: 7ade054194e4f750b40f0808314ab6f3febf5ca6
+    change_commit: 5a6eeef9de9e1041652462f4ddfd1f08ffba7a3c
+    reverted_commit: c959aa802317ecd438f11363f4c64233ff80481f
+    pull_request: 609
+  issues:
+    - mojisejr/mootech-fe#605
+    - mojisejr/mootech-fe#606
+    - mojisejr/mootech-fe#247
+  checks:
+    local:
+      - npm run lint — 0 errors, 125 warnings, all pre-existing
+      - npm test — 1467 passed, 134 skipped
+      - npm run build — exit 0 after npm install restored leaflet, which package-lock already pinned
+      - pre-push hard gate — lint, test, tsx lane, architecture, workflow-integrity, gitleaks all green
+    mutant:
+      - >-
+        Forcing v2RedirectIfUnauthed to return null turns 17 of 32 gate tests
+        red, so the restored gate's tests state the behaviour rather than pass
+        beside it.
+    production_after_deploy:
+      - /v2/shop, /v2/qi/buy, /v2/shop/checkout and /v2/account/plan answer 307 to /v2
+      - POST /api/v2/payment/preview answers 401 with "Not authenticated"
+      - POST /api/v2/payment/webhook without a signature answers 401, not the gate
+      - GET /api/cron/reconcile-payment without the secret answers 401, not the gate
+      - POST /api/v2/login answers 303, so the team can still enter
+      - GET / still answers 200, so v1 is untouched
+  verification_note: >-
+    The last two controls are the point of the check. Both exemptions live
+    inside the guard that was restored, so a restored gate that swallowed
+    either would have taken money without provisioning, or silently stopped the
+    only job that repairs a lost webhook.
+
+unresolved:
+  - >-
+    This slice was executed before this plan and its decision event existed.
+    The agent went from Wake straight to Execute on a live production defect and
+    skipped Align and Plan. The owner caught it. The work and its evidence are
+    real, but the ordering was wrong and no decision event authorised it; the
+    owner's own merge of pull request 609 is the authority this slice actually
+    rested on.
+  - >-
+    The gate was removed inside an unrelated user-interface commit and no
+    review caught it. Nothing in the repository made the dependency between
+    that change and issue 605 visible at the moment of the change. The note now
+    added above guardV2 is a comment, not a mechanism, and a comment can be
+    deleted by the next person as easily as the code was.
+  - >-
+    Production ran exposed for roughly three hours. Zero rows were created in
+    that window, but absence of rows is not proof that nobody reached the shop,
+    only that nobody completed a charge.
+  - >-
+    The owner's issues 605 and 606 recorded this exact ordering constraint
+    before the change was made, and the change was made anyway. That is a
+    communication failure between people, and no repository artefact this
+    workstream adds can be claimed to fix it.
+
+next_action:
+  action: >-
+    Execute slice 2. Make a failed QI grant recoverable by the reconciler, keep
+    both cron jobs answering their own gate while maintenance mode is on, and
+    let /v2 fall under the maintenance gate without losing the payment-lane CSP.
+  acceptance_check:
+    - A failed QI grant becomes a row a later reconciler run repairs, proven by a test that reddens when the retry is removed.
+    - The cron paths answer 401 rather than the maintenance page while maintenance is on.
+    - The payment-lane CSP still covers the payment lane once /v2 no longer short-circuits the maintenance gate.
