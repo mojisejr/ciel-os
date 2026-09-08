@@ -3,7 +3,7 @@
 **Workstream:** `dac2-durian-smart-account-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -13,7 +13,9 @@
 Rebuild an owner-held Thai durian-orchard business calculator, currently a
 twelve-sheet Excel workbook, as a local web application written in Rust on both
 sides, and use the build to exercise the CIEL operating contract end to end over
-eight consecutive slices.
+six consecutive slices. Slices 1 through 3 are complete; the owner consolidated
+the five remaining slices from revision 0.3 into three owner-reviewed delivery
+batches represented here as slices 4 through 6.
 
 The owner's stated purpose is to dogfood CIEL on a project that is allowed to be
 damaged. Both goals are real and neither subordinates the other: the application
@@ -202,7 +204,7 @@ that earns its place is `calc` staying pure, and the compiler enforces that.
 dac2-durian-smart-account/
 ├── Cargo.toml            workspace
 ├── DESIGN.md             the owner's UI surface; interface slices follow it
-├── compose.yaml          PostgreSQL 17, and Mailpit from slice 5
+├── compose.yaml          PostgreSQL 17, and Mailpit from slice 4
 ├── rust-toolchain.toml
 ├── migrations/           sqlx
 ├── public/  style/
@@ -305,7 +307,7 @@ it. They are short on purpose.
    one hour. The request form answers identically whether or not the address is
    registered, so it cannot be used to discover who has an account. Completing a
    reset invalidates every existing session for that user.
-9. Slices 6, 7, and 8 conform to `DESIGN.md`. Where it is silent, the question
+9. Slices 5 and 6 conform to `DESIGN.md`. Where it is silent, the question
    is added to its open questions rather than answered by whoever is writing the
    screen. Its eight non-negotiable rules are acceptance criteria for every
    interface slice, not aspirations.
@@ -317,8 +319,10 @@ it. They are short on purpose.
    against a number nobody chose.
 12. A closed plan is read-only, and `store` refuses to write it. Hiding the edit
     controls is not the enforcement.
-13. Every slice ends with a draft pull request whose head carries its closeout
-    event, verified on that head before the pull request is marked ready.
+13. Every slice is one application delivery batch and ends with one application
+    draft pull request plus its companion HQ evidence pull request. Each head
+    carries the evidence that belongs in that repository and is verified before
+    either pull request is marked ready.
 
 ## Test strategy
 
@@ -339,26 +343,33 @@ Slice 3 adds integration tests against the real local PostgreSQL container for
 persistence, ownership, closed-plan enforcement, and duplication.
 
 Slice 4 adds mandatory unit tests for email parsing and canonical comparison,
-password-policy boundaries, password hashing and verification, and
-authentication responses that must not reveal whether an account exists. Its
-PostgreSQL integration suite proves that
-case variants and concurrent registration cannot create duplicate identities;
-that malformed addresses are rejected; and that registration, login, session
-rotation, route protection, and server-side logout work together. Database and
-session properties do not count as proved by a mocked unit test.
+password-policy boundaries, password hashing and verification, authentication
+responses, and verification and reset token hashing, expiry, single use, and
+altered-token rejection. Its PostgreSQL and Mailpit integration suites prove
+database uniqueness under case variants and concurrent registration, delivery,
+registration, verified activation, login, session rotation, route protection,
+server-side logout, verification resend, password reset, and invalidation of
+existing sessions. Database, session, and mail properties do not count as
+proved by a mocked unit test.
 
-Slice 5 adds mandatory unit tests for verification and reset token hashing,
-expiry boundaries, single-use state, and altered-token rejection. Its
-PostgreSQL and Mailpit integration suite proves delivery and both complete
-flows, including resend invalidation, refusal of an unverified account after
-verification becomes available, indistinguishable requests for existing and
-unknown addresses, and invalidation of every session after a password reset.
-The local check entry points for each slice must invoke these tests before its
-pull request is offered for review.
+Slice 5 adds focused unit tests for form-to-`Plan` mapping and interface state
+that is not already a `calc` rule. Its PostgreSQL integration suite exercises
+the authenticated server functions for save, reload, duplicate, and close;
+existing `calc` and `store` suites remain regression gates. SSR render smoke
+tests cover the six input routes and their empty and closed states.
+
+Slice 6 keeps the workbook golden suite as the numerical oracle and adds unit
+tests for mapping `Analysis` into dashboard, KPI, completeness, tax, and
+scenario presentation states. SSR render smoke tests cover complete, missing,
+and unset-target states. Presentation rounding is asserted independently from
+the full-precision values that feed later calculations.
+
+The local check entry points for each slice must invoke its new tests and all
+prior regression suites before its pull request is offered for review.
 
 Browser E2E automation, snapshot tests, property-test frameworks, mocks
 introduced only to support tests, hosted coverage, and CI are not authorized by
-this revision. The acceptance flows in slices 4 through 8 retain local
+this revision. The acceptance flows in slices 4 through 6 retain local
 functional proof in addition to the unit and integration suites; the owner may
 choose a small browser E2E suite later, once the real interface makes the costly
 flows visible.
@@ -374,7 +385,7 @@ the pinned versions coexist.
 
 The workspace holds the three crates described under repository layout, each
 compiling and each empty of behaviour. `compose.yaml` runs `postgres:17-alpine`
-and nothing else; Mailpit joins it in slice 5, when something needs it. A single
+and nothing else; Mailpit joins it in slice 4, when something needs it. A single
 migration and one trivial query prove `sqlx` reaches
 the database, and the `.sqlx` offline cache is committed so that a checkout
 without a running database still compiles.
@@ -485,7 +496,11 @@ cannot read, update, or delete the first user's plan through any function
 refused by `store` itself; and duplicating a plan produces an independent copy
 whose later edits do not touch the original.
 
-### 4. Sign-in
+### 4. Account and trust
+
+This is the first of the three owner-selected delivery batches. It combines the
+old sign-in and mail-token slices so the application never checkpoints a
+temporary registration policy that the next pull request immediately replaces.
 
 Registration asks only for email and password. It stores the original address
 for display and a canonical comparison value under a database uniqueness
@@ -495,52 +510,30 @@ syntax, DNS, or SMTP probe proves control of a mailbox. Duplicate registration
 returns a response that does not reveal whether the canonical address already
 exists.
 
-Login, logout, and session handling use `argon2id` password hashing, an
-HttpOnly SameSite cookie session, session rotation on login, and a login failure
-message that does not reveal whether an account exists. A password has at least
-fifteen characters; the input accepts lengths of at least sixty-four; spaces
-and Unicode are permitted; and no mixture of uppercase, lowercase, numbers, or
-symbols is required. Slice 4 has no mail transport yet, so its local-only
-checkpoint logs a newly registered user in immediately. This temporary
-behaviour exists only so the slice is independently usable on the owner's
-machine; slice 5 replaces it with verified activation, and deployment remains
-unauthorized.
-
-**Done when** the mandatory unit and PostgreSQL integration tests in the test
-strategy pass; malformed addresses are rejected; case variants, surrounding
-whitespace, and concurrent attempts cannot create duplicate identities; an
-unauthenticated request to a plan route is refused; a registered local user can
-log in and reach only their own plans; logging in rotates the session; logging
-out invalidates it server-side; duplicate registration and login failures do
-not disclose account existence; and no password or session token is written to
-a log.
-
-### 5. Email verification and password reset
+Passwords use `argon2id`. A password has at least fifteen characters; the input
+accepts lengths of at least sixty-four; spaces and Unicode are permitted; and no
+mixture of uppercase, lowercase, numbers, or symbols is required. Login uses an
+HttpOnly SameSite cookie session, rotates the session on success, and returns a
+failure message that does not reveal whether an account exists. Logout
+invalidates the session server-side.
 
 Add Mailpit to `compose.yaml`, an `email_verification_tokens` table, a
 `password_reset_tokens` table, and a nullable verification timestamp on the
-user. Registration still asks for only email and password, but now creates an
-unverified account and sends a verification link. The account cannot
-authenticate or reach a plan until that link is completed. Resending a
-verification link invalidates earlier verification tokens for the account.
-Existing slice 4 accounts also begin unverified and use resend; none is silently
-grandfathered as verified.
+user. Registration creates an unverified account and sends a verification link;
+the account cannot authenticate or reach a plan until that link is completed.
+Resending a verification link invalidates earlier verification tokens for the
+account.
 
 The verification and reset token types remain separate so one cannot be used in
 the other flow. `lettre` sends both messages to Mailpit over SMTP on 1025 and
 the operator reads them at 8025. Nothing is sent to a real mail provider, no
-provider account exists, and no SaaS is introduced. Slice 5 also updates the
-registration flow in `DESIGN.md` from immediate entry to the verification step.
+provider account exists, and no SaaS is introduced. This slice also updates the
+registration flow in `DESIGN.md` from immediate entry to verified activation.
 
-Password reset retains two halves: request a reset from an address, and
-complete it from the link. Verification and reset have different expiry rules,
-but both store only token hashes, consume tokens once, reject altered tokens,
-and keep raw tokens and complete token-bearing URLs out of logs.
-
-This remains its own slice rather than part of sign-in because mail delivery and
-token lifecycle have failure modes separate from password authentication.
-Invariants 7 and 8 state them; this slice is where they are proved rather than
-intended.
+Password reset has two halves: request a reset from an address, and complete it
+from the link. Verification and reset have different expiry rules, but both
+store only token hashes, consume tokens once, reject altered tokens, and keep
+raw tokens and complete token-bearing URLs out of logs.
 
 Rate limiting is not built here. `tower-governor` 0.8.0 has not been published
 since August 2025, and an application reachable only from this machine does not
@@ -549,18 +542,22 @@ rate limiting before the application becomes reachable by anyone else. Real
 SMTP delivery, HTTPS, and secure production cookies belong to that same future
 deployment gate; no deployment is authorized by this plan.
 
-**Done when** the mandatory unit, PostgreSQL, and Mailpit integration tests in
-the test strategy pass; registration produces a working single-use verification
-link; an account cannot authenticate before verification and can authenticate
-after it; a resent link invalidates its predecessor; used, expired, altered, or
-wrong-purpose tokens are refused; the database and logs contain no raw token;
-a reset requested for a registered address produces a working single-use link;
-the same request for an unregistered address produces an identical response and
-no message; and completing a reset ends every session that user already had.
+**Done when** the mandatory unit, PostgreSQL, and Mailpit integration suites in
+the test strategy pass; malformed addresses are rejected; case variants,
+surrounding whitespace, and concurrent attempts cannot create duplicate
+identities; registration produces a working single-use verification link; an
+account cannot authenticate before verification and can authenticate after it;
+a resent link invalidates its predecessor; used, expired, altered, or
+wrong-purpose tokens are refused; the database and logs contain no password or
+raw token; unauthenticated plan routes are refused; login rotates the session;
+logout invalidates it server-side; duplicate registration, login, verification
+resend, and reset responses do not disclose account existence; a valid reset
+link changes the password; and completing a reset ends every existing session
+for that user.
 
-### 6. Input capture
+### 5. Plan workspace
 
-Leptos server-rendered forms for the six input sections, in Thai, with the
+Leptos server-rendered forms capture the six input sections in Thai, with the
 validation from `calc` surfaced as the operator types. Identifiers and code
 remain in English.
 
@@ -582,37 +579,32 @@ what it is, what it is for, why it matters, and what happens if it is left out.
 `DESIGN.md` holds the wording, because the words are the owner's domain
 knowledge and not the implementer's.
 
-**Done when** an operator can enter a complete plan, save it, reload the page,
-and see exactly what they entered; a grade mix of ten grades can be built and
-rejects proportions that do not sum to one; the live total bar updates without a
-round trip; the sample plan can be cleared in one action and the resulting empty
-state is usable; a season can be duplicated from the interface; a closed season
-cannot be edited from it; every figure named in `DESIGN.md` has its explanation;
-and the eight non-negotiable rules in `DESIGN.md` hold on every screen this
-slice adds.
+**Done when** the required unit, PostgreSQL integration, SSR smoke, and prior
+regression suites pass; an operator can enter a complete plan, save it, reload
+the page, and see exactly what they entered; a grade mix of ten grades can be
+built and rejects proportions that do not sum to one; the live total bar updates
+without a round trip; the sample plan can be cleared in one action and the
+resulting empty state is usable; a season can be duplicated from the interface;
+a closed season cannot be edited from it; every figure named in `DESIGN.md` has
+its explanation; and the eight non-negotiable rules in `DESIGN.md` hold on every
+screen this slice adds.
 
-### 7. Dashboard, efficiency, and completeness
+### 6. Analysis experience
 
-The three presentation surfaces that read the engine: the ten dashboard figures,
-the nine efficiency KPIs with their met-or-improve status, and the six
-completeness rules with the overall readiness status.
+Render every derived surface from the existing calculation engine: the ten
+dashboard figures, nine efficiency KPIs with their met-or-improve status, six
+completeness rules with the overall readiness status, both preliminary tax
+methods, and the five-by-five price-by-yield scenario matrix. The tax screen
+carries the disclaimer required by invariant 5.
 
-**Done when** entering the workbook's own input values through the interface
-produces on screen every figure that slice 2 asserts in its golden test, the
-overall completeness status matches the workbook, an incomplete plan shows what
-is missing instead of a confident figure derived from absent inputs, and a KPI
-whose target is unset shows `ยังไม่ได้ตั้งเป้า` with a route to the targets
-screen rather than a verdict.
-
-### 8. Tax estimate and scenario matrix
-
-The two remaining derived surfaces, including the disclaimer required by
-invariant 5.
-
-**Done when** both tax methods render correctly with the cheaper one marked, the
-disclaimer is visible on the tax screen itself, the two scenario sliders produce
-the same figures the matrix holds, and all twenty-five cells are reachable
-through the full table.
+**Done when** the required presentation unit tests, SSR smoke tests, workbook
+golden suite, and all prior regression suites pass; entering the workbook input
+through the interface renders every golden figure; the completeness status
+matches the workbook; missing inputs do not produce a confident figure; an
+unset KPI target shows `ยังไม่ได้ตั้งเป้า` with a route to the targets screen;
+both tax methods render correctly with the cheaper one marked and the disclaimer
+visible; the two scenario sliders agree with the matrix; and all twenty-five
+cells are reachable through the full table.
 
 ## Out of scope
 
@@ -638,7 +630,7 @@ instead of an oversight.
 - `axum-login` 0.18.0 has not been published since July 2025. Whether that is
   stability or abandonment is not established by its version history alone.
 - Whether `lettre` 0.11.23 talks to Mailpit v1.31.1 without configuration beyond
-  a plaintext local SMTP transport is untested; slice 5 answers it.
+  a plaintext local SMTP transport is untested; slice 4 answers it.
 - Rate limiting for registration, login, verification resend, and password
   reset remains deferred only while the application is reachable from one
   machine by its owner. Whoever first deploys it owes that control together
