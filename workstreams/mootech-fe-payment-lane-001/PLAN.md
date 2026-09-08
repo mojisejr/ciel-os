@@ -3,7 +3,7 @@
 **Workstream:** `mootech-fe-payment-lane-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -50,13 +50,27 @@ what the owner authorized.
 - No secret value is ever written into a repository file, event, pull request,
   or report. Only names, locations, and mode prefixes are recorded.
 
-## Correction recorded against this plan
+## Corrections recorded against this plan
 
-Slice 1 was executed before this plan and its decision event existed. The
-agent went from Wake straight to Execute on a live production defect and
-skipped Align and Plan. The owner caught it. The slice's work and evidence are
-real and were verified on production, but the ordering was wrong, and this plan
-records that rather than presenting slice 1 as though it had been planned first.
+**Slice 1.** Executed before this plan and its decision event existed. The agent
+went from Wake straight to Execute on a live production defect and skipped Align
+and Plan. The owner caught it. The work and evidence are real and were verified
+on production, but the ordering was wrong, and this plan records that rather
+than presenting slice 1 as though it had been planned first.
+
+**Slice 4, revision 0.2.** The same thing happened again, and worse. The owner
+asked whether `#480` should be repaired before launch and decided yes. `#480`
+was sitting in this plan's own **deferred** list, so that decision changed the
+plan — and the agent executed it, plus an unrelated stale end-to-end spec,
+before revising the plan or recording the decision. The owner caught it again.
+
+Twice is a pattern, not a slip. The failure mode is specific: the agent treats
+an owner's answer inside a conversation as sufficient authority to act, and
+records it afterwards as narration. An owner answer is authority to *decide*;
+this plan and a decision event are where that authority becomes executable, and
+they come first. Recorded here rather than turned into a new mechanism — CIEL
+already has the vocabulary, and adding a gate would be the meta-optimization
+`OWNER.md` warns about.
 
 ## Execution slices and acceptance criteria
 
@@ -116,7 +130,29 @@ Slice 3 is done when the production package rows match the applied migrations,
 verified by reading them back, and the five suites have been run green against
 the local test database. They are not added to the pre-push gate.
 
-### 4. Prove real money end to end
+### 4. Repair what the payment screens promise
+
+Promoted out of this plan's deferred list by an explicit owner decision on
+2026-09-09, after evidence that the affected path is not rare: of the four real
+PromptPay charges on production, three ended `expired` — so three of four real
+users of that method saw the screen `#480` is about.
+
+`QR_MAYBE_EXPIRED` names two actions and draws one button, stranding whichever
+reader needed the missing one. The row cannot drop either action, because it is
+the one row that does not know which of two people is reading it: someone who
+never paid and needs a fresh QR, or someone whose money already left and whose
+row the reconciler is still working through.
+
+Also repair the browser-truth specs that cover this lane. They are run by hand,
+nobody had run them since the Figma-parity rebuild, and one assertion for a
+settled charge was looking for a screen that no longer renders — a red spec on
+the money lane hides the next real regression behind it.
+
+Slice 4 is done when the screen draws every action its words name, proven by a
+test that reddens when the fix is removed and by a photograph at the widths the
+ticket names, and when the lane's browser-truth specs pass again.
+
+### 5. Prove real money end to end
 
 Install the Omise live keys, including the live webhook signing secret — which
 is not a string of our choosing, because the verifier base64-decodes it and it
@@ -131,13 +167,17 @@ recorded, and the QI check reads the buyer's engine balance rather than the row.
 
 ## Deferred in this lane
 
-Not blocking real money and not serious: `#401` `#443` `#453` `#473` `#480`
+Not blocking real money and not serious: `#401` `#443` `#453` `#473`
 `#488` `#504` `#514` `#388`; the sales-copy tickets `#471` `#517` `#535` `#545`
 `#555` `#557` `#382`; the unbuilt `#362` `#366` `#378` `#410` `#464`; `#597`,
 where the route guard exists and only its test is missing; `#407`, whose safe
 workaround is never pointing the suites at a database holding real rows; and
 `#582` with the duplicate `0006_` filename, which is a merge-time trap rather
 than a money defect.
+
+`#480` was on that list in revision 0.1 and the owner took it off on
+2026-09-09. Deferral is a judgement about blocking and harm, and the owner
+holds it; the evidence that changed it is in slice 4.
 
 ## Rollback contract
 

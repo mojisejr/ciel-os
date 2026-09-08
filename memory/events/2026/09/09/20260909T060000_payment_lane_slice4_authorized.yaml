@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T060000_payment_lane_slice4_authorized
+type: decision
+recorded_at: 2026-09-09T06:00:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+  scope:
+    - Adopt plan revision 0.2, which promotes issue 480 out of this plan's deferred list and declares it as slice 4.
+    - Make the QR-maybe-expired screen draw every action its sentence names, without removing either audience.
+    - Repair the browser-truth specs covering this lane so a stale red cannot hide the next real regression.
+  excluded:
+    - The other deferred screen tickets. Only 480 was promoted, and only on the evidence below.
+    - Any money-lane code. This slice changes what a screen offers after a charge did not settle.
+    - The real-money proof, which is now slice 5 and has its own decision.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner asked whether the QR-maybe-expired screen should be repaired
+      before launch and answered yes, against the agent's presented evidence
+      that three of the four real PromptPay charges on production ended expired,
+      so three of four real users of that method reached that screen.
+    - >-
+      That decision moved issue 480 out of the deferred list this plan itself
+      wrote in revision 0.1. Deferral is a judgement about blocking and harm and
+      the owner holds it, so the plan is revised rather than quietly widened.
+    - >-
+      The owner separately directed that everything else which neither blocks
+      real payment nor is serious stays deferred. Only this one moved.
+  not_completed:
+    - No implementation, test, photograph, or merge is claimed by this decision.
+    - Slice 5, the real-money proof, is unauthorised until its own decision.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "4"
+  repository:
+    head: 80867860244d67a7b1fa4a71126c86940b3c7fd8
+    branch: feat/payment-lane-screen-debt
+  owner_confirmed:
+    - Issue 480 is repaired before launch, not deferred.
+    - Every other non-blocking, non-serious screen ticket stays deferred.
+  production_evidence:
+    - >-
+      Four PromptPay rows exist on production. One settled on 2026-08-26; the
+      other three carry expired or gateway_expired, meaning nobody scanned the
+      QR in time. Those three are the readers of the screen this slice repairs.
+
+unresolved:
+  - >-
+    This decision is recorded after the work it authorises was already executed.
+    That is the second such ordering breach in this workstream, and the plan's
+    corrections section names the pattern rather than treating it as a slip.
+  - >-
+    Promoting one ticket out of a deferred list invites promoting others one at
+    a time. Nothing here establishes a threshold; the owner decided this one on
+    stated evidence, and the next one needs its own.
+
+next_action:
+  action: >-
+    Implement plan revision 0.2 slice 4 and open its pull requests for the owner
+    to merge.
