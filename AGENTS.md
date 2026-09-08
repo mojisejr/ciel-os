@@ -22,7 +22,7 @@ CIEL preserves evidence, decisions, and reconstructable context across disposabl
 On every fresh session, before giving a substantive answer or changing a file, perform this read-only Wake procedure. Do not require the human to invoke a separate skill.
 
 1. From the repository root, run `bun run wake`. Treat its output as local, read-only evidence; it validates events and reports current Git facts, the newest event, reconciliation, and unknowns.
-2. Read `README.md` and the task-relevant plan or Genesis document.
+2. Read `README.md`, `OWNER.md`, and the task-relevant plan or Genesis document. `OWNER.md` is mandatory Wake input before Align.
 3. Identify the project/workstream explicitly. If multiple candidates fit, surface the ambiguity; do not choose silently.
 4. Inspect further Git history, code, tests, or issues only where the report or task requires it. Separate observed facts, recorded claims, inferences, decisions, and unknowns. State uncertainty rather than filling a gap with a confident guess.
 
@@ -35,6 +35,13 @@ On every fresh session, before giving a substantive answer or changing a file, p
 - Ambient availability of a host capability is not itself CIEL evidence. A reported CIEL fact must remain traceable to a repository file or local Git output.
 - After Wake, an agent may use a task-relevant global capability as optional assistance. It has no CIEL authority: verify any material factual claim locally, or label it as an unverified suggestion.
 - If a Wake claim requires or relies on an excluded source, report `environment-contaminated` and stop that claim. Do not substitute the external result for repository evidence.
+
+### Owner operating contract
+
+`OWNER.md` contains only owner-confirmed working patterns and agent response
+rules. It is not a profile or personal-memory store. An agent may observe and
+suggest an interpretation, but only an explicit owner decision may change that
+file. Client bridges point to this shared boundary and do not copy its rules.
 
 ## Work lifecycle
 
@@ -85,7 +92,7 @@ reported by `bun run wake`. This file does not track them.
 
 - Keep this file concise, specific, and non-conflicting. State each rule once.
 - A client bridge carries pointers and client-specific mechanics only, never the only copy of a rule. A rule that applies to any client belongs here, stated once.
-- Put universal, durable operating rules here. Put task-specific procedures in a future skill only after repeat use justifies it; put path-specific rules next to the affected code only when that code exists.
+- Put universal, durable CIEL rules here and confirmed owner-specific response rules in `OWNER.md`. Put task-specific procedures in a future skill only after repeat use justifies it; put path-specific rules next to the affected code only when that code exists.
 - Review an instruction when a repeated failure, human correction, or measured evaluation shows that the instruction is needed or obsolete.
 
 ## Required final report

@@ -237,4 +237,3 @@ whole delivery PR.
   therefore begins with no demonstrated baseline failure; its remaining claim
   is whether an explicit, owner-controlled contract makes the behavior durable
   without causing over-stoppage or context bloat.
-

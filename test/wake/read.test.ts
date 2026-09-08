@@ -201,6 +201,7 @@ test("observes whether the client bridge is present alongside the shared contrac
     expect(report.observed.instructions).toEqual({
       agentsMdPresent: true,
       claudeMdPresent: false,
+      ownerOperatingContractPresent: false,
       readmePresent: true
     });
 
@@ -209,6 +210,11 @@ test("observes whether the client bridge is present alongside the shared contrac
 
     expect(report.observed.instructions.claudeMdPresent).toBe(true);
     expect(report.observed.instructions.agentsMdPresent).toBe(true);
+
+    await writeFile(join(fixture.path, "OWNER.md"), "# fixture owner contract\n");
+    report = await readWakeReport(fixture.path);
+
+    expect(report.observed.instructions.ownerOperatingContractPresent).toBe(true);
   } finally {
     await rm(fixture.path, { force: true, recursive: true });
   }
