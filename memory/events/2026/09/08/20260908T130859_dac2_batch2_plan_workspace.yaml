@@ -1,0 +1,136 @@
+schema_version: ciel.event.v0.1
+id: evt_20260908T130859_dac2_batch2_plan_workspace
+type: closeout
+recorded_at: 2026-09-08T13:08:59+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Deliver plan revision 0.4 slice 5 as the second owner-selected batch: an
+    authenticated, mobile-first Thai workspace for entering and managing a
+    complete orchard plan.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  completed:
+    - >-
+      Added an owner-scoped plan list and six input routes for market, yield and
+      grade mix, variable costs, fixed costs, owner-defined targets, and the
+      twelve-question health check.
+    - >-
+      Added a raw-text form boundary that preserves invalid typing, converts
+      percentages only when mapping to calc::Plan, surfaces calculation input
+      rules, supports ten grades, and refuses a completed grade mix whose shares
+      do not total one hundred percent.
+    - >-
+      Added workbook-sample and empty-plan starts, a confirmed one-action clear,
+      editable duplication that advances a four-digit season year by default,
+      and season close with read-only text rendering on every input route.
+    - >-
+      Added a sticky live-profit bar whose value is calculated locally through
+      the existing pure calc crate, with two decimals and thousands separators.
+      No Slice 6 dashboard, KPI verdict, tax, or scenario surface was added.
+    - >-
+      Applied the DESIGN.md light and dark tokens, single-column 480-pixel cap,
+      48-pixel interaction targets, Thai line height, reduced-motion rule, and
+      self-hosted Sarabun files under their SIL Open Font License.
+    - >-
+      Added focused form and interface unit tests, six-route empty and closed SSR
+      smoke tests, owner-scoped plan-list persistence proof, and an authenticated
+      PostgreSQL flow for save, exact reload, duplicate, clear, close, and
+      closed-plan refusal.
+    - >-
+      Kept calculation golden/unit, account, Mailpit, session, store, Leptos,
+      hydration, Wasm, Clippy, and dependency-boundary regressions passing.
+    - Returned the workstream execution marker to none and idle after proof.
+  not_completed:
+    - Slice 6 analysis presentation remains unauthorized and untouched.
+    - >-
+      The ten explanation topics marked Still needing wording in DESIGN.md remain
+      owner content. This batch uses only the two existing owner-authored drafts
+      relevant to its rendered surfaces and does not invent the missing wording.
+    - No browser E2E, CI, GitHub Action, deployment, hosting, or hosted service was added.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "5"
+  repository:
+    head: 4b623e175e9440d278f8e29f42b626d357546dfb
+    branch: feat/dac2-batch-2
+  delivery:
+    target_branch: main
+    topic_branch: feat/dac2-batch-2
+  hq_pull_request:
+    number: 52
+    url: https://github.com/mojisejr/ciel-os/pull/52
+    base: main
+    head: feat/dac2-batch-2
+    observed_head: 4b623e175e9440d278f8e29f42b626d357546dfb
+  application_repository:
+    id: dac2-durian-smart-account
+    revision: 7efce3ca6e6a15e302a015398143ffcde9f3f087
+    branch: feat/plan-workspace
+  application_pull_request:
+    number: 5
+    url: https://github.com/mojisejr/dac2-durian-smart-account/pull/5
+    base: main
+    head: feat/plan-workspace
+    observed_head: 7efce3ca6e6a15e302a015398143ffcde9f3f087
+  checks:
+    commands:
+      - docker compose up -d --wait
+      - ./scripts/check.sh
+      - ./scripts/test-plans.sh
+      - ./scripts/test-auth.sh
+      - cargo sqlx migrate run against the owner-controlled localhost database
+      - localhost HTTP smoke for public pages, self-hosted font, and protected plans route
+      - bun run check in CIEL HQ
+    result:
+      - Thirty-eight calc unit tests and the workbook golden regression passed.
+      - Nine plan form and interface unit tests passed with all prior web unit tests.
+      - >-
+        Two SSR tests covered all six routes in both empty editable and closed
+        read-only states.
+      - >-
+        Six PostgreSQL plan-store tests and one authenticated plan-operation
+        integration flow passed.
+      - >-
+        Four account PostgreSQL tests, the HTTP session suite, and Mailpit
+        delivery suite remained passing.
+      - >-
+        Formatting, all-target compilation, warning-free Clippy, Leptos SSR and
+        hydration builds, calc Wasm, and both dependency boundaries passed.
+      - >-
+        Localhost returned 200 for the public UI and Sarabun asset and redirected
+        an unauthenticated plans request to login.
+
+unresolved:
+  - >-
+    Ten explanation drafts remain owner work, including weighted price,
+    variable versus fixed cost, each KPI target, health score, and largest-buyer
+    share. The absent domain wording remains visible in DESIGN.md and was not
+    fabricated by the implementation.
+  - >-
+    Browser E2E automation and CI remain intentionally deferred. Current proof
+    is unit, SSR, PostgreSQL, HTTP/session, Mailpit, build, and localhost smoke.
+  - >-
+    The application remains localhost-only. Network deployment still requires
+    rate limiting, real SMTP, HTTPS, Secure cookies, and a separate owner decision.
+  - >-
+    Workbook parity still does not establish that its Thai tax formulas are
+    legally current or correct.
+
+next_action:
+  action: >-
+    Review and merge application PR 5 first, then HQ PR 52. After both merge,
+    fetch and verify both clean main branches and remove only the merged topic
+    branches. Slice 6 requires a separate owner decision.
+  acceptance_check:
+    - Application revision 7efce3c is reachable from fetched origin/main.
+    - This closeout is reachable from CIEL's fetched origin/main.
+    - Wake reports both repositories clean and current after branch cleanup.

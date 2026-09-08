@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20260908T121447_dac2_batch2_authorized
+type: decision
+recorded_at: 2026-09-08T12:14:47+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-durian-smart-account-001
+  objective: >-
+    Authorize the second owner-selected delivery batch, the authenticated plan
+    workspace, under the existing remote pull-request workflow.
+  scope:
+    - Implement plan revision 0.4 slice 5 only.
+    - Preserve the account and trust behaviour delivered by slice 4.
+    - Add the focused unit, PostgreSQL integration, and SSR render tests declared for slice 5.
+  excluded:
+    - Slice 6 analysis presentation and its dashboard, KPI, tax, and scenario surfaces.
+    - Browser E2E automation, CI, GitHub Actions, deployment, hosting, and hosted services.
+
+outcome:
+  status: decided
+  completed:
+    - The owner explicitly authorized Batch 2 with the instruction to proceed.
+    - The execution marker now claims slice 5 for this bounded implementation.
+  not_completed:
+    - No Batch 2 application implementation or test result is claimed by this decision.
+    - Slice 6 remains unauthorized.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "5"
+  repository:
+    head: a1f346d70602c6b96619d3f2083d1d0a0a4435ff
+    branch: feat/dac2-batch-2
+
+unresolved:
+  - Ten explanation drafts and four design questions remain owner work; slice 5 must not invent missing wording.
+  - Browser E2E and CI remain intentionally deferred under plan revision 0.4.
+  - Slice 6 remains unauthorized after this decision.
+
+next_action:
+  action: >-
+    Implement slice 5 on a clean application topic branch, run every declared
+    local regression and integration check, and prepare one application draft
+    PR plus its companion HQ evidence PR for owner review.
