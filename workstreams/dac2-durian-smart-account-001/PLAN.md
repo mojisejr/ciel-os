@@ -4,8 +4,8 @@
 **State:** active
 **Execution lane:** single
 **Plan revision:** 0.4
-**Execution phase:** 5
-**Execution state:** executing
+**Execution phase:** none
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective and owner agreement
