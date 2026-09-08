@@ -1,0 +1,105 @@
+schema_version: ciel.event.v0.1
+id: evt_20260908T234500_payment_lane_slice2_qi_repair
+type: closeout
+recorded_at: 2026-09-08T23:45:00+07:00
+recorded_by:
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Made a failed QI grant recoverable. Migration 0019 adds a nullable
+      v2_payment.qi_granted_at and a partial index on exactly the repair
+      predicate. The settle path records a confirmed grant; a failure to record
+      cannot masquerade as a failed grant, because the QI is already credited
+      and leaving the row unmarked simply schedules a retry the engine dedups.
+      A second reconciler pass scans APPROVED, tier QI, qi_granted_at IS NULL,
+      after the PENDING pass and behind the same kill switch.
+    - >-
+      Chose no backfill and no time window, and recorded why. Marking existing
+      rows as granted would throw away the only chance to repair a genuinely
+      failed one, and windowing would make the money permanent while the goods
+      stayed permanently missing, which is the bug itself.
+    - >-
+      Added /api/cron/ to the maintenance allowlist. Both Vercel crons were
+      being rewritten to the maintenance page and answering HTTP 200, so
+      Vercel's cron log would record success while nothing ran. This costs no
+      security: the route already refuses any caller without CRON_SECRET.
+    - >-
+      Moved the payment-lane CSP from guardV2's return value to the whole of
+      middleware(), so it keys on the request rather than on which gate
+      answered. That coupling was why the launch change kept guardV2 alive
+      returning next(), which in turn made it impossible for /v2 to ever reach
+      the maintenance gate that #606's step order depends on.
+    - >-
+      Proved each part with a mutant. Recording before the engine confirms
+      kills four assertions; counting a failed write as a repair kills one;
+      dropping the cron path from the allowlist kills two; deleting the CSP call
+      at its new home kills fourteen.
+  not_completed:
+    - >-
+      Nothing is deployed. The agent is blocked from merging by a host
+      permission gate, so this is a pull request awaiting the owner.
+    - >-
+      The cron behaviour under maintenance is proven by unit test only.
+      MAINTENANCE_MODE is off on production, so it cannot be observed there
+      until the cutover turns it on.
+    - >-
+      No claim is made that the engine is idempotent on ref equals charge_id.
+      The entire retry rests on that, it lives in another repository, and every
+      test here would still pass if it were false. Only slice 4's real QI
+      purchase, read at the buyer's balance, can establish it.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: 6fb4edec4693114abd2148ea7cacb22602b00968
+    branch: feat/mootech-fe-payment-lane
+  product_repository:
+    project: mootech-fe
+    topic_branch: fix/payment-lane-slice2
+    head: ddcfe0ba6170000baca716ccf50c2aff022d062c
+    pull_request: 610
+    pull_request_url: https://github.com/mojisejr/mootech-fe/pull/610
+  checks:
+    - npm run lint — 0 errors, 125 warnings, all pre-existing
+    - npm test — 1475 passed, 134 skipped, up 8 from the new suite
+    - npm run build — exit 0, compiled successfully, VAPID gate green
+    - pre-push hard gate — lint, test, tsx lane, architecture, workflow-integrity, gitleaks all green
+  deploy_order: >-
+    Migration 0019 had to reach production BEFORE this merges, and it did. The
+    running deployment does not know the column exists, so applying it first is
+    safe; merging first would have left the repair pass logging errors and doing
+    nothing, which is the state this slice exists to end.
+
+unresolved:
+  - >-
+    The retry's safety rests entirely on the engine deduplicating on
+    ref equals charge_id. If that guarantee is ever dropped, this pass becomes a
+    double-credit machine and must be deleted in the same change. A test states
+    the dependency; it cannot verify it.
+  - >-
+    A permanently ungrantable row, such as one with a package code the catalog
+    does not know, will be retried every fifteen minutes forever and logged each
+    time. That is noisy on purpose rather than silent, but nobody has decided
+    what should eventually happen to such a row.
+  - >-
+    The note added above guardV2 in slice 1 is still a comment, and this slice
+    did not turn it into a mechanism. #606 B3 remains the intended safe removal
+    path and nothing enforces it.
+
+next_action:
+  action: >-
+    Owner reviews and merges mootech-fe pull request 610. After it deploys,
+    confirm the cron endpoints still answer 401 and that the reconciler's JSON
+    response now carries its qi counters.

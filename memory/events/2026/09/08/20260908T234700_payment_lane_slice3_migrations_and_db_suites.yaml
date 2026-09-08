@@ -1,0 +1,118 @@
+schema_version: ciel.event.v0.1
+id: evt_20260908T234700_payment_lane_slice3_migrations_and_db_suites
+type: closeout
+recorded_at: 2026-09-08T23:47:00+07:00
+recorded_by:
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Applied 0018 and 0019 to the production database, each as a whole file in
+      a single transaction, and read the result back. V2_PRO_MONTHLY now reads
+      199 and active, which the live shop toggle had been offering while the
+      row still refused it. v2_payment now carries a nullable qi_granted_at and
+      the partial repair index.
+    - >-
+      Proved nothing was lost. Row counts before and after are identical:
+      v2_payment 12, member_subscription 22, payment_package 29.
+    - >-
+      Established that migrations 0016 and 0017 were already applied to
+      production, which closes blocker 2 of issue 605. All four QI packs exist
+      at 35, 99, 219 and 449, active, and both tier CHECK constraints already
+      include QI. No package row has a null tier.
+    - >-
+      Ran the five database-backed payment suites — the ones nothing runs —
+      against a local arena brought up to 0019. 72 passed, 0 failed. The webhook,
+      the reconciler cron, the discount race and the subscription writer have now
+      met a real Postgres.
+    - >-
+      Found and fixed the two things that made them unrunnable. Three suites
+      rebuild v2_payment from a hand-maintained list of migration files, so 0019
+      had to be added to each. And one assertion hard-coded a 1M package as 31
+      days when the code uses calendar months, so it had been passing only in
+      the seven 31-day months.
+    - >-
+      Verified independently that the money math is correct. Three real
+      production member_subscription rows, including two carry-over cases, match
+      the formula in provision.ts to the day. Issue 458 says expire_at has never
+      been proven; for these three rows it now has been.
+  not_completed:
+    - >-
+      The suites are not added to the pre-push gate, deliberately. The hook's
+      own note explains that an unpredictable wait in front of every push is what
+      teaches people to reach for --no-verify.
+    - >-
+      Nothing establishes that the local arena stays current. It was eight
+      migrations behind and nothing prevents that recurring.
+    - >-
+      Three real rows are three rows. The expire_at formula is confirmed for
+      first purchase and for carry-over, not for buffer days, not for monthly
+      packages, and not for February.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: 6fb4edec4693114abd2148ea7cacb22602b00968
+    branch: feat/mootech-fe-payment-lane
+  product_repository:
+    project: mootech-fe
+    topic_branch: fix/payment-lane-slice2
+    head: ddcfe0ba6170000baca716ccf50c2aff022d062c
+    pull_request: 610
+  production_database:
+    applied:
+      - lib/db/0019_v2_payment_qi_granted_at.sql
+      - lib/db/0018_enable_v2_pro_monthly.sql
+    read_back:
+      - qi_granted_at exists, timestamp with time zone, nullable
+      - idx_v2_payment_qi_ungranted exists with the exact repair predicate
+      - V2_PRO_MONTHLY is 199 and active; V2_PLUS_MONTHLY remains 0 and inactive by design
+      - the reconciler's repair query returns zero rows
+    row_counts_unchanged: v2_payment 12, member_subscription 22, payment_package 29
+  db_suites:
+    command: >-
+      TEST_DATABASE_URL and DATABASE_URL pointed at the local arena, vitest run
+      over the five *-db suites with --no-file-parallelism
+    result: 72 passed, 0 failed
+    mutant: >-
+      Dropping the carry-over in provision.ts fails five tests, including the
+      assertion corrected here, so the correction did not remove its teeth.
+
+unresolved:
+  - >-
+    Those suites DROP TABLE v2_payment CASCADE. Issue 407 describes the hazard
+    as DELETE, which understates it. Pointing TEST_DATABASE_URL at a database
+    holding real rows destroys the table, not just its contents.
+  - >-
+    The hand-maintained migration list in three suites has no enforcement. The
+    next v2_payment ALTER will break them the same way, and again nobody will
+    know until someone runs them. reconcile-cron-db.test.ts predicted this in
+    writing before it happened.
+  - >-
+    The date-dependent assertion had been wrong in five months of every year and
+    nothing caught it, because a suite that never runs cannot fail. It is not
+    established that the other four suites hold no similar assertion.
+  - >-
+    0018 makes Pro monthly sellable at 199. Reaching it still requires the team
+    gate, and the gateway is still in test mode, so nothing real can be bought
+    yet — but the row is live from now on.
+
+next_action:
+  action: >-
+    Slice 4. The owner installs the Omise live keys, which the agent could not
+    do because the only live secret key found locally is expired, then proves a
+    real charge settles and the dynamic webhook arrives with no static endpoint.
+  acceptance_check:
+    - A live-mode secret key that Omise accepts is installed on Vercel Production, together with the live webhook signing secret.
+    - One real charge settles, its webhook arrives at the v2 endpoint, and the buyer receives what they paid for.

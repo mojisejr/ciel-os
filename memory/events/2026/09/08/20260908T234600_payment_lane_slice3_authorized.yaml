@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20260908T234600_payment_lane_slice3_authorized
+type: decision
+recorded_at: 2026-09-08T23:46:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+  scope:
+    - Apply the outstanding money-affecting migrations to the production database and read the result back.
+    - Run the five database-backed payment suites once against the local arena.
+  excluded:
+    - Adding those suites to the pre-push gate.
+    - Any change that starts real money moving.
+    - Restoring production data from a dump, or pointing any suite at production.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner authorised applying the migrations on the condition that, after
+      the implementation was finished, they were still true and still necessary,
+      and only if the agent was sure they were safe for the database. If any
+      risked data loss the agent was to stop and ask rather than proceed.
+    - >-
+      The owner authorised running the database-backed suites before launch,
+      limited to what the money lane needs, and directed that anything which
+      neither blocks real payment nor is serious be skipped entirely.
+  not_completed:
+    - No migration had been applied and no suite had been run when this decision was recorded.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: 6fb4edec4693114abd2148ea7cacb22602b00968
+    branch: feat/mootech-fe-payment-lane
+  safety_assessment:
+    "0018": >-
+      One UPDATE of one row, setting V2_PRO_MONTHLY from amount 0 and inactive
+      to 199 and active. No schema change, no DROP, no delete. Reversible by the
+      inverse UPDATE. No data-loss path.
+    "0019": >-
+      ADD COLUMN IF NOT EXISTS on a nullable column, CREATE INDEX IF NOT EXISTS
+      on a partial index, and a COMMENT. No DROP, no NOT NULL, no default, no
+      backfill, no rewrite. Re-runnable. No data-loss path.
+  owner_confirmed:
+    - Apply only if still necessary after the implementation, and only if safe.
+    - Stop and ask instead of proceeding if data loss is possible.
+    - Run the database suites before launch, only as far as the money lane needs.
+
+unresolved:
+  - >-
+    The local arena's database was found to be roughly eight migrations behind,
+    which is why these suites had not run for anyone. Bringing it forward is a
+    local repair and nothing keeps it forward.
+
+next_action:
+  action: >-
+    Apply 0018 then 0019 to production, read both back, then bring the local
+    arena to 0019 and run the five database-backed payment suites.
