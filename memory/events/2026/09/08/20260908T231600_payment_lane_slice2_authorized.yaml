@@ -1,0 +1,93 @@
+schema_version: ciel.event.v0.1
+id: evt_20260908T231600_payment_lane_slice2_authorized
+type: decision
+recorded_at: 2026-09-08T23:16:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+  scope:
+    - Implement plan revision 0.1 slice 2 in mootech-fe on a topic branch, with a pull request the owner merges.
+    - Make a failed QI grant a row the reconciler repairs, using the engine's existing idempotency on ref equals charge_id.
+    - Keep both cron jobs reachable while maintenance mode is on, so neither answers 200 with the maintenance page.
+    - Let /v2 fall under the maintenance gate at launch without losing the payment-lane content security policy.
+  excluded:
+    - Any change that starts real money moving. Live keys are a separate owner-gated step in slice 4.
+    - Any production database write. Slice 3 covers those and each one is confirmed separately.
+    - Every ticket listed as deferred in the plan, including the sales-copy set and the ops route test hole.
+    - mootech-be. It is read for evidence only.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner stated the committed outcome on 2026-09-08: customer payment,
+      point deduction and time deduction must be correct and complete, and real
+      payment must work before launch.
+    - >-
+      The owner authorised the agent to carry the work while he sleeps,
+      provided nothing needs a decision from him overnight, and to raise
+      anything that does rather than choose for him.
+    - >-
+      The owner authorised read-only queries against the production database
+      for this workstream.
+    - >-
+      The owner authorised fixing the unrecoverable QI grant before launch,
+      because customers will have paid real money.
+    - >-
+      The owner authorised running the database-backed payment suites once
+      before launch, limited to what the money lane needs, and directed that
+      every issue which neither blocks real payment nor is serious be skipped.
+    - >-
+      The owner authorised installing the Omise live keys only on the condition
+      that /v2 is provably closed to the public first, and will test a real
+      payment himself the following morning.
+    - >-
+      The owner authorised applying the outstanding migrations only if they are
+      still true and necessary after the implementation, and directed the agent
+      to stop and ask rather than proceed if any of them risks data loss.
+  not_completed:
+    - No slice 2 implementation, test, or proof is claimed by this decision.
+    - Slices 3 and 4 are described by this decision's scope but authorised only by their own decisions.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: cb547d3de918f192b3640d0b0cf9d619debf9272
+    branch: feat/mootech-fe-payment-lane
+  owner_confirmed:
+    - Real payment working correctly is the committed outcome; launch is gated on it.
+    - The agent works through the night and wakes the owner only for a decision he alone can make.
+    - Live keys wait on a closed gate. The condition was met at 23:13 +07 and verified on production.
+    - A migration that risks data loss is stopped and reported, never applied on the agent's judgement.
+
+unresolved:
+  - >-
+    The condition attached to the live keys was met by the owner's own merge,
+    not by the agent, who was blocked from merging by a host permission gate.
+    The same gate will block every future deploy in this lane, so each slice
+    ends at a pull request and needs the owner's hand.
+  - >-
+    The owner's authorisation for slices 3 and 4 was given in conversation
+    before their work exists. Each will be confirmed against what is actually
+    built before it is executed, because the owner conditioned the migration
+    authority on the work still being necessary afterwards.
+  - >-
+    Issue 605 states that the Omise webhook secret is a string of our choosing.
+    The verifier base64-decodes it and it differs between the value production
+    holds and the value mootech-be holds for live, so it is mode-specific and
+    that instruction is wrong. Nothing has been changed on the strength of this
+    yet; it is recorded because slice 4 depends on it.
+
+next_action:
+  action: >-
+    Implement plan revision 0.1 slice 2 in mootech-fe on a topic branch, prove
+    each part with a test that reddens when the fix is removed, and open a pull
+    request with the build, lint and test output for the owner to merge.
