@@ -1,0 +1,140 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T144000_payment_lane_webhook_root_cause
+type: closeout
+recorded_at: 2026-09-09T14:40:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Found the root cause of every 401, and it is our code, not a key, not a
+      setting, and not Omise. Omise's webhook specification says the
+      Omise-Signature header may carry MORE THAN ONE signature, comma-separated,
+      and that a verifier must split the header and accept the delivery if ANY of
+      them matches. Our verifier treats the entire header as one hex string,
+      compares its length against a single 64-character digest, and returns false
+      the moment they differ.
+    - >-
+      Established when the header carries two. Omise's documentation states that
+      rolling the webhook secret generates the new one immediately and keeps the
+      previous one valid for twenty-four hours, and that during that window every
+      webhook is signed with BOTH secrets, delivered as two comma-separated
+      signatures. The account holder rolled the secret at 11:02 today. Every
+      delivery since then has carried two signatures, and every one of them has
+      been refused by a length check.
+    - >-
+      Confirmed the account's delivery log agrees, event by event. Seven
+      deliveries to the v2 endpoint today, all 401. Every historical delivery to
+      mootech-be, 200. Those 200s are dated 2026-08-17 and earlier, which is
+      before any roll, so they carried one signature and passed — mootech-be
+      carries the identical defect and has simply never met a rolled secret.
+    - >-
+      Reconciled the contradiction that had blocked the diagnosis. A payload this
+      agent signed by hand carries ONE signature and production answered 200; a
+      payload Omise signs after a roll carries TWO and production answers 401.
+      Both observations were correct and the difference between them was the
+      thing nobody had looked at.
+    - >-
+      Explained the two 401s from 10:08 and 10:09, which predate the roll, as a
+      different fault with the same symptom: at that hour the production variable
+      still held the TEST-mode signing secret while the account was answering in
+      live mode. That fault is already fixed; the comma one is not.
+    - >-
+      Cleared the hypothesis this session was about to spend effort on. The
+      dashboard was not showing a test-mode secret, and the value installed is
+      correct. The test-mode charge created at 14:28:47 to probe that idea is now
+      unnecessary as evidence, though harmless — it moved no money.
+    - >-
+      Confirmed independently, without the dashboard, that the webhook is not
+      being accepted. Two PromptPay QRs were created twenty-seven seconds apart
+      and left unpaid. Their expiries were twenty-seven seconds apart, but both
+      rows were written at the same instant, 14:30:59 — the signature of one cron
+      pass, not of two webhook deliveries.
+  not_completed:
+    - >-
+      Nothing was changed. The owner asked for research and a record before any
+      action, and no code, key, or setting was touched.
+    - The refund defect found earlier today is still open and still deferred by the owner's decision.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.3"
+  repository:
+    head: 26d5d51fe3a362956c1db5abdda89a09e33ab93b
+    branch: feat/payment-lane-live-keys
+  the_defect:
+    file: mootech-fe lib/payment/webhook-verify.ts
+    behaviour: >-
+      The header is compared as a single UTF-8 string against one 64-character
+      hex digest, with an explicit length check in front of timingSafeEqual. A
+      two-signature header is roughly 129 characters, so the length check refuses
+      it before any comparison happens.
+    specification: >-
+      Omise's own sample splits the header on commas, decodes each part from hex,
+      and accepts the delivery if any part matches the digest. Two differences
+      from ours: the split, and comparing decoded bytes rather than the hex text.
+      The split is what is breaking production; the text comparison is a latent
+      fragility about hex case.
+    also_present_in: >-
+      mootech-be src/omise/omise.service.ts verifyWebhookSignature, from which
+      ours was ported line for line. v1 would break the same way the first time
+      anyone rolled a secret while it was taking money.
+  delivery_log_read_from_the_account:
+    v2_endpoint_today: seven deliveries, all 401, from 10:08:45 through 14:11:03
+    mootech_be_endpoint: 200 on every delivery, most recently 2026-08-17, all before any roll
+  independent_confirmation:
+    charges: chrg_68yi9ynrogpz9b2x7mz and chrg_68yia4b2dqb80tqxnfw
+    created: 14:10:35 and 14:11:02, unpaid on purpose, no money involved
+    expired: 14:25:35 and 14:26:02, twenty-seven seconds apart
+    written: both at 14:30:59, together, which only a cron pass does
+  self_healing_note: >-
+    Omise's grace window is twenty-four hours from the 11:02 roll. After roughly
+    11:02 tomorrow the header carries one signature again and the current code
+    would start working — without anything being fixed. That is a trap, not a
+    remedy: the fault would look repaired and would return at the next roll,
+    which is exactly when someone is already dealing with a security event.
+
+unresolved:
+  - >-
+    This is the third reasoning error of the day and the most expensive. The
+    agent trusted a comment saying the verifier was "ported EXACTLY" from the
+    code that takes real money, and never read the vendor's specification. Two
+    hours went into keys, modes, timelines and a refund, while the answer was one
+    line of documentation about the header format. A port being faithful says
+    nothing about whether the original was right.
+  - >-
+    A test that passes can hide the defect completely. Every test of this
+    verifier constructs its own single-signature header, so the whole suite is
+    green against a shape the vendor stops sending the moment a secret is rolled.
+    Whatever fix lands needs a test whose header carries two signatures, in both
+    orders, and one that carries only a wrong one.
+  - >-
+    mootech-be carries the same defect and is out of this lane's scope. Recording
+    it here so the next person to touch v1 does not rediscover it during an
+    incident.
+  - >-
+    Whether Omise ever sends more than two signatures, and whether the header can
+    carry whitespace after the comma, is not established. A fix should tolerate
+    both rather than assume exactly two.
+
+next_action:
+  action: >-
+    Fix verifyOmiseSignature to split the Omise-Signature header on commas,
+    compare each candidate against the digest, and accept if any matches, with a
+    test that reddens when the split is removed. Then create a PromptPay QR,
+    leave it unpaid, and prove the expiry is written at the expiry instant rather
+    than at the next cron pass. Only then buy and settle for real.
+  acceptance_check:
+    - A webhook Omise signed with two signatures is accepted on production.
+    - An unpaid QR's expiry reaches its row within seconds of expiring, not at the next cron.
+    - A test carrying two signatures reddens when the comma split is removed.
