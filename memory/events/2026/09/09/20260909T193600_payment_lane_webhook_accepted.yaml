@@ -1,0 +1,124 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T193600_payment_lane_webhook_accepted
+type: closeout
+recorded_at: 2026-09-09T19:36:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      A webhook Omise signed was ACCEPTED on production, for the first time in
+      the life of this endpoint. The account's delivery log shows charge.create
+      to the v2 payment webhook on the production host answering 200 at 19:27:11,
+      one second after the charge was created. Slice 5's first acceptance
+      criterion is met.
+    - >-
+      Eliminated the competing explanation that had survived every earlier
+      record. The worry was that the installed signing secret was not the one the
+      account signs with, which a self-signed probe cannot distinguish. It is
+      now settled by the timeline rather than by another probe: the owner
+      replaced OMISE_WEBHOOK_SECRET at about 11:47, and a delivery at 14:11 still
+      answered 401 with that correct value in place. The only thing that changed
+      between that 401 and this 200 is the verifier.
+    - >-
+      Established the before and after with one variable moved. Seven deliveries
+      answered 401 between 10:08 and 14:11 while the code compared the whole
+      Omise-Signature header against a single digest. mootech-fe#615 shipped the
+      comma split and the byte comparison, merged as 3ac96bc, and the next
+      delivery answered 200 inside the same twenty-four hour grace window that
+      produced the two-signature headers.
+    - >-
+      Confirmed the fifteen-minute PromptPay lifetime still holds after both
+      #614 and #615 reached production. The charge created at 19:27:10 carries
+      charge_expires_at at 19:42:10, fifteen minutes to the second.
+    - >-
+      Confirmed the delivery reached the production host and not a preview or a
+      stale endpoint. The endpoint in the delivery log is the exact value of
+      OMISE_WEBHOOK_URL_V2, which is the production origin that NEXTAUTH_URL and
+      OMISE_RETURN_ORIGIN_V2 also name.
+  not_completed:
+    - >-
+      The paid path is not proven by this. A charge.create event is not settleable,
+      so the handler accepted the delivery and correctly did nothing. Whether a
+      charge.complete settles a real charge without the reconciler is step two and
+      has not been attempted.
+    - The refund proof has not been attempted.
+    - >-
+      No money moved for this observation. The charge was left unpaid on purpose
+      and will expire at 19:42:10.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "5"
+  execution_phase: "5"
+  repository:
+    head: 2dff7ba5f334245b8575419dc3c5c50f48ddb54a
+    branch: feat/payment-lane-webhook-accepted
+  product_repository:
+    project: mootech-fe
+    main: 3ac96bc, the merge of pull request 615
+    fix: lib/payment/webhook-verify.ts splits Omise-Signature on commas and compares decoded bytes
+  delivery_observed:
+    source: the account's own delivery log, read by the owner from the Omise dashboard
+    status: 200
+    event_key: charge.create
+    endpoint: the v2 payment webhook on the production host
+    at: 2026-09-09T19:27:11+07:00
+  charge_that_produced_it:
+    id: chrg_68yldelkr5uz504by2a
+    package: QI_60 at 3500 satang
+    created: 2026-09-09T19:27:10+07:00
+    expires: 2026-09-09T19:42:10+07:00, fifteen minutes exactly
+    row_status_at_observation: PENDING
+    money: none, left unpaid deliberately
+  static_webhook_state: >-
+    The account's live static webhook still points at the v2 endpoint, moved
+    there by the account holder before slice 5 began. Recorded beside the
+    observation, as revision 0.3 requires, so a later reader can tell that the
+    per-charge mechanism of issue 374 is NOT what delivered this event.
+
+unresolved:
+  - >-
+    The header itself was still not read. The 401 branch logs its shape, and a
+    200 takes a path that logs nothing, so this delivery left no record of how
+    many signatures it carried. That it carried two rests on the grace window
+    from the 11:02 roll still being open, and on the before-and-after above,
+    rather than on an observation of the header. The gap is small and it is
+    stated rather than closed.
+  - >-
+    The grace window closes at about 11:02 on 2026-09-10. After it, a delivery
+    carries one signature again, and this observation cannot be reproduced until
+    someone rolls the secret. Anything that depends on seeing a two-signature
+    header accepted must happen before that hour.
+  - >-
+    mootech-be still carries the identical defect and remains outside this lane.
+    Nothing about today's fix reaches it.
+  - >-
+    Whether an expired QR's row is written at the expiry instant or at the next
+    cron pass is still open, and this charge is a live probe of it: it expires at
+    19:42:10 and the reconciler runs every fifteen minutes.
+
+next_action:
+  action: >-
+    Step two. Buy a QI_60 pack for 35 baht with real money on production, with
+    the preview gate still closed, and establish that it settles by webhook
+    rather than by the reconciler — qi_granted_at within seconds of payment, not
+    on a quarter-hour boundary. The credit must be 90 QI and not 60, which also
+    confirms the catalog and the package rows agree after 0020. Then step three,
+    the membership refund.
+  acceptance_check:
+    - A real charge settles without waiting for the reconciler.
+    - The engine wallet rises by 90 QI, read back through the engine rather than from a row.
+    - A refunded membership purchase loses its entitlement.
+    - The preview gate is still closed when all of it is observed.

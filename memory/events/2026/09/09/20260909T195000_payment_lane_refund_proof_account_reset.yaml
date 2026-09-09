@@ -1,0 +1,131 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T195000_payment_lane_refund_proof_account_reset
+type: decision
+recorded_at: 2026-09-09T19:50:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+  scope:
+    - >-
+      Lapse the owner's own account to FREE on production so the purchase gate
+      will allow a membership purchase, which is what the refund proof needs.
+    - >-
+      Do it reversibly: move the membership shadow's expiry to a past date rather
+      than deleting the row, and set the single ACTIVE subscription row to
+      EXPIRED. Both are restored by writing the recorded values back.
+  excluded:
+    - >-
+      Any account but the owner's own. This touches one user id and nothing else,
+      named by an equality on that id alone.
+    - >-
+      Deleting any row. Nothing is removed; two values are changed and both are
+      recorded here so they can be written back.
+    - >-
+      The purchase and the refund themselves, which need a real card and the
+      Omise dashboard and are the owner's actions, not the agent's.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      Established that the refund proof cannot run on this account as it stands.
+      decidePurchase refuses every sellable membership package: the two PRO
+      packages as ALREADY_ON_THIS_TIER and the PLUS one as CANNOT_DOWNGRADE,
+      because TIER_RANK places PRO at the top and this account already holds a
+      paid membership. The refusal happens at the door, so no charge would ever
+      be created and nothing about the refund path would be exercised.
+    - >-
+      The owner chose to lapse their own account rather than defer the proof, and
+      confirmed the account is a development one where dirty data is acceptable.
+      The agent had recommended against editing membership rows and said so; the
+      owner reaffirmed, which makes it their decision to take.
+    - >-
+      Read and recorded the exact state to restore, before touching anything. The
+      membership shadow holds one row for this user, plan MEMBER, package
+      V2_PRO_YEARLY, created 2026-06-22, starting 2026-09-01, expiring
+      2028-08-31. The subscription table holds five rows for this user, of which
+      exactly ONE is ACTIVE: id 152d1d13-81ad-48a8-9fe8-ddc4f4c5c28c, tier PLUS,
+      package V2_PLUS_YEARLY, 79000 satang, starting 2026-09-01, expiring
+      2027-09-01. The other four are already REPLACED and are not touched.
+    - >-
+      Chose to lapse rather than delete, for a reason that improves the proof
+      rather than only reducing risk. A deleted shadow row would leave
+      prev_member_expire_at NULL at settlement, and a reversal on a NULL hands the
+      shadow to a human and writes nothing over it — the NEEDS_HUMAN branch. A
+      lapsed row leaves a real previous value, so the refund exercises the
+      RESTORED branch of issue 484, which is the one that actually takes an
+      entitlement back.
+  not_completed:
+    - >-
+      Nothing has been written at the time this event is recorded. The write
+      follows it, which is the ordering this plan's corrections say was broken
+      twice.
+    - >-
+      The purchase and the refund are not the agent's to perform. They need a
+      real card in a browser and the Omise dashboard.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "5"
+  execution_phase: "5"
+  repository:
+    head: 1661dfe
+    branch: feat/payment-lane-webhook-accepted
+  owner_confirmed:
+    - Lapse the owner's own account to free tier and run the refund proof on it.
+    - The account is a development one; dirty data on it is acceptable.
+  account:
+    user_id: b54b765a-c01b-471f-bf7c-0c2a1a448bdd
+    note: the owner's own account, identified by the owner in session
+  restore_values:
+    membership_shadow:
+      expire_at: "2028-08-31"
+      note: one row for this user; only the expiry is changed
+    subscription_row:
+      id: 152d1d13-81ad-48a8-9fe8-ddc4f4c5c28c
+      status: ACTIVE
+      note: the only ACTIVE row; the other four were already REPLACED and stay untouched
+  planned_writes:
+    - the membership shadow's expiry moves to a past date for this user id
+    - the one ACTIVE subscription row's status becomes EXPIRED, by its id
+  why_the_gate_refuses_today:
+    tier_rank: FREE 0, PLUS 1, PRO 2
+    sellable_membership_packages:
+      - V2_PRO_MONTHLY at 199, tier PRO
+      - V2_PRO_YEARLY at 1590, tier PRO
+      - V2_PLUS_YEARLY at 790, tier PLUS
+
+unresolved:
+  - >-
+    A lapsed account is not the same as a never-paid one, and the proof this
+    produces is about the RESTORED branch rather than about a first-time buyer
+    losing access. A genuinely new account would exercise NEEDS_HUMAN instead.
+    Neither shape covers the other, and only one is being run.
+  - >-
+    Restoring the account afterwards is a manual step held only by this record.
+    Nothing in the system will notice if it is forgotten, and the owner would be
+    left silently lapsed on their own account.
+  - >-
+    The v2 side and the legacy shadow disagree on this account today: the ACTIVE
+    subscription row is PLUS to 2027-09-01 while the shadow names V2_PRO_YEARLY
+    to 2028-08-31. That disagreement predates this session and is neither created
+    nor repaired by it.
+
+next_action:
+  action: >-
+    Apply the two updates inside one transaction, read back that the account
+    reads as unpaid, and hand it to the owner to buy V2_PRO_MONTHLY at 199 baht
+    with a real card and then refund it from the Omise dashboard. Restore the
+    recorded values afterwards.
+  acceptance_check:
+    - The purchase gate allows V2_PRO_MONTHLY for this account after the change.
+    - A refunded membership purchase loses its entitlement, with the shadow RESTORED rather than left for a human.
+    - The shadow expiry and the ACTIVE subscription row are written back to the recorded values when the proof is done.
