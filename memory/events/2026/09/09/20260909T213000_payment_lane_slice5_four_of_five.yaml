@@ -1,0 +1,202 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T213000_payment_lane_slice5_four_of_five
+type: closeout
+recorded_at: 2026-09-09T21:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Fixed the webhook verifier and proved it on production. The Omise-Signature
+      header may carry more than one signature, comma-separated; our verifier
+      compared the whole header against one 64-character digest behind a length
+      check, so every delivery after the 11:02 secret roll was refused before any
+      comparison happened. mootech-fe#615 splits on commas and compares decoded
+      bytes. The next delivery answered 200 at 19:27:11, one second after its
+      charge was created — the first webhook this endpoint has ever accepted.
+    - >-
+      Eliminated the competing explanation without another probe. The worry was
+      that the installed signing secret was not the one the account signs with,
+      which a self-signed probe cannot distinguish. The timeline settles it: the
+      owner replaced OMISE_WEBHOOK_SECRET at about 11:47 and a delivery at 14:11
+      still answered 401 with that correct value in place. Between that 401 and
+      this 200, only the verifier moved.
+    - >-
+      Proved a card charge settles by webhook and not by the reconciler. A 35
+      baht QI_60 charge created at 19:38:35 had qi_granted_at at 19:39:03 —
+      twenty-eight seconds. The reconciler runs every fifteen minutes, so 19:30
+      and 19:45, and 19:39:03 is neither. Only two places write APPROVED, the
+      webhook route and the reconcile cron; charge-flow deliberately does not,
+      and the status endpoint the screen polls never calls settleAndProvision.
+    - >-
+      Proved a PromptPay charge settles the same way. The 199 baht
+      V2_PRO_MONTHLY charge was created at 20:06:58 and its member_subscription
+      row was written at 20:07:34 — thirty-six seconds, again between cron
+      passes. For contrast, this morning's two charges settled at 10:24 and
+      11:39:59, both on quarter-hour boundaries, which is what the reconciler
+      looks like.
+    - >-
+      Proved the QI credit reaches the engine's own wallet with the new
+      quantities. The balance read 220 before and 310 after, exactly ninety, not
+      the sixty the pre-0020 catalog granted — which independently confirms the
+      code and the payment_package rows agree. The once-per-lifetime first
+      purchase bonus did not fire a second time.
+    - >-
+      Proved the membership provisioning arithmetic on a lapsed account. The
+      purchase granted PRO from 2026-09-09 to 2026-10-09, one calendar month, and
+      carried nothing forward from the lapsed row, which is the
+      first-purchase branch behaving as written.
+    - >-
+      Confirmed, with real money, that a full refund does NOT take an entitlement
+      back — see the defect below. This is a failure of the acceptance check and
+      it is the most valuable thing this session found.
+    - >-
+      Closed an open question that had only been suspected. An unpaid QR created
+      at 19:27:10 expired at 19:42:10, still read PENDING at 19:44:57, and read
+      REJECT with gateway_expired at 19:59:20. The row is written by the cron
+      pass, not at the expiry instant, so a buyer whose QR has died can be shown a
+      waiting screen for up to a quarter of an hour.
+    - >-
+      Restored the owner's account to its pre-session state, and found that the
+      restore values recorded before the change were incomplete — only expire_at
+      was written down, while the purchase had also overwritten package_code and
+      start_at. The first restore therefore produced an incoherent row, a monthly
+      package expiring in 2028. All three fields are now back to V2_PRO_YEARLY,
+      2026-09-01, 2028-08-31, and the PLUS subscription row is ACTIVE again. The
+      genuinely purchased PRO row to 2026-10-09 was deliberately left in place.
+  not_completed:
+    - >-
+      The refund proof FAILED, and slice 5 is therefore four of five. A refund
+      does not revoke anything, and the acceptance check that a refunded
+      membership purchase loses its entitlement is not met.
+    - >-
+      The declined-card proof remains deferred with its reason, as revision 0.3
+      recorded.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "5"
+  execution_phase: "5"
+  repository:
+    head: 98cddce
+    branch: feat/payment-lane-webhook-accepted
+  product_repository:
+    project: mootech-fe
+    merged: 3ac96bc, pull request 615, the signature fix
+  webhook_accepted:
+    status: 200
+    event_key: charge.create
+    at: "2026-09-09T19:27:11+07:00"
+    endpoint: the v2 payment webhook on the production host, matching OMISE_WEBHOOK_URL_V2
+  settlements_by_webhook:
+    charges:
+      - "chrg_68ylhf590g119lfivdi, card, 3500 satang, created 19:38:35, qi_granted_at 19:39:03"
+      - "chrg_68ylreudm4vt6ddoa8f, promptpay, 19900 satang, created 20:06:58, subscription written 20:07:34"
+    discriminator: >-
+      the reconciler runs every fifteen minutes; neither time falls on a
+      quarter-hour boundary
+  qi_wallet: 220 before, 310 after, exactly ninety, read through the engine and not from a row
+  qr_expiry_written_by_cron:
+    charge: chrg_68yldelkr5uz504by2a
+    expired_at: "19:42:10"
+    still_pending_at: "19:44:57"
+    rejected_by: "19:59:20, at the 19:45 cron pass, with failure_code gateway_expired"
+
+the_refund_defect:
+  what_was_done:
+    refund: "rfnd_68ymhs6wskczqmp67us, livemode true, voided true, 3500 THB, at 21:21:53"
+    charge: "chrg_68ylhf590g119lfivdi, the card QI purchase"
+  what_happened_on_our_side: >-
+    Nothing. failure_code was polled twelve times between 21:23:16 and 21:27:01
+    and stayed empty, more than five minutes after the refund, while every
+    webhook earlier in the evening landed within one to thirty-six seconds.
+  first_reason: >-
+    The charge does not become reversed. Read back from the account after the
+    refund, the charge's own status is still successful, with the refund nested
+    inside it carrying status closed. isReversal requires evt.status ===
+    'reversed', so it can never be true for a refunded charge. The word reversed
+    in Omise means a voided authorization, which is not the same event as a
+    refund; issue 484 was written about refunds taking entitlements back, and the
+    code implements the other meaning of the word.
+  second_reason: >-
+    parseChargeEvent reads data.id and data.status, which are correct for a
+    charge event and wrong for a refund event: on a refund.create the data object
+    is the REFUND, so data.id is the refund id, data.status is closed, and
+    data.charge — the only field carrying the charge id — is never read. Either
+    reason alone is enough to stop the revoke; both are present.
+  what_is_not_established: >-
+    Which event or events Omise actually delivered for this refund. The 401 branch
+    logs the header's shape, but the accepted path logs nothing at all, so a
+    delivery that was received and did nothing leaves no trace. That gap is why
+    this took a poll and a charge read rather than one log line.
+  why_it_was_invisible_until_tonight: >-
+    revokeByChargeId is only reachable from the webhook route; the reconciler
+    never handles reversals. Until 19:27 today no webhook had ever been accepted
+    by this endpoint, so this code path had never run in production in any mode.
+    The first defect was hiding the second.
+
+side_findings:
+  promptpay_cannot_be_refunded_by_api: >-
+    The 199 baht membership charge was paid by PromptPay and the refunds endpoint
+    answered failed_refund. Read back, that charge reports refundable false while
+    the card charge reports refundable true. The refund proof therefore cannot be
+    run on a PromptPay purchase at all, which is not a defect in our code but is a
+    constraint on how this proof can ever be performed.
+  env_file_is_not_a_mirror_of_vercel: >-
+    .env.production.local holds a correct DATABASE_URL and a stale
+    OMISE_SECRET_KEY. A refund attempted with it answered not_found, which is what
+    a test-mode key returns for a live charge. The live values were installed on
+    Vercel this morning and the local file was never updated. The filename invites
+    exactly the assumption that broke here.
+  agent_tooling_limits: >-
+    This session could not read the live Omise secret key or run vercel env pull;
+    both were refused by the session's own policy, so every call that moves money
+    was run by the owner. Recorded because it shapes what a future session can and
+    cannot verify unaided.
+
+unresolved:
+  - >-
+    The refund defect is open and it blocks the launch on its own terms: a
+    customer who is refunded keeps what they bought, and nothing in the system
+    says so. The plan's objective names delivering what was bought; taking it
+    back when the money goes back is the same promise.
+  - >-
+    A QI refund taking QI back is still an undecided policy, separate from this
+    defect. Tonight's refund was of a QI purchase, and the ninety QI remain
+    credited with the money returned. That is what the code intends today.
+  - >-
+    Nothing logs an accepted webhook that does nothing. A delivery that is
+    received, understood as no action, and answered 200 is indistinguishable from
+    one that was never sent. That is precisely the shape that hid tonight's
+    defect.
+  - >-
+    mootech-be still carries the signature defect this lane fixed on the v2 side.
+  - >-
+    The owner's account carries an extra ACTIVE PRO row to 2026-10-09 from the
+    199 baht PromptPay purchase, which is real and was not refundable. It is left
+    in place deliberately.
+
+next_action:
+  action: >-
+    Fix the refund path in mootech-fe. Read data.charge when the event key is a
+    refund event, and decide the revoke on the refunded amount rather than on a
+    charge status of reversed — keeping the existing reversed branch, which is a
+    different real case. Cover it with a test built from a refund.create payload
+    shaped like the one Omise actually sends, and a second test that a charge
+    which is still successful but fully refunded revokes. Then repeat the proof
+    with a CARD purchase, because PromptPay charges cannot be refunded by API.
+  acceptance_check:
+    - A refunded membership purchase loses its entitlement, observed on production.
+    - A test built from a refund event payload reddens when the data.charge read is removed.
+    - The QI early-return still holds, so a refunded QI purchase revokes nothing and waits for no human.
