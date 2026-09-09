@@ -4,8 +4,8 @@
 **State:** active
 **Execution lane:** single
 **Plan revision:** 0.3
-**Execution phase:** none
-**Execution state:** idle
+**Execution phase:** 5
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -190,39 +190,58 @@ ticket names, and when the lane's browser-truth specs pass again.
 
 ### 5. Prove real money end to end
 
-Rewritten in revision 0.3 for a v2-only account. Not authorized; it needs its
-own decision, and the acceptance check below is what that decision would be
-against.
+Rewritten in revision 0.3 for a v2-only account, and authorized on 2026-09-09
+once the account holder produced a working live key pair.
 
-The live secret key the team holds is **expired** — Omise answers
-`403 key_expired_error` to it, while a control call with the v2 test key on the
-same endpoint answers 200, so the verdict is the key's and not the call's. The
-Omise account is registered to an address outside the two people working this
-repository, so the replacement cannot be produced locally. What must be obtained
-from the account holder, and in this order:
+**The account, read on 2026-09-09 with the new key.** `GET /account` answers
+`200`, `livemode` is true, and the account's live static webhook already points
+at the v2 endpoint — the account holder moved it. `GET /capability` reports both
+`card` and `promptpay` enabled. The last live charge on the account is dated
+2026-08-17, so v1 has taken no real money for three weeks and moving that
+webhook cost nothing.
 
-- A rotated live key pair. Nothing is installed until Omise answers 200 to the
-  new secret key on a read-only call.
-- The live webhook signing secret **read back, not rotated**. It is one value
-  per mode shared by everything on the account, it is base64 that the verifier
-  decodes rather than a string of our choosing, and rotating it breaks whatever
-  still runs on the old one until that is redeployed too.
-- The account's static webhook: the test-mode line currently points at the v2
-  endpoint, which is why `#374` cannot be proven while it stands — the webhook
-  would arrive whether or not the per-charge mechanism works, which is the exact
-  failure the ticket exists to prevent. It is removed before the proof. The
-  live-mode line moves to the v2 endpoint only once v1 is provably off.
+Because the account's live static webhook now points at v2, `#374` cannot be
+proven by this slice: an event would arrive whether or not the per-charge
+mechanism works. That is the same objection revision 0.2 raised about the
+test-mode line, and it now applies to live. The slice therefore records the
+static webhook's state alongside the observation rather than claiming the
+per-charge path was what delivered.
+
+**Two things must ship before the money moves.**
+
+- The live key pair, the live webhook signing secret, and nothing else, into the
+  three production variables that still hold test values. The public key is
+  inlined at build time, so this needs a real rebuild and not a cache reuse; the
+  postbuild guard fails the build if the value is not in the bundle.
+- The PromptPay QR lifetime, raised from five minutes to fifteen. Under five
+  minutes the lane is 0 for 2 on production: both charges carrying a
+  `charge_expires_at` expired, and the only PromptPay success this product has
+  ever had was created while the lifetime was still Omise's 24-hour default.
+  Proving the QR lane with real money under a window that has never once worked
+  would measure the window, not the lane.
 
 Then prove, on production with the preview gate still closed, in this order: the
-webhook arrives and is accepted, a card charge settles, a declined card releases
-its hold, a PromptPay charge settles, a QI pack credits the buyer's balance in
-the engine, and a refund takes the entitlement back.
+webhook arrives and is accepted, a card charge settles, a PromptPay charge
+settles, a QI pack credits the buyer's balance in the engine, and a refund takes
+the entitlement back.
+
+**Two proofs are shaped by what the code and the account actually allow.**
+
+- The refund proof uses a **membership** package. `revokeByChargeId` returns
+  early for `tier_code = 'QI'` — taking granted QI back is an undecided policy,
+  not an oversight — so a QI refund would prove nothing about entitlement.
+- A declined card releasing its hold is **not** claimed by this slice. Live mode
+  refuses test card numbers, and producing a genuine decline on a real card is
+  not something this lane can arrange reliably. It moves to the deferred list
+  with its reason, rather than being quietly dropped from the acceptance check.
 
 Slice 5 is done when each of those is observed on production with live keys and
 recorded; when the QI check reads the buyer's balance through the engine rather
-than a row, because a row that says granted is not a balance the buyer has; and
-when the static webhook's state at the time of the `#374` observation is
-recorded alongside it, so a later reader can tell which mechanism delivered.
+than a row, because a row that says granted is not a balance the buyer has — and
+no QI pack has ever been bought through this lane, in any mode, so that call has
+never run from a real charge; and when the static webhook's state at the time of
+the webhook observation is recorded alongside it, so a later reader can tell
+that the per-charge mechanism was not what the observation proved.
 
 ## Deferred in this lane
 
@@ -232,7 +251,10 @@ Not blocking real money and not serious: `#401` `#443` `#453` `#473`
 where the route guard exists and only its test is missing; `#407`, whose safe
 workaround is never pointing the suites at a database holding real rows; and
 `#582` with the duplicate `0006_` filename, which is a merge-time trap rather
-than a money defect.
+than a money defect; and, added in revision 0.3, **proving that a declined card
+releases its hold**, because live mode refuses test card numbers and this lane
+cannot reliably arrange a genuine decline on a real card. It is deferred with its
+reason rather than dropped from slice 5's acceptance check in silence.
 
 `#480` was on that list in revision 0.1 and the owner took it off on
 2026-09-09. Deferral is a judgement about blocking and harm, and the owner

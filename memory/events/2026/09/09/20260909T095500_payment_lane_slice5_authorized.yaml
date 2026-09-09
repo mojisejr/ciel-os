@@ -1,0 +1,146 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T095500_payment_lane_slice5_authorized
+type: decision
+recorded_at: 2026-09-09T09:55:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+  scope:
+    - Install the Omise live key pair and the live webhook signing secret into the three production variables that still hold test values.
+    - Raise the PromptPay QR lifetime from five minutes to fifteen before any real money is put through that lane.
+    - Prove on production, with the preview gate still closed, that a card charge settles, a PromptPay charge settles, a QI pack credits the buyer's balance in the engine, and a refund takes a membership entitlement back.
+  excluded:
+    - >-
+      Proving that a declined card releases its hold. Live mode refuses test card
+      numbers and this lane cannot reliably arrange a genuine decline on a real
+      card, so it moves to the deferred list with its reason rather than being
+      dropped from the acceptance check in silence.
+    - >-
+      Claiming issue 374. The account's live static webhook now points at the v2
+      endpoint, so an event would arrive whether or not the per-charge mechanism
+      works. The slice records the static webhook's state beside the observation
+      instead of claiming the per-charge path delivered it.
+    - Opening /v2 to the public. The preview gate stays closed for the whole proof.
+    - Anything in mootech-be, and anything that exists only to keep v1 taking money.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The account holder produced a rotated live key pair and moved the account's
+      live static webhook to the v2 endpoint. The new secret key was verified
+      against Omise on 2026-09-09: GET /account answers 200 with livemode true,
+      country TH, api_version 2019-05-29, and webhook_uri already pointing at the
+      v2 payment webhook. GET /capability reports card and promptpay both enabled.
+    - >-
+      The owner authorized installing the live keys on Vercel. The condition
+      attached to that authorization in revision 0.1 — that /v2 be provably closed
+      to the public — was checked against production rather than assumed: /v2
+      answers 200 with the gate page, /v2/shop and /v2/shop/checkout answer 307
+      into it, /api/v2/payment/status and /api/cron/reconcile-payment answer their
+      own 401, and the webhook answers 405 to a GET, which is the route refusing a
+      method rather than the gate refusing the caller.
+    - >-
+      The owner decided to raise the PromptPay QR lifetime from five minutes to
+      fifteen, on evidence read from the production rows: of the four real
+      PromptPay charges, the only success was created while the lifetime was still
+      Omise's 24-hour default, and both charges that carry a charge_expires_at —
+      five minutes to the second — expired. Under five minutes the lane is 0 for 2.
+    - >-
+      Established that no QI pack has ever been bought through this lane in any
+      mode. Every one of the ten payments on production is a membership package,
+      so grantQiPurchase has never run from a real charge. The engine answers on
+      both its grant and wallet endpoints, but whether QI_GRANT_SECRET on Vercel
+      matches the engine's cannot be read back — the variable is marked sensitive —
+      and the QI purchase in this slice is what will settle it.
+    - >-
+      Established that a refund of a QI pack takes nothing back. revokeByChargeId
+      returns early for tier_code QI, with a comment recording that clawing back
+      granted QI is an undecided policy. The refund proof therefore uses a
+      membership package.
+  not_completed:
+    - Nothing has been installed on Vercel yet and no real money has moved.
+    - The QR lifetime change is not written, tested, or merged.
+    - No proof step has been attempted.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "5"
+  execution_phase: "5"
+  repository:
+    head: e1b39e37c0a57c9aca514effd0c6df68c5a6f35c
+    branch: feat/payment-lane-live-keys
+  owner_confirmed:
+    - The live keys may be installed on Vercel and the agent performs it.
+    - The PromptPay QR lifetime becomes fifteen minutes.
+    - The preview gate stays closed throughout.
+  omise_account_observed:
+    endpoint: GET https://api.omise.co/account with the rotated live secret key
+    http: 200
+    livemode: true
+    api_version: "2019-05-29"
+    webhook_uri: the v2 payment webhook on the production host
+    capability: card and promptpay both enabled, THB
+    last_live_charge: 2026-08-17, which is why moving that webhook away from v1 cost nothing
+  production_env_observed:
+    holding_test_values:
+      - OMISE_SECRET_KEY
+      - NEXT_PUBLIC_OMISE_KEY_V2
+      - OMISE_WEBHOOK_SECRET
+    already_correct:
+      - OMISE_WEBHOOK_URL_V2 points at the v2 payment webhook on the production host
+      - OMISE_RETURN_ORIGIN_V2 is the production origin, so 3-D Secure has somewhere to return to
+      - OMISE_RETURN_URI is unset, which is the intended state for the card lane
+      - BAZI_BASE_URL points at the engine, which answers on its grant and wallet endpoints
+      - CRON_SECRET is set, so the reconciler authorizes its caller
+      - RECONCILE_ENABLED is unset, which reads as ON
+      - V2_PREVIEW_KEY is set, and production behaviour confirms the gate is closed
+    left_alone: >-
+      NEXT_PUBLIC_OMISE_KEY still holds v1's rotated-away live public key. v1 is
+      outside this lane and is not repaired here.
+  promptpay_rows_read:
+    - 2026-08-25 11:30 expired, no charge_expires_at
+    - 2026-08-26 13:43 APPROVED, no charge_expires_at
+    - 2026-09-03 12:08 gateway_expired, charge_expires_at 12:13:27
+    - 2026-09-05 22:20 gateway_expired, charge_expires_at 22:25:27
+  qi_rows_read: zero payments with tier_code QI, in any mode, since the lane was built
+  cheapest_sellable_packages:
+    - QI_60 at 35 THB, which exercises the engine grant
+    - V2_PRO_MONTHLY at 199 THB, which exercises the membership lane and its refund
+
+unresolved:
+  - >-
+    Whether QI_GRANT_SECRET on Vercel matches the engine's cannot be established
+    before the purchase. The variable is sensitive and does not read back. A
+    mismatch settles the charge and never credits the QI, and the only symptom is
+    a log line the buyer never sees.
+  - >-
+    Issue 374 stays unproven and now cannot be proven on this account without
+    removing the static webhook again. The design question behind it — whether
+    api_version 2019-05-29 supports per-charge webhook_endpoints — is still
+    unanswered, and every charge on the account still reports the field as null.
+  - >-
+    Fifteen minutes is a judgement, not a measurement. Nothing establishes how
+    long the two expired buyers actually needed; the rows record only that five
+    minutes was not enough twice.
+  - >-
+    /dev-access/ answers 200 on production and carries nine internal preview
+    pages. Installing live keys does not change that, and it is still undecided.
+
+next_action:
+  action: >-
+    Raise the PromptPay QR lifetime to fifteen minutes in mootech-fe and open its
+    pull request with proof. Install the three live values on Vercel production.
+    Then let the owner merge, which rebuilds with the live public key inlined, and
+    run the proof steps in the order the plan names.
+  acceptance_check:
+    - Omise answers 200 to the installed secret key before any charge is attempted.
+    - The build that carries the live keys proves the public key reached the bundle.
+    - The preview gate is still closed when the first real charge is made.
