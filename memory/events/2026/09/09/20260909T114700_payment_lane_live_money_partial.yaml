@@ -1,0 +1,142 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T114700_payment_lane_live_money_partial
+type: closeout
+recorded_at: 2026-09-09T11:47:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Took real money twice on production with live keys, behind the closed
+      preview gate, and delivered the goods both times. A card charge of 35 THB
+      and a PromptPay charge of 35 THB both reached status successful with
+      paid true at Omise, both settled to APPROVED in v2_payment, and both
+      credited QI that was read back from the engine's own wallet rather than
+      from a row.
+    - >-
+      Established that the QI purchase lane had never worked, in any mode, since
+      it was built. Zero rows with tier_code QI existed before today. The cause
+      was that the engine project on Vercel had no QI_GRANT_SECRET at all — not a
+      wrong value, an absent one — so its grant route took the fail-closed branch
+      its own comment describes and answered 401 to every caller. The frontend
+      half had been set five days earlier. One end of the wire was live and the
+      other was never connected.
+    - >-
+      Repaired it by generating one secret and installing it on both projects
+      from the same file, so the two sides cannot differ by a typo. The engine
+      redeploy first failed on an unrelated 250 MB function-size limit, which was
+      cleared with the flag Vercel's own error names.
+    - >-
+      Proved the reconciler on real money, twice. Both charges were settled by
+      the reconciler and not by a webhook, because the webhook never arrived —
+      which is precisely the failure that lane was built for and had never been
+      exercised with money. The first purchase also proved the QI retry pass: it
+      settled while the engine was still refusing, then credited on a later run
+      once the secret was in place, with no second payment and no manual write.
+    - >-
+      Proved the fifteen-minute PromptPay QR on production. The charge carries
+      expires_at exactly fifteen minutes after creation, agreeing on both sides,
+      and a human paid inside that window — which no PromptPay buyer had managed
+      since the lifetime was shortened to five minutes.
+    - >-
+      Proved idempotency is wired as designed. Each QI credit in the engine
+      ledger carries ref equal to its charge id, and the once-per-lifetime
+      first-purchase bonus fired on the first purchase and not the second.
+  not_completed:
+    - >-
+      The Omise webhook still does not reach us. Omise delivered both events for
+      the first charge and our endpoint answered 401 twice, which the account's
+      delivery log showed and the API did not. The signing secret was rotated and
+      installed, and the second charge's deliveries have not been read yet, so
+      whether the rotation fixed it is unknown rather than answered.
+    - >-
+      The refund proof has not been attempted. It needs a membership package,
+      because revokeByChargeId returns early for tier_code QI.
+    - >-
+      A declined card releasing its hold is deferred, as revision 0.3 records.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.3"
+  repository:
+    head: 08cb2c30ad1414ccdead9a0009d384e7fc3bc9d0
+    branch: feat/payment-lane-live-keys
+  live_charges:
+    - charge: chrg_68yfwts9y5j8zy0rsu2
+      method: card, VISA
+      amount: 35 THB, authorized and captured
+      created: 2026-09-09T10:08:45+07:00
+      settled_by: the reconciler at 10:24, not a webhook
+      qi_granted_at: 2026-09-09T10:57:16+07:00, after the engine secret was installed
+      engine_ledger: qi:buy:QI_60 +60 with ref = the charge id, plus qi:earn:first_buy_bonus +30
+    - charge: chrg_68ygn96lvsf5kbporoc
+      method: promptpay
+      amount: 35 THB
+      created: 2026-09-09T11:23:49+07:00
+      expires_at: 2026-09-09T11:38:49+07:00, fifteen minutes exactly, agreeing on both sides
+      settled_by: the reconciler at 11:39:59, not a webhook
+      engine_ledger: qi:buy:QI_60 +60 with ref = the charge id, and NO second first-buy bonus
+  engine_wallet_read_back: >-
+    The buyer's balance read through the engine's wallet endpoint rose across the
+    two purchases and its history names both charge ids. The check is the engine's
+    balance, not the v2_payment row, because a row that says granted is not a
+    balance the buyer has.
+  configuration_changed:
+    - QI_GRANT_SECRET added to the engine project, where it had never existed.
+    - QI_GRANT_SECRET on mootech-fe replaced with the same value, installed from one file rather than retyped.
+    - VERCEL_SUPPORT_LARGE_FUNCTIONS enabled on the engine so its deploy could complete.
+    - OMISE_WEBHOOK_SECRET on mootech-fe replaced by the owner after the account holder rotated it.
+    - Both projects redeployed. The live public key was confirmed present in the production browser bundle after each mootech-fe deploy.
+  gate_state_during_the_proof: >-
+    Closed throughout. /v2 answers the gate page, /v2/shop and /v2/shop/checkout
+    redirect into it, the payment and cron APIs answer their own 401, and the
+    webhook answers 401 to an unsigned POST.
+
+unresolved:
+  - >-
+    The agent claimed the Omise webhook secret was correct on the strength of a
+    request it had signed itself with the value the server verifies against. That
+    proves the HMAC code runs; it cannot disagree about the value, because both
+    sides of the test were the same value. The account's delivery log showed 401
+    and settled it. A self-signed probe is not evidence about a shared secret.
+  - >-
+    The webhook remains unproven. Until a delivery Omise signed is accepted, every
+    buyer waits fifteen to thirty minutes for goods the reconciler hands them.
+    That is not a launch state, and it is the only thing left that blocks one.
+  - >-
+    The engine's grant failure was invisible. runQiGrantRetry swallows a per-row
+    throw in a bare catch and reports a count, so a paid customer's missing goods
+    produced no line naming a cause. The diagnosis came from eliminating the two
+    branches that DO log. A count is not a reason.
+  - >-
+    api_version 2019-05-29 reports webhook_deliveries as an empty list even for
+    events the dashboard shows as delivered. That field cannot be used as evidence
+    on this account, and issue 374 still has no answer.
+  - >-
+    The engine's 250 MB function limit was cleared with a flag, not understood.
+    Why the deployment eighteen hours earlier built the same source successfully
+    is unexplained.
+  - >-
+    /dev-access/ still answers 200 on production with nine internal preview pages.
+
+next_action:
+  action: >-
+    Read the account's delivery log for the PromptPay charge's two events to learn
+    whether the rotated signing secret is accepted. If it still answers 401, the
+    secret is still not the one that endpoint signs with. Once a delivery Omise
+    signed is accepted, buy a membership package and refund it to close the last
+    proof this slice needs.
+  acceptance_check:
+    - A webhook Omise signed is accepted on production, and a charge settles without the reconciler.
+    - A refunded membership purchase loses its entitlement.
+    - The preview gate is still closed when both are observed.
