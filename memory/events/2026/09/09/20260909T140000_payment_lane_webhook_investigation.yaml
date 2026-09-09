@@ -1,0 +1,130 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T140000_payment_lane_webhook_investigation
+type: closeout
+recorded_at: 2026-09-09T14:00:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Proved our side of the webhook is correct, without the circular test that
+      produced a wrong answer earlier today. The signing secret was read out of a
+      screenshot of the Omise dashboard, base64-decoded, used to sign a payload
+      with the same HMAC the verifier uses, and sent to the live production host.
+      Production answered 200. The value came from Omise and the check ran against
+      the deployment serving traffic, so the two ends of the test are independent:
+      the running deployment verifies against exactly the secret Omise signs with.
+    - >-
+      Established the timeline that clears our configuration entirely. The account
+      holder rolled the secret at 11:02. The owner installed it. The redeploy
+      carrying it was created 11:16:20 and was serving by roughly 11:20. The
+      PromptPay charge was created 11:23:49 and its charge.complete fired at
+      11:24:12, four minutes after the correct secret was live — and the row was
+      still settled by the reconciler at 11:39:59 rather than by a webhook.
+    - >-
+      Established a baseline for what a working webhook looks like on this
+      product, by measuring test-mode settlements: the gap between a charge row
+      and the member_subscription written for it is two to three seconds for card
+      and thirty-three for the PromptPay one, which is a human scanning. The
+      reconciler cannot produce those numbers — it waits fifteen minutes. So the
+      webhook worked in test mode, every time.
+    - >-
+      Explained why test mode worked. The signing secret differs per mode. The
+      value that had been on Vercel since mid-August was the TEST-mode secret, so
+      test events verified and live events did not. Nobody misconfigured anything;
+      the move to live keys did not carry the webhook secret with it.
+    - >-
+      Calibrated the events API and found it useless for this question. Across 120
+      events in both modes — including test-mode events proved delivered by the
+      three-second settlements above — webhook_deliveries is an empty array every
+      single time. An empty array on this account does not mean "not delivered".
+      It means the field is not populated. The dashboard's Recent Deliveries table
+      is the only place delivery status exists.
+    - >-
+      Ruled out, by direct test rather than reasoning: a Vercel firewall or bot
+      rule (a request shaped like Omise's reaches the app and gets the app's own
+      401, not a platform 403), the preview gate (middleware exempts the path
+      before reading the key), the package or payment method (the signature is
+      checked before the body is parsed, so the route does not yet know what was
+      bought), and the per-charge webhook_endpoints field (test mode sent it too
+      and delivered in three seconds).
+  not_completed:
+    - >-
+      Whether Omise delivered the 11:23:50 and 11:24:12 events is still unknown,
+      and now cannot be learned from the API. It needs the dashboard.
+    - The refund proof and the membership provisioning proof are still not done.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.3"
+  repository:
+    head: 59741dc4688c6c28275e895393e49c1953d9f2ef
+    branch: feat/payment-lane-live-keys
+  refund_executed:
+    refund: rfnd_68yi2e6d7wlm12dzcme
+    charge: chrg_68yfwts9y5j8zy0rsu2
+    amount: 3500 satang, the full charge, returned to the buyer's card
+    at: 2026-09-09T13:49:06+07:00
+    authorized_by: the owner, explicitly, as a diagnostic that costs nothing net
+  omise_reports_after_the_refund:
+    status: successful
+    paid: true
+    reversed: false
+    refunded_amount: 3500
+    voided: true
+  our_row_after_the_refund:
+    status: APPROVED
+    failure_code: none
+    detail: unchanged, because nothing reached the code that would change it
+
+unresolved:
+  - >-
+    A REAL DEFECT, found by accident. lib/payment/gateway.ts isReversal fires only
+    on status 'reversed'. A refund does not produce that status: Omise still
+    reports the charge successful and paid with reversed false, and records the
+    refund in refunded_amount instead. So revokeByChargeId can never be reached by
+    a refund, and issue 484's rule — a payment that did not stay successful grants
+    nothing — is not implemented for the case people actually use. The intent is
+    right and the trigger is wrong. This charge was a QI pack, which
+    revokeByChargeId skips anyway, but a refunded MEMBERSHIP would keep its
+    entitlement. Slice 5's refund acceptance check cannot pass until this is fixed,
+    and the fix is not a key or a setting — it is code.
+  - >-
+    The agent designed the diagnostic badly and it answered nothing. It chose
+    refund.create, an event the route deliberately ignores, and watched a log
+    channel that only surfaces console output. A silently accepted delivery and a
+    delivery that never arrived produce identical evidence there: nothing. The
+    money came back, so the cost was zero, but the question is exactly as open as
+    before. Design the observation around what the system will visibly do, not
+    around what is convenient to trigger.
+  - >-
+    That is the second reasoning error in this investigation. The first was
+    calling the webhook secret correct on the strength of a self-signed request.
+    Both share a shape: a test whose two ends were not independent of each other.
+  - >-
+    With the API calibrated as silent and our side proved correct, the remaining
+    hypothesis is that Omise is not delivering, or that its delivery does not reach
+    production. Neither can be advanced without the dashboard's delivery log.
+
+next_action:
+  action: >-
+    Get one screenshot of the account's Recent Deliveries table for today, showing
+    the rows at 11:23:50, 11:24:12 and 13:49:06 with their status. A 401 there
+    contradicts the proof above and belongs in a support case with Omise; a 200
+    means delivery works and the failure is downstream; no row at all means Omise
+    is not sending. Then fix isReversal so a refund can revoke an entitlement, and
+    only then buy and refund a membership package to close slice 5.
+  acceptance_check:
+    - The delivery status of those three events is known and recorded.
+    - A refunded membership purchase loses its entitlement, proved on production.
+    - The preview gate is still closed when that is observed.
