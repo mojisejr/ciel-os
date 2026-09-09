@@ -1,0 +1,126 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T091300_payment_lane_focus_narrowed_to_v2
+type: closeout
+recorded_at: 2026-09-09T09:13:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      The owner narrowed this lane's focus: v1 is being retired, and mootech-be
+      is not to be touched unless something in v2 provably needs it. Work that
+      exists only to keep v1 taking money is out of scope from this point.
+    - >-
+      Established by reading the code that the v2 money lane is entirely inside
+      mootech-fe. The browser talks only to same-origin /api/v2/payment/*, and
+      the only external hosts the lane reaches are api.omise.co and the bazi
+      engine at BAZI_BASE_URL. A grep for NEXT_PUBLIC_BACKEND_URL, its generator,
+      and the ENDPOINT constant across pages/api/v2/payment, lib/payment,
+      lib/v2, features/v2-shop and pages/v2 returns nothing. Settlement,
+      provisioning, and the reconciler all reach Postgres directly through
+      Drizzle.
+    - >-
+      Established the one delivery dependency that is NOT in mootech-fe. A QI
+      purchase is credited by POST {BAZI_BASE_URL}/api/qi/grant to the engine
+      (bazi-pdf-dev), idempotent on ref = charge_id. Membership tiers are
+      written straight to the database; only QI leaves the app. The engine is
+      not mootech-be.
+    - >-
+      Established that v1 had NOT been migrated onto the frontend, which is what
+      the owner asked to have checked. constants/api/endpoint.ts still routes
+      payment.pay_via_credit_card, pay_via_qr_code, create and retrieve to the
+      NestJS backend, and four v1 pages still call them. Only payment_package.get
+      and the whole v2 lane are same-origin. That is what makes retiring v1 a
+      scope decision rather than a cleanup.
+    - >-
+      Drew the consequence for issue 374. That ticket exists because one Omise
+      account has a single static webhook per mode and v1 already owns the live
+      one. If v1 is retired, nothing contends for it, so the account's live
+      static webhook can point at the v2 endpoint directly and the unanswered
+      question about api_version 2019-05-29 stops being a launch blocker. It
+      remains worth answering; it no longer gates.
+  not_completed:
+    - >-
+      The plan is still at revision 0.2 and its slice 5 text is written for a
+      world where v1 and v2 share the account. It has NOT been revised. That is
+      deliberate: the owner said the conversation continues, and a plan revision
+      is an owner decision, not a tidy-up the agent performs on its own.
+    - No live key is installed, nothing on Vercel changed, and no code was touched this session.
+    - Slice 5 has no decision and has not started.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: e99d2ef941f3a216875aef2060e3ece431db18e4
+    branch: feat/payment-lane-screen-debt
+  owner_confirmed:
+    - Focus is v2. v1 is being retired.
+    - mootech-be is not touched unless v2 provably needs it.
+    - The plan is discussed further before it is revised.
+  v2_money_lane_boundary:
+    inside_mootech_fe:
+      - pages/v2/shop/* and features/v2-shop/* call same-origin /api paths only
+      - /api/v2/payment/preview, charge, promptpay, status, webhook
+      - /api/cron/reconcile-payment, on the Vercel cron every 15 minutes
+      - settlement and provisioning in lib/payment/repo.ts, straight to Postgres via Drizzle
+    external_hosts:
+      - api.omise.co — tokenisation from the browser, charge and retrieve from the server
+      - BAZI_BASE_URL — POST /api/qi/grant, the engine that credits a QI purchase
+    mootech_be_calls_in_the_v2_payment_lane: none
+    nearest_v2_call_to_mootech_be: pages/api/v2/onboarding.ts posts to /consent, which is not the money lane
+  production_origin: >-
+    The frontend's production origin is the value of NEXTAUTH_URL in the
+    Vercel-pulled production environment. The v2 webhook path under it is
+    /api/v2/payment/webhook.
+
+unresolved:
+  - >-
+    Retiring v1 is a decision about the payment lane, not about the backend.
+    mootech-be still serves several non-payment flows the frontend calls, so
+    "drop v1" must not be read as "shut down Render" without a separate check of
+    what v2 still depends on.
+  - >-
+    The production values of BAZI_BASE_URL and QI_GRANT_SECRET were not read.
+    They live on Vercel and could not be established from the repository. If the
+    secret does not match the engine's, a charge settles and the QI never
+    arrives, and the failure is a log line rather than an error the buyer sees.
+  - >-
+    Whether the live Omise webhook signing secret held in the operator's local
+    copy of the Render environment is still current is unverified, and cannot be
+    verified without a live webhook arriving. The secret key beside it in that
+    same file is expired, which is the reason to doubt it.
+  - >-
+    The previous record's next action told the agent to ask the Omise account
+    holder three questions, one of which was framed as the largest open question
+    in the workstream. This record supersedes the weight of that third question
+    but not the first two. A cold session reading only the older record would
+    still treat api_version as a blocker.
+  - >-
+    Retiring v1 has consequences outside this lane that nobody has enumerated —
+    existing v1 subscriptions, v1 customers mid-purchase, and the v1 screens
+    themselves. This record establishes the focus, not the migration.
+
+next_action:
+  action: >-
+    Continue the conversation with the owner on what slice 5 becomes now that v1
+    is being retired, then revise the plan and record its decision before any
+    execution. The narrower shape to put to the owner is: rotate the Omise live
+    key pair, read back the live webhook signing secret rather than rotating it,
+    point the account's live static webhook at the v2 endpoint once v1 is
+    provably off, and prove the six real-money steps on production with the
+    preview gate still closed.
+  acceptance_check:
+    - The plan is revised and its decision recorded before slice 5 executes.
+    - A live secret key that Omise answers 200 to is in hand before anything is installed on Vercel.
+    - Nothing in mootech-be is changed unless a v2 dependency on it is first established here.
