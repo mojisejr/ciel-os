@@ -1,0 +1,122 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T090000_payment_lane_session_record
+type: closeout
+recorded_at: 2026-09-09T09:00:00+07:00
+recorded_by:
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Established that the Omise live secret key is EXPIRED. The value held by
+      mootech-be on Render is byte-identical to the stale copy in that repo's
+      local env file, and Omise answers 403 key_expired_error to it. A control
+      call with the v2 test key on the same endpoint answers 200, so the method
+      is sound and the verdict is the key's, not the call's.
+    - >-
+      Concluded, without being able to read mootech-be's logs, that v1 most
+      likely cannot take real money right now, because that is the key it runs on.
+    - >-
+      Established that the Omise account is registered to an address outside the
+      two people working this repository. That is why the key cannot be produced
+      locally and why it may have been rotated with nobody told.
+    - >-
+      Established that the account's STATIC webhook already points at the v2
+      endpoint in test mode. Issue 374 cannot be proven while that is true: the
+      webhook would arrive whether or not the per-charge mechanism works, which
+      is the exact failure that ticket exists to prevent. It also means v1 is not
+      receiving the account's static webhook in test mode.
+    - >-
+      Established that the account's pinned api_version is 2019-05-29 and that
+      every recent charge reports webhook_endpoints as null, although the code
+      sends that field on every create-charge call. Whether that means the field
+      is merely not echoed back or is not supported at all is NOT established,
+      and the difference decides whether the dynamic-webhook design works.
+    - >-
+      Credited 30,300 QI to a team member at the owner's instruction, and in
+      doing so established how the QI system actually stores a balance.
+  not_completed:
+    - >-
+      No live key is installed and nothing on Vercel was changed. The condition
+      the owner attached to that step was a closed gate, and the gate is closed —
+      but the key that was found does not work, so the step is blocked on a
+      different thing than expected.
+    - Slice 5 has no decision and has not started.
+    - Three pull requests are open and unmerged by the owner's choice.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: c696fa5e88205fa333b023e58eafc45c00cfce70
+    branch: feat/payment-lane-screen-debt
+  omise_account_observed:
+    api_version: "2019-05-29"
+    livemode_of_the_key_used: false
+    static_webhook_uri: points at the v2 payment webhook on the production host
+    recent_charges: five most recent all report webhook_endpoints as null
+  qi_storage_finding: >-
+    The QI system keeps TWO tables that must be written together. bazi_ledger_txn
+    is the append-only history and bazi_wallet holds the balance the user's
+    screen actually reads through the engine's wallet endpoint. Writing only the
+    ledger leaves the history showing a credit that the balance does not have,
+    and it fails silently. The invariant was verified across all 29 wallets
+    before repairing it: coins matched 29 of 29, xp 29 of 29, qi 28 of 29, and
+    the single mismatch was the one this agent had just created.
+  qi_storage_consequence: >-
+    The product code is already correct: lib/qi/grant.ts calls the engine's
+    grant endpoint, which writes both, and the QI repair pass added in slice 2
+    calls that same function. The hazard belongs to anyone repairing QI BY HAND,
+    which is exactly what a person would reach for when the reconciler's retry
+    is being debugged.
+  open_pull_requests:
+    - mojisejr/mootech-fe#611 — the settled-charge browser-truth spec looked for a screen that no longer renders
+    - mojisejr/mootech-fe#612 — issue 480, the QR-maybe-expired screen offers both actions its sentence names
+    - mojisejr/ciel-os#55 — plan revision 0.2, the slice 4 decision and closeout, and this record
+  production_state_at_record_time:
+    - The v2 preview gate is closed. Payment screens redirect to the gate, and the webhook and cron endpoints answer their own 401.
+    - Omise for v2 is still in test mode. No live key is installed.
+    - Migrations 0018 and 0019 are applied and were read back.
+    - v1 is untouched and still serving.
+
+unresolved:
+  - >-
+    The agent asserted that the engine sums the ledger for a balance, on a
+    coincidence of two numbers matching, and acted on it. The assertion was
+    wrong. It was caught only because the result was verified against the engine
+    afterwards rather than assumed from the write succeeding. A write that
+    succeeds is not a change that took effect.
+  - >-
+    Whether api_version 2019-05-29 supports per-charge webhook_endpoints is the
+    single largest open question in this workstream. If it does not, the design
+    issue 374 rests on does not work and slice 5 needs rethinking, not just keys.
+  - >-
+    Whether v1 can currently take real money is inferred, not observed. It rests
+    on the key being expired and mootech-be running on that key. Reading
+    mootech-be's logs would settle it and was not done.
+  - >-
+    /dev-access/ answers 200 on production and slice 4 adds one more page there.
+    The owner has not decided on it.
+  - >-
+    The QI credit was an owner-instructed administrative action outside every
+    declared slice. It is recorded here because the storage finding is durable
+    and touches the payment lane, not because the credit itself is plan work.
+
+next_action:
+  action: >-
+    Ask the Omise account holder three things before any further payment work:
+    the current live keys including the live webhook signing secret; whether the
+    account's static webhook may be removed from the v2 endpoint; and whether
+    api_version 2019-05-29 supports per-charge webhook_endpoints. The third
+    answer decides whether slice 5 is a key swap or a redesign.
+  acceptance_check:
+    - A live secret key that Omise answers 200 to is in hand before anything is installed on Vercel.
+    - The static webhook's state is known and recorded before issue 374 is called proven.

@@ -1,0 +1,115 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T060100_payment_lane_slice4_screen_promises
+type: closeout
+recorded_at: 2026-09-09T06:01:00+07:00
+recorded_by:
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      The QR-maybe-expired screen now draws both actions its sentence names. It
+      is the one row that does not know which of two people is reading it, so
+      neither action could be dropped: the unpaid reader needs a fresh QR, and
+      the reader whose money already left must not be pushed into paying twice.
+    - >-
+      Put the safe action first. The filled button checks; the outlined button
+      asks for a new QR. The sentence leads with the unpaid case because it is
+      the common one, and the buttons deliberately do not follow it, because an
+      unpaid reader who checks first loses a tap while a paid reader who asks
+      for a new QR first can pay twice. The repo had already made that trade in
+      RECONCILING.
+    - >-
+      Took the photograph the ticket asked for, and it found a second defect the
+      tests could not see. At 393, the main width, the body wrapped so that one
+      Thai particle sat alone on a third line. The sentence was shortened by two
+      words, losing neither audience, and now ends on exactly the words printed
+      on the button. QR_EXPIRED had already been treated for the same disease.
+    - >-
+      Added teeth at the screen, not only at the table. Both earlier bugs on
+      this screen were table-right and screen-wrong, so the new class assertion
+      renders each state and requires a button for every action its words name,
+      with a counter so the loop cannot silently check nothing.
+    - >-
+      Emptied the KNOWN_GAP list that had carried this row since issue 455, and
+      kept its self-expiry assertion so it cannot rot again.
+    - >-
+      Repaired a browser-truth spec that had been red since the Figma-parity
+      rebuild. A settled charge now renders PlanPaySuccess, not ResultScreen,
+      so the assertion could only have been satisfied by a not-paid state — the
+      opposite of what the test is named for.
+    - >-
+      Added a dev-only preview harness for this screen. Two of its bugs have now
+      been found in a photograph and by nothing else, because reaching it for
+      real needs a session, a charge and a webhook.
+  not_completed:
+    - Nothing is deployed. Both pull requests await the owner's merge.
+    - >-
+      No claim that the other deferred screen tickets are unaffected by the same
+      class. The new assertion covers only the two action phrases it names.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "4"
+  repository:
+    head: 80867860244d67a7b1fa4a71126c86940b3c7fd8
+    branch: feat/payment-lane-screen-debt
+  product_repository:
+    project: mootech-fe
+    pull_requests:
+      - number: 611
+        topic_branch: fix/e2e-stale-success-screen
+        head: 8670525
+        subject: the settled-charge browser-truth spec looked for a screen that no longer renders
+      - number: 612
+        topic_branch: fix/480-qr-maybe-expired-buttons
+        head: 11b6deb
+        subject: the QR-maybe-expired screen offers both actions its sentence names
+  issues:
+    - mojisejr/mootech-fe#480
+    - mojisejr/mootech-fe#471
+    - mojisejr/mootech-fe#414
+  checks:
+    - npm run lint — 0 errors, 125 warnings, all pre-existing
+    - npm test — 1477 passed, 134 skipped
+    - npm run build — exit 0, compiled successfully, VAPID gate green
+    - playwright — v2-checkout 15 passed, v2-shop 5 passed, v2-csp-teeth 6 passed
+  mutant: >-
+    Putting the retry value back to its old setting kills four tests across
+    three files, including both new class assertions.
+  photograph:
+    widths: 320, 393, 768, 1280
+    result: >-
+      All four render all three buttons in the intended order. 393 wrapped to
+      three lines with an orphan before the copy change and to two lines after.
+
+unresolved:
+  - >-
+    The CSP teeth pass in a real browser, but every payment API in the
+    browser-truth specs is still route-mocked. Issue 507 remains open and the
+    only unmocked settle evidence is the production rows.
+  - >-
+    Those specs are in no automated lane. They are run by hand, which is why one
+    of them had been red since the rebuild without anyone knowing, and nothing
+    added here changes that.
+  - >-
+    /dev-access/ answers 200 on production. The pages are mock-only and hold no
+    real data, but they are internal harnesses on a public URL, and this slice
+    adds one more. The owner has not been asked to decide on it yet.
+  - >-
+    The new screen-level class assertion knows two action phrases. A future row
+    that names a third action in different words is not covered by it.
+
+next_action:
+  action: >-
+    Owner reviews and merges mootech-fe pull requests 611 and 612, then decides
+    whether /dev-access/ should be closed before launch.
