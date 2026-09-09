@@ -1,0 +1,142 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T190500_payment_lane_slice3_reopen_authorized
+type: decision
+recorded_at: 2026-09-09T19:05:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+  scope:
+    - >-
+      Read the four QI rows of payment_package back from the production database
+      before writing anything, because the last read was 2026-09-08 and another
+      author has been in the product repository since.
+    - >-
+      Apply lib/db/0020_qi_packs_reprice_2026-09.sql to the production database
+      as a whole file in a single transaction, moving QI_500 from 219 to 249 and
+      QI_1200 from 449 to 499, and bringing all four descriptions up to the
+      quantities the shipped code already grants.
+    - >-
+      Read the rows back afterwards and record before and after side by side,
+      with the payment_package row count, which must not change.
+  excluded:
+    - >-
+      Migrations 0021 and 0022, which arrived in the same pull request and are
+      not money. Revision 0.4 defers them. Migrations from 0005 upward are
+      hand-applied one file at a time, so applying 0020 does not carry them along.
+    - >-
+      Re-running the five database-backed suites. They ran 72 green on
+      2026-09-08 against a local arena, and 0020 changes no schema.
+    - Anything in mootech-be, and opening /v2 to the public.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner authorized applying 0020 to the production database in this
+      session, which is the per-instance authorization this plan's authority
+      boundary requires for a production write. Recorded here before the write
+      rather than narrated after it, which is the ordering the plan's own
+      corrections say was broken twice.
+    - >-
+      Stated what was believed to need correcting, WHICH TURNED OUT TO BE WRONG
+      and is corrected by the closeout that follows this event. The belief was
+      that 0020 had not been applied, reasoned from the 2026-09-08 row read of
+      35, 99, 219 and 449 — a read that predates mootech-fe#614 — and therefore
+      that production was selling 900 QI for 219 baht. Nothing had been read from
+      production at the time this decision was recorded, which the not_completed
+      list below says plainly, and the read is what the decision authorized.
+    - >-
+      Distinguished the three databases by the file that names each, before
+      touching any of them, because issue 407 is precisely the hazard of pointing
+      a tool at the wrong one. Production is the Supabase project named by
+      .env.production.local, which .env.preview.local also names. A DIFFERENT
+      Supabase project is named by .env.local and is not production. The local
+      arena is the mumate_test database on localhost, named by .env. The
+      identifiers themselves are deliberately not written here: this plan records
+      names and locations, never values.
+    - >-
+      Assessed the change as safe to apply. 0020 is four UPDATE statements
+      against payment_package, additive and idempotent, with no schema change and
+      no DROP. It touches amount and description on four rows and nothing else. A
+      charge already in flight carries the amount it was created with, so no
+      pending payment can be repriced underneath a buyer.
+    - >-
+      Recorded a guard that fired correctly. This event was first written with
+      the production project identifier spelled out, and the repository's own
+      pre-tool guard refused it. The plan's authority boundary already said that
+      no value goes into a repository file, and the agent was about to break it
+      while writing the event whose purpose is to respect it.
+  not_completed:
+    - >-
+      Nothing has been written to production. The psql call was refused by this
+      session's tooling policy and the owner has been asked to allow it. The
+      before-read has therefore not happened either.
+    - >-
+      Whether the four rows still hold 35/99/219/449 is not established as of
+      this event. The 2026-09-08 read is the most recent one and it predates
+      #614's merge.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  execution_phase: "5"
+  repository:
+    head: 9afc7997a6f973d849c42a8c2178dce4506c3eba
+    branch: feat/payment-lane-slice3-reopen
+  owner_confirmed:
+    - Pull request 57 is merged.
+    - Apply 0020 to production if it is safe, then start the webhook fix.
+  migration:
+    file: lib/db/0020_qi_packs_reprice_2026-09.sql
+    statements: four UPDATE statements on payment_package, separated by statement-breakpoint
+    changes:
+      - QI_60 stays at 35; the description becomes the 90 QI the code grants
+      - QI_200 stays at 99; the description becomes 300 QI plus a 45 bonus
+      - QI_500 moves from 219 to 249; the description becomes 900 QI plus a 260 bonus
+      - QI_1200 moves from 449 to 499; the description becomes 2,100 QI plus an 816 bonus
+    package_codes_unchanged: >-
+      deliberate, so that historical charges and their payment_package rows are
+      not orphaned by a rename
+  databases_distinguished_by_file:
+    production: the Supabase project named by .env.production.local, also named by .env.preview.local
+    not_production: a different Supabase project, named by .env.local
+    local_arena: the mumate_test database on localhost, named by .env
+  prior_read_being_relied_on:
+    event: memory/events/2026/09/08/20260908T234700_payment_lane_slice3_migrations_and_db_suites.yaml
+    rows: all four QI packs at 35, 99, 219 and 449, active, with both tier CHECK constraints already including QI
+    counts: v2_payment 12, member_subscription 22, payment_package 29
+
+unresolved:
+  - >-
+    The pricing itself is not this lane's judgement. 0020 carries another
+    author's price table, merged into production code before its data half
+    existed, and this decision applies that table rather than approving it. If
+    the owner disagrees with 249 or 499, the number to change is in the migration
+    and this is the moment to say so.
+  - >-
+    Nothing prevents the same split from happening again. A price lives in a row
+    and a quantity lives in the code, and a pull request can move one without the
+    other with no test failing. That is a shape, not an incident, and it is not
+    fixed here.
+  - >-
+    The five database-backed suites still DROP TABLE v2_payment CASCADE, carried
+    forward from the 2026-09-08 closeout. Pointing TEST_DATABASE_URL at
+    production destroys the table rather than its contents.
+
+next_action:
+  action: >-
+    Once the psql call is allowed, read the four QI rows from production, apply
+    0020 as a whole file in one transaction, read the rows back, confirm the
+    payment_package count is still 29, and record before and after in a closeout.
+  acceptance_check:
+    - The four QI rows read back as 35, 99, 249 and 499, active.
+    - The payment_package row count is unchanged.
+    - The buy screen's quantity and the row's price agree for all four packs.

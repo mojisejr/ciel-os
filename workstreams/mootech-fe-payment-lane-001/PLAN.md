@@ -77,6 +77,16 @@ they come first. Recorded here rather than turned into a new mechanism — CIEL
 already has the vocabulary, and adding a gate would be the meta-optimization
 `OWNER.md` warns about.
 
+**Slice 3, revision 0.4.** The revision was written claiming production sold 900
+QI for 219 baht, and it reached `main` saying so. The claim was reasoned off the
+2026-09-08 row read, which predates `#614`, while the same paragraph told the
+reader those rows must be read back rather than assumed. Reading them cost one
+query and showed `0020` already applied. This is the same failure as the
+webhook's, twice in one day: a record treated as the current state of a system
+that had moved — once about a vendor's specification, once about our own
+database. What both share is that the check was cheap and was skipped because
+the stale source felt authoritative.
+
 ## Scope narrowed in revision 0.3
 
 The owner decided on 2026-09-09 that v1 is being retired and that `/v2` is what
@@ -198,19 +208,22 @@ row counts were unchanged at 12 / 22 / 29, and the five database-backed suites
 ran 72 green against a local arena. Everything this plan knows about the
 production rows comes from that closeout.
 
-`#614` reopens it, and not hypothetically. That closeout read all four QI pack
-rows back as **35, 99, 219 and 449**, active. `#614` then shipped
-`lib/payment/catalog.ts` granting **90/300/900/2,100** with bonuses
-**0/45/260/816**, and `0020` — which would move `QI_500` to 249 and `QI_1200`
-to 499 — has not been applied. The buy screen takes its quantity from the code
-and its price from the row, and `grantQiPurchase` credits by the code. So
-production sells 900 QI for 219 baht and 2,100 QI for 449 right now.
+**Reopened by `#614`, and closed again by reading.** `#614` shipped
+`lib/payment/catalog.ts` granting **90/300/900/2,100** QI with bonuses
+**0/45/260/816**, and `0020` carries the prices that go with them. Revision 0.4
+as first written claimed `0020` had not been applied, and therefore that
+production was selling 900 QI for 219 baht. That was reasoning from the
+2026-09-08 read — which predates `#614` — rather than from production, and it
+was wrong.
 
-The preview gate is closed, so no public buyer can reach it, and that is the
-only reason this is a plan item and not an incident. It is exactly the
-"ตัดแต้มไม่ถูกต้อง" the owner's committed outcome names. The rows are read back
-again before `0020` is applied, because the last read was 2026-09-08 and someone
-else has been in this repository since.
+The rows were read on 2026-09-09 at 19:12. They hold **35, 99, 249 and 499**
+with the descriptions `0020` writes, `payment_package` still carries 29 rows,
+`V2_PRO_MONTHLY` is 199 and active, `v2_payment.qi_granted_at` exists, and
+`0021` and `0022` are applied as well. The author of `#614` applied their own
+migrations. Nothing was left for this lane to apply.
+
+Slice 3's acceptance — the production rows agree with the code that is on
+production — is therefore met by a read rather than by a write.
 
 The five DB-backed payment suites are `describe.skipIf(!TEST_DATABASE_URL)` and
 the pre-push lane does not run them, so the webhook, reconciler, discount race,
