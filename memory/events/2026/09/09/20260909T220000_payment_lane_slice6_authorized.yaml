@@ -1,0 +1,168 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T220000_payment_lane_slice6_authorized
+type: decision
+recorded_at: 2026-09-09T22:00:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+  scope:
+    - >-
+      Read data.charge as the charge id when a webhook event is a refund event,
+      because on refund.create the data object is the refund and data.id is the
+      refund's own id.
+    - >-
+      Route a refund event to revokeByChargeId, which already exists, already
+      works, and is covered by twelve database-backed tests. The fix is the pipe
+      to it, not the machinery behind it.
+    - >-
+      Revoke only on a FULL refund, comparing the refunded amount against
+      v2_payment.amount_satang, which is already on the row and already selected
+      inside revokeByChargeId's transaction. A smaller refund revokes nothing and
+      is logged loudly.
+    - >-
+      Stop an accepted webhook that matches no branch from being silent. That
+      silence is what hid this defect, and it is why finding it took a poll and a
+      charge read instead of one log line.
+    - >-
+      Prove it with a real card refund on production, and with a test built from
+      a refund.create payload of the shape Omise actually sent.
+  excluded:
+    - >-
+      Building any refund capability into the product. Nothing here lets a user
+      or an operator start a refund; refunds stay a Omise dashboard action, which
+      is what #605 already says they are.
+    - >-
+      Partial refund support. The comparison exists to avoid revoking a whole
+      month over a mistyped smaller number, not to model partial refunds.
+    - >-
+      Changing the charge.reverse branch. It handles a real and different Omise
+      event and is left exactly as #484 built it.
+    - >-
+      Changing the QI early return. A refunded QI purchase still revokes nothing
+      and waits for no human; whether granted QI should ever be clawed back
+      remains an undecided policy.
+    - PromptPay refunds, which Omise does not support through its refunds endpoint at all.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner decided a full refund revokes and anything less does not. The
+      agent raised the partial-refund question, the owner answered that the
+      product only ever issues full refunds, and both agreed to keep the
+      comparison anyway because it costs one line and prevents a mistyped number
+      from taking a paid month away.
+    - >-
+      Established by reading, not by assuming, that a refund is not a product
+      feature. No code calls the Omise refunds endpoint. The PaymentGateway port
+      declares only createCardCharge, createPromptPayCharge, verifyWebhook and
+      retrieveCharge, so the contract has no refund in it at all. The /ops admin
+      surface has none. The two parity documents mention refunds only as a status
+      pill on a screen. The delete-account screen tells the user outright that a
+      refund cannot be requested. There is no recurring billing, so no
+      cancellation path can produce one. #605 states refunds are performed from
+      the Omise dashboard.
+    - >-
+      Established from Omise's own event list that refund.create and
+      charge.reverse are separate events. #484 implemented the reversal one while
+      its ticket was written about the refund one, and the ticket's own section
+      titled What I could NOT establish asked for somebody to check whether Omise
+      ever sends reversed for our charges. Nobody did, for two weeks. The proof
+      on 2026-09-09 is that check.
+    - >-
+      Obtained the refund payload shape from a live observation rather than from
+      documentation: the refund object returned by the account tonight carries
+      id, charge, amount, status closed and voided true. The webhook data for
+      refund.create is that object.
+    - >-
+      Reassessed severity honestly and downward. The webhook defect struck every
+      paying customer automatically with nobody present; this one strikes only
+      when staff deliberately refund, and that person is present. The agent had
+      called this a launch blocker of the same class earlier in the session and
+      corrects that here.
+  not_completed:
+    - Nothing has been written in mootech-fe. This event and the plan revision come first.
+    - >-
+      Whether Omise wraps the refund object as {key, data} in the standard event
+      shape is not directly observed. The log this slice adds answers it on the
+      first refund after deploy, which is why the log ships in the same change as
+      the fix.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "6"
+  execution_phase: "6"
+  repository:
+    head: ff4ea24
+    branch: feat/payment-lane-webhook-accepted
+  owner_confirmed:
+    - A refund must take the entitlement back; that is what finishes this properly.
+    - Full refunds only; no partial refund support.
+    - Research first, then implement, in this session.
+  the_two_reasons_nothing_happened:
+    first: >-
+      isReversal requires evt.status === 'reversed'. A refunded charge is still
+      successful, so it can never be true. reversed belongs to charge.reverse,
+      which is a different event about a voided authorization.
+    second: >-
+      parseChargeEvent reads data.id and data.status, which on refund.create
+      belong to the refund. data.charge, the only field carrying the charge id,
+      is never read.
+  refund_is_not_a_product_feature:
+    no_code_calls_the_refunds_endpoint: true
+    gateway_port_methods:
+      - createCardCharge
+      - createPromptPayCharge
+      - verifyWebhook
+      - retrieveCharge
+    ops_admin_has_refund: false
+    docs_mention: a status pill reading คืนเงินแล้ว on the orders and receipt screens
+    delete_account_screen: tells the user a refund cannot be requested
+    recurring_billing: none, so no cancellation path can produce a refund
+    ticket_605: says refunds are performed from the Omise dashboard
+  observed_refund_object:
+    fields: id, charge, amount, status closed, voided true, currency THB
+    source: the account's own API response to the refund performed at 21:21:53 on 2026-09-09
+  amount_to_compare_against: >-
+    v2_payment.amount_satang, written when the charge was created and already
+    selected inside revokeByChargeId's transaction, so deciding fullness needs
+    nothing from Omise.
+
+unresolved:
+  - >-
+    Until this ships, whoever refunds from the dashboard must also take the
+    entitlement back by hand, and nothing in the system will tell them. That
+    workaround belongs with the people who perform refunds, not only in this
+    file.
+  - >-
+    Whether a dispute or a chargeback produces yet another event shape that also
+    revokes nothing is not established. Omise sends dispute.create and its
+    siblings; nothing in our code reads them either. Recorded rather than
+    scoped, because no dispute has ever been observed on this account.
+  - >-
+    mootech-be carries the same signature defect this lane fixed on the v2 side,
+    and is untouched.
+
+next_action:
+  action: >-
+    On a mootech-fe topic branch, read data.charge on refund events, route them
+    to revokeByChargeId, gate the revoke on the refunded amount reaching
+    v2_payment.amount_satang, log any accepted event that matches no branch, and
+    cover it with tests built from the observed payload shape. Open the pull
+    request with its proof. After it merges and deploys, buy 35 baht of QI WITH A
+    CARD — PromptPay cannot be refunded — refund it in full, and read the row
+    back.
+  acceptance_check:
+    - A full refund of a real card charge on production sets failure_code and takes the entitlement back.
+    - A test built from a refund.create payload reddens when the data.charge read is removed.
+    - A refund smaller than the charge revokes nothing and says so in a log.
+    - The charge.reverse branch and the QI early return both still behave as before.
+    - An accepted webhook that matches no branch is no longer silent.
