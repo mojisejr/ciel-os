@@ -1,0 +1,175 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T225500_owner_contract_first_dogfood_lane
+type: closeout
+recorded_at: 2026-09-09T22:55:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-owner-operating-contract-001
+  lane: single
+  objective: >-
+    Add the smallest owner-controlled operating contract that lets a fresh
+    session apply one confirmed working rule — progress before
+    meta-optimization — without turning CIEL into a personal-memory system.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      The first live dogfood lane finished. mootech-fe-payment-lane-001 reached
+      lifecycle completed on 2026-09-09 at 22:46, which slice 1's next action
+      named as the first real test of contract v0.1. This event is the
+      observation from that lane. It authorizes nothing.
+    - >-
+      Recorded what the lane cost and produced, so a later reader can weigh the
+      contract against something real. Four hours and fifteen minutes from Wake
+      to the final merge. Two defects that had been taking real money found,
+      fixed, and each proved on production with live keys behind a closed gate:
+      a webhook verifier that read a possibly-multi-signature header as one
+      string, so no webhook had ever been accepted in the life of the endpoint;
+      and a refund path that handled charge.reverse while its own ticket was
+      written about refund.create, so a refunded customer kept what they bought.
+      The second was only visible because the first was fixed.
+    - >-
+      Observed the deferral rule holding under load. At least seven side issues
+      surfaced during committed work — a card charge's charge_expires_at
+      disagreeing with both its sibling and the column's own comment, /dev-access
+      answering 200 with internal pages, whether the new /ops admin surface needs
+      covering before launch, a hand-maintained migration list inside three test
+      suites, dispute and chargeback events that nothing reads, mootech-be
+      carrying the identical signature defect, and whether a refunded QI purchase
+      should return the QI. None became a workstream, a state, a queue, or a
+      mechanism. Each went into an existing unresolved list as prose, which is
+      what "defer without inventing a system" asks for.
+    - >-
+      Observed the minimum-fix rule holding at the one point it was tested. The
+      reversal database suite could not run because its hand-maintained migration
+      list was missing 0019. That blocked the committed outcome, the minimum fix
+      was one line in one file, and the agent made it and returned rather than
+      building the enforcement the list obviously lacks — while recording that
+      the list is still unenforced.
+    - >-
+      Observed change control holding on every production write. Three writes to
+      production data happened tonight: lapsing the owner's own account, and two
+      halves of restoring it. Each was preceded by a decision event, not narrated
+      after. The payment plan carries two recorded corrections saying that exact
+      ordering was broken twice before, and it did not break again — including
+      when the owner said "run เลย" and waiting cost a step.
+  not_completed:
+    - >-
+      This does NOT evaluate the contract, amend it, or authorize slice 2. Slice
+      2's gate is four weeks and at least three real qualifying encounters; this
+      is day one and one encounter. OWNER.md is explicit that agent
+      self-evaluation is evidence and not a verdict, and this event is evidence.
+    - >-
+      No rule is added, generalized, or removed here. The interpretation offered
+      below is offered, not applied.
+
+evidence:
+  plan: workstreams/ciel-owner-operating-contract-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: b1576bb
+    branch: feat/owner-contract-first-dogfood
+  dogfood_lane:
+    workstream: mootech-fe-payment-lane-001
+    finished: 2026-09-09T22:46+07:00, lifecycle completed
+    plan_revisions_during_the_lane: 0.3 to 0.5
+    slices_closed: six
+  what_the_lane_proved_with_real_money:
+    - the webhook is accepted, 200 at 19:27:11, a first for that endpoint
+    - a card charge settled by webhook in twenty-eight seconds, not by the reconciler
+    - a PromptPay charge settled by webhook in thirty-six seconds
+    - a QI pack credited the buyer's balance read back through the engine
+    - a full refund set failure_code to gateway_reversed in thirty-three seconds
+
+where_the_contract_showed_its_teeth:
+  deferral_without_a_new_system: >-
+    Seven side issues, zero new states or workstreams, all in existing unresolved
+    lists as prose.
+  minimum_fix_then_return: >-
+    The missing 0019 in one test suite was fixed; the unenforced list it belongs
+    to was recorded, not solved.
+  decision_before_execution: >-
+    Every production write carried a decision event written first, including
+    under owner urgency.
+  asking_rather_than_scoping: >-
+    The /ops admin surface arrived in another author's merge, grants tier and
+    adjusts QI with no money moving, and was left for the owner to decide rather
+    than pulled into the lane.
+
+where_it_did_not_fully_hold:
+  - >-
+    The agent raised the partial-refund question as though it were a policy
+    decision the owner had to make, and the owner pushed back asking whether the
+    product could even issue one. Research then showed it cannot — no code calls
+    the refunds endpoint and the gateway port has no refund method at all — and
+    the question collapsed into a one-line guard. Asking before researching turned
+    a small thing into a decision point, which is a mild form of the failure this
+    contract exists to prevent.
+  - >-
+    The agent designed a three-step production test plan without first checking
+    whether the test account could buy anything. The purchase gate refused every
+    sellable membership package for it, and the plan had to be reworked mid-flight.
+  - >-
+    Three times in the lane the agent treated a record as the current state of a
+    live system: a source comment claiming a verifier was ported exactly, a row
+    read the previous day, and its own incomplete note of what to restore on the
+    owner's account. Each check that would have settled one was a single query or
+    request. This is not a contract failure — the contract does not speak to it —
+    but it is the dominant error shape of the lane and belongs beside the rest.
+
+observation_offered_for_owner_decision:
+  what_was_observed: >-
+    The machine holds fifty-one skills under the user's global skills directory.
+    Exactly one of them, syncup, appeared in this session's available-skills
+    listing, and it was never invoked. Its description alone carried the owner's
+    name, a workflow vocabulary, and a stance about how to converse — all of which
+    reached the agent's context without any skill being run.
+  suggested_interpretation: >-
+    A skill description behaves as ambient instruction. CIEL's contract travels
+    with the repository; the skills travel with the machine. The same repository
+    read by the same model in another person's harness would therefore be worked
+    on differently, and the difference would be invisible from inside the
+    repository.
+  what_already_defends_against_it: >-
+    CLAUDE.md already names this and names it first: while establishing a Wake
+    fact, only repository files and local Git may be used, and "a global skill,
+    global memory, prior session history" cannot establish one — described there
+    as the recorded way this contract gets broken. Tonight every material claim
+    went through Wake, Git, a vendor's own documentation, or a read-back from
+    production, so the defence held where it matters.
+  the_gap_that_remains: >-
+    Nothing tells a reader which skills were present in a given session, so the
+    ambient half of the environment is not recorded anywhere. Whether that is
+    worth closing, and how, is an owner decision. This event does not propose a
+    mechanism, because OWNER.md says CIEL already has sufficient vocabulary and
+    the agent must not add one from inference.
+
+unresolved:
+  - >-
+    One encounter is not three, and one day is not four weeks. A single lane that
+    went well says little about a contract; the failure it is meant to prevent is
+    one that shows up over time, and this lane had unusually clear acceptance
+    criteria and an owner present throughout.
+  - >-
+    The agent evaluating the contract it was operating under is the party with
+    the least standing to judge it. Everything above is what happened, and the
+    reading of it belongs to the owner.
+  - >-
+    Whether "progress before meta-optimization" would have held on a lane with a
+    vaguer committed outcome is untested. This one had a defect list, an
+    acceptance check per slice, and money as the arbiter.
+
+next_action:
+  action: >-
+    None for this workstream. Slice 2 stays unauthorized until its own gate is
+    met — four weeks and at least three real qualifying encounters — and this
+    record is one encounter toward it. The owner decides whether the skills
+    observation becomes anything; nothing is built from it here.
+  acceptance_check:
+    - This record is reachable from fetched origin/main after the owner merge.
+    - No rule in OWNER.md was added, amended, or removed by it.
+    - Slice 2 remains unauthorized.
