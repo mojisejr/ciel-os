@@ -1,0 +1,179 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T223800_payment_lane_refund_proved_and_delivered
+type: closeout
+recorded_at: 2026-09-09T22:38:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      A refund now revokes, proved with real money on production. A 35 baht card
+      charge was refunded in full at 22:33:48 and v2_payment.failure_code read
+      gateway_reversed by 22:34:21 — inside about thirty-three seconds, the same
+      order as every other webhook this evening. Before mootech-fe#616 the same
+      action on the same kind of charge wrote nothing at all, for five minutes of
+      polling.
+    - >-
+      The QI early return behaved exactly as designed and was watched rather than
+      assumed. The refund was recorded on the payment row while member_subscription
+      was not touched — the owner's PRO and PLUS rows both stayed ACTIVE — the
+      membership shadow kept the value restored earlier in the session, and the
+      credited QI was not clawed back. v2_payment.status stayed APPROVED, because
+      the payment did happen and history is not rewritten.
+    - >-
+      Slice 6 shipped as mootech-fe#616. parseChargeEvent reads data.charge and
+      data.amount; isRefund routes refund events to revokeByChargeId, which was
+      not changed; a full refund revokes and a smaller one changes nothing at all,
+      not even failure_code; and an accepted webhook that matches no branch is no
+      longer silent.
+    - >-
+      Fixed two test faults found while proving it. parseChargeEvent, isReversal,
+      isSettleable and isTerminalFailure had NO main-lane test of any kind — the
+      only coverage lived in DB suites that skip without TEST_DATABASE_URL, which
+      is the lesson the verifier's own header states. And this lane's reversal DB
+      suite could not run at all: it rebuilds v2_payment from a hand-maintained
+      migration list that was missing 0019, so settleAndProvision failed with
+      42703 before any assertion. The slice 3 closeout predicted that recurrence
+      in writing on 2026-09-08 and named the reason: nothing enforces the list.
+    - >-
+      Ran the proof twice, because the first run was invalid and saying so was
+      cheaper than explaining a false negative later. The pull request merged at
+      22:21:01 and the purchase was made at 22:21:30, twenty-nine seconds later,
+      while Vercel was still building; the deploy reached Ready at about 22:22:27
+      after a one minute twenty-two second build. The refund fired before that and
+      met the old code. The charge from that run still carries an empty
+      failure_code and is left that way as evidence of the pre-fix state.
+  not_completed:
+    - >-
+      The membership revoke was NOT exercised on production. The proof used a QI
+      purchase, and revokeByChargeId returns early for tier_code QI, so the branch
+      that moves member_subscription and restores the shadow was not reached by
+      real money. It is covered by the database-backed suite instead: nineteen
+      tests green against a real postgres, including a full refund ending the v2
+      lane and the shadow going back to its pre-purchase value, both of which
+      redden when the branch is removed.
+    - >-
+      The owner was offered a 199 baht membership purchase and refund to close
+      that on production and declined it. Recorded as a decision, not as an
+      omission: what was broken was the routing, and the routing is what real
+      money proved.
+    - >-
+      A declined card releasing its hold stays deferred with the reason revision
+      0.3 gave it.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "6"
+  execution_phase: "6"
+  repository:
+    head: 2a2e62e
+    branch: feat/payment-lane-refund-proved
+  product_repository:
+    project: mootech-fe
+    merged: 60709da, pull request 616
+    deploy_ready_at: about 2026-09-09T22:22:27+07:00, after a 1m22s build
+  the_valid_proof:
+    charge: chrg_68yn2rx7q2gb12d4n24, QI_60, card, 3500 satang
+    settled: qi_granted_at 22:22:00, by webhook
+    refund: rfnd_68yn73oj82mk3zsbobh, livemode true, 3500 THB, at 22:33:48
+    observed: failure_code gateway_reversed at 22:34:21, about thirty-three seconds later
+    untouched_on_purpose:
+      - member_subscription — the owner's PRO row to 2026-10-09 and PLUS row to 2027-09-01 both still ACTIVE
+      - member_payment — still V2_PRO_YEARLY to 2028-08-31, the value restored earlier in the session
+      - the credited QI, which the early return leaves alone by design
+      - v2_payment.status, still APPROVED, because the payment did happen
+  the_invalid_first_run:
+    charge: the same one, purchased at 22:21:30
+    refund_attempt: fired before the deploy reached Ready
+    why_it_proves_nothing: the code serving that delivery had no refund branch in it
+    left_as_evidence: >-
+      chrg_68ylhf590g119lfivdi, refunded at 21:21:53 under the old code, still
+      carries an empty failure_code. It is not repaired; it is the before picture.
+  covered_by_test_rather_than_by_money:
+    suite: scripts/reversal-revoke-db.test.ts against a real postgres
+    result: 19 passed, 0 failed
+    includes:
+      - a full refund ends the v2 lane
+      - a full refund restores the shadow exactly as a reversal does
+      - a partial refund changes nothing, not even failure_code
+      - a partial refund does not poison the full one that follows it
+      - a second delivery of the same refund changes nothing
+    mutants_proven:
+      - removing the isRefund branch reddens five of them
+      - removing the partial guard reddens two
+      - removing the data.charge read reddens four in the main lane
+  main_lane: 1508 passed, 0 failed; tsc clean
+
+what_this_lane_delivered:
+  - The v2 preview gate was restored and stayed closed through every proof.
+  - A failed QI grant became a row the reconciler repairs, and the cron paths answer their own 401.
+  - Production package rows and the code that reads them agree, verified by reading the rows back.
+  - The QR-maybe-expired screen draws every action its words name.
+  - >-
+    Real money moved on production with live keys: a card charge and a PromptPay
+    charge both settled, a QI pack credited the buyer's balance in the engine,
+    and a membership was provisioned for one calendar month.
+  - >-
+    The Omise webhook is accepted. It never had been, in any mode, before
+    2026-09-09 — the verifier compared a possibly-multi-signature header as one
+    string.
+  - A refund is no longer silent: it revokes.
+
+unresolved:
+  - >-
+    An expired QR's row is written by the cron pass and not at the expiry
+    instant, measured tonight: expired 19:42:10, still PENDING at 19:44:57,
+    REJECT by 19:59:20. A buyer whose QR has died can be shown a waiting screen
+    for up to fifteen minutes. Not money lost, and not fixed.
+  - >-
+    Whether a refunded QI purchase should take the QI back is still an undecided
+    policy. Tonight it did not, which is what the code intends today, and the
+    buyer keeps ninety QI with the money returned.
+  - >-
+    Disputes and chargebacks send their own Omise events and nothing in our code
+    reads any of them. No dispute has ever been observed on this account, so this
+    is recorded rather than scoped — but it is the same shape as the defect this
+    slice fixed.
+  - >-
+    The migration list inside three DB suites is still hand-maintained with
+    nothing enforcing it. This session hit the predicted recurrence and repaired
+    one more file; the next ALTER will break whichever file is left.
+  - >-
+    mootech-be carries the identical signature defect this lane fixed on the v2
+    side, and would break the first time anyone rolls a secret while v1 takes
+    money.
+  - >-
+    /dev-access/ still answers 200 on production with nine internal preview pages.
+  - >-
+    Whether the /ops admin surface — which grants tier and adjusts QI with no
+    money moving — needs covering before launch is an owner decision that has not
+    been made.
+  - >-
+    Three times in one session the agent treated a record as the current state of
+    a live system: a source comment claiming the verifier was ported exactly, a
+    row read from the previous day, and its own incomplete note of what to restore
+    on the owner's account. Each check that would have settled it was cheap. The
+    pattern is recorded rather than turned into a mechanism.
+
+next_action:
+  action: >-
+    Owner decision on whether /v2 opens. This lane's declared slices are all
+    closed and its objective is met: the payment lane takes real money and
+    delivers what was bought, proved on production behind a closed gate. The
+    launch itself is mootech-fe#606, which gates on #605 and is not this
+    workstream's work. Nothing here is waiting on the agent.
+  acceptance_check:
+    - The lane's six slices each carry a closeout naming what was proved and what was not.
+    - The preview gate is still closed.
+    - The owner has what they need to decide on #606 without reopening this lane.
