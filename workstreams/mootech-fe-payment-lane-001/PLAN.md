@@ -3,7 +3,7 @@
 **Workstream:** `mootech-fe-payment-lane-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution phase:** 5
 **Execution state:** idle
 **Parallelism:** none
@@ -108,6 +108,38 @@ that are not money. "Drop v1" must not be read as "shut down Render" without a
 separate account of what v2 still depends on, and that account is not this
 plan's work.
 
+## What revision 0.4 answers to
+
+Two things happened after revision 0.3 was written, and both change what this
+lane must do rather than merely adding to it.
+
+**The webhook's root cause was found, and it is our code.** Omise's
+`Omise-Signature` header may carry more than one signature, comma-separated;
+`verifyOmiseSignature` compares the whole header as a single 64-character hex
+string behind a length check, so a two-signature header is refused before any
+comparison happens. Rolling a webhook secret is what produces two: the previous
+secret stays valid for twenty-four hours and every delivery inside that window
+is signed with both. The account holder rolled at 11:02 on 2026-09-09, and every
+delivery since has answered 401. The header format was read from the vendor's
+own documentation on 2026-09-09, not inferred from the symptom — which is the
+step the whole day had skipped.
+
+This is not a new slice. It is slice 5's first acceptance criterion — the
+webhook arrives and is accepted — finally having a cause.
+
+**`mootech-fe#614` merged to `main` at 15:33 on 2026-09-09 and reached
+production.** It was not this lane's work and most of it is not this lane's
+business, but it touched the money lane in three places, and one of those is a
+live disagreement between code and data. Revision 0.4 records those three and
+defers the rest by name.
+
+The owner decided on 2026-09-09 that this lane finishes before anything from
+`#614` is taken up, unless `#614` blocks it. It does not block it: migrations
+`0005` upward are hand-applied SQL chosen one file at a time — the drizzle
+journal stops at `0004`, and each DB-backed suite reads the files it needs by
+name — so `0020` can be applied to production without `0021` or `0022` riding
+along on the same pass.
+
 ## Execution slices and acceptance criteria
 
 ### 1. Close the public exposure of the v2 payment lane
@@ -150,21 +182,46 @@ repairs, proven by a test that reddens when the retry is removed; the cron paths
 answer their own 401 rather than the maintenance page; and the CSP still covers
 the payment lane with `/v2` no longer short-circuiting the maintenance gate.
 
+**Changed by `#614`.** The maintenance allow-list now exempts
+`/api/v2/payment/webhook` alongside the cron paths — the hole `#606` B1 warned
+about, where the launch deletes `guardV2`, the webhook falls through to the
+maintenance gate, answers HTTP 200, and Omise reads that as delivered and never
+retries. It was written outside this lane. This plan verifies it rather than
+claiming it, and does not rewrite it.
+
 ### 3. Bring production data and the DB-backed proofs up to the code
 
-`0018` (Mumate Pro monthly, 199 baht) is on `main` and its shop toggle is live,
-but the production row still reads `amount = 0, is_active = false`, so the
-screen offers something the till refuses. Slice 2 adds `0019`. Both are
-operator-gated and money-affecting.
+**Closed once, and reopened by `#614`.** Slice 3 was delivered on 2026-09-08 at
+revision 0.1: `0018` and `0019` were applied to production a whole file at a
+time and read back, `0016` and `0017` were established as already applied, the
+row counts were unchanged at 12 / 22 / 29, and the five database-backed suites
+ran 72 green against a local arena. Everything this plan knows about the
+production rows comes from that closeout.
+
+`#614` reopens it, and not hypothetically. That closeout read all four QI pack
+rows back as **35, 99, 219 and 449**, active. `#614` then shipped
+`lib/payment/catalog.ts` granting **90/300/900/2,100** with bonuses
+**0/45/260/816**, and `0020` — which would move `QI_500` to 249 and `QI_1200`
+to 499 — has not been applied. The buy screen takes its quantity from the code
+and its price from the row, and `grantQiPurchase` credits by the code. So
+production sells 900 QI for 219 baht and 2,100 QI for 449 right now.
+
+The preview gate is closed, so no public buyer can reach it, and that is the
+only reason this is a plan item and not an incident. It is exactly the
+"ตัดแต้มไม่ถูกต้อง" the owner's committed outcome names. The rows are read back
+again before `0020` is applied, because the last read was 2026-09-08 and someone
+else has been in this repository since.
 
 The five DB-backed payment suites are `describe.skipIf(!TEST_DATABASE_URL)` and
 the pre-push lane does not run them, so the webhook, reconciler, discount race,
 and subscription writer have never been exercised against a real Postgres in the
 normal loop. Run them once against the local arena before real money.
 
-Slice 3 is done when the production package rows match the applied migrations,
-verified by reading them back, and the five suites have been run green against
-the local test database. They are not added to the pre-push gate.
+Slice 3 is done when the production package rows match the code that is on
+production — `0018`, `0019` and `0020` accounted for, each either applied or
+recorded as already true — verified by reading the rows back rather than by
+trusting the migration files, and when the five suites have been run green
+against the local test database. They are not added to the pre-push gate.
 
 ### 4. Repair what the payment screens promise
 
@@ -225,6 +282,52 @@ webhook arrives and is accepted, a card charge settles, a PromptPay charge
 settles, a QI pack credits the buyer's balance in the engine, and a refund takes
 the entitlement back.
 
+**Where slice 5 stands on 2026-09-09.** Real money moved twice, both charges
+settled, and both credited QI that was read back from the engine's own wallet.
+Both were settled by the reconciler and not by a webhook, because no webhook has
+ever been accepted by this endpoint. The refund proof has not been attempted.
+What remains is the webhook and then the refund, in that order.
+
+**The webhook fix.** Split the `Omise-Signature` header on commas, decode each
+candidate from hex, and accept the delivery when any of them matches the digest.
+Three details are deliberate rather than incidental. The comparison moves to
+decoded bytes instead of hex text, because the specification promises nothing
+about hex case. Each candidate is trimmed, because the specification says
+nothing about whitespace after the comma. The loop neither stops at the first
+match nor assumes exactly two, because the specification promises neither. The
+length check stays, moved inside the loop, because `timingSafeEqual` throws on
+unequal lengths.
+
+Every existing test of this verifier builds its own single-signature header, so
+the suite is green against a shape the vendor stops sending the moment a secret
+is rolled. A green suite is what let this defect reach production. The fix needs
+a header carrying two signatures in both orders, one carrying only a wrong
+signature, one with whitespace after the comma, and one in upper-case hex — each
+reddening when the split is removed.
+
+**The window the fix has to be proven in.** The twenty-four hour grace from the
+11:02 roll closes at about 11:02 on 2026-09-10. After that Omise sends one
+signature again and the unfixed code would begin answering 200 on its own. That
+is a trap and not a remedy: the fault would look repaired and would return at
+the next roll, which is exactly when somebody is already handling a security
+event. It also means a delivery Omise genuinely signed with two signatures can
+only be observed before that hour — unless the account holder rolls again, which
+would work, because the value production holds becomes the expiring half of the
+new pair, but which then obliges installing the newer secret inside its own
+twenty-four hours or every delivery 401s again.
+
+**What the 401s do not yet prove.** No raw `Omise-Signature` header from a real
+delivery has been read. The defect in our code is certain and the vendor's
+specification is now first-hand, but that this defect produced today's seven
+401s is inference from timing rather than observation, and one competing
+explanation survives it: that the installed secret is simply not the one the
+account signs with. A self-signed probe cannot tell those apart, because both
+sides of that test carry the same value — the 11:47 record already conceded
+this about itself. Logging the header's length and its comma count at the 401
+branch costs nothing, leaks no secret and no PII, and settles the question on
+the next delivery. The fix is necessary either way; only its sufficiency is in
+doubt.
+
 **Two proofs are shaped by what the code and the account actually allow.**
 
 - The refund proof uses a **membership** package. `revokeByChargeId` returns
@@ -259,6 +362,26 @@ reason rather than dropped from slice 5's acceptance check in silence.
 `#480` was on that list in revision 0.1 and the owner took it off on
 2026-09-09. Deferral is a judgement about blocking and harm, and the owner
 holds it; the evidence that changed it is in slice 4.
+
+Added in revision 0.4, from `#614`, by the owner's decision on 2026-09-09 that
+this lane finishes first: the `/ops` admin surface and its `OPS_ADMIN_SECRET`,
+migrations `0021` and `0022`, the destiny cache and birth merge, and the
+manifest and chat changes.
+
+The `/ops` surface earns a note rather than silence. It grants tier and adjusts
+QI without money moving, which is money-adjacent even though it is not this
+lane's objective, and whether it must be covered before launch is an owner
+decision this plan does not make. Deferring it is defensible rather than merely
+convenient because its gate fails closed when `OPS_DASHBOARD_KEY` is unset and
+every mutation writes to `ops_audit_log`. `OPS_ADMIN_SECRET` must be set on both
+`mootech-fe` and the engine or the admin actions that reach the engine fail
+closed — the same two-ended shape as the `QI_GRANT_SECRET` gap found on the
+morning of 2026-09-09, recorded here so it is not rediscovered as an incident.
+
+Also recorded and deferred: `mootech-be` carries the identical signature defect,
+ported line for line, and would break the same way the first time anyone rolls a
+secret while it is taking money. Revision 0.3's boundary puts it outside this
+lane.
 
 ## Rollback contract
 
