@@ -1,0 +1,123 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T191200_payment_lane_slice3_already_applied
+type: closeout
+recorded_at: 2026-09-09T19:12:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Read the production package rows with the owner's explicit authorization,
+      and found 0020 ALREADY APPLIED. All four QI packs read back as 35, 99, 249
+      and 499, active, each carrying the description 0020 writes. payment_package
+      still holds 29 rows. Nothing was written to production, because nothing
+      needed writing.
+    - >-
+      Corrected revision 0.4, which had reached main claiming that production was
+      selling 900 QI for 219 baht and 2,100 QI for 449. That claim was reasoned
+      off the 2026-09-08 row read, which predates mootech-fe#614, while the same
+      paragraph told the reader the rows must be read rather than assumed. The
+      plan now records what production holds and carries the correction in its
+      own corrections section rather than quietly restating the number.
+    - >-
+      Established that the author of #614 applied their own migrations. 0021 and
+      0022 are both present: bazi_destiny_cache and ops_audit_log exist. The
+      guess that they had shipped code without its data half was wrong for every
+      one of the three, not only for 0020.
+    - >-
+      Confirmed the rest of slice 3 still holds, months after its closeout.
+      V2_PRO_MONTHLY reads 199 and active from 0018, V2_PLUS_MONTHLY remains 0
+      and inactive by design, and v2_payment.qi_granted_at from 0019 exists. The
+      production database is level with what is on mootech-fe main.
+    - >-
+      Slice 3's acceptance is therefore met by reading rather than by writing:
+      the production rows agree with the code that is on production, verified by
+      reading them back.
+  not_completed:
+    - >-
+      Nothing was applied and nothing was changed in either repository's product
+      code by this event. The only writes are this record and the plan
+      correction.
+    - >-
+      The webhook fix is open as mootech-fe#615 and is not merged, so no delivery
+      has been observed yet.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  execution_phase: "5"
+  repository:
+    head: 16e5fcbd2a561f1a5f5cf6469541ade6b6d39a75
+    branch: feat/payment-lane-slice3-reopen
+  authorization: >-
+    The owner authorized the production access explicitly in session, which both
+    this plan's authority boundary and the repository's own pre-tool guard
+    require. Read-only queries were run; no write was attempted once the read
+    made one unnecessary.
+  production_rows_read:
+    at: 2026-09-09T19:12+07:00
+    database: the Supabase project named by .env.production.local
+    qi_packages:
+      - QI_60 amount 35 active, description names 90 QI
+      - QI_200 amount 99 active, description names 300 QI plus a 45 bonus
+      - QI_500 amount 249 active, description names 900 QI plus a 260 bonus
+      - QI_1200 amount 499 active, description names 2,100 QI plus an 816 bonus
+    membership_packages:
+      - V2_PRO_MONTHLY amount 199 active, which is 0018
+      - V2_PLUS_MONTHLY amount 0 inactive, by design
+    schema_spot_checks:
+      - v2_payment.qi_granted_at exists, which is 0019
+      - bazi_destiny_cache exists, which is 0021
+      - ops_audit_log exists, which is 0022
+    payment_package_row_count: 29, unchanged from the 2026-09-08 read
+  code_on_production:
+    qi_quantities: 90 / 300 / 900 / 2,100
+    qi_bonuses: 0 / 45 / 260 / 816
+    agreement: the rows and the code now name the same packs at the same prices
+
+unresolved:
+  - >-
+    This is the second time in one day that a stale record was treated as the
+    current state of a live system, and the second time the check that would
+    have settled it was cheap. The first was a source comment saying the verifier
+    had been ported exactly; this was a row read from the day before. Recording
+    the pattern rather than a mechanism: what both share is that the stale source
+    felt authoritative enough to skip the read.
+  - >-
+    A misread of table names nearly produced a second wrong claim inside the same
+    check. 0021 creates bazi_destiny_cache and the first query asked for
+    destiny_cache, which answered empty and briefly looked like a missing
+    migration. The migration file named the table; the query did not.
+  - >-
+    Nothing prevents a price in a row and a quantity in the code from moving
+    apart again. A pull request can change one without the other and no test
+    fails. This time they agree because another author applied their own
+    migration promptly, not because anything enforces it.
+  - >-
+    The five database-backed suites still DROP TABLE v2_payment CASCADE. Pointing
+    TEST_DATABASE_URL at the database read here would destroy the table rather
+    than its contents.
+
+next_action:
+  action: >-
+    Merge mootech-fe#615, which fixes the Omise signature verifier, then watch a
+    real delivery and record what the header actually carried, before the
+    twenty-four hour grace window from the 11:02 roll closes at about 11:02 on
+    2026-09-10. Then buy a membership package and refund it, which is the last
+    proof slice 5 needs.
+  acceptance_check:
+    - A webhook Omise signed is accepted on production and a charge settles without the reconciler.
+    - The 401 log, or an accepted delivery, establishes what the header actually carried.
+    - A refunded membership purchase loses its entitlement.
+    - The preview gate is still closed when both are observed.
