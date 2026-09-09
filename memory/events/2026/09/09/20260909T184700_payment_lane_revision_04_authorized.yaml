@@ -1,0 +1,186 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T184700_payment_lane_revision_04_authorized
+type: decision
+recorded_at: 2026-09-09T18:47:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+  scope:
+    - >-
+      Fix verifyOmiseSignature to split the Omise-Signature header on commas,
+      decode each candidate from hex, and accept the delivery when any of them
+      matches — with tests carrying two signatures in both orders, one carrying
+      only a wrong signature, one with whitespace after the comma, and one in
+      upper-case hex, each reddening when the split is removed.
+    - >-
+      Log the header's length and comma count at the 401 branch, so the next
+      delivery settles whether the comma defect is what produced today's 401s
+      rather than leaving it as inference from timing.
+    - >-
+      Observe a delivery Omise signed being accepted on production, with the
+      preview gate still closed, before the twenty-four hour grace window from
+      the 11:02 roll closes at about 11:02 on 2026-09-10.
+    - >-
+      Then buy a membership package and refund it, which is the last proof
+      slice 5 needs and the one revision 0.3 already shaped around
+      revokeByChargeId returning early for tier_code QI.
+  excluded:
+    - >-
+      Everything in mootech-fe#614 that is not money: the /ops admin surface and
+      its OPS_ADMIN_SECRET, migrations 0021 and 0022, the destiny cache, the
+      birth merge, and the manifest and chat changes. The owner decided this lane
+      finishes first, and #614 was checked for whether it blocks that rather than
+      assumed either way.
+    - >-
+      Slice 3. Revision 0.4 changes what slice 3 must do — 0020's code half is on
+      production and its data half is not — but this decision authorizes slice 5
+      only. Applying migrations to production is money-affecting and operator-
+      gated, and it needs its own decision naming slice 3.
+    - >-
+      mootech-be, which carries the identical signature defect. Revision 0.3's
+      boundary holds and is not reopened by having found the defect.
+    - Opening /v2 to the public. The preview gate stays closed for the whole proof.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner merged pull request 56, so the slice 5 records through the
+      root-cause finding are on origin/main and the next session Wakes onto them
+      rather than onto a topic branch. This checkout returned to a clean main
+      matching origin/main before the branch carrying this revision was opened.
+    - >-
+      The owner decided the payment lane finishes before anything from #614 is
+      taken up, unless #614 blocks it, and that the block question is answered
+      rather than assumed.
+    - >-
+      Established that #614 does not block this lane. Migrations 0005 upward are
+      hand-applied SQL chosen one file at a time — the drizzle journal in
+      lib/db/meta/_journal.json stops at 0004, and each DB-backed suite reads the
+      files it needs by name — so 0020 can be applied to production without 0021
+      or 0022 riding along.
+    - >-
+      Confirmed the Omise-Signature specification first-hand rather than from the
+      earlier record. The vendor's own documentation states that during secret
+      rotation the header carries two comma-separated signatures, that rolling
+      generates a new secret immediately while the previous one stays valid for
+      twenty-four hours, that every webhook in that window is signed with both,
+      and that a maximum of two secrets are active at once. Its sample verifier
+      splits on commas, decodes each part from hex, and accepts on the first
+      match. Our verifier does none of that.
+    - >-
+      Confirmed the defect is present on mootech-fe origin/main as recorded, and
+      that all six existing tests of the verifier construct single-signature
+      headers, so the suite is green against a shape the vendor stops sending the
+      moment a secret is rolled.
+    - >-
+      Found, while reading #614 against this plan, that lib/payment/catalog.ts
+      now grants 90/300/900/2,100 QI with bonuses 0/45/260/816 and is live on
+      production while 0020 is not applied. The buy screen takes its quantity
+      from the code and its price from the payment_package row, so the two halves
+      disagree on production right now. Recorded into slice 3 rather than acted
+      on.
+    - >-
+      Corrected a claim this agent had made minutes earlier in the same session.
+      It had reported the production package rows as probably stale and whether
+      0017 ever reached production as unestablished. The slice 3 closeout of
+      2026-09-08 had already applied 0018 and 0019, read all four QI pack rows
+      back, and established 0016 and 0017 as applied. The plan is now written
+      from that closeout instead of from the guess, which turns the QI
+      mispricing from a conditional into an observed state of production. The
+      pattern is the day's own lesson repeating: the record was there and was
+      not read.
+  not_completed:
+    - >-
+      Nothing was changed in mootech-fe. This event and the plan revision are the
+      whole of what was written, which is the ordering the plan's own recorded
+      corrections say was broken twice.
+    - >-
+      No raw Omise-Signature header from a real delivery has been read, so the
+      comma defect being the cause of today's 401s is inference and not
+      observation.
+    - Slice 3 is unauthorized and untouched. The production rows have not been read back.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "5"
+  execution_phase: "5"
+  repository:
+    head: f9ba7093ad5e17f01f03242081b9286a0c14cd1f
+    branch: feat/payment-lane-revision-04
+  owner_confirmed:
+    - Pull request 56 is merged; clean up and proceed on the plan.
+    - The payment lane finishes first; #614's unrelated work is not touched unless it blocks this lane.
+    - The webhook fix proceeds as slice 5, not as a new workstream.
+  vendor_specification_read:
+    source: the Omise webhooks documentation, read 2026-09-09
+    header: >-
+      hex-encoded HMAC signature; during secret rotation the header carries two
+      comma-separated signatures, one per secret
+    rotation: >-
+      rolling generates a new secret immediately and the previous stays valid for
+      twenty-four hours, with every webhook in the window signed by both; at most
+      two secrets are active at once
+    sample_verifier: splits on commas, decodes each part from hex, timing-safe compares, accepts on any match
+    silent_on: whitespace after the comma, hex case, and any client-side maximum
+  defect_confirmed_on_main:
+    file: mootech-fe lib/payment/webhook-verify.ts
+    line: the length guard in front of timingSafeEqual, comparing UTF-8 hex text
+    tests: scripts/payment-webhook-verify.test.ts, six cases, every header single-signature
+  fe_sync:
+    local_main: eab17bf, matching origin/main
+    merged_since_last_session:
+      - "#613 fix/promptpay-qr-15min, this lane's own work"
+      - "#614 feat/ops-admin-qi-fixes, 9903056, merged 15:33 by another author"
+    "614_touches_the_money_lane_in":
+      - lib/payment/catalog.ts and lib/db/0020_qi_packs_reprice_2026-09.sql — QI quantities and two prices
+      - middleware.ts — /api/v2/payment/webhook added to the maintenance allow-list, which is #606 B1
+      - new environment variable OPS_ADMIN_SECRET, required on both mootech-fe and the engine
+
+unresolved:
+  - >-
+    The competing explanation for today's 401s — that the installed signing
+    secret is not the one the account signs with — is not eliminated. A
+    self-signed probe cannot distinguish it, because both sides of that test
+    carry the same value. The 401-branch log settles it on one delivery; until
+    then the comma fix is necessary but not proven sufficient.
+  - >-
+    The grace window closes at about 11:02 on 2026-09-10. After it, an unfixed
+    verifier starts answering 200 on its own and the fault becomes unobservable
+    until the next roll. Reopening the window means asking the account holder to
+    roll again, which then obliges installing the newer secret inside its own
+    twenty-four hours.
+  - >-
+    Production is selling 900 QI for 219 baht and 2,100 QI for 449 right now, and
+    this is not conditional. The slice 3 closeout of 2026-09-08 read all four QI
+    pack rows back as 35, 99, 219 and 449 active, and 0020 has not been applied
+    since. The gate is closed so no public buyer can reach it. This event does
+    not authorize doing anything about it; slice 3 needs its own decision.
+  - >-
+    Whether the /ops surface — which grants tier and adjusts QI with no money
+    moving — must be covered before launch is an owner decision that has not been
+    made. It is deferred, not judged safe.
+  - >-
+    /dev-access/ still answers 200 on production with nine internal preview
+    pages, carried forward unresolved from the 11:47 record.
+
+next_action:
+  action: >-
+    On a mootech-fe topic branch, fix verifyOmiseSignature to split the header on
+    commas and compare decoded bytes, add the four test shapes the plan names,
+    add the non-secret 401-branch log, and open the pull request with its proof
+    for the owner to merge. Then observe a real delivery before the grace window
+    closes, and record what the header actually carried.
+  acceptance_check:
+    - A webhook Omise signed with two signatures is accepted on production.
+    - The 401-branch log, or an accepted delivery, establishes what the header actually carried.
+    - A test carrying two signatures reddens when the comma split is removed.
+    - The preview gate is still closed when the delivery is observed.
