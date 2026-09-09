@@ -1,0 +1,130 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T092600_payment_lane_v2_focus_checkpoint
+type: closeout
+recorded_at: 2026-09-09T09:26:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-payment-lane-001
+  lane: single
+  objective: >-
+    Make the MuMate v2 payment lane provably able to take real money and
+    deliver what was bought, before /v2 is opened to the public.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Slice 4 reached production. The owner merged mootech-fe 611 and 612 on
+      2026-09-09; both are ancestors of origin/main, verified locally after a
+      fetch. No pull request is left open on mootech-fe.
+    - >-
+      Plan revision 0.3 is written and its decision is recorded. The lane is now
+      v2-only, mootech-be sits outside the authority boundary, and slice 5 is
+      rewritten for a single-tenant Omise account.
+    - >-
+      Answered the owner's question about the QR lane by reading it end to end.
+      The code path is complete: source then charge, a five-minute expires_at set
+      on the charge rather than Omise's 24-hour default, the per-charge webhook
+      field attached before the source exists so a bad endpoint cannot leave an
+      orphan, a three-state QR deadline that has no boolean to misread, a screen
+      horizon computed from the reconciler's own numbers, and a reconciler that
+      re-asks for seven days with no give-up flag. One real PromptPay charge has
+      settled end to end on production in test mode.
+    - >-
+      Established what the QR lane is still missing, which is not code: it has
+      never run with a live key, its browser-truth specs still mock every payment
+      API and are run by hand, and the five-minute QR lifetime is a product
+      decision that has not been looked at against the fact that three of the
+      four real PromptPay charges on production ended expired.
+  not_completed:
+    - >-
+      Slice 5 is not authorized and has not started. No key was obtained,
+      installed, or tested, and nothing on Vercel changed.
+    - >-
+      /dev-access/ still answers 200 on production and now carries nine internal
+      preview pages. The slice 4 merge added the ninth. The owner has not decided.
+    - >-
+      Whether the three expired PromptPay charges predate or postdate the
+      five-minute lifetime was not read from production, so the lifetime cannot
+      yet be called either safe or wrong.
+
+evidence:
+  plan: workstreams/mootech-fe-payment-lane-001/PLAN.md
+  plan_revision: "0.3"
+  repository:
+    head: ddefc1f0fd85e387a2d53caeece630d983ff7bb9
+    branch: feat/payment-lane-screen-debt
+  product_repository:
+    project: mootech-fe
+    merged:
+      - number: 611
+        merge_commit: 49a7d17c9f340aab2f578d1d173995ed6d4216a0
+        subject: the settled-charge browser-truth spec looked for a screen that no longer renders
+      - number: 612
+        merge_commit: 7a00fe4c75e9367635389c94ba1716705ed8594e
+        subject: the QR-maybe-expired screen offers both actions its sentence names
+    open_pull_requests: none
+  qr_lane_observed:
+    charge_construction: >-
+      createPromptPayCharge posts /sources then /charges; webhook_endpoints is
+      resolved before /sources so a misconfigured endpoint cannot leave an orphan
+      source or show a QR for a charge we could not hear about.
+    qr_lifetime: >-
+      PROMPTPAY_QR_TTL_MS is five minutes, sent as expires_at on the charge.
+      Shipped to main in 09ca614 on 2026-08-26. One constant, one caller, and the
+      builder throws rather than clamping or omitting.
+    deadline_model: >-
+      qrDeadlineState returns expired, live, or unknown. There is deliberately no
+      boolean, because a null charge_expires_at would otherwise fall silently into
+      "not expired" — and null is the majority case, not an edge.
+    screen_horizon: >-
+      RECONCILE_HORIZON_MS is computed from the reconciler's grace plus the cron
+      period rather than typed, so widening either moves the screen with it.
+    recovery: >-
+      A PENDING row is re-asked every cron period for seven days. There is no
+      attempt counter and no terminal state; an unreachable gateway leaves the row
+      for the next run.
+    proven: One real PromptPay charge settled end to end on production in test mode on 2026-08-26.
+    unproven: Everything above with a live key.
+  pull_request_offered:
+    project: ciel-os
+    number: 55
+    carries:
+      - plan revision 0.2, the slice 4 decision, and the slice 4 closeout
+      - the session record of what was established about the Omise account and QI storage
+      - the focus narrowing to v2
+      - plan revision 0.3, its decision, and this closeout
+
+unresolved:
+  - >-
+    This closeout is a checkpoint, not the workstream's delivery. Slice 5 is
+    declared and unclosed, so the plan is not finished by it.
+  - >-
+    The five-minute QR lifetime shortens a window in a lane where three of four
+    real charges already expired. Shortening it raises the expiry rate, which
+    makes the screen slice 4 repaired the common path rather than the rare one.
+    Nobody has decided whether five minutes is right.
+  - >-
+    The browser-truth specs that cover this lane are in no automated lane and
+    every payment API in them is route-mocked. One of them had been red since the
+    Figma-parity rebuild without anyone knowing. Merging 611 fixed that instance
+    and changed nothing about the lane it sits in.
+  - >-
+    Retiring v1 has consequences outside this plan — existing v1 subscriptions,
+    customers mid-purchase, and the v1 screens. No owner is named for them here.
+
+next_action:
+  action: >-
+    Owner reviews and merges ciel-os pull request 55. Then the conversation
+    resumes on slice 5, whose first step is the request to the Omise account
+    holder: rotate the live key pair, read back the live webhook signing secret
+    without rotating it, and remove the test-mode static webhook that points at
+    the v2 endpoint. Nothing is installed until Omise answers 200 to the new
+    secret key.
+  acceptance_check:
+    - Plan revision 0.3, its decision, and this closeout are on the pull request head and verified there.
+    - Slice 5 does not begin without its own decision.
+    - A live secret key that Omise answers 200 to is in hand before anything is installed on Vercel.

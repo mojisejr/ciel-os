@@ -3,7 +3,7 @@
 **Workstream:** `mootech-fe-payment-lane-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -35,7 +35,8 @@ what the owner authorized.
 | `mootech-fe` | the payment lane, its screens, migrations, and deploys | `/Users/non/ghq/github.com/mojisejr/mootech-fe` |
 | `ciel-os` | this plan and its events | `.` |
 
-`mootech-be` is read for evidence only. No change to it is authorized here.
+`mootech-be` is out of scope in revision 0.3. It may be read for evidence when
+a v2 question needs it, and nothing in it is changed.
 
 ## Authority boundary
 
@@ -47,6 +48,10 @@ what the owner authorized.
 - The owner authorized installing Omise live keys **only after** `/v2` is
   provably closed to the public. If that condition is not met, the keys are not
   installed and the agent says so rather than proceeding.
+- `mootech-be` and the v1 payment path are outside this lane. Work that exists
+  only to keep v1 taking money is not this lane's work. If something in v2 turns
+  out to need `mootech-be`, that dependency is established here first and the
+  owner decides before anything is changed there.
 - No secret value is ever written into a repository file, event, pull request,
   or report. Only names, locations, and mode prefixes are recorded.
 
@@ -71,6 +76,37 @@ this plan and a decision event are where that authority becomes executable, and
 they come first. Recorded here rather than turned into a new mechanism — CIEL
 already has the vocabulary, and adding a gate would be the meta-optimization
 `OWNER.md` warns about.
+
+## Scope narrowed in revision 0.3
+
+The owner decided on 2026-09-09 that v1 is being retired and that `/v2` is what
+ships. Revision 0.2 was written for a world where both lanes take money from one
+Omise account at the same time, and several of its judgements only make sense in
+that world. This revision narrows the plan to v2 rather than leaving the reader
+to work out which parts still apply.
+
+**What the narrowing rests on.** The v2 money lane is entirely inside
+`mootech-fe`: the browser talks only to same-origin `/api/v2/payment/*`, and the
+only hosts the lane reaches outward are `api.omise.co` and the bazi engine at
+`BAZI_BASE_URL`, which credits a QI purchase. Settlement, provisioning, and the
+reconciler reach Postgres directly. Nothing in the lane calls `mootech-be`. That
+was read out of the code on 2026-09-09 and recorded.
+
+**What it changes.** `#374` exists because one Omise account has a single static
+webhook per mode and v1 already owns the live one, so v2's charges had to carry
+their own endpoint or the two lanes would collide. With v1 retired nothing
+contends for that line, and the account's live static webhook can point at the
+v2 endpoint directly. The unanswered question — whether the account's pinned
+`api_version` `2019-05-29` supports per-charge `webhook_endpoints` — therefore
+stops being a launch blocker. It is still worth an answer, because the
+per-charge design is the better one and the code refuses to charge without it
+configured, but the lane no longer waits on it.
+
+**What it does not change.** Retiring v1 is a decision about the payment lane,
+not about the backend: `mootech-fe` still calls `mootech-be` for several flows
+that are not money. "Drop v1" must not be read as "shut down Render" without a
+separate account of what v2 still depends on, and that account is not this
+plan's work.
 
 ## Execution slices and acceptance criteria
 
@@ -154,16 +190,39 @@ ticket names, and when the lane's browser-truth specs pass again.
 
 ### 5. Prove real money end to end
 
-Install the Omise live keys, including the live webhook signing secret — which
-is not a string of our choosing, because the verifier base64-decodes it and it
-differs per mode. Then prove, on production and in this order: the dynamic
-per-charge webhook arrives with no static endpoint present (`#374`), a card
-charge settles, a declined card releases its hold, a PromptPay charge settles, a
-QI pack credits the buyer's balance in the engine, and a refund takes the
-entitlement back.
+Rewritten in revision 0.3 for a v2-only account. Not authorized; it needs its
+own decision, and the acceptance check below is what that decision would be
+against.
 
-Slice 4 is done when each of those is observed on production with live keys and
-recorded, and the QI check reads the buyer's engine balance rather than the row.
+The live secret key the team holds is **expired** — Omise answers
+`403 key_expired_error` to it, while a control call with the v2 test key on the
+same endpoint answers 200, so the verdict is the key's and not the call's. The
+Omise account is registered to an address outside the two people working this
+repository, so the replacement cannot be produced locally. What must be obtained
+from the account holder, and in this order:
+
+- A rotated live key pair. Nothing is installed until Omise answers 200 to the
+  new secret key on a read-only call.
+- The live webhook signing secret **read back, not rotated**. It is one value
+  per mode shared by everything on the account, it is base64 that the verifier
+  decodes rather than a string of our choosing, and rotating it breaks whatever
+  still runs on the old one until that is redeployed too.
+- The account's static webhook: the test-mode line currently points at the v2
+  endpoint, which is why `#374` cannot be proven while it stands — the webhook
+  would arrive whether or not the per-charge mechanism works, which is the exact
+  failure the ticket exists to prevent. It is removed before the proof. The
+  live-mode line moves to the v2 endpoint only once v1 is provably off.
+
+Then prove, on production with the preview gate still closed, in this order: the
+webhook arrives and is accepted, a card charge settles, a declined card releases
+its hold, a PromptPay charge settles, a QI pack credits the buyer's balance in
+the engine, and a refund takes the entitlement back.
+
+Slice 5 is done when each of those is observed on production with live keys and
+recorded; when the QI check reads the buyer's balance through the engine rather
+than a row, because a row that says granted is not a balance the buyer has; and
+when the static webhook's state at the time of the `#374` observation is
+recorded alongside it, so a later reader can tell which mechanism delivered.
 
 ## Deferred in this lane
 
