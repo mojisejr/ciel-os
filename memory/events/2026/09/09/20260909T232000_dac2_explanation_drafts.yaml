@@ -1,0 +1,112 @@
+schema_version: ciel.event.v0.1
+id: evt_20260909T232000_dac2_explanation_drafts
+type: closeout
+recorded_at: 2026-09-09T23:20:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Draft the ten explanation topics DESIGN.md still listed as missing, at the
+    owner's request, so slice 6 has owner-reviewable wording to render rather
+    than a gap. This record claims no slice and authorizes none.
+
+outcome:
+  status: explanation-drafts-offered-for-owner-review
+  completed:
+    - >-
+      Replaced the Still needing wording list in DESIGN.md with drafted
+      explanations for all ten topics, in the existing four-question shape:
+      คืออะไร, ใช้ยังไง, ทำไมต้องมี, ไม่ใส่ได้ไหม.
+    - >-
+      Wrote eighteen blocks rather than ten, because เป้าหมาย KPI แต่ละตัว is
+      nine KPIs. Each KPI carries its own four answers under one shared
+      introduction that states the unset-target rule once.
+    - >-
+      Read every claim from crates/calc rather than from the workbook alone, so
+      each explanation describes what the code computes. Three behaviours a
+      reader would guess wrong are now stated in the wording itself.
+    - >-
+      Added a preamble sentence recording that no explanation names a benchmark,
+      so a later session reads the absence as a rule rather than an omission.
+  not_completed:
+    - >-
+      Slice 6 remains unauthorized and untouched. This record is preparation for
+      it, not any part of its delivery.
+    - >-
+      The wording is not owner-confirmed. It is a draft offered for correction,
+      which is what DESIGN.md asks drafts to be.
+    - No code, test, interface, dependency, or plan revision changed.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: cc0154ca8560802166ff26fd6baa110e1f65f917
+    branch: docs/dac2-explanation-drafts
+  application_repository:
+    id: dac2-durian-smart-account
+    revision: fb4fbedfc75b36414de77f44419df80e8140a603
+    branch: docs/explanation-drafts
+  application_pull_request:
+    number: 6
+    url: https://github.com/mojisejr/dac2-durian-smart-account/pull/6
+    base: main
+    head: docs/explanation-drafts
+    observed_head: fb4fbedfc75b36414de77f44419df80e8140a603
+  read_before_writing:
+    - crates/calc/src/revenue.rs
+    - crates/calc/src/cost.rs
+    - crates/calc/src/breakeven.rs
+    - crates/calc/src/efficiency.rs
+    - crates/calc/src/health.rs
+    - crates/calc/src/tax.rs
+    - crates/calc/src/targets.rs
+    - crates/calc/src/plan.rs
+    - crates/web/src/plan_ui.rs
+  behaviours_recorded_in_the_wording:
+    - >-
+      health.rs average_complete returns None when any of the twelve answers is
+      absent, so the overall score and each two-question dimension show nothing
+      until complete. It does not average the answered subset.
+    - >-
+      largest_buyer_share is captured and validated but enters no calculation,
+      so leaving it blank changes no other figure.
+    - >-
+      The labour, fertiliser, water, and electricity KPIs divide by a quantity
+      from the variable-cost line, so a line entered as a baht figure alone
+      leaves them blank.
+  checks:
+    commands:
+      - ./scripts/check.sh in the application checkout
+    result:
+      - >-
+        Passed, exit 0. A Markdown-only change cannot affect it; it was run to
+        show nothing regressed, not to prove the change.
+
+unresolved:
+  - >-
+    The wording carries no benchmark for what counts as a good figure, by
+    design. Every KPI verdict still depends on a target only the owner can set,
+    and none is set by this record.
+  - >-
+    The workbook's tax rates remain unestablished as current law. The drafted
+    tax explanation now says so to the reader; it does not resolve it.
+  - >-
+    Slice 6 renders these surfaces and still requires a separate owner decision.
+  - >-
+    The four earlier drafts were left as they stand. Whether the register of the
+    new eighteen matches them is an owner judgement, not a checked property.
+
+next_action:
+  action: >-
+    Read the drafts in application PR 6 and correct the wording. Merge PR 6 when
+    the words are the owner's, then this HQ PR. Slice 6 stays unauthorized until
+    a separate decision event names it.
+  acceptance_check:
+    - Application revision fb4fbed is reachable from fetched origin/main.
+    - This closeout is reachable from CIEL's fetched origin/main.
+    - Wake reports both repositories clean and current after branch cleanup.
