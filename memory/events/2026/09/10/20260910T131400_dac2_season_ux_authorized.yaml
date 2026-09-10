@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20260910T131400_dac2_season_ux_authorized
+type: decision
+recorded_at: 2026-09-10T13:14:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-season-ux-001
+  lane: single
+  objective: >-
+    Make yearly seasons identifiable and navigable, turn the workbook sample
+    into a non-persistent editable demonstration, and keep live calculation on
+    input screens as quiet feedback rather than an attention-dominating card.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner approved the shared understanding after thirteen explicit UX
+      decisions, including the corrections that one season combines all plots
+      for one harvest year and that sample data is never season history.
+    - >-
+      The owner authorized clearing the 46 existing local test plans during
+      implementation while retaining local user accounts.
+  not_completed:
+    - >-
+      At the authorization point, no application code, schema, or remote state
+      had changed. The authorized local-plan reset and its result belong to the
+      implementation closeout.
+
+evidence:
+  plan: workstreams/dac2-season-ux-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  application_base: fb7f1b7acb13bf5a166c91e180f51472fa571ca1
+  repository:
+    head: 512059a43decf311e1899219ac835756e8ff99a6
+    branch: feat/dac2-season-ux
+
+unresolved:
+  - >-
+    The browser proof does not measure comprehension, zoom, system font
+    scaling, one-thumb reach, or engines other than portrait Chrome.
+  - The application remains localhost-only with its existing deployment debts.
+
+next_action:
+  action: >-
+    Implement plan revision 0.1 slice 1 in the application repository, prove
+    its store, server, SSR, and responsive behavior, then prepare both draft
+    pull requests and their final closeout for owner review.
+  acceptance_check:
+    - Every acceptance criterion in plan revision 0.1 slice 1 is evidenced.
+    - Neither pull request advances beyond draft before its closeout is present.
