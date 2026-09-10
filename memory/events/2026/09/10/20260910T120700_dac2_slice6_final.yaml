@@ -1,0 +1,134 @@
+schema_version: ciel.event.v0.1
+id: evt_20260910T120700_dac2_slice6_final
+type: closeout
+recorded_at: 2026-09-10T12:07:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    The final description of plan revision 0.4 slice 6. It supersedes every
+    earlier slice 6 closeout, each of which described a state the owner's next
+    session of use then found wanting.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  completed:
+    - >-
+      Rendered every derived surface the calculation engine produces: the
+      dashboard, the nine efficiency KPIs against owner-set targets, the six
+      completeness rules, both preliminary tax methods, and the price-by-yield
+      scenario reached by two sliders over the same matrix.
+    - >-
+      Repaired the layout so no page exceeds the device at 320, 360, 393, or
+      412 pixels, by removing the content-based automatic minimum from the layout
+      containers rather than by patching each overflow.
+    - >-
+      Replaced the explanation popover with a bottom sheet that names its figure,
+      scrolls its own body, and closes by a full-width button in the thumb's
+      reach; every explanation is taller than half a 320-pixel screen and six are
+      taller than all of it, so it was never tooltip content.
+    - >-
+      Made the sheet state its own colours, after it inherited a light foreground
+      from the dark bar it opened from and rendered its text at 1.04 to 1.
+    - >-
+      Took the live total bar off the plan hub. It exists so a figure moves while
+      the owner types; nothing on the hub is typed, so there it only covered the
+      cards beneath it. It stays on the six input sections.
+    - >-
+      Built scripts/check-responsive.sh, which drives Chrome at four widths and
+      asserts that no page exceeds its device, that no interactive label is
+      silently clipped, that every activation target meets 48 pixels and stays
+      reachable, that every text colour clears 6 to 1, and that an open
+      explanation lies wholly on screen with a close control of its own.
+  not_completed:
+    - >-
+      No visual redesign. The owner's restyling remains parked; this made the
+      existing design hold and measured the rules it already declared.
+    - >-
+      The live total bar stays on the input sections. Removing it there would
+      undo the slice 5 feature it was built for, and was not asked for.
+    - >-
+      The sheet body carries no hint that more text sits below the fold, the tax
+      panel still nests three cards deep, and long forms still have no save
+      control near the sticky bar.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  supersedes: memory/events/2026/09/10/20260910T113200_dac2_slice6_explanation_sheet.yaml
+  repository:
+    head: 2d287ccaa437fb9b6d1c57f942361630d1fb5a3b
+    branch: feat/dac2-slice-6
+  application_repository:
+    id: dac2-durian-smart-account
+    revision: d8aa5229d5c74b9f7c93c5a0781a892b18d98c0b
+    branch: feat/analysis-experience
+  application_pull_request:
+    number: 7
+    url: https://github.com/mojisejr/dac2-durian-smart-account/pull/7
+    base: main
+    head: feat/analysis-experience
+    observed_head: d8aa5229d5c74b9f7c93c5a0781a892b18d98c0b
+  checks:
+    commands:
+      - ./scripts/check.sh
+      - ./scripts/test-plans.sh
+      - ./scripts/test-auth.sh
+      - ./scripts/check-responsive.sh
+    result:
+      - All three Rust suites exit 0.
+      - The layout proof passes at 320, 360, 393, and 412 pixels.
+      - >-
+        Each assertion was shown to fail on the defect it exists for: restoring
+        the popover anchoring reports 450 findings, making the sheet body
+        unscrollable reports 13, and removing the sheet's stated colour reports 48.
+  what_the_proof_found_that_people_did_not:
+    - >-
+      The sticky bar carries z-index 5 and so is a stacking context; a sheet
+      opened inside it was trapped below the navigation and its close button
+      could not be reached.
+    - The bar's own icon was being squeezed to 26 pixels, below the 48-pixel rule.
+    - >-
+      A heading counter clipped at 320 pixels once the automatic minimum was
+      removed, a regression introduced by the repair itself.
+
+unresolved:
+  - >-
+    Three of the four rules DESIGN.md calls non-negotiable are now measured on
+    every route. Reduced motion and one-thumb operation are not, and neither is
+    zoom or system font scaling. Only Chrome is driven, in portrait.
+  - >-
+    Several manual runs of the proof were made against a server process that had
+    survived a kill and was serving an older binary, so they proved a build that
+    was not the one under test. The script starts its own server and is not
+    exposed to this; the lesson belongs to the operator, not the check.
+  - >-
+    Whether this class of proof belongs to CIEL as a shared outer layer stays
+    open at the owner's instruction, for discussion after this delivery.
+  - >-
+    Slice 5's closeout claims 48-pixel targets were applied; measurement
+    contradicted it and the record cannot be corrected.
+  - >-
+    The proof measures geometry and colour, never comprehension. Whether a
+    farmer understands these screens, and whether a sheet suits them better than
+    a full screen, only real use decides.
+  - >-
+    Browser proof of behaviour remains deferred, and the application remains
+    localhost-only with the same deployment debts.
+
+next_action:
+  action: >-
+    Review and merge application PR 7 first, then the HQ pull request carrying
+    every slice 6 event. After both merge, fetch and verify both clean main
+    branches and remove only the merged topic branches. This closeout names the
+    last declared slice, so the workstream completes at that point.
+  acceptance_check:
+    - Application revision d8aa522 is reachable from fetched origin/main.
+    - Every slice 6 event is reachable from CIEL's fetched origin/main.
+    - Wake reports both repositories clean and current after branch cleanup.
+    - Wake reports the workstream completed rather than authorized.
