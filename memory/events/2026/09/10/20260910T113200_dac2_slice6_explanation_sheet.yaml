@@ -1,0 +1,122 @@
+schema_version: ciel.event.v0.1
+id: evt_20260910T113200_dac2_slice6_explanation_sheet
+type: closeout
+recorded_at: 2026-09-10T11:32:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Record what slice 6 delivers after the explanation container was rebuilt as a
+    sheet. This supersedes the responsive-repair closeout and is the description
+    of what merges.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  completed:
+    - >-
+      Everything the two earlier slice 6 closeouts record still stands: the
+      dashboard, the four analysis panels, and the responsive repair with its
+      browser proof.
+    - >-
+      Replaced the explanation popover with a bottom sheet that names the figure
+      it explains, scrolls its own body, and closes by a full-width button in the
+      thumb's reach or by tapping the dimmed background behind it.
+    - >-
+      Made the close control a real element rather than a styled pseudo-element,
+      so the layout proof can measure it and assistive technology can describe it.
+    - >-
+      Gave the sticky total bar's own explanation the same component, which
+      removed the duplicated wording from plan_ui and left one source for it.
+    - >-
+      Extended the layout proof with three assertions: an open explanation lies
+      wholly within the screen, closes by a control meeting the 48-pixel rule,
+      and can be scrolled when its text exceeds its room.
+  not_completed:
+    - >-
+      Without script the sheet still closes only by its summary. The close button
+      is a progressive enhancement, not the sole mechanism.
+    - >-
+      No wording changed, no figure changed, and no other surface was touched.
+    - >-
+      The scrollable body carries no fade or other hint that more text is below
+      the fold. It scrolls and the proof requires that it can; it does not
+      advertise it.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  supersedes: memory/events/2026/09/10/20260910T093600_dac2_slice6_responsive_repair.yaml
+  authorized_by: memory/events/2026/09/10/20260910T110900_dac2_explanation_sheet.yaml
+  repository:
+    head: 105caa951c0ee12f5cd1e9bd973354f622ffb604
+    branch: feat/dac2-slice-6
+  application_repository:
+    id: dac2-durian-smart-account
+    revision: f10cf1a57c20cdda4e1549168a344a98c588f246
+    branch: feat/analysis-experience
+  application_pull_request:
+    number: 7
+    url: https://github.com/mojisejr/dac2-durian-smart-account/pull/7
+    base: main
+    head: feat/analysis-experience
+    observed_head: f10cf1a57c20cdda4e1549168a344a98c588f246
+  checks:
+    commands:
+      - ./scripts/check.sh
+      - ./scripts/test-plans.sh
+      - ./scripts/test-auth.sh
+      - ./scripts/check-responsive.sh
+    result:
+      - All three Rust suites exit 0.
+      - The layout proof passes at 320, 360, 393, and 412 pixels.
+      - >-
+        Making the sheet body unscrollable turns the new assertion red on
+        thirteen counts, so the check is demonstrated to fail on the defect that
+        prompted it.
+  found_by_the_proof_itself:
+    - >-
+      The sticky total bar carries z-index 5, which makes it a stacking context,
+      so a sheet opened from inside it was trapped below the navigation's
+      z-index 10 and its close button could not be reached. This is the same
+      family of defect as the owner's original report and was found by the check
+      rather than by a person.
+    - >-
+      The bar's icon was being squeezed to 26 pixels wide by its flex row, below
+      the 48-pixel rule, which no earlier measurement had reached.
+
+unresolved:
+  - >-
+    Whether a farmer prefers a sheet to a full screen is an owner judgement that
+    only real use settles. The proof measures geometry, not preference, and the
+    owner's first instinct was a full screen.
+  - >-
+    Whether this class of proof belongs to CIEL as a shared outer layer remains
+    open at the owner's instruction, to be discussed after this delivery.
+  - >-
+    Slice 5's closeout claims 48-pixel interaction targets were applied.
+    Measurement contradicted that. The record is append-only, so the
+    contradiction stands noted rather than corrected.
+  - >-
+    The proof drives only Chrome, in portrait, at four widths, with no zoom and
+    no system font scaling. A reader who enlarges text is not covered.
+  - >-
+    Browser proof of behaviour remains deferred. Layout is proved; that dragging
+    a slider changes a figure is not.
+  - The application remains localhost-only, with the same deployment debts.
+
+next_action:
+  action: >-
+    Review and merge application PR 7 first, then the HQ pull request carrying
+    every slice 6 event. After both merge, fetch and verify both clean main
+    branches and remove only the merged topic branches. This closeout names the
+    last declared slice, so the workstream completes at that point.
+  acceptance_check:
+    - Application revision f10cf1a is reachable from fetched origin/main.
+    - Every slice 6 event is reachable from CIEL's fetched origin/main.
+    - Wake reports both repositories clean and current after branch cleanup.
+    - Wake reports the workstream completed rather than authorized.

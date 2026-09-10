@@ -1,0 +1,87 @@
+schema_version: ciel.event.v0.1
+id: evt_20260910T065100_dac2_slice6_authorized
+type: decision
+recorded_at: 2026-09-10T06:51:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Authorize plan revision 0.4 slice 6, the analysis experience, which is the
+    last declared slice of this plan.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner ran the merged application locally for the first time, registered
+      through Mailpit, and exercised the slice 5 plan workspace by hand. Their
+      verdict was that it is functionally acceptable.
+    - >-
+      The owner authorized slice 6 to proceed immediately after that review.
+  not_completed:
+    - >-
+      No deployment, hosting, rate limiting, real SMTP, or HTTPS decision is made
+      here. Those remain out of scope and would need their own workstream.
+
+decision:
+  - >-
+    Slice 6 is authorized as written in plan revision 0.4: the ten dashboard
+    figures, nine efficiency KPIs with their met-or-improve status, six
+    completeness rules with the overall readiness status, both preliminary tax
+    methods with the required disclaimer, and the five-by-five price-by-yield
+    scenario matrix reached through two sliders.
+  - >-
+    Visual design is deferred, deliberately and by the owner. Their words were
+    that the current interface is plain and not modern, and that a finished,
+    fully working application comes first and appearance is discussed after.
+    Slice 6 therefore follows the existing DESIGN.md tokens and components rather
+    than introducing a new visual language, and a later restyling is expected
+    work rather than a defect this slice failed to prevent.
+  - >-
+    The explanation drafts merged on 2026-09-09 are accepted as they stand and
+    are the wording slice 6 renders. The owner chose not to correct them first.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: 2eea14295a27e9ac9437b3c2819efcbd60aafae1
+    branch: feat/dac2-slice-6
+  application_repository:
+    id: dac2-durian-smart-account
+    revision: c1cde22
+  owner_review:
+    method: >-
+      Local run at http://127.0.0.1:3000 with PostgreSQL and Mailpit containers,
+      cargo leptos serve, and a machine-local .env that is not tracked.
+    observed:
+      - Public pages, login, and registration returned 200.
+      - An unauthenticated request to /plans redirected to /login.
+      - Mailpit received the verification mail at http://127.0.0.1:8025.
+
+unresolved:
+  - >-
+    The ten explanation drafts are agent-written and owner-accepted without
+    correction. Whether the wording reads right to an orchard owner is still
+    unproven by anything but the owner's own reading.
+  - >-
+    Visual design remains an open owner item after this slice, not a resolved
+    one.
+  - >-
+    Browser E2E automation and CI remain deferred. Slice 6 proof will be unit,
+    SSR, PostgreSQL, build, and localhost smoke, as in every prior slice.
+  - >-
+    The application stays localhost-only. Nothing in this decision changes that.
+
+next_action:
+  action: >-
+    Execute slice 6 on an application topic branch, prove it with the required
+    suites, and prepare the closeout that finishes plan revision 0.4.
+  acceptance_check:
+    - The slice 6 closeout names slice 6 and plan revision 0.4.
+    - Every acceptance criterion written in the plan's slice 6 section is met.

@@ -1,0 +1,147 @@
+schema_version: ciel.event.v0.1
+id: evt_20260910T070600_dac2_slice6_analysis_experience
+type: closeout
+recorded_at: 2026-09-10T07:06:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Deliver plan revision 0.4 slice 6, the analysis experience. It is the last
+    declared slice, so this closeout completes the plan once merged.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  completed:
+    - >-
+      Added a per-plan dashboard at /plans/:id/dashboard carrying net profit as
+      the hero plus cost per kilogram, break-even, ROI, payback, revenue, total
+      cost, operating cash flow, weighted price, contribution per kilogram,
+      safety margin, market fulfilment, and the overall health score.
+    - >-
+      Added /plans/:id/analysis with four panels reached by a segmented control:
+      the nine efficiency KPIs with their six health dimensions, the six
+      completeness rules with the overall readiness word, both preliminary tax
+      methods, and the price-by-yield scenario with two sliders over the same
+      matrix.
+    - >-
+      Moved the ten explanation topics merged on 2026-09-09 out of DESIGN.md into
+      crates/web/src/explanations.rs, so every rendered figure answers คืออะไร,
+      ใช้ยังไง, ทำไมต้องมี, and ไม่ใส่ได้ไหม in place through its ⓘ.
+    - >-
+      Withheld rather than invented: a figure the engine cannot compute renders
+      as ยังไม่มีข้อมูล, a plan that cannot be analysed is answered with the list
+      of sections still to fill and a route into each, and a KPI whose target the
+      owner never set shows ยังไม่ได้ตั้งเป้า with a route to the targets screen
+      instead of a verdict.
+    - >-
+      Rendered every panel with the inactive ones carrying hidden, so the whole
+      analysis arrives in the first server response and a reader whose script
+      never runs still receives it.
+    - >-
+      Enabled the วิเคราะห์ entry in the bottom navigation, which slice 5 left
+      deliberately disabled, and registered the new suite in both check.sh and
+      test-plans.sh.
+  not_completed:
+    - >-
+      No visual redesign. The owner reviewed slice 5, called the interface plain
+      and not modern, and decided that a fully working application comes first.
+      This slice therefore reuses the existing DESIGN.md tokens and components.
+    - No browser E2E, CI, GitHub Action, deployment, hosting, or hosted service.
+    - No change to calc, to store, to the database schema, or to any dependency.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: 8e5e96e7f3a7c5b5f7509d5f8dde32836c496427
+    branch: feat/dac2-slice-6
+  application_repository:
+    id: dac2-durian-smart-account
+    revision: 9d8e5dcfd466f343a37da72433ba28d863d337b8
+    branch: feat/analysis-experience
+  application_pull_request:
+    number: 7
+    url: https://github.com/mojisejr/dac2-durian-smart-account/pull/7
+    base: main
+    head: feat/analysis-experience
+    observed_head: 9d8e5dcfd466f343a37da72433ba28d863d337b8
+  authorized_by: memory/events/2026/09/10/20260910T065100_dac2_slice6_authorized.yaml
+  checks:
+    commands:
+      - docker compose up -d --wait
+      - ./scripts/check.sh
+      - ./scripts/test-plans.sh
+      - ./scripts/test-auth.sh
+      - cargo test -p calc
+      - authenticated localhost HTTP smoke through Mailpit
+    result:
+      - >-
+        check.sh exit 0, including formatting, all-target compilation,
+        warning-free Clippy, Leptos SSR and hydration builds, calc Wasm, and both
+        dependency boundaries.
+      - >-
+        Thirty-eight calc unit tests and the workbook golden regression passed.
+      - >-
+        Twenty web unit tests passed, seven of them new: four formatting rules,
+        the KPI label and unit coverage, the check routing coverage, and a test
+        that refuses any explanation naming a figure as good.
+      - >-
+        Ten new SSR tests passed against the HTML the server sends, covering the
+        dashboard, the empty-plan state, all nine KPI rows, the graded and
+        ungraded target cases, all six rules, both tax methods with the marker
+        and the disclaimer, and all twenty-five scenario cells.
+      - test-plans.sh exit 0 and test-auth.sh exit 0, all prior suites passing.
+  localhost_proof:
+    method: >-
+      Registered a fresh account against the running application, took the
+      verification link from Mailpit, logged in, created the workbook sample
+      plan, and requested both new routes with the session cookie.
+    observed:
+      - Both new routes returned 200 authenticated and 303 to /login without a session.
+      - >-
+        The dashboard rendered 834,600.00 บาท net profit and 40.66 บาท per
+        kilogram, the same figures DESIGN.md quotes from the workbook.
+      - Nine KPI rows were graded, five as ต้องปรับปรุง and four as ถึงเป้า.
+      - >-
+        Exactly one tax method carried the cheaper marker, and the full scenario
+        table carried twenty-five cells.
+
+unresolved:
+  - >-
+    Visual design is now the owner's next open item. The interface is functional
+    and follows the design tokens; the owner has already said it is plainer than
+    they want. That is deferred work, recorded, not a defect this slice hid.
+  - >-
+    The explanation wording remains agent-drafted and owner-accepted without
+    correction. It now reaches real screens, so a reading by an actual orchard
+    owner would be the first genuine test of it.
+  - >-
+    Browser E2E automation and CI remain deferred. Nothing here was proved by a
+    real browser; the SSR tests read server HTML and the smoke used curl.
+  - >-
+    The application remains localhost-only. Network deployment still requires
+    rate limiting, real SMTP, HTTPS, Secure cookies, and its own workstream.
+  - >-
+    Workbook parity still does not establish that the Thai tax formulas are
+    legally current or correct.
+  - >-
+    The scenario sliders were proved through the matrix they read from and
+    through their starting position, not by dragging one in a browser.
+
+next_action:
+  action: >-
+    Review and merge application PR 7 first, then the HQ pull request carrying
+    this closeout. After both merge, fetch and verify both clean main branches
+    and remove only the merged topic branches. This closeout names the last
+    declared slice, so the workstream completes at that point and anything
+    further needs a new owner-approved workstream.
+  acceptance_check:
+    - Application revision 9d8e5dc is reachable from fetched origin/main.
+    - This closeout is reachable from CIEL's fetched origin/main.
+    - Wake reports both repositories clean and current after branch cleanup.
+    - Wake reports the workstream completed rather than authorized.
