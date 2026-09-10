@@ -1,0 +1,100 @@
+schema_version: ciel.event.v0.1
+id: evt_20260910T091300_dac2_slice6_responsive_scope
+type: decision
+recorded_at: 2026-09-10T09:13:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Record the owner's decision to widen slice 6 to carry the responsive repair
+    and its browser-level proof, rather than merge a delivery whose own review
+    found it defective on a real phone.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner opened the running application on narrow viewports and reported
+      that the explanation card and the analysis page overflow the screen.
+    - >-
+      A Playwright audit driving real Chrome at 320, 375, 393, and 412 pixels
+      reproduced both reports and measured them, and two analysis passes
+      established the mechanism and found further defects neither party had seen.
+  not_completed:
+    - >-
+      No visual redesign is authorized. This is repair of layout that does not
+      hold, not the restyling the owner still has parked.
+
+decision:
+  - >-
+    All three groups go into the open slice 6 pull requests rather than being
+    split. The agent proposed keeping the pre-existing defects out of slice 6 to
+    protect its scope; the owner considered that and chose one delivery. The
+    reason this is recorded rather than left in chat is that slice 6's declared
+    acceptance criteria do not mention responsive behaviour, so a later reader
+    would otherwise find work in the slice that the plan never asked for.
+  - >-
+    Group one is what slice 6 itself introduced: the explanation card, the
+    segmented control, the scenario table, and the figure and KPI rows.
+  - >-
+    Group two predates slice 6 and would have been a separate authorization: the
+    five-button score row, the unclassed header link, the sticky total bar
+    occluding inputs and hub cards, and the bottom navigation reading as damage
+    rather than as chrome.
+  - >-
+    Group three is the proof that was missing. A headless browser step joins the
+    repository checks and asserts, at several widths, that the page never exceeds
+    the viewport, that no interactive label is clipped, and that every activation
+    target meets the 48-pixel rule DESIGN.md calls non-negotiable.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: 3d1094582623043f367088f2b72755b16e040343
+    branch: feat/dac2-slice-6
+  application_repository:
+    id: dac2-durian-smart-account
+    revision: 9d8e5dcfd466f343a37da72433ba28d863d337b8
+  measured_before_deciding:
+    - >-
+      Opening the explanation card widened the layout viewport by 7 pixels at
+      412 and by 49 at 320. Opening the full scenario table widened the whole
+      page to 705 pixels at every device width, header and navigation included.
+    - >-
+      The mechanism is content-based minimum sizing. The table's min-content
+      width propagates through two grid ancestors whose items default to
+      min-width auto, so the overflow container never receives a definite width
+      and never scrolls.
+    - >-
+      The explanation card is anchored to the 48-pixel icon rather than to the
+      row, so its right edge is the icon's position plus 78vw and overflow is
+      arithmetic rather than incidental.
+    - >-
+      The five-button score row already overflows at 320 pixels with no long
+      content at all, and has done since slice 5.
+
+unresolved:
+  - >-
+    Whether this class of proof belongs to CIEL as a shared outer layer rather
+    than to each project is deliberately left open. The owner raised it and chose
+    to settle it after this delivery, so it is recorded here and carried into the
+    closeout rather than decided under time pressure.
+  - >-
+    Slice 5's closeout states that 48-pixel interaction targets were applied.
+    Measurement contradicts that for the header link. The record cannot be
+    amended; this decision is where the contradiction is noted.
+
+next_action:
+  action: >-
+    Repair all three groups on the existing application topic branch, prove the
+    result with the new browser check at every audited width, and append a second
+    closeout describing what actually merges.
+  acceptance_check:
+    - The browser check runs in scripts/check.sh and fails on a regression.
+    - No audited route exceeds its viewport at 320, 375, 393, or 412 pixels.

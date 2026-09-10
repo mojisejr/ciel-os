@@ -1,0 +1,142 @@
+schema_version: ciel.event.v0.1
+id: evt_20260910T093600_dac2_slice6_responsive_repair
+type: closeout
+recorded_at: 2026-09-10T09:36:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Record what slice 6 actually delivers after the owner's own review found the
+    first closeout's screens defective on a phone. This supersedes the earlier
+    slice 6 closeout, which cannot be amended, and is the description of what
+    merges.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  completed:
+    - >-
+      Repaired the class of layout failure rather than its instances. Grid and
+      flex items in the layout containers no longer keep their content-based
+      automatic minimum, so an over-wide child overflows its container instead of
+      widening every ancestor. The scenario table now scrolls inside its own
+      frame and the sticky first column written in slice 6 works for the first
+      time.
+    - >-
+      Re-anchored the explanation card to the row or card and pinned both edges,
+      so its width is its column's width and it cannot overflow by construction.
+      Raised it above the bottom navigation, which had been cutting the middle
+      out of the answer.
+    - >-
+      Gave every figure row one shape below 380 pixels, so values share a column
+      a reader can follow with one thumb instead of scattering to six left edges.
+    - >-
+      Moved the 48-pixel rule from a list of class names onto the interactive
+      elements themselves, which is why the header link had been exempt in
+      silence, and let the five-button score row wrap rather than overflow.
+    - >-
+      Added scripts/check-responsive.sh and scripts/responsive.mjs, a browser
+      proof at 320, 360, 393, and 412 pixels asserting that no page exceeds its
+      device, that no interactive label is silently clipped, and that every
+      activation target meets 48 pixels and stays reachable under the sticky bars.
+    - >-
+      Kept every prior suite passing and left the calculation, persistence, and
+      account layers untouched.
+  not_completed:
+    - >-
+      No visual redesign. The interface is still the owner's parked item; this
+      made the existing design hold, it did not restyle it.
+    - >-
+      The segmented control's longest Thai labels now wrap to two lines inside
+      their pills rather than escaping them. That is legible and passes, but a
+      scrolling strip would read better and was not done.
+    - >-
+      Several smaller findings from the screenshot review were left: three levels
+      of card nesting on the tax panel, the distance between a destructive text
+      button and the checkbox above it, and the absence of a save control near
+      the sticky total on long forms.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  supersedes: memory/events/2026/09/10/20260910T070600_dac2_slice6_analysis_experience.yaml
+  authorized_by: memory/events/2026/09/10/20260910T091300_dac2_slice6_responsive_scope.yaml
+  repository:
+    head: 3d1094582623043f367088f2b72755b16e040343
+    branch: feat/dac2-slice-6
+  application_repository:
+    id: dac2-durian-smart-account
+    revision: e088a6fbe65d800ca8dffe55c7ee4fc86420f21b
+    branch: feat/analysis-experience
+  application_pull_request:
+    number: 7
+    url: https://github.com/mojisejr/dac2-durian-smart-account/pull/7
+    base: main
+    head: feat/analysis-experience
+    observed_head: e088a6fbe65d800ca8dffe55c7ee4fc86420f21b
+  checks:
+    commands:
+      - ./scripts/check.sh
+      - ./scripts/test-plans.sh
+      - ./scripts/test-auth.sh
+      - cargo test -p calc
+      - ./scripts/check-responsive.sh
+    result:
+      - All four prior suites exit 0, unchanged by this repair.
+      - >-
+        The browser proof passes at all four widths and was run twice in
+        succession to establish that it is deterministic rather than lucky.
+      - >-
+        Reintroducing the original card anchoring makes the proof report 450
+        findings; removing it again returns zero. The check is demonstrated to
+        fail on the defect it exists to catch.
+  measured_repair:
+    before:
+      - Twelve of forty-four measured states pushed the layout viewport past the device.
+      - Opening the full table widened every device to 705 pixels.
+      - Opening the explanation card added 7 pixels at 412 and 49 at 320.
+    after:
+      - No measured state exceeds its device width.
+      - No interactive label is silently clipped.
+      - >-
+        The only sub-48-pixel element is a checkbox whose wrapping label is 48
+        pixels and is the activation target, which satisfies the rule.
+
+unresolved:
+  - >-
+    Whether this class of proof belongs to CIEL as a shared outer layer rather
+    than to each project is open, at the owner's instruction, to be discussed
+    after this delivery. What is established is only that the gap is real and
+    that one project now closes it locally; one example is not yet a case for a
+    shared layer, and AGENTS.md forbids changing CIEL's CLI regardless.
+  - >-
+    Slice 5's closeout states that 48-pixel interaction targets were applied.
+    Measurement contradicted that for the header link. The record is append-only,
+    so the contradiction is noted here rather than corrected there.
+  - >-
+    The proof asserts geometry, not comprehension. It cannot tell whether a
+    farmer understands a screen, and the explanation wording still has not been
+    read by one.
+  - >-
+    Only Chrome is driven, at four widths, in portrait, with no zoom and no
+    system font scaling. A reader who enlarges text is not covered.
+  - >-
+    Browser E2E of behaviour remains deferred. This proves layout, not that
+    dragging a slider changes a figure.
+  - The application remains localhost-only, with the same deployment debts.
+
+next_action:
+  action: >-
+    Review and merge application PR 7 first, then the HQ pull request carrying
+    both closeouts. After both merge, fetch and verify both clean main branches
+    and remove only the merged topic branches. This closeout names the last
+    declared slice, so the workstream completes at that point.
+  acceptance_check:
+    - Application revision e088a6f is reachable from fetched origin/main.
+    - Both slice 6 closeouts are reachable from CIEL's fetched origin/main.
+    - Wake reports both repositories clean and current after branch cleanup.
+    - Wake reports the workstream completed rather than authorized.
