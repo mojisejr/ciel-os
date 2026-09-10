@@ -1,0 +1,98 @@
+schema_version: ciel.event.v0.1
+id: evt_20260910T110900_dac2_explanation_sheet
+type: decision
+recorded_at: 2026-09-10T11:09:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-durian-smart-account-001
+  lane: single
+  objective: >-
+    Replace the explanation tooltip with a bottom sheet, because measurement
+    shows the content was never tooltip-sized and the pattern was chosen without
+    ever measuring it.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner opened a repaired explanation card on a phone and observed that
+      the last of its four answers was still cut off, and that closing it means
+      finding the same small icon again.
+    - >-
+      All twenty-one explanations were measured at 320 pixels wide. Every one is
+      taller than half the screen. Six are taller than the whole screen on a
+      568-pixel-tall device. The longest needs 692 pixels and was being shown in
+      339, so a reader saw 49 percent of it with nothing to say the rest existed.
+  not_completed:
+    - >-
+      No change to the wording, to the figures, or to any other surface. This is
+      the container the explanations sit in, nothing else.
+
+decision:
+  - >-
+    The explanation becomes a bottom sheet rather than a popover: it rises from
+    the bottom, occupies most of the screen, dims what is behind it, and carries
+    the name of the figure it explains plus a full-width close control in the
+    thumb's reach.
+  - >-
+    A sheet was chosen over a full-screen dialog, which the owner first proposed,
+    for one reason: context. A reader taps the icon beside 119 percent because
+    that number confused them, and a sheet leaves the number visible above it
+    while a full screen would take it away and make them read from memory. The
+    cost is accepted: on the shortest phone the longest explanation still needs
+    a short scroll, where a full screen would not.
+  - >-
+    Closing must never require finding the same small icon again. The sheet
+    closes by its own button, and the button is a real element rather than a
+    styled pseudo-element, so that it can be measured by the layout proof and
+    described by a screen reader.
+  - >-
+    The layout proof gains an assertion that an open explanation lies entirely
+    within the viewport and carries a close control meeting the 48-pixel rule.
+    Had that assertion existed, a tooltip holding 692 pixels of text would have
+    failed the day it was written.
+
+evidence:
+  plan: workstreams/dac2-durian-smart-account-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: 105caa951c0ee12f5cd1e9bd973354f622ffb604
+    branch: feat/dac2-slice-6
+  application_repository:
+    id: dac2-durian-smart-account
+    revision: e088a6fbe65d800ca8dffe55c7ee4fc86420f21b
+  measurement:
+    method: >-
+      Playwright driving Chrome at 320x568 and 320x740, opening each explanation
+      in turn and reading the panel's scrollHeight against its clientHeight.
+    result:
+      - Twenty-one explanations measured; twenty needed scrolling inside the card.
+      - All twenty-one are taller than half a 568-pixel screen; six exceed it entirely.
+      - The longest needed 692 pixels of the 339 it was given.
+  reference:
+    - >-
+      Material Design directs a full-screen dialog when content needs more
+      vertical space than a sheet can hold, and a bottom sheet for supplementary
+      content shown alongside the main screen. This content stopped being
+      supplementary at the measured lengths, which is what settled the choice.
+
+unresolved:
+  - >-
+    Without script the sheet still closes only by its summary, so the close
+    button is a progressive enhancement rather than the sole mechanism. The
+    application hydrates in practice, and this is recorded rather than solved.
+  - >-
+    The proof measures geometry. Whether a farmer prefers a sheet to a full
+    screen is an owner judgement that only real use can settle.
+
+next_action:
+  action: >-
+    Build the sheet, extend the layout proof with the two new assertions, and
+    append a closeout describing what merges.
+  acceptance_check:
+    - An open explanation lies wholly within the viewport at every audited width.
+    - Its close control measures at least 48 by 48 and is a real element.
