@@ -1,0 +1,118 @@
+schema_version: ciel.event.v0.1
+id: evt_20260911T170622_dac2_batch2_ready_for_owner_merge
+type: closeout
+recorded_at: 2026-09-11T17:06:22+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-decision-support-001
+  lane: single
+  objective: >-
+    Deliver a reviewable actual-outcome close journey and deterministic
+    forecast-versus-actual comparison without AI or LLM behavior.
+  scope:
+    - Batch 2 actual draft, review, atomic close, frozen forecast, and six deterministic comparisons.
+    - Pure calculation, PostgreSQL, SSR, authenticated server, and local Playwright responsive proof.
+  out_of_scope:
+    - Batch 3 history, Batch 4 assets, deployment, external data, and AI or LLM behavior.
+    - Physical-phone rendering and human-comprehension claims.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      An open season saves actual sellable kilograms, revenue, approximate
+      total cost, and an optional note as a draft without closing.
+    - >-
+      The owner-facing flow requires entry, explicit review, and a final
+      irreversible confirmation. Cancel and back keep the season open and the
+      saved draft available for correction.
+    - >-
+      Final confirmation stores the actual snapshot, freezes the active Quick
+      or Detailed forecast, and sets closed_at in one PostgreSQL transaction.
+      Repeating the same confirmation is idempotent; a changed closed outcome
+      remains rejected.
+    - >-
+      Actual profit, average price, and cost per kilogram and the six
+      forecast-versus-actual rows are pure deterministic calculations. Every UI
+      row names forecast, actual, direction, unit, and the formula actual minus
+      forecast without diagnosing a cause.
+    - >-
+      Existing closed seasons remain readable with an explicit no-actual state,
+      and duplicated seasons never inherit an actual outcome or note.
+    - >-
+      Local Playwright completed draft persistence, review and correction,
+      cancel, final close, exact comparison, and geometry proof at 320, 360,
+      393, and 412 pixels. Two earlier harness attempts checked asynchronous
+      content before it rendered; waits were corrected without changing product
+      behavior, and the third complete run passed.
+    - >-
+      The dependency boundary remains deterministic with no AI, LLM, model API,
+      prompt, embedding, vector store, or inference runtime surface.
+  not_completed:
+    - Application pull request 10 and CIEL HQ pull request 66 await owner merge.
+    - Batches 3 and 4 are not implemented or authorized.
+    - Physical-device and human-comprehension proof are not claimed for Batch 2.
+
+evidence:
+  plan: workstreams/dac2-decision-support-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: 7ffa9f5bdeb7aaa2fffe90504e1364a09cd5da8d
+    branch: docs/dac2-batch2-actual-comparison
+    working_tree: clean-before-this-closeout
+  application:
+    repository: dac2-durian-smart-account
+    base: 48d04ac46195b39f6b9a9c38f8e036f267685c70
+    head: 4d04b7e4afb1425a9c30cf81e50e2446f4bd4023
+    branch: feat/actual-close-comparison
+    pull_request:
+      number: 10
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/10
+  proof_contract: https://github.com/mojisejr/ciel-os/pull/66#issuecomment-5632621421
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-local-postgresql
+    eye_truth: closed-local-playwright-chrome
+    device_truth: not-applicable-no-physical-device-claim
+  checks:
+    - ./scripts/check.sh passed at the application head.
+    - ./scripts/test-plans.sh passed against local PostgreSQL.
+    - ./scripts/test-auth.sh passed against local PostgreSQL and Mailpit.
+    - node --check scripts/responsive.mjs passed.
+    - ./scripts/check-responsive.sh passed at 320, 360, 393, and 412 pixels in real Chrome.
+    - >-
+      Pure and integration proof includes 51 calc unit tests, the workbook
+      golden fixture, 14 plan store tests, 12 plan SSR tests, and the
+      authenticated end-to-end server flow.
+
+unresolved:
+  - >-
+    Human comprehension by likely orchard owners remains unmeasured; no
+    usability claim is made.
+  - >-
+    Responsive Chrome proves phone-sized geometry, not rendering on a physical
+    phone.
+  - >-
+    Invalid ServerFn form values can produce HTTP 500 transport responses while
+    the UI correctly shows validation and keeps the form. This cross-cutting
+    transport behavior was observed in Batch 1 and remains outside Batch 2.
+  - >-
+    The application remains localhost-only with its existing deployment debts.
+  - >-
+    Closed-season correction remains deliberately absent; changing a finalized
+    actual outcome requires a separately governed correction policy.
+
+next_action:
+  action: >-
+    The owner reviews and merges application pull request 10 and CIEL HQ pull
+    request 66. After both repositories return to clean fetched main,
+    re-estimate Batch 3 from the merged actual-outcome schema and record a fresh
+    owner decision before implementation.
+  acceptance_check:
+    - Both pull requests merge at the recorded heads.
+    - Both local repositories return to clean main equal to fetched origin/main.
+    - Batch 3 begins only from that merged state and a fresh owner decision.

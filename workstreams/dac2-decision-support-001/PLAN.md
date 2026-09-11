@@ -3,8 +3,8 @@
 **Workstream:** `dac2-decision-support-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
-**Execution phase:** 1
+**Plan revision:** 0.3
+**Execution phase:** 2
 **Execution state:** idle
 **Parallelism:** none
 
@@ -28,10 +28,10 @@ season UX and ROI correction merged. The product boundary is explicit:
 - This remains a planning and decision calculator, not a receipt, transaction,
   tax, compliance, inventory, or full accounting system.
 
-The work is divided into **four sequential delivery batches**. Batch 1 alone is
-authorized for implementation by the opening decision. Each later batch needs
-the prior batch's closeout and a fresh owner decision, so research findings do
-not silently become product authority.
+The work is divided into **four sequential delivery batches**. Batch 1 was
+authorized by the opening decision and merged through application PR 9 and CIEL
+HQ PR 65. Each later batch needs the prior batch's closeout and a fresh owner
+decision, so research findings do not silently become product authority.
 
 On 2026-09-11 the owner revised the Batch 1 proof gate after directing Codex
 from a mobile session while Codex exercised the local application through real
@@ -40,6 +40,12 @@ owner-directed remote browser run replaces the planned four-or-five-person
 unassisted pilot. It proves the contracted behavior and the remote operating
 path; it does not prove physical-phone rendering, orchard-owner comprehension,
 or population-wide usability. Those claims remain explicitly unmade.
+
+Later on 2026-09-11, after both Batch 1 PRs merged and both repositories
+returned to clean fetched `main`, the owner confirmed the merge and authorized
+continuing to Batch 2. Batch 2 remains bounded to the actual-outcome close
+journey and forecast comparison below; it does not pull Batch 3 history or
+Batch 4 assets forward.
 
 ## Project links
 
@@ -271,8 +277,12 @@ and cost per kilogram only where both sides are mathematically available.
 6. Existing already-closed seasons remain readable and are labelled as having no
    captured actual outcome; no zero actuals are invented.
 
-Engineering estimate: **18-28 hours** plus heavy review. Batch 2 waits for the
-Batch 1 closeout and a fresh owner decision.
+Re-estimate from merged Batch 1 schema: **20-30 hours** plus heavy review. The
+one-owner/one-season store boundary and separate Quick/Detailed forecast inputs
+are already present, but the reviewable persisted draft, atomic idempotent
+finalization, mode-aware forecast snapshot, and SSR comparison surface each
+need focused database and UI proof. Batch 2 is authorized by the 2026-09-11
+post-merge owner decision.
 
 ### 3. Batch 3 — season history and deterministic decision cues
 
@@ -372,7 +382,7 @@ After each pair merges, both repositories return to clean `main` equal to
 fetched `origin/main` before the next batch begins. The implementation agent
 does not prebuild Batch 2 schema while Batch 1 is under review.
 
-Total engineering estimate is **79-123 hours**, plus owner/user review time.
+Total engineering estimate is **82-127 hours**, plus owner/user review time.
 This is a range, not a delivery-date commitment. Re-estimate each later batch
 from the merged schema before authorizing it.
 
