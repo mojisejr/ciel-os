@@ -1,0 +1,79 @@
+schema_version: ciel.event.v0.1
+id: evt_20260911T164520_dac2_batch2_authorized
+type: decision
+recorded_at: 2026-09-11T16:45:20+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-decision-support-001
+  lane: single
+  objective: >-
+    Replace immediate season close with a reviewable actual-outcome snapshot
+    and deterministic forecast-versus-actual comparison.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      Application PR 9 merged at 48d04ac46195b39f6b9a9c38f8e036f267685c70
+      and CIEL HQ PR 65 merged at
+      d3422ac9f207ec7a1092cc3627b736b59d7db734.
+    - Both local repositories returned to clean main equal to fetched origin/main.
+    - >-
+      The owner confirmed the merges after previously authorizing continuation
+      and approved starting Batch 2 as the next sequential delivery.
+    - >-
+      Inspection of the merged store and UI re-estimated Batch 2 at 20-30
+      engineering hours plus heavy review.
+  not_completed:
+    - No Batch 2 application schema, calculation, store, server, or UI change exists yet.
+    - Batches 3 and 4 remain unauthorized.
+
+evidence:
+  plan: workstreams/dac2-decision-support-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: d3422ac9f207ec7a1092cc3627b736b59d7db734
+    branch: docs/dac2-batch2-actual-comparison
+  application:
+    repository: dac2-durian-smart-account
+    base: 48d04ac46195b39f6b9a9c38f8e036f267685c70
+  proof_contract:
+    - >-
+      Hard Gate: pure actual and comparison tests, full workspace checks, and
+      existing golden/detail regressions pass.
+    - >-
+      API Truth: local PostgreSQL proves owner scope, draft persistence, atomic
+      close, idempotent repeated confirmation, immutable closed results, legacy
+      closed seasons without invented actuals, and duplicates without copied
+      actual outcomes.
+    - >-
+      Eye Truth: SSR and local Playwright prove entry, review, correction,
+      cancel/back, final comparison, and explicit unavailable states at 320,
+      360, 393, and 412 pixels.
+    - >-
+      Device Truth: not required for Batch 2; responsive local Chrome is the
+      contracted rendering proof and no physical-device claim will be made.
+
+unresolved:
+  - >-
+    The exact internal representation of a saved draft versus finalized
+    snapshot is an implementation choice, but finalization must remain atomic
+    and a closed snapshot immutable.
+  - >-
+    Existing closed seasons have no actual outcome and must remain readable
+    with an explicit unavailable label rather than synthetic zero values.
+  - The application remains localhost-only with its existing deployment debts.
+
+next_action:
+  action: >-
+    Open a focused application topic branch and draft PR, implement only Batch
+    2, and keep every proof lane explicit until the companion final closeout.
+  acceptance_check:
+    - The normal UI cannot close an open season without a reviewed actual snapshot.
+    - Final snapshot creation and plan close are atomic, owner-scoped, and idempotent.
+    - Forecast-versus-actual deltas are deterministic, sourced, neutral, and mode-aware.
+    - Duplicate and legacy-closed behavior never invent or copy actual outcomes.
