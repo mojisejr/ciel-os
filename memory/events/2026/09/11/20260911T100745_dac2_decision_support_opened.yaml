@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20260911T100745_dac2_decision_support_opened
+type: decision
+recorded_at: 2026-09-11T10:07:45+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-decision-support-001
+  lane: single
+  objective: >-
+    Give an orchard owner a five-minute first estimate, retain a small actual
+    outcome at season close, compare seasons through deterministic facts, and
+    reuse owner-level assets without turning DAC2 into bookkeeping.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner approved opening the successor workstream after the season UX
+      and ROI correction merged and both repositories returned to clean main.
+    - >-
+      The owner set a hard product boundary that DAC2 uses no AI or LLM for now;
+      calculations and guidance must remain deterministic and traceable.
+    - >-
+      Research and repository inspection produced four sequential delivery
+      batches. This decision authorizes Batch 1 only.
+    - >-
+      The owner approved adapting the frame method to a CIEL workstream plan
+      rather than creating a GitHub issue or board item.
+  not_completed:
+    - No application code, migration, or runtime behavior is changed here.
+    - Batches 2 through 4 require prior-batch closeout and fresh owner decisions.
+
+evidence:
+  plan: workstreams/dac2-decision-support-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  application_base: 0a05bccc50a846812fe304449d77564e885f5d99
+  repository:
+    head: 9fefbc2f2a1c6c272299ab5d65dfb1a48fc3f29b
+    branch: docs/dac2-decision-support-plan
+
+unresolved:
+  - >-
+    The five-minute journey and farmer-facing wording still require an
+    unassisted pilot with four or five likely orchard owners.
+  - >-
+    Closed-season correction is not designed; the existing immutable close
+    rule remains until evidence and a later owner decision justify a change.
+  - >-
+    The application remains localhost-only with its existing deployment debts.
+
+next_action:
+  action: >-
+    Implement only Batch 1 on a fresh application topic branch, prove the pure
+    formulas, migration, PostgreSQL persistence, SSR journey, and portrait
+    layout, then present a local candidate for the owner-run comprehension test.
+  acceptance_check:
+    - A new season reaches a correct result from three quick answers.
+    - Existing detailed seasons and golden calculations remain unchanged.
+    - No AI, LLM, generated guidance, or inference dependency enters DAC2.

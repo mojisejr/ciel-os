@@ -1,0 +1,99 @@
+schema_version: ciel.event.v0.1
+id: evt_20260911T105626_dac2_batch1_local_candidate
+type: closeout
+recorded_at: 2026-09-11T10:56:26+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-decision-support-001
+  lane: single
+  objective: >-
+    Prepare the deterministic Batch 1 local candidate that reaches a useful
+    result from three owner-entered season estimates without using AI or LLM.
+  scope:
+    - Batch 1 only: quick mode, three answer pages, deterministic first result, persistence, and explicit mode switching.
+    - Application pull request 9 and its local automated and browser proof.
+  out_of_scope:
+    - Batches 2 through 4, deployment, external data, and any AI or LLM product behavior.
+
+outcome:
+  status: local-candidate-ready-for-owner-pilot
+  completed:
+    - >-
+      A new season starts in quick mode and reaches revenue, profit or loss,
+      cost per kilogram, and break-even average sale price after three persisted
+      answers.
+    - >-
+      Existing seasons migrate to detailed mode. Quick and detailed inputs are
+      stored separately; an owner can switch modes explicitly while the season
+      is open without conversion or deletion.
+    - >-
+      Missing, zero, negative, and arithmetic-overflow cases withhold all quick
+      results. Owner scoping and the closed-season write lock cover the new
+      mutations.
+    - >-
+      Server-rendered question and result pages, interrupted resume, browser
+      back, refresh, and both quick and detailed portrait routes are proved.
+    - >-
+      Manual inspection at 393 pixels found a duplicated long field label; the
+      label was shortened, the design contract updated, and the revised screen
+      inspected again before this checkpoint.
+    - >-
+      The dependency and source scan found no AI, LLM, model API, prompt,
+      embedding, vector-store, or inference runtime surface.
+  not_completed:
+    - Pull request 9 is not merged and remains a draft local candidate.
+    - >-
+      The owner-run unassisted pilot with four or five likely orchard owners has
+      not happened, so Batch 1 acceptance criterion 7 and the Batch 1 final
+      closeout remain pending.
+    - Batches 2 through 4 remain unauthorized.
+
+evidence:
+  plan: workstreams/dac2-decision-support-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 2ecd53298a41b47ba5c00c751b1514f1b8cf0ec1
+    branch: docs/dac2-decision-support-plan
+    working_tree: clean-before-this-closeout
+  application:
+    repository: dac2-durian-smart-account
+    base: 0a05bccc50a846812fe304449d77564e885f5d99
+    head: ed43886b3f7d1eb7421390ba23e87a1bdbd5af61
+    branch: feat/quick-first-result
+    pull_request:
+      number: 9
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/9
+      state: draft
+  proof_contract: https://github.com/mojisejr/ciel-os/pull/65#issuecomment-5628963305
+  checks:
+    - ./scripts/check.sh passed on the application candidate.
+    - ./scripts/test-plans.sh passed against local PostgreSQL.
+    - ./scripts/test-auth.sh passed against local PostgreSQL and Mailpit.
+    - node --check scripts/responsive.mjs passed.
+    - >-
+      ./scripts/check-responsive.sh passed in real Chrome at 320, 360, 393,
+      and 412 pixels across quick questions, quick result, and detailed routes.
+    - The quick result and first question were visually inspected at 393 pixels.
+
+unresolved:
+  - >-
+    Four or five likely orchard owners still need to try the journey unassisted;
+    the owner must record completion time, hesitation, misunderstood wording,
+    and every assistance request, then decide whether the wording is settled.
+  - >-
+    This is localhost-only. Existing deployment debts and the product boundary
+    recorded in the opening decision remain unchanged.
+
+next_action:
+  action: >-
+    The owner reviews and runs pull request 9 as the local candidate, then runs
+    the unassisted four-or-five-person pilot. Record the owner verdict before
+    marking Batch 1 final or authorizing Batch 2.
+  acceptance_check:
+    - At least four pilot participants reach the first result in five minutes or less.
+    - Every hesitation, misunderstood term, and assistance request is recorded.
+    - The owner decides whether the wording is good enough to continue unchanged.

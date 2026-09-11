@@ -1,0 +1,117 @@
+schema_version: ciel.event.v0.1
+id: evt_20260911T161530_dac2_batch1_ready_for_owner_merge
+type: closeout
+recorded_at: 2026-09-11T16:15:30+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-decision-support-001
+  lane: single
+  objective: >-
+    Deliver deterministic Batch 1 as a merge-ready quick-estimate journey with
+    three persisted answers and no AI or LLM product behavior.
+  scope:
+    - Batch 1 quick and detailed forecast modes, three answer pages, deterministic result, persistence, and reversible mode switching.
+    - Automated, PostgreSQL, responsive Chrome, and owner-directed remote Playwright proof.
+  out_of_scope:
+    - Batches 2 through 4, deployment, external data, and any AI or LLM product behavior.
+    - Physical-phone rendering and human-comprehension claims.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      A new season starts in quick mode and derives revenue, profit or loss,
+      cost per kilogram, and break-even average sale price from expected
+      sellable kilograms, average price, and approximate total cost.
+    - >-
+      Existing seasons migrate to detailed mode. Quick and detailed inputs stay
+      separate and survive explicit reversible switching without synthetic or
+      deleted detailed rows.
+    - >-
+      Pure calculation, migration, PostgreSQL store, authentication,
+      server-rendered navigation, and real-Chrome responsive proof all passed at
+      application head ed43886b3f7d1eb7421390ba23e87a1bdbd5af61.
+    - >-
+      From a mobile Codex session, the owner directed Codex to run local
+      Playwright with the owner's development account. The run proved login,
+      three-answer completion, interrupted resume, browser back, refresh, zero
+      validation, exact results, 393-pixel geometry, and reversible Quick to
+      Detailed to Quick switching.
+    - >-
+      The exact proof inputs were 20,000 kg, 80 baht per kg, and 900,000 baht;
+      the UI returned 1,600,000 baht revenue, 700,000 baht profit, 45 baht per
+      kg cost, and 45 baht per kg break-even average price.
+    - >-
+      The dependency and source scan found no AI, LLM, model API, prompt,
+      embedding, vector store, or inference runtime surface.
+  not_completed:
+    - Application pull request 9 and CIEL HQ pull request 65 await owner merge.
+    - >-
+      Human comprehension and rendering on physical phone hardware are not
+      proved and are not claimed under the revised Batch 1 acceptance gate.
+    - Batches 2 through 4 are not implemented.
+
+evidence:
+  plan: workstreams/dac2-decision-support-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: b4561e0733179e9c599557759a6cb80f450bf4c3
+    branch: docs/dac2-decision-support-plan
+    working_tree: clean-before-this-closeout
+  application:
+    repository: dac2-durian-smart-account
+    base: 0a05bccc50a846812fe304449d77564e885f5d99
+    head: ed43886b3f7d1eb7421390ba23e87a1bdbd5af61
+    branch: feat/quick-first-result
+    pull_request:
+      number: 9
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/9
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-local-postgresql
+    eye_truth: closed-local-playwright-chrome
+    device_truth: not-claimed
+    human_truth: not-claimed-by-owner-decision
+  checks:
+    - ./scripts/check.sh passed.
+    - ./scripts/test-plans.sh passed against local PostgreSQL.
+    - ./scripts/test-auth.sh passed against local PostgreSQL and Mailpit.
+    - node --check scripts/responsive.mjs passed.
+    - ./scripts/check-responsive.sh passed at 320, 360, 393, and 412 pixels in real Chrome.
+    - Owner-directed local Playwright completed the owner-account journey and exact-result assertions.
+  local_test_record:
+    season_id: 70
+    harvest_year: 2570
+    name: ทดสอบ Batch 1 Playwright
+    disposition: retained in the owner's local development account for inspection
+
+unresolved:
+  - >-
+    Human comprehension by likely orchard owners remains unmeasured. The owner
+    explicitly removed it from the Batch 1 gate; no usability claim is made.
+  - >-
+    Responsive Chrome proves 320 through 412 pixel geometry, not rendering on a
+    physical phone. The owner's mobile device was the remote control surface.
+  - >-
+    Submitting the deliberately invalid zero value produced an HTTP 500
+    ServerFn transport response while the UI correctly showed the specific Thai
+    validation and remained on the question. No Batch 1 user-visible failure
+    was observed; changing shared error transport is outside this slice.
+  - >-
+    The application remains localhost-only. The local test season named above
+    remains in the owner's development account for inspection.
+
+next_action:
+  action: >-
+    The owner reviews and merges application pull request 9 and CIEL HQ pull
+    request 65. After both repositories are fetched, clean, and equal to main,
+    re-estimate Batch 2 from the merged schema and record a fresh owner decision
+    before implementation.
+  acceptance_check:
+    - Both pull requests merge at the recorded heads.
+    - Both local repositories return to clean main equal to fetched origin/main.
+    - Batch 2 begins only from that merged state and a fresh owner decision.
