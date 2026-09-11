@@ -1,0 +1,125 @@
+schema_version: ciel.event.v0.1
+id: evt_20260911T093723_dac2_season_ux_delivered
+type: closeout
+recorded_at: 2026-09-11T09:37:23+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-season-ux-001
+  lane: single
+  objective: >-
+    Deliver identifiable yearly seasons, a non-persistent demonstration, quiet
+    input feedback, and corrected ROI and payback guidance without expanding
+    into the later onboarding, actual-history, or asset workstream.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Added Buddhist harvest year, name, note, lifecycle state, duplicate-year
+      protection, metadata-aware creation and copying, deterministic season
+      cards, active navigation, and a meaningful season-list return path.
+    - >-
+      Replaced persisted workbook samples with an editable, resettable browser
+      demonstration that creates no season-history records and opens the real
+      creation flow without copying sample figures.
+    - >-
+      Replaced the dark live-total card with compact live net-profit feedback on
+      the six input screens and kept it clear of the input and navigation work.
+    - >-
+      Corrected investment aggregation so a blank investment on one recurring
+      fixed-cost row does not suppress positive investments, ROI, or payback
+      derived from other rows. All-blank investment remains unavailable.
+    - >-
+      Renamed the item field to farmer-facing optional wording and made missing
+      ROI or payback state the actual prerequisite: positive investment or
+      positive operating cash flow.
+    - >-
+      The owner exercised the local candidate and accepted the visible result
+      before authorizing both draft pull requests to become ready for review.
+  not_completed:
+    - >-
+      No asset register, useful-life schedule, automatic depreciation, land
+      value, starting capital, actual-season ledger, cross-season trend, or
+      guided onboarding was added.
+    - No deployment, hosted service, schema change for slice 2, or native app work was added.
+    - >-
+      This delivery does not establish unassisted comprehension across orchard
+      owners; that remains a later product-validation activity.
+
+evidence:
+  plan: workstreams/dac2-season-ux-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  authorized_by: memory/events/2026/09/11/20260911T062216_dac2_roi_guidance_authorized.yaml
+  repository:
+    head: 6806809de20f73ff98602f9c35b87a57e26e27d8
+    branch: feat/dac2-season-ux
+  hq_pull_request:
+    number: 64
+    url: https://github.com/mojisejr/ciel-os/pull/64
+    base: main
+    head: feat/dac2-season-ux
+    observed_head: 6806809de20f73ff98602f9c35b87a57e26e27d8
+  application_repository:
+    id: dac2-durian-smart-account
+    revision: 464cad031a5d11776551acdba0c5c351e1992729
+    branch: feat/season-ux
+  application_pull_request:
+    number: 8
+    url: https://github.com/mojisejr/dac2-durian-smart-account/pull/8
+    base: main
+    head: feat/season-ux
+    observed_head: 464cad031a5d11776551acdba0c5c351e1992729
+  checks:
+    commands:
+      - ./scripts/check.sh
+      - ./scripts/test-auth.sh
+      - ./scripts/check-responsive.sh
+      - bun run check
+    result:
+      - >-
+        Forty calc tests, the workbook golden regression, seven store unit
+        tests, twenty-two web unit tests, four plan SSR tests, and eleven
+        analysis SSR tests passed.
+      - >-
+        Account, session, Mailpit, and authenticated plan-operation integration
+        tests passed against the local test stack.
+      - >-
+        Formatting, all-target compilation, warning-free Clippy, Leptos SSR and
+        hydration builds, calc Wasm, and dependency-boundary checks passed.
+      - Responsive browser proof passed at 320, 360, 393, and 412 pixels.
+      - CIEL typecheck and forty-four tests passed before this closeout was written.
+  proof_lanes:
+    hard_gate: Closed
+    api_truth: N/A; slice 2 adds no endpoint, schema, or persistence write.
+    eye_truth: Closed; responsive browser proof passed at all four declared widths.
+    device_truth: N/A; the delivery has no native-device-only behaviour.
+    human_review: Closed; the owner tested and accepted the local candidate.
+
+unresolved:
+  - >-
+    The responsive proof drives Chrome in portrait at four widths. Zoom, system
+    font scaling, reduced motion, other engines, and one-thumb reach remain
+    unmeasured.
+  - >-
+    One owner review does not establish comprehension across orchard owners.
+    The later unassisted five-minute test with four or five owners remains open.
+  - The application remains localhost-only with its existing deployment debts.
+  - >-
+    Guided onboarding, lightweight plan-versus-actual history, and owner-level
+    assets reused across seasons require a successor owner-approved workstream.
+
+next_action:
+  action: >-
+    Review and merge application PR 8 first, then HQ PR 64. After both merge,
+    fetch and verify both clean main branches and remove only the merged topic
+    branches. This closeout names the last declared slice, so the workstream
+    completes when both deliveries reach their target branches.
+  acceptance_check:
+    - Application revision 464cad0 is reachable from fetched origin/main.
+    - This closeout is reachable from CIEL's fetched origin/main.
+    - Wake reports both repositories clean and current after branch cleanup.
+    - Wake reports dac2-season-ux-001 completed rather than active.
