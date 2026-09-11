@@ -1,0 +1,117 @@
+schema_version: ciel.event.v0.1
+id: evt_20260911T213955_dac2_batch3_ready_for_owner_merge
+type: closeout
+recorded_at: 2026-09-11T21:39:55+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-decision-support-001
+  lane: single
+  objective: >-
+    Deliver chronological season history and transparent deterministic decision
+    cues without AI or LLM behavior.
+  scope:
+    - Batch 3 chronological history, baseline, trends, fixed cues, and unavailable states.
+    - Move existing targets to optional advanced planning while preserving stored values.
+    - Pure calculation, PostgreSQL, SSR, authenticated server, and local Playwright proof.
+  out_of_scope:
+    - Batch 4 assets, deployment, external data, generated advice, and AI or LLM behavior.
+    - Physical-phone rendering and human-comprehension claims.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Closed seasons are shown in deterministic Buddhist-year order. The first
+      season with actuals is labelled as a baseline rather than a trend, while
+      legacy closed seasons without actuals remain explicit and never become
+      synthetic zeroes.
+    - >-
+      Sellable kilograms, revenue, total cost, profit, average price, and cost
+      per kilogram compare each observed actual season with its immediately
+      preceding observed season. Skipped years name both source years and are
+      never interpolated.
+    - >-
+      Every decision cue is a fixed Thai template over displayed stored values.
+      Pure rules expose absolute change, direction, and percent calculation;
+      zero or missing denominators remain explicitly unavailable.
+    - >-
+      The accessible server-rendered history table works without client-side
+      JavaScript and includes an explicit return link when opened from a season.
+    - >-
+      The nine existing KPI targets moved out of the main detailed journey into
+      an optional advanced-planning area. Existing target values remain stored
+      and editable, and absent optional physical quantities stay quiet.
+    - >-
+      Local Playwright created and finalized multiple seasons, verified the
+      exact deterministic cue and skipped-year wording, expanded and saved an
+      advanced target, proved persistence after navigation, and passed geometry
+      at 320, 360, 393, and 412 pixels.
+    - >-
+      The calculation dependency tree remains deterministic with no AI, LLM,
+      model API, prompt, embedding, vector store, or inference runtime surface.
+  not_completed:
+    - Application pull request 11 and CIEL HQ pull request 67 await owner merge.
+    - Batch 4 is not implemented or authorized.
+    - Physical-device and human-comprehension proof are not claimed for Batch 3.
+
+evidence:
+  plan: workstreams/dac2-decision-support-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: 40418e52b0f9ffb36c6ca716078ca5a0041ee841
+    branch: docs/dac2-batch3-season-history
+    working_tree: clean-before-this-closeout
+  application:
+    repository: dac2-durian-smart-account
+    base: 3d265fa6252a52e69da685858bfb79a5a5bf99e5
+    head: 607ce651fc0f960a6fa2d377a2736e25341d8277
+    branch: feat/season-history-cues
+    pull_request:
+      number: 11
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/11
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-local-postgresql
+    eye_truth: closed-local-playwright-chrome
+    device_truth: not-applicable-no-physical-device-claim
+  checks:
+    - ./scripts/check.sh passed at the application head.
+    - ./scripts/test-plans.sh passed against local PostgreSQL.
+    - ./scripts/test-auth.sh passed against local PostgreSQL and Mailpit.
+    - node --check scripts/responsive.mjs passed.
+    - ./scripts/check-responsive.sh passed at 320, 360, 393, and 412 pixels in real Chrome.
+    - >-
+      Pure and integration proof includes 55 calc unit tests, the workbook
+      golden fixture, 15 plan store tests, 16 plan SSR tests, 12 analysis SSR
+      tests, and the authenticated end-to-end server flow.
+
+unresolved:
+  - >-
+    Human comprehension by likely orchard owners remains unmeasured; fixed
+    wording and visible formulas do not establish usability.
+  - >-
+    Responsive Chrome proves phone-sized geometry, not rendering on a physical
+    phone.
+  - >-
+    Invalid ServerFn form values can produce HTTP 500 transport responses while
+    the UI correctly shows validation and keeps the form. This cross-cutting
+    transport behavior remains outside Batch 3.
+  - The application remains localhost-only with its existing deployment debts.
+  - >-
+    Closed-season correction remains deliberately absent; changing a finalized
+    actual outcome requires a separately governed correction policy.
+
+next_action:
+  action: >-
+    The owner reviews and merges application pull request 11 and CIEL HQ pull
+    request 67. After both repositories return to clean fetched main,
+    re-estimate Batch 4 from the merged history implementation and record a
+    fresh owner decision before implementation.
+  acceptance_check:
+    - Both pull requests merge at the recorded heads.
+    - Both local repositories return to clean main equal to fetched origin/main.
+    - Batch 4 begins only from that merged state and a fresh owner decision.

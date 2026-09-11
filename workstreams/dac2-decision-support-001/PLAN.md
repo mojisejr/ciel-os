@@ -3,8 +3,8 @@
 **Workstream:** `dac2-decision-support-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
-**Execution phase:** 2
+**Plan revision:** 0.4
+**Execution phase:** 3
 **Execution state:** idle
 **Parallelism:** none
 
@@ -46,6 +46,15 @@ returned to clean fetched `main`, the owner confirmed the merge and authorized
 continuing to Batch 2. Batch 2 remains bounded to the actual-outcome close
 journey and forecast comparison below; it does not pull Batch 3 history or
 Batch 4 assets forward.
+
+Later on 2026-09-11, after application PR 10 and CIEL HQ PR 66 merged and both
+repositories again returned to clean fetched `main`, the owner explicitly
+authorized starting Batch 3. Inspection of the merged Batch 2 schema confirms
+that the finalized actual and six frozen forecast metrics already carry the
+history facts Batch 3 needs, so no new persistence table is expected. Batch 3
+remains bounded to chronological history, deterministic cues, and moving the
+existing target burden out of the main journey; it does not pull Batch 4 assets
+forward.
 
 ## Project links
 
@@ -317,8 +326,23 @@ quantity and unit exist; absence remains quiet and never blocks readiness.
 5. The main journey contains no target-entry or physical-KPI completeness
    burden; existing target values remain stored and editable in advanced mode.
 
-Engineering estimate: **14-22 hours** plus medium review. Batch 3 waits for the
-Batch 2 closeout and a fresh owner decision.
+Re-estimate from the merged Batch 2 schema: **14-20 hours** plus medium review.
+The existing `season_actual_outcomes` rows already freeze actual and forecast
+metrics, while the owner/year uniqueness constraint supplies deterministic
+chronology. Work remains in the pure trend rules, one owner-scoped history
+query, SSR presentation, advanced-target navigation, and browser proof. Batch 3
+is authorized by the 2026-09-11 post-merge owner decision.
+
+#### Batch 3 proof contract
+
+| Acceptance | Executable proof | Lane |
+|---|---|---|
+| Baseline and chronology are deterministic | Pure history tests plus PostgreSQL rows ordered by Buddhist year and stable id tie-break | Hard Gate / API Truth |
+| Every trend and cue is reproducible | Pure rule tests assert visible inputs, absolute/percent change, direction, formula, and fixed Thai template | Hard Gate |
+| Missing and incomparable data stay unavailable | Pure and store fixtures cover legacy closed seasons, zero denominators, missing snapshots, and skipped years | Hard Gate / API Truth |
+| History works without client-side JavaScript | SSR tests and direct authenticated HTTP navigation render the complete accessible table and cue text | Hard Gate / API Truth |
+| Main journey no longer carries target-entry burden | SSR and local Playwright prove targets remain stored/editable only from an explicitly advanced detailed-planning area | Eye Truth |
+| Mobile and product boundaries hold | Local Chrome passes 320, 360, 393, and 412 pixels; source/dependency scan finds no AI or LLM surface | Eye Truth / Hard Gate |
 
 ### 4. Batch 4 — shared assets with historical-safe season allocation
 

@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20260911T210714_dac2_batch3_authorized
+type: decision
+recorded_at: 2026-09-11T21:07:14+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-decision-support-001
+  lane: single
+  objective: >-
+    Add chronological season history and transparent deterministic decision
+    cues without AI or LLM behavior.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      Application PR 10 merged at 3d265fa6252a52e69da685858bfb79a5a5bf99e5
+      and CIEL HQ PR 66 merged at
+      10c60d0591b3aa9210c8cdbb5e9851ca3b0ff02c.
+    - Both local repositories returned to clean main equal to fetched origin/main.
+    - The owner explicitly approved starting Batch 3 as the next sequential delivery.
+    - >-
+      Inspection of the merged actual-outcome schema re-estimated Batch 3 at
+      14-20 engineering hours plus medium review, with no new persistence table expected.
+  not_completed:
+    - No Batch 3 calculation, store, server, history UI, or target-navigation change exists yet.
+    - Batch 4 remains unauthorized.
+
+evidence:
+  plan: workstreams/dac2-decision-support-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: 10c60d0591b3aa9210c8cdbb5e9851ca3b0ff02c
+    branch: docs/dac2-batch3-season-history
+  application:
+    repository: dac2-durian-smart-account
+    base: 3d265fa6252a52e69da685858bfb79a5a5bf99e5
+  proof_contract:
+    - >-
+      Hard Gate: pure trend rules, full workspace checks, and existing golden
+      and detailed-plan regressions pass without generated prose.
+    - >-
+      API Truth: local PostgreSQL proves owner-scoped chronological history,
+      stable ordering, legacy missing-actual behavior, and unchanged target persistence.
+    - >-
+      Eye Truth: SSR and local Playwright prove the accessible history table,
+      fixed cues, explicit unavailable states, advanced targets, and responsive
+      geometry at 320, 360, 393, and 412 pixels.
+    - >-
+      Device Truth: not required for Batch 3; responsive local Chrome is the
+      contracted rendering proof and no physical-device claim will be made.
+
+unresolved:
+  - >-
+    Human comprehension by likely orchard owners remains unmeasured; deterministic
+    wording and visible formulas do not establish usability.
+  - >-
+    A skipped harvest year is a comparison between observed seasons, not an
+    interpolation; the UI must name both years.
+  - The application remains localhost-only with its existing deployment debts.
+
+next_action:
+  action: >-
+    Open a focused application topic branch and draft PR, implement only Batch
+    3, and keep every proof lane explicit until the companion final closeout.
+  acceptance_check:
+    - One finalized actual season is baseline only; two or more show deterministic changes.
+    - Every cue exposes stored inputs and its calculation without causes or advice.
+    - Missing actuals and zero denominators never become zero trends or interpolations.
+    - Targets leave the main journey but remain stored and editable in advanced detailed mode.
