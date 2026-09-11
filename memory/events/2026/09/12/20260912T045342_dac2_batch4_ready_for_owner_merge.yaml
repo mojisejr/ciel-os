@@ -1,0 +1,130 @@
+schema_version: ciel.event.v0.1
+id: evt_20260912T045342_dac2_batch4_ready_for_owner_merge
+type: closeout
+recorded_at: 2026-09-12T04:53:42+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-decision-support-001
+  lane: single
+  objective: >-
+    Deliver reusable owner assets and historically safe season allocation
+    without AI or LLM behavior.
+  scope:
+    - Owner equipment and owned-land register with explicit season inclusion.
+    - Deterministic depreciation, separate starting capital, and immutable close snapshots.
+    - Pure calculation, PostgreSQL, SSR, authenticated server, and local Playwright proof.
+  out_of_scope:
+    - Deployment, tax depreciation, market valuation, multi-enterprise allocation, and AI or LLM behavior.
+    - Physical-phone rendering and human-comprehension claims.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      An owner can create reusable equipment or owned-land records once, use
+      either a Buddhist start year or approximate prior years, edit current
+      facts, retire an asset, and keep every record isolated by owner.
+    - >-
+      Open seasons exclude assets by default and require an explicit include or
+      remove action. One asset can be reused across multiple open seasons
+      without copying its cost, life, age, or residual facts.
+    - >-
+      Pure rules calculate straight-line planning depreciation over inclusive
+      start and exclusive useful-life and retirement boundaries without reading
+      wall-clock time. Invalid costs, life, residual, years, and extreme values
+      fail explicitly; owned land always contributes zero depreciation.
+    - >-
+      Final confirmation snapshots the selected asset facts and contribution in
+      the same PostgreSQL transaction that closes the season. Later edits or
+      retirement affect open previews but cannot rewrite the closed forecast,
+      actual, comparison, or asset snapshot.
+    - >-
+      Manual fixed cost, automatic non-cash depreciation, manual investment,
+      selected asset value, and starting capital remain separately named.
+      Existing rows are neither guessed nor migrated, and starting capital
+      changes only the explicit investment analysis.
+    - >-
+      Server-rendered asset management and season selection work without
+      client-side JavaScript. Closed seasons expose their immutable snapshot
+      without edit controls, while duplicated seasons copy starting capital but
+      never silently copy asset selections.
+    - >-
+      Local Playwright created an asset, proved default exclusion and explicit
+      selection, set starting capital, reused the asset, closed a season, and
+      verified open and closed asset geometry at 320, 360, 393, and 412 pixels.
+    - >-
+      The calculation and application dependency trees remain deterministic
+      with no AI, LLM, model API, prompt, embedding, vector store, inference
+      endpoint, or generated-advice surface.
+  not_completed:
+    - Application pull request 12 and CIEL HQ pull request 68 await owner merge.
+    - Physical-device and human-comprehension proof are not claimed for Batch 4.
+
+evidence:
+  plan: workstreams/dac2-decision-support-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  repository:
+    head: 0762424790263c13d5f50966744b4e0afacb2303
+    branch: docs/dac2-batch4-assets
+    working_tree: clean-before-this-closeout
+    pull_request:
+      number: 68
+      url: https://github.com/mojisejr/ciel-os/pull/68
+  application:
+    repository: dac2-durian-smart-account
+    base: 253d797fab8337bd18de44e90073a29d3b92e6ac
+    head: aeacd642c6c0c3e5d53262434aed282bde7798af
+    branch: feat/shared-assets
+    pull_request:
+      number: 12
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/12
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-local-postgresql
+    eye_truth: closed-local-playwright-chrome
+    device_truth: not-applicable-no-physical-device-claim
+  checks:
+    - ./scripts/check.sh passed from a cleaned target directory at the application head.
+    - ./scripts/test-plans.sh passed against local PostgreSQL.
+    - ./scripts/test-auth.sh passed against local PostgreSQL and Mailpit.
+    - ./scripts/check-responsive.sh passed at 320, 360, 393, and 412 pixels in real Chrome.
+    - >-
+      Pure and integration proof includes 62 calc unit tests, the workbook
+      golden fixture, 15 plan store tests, 4 asset store tests, 16 plan SSR
+      tests, 12 analysis SSR tests, 3 asset SSR tests, and authenticated server flows.
+    - >-
+      Workspace build, hydrate build, wasm build, strict clippy, dependency
+      boundary, and executable no-AI source and dependency scans passed.
+
+unresolved:
+  - >-
+    Human comprehension by likely orchard owners remains unmeasured; explicit
+    labels and successful browser completion do not establish usability.
+  - >-
+    Responsive Chrome proves portrait phone-sized geometry, not rendering on a
+    physical phone, other browser engines, landscape, zoom, or changed font scaling.
+  - >-
+    Invalid ServerFn form values can produce HTTP 500 transport responses while
+    the UI correctly shows validation and keeps the form. This existing
+    cross-cutting transport behavior remains outside Batch 4.
+  - The application remains localhost-only with its existing deployment debts.
+  - >-
+    Closed-season correction remains deliberately absent; changing a finalized
+    result requires a separately governed correction policy.
+  - >-
+    Asset allocation across multiple farm enterprises is not modeled; Batch 4
+    retains one owner and one combined-orchard season context.
+
+next_action:
+  action: >-
+    The owner reviews and merges application pull request 12, then CIEL HQ pull
+    request 68. After both merges, return both repositories to clean fetched
+    main and verify the recorded application head and final workstream closeout.
+  acceptance_check:
+    - Both pull requests merge at the recorded heads.
+    - Both local repositories return to clean main equal to fetched origin/main.
+    - Wake recognizes Slice 4 as the final delivered slice without dropping unresolved items.

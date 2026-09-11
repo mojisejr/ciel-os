@@ -3,8 +3,8 @@
 **Workstream:** `dac2-decision-support-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.4
-**Execution phase:** 3
+**Plan revision:** 0.5
+**Execution phase:** 4
 **Execution state:** idle
 **Parallelism:** none
 
@@ -55,6 +55,15 @@ history facts Batch 3 needs, so no new persistence table is expected. Batch 3
 remains bounded to chronological history, deterministic cues, and moving the
 existing target burden out of the main journey; it does not pull Batch 4 assets
 forward.
+
+Later on 2026-09-11, after application PR 11 and CIEL HQ PR 67 merged and both
+repositories returned to clean fetched `main`, the owner explicitly authorized
+finishing Batch 4 if no blocker changed its scope or cost. Inspection found no
+such blocker. The merged plan, actual snapshot, and history boundaries can be
+extended with owner assets, explicit season selections, and immutable close
+snapshots without migrating or rewriting existing fixed-cost rows. Batch 4 is
+re-estimated at 28-40 engineering hours plus heavy review and remains bounded
+to the asset and investment behavior below.
 
 ## Project links
 
@@ -385,8 +394,19 @@ asset contribution.
    historical snapshots pass PostgreSQL integration and adversarial cross-owner
    tests.
 
-Engineering estimate: **28-42 hours** plus heavy review. Batch 4 waits for the
-Batch 3 closeout and a fresh owner decision.
+Re-estimate from the merged Batch 3 implementation: **28-40 hours** plus heavy
+review. Batch 4 is authorized by the 2026-09-11 post-merge owner decision.
+
+#### Batch 4 proof contract
+
+| Acceptance | Executable proof | Lane |
+|---|---|---|
+| Owner assets are reusable and owner-scoped | PostgreSQL integration tests create one asset, select it in multiple open seasons, and reject cross-owner reads and writes | Hard Gate / API Truth |
+| Depreciation boundaries are deterministic | Pure tests cover start and end years, approximate prior use, retirement, invalid values, residual value, owned land, and no wall-clock dependency | Hard Gate |
+| Closed history never changes | Finalization transaction tests snapshot selected facts and contribution, then edit or retire the owner asset and prove the closed snapshot and forecast stay byte-for-byte equal | Hard Gate / API Truth |
+| Costs and investment roles remain distinct | Pure and SSR tests prove rent remains cash fixed cost, owned land has zero depreciation, starting capital affects only named investment analysis, and manual rows are not migrated or guessed | Hard Gate / Eye Truth |
+| Duplicate counting requires an explicit choice | SSR and local Playwright show manual fixed-cost and automatic asset sources together, leave assets excluded by default, and require the owner to include or remove each asset | Eye Truth / API Truth |
+| Mobile and product boundaries hold | Local Chrome passes 320, 360, 393, and 412 pixels; source and dependency scans find no AI or LLM surface | Eye Truth / Hard Gate |
 
 ## Delivery sequence and pull-request contract
 

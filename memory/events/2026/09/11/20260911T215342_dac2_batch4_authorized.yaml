@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20260911T215342_dac2_batch4_authorized
+type: decision
+recorded_at: 2026-09-11T21:53:42+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-decision-support-001
+  lane: single
+  objective: >-
+    Finish the final batch with reusable owner assets and historical-safe
+    season allocation without AI or LLM behavior.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      Application PR 11 merged at 253d797fab8337bd18de44e90073a29d3b92e6ac
+      and CIEL HQ PR 67 merged at
+      caa138a5688c9eb755edd84bea886fe058365ef7.
+    - Both local repositories returned to clean main equal to fetched origin/main.
+    - >-
+      The owner explicitly authorized finishing Batch 4 if no blocker changed
+      its scope or cost; schema and design inspection found no such blocker.
+    - >-
+      The merged implementation was re-estimated at 28-40 engineering hours
+      plus heavy review with owner assets, explicit season selection, and
+      immutable close snapshots as the bounded delivery.
+  not_completed:
+    - No Batch 4 calculation, schema, store, server, asset UI, or snapshot change exists yet.
+    - The workstream is not complete until the Batch 4 closeout and owner-reviewed merge.
+
+evidence:
+  plan: workstreams/dac2-decision-support-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  repository:
+    head: caa138a5688c9eb755edd84bea886fe058365ef7
+    branch: docs/dac2-batch4-assets
+  application:
+    repository: dac2-durian-smart-account
+    base: 253d797fab8337bd18de44e90073a29d3b92e6ac
+  proof_contract:
+    - >-
+      Hard Gate: pure asset rules, full workspace checks, golden regressions,
+      and immutable-finalization tests pass without generated behavior.
+    - >-
+      API Truth: local PostgreSQL proves ownership, explicit selections,
+      transactional snapshots, and unchanged closed history after asset edits.
+    - >-
+      Eye Truth: SSR and local Playwright prove the owner asset register,
+      separated cost roles, explicit inclusion, and responsive phone geometry.
+    - >-
+      Device Truth: not required for Batch 4; responsive local Chrome is the
+      contracted rendering proof and no physical-device claim will be made.
+
+unresolved:
+  - >-
+    Human comprehension by likely orchard owners remains unmeasured; explicit
+    labels and browser completion do not establish usability.
+  - >-
+    Asset allocation across more than one farm enterprise remains outside the
+    one-owner, one-combined-orchard season model.
+  - The application remains localhost-only with its existing deployment debts.
+
+next_action:
+  action: >-
+    Implement only Batch 4 on a focused application branch and draft PR, keep
+    all four proof lanes explicit, then write the final workstream closeout for
+    owner review.
+  acceptance_check:
+    - Owner assets are reusable across open seasons and isolated by owner.
+    - Closed season asset facts and contributions remain immutable after later edits.
+    - Land, rent, starting capital, manual costs, and automatic depreciation remain distinct.
+    - The final PR pair carries deterministic, PostgreSQL, SSR, Playwright, and no-AI proof.
