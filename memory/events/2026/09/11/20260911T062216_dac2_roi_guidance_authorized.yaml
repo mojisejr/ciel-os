@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20260911T062216_dac2_roi_guidance_authorized
+type: decision
+recorded_at: 2026-09-11T06:22:16+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-season-ux-001
+  lane: single
+  objective: >-
+    Correct ROI and payback guidance without expanding the current season UX
+    delivery into the later onboarding, actual-history, or asset workstream.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner confirmed that a fixed recurring expense with no associated
+      investment may leave that row's investment value blank without hiding
+      ROI or payback derived from other positive investment rows.
+    - >-
+      The owner approved farmer-facing optional-field wording and direct reasons
+      for unavailable ROI and payback results.
+    - >-
+      The owner approved adapting the global frame method to the repository's
+      CIEL plan instead of creating a GitHub issue or board item.
+  not_completed:
+    - No application or database change is claimed by this decision.
+    - >-
+      The successor onboarding, lightweight actual-history, and cross-season
+      asset direction remains outside the current pull requests.
+
+evidence:
+  plan: workstreams/dac2-season-ux-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  application_head: 59ce2c39fa70188749884ac8dd19785b6aceeea7
+  repository:
+    head: a9b57952af908f61d5d5df71d2c77e0a488f279e
+    branch: feat/dac2-season-ux
+
+unresolved:
+  - >-
+    The asset model, depreciation schedule, optional land and starting capital,
+    and plan-versus-actual history require a successor workstream after the
+    current application and HQ pull requests merge.
+  - >-
+    Farmer comprehension still requires the later unassisted five-minute test
+    with four or five orchard owners.
+
+next_action:
+  action: >-
+    Implement plan revision 0.2 slice 2 on the existing application branch,
+    run its unit, SSR, full application, authentication, and responsive proof,
+    then prepare the application and HQ closeouts for owner review.
+  acceptance_check:
+    - A blank non-investment row no longer suppresses a valid positive investment total.
+    - Missing ROI and payback states identify their actual prerequisite.
+    - Neither current pull request includes the successor product scope.
