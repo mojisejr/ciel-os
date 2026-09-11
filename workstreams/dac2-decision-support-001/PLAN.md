@@ -3,7 +3,7 @@
 **Workstream:** `dac2-decision-support-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** 1
 **Execution state:** idle
 **Parallelism:** none
@@ -32,6 +32,14 @@ The work is divided into **four sequential delivery batches**. Batch 1 alone is
 authorized for implementation by the opening decision. Each later batch needs
 the prior batch's closeout and a fresh owner decision, so research findings do
 not silently become product authority.
+
+On 2026-09-11 the owner revised the Batch 1 proof gate after directing Codex
+from a mobile session while Codex exercised the local application through real
+Chrome with Playwright and the owner's development account. For Batch 1, that
+owner-directed remote browser run replaces the planned four-or-five-person
+unassisted pilot. It proves the contracted behavior and the remote operating
+path; it does not prove physical-phone rendering, orchard-owner comprehension,
+or population-wide usability. Those claims remain explicitly unmade.
 
 ## Project links
 
@@ -122,8 +130,10 @@ users throughout development. ([Progressive enhancement](https://www.gov.uk/serv
 
 **Consequence for DAC2:** every batch must retain server-rendered navigation and
 forms, pass the current 320, 360, 393, and 412 pixel proof, and receive an
-owner-visible local candidate. Batch 1 also has a small unassisted orchard-owner
-test before its interaction model is treated as settled.
+owner-visible local candidate. For Batch 1, the owner accepted an
+owner-directed remote Playwright run against the owner's development account as
+the final interaction proof. Human comprehension remains an unmeasured product
+assumption rather than a completed proof claim.
 
 ## Starting evidence
 
@@ -210,10 +220,12 @@ unchanged.
    route to completion.
 6. The result and every question page fit the existing 320, 360, 393, and 412
    pixel portrait proof with 48-pixel activation targets.
-7. In an owner-run unassisted pilot with four or five likely orchard owners, at
-   least four reach the first result in five minutes or less; every hesitation,
-   misunderstood term, and assistance request is recorded. The owner, not the
-   agent, decides whether the wording is good enough to continue unchanged.
+7. In an owner-directed remote session, Codex uses local Playwright and the
+   owner's development account to prove login, the three-answer journey,
+   interrupted resume, browser back, refresh, invalid input, exact results, and
+   explicit reversible mode switching. The mobile device is the control surface
+   for Codex, not the device rendering DAC2; physical-phone and human-
+   comprehension claims are out of this Batch 1 gate.
 8. The dependency and source scan continues to find no product AI/LLM surface.
 
 #### Proof and estimate
@@ -224,11 +236,10 @@ unchanged.
 | Store and server journey | Quick answers persist owner-scoped and resume correctly; explicit mode changes preserve both input sets | 6-10 hours | implementation agent | same branch | data model |
 | Mobile result surface | SSR pages and result use existing design tokens and pass browser geometry | 5-8 hours | implementation agent | same branch | server journey |
 | Automated and local proof (heavy) | Full calc, migration, PostgreSQL, SSR, auth, and responsive suites pass against a local candidate | 3-5 hours | implementation agent | local PostgreSQL and Chrome | implementation |
-| Unassisted comprehension proof | Four or five likely users try the three-answer journey; owner records the verdict | elapsed time owner controls | human owner | local candidate | automated proof |
+| Owner-directed remote browser proof | From a mobile Codex session, the owner directs local Playwright through the owner-account journey and reviews the reported evidence and limits | 1-2 hours | owner and implementation agent | local candidate | automated proof |
 
-Engineering estimate: **19-31 hours**, excluding the elapsed time needed to
-schedule likely users. Confidence is medium because the main uncertainty is the
-mode migration and interruption behavior, not the formula.
+Engineering estimate: **20-33 hours**. Confidence is medium because the main
+uncertainty is the mode migration and interruption behavior, not the formula.
 
 ### 2. Batch 2 — close with actual outcome and compare
 
@@ -345,8 +356,10 @@ Batch 3 closeout and a fresh owner decision.
 
 ## Delivery sequence and pull-request contract
 
-The four batches are sequential because each consumes the prior batch's stored
-meaning. They are not one giant application pull request.
+The four batches stay in this one workstream but are delivered sequentially
+because each consumes the prior batch's stored meaning. They are not one giant
+application pull request or one long-lived CIEL HQ pull request: each batch gets
+one focused application PR and one companion HQ decision/closeout PR.
 
 | Batch | Application delivery | CIEL evidence | Review weight | Dependency |
 |---|---|---|---|---|
@@ -372,12 +385,14 @@ from the merged schema before authorizing it.
 | Existing results do not drift | Workbook golden fixture and current detailed-plan regressions remain numerically identical unless a later owner decision names a correction | Hard Gate | implementation agent |
 | Core journey survives browser limits | SSR and HTTP tests prove create, resume, switch, close, compare, and history without relying on hydration alone | Hard Gate | implementation agent |
 | Mobile layout holds | Real Chrome proof covers 320, 360, 393, and 412 pixels, overflow, visible labels, and 48-pixel targets | Eye Truth | implementation agent |
-| Five-minute path is understandable | Four or five likely orchard owners attempt Batch 1 without instruction and the owner records completion times and misunderstandings | Human Truth | owner |
+| Owner-directed remote journey works | Local Playwright uses the owner's development account to prove login, answer persistence, resume, back, refresh, validation, exact output, and reversible mode switching | API Truth / Eye Truth | owner and implementation agent |
 | No AI/LLM enters the product | Lockfile and application-source scan plus network-boundary review find no model client, prompt, embedding, vector store, inference endpoint, or generated guidance | Hard Gate | implementation agent |
 
-Database and write-path work is always heavy review. A passing geometry or text
-assertion is not evidence that orchard owners understand the journey; the human
-pilot remains a separate lane.
+Database and write-path work is always heavy review. A passing geometry, text,
+or owner-directed Playwright run is not evidence that orchard owners understand
+the journey. Batch 1 closes without that claim by the owner's explicit
+2026-09-11 decision; a future human-research gate requires a later owner
+decision.
 
 ## Expected application paths
 
@@ -421,15 +436,17 @@ before editing it.
 | Asset edits rewrite old results | Snapshot selected asset facts and contribution inside the atomic close transaction |
 | Asset cost is counted twice | Show manual and automatic sources separately and require explicit replacement/inclusion |
 | Aggregate cost hides useful detail | Keep detailed mode intact and make the result state which mode produced it |
-| A polished flow is still misunderstood | Treat the orchard-owner test as a human gate, not as optional polish |
+| Remote automation is mistaken for human understanding | Record exactly what Playwright proved and keep physical-device and comprehension claims explicitly unproved |
 
 ## Unknowns carried forward
 
-- The five-minute path is a synchronized owner direction, not yet observed with
-  likely orchard owners. The Batch 1 pilot may change wording or page grouping
-  without changing the three-fact boundary.
-- Four or five participants can expose serious usability failures but cannot
-  establish population-wide usability or statistical performance.
+- The three-question path has not been observed with likely orchard owners.
+  Owner-directed remote Playwright proves behavior, not comprehension; future
+  human research may still change wording or page grouping without changing the
+  three-fact boundary.
+- The browser proof uses real local Chrome at phone-sized viewports, not DAC2
+  rendered on a physical phone. The owner's phone was the remote Codex control
+  surface.
 - Existing responsive proof covers portrait Chrome, not browser zoom, system
   font scaling, landscape, reduced motion, or other engines.
 - The application remains localhost-only with its existing deployment debts.
