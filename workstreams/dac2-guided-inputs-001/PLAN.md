@@ -3,9 +3,9 @@
 **Workstream:** `dac2-guided-inputs-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 0.1  
-**Execution phase:** none  
-**Execution state:** idle  
+**Plan revision:** 0.2
+**Execution phase:** 1
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -22,6 +22,16 @@ completed decision-support batches. This opening checkpoint authorizes the
 research record and plan only. It does not authorize application changes or any
 individual delivery batch. Each batch needs its own owner decision after the
 preceding closeout.
+
+On 2026-09-13 the owner confirmed the navigation policy below and authorized
+Batch 1 if no implementation blocker changed the agreed scope. The application
+therefore uses a **hybrid guided flow**: the default path recommends one next
+question at a time, but it never locks an open season into a linear wizard.
+Owners may pause, resume, go back, see the current result, or open any section.
+An optional or explicitly unknown answer may be deferred; a result whose real
+dependencies are absent remains unavailable with a link to the exact missing
+question. The application never fills a missing fact or forces unrelated
+sections merely to reach the requested result.
 
 The product boundary remains explicit:
 
@@ -150,6 +160,55 @@ Close and learn
   Actual kg/revenue/cost/note -> Review -> Irreversible confirm
   -> Forecast-versus-actual comparison -> History and trends
 ```
+
+## Target user flow — guided by default, freely editable
+
+```text
+Create season
+  -> year, name, optional note
+  -> expected sellable kg
+       -> enter known total
+       -> or derive from orchard facts in Batch 2
+       -> or explicitly defer as unknown
+  -> expected price
+       -> enter one average
+       -> or enter grades in Batch 2
+       -> or explicitly defer as unknown
+  -> expected total cost
+       -> enter known total
+       -> or itemize in Batch 3
+       -> or explicitly defer as unknown
+  -> first financial result when kg + price + cost exist
+  -> choose the next question by desired result
+       -> buyer quantity for market comparison
+       -> cash classification for cash view
+       -> investment facts for ROI/payback
+       -> grades for grade analysis
+       -> optional targets or health self-review
+```
+
+The open-season hub always offers both paths:
+
+- **Guided path:** one primary `ทำขั้นถัดไป` action based on the result the
+  owner is closest to unlocking, with back, pause, resume, and explicit defer.
+- **Overview path:** `ดูและแก้ข้อมูลทั้งหมด` keeps non-linear access to every
+  section for returning or experienced users.
+
+Navigation is not completion. Status describes result readiness:
+
+| Requested result | Minimum required facts | Other sections |
+|---|---|---|
+| First revenue, profit, cost/kg, break-even price | sellable kg, average price, total cost | never required |
+| Market comparison | sellable kg and an accurately named buyer/intended-sales quantity | other market context remains optional |
+| Cash view | costs plus cash/non-cash classification | health and targets remain optional |
+| ROI and payback | eligible investment facts and the required cash result | market and health remain optional |
+| Grade analysis | grade quantities or shares and prices | buyer context remains optional |
+| Health self-review | the health answers selected by that contract | never blocks financial results |
+
+Closing a season remains its own short guided boundary: enter actual sellable
+kg, revenue, total cost, and optional note; review the immutable snapshot; see
+which comparisons will be unavailable; then explicitly confirm. An incomplete
+optional forecast does not erase or block a legitimate actual outcome.
 
 ### Route and screen coverage
 
@@ -300,6 +359,23 @@ coaching.
 ## Four sequential delivery batches
 
 ### 1. Batch 1 — field foundation and safe navigation
+
+#### Execution proof contract
+
+This contract was fixed before application code changed.
+
+| Definition of done | Executable proof | Lane | Prover |
+|---|---|---|---|
+| Quick values never cross semantic questions during client navigation | browser regression walks production -> price -> cost without reload; a control reproduces the old leak | Hard Gate + Eye Truth | implementation agent |
+| Quick and Detailed wrong-mode routes tell the truth | SSR route tests cover both directions and real Chrome opens both URLs | Hard Gate + Eye Truth | implementation agent |
+| Hub status names result readiness, missing dependency, or optional unlock | pure status unit table plus SSR assertions for empty, partial, ready, optional, and closed plans | Hard Gate | implementation agent |
+| Shared guided fields keep primary question, formal term, persistent help, example, output effect, unit, and error associated | SSR accessibility assertions reject placeholder-only essential guidance and inspect `aria-describedby` / `aria-invalid` | Hard Gate | implementation agent |
+| Public/account/Quick/hub/close/recovery routes remain usable at phone widths | real-Chrome matrix at 320, 360, 393, and 412 pixels checks overflow, target size, and obscured actions | Eye Truth | implementation agent |
+| History uses the same unauthenticated boundary as Plans | unauthenticated HTTP controls require redirect for both routes | API Truth | implementation agent |
+| Visible section errors are local and actionable | SSR/server tests submit a valid visible section while another section contains stale invalid text, then submit a visible invalid field and assert its named error | Hard Gate + API Truth | implementation agent |
+| Tax does not recommend a cheaper method without a reviewed current rule contract | SSR copy assertions require the dated-estimate boundary before figures and reject comparative recommendation wording | Hard Gate | implementation agent |
+| DAC2 remains deterministic with no AI/LLM product surface | executable source and dependency scan plus current calculation suites | Hard Gate | implementation agent |
+| Orchard-owner comprehension and physical-device behavior are not overclaimed | closeout leaves Human Comprehension and Device Truth pending unless separately executed | Device Truth | owner for later human/device proof |
 
 #### Deliverable
 
@@ -483,10 +559,10 @@ Batch 1 foundation and safety
 - Every application PR remains draft until its CIEL closeout is committed,
   pushed, and verified at the PR head.
 
-## Open decisions before Batch 1 execution
+## Batch 1 owner decision
 
-No decision is needed to retain this research checkpoint. Batch 1 execution
-needs owner approval of this plan revision and these boundaries:
+The owner authorized Batch 1 against plan revision 0.2 on 2026-09-13 and
+confirmed these boundaries:
 
 1. Tax comparison remains visible only as a clearly dated planning estimate and
    loses the “cheaper” recommendation until its rule set is independently
@@ -518,7 +594,7 @@ needs owner approval of this plan revision and these boundaries:
 
 ## Next executable action
 
-The owner reviews this plan and authorizes or revises Batch 1. Once authorized,
-start from clean fetched `main` in both repositories, record a Batch 1 decision
-event naming plan revision `0.1` and slice `1`, then implement only the field
-foundation and safe-navigation boundary above.
+Record the Batch 1 decision event naming this plan, revision `0.2`, and slice
+`1`, then implement only the field foundation and safe-navigation boundary.
+Hold both application and CIEL pull requests as drafts until the application
+proof lanes and Batch 1 closeout are committed and pushed at their final heads.
