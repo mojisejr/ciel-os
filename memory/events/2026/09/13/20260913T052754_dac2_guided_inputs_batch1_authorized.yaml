@@ -1,0 +1,82 @@
+schema_version: ciel.event.v0.1
+id: evt_20260913T052754_dac2_guided_inputs_batch1_authorized
+type: decision
+recorded_at: 2026-09-13T05:27:54+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Deliver the field foundation and safe-navigation batch for a hybrid guided
+    flow without changing DAC2's deterministic no-AI product boundary.
+  scope:
+    - Quick hydrated-state safety and truthful Quick/Detailed wrong-mode routes.
+    - Guided field primitive, result-readiness statuses, scoped validation, and shared account/season/recovery copy.
+    - History authentication alignment, tax-estimate boundary, and phone-width browser proof.
+  out_of_scope:
+    - Batch 2 market and production data semantics.
+    - Batch 3 cost knowledge-state schema and expense-first capture.
+    - Batch 4 result-wide rewrite and orchard-owner comprehension study.
+    - AI, LLM, generated advice, deployment, and production data.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner approved the hybrid guided flow and authorized Batch 1 if no
+    implementation blocker changed the agreed scope. No such blocker was found
+    during the clean-main and design-contract preflight.
+  constraints:
+    - >-
+      Guidance recommends one next question but never locks an open season into
+      a linear wizard; overview navigation, back, pause, resume, and current
+      results remain available.
+    - >-
+      Missing optional or explicitly unknown facts are never invented. Only the
+      requested result's real dependencies can keep that result unavailable.
+    - >-
+      Familiar language is primary and correct accounting terminology remains a
+      readable secondary label with persistent help rather than placeholder-only guidance.
+    - >-
+      Existing market-demand meaning is not changed in Batch 1 and human
+      comprehension remains unproved until its later study.
+    - >-
+      Tax remains a clearly bounded planning estimate and does not recommend a
+      cheaper method without a reviewed current rule contract.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: 12aae43729209577fff160f252be4c71d5187512
+    branch: docs/dac2-guided-inputs-plan
+    working_tree: clean-before-this-decision
+    pull_request:
+      number: 69
+      url: https://github.com/mojisejr/ciel-os/pull/69
+  application:
+    repository: dac2-durian-smart-account
+    base: 89787973373d469e2f1d1c334c1d152434f24ddc
+    branch: main
+    working_tree: clean
+  proof_contract: workstreams/dac2-guided-inputs-001/PLAN.md#1-batch-1--field-foundation-and-safe-navigation
+
+unresolved:
+  - Human comprehension by likely orchard owners is not a Batch 1 proof claim.
+  - Physical-phone, non-Chromium, landscape, zoom, and changed-font behavior remain unproved.
+  - Existing demand_kg semantics remain unchanged and await the Batch 2 compatibility decision.
+  - Confirmed-none cost state remains deferred to Batch 3 and may require a migration.
+  - Closed-season correction policy and localhost-only deployment debts remain outside Batch 1.
+
+next_action:
+  action: >-
+    Create a bounded application topic branch from clean fetched main, implement
+    the Batch 1 proof contract, open a draft application pull request from the
+    first commit, and keep both PRs draft until the final closeout is pushed.
+  acceptance_check:
+    - Every Batch 1 proof-contract row has Closed or Pending status with an owner.
+    - Application and CIEL closeouts cite their final pushed heads.
+    - No Batch 2, 3, or 4 data-contract behavior enters the Batch 1 diff.
