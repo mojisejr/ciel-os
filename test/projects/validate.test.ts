@@ -11,6 +11,7 @@ test("validates the committed project registry", async () => {
 
   expect(result.errors).toEqual([]);
   expect(result.files).toEqual([
+    expect.stringContaining("projects/bazi-sft-dataset/project.yaml"),
     expect.stringContaining("projects/ciel-os/project.yaml"),
     expect.stringContaining("projects/cu12-e2e-lab/project.yaml"),
     expect.stringContaining("projects/cu12-simulator/project.yaml"),
