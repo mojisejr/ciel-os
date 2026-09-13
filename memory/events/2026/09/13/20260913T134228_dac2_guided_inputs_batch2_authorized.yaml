@@ -1,0 +1,87 @@
+schema_version: ciel.event.v0.1
+id: evt_20260913T134228_dac2_guided_inputs_batch2_authorized
+type: decision
+recorded_at: 2026-09-13T13:42:28:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Deliver the sell-and-harvest batch: familiar market, production, and price
+    questions with explicit branches, without changing DAC2's deterministic
+    no-AI product boundary.
+  scope:
+    - Rename demand_kg to an accurately named buyer-committed quantity with migration and rollback fixtures.
+    - Detailed yield_source and price_source columns with direct kilogram and average-price fields; Quick unchanged.
+    - Grade share entry by percent or kilograms with the conversion shown in place; stored share unchanged.
+    - Market fields that state optionality and calculation effect; four-knowledge-state proof; phone-width browser journey.
+  out_of_scope:
+    - Batch 3 cost knowledge-state schema and expense-first capture.
+    - Batch 4 result-wide rewrite and orchard-owner comprehension study.
+    - Merging Quick and Detailed, or any change to forecast_mode and the frozen close snapshot.
+    - A kilogram-per-grade column, AI, LLM, generated advice, deployment, and production data.
+
+outcome:
+  status: decided
+  decision: >-
+    After application PR 13 and CIEL HQ PR 69 merged and both repositories
+    returned to clean fetched main, the owner authorized Batch 2 against plan
+    revision 0.3. The merged-schema re-estimate found no blocker and kept the
+    28-42 hour estimate at medium confidence.
+  constraints:
+    - >-
+      demand_kg is renamed in a migration, not duplicated and not merely
+      relabelled; stored values are unchanged and the rationale is recorded in
+      the plan.
+    - >-
+      Detailed gains explicit yield_source and price_source; the unselected
+      branch's facts are preserved when the owner switches, and only the
+      selected source feeds the result.
+    - >-
+      Grade share remains a stored percentage; kilogram entry is converted
+      visibly, never silently, and stays unavailable with a named reason while
+      total sellable kilograms are unknown.
+    - >-
+      Every market field states whether it is optional and whether it changes a
+      calculation or is saved as planning context.
+    - >-
+      Formal terms remain secondary labels; human comprehension remains unproved
+      until Batch 4.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: fb43d0d96c1eb58d3aa61a9d780d165dbac81e35
+    branch: hq/20260913
+    working_tree: clean-before-this-decision
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: dac2-durian-smart-account
+    base: 43fe8b3dd5d27c691daebd280951b03979a06f91
+    branch: main
+    working_tree: clean
+  proof_contract: workstreams/dac2-guided-inputs-001/PLAN.md#2-batch-2--sell-and-harvest-in-familiar-branches
+
+unresolved:
+  - Which production entry form likely owners know best remains unresearched; Batch 2 preserves every alternative without a default.
+  - Confirmed-none cost state remains deferred to Batch 3 and may require a migration.
+  - Human comprehension, physical-phone, non-Chromium, landscape, zoom, and changed-font behavior remain unproved.
+  - Closed-season correction policy and localhost-only deployment debts remain outside Batch 2.
+
+next_action:
+  action: >-
+    Create the application topic branch feat/guided-inputs-batch2 from clean
+    fetched main at 43fe8b3dd5d27c691daebd280951b03979a06f91, implement the
+    Batch 2 proof contract starting with the migration and store round-trip,
+    and open a draft application pull request from the first commit. Commit HQ
+    records to hq/20260913 and open no CIEL HQ pull request until the owner
+    decides to merge.
+  acceptance_check:
+    - Every Batch 2 proof-contract row has Closed or Pending status with an owner.
+    - Existing rows survive the demand_kg rename with unchanged values under migration and rollback fixtures.
+    - No Batch 3 or Batch 4 data-contract behavior enters the Batch 2 diff.
