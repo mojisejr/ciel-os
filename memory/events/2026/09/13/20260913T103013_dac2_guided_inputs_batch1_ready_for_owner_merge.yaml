@@ -1,0 +1,115 @@
+schema_version: ciel.event.v0.1
+id: evt_20260913T103013_dac2_guided_inputs_batch1_ready_for_owner_merge
+type: closeout
+recorded_at: 2026-09-13T10:30:13+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Deliver Batch 1 as a plain-first guided-input foundation with safe
+    navigation, truthful result readiness, section-local saves, and no AI or
+    LLM product behavior.
+  scope:
+    - Guided field and language contract across public, account, season, quick, detailed, actual, tax, and error surfaces.
+    - Hybrid guided hub, safe Quick navigation, result-specific readiness, section-local persistence, and history authentication.
+    - Deterministic, PostgreSQL, server-rendered, and real-Chrome responsive proof.
+  out_of_scope:
+    - Batch 2 market, production, and price branches; Batch 3 cost knowledge states; Batch 4 result language and human comprehension.
+    - Physical-phone, non-Chromium, landscape, zoom, changed-font, deployment, and tax-filing proof.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Quick production, price, and cost pages now clear stale browser state on
+      client navigation; a behavior-changing mutant reproducing the prior leak
+      is rejected by the responsive journey.
+    - >-
+      The open-season hub recommends one truthful next step while preserving
+      non-linear access. Its statuses describe the named result that is ready,
+      missing, or optional rather than claiming the whole season is complete.
+    - >-
+      Detailed section saves merge only the submitted section into the owner's
+      stored plan, and server proof confirms an unrelated invalid payload cannot
+      overwrite valid production data.
+    - >-
+      Guided fields retain plain primary language, readable formal terms,
+      persistent hints, examples, result effects, units, and programmatically
+      associated errors. Public, authentication, new-season, actual-close,
+      analysis, asset-error, tax, and wrong-mode surfaces use the same contract.
+    - >-
+      History uses the authenticated-route boundary; direct HTTP positive and
+      negative controls cover history, authentication, and section-local save.
+    - >-
+      Tax no longer recommends a cheaper choice. The dated planning-estimate
+      limitation appears before figures and states that its source and effective
+      date are not independently verified.
+    - >-
+      Application dependency and source checks found no AI, LLM, model API,
+      prompt, embedding, vector store, or inference runtime surface.
+  not_completed:
+    - Application pull request 13 and CIEL HQ pull request 69 await owner merge.
+    - Batches 2 through 4 are not implemented or authorized by this closeout.
+    - Human comprehension and physical-device behavior remain unproved and are not claimed.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: 19d1ef83a3f01ce95f81806ba77a2662a0e28578
+    branch: docs/dac2-guided-inputs-plan
+    working_tree: clean-before-this-closeout
+    pull_request:
+      number: 69
+      url: https://github.com/mojisejr/ciel-os/pull/69
+  application:
+    repository: dac2-durian-smart-account
+    base: 89787973373d469e2f1d1c334c1d152434f24ddc
+    head: aa6f391ac2b75df60719e207307bc121f1b8a474
+    branch: feat/guided-inputs-batch1
+    pull_request:
+      number: 13
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/13
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-local-postgresql-and-http
+    eye_truth: closed-local-playwright-chrome
+    device_truth: pending-not-claimed
+    human_comprehension: pending-batch4
+  checks:
+    - ./scripts/check.sh passed at application head aa6f391ac2b75df60719e207307bc121f1b8a474.
+    - cargo test -p web --features ssr --test auth_http --test plan_server passed.
+    - >-
+      ./scripts/check-responsive.sh passed 29 routes at 320, 360, 393, and
+      412 pixels in real Chrome at 516f506; the final proof-only commit added
+      ARIA associations and assertions without changing measured geometry.
+    - >-
+      Replacing the Quick input property binding with the stale-value behavior
+      made the responsive proof fail at the production-to-price boundary; the
+      implementation was restored before the final checks.
+    - bun run check and bun run wake passed in CIEL HQ before this closeout.
+
+unresolved:
+  - No likely orchard owner has completed the guided journey unassisted; vocabulary choices remain testable hypotheses until Batch 4.
+  - Existing demand_kg meaning is unchanged and still requires the Batch 2 compatibility decision.
+  - Explicit unknown and confirmed-none cost-section states remain Batch 3 schema work.
+  - Current tax arithmetic is not established as complete or current for an owner's filing situation.
+  - Closed seasons remain immutable and no correction policy exists.
+  - The application remains localhost-only with its existing deployment debts.
+  - Physical-device, non-Chromium, landscape, zoom, and altered-font proof remain open.
+
+next_action:
+  action: >-
+    The owner reviews and merges application pull request 13 and CIEL HQ pull
+    request 69 at the recorded heads. After both repositories return to clean
+    current main, re-estimate Batch 2 and record a fresh owner decision before
+    changing market, production, price, or stored demand semantics.
+  acceptance_check:
+    - Both pull requests merge at the recorded heads.
+    - Both local repositories return to clean main equal to fetched origin/main.
+    - Batch 2 begins only from that merged state and a fresh owner decision.

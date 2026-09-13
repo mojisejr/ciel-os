@@ -5,7 +5,7 @@
 **Execution lane:** single  
 **Plan revision:** 0.2
 **Execution phase:** 1
-**Execution state:** executing
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -594,7 +594,8 @@ confirmed these boundaries:
 
 ## Next executable action
 
-Record the Batch 1 decision event naming this plan, revision `0.2`, and slice
-`1`, then implement only the field foundation and safe-navigation boundary.
-Hold both application and CIEL pull requests as drafts until the application
-proof lanes and Batch 1 closeout are committed and pushed at their final heads.
+The owner reviews and merges the Batch 1 application and CIEL HQ pull requests
+at their recorded heads. After both repositories return to clean `main` equal
+to fetched `origin/main`, re-estimate the market and production compatibility
+work from the merged schema and record a fresh owner decision for Batch 2 before
+implementation.
