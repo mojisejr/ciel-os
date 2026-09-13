@@ -5,7 +5,7 @@
 **Execution lane:** single  
 **Plan revision:** 0.3
 **Execution phase:** 2
-**Execution state:** executing
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -654,10 +654,9 @@ code changed.
 
 ## Next executable action
 
-Create a bounded application topic branch from clean fetched `main` at
-`43fe8b3dd5d27c691daebd280951b03979a06f91`, implement the Batch 2 proof
-contract in this order: migration and store round-trip, pure calculation
-branches, then the three input pages and browser journey. Open a draft
-application pull request from the first commit. HQ records for this batch are
-committed to the standing branch `hq/20260913`; no CIEL HQ pull request is
-opened until the owner decides to merge.
+The owner reviews application pull request 14 at its recorded head and merges
+it; the HQ coordinator decides when `hq/20260913` merges. After both
+repositories return to clean `main` equal to fetched `origin/main`,
+re-estimate Batch 3 from the merged schema — the explicit
+`unknown | confirmed_none | entered_items` cost-section state and its
+migration — and record a fresh owner decision before implementation.
