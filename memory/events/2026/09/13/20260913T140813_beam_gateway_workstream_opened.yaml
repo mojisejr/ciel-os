@@ -1,0 +1,99 @@
+schema_version: ciel.event.v0.1
+id: evt_20260913T140813_beam_gateway_workstream_opened
+type: decision
+recorded_at: 2026-09-13T14:08:13+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-beam-gateway-001
+  lane: single
+  objective: >-
+    Put Beam Checkout behind the existing v2 payment port so the MuMate v2 shop
+    takes real money through Beam (PromptPay and card) with Omise kept installed
+    and selectable as the rollback, proven by a live charge and a live refund.
+  scope:
+    - Gateway selector, v2_payment.gateway column, second webhook route, purchase pause (slice 1).
+    - Beam adapter for PromptPay, webhook verification, event normalisation, reconciler mapping, proven headless on Playground (slice 2).
+    - Beam card path in the shape D1 decides (slice 3); screens, CSP, branding (slice 4); production flip and live proof (slice 5).
+  out_of_scope:
+    - The server move recorded in mootech-fe#637 and any DigitalOcean provisioning.
+    - mootech-be and the v1 Omise path; retiring Omise from v2.
+    - Recurring billing, saved cards, CIT/MIT, mobile banking, e-wallets, installments, BNPL, partial refunds.
+    - Provider comparison against 2C2P or others.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner directed on 2026-09-13 that the Beam Checkout gateway comes first
+    and the server move is deferred until the payment lane is live on Beam,
+    reasoning that Omise is now live on production and a single move afterwards
+    is simpler. The owner authorized opening this workstream after a research
+    pass over Beam docs v1.24.0 and the payment lane at mootech-fe e57827a. No
+    slice is authorized yet; slice 1 waits on the owner's answers to D1-D3.
+  constraints:
+    - >-
+      Omise stays installed and selectable; PAYMENT_GATEWAY unset or omise must
+      restore today's production behaviour exactly.
+    - >-
+      Preview deployments used for Beam testing must point at a non-production
+      database; a preview found on production stops the slice.
+    - >-
+      CVV pass-through (D1 option ก) is an explicit owner decision, never a
+      default; no card data enters logs, events, or repository files.
+    - >-
+      Production keys, the production webhook, migration 0027 on production,
+      the PAYMENT_GATEWAY flip, and every live charge or refund are owner
+      actions per instance.
+    - >-
+      This lane's slice 5 and mootech-fe#637 P3 never flip on the same day.
+
+evidence:
+  plan: workstreams/mootech-fe-beam-gateway-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: ff4f8ad830dba23f2a631d73bb380b10418d3d68
+    branch: hq/20260913
+    working_tree: only-this-workstream-directory-untracked-before-this-decision
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: mootech-fe
+    base: e57827afcbe1dba8098fc0da063e5fb2524c4b3e
+    branch: main
+    working_tree: clean
+  engine:
+    repository: bazi-sft-dataset
+    base: 099dbc7
+    branch: pdf-dev (checkout detached at origin/pdf-dev; branch held by the bazi-testenv worktree)
+  owner_statements_not_reverified:
+    - Omise on production runs live keys and the payment lane was proven end to end with real money (supersedes mootech-fe#605 blocker 1).
+  external_records:
+    - mootech-fe#637 (infra move, deferred) and its comments on parallel run, DO team ownership, spike playbook.
+    - mootech-fe#605 comment 2026-09-13 recording the Omise-live correction.
+  research_basis:
+    - Beam docs spec v1.24.0 via docs.beamcheckout.com llms.txt mirrors and embedded Swagger; webhook signature test vector recomputed locally and matched.
+    - mootech-fe payment lane audit at e57827a; port, adapter, and webhook route unchanged since 60709da.
+
+unresolved:
+  - D1 card path and PCI scope; Beam confirms no CVV at tokenization, so CARD_TOKEN needs securityCode via our server unless an exemption is granted.
+  - D2 who owns the Beam merchant account (company versus developer); individual accounts are QR-only until KYM.
+  - D3 whether to add a single purchase-pause flag or rely on /ops/packages is_active.
+  - Which database Vercel Preview points at; Preview holds no payment secrets today.
+  - Beam open questions (returnUrl params, token lifetime, rate limits, webhook timeout and IPs, max amount, settlement schedule, dispute flow, expiryTime versus expiresAt).
+  - mootech-fe middleware.ts:229 still states Omise is in test mode; corrected in slice 1, not before.
+
+next_action:
+  action: >-
+    Owner answers D1-D3 and starts Beam onboarding (Playground access,
+    publishable key, the exemption question) in the name decided by D2. On
+    those answers, record a slice-1 authorization decision, create the
+    application topic branch feat/beam-gateway-seam from clean fetched main at
+    e57827afcbe1dba8098fc0da063e5fb2524c4b3e, and implement slice 1 with no
+    production behaviour change. Commit HQ records to hq/20260913 and open no
+    CIEL HQ pull request until the owner decides to merge.
+  acceptance_check:
+    - D1, D2, D3 each have a recorded owner answer.
+    - Beam Playground credentials exist in an owner-controlled location; none appear in any repository file.
+    - Slice 1 authorization is recorded before any application branch is created.
