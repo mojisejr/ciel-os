@@ -718,7 +718,7 @@ code changed.
 
 ## Next executable action
 
-The owner reviews application pull request 15 at its recorded head and merges
+The owner reviews application pull request 15 at its recorded head `f9d3056` and merges
 it; the HQ coordinator decides when `hq/20260913` merges. After both
 repositories return to clean `main` equal to fetched `origin/main`,
 re-estimate Batch 4 from the merged application — result, close, comparison,
