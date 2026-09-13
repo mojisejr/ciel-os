@@ -3,9 +3,9 @@
 **Workstream:** `dac2-guided-inputs-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 0.2
-**Execution phase:** 1
-**Execution state:** idle
+**Plan revision:** 0.3
+**Execution phase:** 2
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -32,6 +32,18 @@ An optional or explicitly unknown answer may be deferred; a result whose real
 dependencies are absent remains unavailable with a link to the exact missing
 question. The application never fills a missing fact or forces unrelated
 sections merely to reach the requested result.
+
+Later on 2026-09-13, after application PR 13 and CIEL HQ PR 69 merged and both
+repositories returned to clean fetched `main`, the owner re-examined the merged
+schema and authorized Batch 2. Inspection found no blocker: `demand_kg` feeds
+only the market gap and fulfillment ratio in `calc/revenue.rs`, never the main
+profit result; direct sellable kilograms and one average price already exist as
+Quick facts on `plans`; derived yield lives in `yield_estimates` and grade
+prices in `grade_mix`; `forecast_mode` is frozen into
+`season_actual_outcomes` and is therefore not touched. The owner decided the
+three open data-contract questions recorded under **Batch 2 owner decision**
+below. Batch 2 remains bounded to market, production, and price; it does not
+pull Batch 3 cost knowledge states or Batch 4 result language forward.
 
 The product boundary remains explicit:
 
@@ -423,6 +435,24 @@ needed earlier than Batch 2.
 
 ### 2. Batch 2 — sell and harvest in familiar branches
 
+#### Execution proof contract
+
+This contract was fixed before application code changed.
+
+| Definition of done | Executable proof | Lane | Prover |
+|---|---|---|---|
+| `demand_kg` is renamed to an accurately named buyer-committed quantity without changing stored values | migration and rollback fixtures round-trip existing rows; store tests read the renamed column; no code path references the old name | Hard Gate + API Truth | implementation agent |
+| Detailed production offers direct kilograms or derived-from-orchard facts, never both silently | `yield_source` round-trips through PostgreSQL; pure tests prove direct and derived paths agree on equivalent fixtures and that only the selected source feeds sellable kilograms | Hard Gate + API Truth | implementation agent |
+| Detailed price offers one average or by-grade prices, never both silently | `price_source` round-trips; pure tests prove average and weighted-grade paths agree on equivalent fixtures and that the unselected source is preserved, not deleted | Hard Gate + API Truth | implementation agent |
+| Grade share accepts percent or kilograms with the conversion shown in place | stored value remains a share; SSR assertions show the converted figure beside the entry and reject a hidden conversion; kilogram entry with unknown total sellable kilograms stays explicitly unavailable | Hard Gate | implementation agent |
+| Market fields state whether they are optional and whether they change a calculation or are saved as planning context | SSR copy assertions require both statements on every market field | Hard Gate | implementation agent |
+| Four knowledge states produce the truthful result set | fixtures for total-kg-plus-one-price, trees-known-grades-unknown, grade-sales-known, and buyer-unknown assert the main result availability and the named missing dependency for unavailable market comparison | Hard Gate | implementation agent |
+| Blank, explicit unknown, valid zero, and entered value round-trip distinctly | store tests persist and read back each state for the new source and quantity fields | API Truth | implementation agent |
+| Refresh, back, interrupted resume, branch switching, and phone geometry hold | real-Chrome journey at 320, 360, 393, and 412 pixels switches production and price branches without losing the other branch's entered facts | Eye Truth | implementation agent |
+| Formal terms appear as secondary language at the point of relevance | SSR assertions find ผลผลิตขายได้, สัดส่วนเกรด, ราคาขายเฉลี่ยถ่วงน้ำหนัก, and ยอดรับซื้อที่คาดไว้ only as secondary labels, never as the primary question | Hard Gate | implementation agent |
+| DAC2 remains deterministic with no AI/LLM product surface | executable source and dependency scan plus current calculation suites | Hard Gate | implementation agent |
+| Orchard-owner comprehension and physical-device behavior are not overclaimed | closeout leaves Human Comprehension and Device Truth pending unless separately executed | Device Truth | owner for later human/device proof |
+
 #### Deliverable
 
 - Replace the Market page with familiar buyer/channel questions. Every field is
@@ -454,8 +484,10 @@ exist, while optional market comparisons stay unavailable with a useful reason.
 | Knowledge state | Blank, explicit unknown, known zero where valid, and entered value round-trip distinctly. |
 | Browser | Refresh, back, interrupted resume, branch switching, and phone geometry pass in real Chrome. |
 
-Estimate: **28-42 engineering hours**, medium-low confidence because the
-market compatibility and alternate forecast-source schema require design review.
+Estimate: **28-42 engineering hours**. Re-estimated on 2026-09-13 from the
+merged schema at medium confidence: every schema change is additive or a
+rename, so no existing row is rewritten; the effort sits in the three input
+pages and the four-knowledge-state proof matrix.
 
 ### 3. Batch 3 — spend, own, and invest without classifying first
 
@@ -574,6 +606,33 @@ confirmed these boundaries:
 4. Existing market-demand data is not relabelled in Batch 1. Its compatibility
    decision belongs to Batch 2.
 
+## Batch 2 owner decision
+
+The owner authorized Batch 2 against plan revision 0.3 on 2026-09-13 after the
+merged-schema re-estimate and decided these three data-contract questions:
+
+1. **`demand_kg` is renamed in a migration**, not duplicated and not merely
+   relabelled. The new column name states what the arithmetic actually uses:
+   the quantity a buyer said they would take. Stored values are unchanged. The
+   rationale is that no owner data beyond the development account exists, one
+   column with one meaning is preferable to two overlapping ones, and the
+   migration with its rollback fixture is itself part of what CIEL dogfoods.
+2. **Detailed gains explicit source columns.** A detailed plan records
+   `yield_source` (direct kilograms or derived from trees, fruit, weight, and
+   loss) and `price_source` (one average or by grade), each with its direct
+   field. Quick mode is unchanged and `forecast_mode` with its frozen close
+   snapshot is not touched. The unselected branch's facts are preserved, not
+   deleted, when the owner switches.
+3. **Grade share stays a stored percentage.** The owner may enter either a
+   percentage or kilograms; the application shows the converted figure beside
+   the entry rather than converting silently, and kilogram entry stays
+   unavailable with a named reason while total sellable kilograms are unknown.
+   A separate kilogram-per-grade column is deferred until research shows it is
+   needed.
+
+The proof contract above was fixed against these decisions before application
+code changed.
+
 ## Unresolved risks
 
 - No likely orchard owner has yet completed this proposed guided journey
@@ -582,8 +641,9 @@ confirmed these boundaries:
   based estimate, grade kilograms, or grade percentages; Batch 2 must preserve
   alternatives until research supports a default.
 - Existing `demand_kg` rows do not contain provenance proving “total market
-  demand” or “buyer commitment”. A copy-only reinterpretation would create
-  historical semantic drift.
+  demand” or “buyer commitment”. The owner accepted the rename because only
+  development data exists; the decision record, not the data, carries that
+  reasoning.
 - Explicit confirmed-none state for cost sections probably requires a migration.
 - Current tax arithmetic has not been established here as complete or current
   for an individual owner's filing situation.
@@ -594,8 +654,10 @@ confirmed these boundaries:
 
 ## Next executable action
 
-The owner reviews and merges the Batch 1 application and CIEL HQ pull requests
-at their recorded heads. After both repositories return to clean `main` equal
-to fetched `origin/main`, re-estimate the market and production compatibility
-work from the merged schema and record a fresh owner decision for Batch 2 before
-implementation.
+Create a bounded application topic branch from clean fetched `main` at
+`43fe8b3dd5d27c691daebd280951b03979a06f91`, implement the Batch 2 proof
+contract in this order: migration and store round-trip, pure calculation
+branches, then the three input pages and browser journey. Open a draft
+application pull request from the first commit. HQ records for this batch are
+committed to the standing branch `hq/20260913`; no CIEL HQ pull request is
+opened until the owner decides to merge.
