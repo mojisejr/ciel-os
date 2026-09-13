@@ -1,0 +1,129 @@
+schema_version: ciel.event.v0.1
+id: evt_20260913T051147_dac2_guided_inputs_research_checkpoint
+type: closeout
+recorded_at: 2026-09-13T05:11:47+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Make every DAC2 journey understandable without prior accounting or market
+    literacy while retaining correct formal terms as readable secondary language.
+  scope:
+    - Full route, screen, input, result, state, error, and user-flow research.
+    - Plain-first terminology and explicit required, optional, unknown, none, and zero contract.
+    - Four sequential delivery batches with proof gates and current estimates.
+  out_of_scope:
+    - Application code, schema, deployment, production data, and batch authorization.
+    - AI or LLM runtime behavior, generated recommendations, and external inference.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      The application route tree, account journey, season list, Quick path,
+      Detailed hub and six sections, advanced targets and assets, four analysis
+      tabs, close review, comparison, history, emails, and material recovery
+      states were inventoried from clean application main.
+    - >-
+      Two read-only subagents independently audited screen/copy coverage and
+      input-to-output semantics. Focused calculation, web unit, plan SSR,
+      analysis SSR, and asset SSR suites passed at the audited application head.
+    - >-
+      Authenticated local Chrome covered the main season, Quick, Detailed,
+      analysis, asset, close, comparison, and history routes. The browser lane
+      does not establish physical-device or human-comprehension proof.
+    - >-
+      A real hydrated Quick journey found that the production value can appear
+      in the price field, and the price value can then appear in the cost field,
+      until refresh. The apparently completed next field can be submitted under
+      the wrong meaning, so this is the first Batch 1 safety defect.
+    - >-
+      The audit identified misleading completion semantics, inconsistent
+      authenticated History behavior, whole-plan validation from section forms,
+      storage-only market questions, forced production and cost classifications,
+      hidden essential help, over-strong result language, and incomplete browser
+      route coverage.
+    - >-
+      Plan revision 0.1 defines plain question first, formal term second,
+      persistent hints and examples, named result effects, field-specific errors,
+      and explicit unknown, confirmed-none, and real-zero states.
+    - >-
+      Four sequential batches cover foundation and safe navigation, sell and
+      harvest branches, spend and investment branches, then results and real
+      comprehension proof. No batch is authorized by this checkpoint.
+    - >-
+      The workstream keeps DAC2 deterministic and adds no AI, LLM, model API,
+      prompt, embedding, vector store, agent, or generated-advice surface.
+  not_completed:
+    - No DAC2 application or schema change was made or authorized.
+    - Human comprehension by likely orchard owners remains unmeasured.
+    - Physical-phone, non-Chromium, landscape, zoom, and changed-font proof remain open.
+    - The Playwright subagent stopped after returning the Quick defect because its host usage limit was reached; no completed-subagent verdict is claimed for that lane.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 937f4004eb77ba1861e0c96e1886e3b2a7cc17d6
+    branch: docs/dac2-guided-inputs-plan
+    working_tree: clean-before-this-closeout
+    pull_request:
+      number: 69
+      url: https://github.com/mojisejr/ciel-os/pull/69
+  application:
+    repository: dac2-durian-smart-account
+    head: 89787973373d469e2f1d1c334c1d152434f24ddc
+    branch: main
+    working_tree: clean
+  proof_lanes:
+    hard_gate: closed-read-only-research
+    api_truth: closed-local-source-http-and-ssr
+    eye_truth: partial-local-playwright-chrome
+    device_truth: not-applicable-no-physical-device-claim
+    human_comprehension: pending
+  checks:
+    - bun run check passed all 44 CIEL tests after the plan was added.
+    - Wake detected four declared slices with no validation error or warning and lifecycle needs-owner-decision.
+    - cargo test -p calc passed 62 unit tests and one workbook golden test at the application head.
+    - cargo test -p web --lib passed 26 tests at the application head.
+    - cargo test -p web --features ssr --test plan_ssr passed 16 tests at the application head.
+    - cargo test -p web --features ssr --test analysis_ssr passed 12 tests at the application head.
+    - cargo test -p web --features ssr --test assets_ssr passed 3 tests at the application head.
+    - >-
+      Local HTTP probing returned 303 for unauthenticated /plans but 200 and a
+      resource error for unauthenticated /history, confirming the boundary mismatch.
+
+unresolved:
+  - >-
+    No likely orchard owner has completed the proposed guided flow unassisted;
+    the wording and branch defaults are hypotheses, not a usability verdict.
+  - >-
+    It is unknown whether users more reliably know total kilograms, tree-based
+    estimates, grade kilograms, or grade percentages.
+  - >-
+    Existing demand_kg values do not prove total market demand or buyer
+    commitment. Relabelling them without a compatibility decision would change
+    the meaning of historical data.
+  - >-
+    Confirmed-none cost state probably needs a migration across hub, calculation,
+    close snapshot, duplication, and PostgreSQL round trips.
+  - >-
+    Current tax arithmetic was not established as complete or current for an
+    individual owner's filing situation.
+  - Closed seasons remain immutable and no correction policy exists.
+  - The application remains localhost-only with its existing deployment debts.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner reviews CIEL HQ pull request 69 and approves or revises plan
+    revision 0.1. If Batch 1 is authorized, record a decision naming this plan,
+    revision 0.1, and slice 1 before changing the application.
+  acceptance_check:
+    - Pull request 69 contains this closeout and the complete plan at its final head.
+    - Wake keeps the workstream in needs-owner-decision and does not mark a slice delivered.
+    - No application implementation begins without the Batch 1 decision event.
