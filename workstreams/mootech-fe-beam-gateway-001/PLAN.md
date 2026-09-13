@@ -3,7 +3,7 @@
 **Workstream:** `mootech-fe-beam-gateway-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -78,10 +78,18 @@ a Beam id and the row stays `PENDING` until the seven-day window drops it
 (`lib/ops/packages.ts:76-83`), enforced before any charge
 (`lib/payment/catalog.ts:116-117`). `MAINTENANCE_MODE` is site-wide.
 
-**Vercel Preview cannot charge today** — the Preview scope holds no
-`OMISE_SECRET_KEY`, `OMISE_WEBHOOK_SECRET`, `QI_GRANT_SECRET` or
-`RECONCILE_ENABLED` (`.env.preview.local` key names). Which database Preview
-points at is not verified.
+**A local arena already exists and is the test environment of this lane.**
+`testenv/` boots the three apps against a docker Postgres 17 with
+self-signed SSL on `:5433` (`mumate_test`), restored from a prod dump that
+`anonymize.sql` scrubs before any app connects; `guard.sh` refuses Supabase
+and Neon hosts, real LINE/Google OAuth works because `http://localhost:3000`
+is a registered redirect URI, and `line-stub.mjs` (`:3200`) stands in for
+LINE (`testenv/README.md`). Port map: fe `:3000`, be `:4000`, bazi `:3100`
+from the `bazi-testenv` worktree, pg `:5433`. Vercel Preview is **not** used:
+its scope holds no payment secrets and its database is unverified, and the
+arena already covers everything short of live money. Beam reaches the arena
+through a `cloudflared` quick tunnel (`cloudflared` 2026.3.0 and Docker 28 are
+installed on the owner's machine).
 
 **The engine's grant is gateway-agnostic.** `lib/qi/grant.ts:33-43` posts
 `ref = chargeId`; the engine replays idempotently on
@@ -186,15 +194,18 @@ over raw bytes, key base64-decoded, constant-time compare, fail closed).
 `isSettleable`, `isTerminalFailure`, `isRefund` and every predicate test stay
 untouched. A `scripts/beam-smoke.ts` drives Playground from a laptop.
 
-Preview scope gains `PAYMENT_GATEWAY=beam`, `BEAM_MERCHANT_ID`, `BEAM_API_KEY`,
-`BEAM_WEBHOOK_HMAC_KEY` (Playground), `QI_GRANT_SECRET` matching the engine
-that `BAZI_BASE_URL` points at, and a `DATABASE_URL` that is **not
-production**. The Playground webhook is registered against the preview URL of
-a fixed branch.
+The arena runs with `PAYMENT_GATEWAY=beam`, `BEAM_MERCHANT_ID`,
+`BEAM_API_KEY`, `BEAM_WEBHOOK_HMAC_KEY` (all Playground) added to the local
+`.env` that `stack.sh up` swaps in — never to the committed `testenv/env/*` —
+and `QI_GRANT_SECRET` shared with the local bazi on `:3100`. Each session
+`cloudflared tunnel --url http://localhost:3000` yields a `trycloudflare.com`
+URL; the Playground webhook is pointed at
+`https://<that>/api/v2/payment/webhook-beam` for the session (Beam retries up
+to ten times, so a dropped tunnel loses nothing that a re-run cannot replay).
 
 Slice 2 is done when: the docs' signature vector passes and a one-byte body
-change fails it; on preview a Playground PromptPay charge → Force Charge →
-`charge.succeeded` sets the row `APPROVED` and the dev engine answers the QI
+change fails it; on the arena a Playground PromptPay charge → Force Charge →
+`charge.succeeded` sets the row `APPROVED` and the local engine answers the QI
 grant; a duplicate delivery, a `charge.failed` after `charge.succeeded`, and a
 `charge.succeeded` arriving after our own expiry-abandon each leave the row in
 the state the current Omise tests already require; the reconciler settles a
@@ -213,7 +224,7 @@ link status; the reconciler stops treating only `pending:` as placeholder
 and includes `link:` rows. Refund of a card purchase goes by the resolved
 `ch_…` id exactly as for PromptPay.
 
-Slice 3 is done when, on Playground through preview: the success card on the
+Slice 3 is done when, on Playground through the arena: the success card on the
 hosted page → `payment_link.paid` → row `APPROVED` with `charge_id` rewritten
 to `ch_…`; the OTP card with `123456` → `APPROVED`, with a wrong OTP the link
 stays unpaid and our expiry abandons the row; decline and insufficient-funds
@@ -231,8 +242,10 @@ the three shop paths replaces the Omise origins with `api.beamcheckout.com`
 `QiBuySuccess.tsx:75`, `checkout.tsx:163-170` say Beam. `omise.js` stays in
 `_document.tsx:19` while v1 still uses it; removing it belongs to `#606`.
 
-Slice 4 is done when the team completes the full shop flow on preview behind
-`V2_PREVIEW_KEY` for PromptPay and card, `csp-payment-path` and the
+Slice 4 is done when the team completes the full shop flow on the arena
+(through the tunnel URL, or a short-lived Supabase branch plus Vercel Preview
+if the team wants a URL that outlives one session — optional, deleted after)
+for PromptPay and card, `csp-payment-path` and the
 `check-omise-key-inlined` gate are green for the Beam configuration, and no
 screen names Omise on a Beam-settled order.
 
@@ -250,7 +263,7 @@ same day reconcile untouched.
 
 Slice 5 is done when all five observations are recorded with timestamps, the
 rollback (`PAYMENT_GATEWAY=omise`, redeploy, purchases paused for the window)
-has been rehearsed once on preview, and seven days of production show no
+has been rehearsed once on the arena, and seven days of production show no
 `PENDING` row older than the reconcile window on either gateway.
 
 ## Sequence with the server move
@@ -273,8 +286,10 @@ slice 5 never flip on the same day.
   live charge or refund are owner actions per instance.
 - Card data never reaches our server (D1 = ข); a change that would route PAN
   or CVV through `mootech-fe` needs a new owner decision, not a code review.
-- Preview deployments used by slices 2–4 must point at a non-production
-  database; a preview found pointing at production stops the slice.
+- Slices 2–4 run against the arena database only; `guard.sh` refusing a
+  Supabase or Neon host is the control, and a run found pointing at production
+  stops the slice. A Supabase branch, if used for UAT, is schema-only (no
+  "Include data") and deleted when the session ends.
 - Omise stays installed and selectable until a later plan retires it; this
   plan removes no Omise code, variable or webhook.
 - No secret value enters a repository file, event, pull request or report;
@@ -297,7 +312,9 @@ applies to a new Checkout merchant (pricing page says weekly T+2, help centre
 says daily T+1/T+3) · dispute flow beyond `TransactionType: CHARGEBACK` ·
 `expiryTime` still accepted or `expiresAt` only · whether a Payment Link
 can be restricted to card only through `linkSettings` on an account whose
-default includes other methods.
+default includes other methods · whether Playground accepts an
+`http://localhost:3000` `redirectUrl`/`returnUrl` (if not, the tunnel URL is
+used and the result page must carry the session on that host).
 
 ## Rollback contract
 

@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20260913T160822_beam_gateway_local_arena_decided
+type: decision
+recorded_at: 2026-09-13T16:08:22:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-beam-gateway-001
+  lane: single
+  objective: >-
+    Put Beam Checkout behind the existing v2 payment port so the MuMate v2 shop
+    takes real money through Beam (PromptPay and card) with Omise kept installed
+    and selectable as the rollback, proven by a live charge and a live refund.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner chose the existing local arena (mootech-fe/testenv: docker
+    Postgres on :5433 with anonymised prod dump, guard refusing Supabase and
+    Neon hosts, local bazi on :3100) plus a cloudflared quick tunnel as the test
+    environment for slices 2-4, instead of Vercel Preview or a Supabase branch.
+    Plan revision 0.3 carries this. A Supabase branch remains an optional,
+    schema-only, short-lived UAT aid for slice 4. The company has been asked to
+    register the Beam Playground. No slice is authorized by this record.
+  constraints:
+    - "Beam Playground secrets go into the local .env that stack.sh swaps in, never into committed testenv/env/* or any repository file."
+    - "The Playground webhook URL is the session's trycloudflare URL plus /api/v2/payment/webhook-beam and is updated per session."
+    - "Live money appears only in slice 5, on production, with Omise as rollback."
+
+evidence:
+  plan: workstreams/mootech-fe-beam-gateway-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: b5d119275d786b0b93f37b08612ad048e4f958d9
+    branch: hq/20260913
+    working_tree: plan-and-this-event-modified-before-this-decision
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: mootech-fe
+    base: e57827afcbe1dba8098fc0da063e5fb2524c4b3e
+    branch: main
+    working_tree: clean
+  local_tooling_observed:
+    - cloudflared 2026.3.0 at /opt/homebrew/bin/cloudflared
+    - Docker server 28.0.4
+    - mootech-fe/testenv with stack.sh, guard.sh, anonymize.sql, line-stub.mjs, env/{fe,be,bazi}.env
+
+unresolved:
+  - Whether Playground accepts http://localhost:3000 as redirectUrl/returnUrl; otherwise the tunnel host must carry the session for the result page.
+  - Playground registration by the company is in progress; merchant id, API key, and webhook HMAC key do not exist yet.
+  - Whether the company account has CARD enabled (KYM) for Payment Links.
+  - Beam open questions listed in the plan.
+
+next_action:
+  action: >-
+    When the company confirms Playground access, the owner creates the
+    Playground API key and stores it with the merchant id in the company vault.
+    Independently, the owner may authorize slice 1 now, since it needs no Beam
+    credential and changes no production behaviour; that authorization is a
+    separate decision record naming slice 1, after which the agent creates
+    feat/beam-gateway-seam from e57827afcbe1dba8098fc0da063e5fb2524c4b3e.
+  acceptance_check:
+    - A decision record naming slice 1 exists before any application branch is created.
+    - The arena boots with stack.sh up on the owner's machine before slice 2 starts.
