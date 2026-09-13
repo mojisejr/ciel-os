@@ -3,7 +3,7 @@
 **Workstream:** `mootech-fe-beam-gateway-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -115,37 +115,40 @@ granted on request via LINE `@beamcheckout`. The team's own notes mention a
 2C2P migration meeting (`docs/profile-qi-build-plan.md:68`); this plan does not
 compare providers, it executes the owner's choice.
 
-## Decisions the owner holds before slice 3
+## Decisions — recorded 2026-09-13
 
-**D1 · Card path and PCI scope.** With Omise, CVV never touched our server
-(SAQ A-EP). With Beam `CARD_TOKEN`, CVV must pass through
-`/api/v2/payment/charge` unless Beam approves a CVV/3DS exemption, and a server
-that transmits CVV is inside PCI scope (SAQ D). Three ways out, none chosen
-here:
+**D1 · Card path = ข) Beam Payment Links; PromptPay stays in-app.** The owner
+chose the hosted page over negotiating a CVV/3DS exemption with Beam. Cards
+never touch our server (SAQ A): `createCardCharge` creates a single-use
+Payment Link (`order.netAmount`, `order.referenceId = orderId`, `expiresAt`
+= now + 15 min, `redirectUrl` = `/v2/shop/result?state=PAYING&order=…`,
+`cancelUrl` = checkout, `collectPhoneNumber: false`, `linkSettings` card only)
+and returns its `url` as `authorizeUri`, which `pay-destination.ts:116`
+already opens as a top-level navigation (`X-Frame-Options: DENY` forbids an
+iframe anyway). The row holds `link:<id>` until `payment_link.paid` arrives;
+the webhook resolves the real charge with
+`GET /api/v1/charges?source_in=PAYMENT_LINK&sourceId=<id>` and rewrites
+`charge_id` to `ch_…` so refund and reconcile keep working by charge id. The
+reconciler must therefore not skip `link:` rows (only `pending:` is a
+placeholder today, `lib/payment/reconcile.ts:46-48`); the Beam adapter's
+`retrieveCharge` branches on the prefix and asks
+`GET /api/v1/payment-links/{id}` (`PAID | EXPIRED | DISABLED | …`). No
+publishable key and no browser tokenizer are needed under ข.
 
-- **ก) accept the pass-through** — smallest code change, largest compliance
-  change; CVV is never logged or stored, but the server is in scope.
-- **ข) cards through Beam Payment Links** — hosted page, `X-Frame-Options: DENY`
-  so it is a top-level redirect that `pay-destination.ts:116` already handles;
-  PromptPay stays in-app through the Charges API. Keeps SAQ A. Costs a second
-  code path: `POST /api/v1/payment-links`, `payment_link.paid`, and the charge
-  looked up by `source_in=PAYMENT_LINK&sourceId=`.
-- **ค) ask Beam for the exemption during onboarding** — if granted, ก) with no
-  CVV at all; if refused, fall to ข).
+What ข gives up: the in-app card form (`CardForm.tsx`, `card-rules.ts`) is
+removed from the v2 path; the card page shows Beam's hosted design with the
+store name and logo set in Lighthouse. Partial refunds stay out of scope.
 
-Recommendation: ask ค) on day one because it is one question; build slice 2
-(PromptPay) either way; decide ก/ข from Beam's answer before slice 3 starts.
+**D2 · The Beam merchant account belongs to the company.** The owner is a
+Developer on it (creates API keys and webhooks); Account Owner stays with the
+company. Playground access is a notification to Beam, not a negotiation.
 
-**D2 · Who owns the Beam merchant account.** The same question the owner
-settled for DigitalOcean on 2026-09-13 (company, not the developer). Payouts,
-KYM documents, Lighthouse roles and the production HMAC key follow the answer.
-An individual account is enough for slice 2 in Playground; slice 5 needs the
-account that will actually receive the money.
-
-**D3 · What "paused" means during a flip.** Either keep using `/ops/packages`
-`is_active` (exists, four rows plus QI packs, no deploy) or add a single
-`PURCHASES_PAUSED` flag checked in `charge-flow` (slice 1, ~15 lines). The plan
-proposes the flag because a rollback at 02:00 should be one switch, not five.
+**D3 · Purchase pause = the existing `/ops/packages` `is_active` toggle.**
+Immediate, no deploy, zero code; a runbook lists every sellable
+`package_code` (four tiers plus QI packs). A one-click "pause all" in `/ops`
+is added only if the slice-5 rollback rehearsal shows the clicks are a risk.
+The env-flag option is dropped: on Vercel it needs a redeploy and is slower
+than what exists.
 
 ## Execution slices and acceptance criteria
 
@@ -158,16 +161,16 @@ unset) and route the four direct imports through it. Add migration `0027` —
 row. Add `pages/api/v2/payment/webhook-beam.ts` as a second raw-body route with
 the same two middleware exemptions as the Omise one (`middleware.ts:252`
 inside `guardV2`, `:374` in the maintenance allow-list — exact match, not
-prefix) so both gateways can receive events at once. Add the purchase-pause
-flag if D3 chooses it. Stale text at `middleware.ts:229` ("Omise v2 is still
+prefix) so both gateways can receive events at once. No pause flag is
+built (D3). Stale text at `middleware.ts:229` ("Omise v2 is still
 in TEST mode") is corrected in the same change.
 
 Slice 1 is done when: with `PAYMENT_GATEWAY` unset the full payment suite is
 green and a diff of production behaviour is empty; `0027` is applied to the
 dev database and to production by the owner (additive, re-runnable); a test
 reddens if `webhook-beam` loses either exemption; the reconciler test proves
-an Omise row is never sent to the Beam adapter and vice versa; and the pause
-flag, if built, returns the same 400 the catalog gate returns today.
+an Omise row is never sent to the Beam adapter and vice versa; and a runbook entry
+names every `package_code` the `/ops/packages` pause must touch.
 
 ### 2. Beam adapter for PromptPay, webhook and reconcile — headless
 
@@ -198,25 +201,30 @@ the state the current Omise tests already require; the reconciler settles a
 Beam `SUCCEEDED` row whose webhook was withheld; and `refund.succeeded` for a
 full amount revokes while a smaller amount changes nothing.
 
-### 3. Beam card path — shape decided by D1
+### 3. Beam card path through Payment Links (D1 = ข)
 
-Under ก/ค: `features/v2-shop/beam-token.ts` posts to `/client/v1/card-tokens`
-with the publishable key; `createCardCharge` sends `CARD_TOKEN` (+
-`securityCode` only under ก), maps `REDIRECT` to `authorizeUri` and
-`returnUrl` to `/v2/shop/result?state=PAYING&order=…`. Under ข:
-`createCardCharge` creates a Payment Link with `order.referenceId = orderId`,
-returns its `url` as `authorizeUri`, and `webhook-beam` learns
-`payment_link.paid` plus the charge lookup by `sourceId`.
+`createCardCharge` creates the Payment Link described under D1 and returns
+its `url` as `authorizeUri`; the `token` argument becomes unused for Beam.
+`webhook-beam` learns `payment_link.paid`: resolve the charge by
+`source_in=PAYMENT_LINK&sourceId`, rewrite the row's `charge_id` from
+`link:<id>` to the `ch_…` id, then settle through the unchanged
+`settleAndProvision`. `retrieveCharge` handles `link:` ids by reading the
+link status; the reconciler stops treating only `pending:` as placeholder
+and includes `link:` rows. Refund of a card purchase goes by the resolved
+`ch_…` id exactly as for PromptPay.
 
-Slice 3 is done when, on Playground through preview: success card →
-`APPROVED`; OTP card with `123456` → `APPROVED`, with a wrong OTP → `REJECT`;
-decline and insufficient-funds cards → `REJECT` with the Beam `failureCode`
-on the row; the two refund-failure cards leave the entitlement in place and
-log loudly; and under ก the request log is proven to contain no `securityCode`.
+Slice 3 is done when, on Playground through preview: the success card on the
+hosted page → `payment_link.paid` → row `APPROVED` with `charge_id` rewritten
+to `ch_…`; the OTP card with `123456` → `APPROVED`, with a wrong OTP the link
+stays unpaid and our expiry abandons the row; decline and insufficient-funds
+cards leave the link unpaid and the row ends `REJECT` via expiry with the
+`failureCode` read from the link's charges; the cancel button returns the user
+to checkout with the hold released; `refund.succeeded` on a link-originated
+charge revokes; and a `payment_link.paid` replay changes nothing.
 
 ### 4. Screens, CSP and branding
 
-`checkout.tsx` swaps the tokenizer (or drops the card form under ข),
+`checkout.tsx` drops the card form and tokenizer (card is a redirect under ข),
 `QrScreen` accepts the data URI (already allowed by `img-src data:`), CSP on
 the three shop paths replaces the Omise origins with `api.beamcheckout.com`
 (`middleware.ts:181,193,195`), copy and logo in `PlanPaySuccess.tsx:90`,
@@ -231,7 +239,8 @@ screen names Omise on a Beam-settled order.
 ### 5. Production flip and live proof
 
 Owner installs Beam production keys and registers the production webhook
-(different HMAC key) in Lighthouse; `PAYMENT_GATEWAY=beam` on Vercel
+(different HMAC key) in Lighthouse and sets the store name and logo shown on
+the hosted card page; `PAYMENT_GATEWAY=beam` on Vercel
 Production; Omise variables stay in place. Then, as owner actions: one live
 PromptPay purchase and one live card purchase at the smallest price the catalog
 allows, each observed through webhook → `APPROVED` → entitlement/QI; one full
@@ -262,8 +271,8 @@ slice 5 never flip on the same day.
 - Installing Beam production keys, flipping `PAYMENT_GATEWAY` on Production,
   applying `0027` to production, registering the production webhook, and every
   live charge or refund are owner actions per instance.
-- CVV pass-through (D1 ก) is a compliance decision the owner makes explicitly;
-  the agent does not ship it under a default.
+- Card data never reaches our server (D1 = ข); a change that would route PAN
+  or CVV through `mootech-fe` needs a new owner decision, not a code review.
 - Preview deployments used by slices 2–4 must point at a non-production
   database; a preview found pointing at production stops the slice.
 - Omise stays installed and selectable until a later plan retires it; this
@@ -280,13 +289,15 @@ retiring Omise from v2; provider comparison against 2C2P or others.
 
 ## Open questions to Beam (asked at onboarding, answers recorded here)
 
-CVV/3DS exemption criteria for `CARD_TOKEN` · whether `returnUrl` receives any
-query params · card-token lifetime and id format · numeric rate limits and
+whether `redirectUrl` (Payment Links) or `returnUrl` receives any query
+params · numeric rate limits and
 webhook response timeout · webhook egress IPs · whether several endpoints per
 environment are supported · maximum charge amount · settlement schedule that
 applies to a new Checkout merchant (pricing page says weekly T+2, help centre
 says daily T+1/T+3) · dispute flow beyond `TransactionType: CHARGEBACK` ·
-`expiryTime` still accepted or `expiresAt` only.
+`expiryTime` still accepted or `expiresAt` only · whether a Payment Link
+can be restricted to card only through `linkSettings` on an account whose
+default includes other methods.
 
 ## Rollback contract
 
@@ -294,5 +305,5 @@ Every slice is additive and forward. `PAYMENT_GATEWAY` unset or `omise`
 restores today's behaviour exactly; `0027` is a defaulted column and is never
 dropped; both webhook routes stay registered so a Beam event arriving after a
 rollback still settles or revokes its own row; rows carry their gateway so the
-reconciler never asks the wrong provider; purchases can be paused for the
-redeploy window (D3). No production row is deleted and no history rewritten.
+reconciler never asks the wrong provider; purchases are paused for the
+redeploy window from `/ops/packages` (D3). No production row is deleted and no history rewritten.
