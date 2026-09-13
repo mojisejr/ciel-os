@@ -3,7 +3,7 @@
 **Workstream:** `mootech-fe-beam-gateway-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.5
+**Plan revision:** 0.6
 **Execution phase:** 2
 **Execution state:** idle
 **Parallelism:** none
@@ -304,6 +304,54 @@ which needs the company's Playground credentials; slice 5 is untouched and is
 the owner's. Execution phase is recorded as 2 — the first slice whose
 acceptance is still open — and state as idle, because no session is working
 until credentials arrive.
+
+## Revision 0.6 — production credentials arrived before Playground did
+
+On 2026-09-14 the company handed the owner a production Lighthouse value
+(one variable, kept in an owner-controlled ignored file outside every
+repository; its name says "API key", its shape is a 44-character base64
+string, and which of Beam's three secrets it is has not been confirmed). The
+owner asked whether Playground is still needed.
+
+**What changes:** nothing in the code, and nothing in what merges. PRs
+#650–#653 are no-ops with `PAYMENT_GATEWAY` unset and never depended on
+Playground; they can merge as soon as the owner has applied `0027` to
+production. What changes is **where the proof runs**:
+
+- The production `/v2` payment screens are still behind `V2_PREVIEW_KEY`
+  (`middleware.ts` guardV2; `#606` has not run), and v1 pays through
+  `mootech-be`'s own Omise client, not this gateway. So `PAYMENT_GATEWAY=beam`
+  on Production reaches **only the team**. The arena is therefore optional:
+  the same slice-2/3/4 acceptance runs on Production, behind the gate, with
+  real money at the smallest price `/ops/packages` allows (Beam's Payment Link
+  minimum is 100 satang), refunded afterwards through Lighthouse or the API.
+- Slice 5's "live proof" and slices 2–4's acceptance collapse into one
+  production run; slice 5 keeps its seven-day watch and its rollback
+  rehearsal.
+- Playground remains the safer place for destructive experiments (test cards
+  that decline, OTP failure, refund-failure cards). If the team later obtains
+  it, `docs/runbooks/beam-playground-session.md` still applies unchanged.
+
+**Webhook path — decided:** Beam gets its **own** route,
+`/api/v2/payment/webhook-beam` (shipped in #650, codec in #651), never the
+Omise path: the signature schemes differ, both providers stay registered
+during the switch and any rollback, and each row settles through the door of
+the provider that holds it. The webhook is registered in **production**
+Lighthouse against `https://bazichart.mumate.co/api/v2/payment/webhook-beam`
+with events `charge.succeeded`, `charge.failed`, `refund.succeeded`,
+`refund.failed`, `payment_link.paid`, and only **after** #650 and #651 are
+deployed (before that the path answers 503 and Beam would retry ten times
+into nothing). Its HMAC key becomes `BEAM_WEBHOOK_HMAC_KEY`.
+
+**What the adapter needs, exactly three values, all from production
+Lighthouse:** `BEAM_MERCHANT_ID` (shown under the store name, top-left),
+`BEAM_API_KEY` (Developers → API Key → Create → Show — a key created with
+that button), `BEAM_WEBHOOK_HMAC_KEY` (shown on the webhook after it is
+created). `BEAM_API_BASE` stays unset for production. Whether the value the
+team sent is the API key is confirmed by one call: `GET /api/v1/charges?limit=1`
+with `Basic base64(merchantId:value)` answers `200` for an API key and `401
+INVALID_CREDENTIALS_ERROR` for anything else — run from the owner's machine,
+never committed.
 
 ## Sequence with the server move
 
