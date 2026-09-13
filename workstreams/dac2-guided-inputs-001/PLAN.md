@@ -718,10 +718,12 @@ code changed.
 
 ## Next executable action
 
-The owner reviews application pull request 15 at its recorded head `3037457` and merges
-it; the HQ coordinator decides when `hq/20260913` merges. After both
-repositories return to clean `main` equal to fetched `origin/main`,
-re-estimate Batch 4 from the merged application — result, close, comparison,
-and history language plus the comprehension proof — and record a fresh owner
-decision, including who the likely orchard-owner participants are, before
-implementation.
+Batch 3 stays open after the owner's 2026-09-14 walkthrough. In a fresh
+session, on `feat/guided-inputs-batch3` from head `3037457`: fix the assets
+page so its actions re-fetch the page data instead of requiring a manual
+refresh, and change the browser proof to observe the inclusion without
+reloading; then rebuild the fixed-costs page as one list in two labelled
+groups — manual rows the owner edits here, and read-only depreciation rows
+from assets included in the season that link to the assets page — with one
+total equal to the dashboard. Record a fresh closeout citing the head, then
+mark application PR 15 ready. HQ records stay on `hq/20260913`.
