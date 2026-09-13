@@ -3,9 +3,9 @@
 **Workstream:** `dac2-guided-inputs-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 0.3
-**Execution phase:** 2
-**Execution state:** idle
+**Plan revision:** 0.4
+**Execution phase:** 3
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -44,6 +44,20 @@ prices in `grade_mix`; `forecast_mode` is frozen into
 three open data-contract questions recorded under **Batch 2 owner decision**
 below. Batch 2 remains bounded to market, production, and price; it does not
 pull Batch 3 cost knowledge states or Batch 4 result language forward.
+
+Later on 2026-09-13, after application PR 14 merged at
+`28dc6a7` and the owner had walked through Batch 2 in the local application,
+the owner authorized Batch 3. CIEL HQ had not yet carried the Batch 2 closeout
+to `origin/main`: this round records every lane on the standing branch
+`hq/20260913`, whose merge timing the owner controls, so Batch 3 starts from
+that branch rather than from `main` and this deviation is recorded here rather
+than hidden. Inspection of the merged schema found no blocker: an empty cost
+list is indistinguishable from an unknown one, variable rows require quantity
+times unit price, and the harvest, transport, and packing quantity default is
+stated once in prose rather than shown beside the field. The owner decided the
+three data-contract questions recorded under **Batch 3 owner decision** below.
+Batch 3 remains bounded to costs, assets, and investment; it does not pull
+Batch 4 result language or the comprehension study forward.
 
 The product boundary remains explicit:
 
@@ -491,6 +505,24 @@ pages and the four-knowledge-state proof matrix.
 
 ### 3. Batch 3 — spend, own, and invest without classifying first
 
+#### Execution proof contract
+
+This contract was fixed before application code changed.
+
+| Definition of done | Executable proof | Lane | Prover |
+|---|---|---|---|
+| Each cost section carries an explicit `unknown`, `confirmed_none`, or `entered_items` state | migration adds the two `plans` columns with defaults and checks; store tests round-trip all three states, derive `entered_items` from rows, revert to `unknown` when the last row is removed, and refuse `confirmed_none` while rows exist | Hard Gate + API Truth | implementation agent |
+| Confirmed none is a known zero; unknown withholds only dependent results | pure tests: confirmed-none variable and fixed sections yield zero cost, cash flow, and a defined total; unknown keeps total cost, cost per kg, and profit unavailable while revenue stays available; assets still add depreciation to a confirmed-none fixed section | Hard Gate | implementation agent |
+| A remembered expense can be captured before classification and never becomes a zero-valued cost row | `unclassified_expenses` table, store round-trip, and pure tests proving captured amounts do not enter any cost total; the hub and result state name the count of unclassified items and link to them | Hard Gate + API Truth | implementation agent |
+| A variable line accepts a total amount or quantity times unit price, never both silently | check constraint and store round-trip for `total_amount`; pure tests prove a total-only line contributes its total, yields no per-unit efficiency figure, and that a line with both entered is rejected as an input issue | Hard Gate + API Truth | implementation agent |
+| The sellable-yield quantity default is disclosed beside each line it applies to | SSR assertions find the applied kilogram figure beside blank harvest, transport, and packing quantities and no such note beside an explicit override | Hard Gate | implementation agent |
+| Classification is asked as familiar questions after capture | SSR assertions on the classify flow: the variable/fixed, cash/non-cash, and multi-year questions appear in plain wording with the formal term secondary, and classifying moves the item into the chosen section with its amount intact | Hard Gate | implementation agent |
+| Section state, unclassified items, and total-amount lines duplicate deliberately and freeze at close | store tests: duplicate copies all three; finalize snapshots the resulting cost figures; a closed plan refuses state, capture, and classification changes; cross-owner access is refused | API Truth | implementation agent |
+| Assets and starting capital are framed as things used for years and money put in | SSR assertions on the assets page require the familiar wording as primary and สินทรัพย์, ค่าเสื่อมราคา, มูลค่าคงเหลือ, อายุการใช้งาน, and เงินลงทุน as secondary labels | Hard Gate | implementation agent |
+| Refresh, back, capture-then-classify, confirm-none, and phone geometry hold | real-Chrome journey captures an expense, leaves, returns, classifies it, confirms a section has none, sees the result change, and passes the route matrix at 320, 360, 393, and 412 pixels | Eye Truth | implementation agent |
+| DAC2 remains deterministic with no AI/LLM product surface | executable source and dependency scan plus current calculation suites | Hard Gate | implementation agent |
+| Orchard-owner comprehension and physical-device behavior are not overclaimed | closeout leaves Human Comprehension and Device Truth pending unless separately executed | Device Truth | owner for later human/device proof |
+
 #### Deliverable
 
 - Let an owner capture a remembered expense in familiar language before choosing
@@ -522,9 +554,11 @@ does not change after the asset is edited.
 | Security/history | Cross-owner negative tests and post-close mutation controls pass. |
 | Browser | Row capture, later classification, defaults, assets, and phone geometry pass with JavaScript and server-rendered navigation. |
 
-Estimate: **30-45 engineering hours**, medium-low confidence because cost-row
-capture and persisted section knowledge states touch schema, store, calculation,
-and UI together.
+Estimate: **30-45 engineering hours**. Re-estimated on 2026-09-13 from the
+merged schema at medium confidence: the three schema changes are additive
+(two state columns, one table, one nullable column with a check), the
+calculation change is confined to `cost.rs`, and the effort sits in the
+capture-and-classify flow, the two cost pages, and the assets copy.
 
 ### 4. Batch 4 — results, close, history, and comprehension proof
 
@@ -633,6 +667,34 @@ merged-schema re-estimate and decided these three data-contract questions:
 The proof contract above was fixed against these decisions before application
 code changed.
 
+## Batch 3 owner decision
+
+The owner authorized Batch 3 against plan revision 0.4 on 2026-09-13 after the
+merged-schema re-estimate and decided these three data-contract questions:
+
+1. **Section knowledge state lives in two columns on `plans`**:
+   `variable_cost_state` and `fixed_cost_state`, each
+   `unknown | confirmed_none | entered_items` with default `unknown`, so every
+   existing row keeps its current meaning. The store derives `entered_items`
+   whenever rows exist, reverts to `unknown` — never silently to
+   `confirmed_none` — when the last row is removed, and refuses
+   `confirmed_none` while rows exist.
+2. **A remembered expense may be kept before it is classified.** A new
+   `unclassified_expenses` table holds name, amount, and note per season. Its
+   amounts enter no calculation; while any exist the hub and the result name
+   the count and link to the classify step. Classifying moves the item into
+   the chosen section with its amount intact and deletes the capture.
+3. **A variable line may carry a total amount instead of quantity times unit
+   price.** `variable_cost_lines.total_amount` is nullable; a line with a
+   total and a quantity or unit price is rejected as an input issue rather
+   than resolved silently. A total-only line contributes its total and yields
+   no per-unit efficiency figure. The quantity default for harvest,
+   transport, and packing is shown beside the field as the applied figure,
+   not implied.
+
+The proof contract above was fixed against these decisions before application
+code changed.
+
 ## Unresolved risks
 
 - No likely orchard owner has yet completed this proposed guided journey
@@ -644,7 +706,9 @@ code changed.
   demand” or “buyer commitment”. The owner accepted the rename because only
   development data exists; the decision record, not the data, carries that
   reasoning.
-- Explicit confirmed-none state for cost sections probably requires a migration.
+- Explicit confirmed-none state for cost sections requires the Batch 3
+  migration decided above; nothing before it can express a known-empty
+  section.
 - Current tax arithmetic has not been established here as complete or current
   for an individual owner's filing situation.
 - Closed seasons remain immutable and no correction policy exists.
@@ -654,9 +718,10 @@ code changed.
 
 ## Next executable action
 
-The owner reviews application pull request 14 at its recorded head and merges
-it; the HQ coordinator decides when `hq/20260913` merges. After both
-repositories return to clean `main` equal to fetched `origin/main`,
-re-estimate Batch 3 from the merged schema — the explicit
-`unknown | confirmed_none | entered_items` cost-section state and its
-migration — and record a fresh owner decision before implementation.
+Create a bounded application topic branch `feat/guided-inputs-batch3` from
+clean fetched `main` at `28dc6a7`, implement the Batch 3 proof contract in
+this order: migration and store round-trip, cost calculation states, the
+capture-and-classify flow and two cost pages, assets copy, then the browser
+journey. Open a draft application pull request from the first commit. HQ
+records for this batch are committed to the standing branch `hq/20260913`;
+no CIEL HQ pull request is opened until the owner decides to merge.
