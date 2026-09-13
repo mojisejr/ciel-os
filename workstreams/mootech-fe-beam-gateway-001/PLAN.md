@@ -3,9 +3,9 @@
 **Workstream:** `mootech-fe-beam-gateway-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.4
-**Execution phase:** 1
-**Execution state:** executing
+**Plan revision:** 0.5
+**Execution phase:** 2
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -293,6 +293,17 @@ Authorized by the owner on 2026-09-13 evening ("ทำยาวๆ จนถึ�
 
 Nothing merges to `main` without the owner. A draft pull request per slice
 keeps the review surface small and the stack rebaseable if `main` moves.
+
+**State at the credential-blocked point (2026-09-13 late evening):** slice 1
+is complete as `mootech-fe#650`; slices 2, 3 and 4 are coded and unit-tested
+as `#651`, `#652`, `#653` (stacked, each a no-op with `PAYMENT_GATEWAY`
+unset); four runbooks exist under `docs/runbooks/`. Every acceptance criterion
+that a real Postgres can prove is proven (`beam-webhook-db` 16/16 on the
+arena database). What remains for slices 2–4 is the Playground run itself,
+which needs the company's Playground credentials; slice 5 is untouched and is
+the owner's. Execution phase is recorded as 2 — the first slice whose
+acceptance is still open — and state as idle, because no session is working
+until credentials arrive.
 
 ## Sequence with the server move
 
