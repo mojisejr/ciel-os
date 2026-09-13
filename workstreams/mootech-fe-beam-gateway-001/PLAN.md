@@ -3,9 +3,9 @@
 **Workstream:** `mootech-fe-beam-gateway-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
-**Execution phase:** none
-**Execution state:** idle
+**Plan revision:** 0.4
+**Execution phase:** 1
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -46,7 +46,12 @@ today and nothing in it is changed by this lane.
 ## Starting evidence
 
 Measured 2026-09-13 against `mootech-fe` `main` `e57827a`, engine
-`origin/pdf-dev` `099dbc7`, and Beam docs spec v1.24.0. Every `path:line` is
+`origin/pdf-dev` `099dbc7`, and Beam docs spec v1.24.0. Re-checked at the
+start of execution against `main` `0742ca9` (2026-09-13 evening): the diff
+`e57827a..0742ca9` over `lib/payment`, `pages/api/v2/payment`,
+`pages/api/cron`, `middleware.ts`, `lib/db/schema.ts`, `lib/qi`,
+`features/v2-shop` is empty, so every citation below still holds; the
+application base for this lane is `0742ca9`. Every `path:line` is
 in `mootech-fe` unless stated.
 
 **The port already exists and the money core never sees the gateway.**
@@ -265,6 +270,29 @@ Slice 5 is done when all five observations are recorded with timestamps, the
 rollback (`PAYMENT_GATEWAY=omise`, redeploy, purchases paused for the window)
 has been rehearsed once on the arena, and seven days of production show no
 `PENDING` row older than the reconcile window on either gateway.
+
+## Work order while Beam credentials are pending
+
+Authorized by the owner on 2026-09-13 evening ("ทำยาวๆ จนถึงจุดที่ต้องรอทีม"):
+
+1. **Slice 1 to completion** on `feat/beam-gateway-seam` from `0742ca9`,
+   opened as a draft pull request. It needs no Beam credential and changes no
+   production behaviour.
+2. **Slices 2 and 3 coded and unit-tested ahead**, each on its own branch
+   stacked on the previous (`feat/beam-gateway-promptpay`,
+   `feat/beam-gateway-card-links`), also as draft pull requests. Their unit
+   tests use the docs' signature vector and payload fixtures; their acceptance
+   criteria close **only** on the arena run with Playground credentials and
+   stay open until then. `scripts/beam-smoke.ts` ships with slice 2 so the
+   arena run is a command, not a rediscovery.
+3. **Slice 4 prepared** behind `PAYMENT_GATEWAY=beam` where it does not
+   disturb the Omise path; branding copy waits for a settled Beam order to
+   look at.
+4. Runbooks written: purchase pause (D3), gateway rollback, Playground
+   session (tunnel + webhook), dispute revoke by hand.
+
+Nothing merges to `main` without the owner. A draft pull request per slice
+keeps the review surface small and the stack rebaseable if `main` moves.
 
 ## Sequence with the server move
 
