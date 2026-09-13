@@ -1,0 +1,90 @@
+schema_version: ciel.event.v0.1
+id: evt_20260913T160245_dac2_guided_inputs_batch3_authorized
+type: decision
+recorded_at: 2026-09-13T16:02:45:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Deliver the spend-own-invest batch: costs captured in familiar language
+    before classification, explicit section knowledge states, total-amount
+    lines, disclosed quantity defaults, and plain-first asset wording, without
+    changing DAC2's deterministic no-AI product boundary.
+  scope:
+    - plans.variable_cost_state and plans.fixed_cost_state (unknown | confirmed_none | entered_items), default unknown.
+    - unclassified_expenses table for remembered expenses that enter no calculation until classified.
+    - variable_cost_lines.total_amount as an alternative to quantity times unit price, with a check against entering both.
+    - Capture-then-classify flow, disclosed sellable-yield quantity default, confirm-none control, assets and starting-capital copy.
+    - Deterministic, PostgreSQL, server-rendered, and real-Chrome proof.
+  out_of_scope:
+    - Batch 4 result-wide language, close review, history, and orchard-owner comprehension study.
+    - Any change to forecast_mode, Quick mode, asset depreciation arithmetic, or the frozen close snapshot shape.
+    - AI, LLM, generated advice, deployment, and production data.
+
+outcome:
+  status: decided
+  decision: >-
+    After application PR 14 merged at 28dc6a7 and the owner walked through
+    Batch 2 locally, the owner authorized Batch 3 against plan revision 0.4.
+    The merged-schema re-estimate found no blocker and kept the 30-45 hour
+    estimate at medium confidence. CIEL HQ starts this batch from the standing
+    branch hq/20260913, which already carries the Batch 2 closeout but has not
+    reached origin/main; the owner controls that merge and directed Batch 3
+    to proceed regardless.
+  constraints:
+    - >-
+      Section state is derived to entered_items whenever rows exist, reverts
+      to unknown when the last row is removed, and confirmed_none is refused
+      while rows exist; no zero-valued cost row is ever manufactured.
+    - >-
+      Unclassified captures enter no cost total; while any exist the hub and
+      the result name their count and link to the classify step.
+    - >-
+      A line with both a total amount and a quantity or unit price is an
+      input issue, never silently resolved; the quantity default is shown
+      beside the field as the applied figure.
+    - >-
+      Assets, depreciation, residual value, useful life, and investment stay
+      visible as secondary terms under familiar wording; their arithmetic and
+      the close snapshot are unchanged.
+    - >-
+      Human comprehension remains unproved until Batch 4.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: f58eb7beb148c3f3a4ecfe0f0ab7a1e701865a24
+    branch: hq/20260913
+    working_tree: clean-before-this-decision
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: dac2-durian-smart-account
+    base: 28dc6a7b53f245319ae6526f1ea7eafc7d5c5f69
+    branch: main
+    working_tree: clean
+  proof_contract: workstreams/dac2-guided-inputs-001/PLAN.md#3-batch-3--spend-own-and-invest-without-classifying-first
+
+unresolved:
+  - The Batch 2 closeout on hq/20260913 has not reached origin/main; its merge is the owner's standing-branch decision.
+  - Which expense wording likely owners recognise is unresearched; the classify questions are hypotheses until Batch 4.
+  - Human comprehension, physical-phone, non-Chromium, landscape, zoom, and changed-font behavior remain unproved.
+  - Closed-season correction policy and localhost-only deployment debts remain outside Batch 3.
+
+next_action:
+  action: >-
+    Create the application topic branch feat/guided-inputs-batch3 from clean
+    fetched main at 28dc6a7b53f245319ae6526f1ea7eafc7d5c5f69, implement the
+    Batch 3 proof contract starting with the migration and store round-trip,
+    and open a draft application pull request from the first commit. Commit
+    HQ records to hq/20260913 and open no CIEL HQ pull request until the
+    owner decides to merge.
+  acceptance_check:
+    - Every Batch 3 proof-contract row has Closed or Pending status with an owner.
+    - Existing rows keep their meaning under the new defaults with migration and rollback fixtures.
+    - No Batch 4 result-language behavior enters the Batch 3 diff.
