@@ -1,0 +1,132 @@
+schema_version: ciel.event.v0.1
+id: evt_20260913T170312_dac2_guided_inputs_batch3_ready_for_owner_merge
+type: closeout
+recorded_at: 2026-09-13T17:03:12:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Deliver Batch 3: costs captured in familiar language before
+    classification, explicit section knowledge states, total-amount lines,
+    disclosed quantity defaults, plain-first asset wording, and no AI or LLM
+    product behavior.
+  scope:
+    - plans.variable_cost_state and fixed_cost_state; unclassified_expenses; variable_cost_lines.total_amount, with migration, rollback, and round-trip proof.
+    - Capture-then-classify page, confirm-none controls, disclosed sellable-yield default, total-or-per-unit lines, assets and starting-capital copy.
+    - Deterministic, PostgreSQL, server-rendered, HTTP, and real-Chrome proof.
+  out_of_scope:
+    - Batch 4 result-wide language, close review, history, and orchard-owner comprehension.
+    - Any change to forecast_mode, Quick mode, depreciation arithmetic, or the close snapshot shape.
+    - Physical-phone, non-Chromium, landscape, zoom, changed-font, deployment, and tax-filing proof.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Migration 202609130002 adds the two section-state columns (default
+      unknown), the unclassified_expenses table, and a nullable total_amount
+      with a check that refuses a total alongside quantity or unit price. A
+      store test steps a legacy plan forward and back through it without
+      changing its values; a legacy line still totals quantity times price.
+    - >-
+      Rows always mean entered items; an emptied list reverts to unknown,
+      never to confirmed none; the store refuses confirmed none while rows
+      exist and writes nothing. Confirmed none is a known zero for cost,
+      cash flow, total, and cost per kilogram; an unknown section keeps only
+      its dependents unavailable while revenue stays available.
+    - >-
+      Behavior change recorded rather than hidden: an unknown fixed section
+      now stays unknown even when selected assets add depreciation. Before,
+      depreciation alone was reported as the whole fixed cost. A plan with
+      assets and no fixed rows must now confirm the manual section empty; the
+      confirm-none control on the fixed-costs page does that in one tap.
+    - >-
+      Remembered expenses are captured on their own page with name, amount,
+      and note, enter no total, survive leaving and returning, and are named
+      by count on the hub, the live total, and the guided next step. Two
+      familiar questions file each item as variable (with its kind) or fixed
+      (cash or non-cash) with its amount intact; the capture page owns all
+      three cost lists because classification is a move.
+    - >-
+      A variable line is answered either per unit or as one total; a
+      total-only line contributes its total and no per-unit efficiency
+      figure. Blank harvest, transport, and packing quantities show the
+      applied sellable kilograms beside the field; explicit overrides and
+      total-only lines show no such note.
+    - >-
+      The assets page leads with ของที่ใช้หลายปี and เงินก้อนที่ลงไป and keeps
+      สินทรัพย์, ค่าเสื่อมราคา, มูลค่าคงเหลือ, อายุการใช้งาน, เงินลงทุน, and
+      เงินทุนเริ่มต้น as secondary labels; its arithmetic is unchanged.
+    - >-
+      Defect found by the browser proof and fixed: a back navigation after a
+      save could replay the owner page from the HTTP cache as it was before
+      the save, reading as a lost answer. Owner pages are now served
+      Cache-Control: no-store; the HTTP test asserts it and the journey
+      passed twice in a row afterwards.
+    - >-
+      Application dependency and source checks found no AI, LLM, model API,
+      prompt, embedding, vector store, or inference runtime surface.
+  not_completed:
+    - Application pull request 15 awaits owner review and merge; the CIEL HQ record rides on hq/20260913 until the owner decides to merge that branch.
+    - Batch 4 is not implemented or authorized by this closeout.
+    - Human comprehension and physical-device behavior remain unproved and are not claimed.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: 21186f9099518b492988a6e6e689d3d51a9ba1d1
+    branch: hq/20260913
+    working_tree: clean-before-this-closeout
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: dac2-durian-smart-account
+    base: 28dc6a7b53f245319ae6526f1ea7eafc7d5c5f69
+    head: 11b0544c862ffb27ef347ecaf8356ae79e612de6
+    branch: feat/guided-inputs-batch3
+    pull_request:
+      number: 15
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/15
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-local-postgresql-and-http
+    eye_truth: closed-local-playwright-chrome
+    device_truth: pending-not-claimed
+    human_comprehension: pending-batch4
+  checks:
+    - ./scripts/check.sh passed at application head 11b0544c862ffb27ef347ecaf8356ae79e612de6.
+    - ./scripts/test-plans.sh passed at that head (calc 73, store plans 21, store assets 4, plan_form 18, plan_ssr 26, assets_ssr 4, plan_server 1).
+    - cargo test -p web --features ssr --test auth_http passed at that head, including the no-store assertion.
+    - >-
+      ./scripts/check-responsive.sh passed 30 routes at 320, 360, 393, and
+      412 pixels in real Chrome twice in a row at that head, including the
+      Batch 3 capture, classify, confirm-none, refresh, and hub journey. Two
+      earlier runs failed at the Batch 2 back-navigation step; that was the
+      cache defect above, not flakiness, and it is fixed rather than retried.
+    - bun run check and bun run wake passed in CIEL HQ before this closeout.
+
+unresolved:
+  - The classify questions and cost wording are hypotheses until Batch 4's comprehension study.
+  - Guided fields bind values as properties, so server-rendered markup shows empty fields until hydration; the browser proof waits for hydration and the flash is not measured.
+  - Existing plans with selected assets and no fixed rows now read as unknown until the owner confirms the section; no data was rewritten to guess.
+  - Closed seasons remain immutable and no correction policy exists.
+  - The application remains localhost-only with its existing deployment debts.
+  - Physical-device, non-Chromium, landscape, zoom, and altered-font proof remain open.
+
+next_action:
+  action: >-
+    The owner reviews application pull request 15 at head
+    11b0544c862ffb27ef347ecaf8356ae79e612de6, marks it ready, and merges it;
+    the HQ coordinator decides when hq/20260913 merges. After both
+    repositories return to clean current main, re-estimate Batch 4 (results,
+    close, history, and the comprehension proof with likely orchard owners)
+    and record a fresh owner decision before implementation.
+  acceptance_check:
+    - Application pull request 15 merges at the recorded head.
+    - The HQ record on hq/20260913 reaches main through the owner's merge decision.
+    - Batch 4 begins only from that merged state, a fresh owner decision, and named human participants.

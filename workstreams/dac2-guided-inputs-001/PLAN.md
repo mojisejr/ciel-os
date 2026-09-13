@@ -5,7 +5,7 @@
 **Execution lane:** single  
 **Plan revision:** 0.4
 **Execution phase:** 3
-**Execution state:** executing
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -718,10 +718,10 @@ code changed.
 
 ## Next executable action
 
-Create a bounded application topic branch `feat/guided-inputs-batch3` from
-clean fetched `main` at `28dc6a7`, implement the Batch 3 proof contract in
-this order: migration and store round-trip, cost calculation states, the
-capture-and-classify flow and two cost pages, assets copy, then the browser
-journey. Open a draft application pull request from the first commit. HQ
-records for this batch are committed to the standing branch `hq/20260913`;
-no CIEL HQ pull request is opened until the owner decides to merge.
+The owner reviews application pull request 15 at its recorded head and merges
+it; the HQ coordinator decides when `hq/20260913` merges. After both
+repositories return to clean `main` equal to fetched `origin/main`,
+re-estimate Batch 4 from the merged application — result, close, comparison,
+and history language plus the comprehension proof — and record a fresh owner
+decision, including who the likely orchard-owner participants are, before
+implementation.
