@@ -353,6 +353,18 @@ with `Basic base64(merchantId:value)` answers `200` for an API key and `401
 INVALID_CREDENTIALS_ERROR` for anything else — run from the owner's machine,
 never committed.
 
+**State after the deploy (2026-09-14 morning):** the whole stack is on
+`mootech-fe` `main` at `ccc0074` (tree identical to #653's head) with
+`PAYMENT_GATEWAY` unset, so production is still Omise; `0027` is on
+production; the production webhook is registered against
+`/api/v2/payment/webhook-beam` with the five events; `BEAM_MERCHANT_ID`,
+`BEAM_API_KEY` and `BEAM_WEBHOOK_HMAC_KEY` are in the Vercel Production scope.
+#651 was merged into its stacked base by mistake and carried to `main` by
+#654 (same tree). Slice 1's acceptance is met; slices 2–4 wait on the
+production run, which needs a slice-2 authorization first. Execution phase
+stays 2, state idle. Record:
+`memory/events/2026/09/14/20260914T094427_beam_gateway_stack_deployed_inert.yaml`.
+
 ## Sequence with the server move
 
 Payment first, then one move: the owner's stated preference, and the plan
