@@ -4,7 +4,7 @@
 **State:** active
 **Execution lane:** single
 **Plan revision:** 0.1
-**Execution phase:** 1
+**Execution phase:** 2
 **Execution state:** idle
 **Parallelism:** none
 
@@ -332,13 +332,16 @@ whatever the free tiers turn out to be at signup.
 
 ## Next executable action
 
-Slice 1 is delivered and awaits merge: application pull request 17 at
-`c766752` on `feat/pilot-container`, closeout recorded on 2026-09-14. It found
-that the release binary overflows the default 2 MiB worker stack on the
-dashboard and analysis pages, which the debug build never showed; the runtime
-now reserves 32 MiB for its single worker, measured against the full route
-matrix. After the owner merges the application pull request and this plan's
-CIEL HQ pull request 71, and both repositories return to clean fetched `main`,
-the owner authorizes slice 2 by a decision naming plan revision 0.1 slice 2.
-Slice 2 starts from the merged application `main` on a topic branch
-`feat/pilot-network-gate`.
+Slices 1 and 2 are delivered. Slice 1 merged at application `c75d8bd`. Slice
+2, the network gate, awaits merge: application pull request 18 at `5e7f3aa`
+on `feat/pilot-network-gate`, closeout recorded on 2026-09-14. Two facts from
+slice 2 bind slice 4: behind Render every peer is the proxy, so
+`CLIENT_ADDRESS_SOURCE=forwarded-for` must be set there or the whole public
+shares one budget; and participants on one venue address share the account
+budget, so the runbook raises `RATE_LIMIT_ACCOUNT` for an in-person study day.
+After the owner merges the application pull request and CIEL HQ pull request
+72, and both repositories return to clean fetched `main`, the owner authorizes
+slice 3 by a decision naming plan revision 0.1 slice 3 and settles whether the
+application repository becomes public (unlimited Actions minutes) or stays
+private (2,000 minutes a month). Slice 3 starts from the merged application
+`main` on a topic branch `feat/pilot-image-from-git`.

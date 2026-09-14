@@ -1,0 +1,76 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T184300_dac2_pilot_deployment_slice2_authorized
+type: decision
+recorded_at: 2026-09-14T18:43:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - Rate limiting on registration, login, verification, resend, and password-reset routes, per client address, limits from the environment with recorded defaults.
+    - Refusal to start with an https APP_BASE_URL and COOKIE_SECURE unset or false.
+    - A one-line plain-first pilot notice on the shell.
+    - SESSION_KEY and DATABASE_URL checked before the server binds, errors naming the variable only.
+    - SSR or HTTP tests for each rule; the responsive matrix re-measured with the notice in place.
+  out_of_scope:
+    - GitHub Actions, GHCR, render.yaml, any external account (slices 3 and 4).
+    - Any change to results, wording, schema, calc, close snapshot, or forecast_mode.
+    - Abuse handling beyond the rate limit; CAPTCHA; account lockout.
+
+outcome:
+  status: decided
+  decision: >-
+    On 2026-09-14, after slice 1 merged at application c75d8bd and both
+    repositories returned to clean main, the owner authorized slice 2, the
+    network gate, against plan revision 0.1, and accepted the proposed
+    defaults without change: ten attempts per client address per five
+    minutes on login, five per client address per hour on registration,
+    verification resend, and password-reset request, each adjustable from
+    the environment. The owner said there was nothing left to decide and to
+    start.
+  constraints:
+    - The refusal page leads with plain wording, names how long to wait, and carries no formal term first.
+    - Limits are read from the environment with the defaults above; a limit that does not parse stops the server at start naming the variable.
+    - The client address is the peer address unless a trusted proxy header is explicitly configured; slice 4 decides whether Render's forwarding header is trusted.
+    - The pilot notice is a shell element; no result surface changes and the measured geometry of the existing route matrix does not move.
+    - No secret enters a repository file, event, pull request, or response.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: 4177d48
+    branch: docs/dac2-pilot-slice2
+    working_tree: clean-main-before-this-branch
+    pull_request: draft-after-this-commit
+  application:
+    repository: dac2-durian-smart-account
+    base: c75d8bd
+    branch: main
+    working_tree: clean
+
+unresolved:
+  - Whether the rate limiter should count by peer address or a forwarded header is a slice-4 decision that depends on how Render terminates TLS; slice 2 makes the source configurable and defaults to the peer address.
+  - Thai wording of the refusal page and the pilot notice are hypotheses like every other wording until 4b.
+
+next_action:
+  action: >-
+    Pass the application start gate on clean fetched main at c75d8bd, create
+    feat/pilot-network-gate, implement the network gate with tests, open a
+    draft application pull request from the first commit, re-run the
+    responsive matrix and the container proof, and record the slice-2
+    closeout on this HQ branch.
+  acceptance_check:
+    - Tests show each guarded route refusing after the configured count and releasing after the window.
+    - An https base URL with an insecure cookie stops the process with the reason named; with COOKIE_SECURE=true the cookie carries Secure.
+    - The pilot notice renders at 320, 360, 393, and 412 pixels and the responsive proof passes.
+    - scripts/check.sh and scripts/check-container.sh pass.
