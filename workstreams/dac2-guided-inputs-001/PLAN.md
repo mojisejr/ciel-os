@@ -718,12 +718,16 @@ code changed.
 
 ## Next executable action
 
-Batch 3 stays open after the owner's 2026-09-14 walkthrough. In a fresh
-session, on `feat/guided-inputs-batch3` from head `3037457`: fix the assets
-page so its actions re-fetch the page data instead of requiring a manual
-refresh, and change the browser proof to observe the inclusion without
-reloading; then rebuild the fixed-costs page as one list in two labelled
-groups — manual rows the owner edits here, and read-only depreciation rows
-from assets included in the season that link to the assets page — with one
-total equal to the dashboard. Record a fresh closeout citing the head, then
-mark application PR 15 ready. HQ records stay on `hq/20260913`.
+Batch 3 is delivered at application head `1e390a7` on
+`feat/guided-inputs-batch3`; the closeout recorded on 2026-09-14 cites it and
+records the real-Chrome proof as three passes and four keep-alive navigation
+stalls on untouched routes, which the owner accepted. Owner: walk through the
+assets and fixed-costs pages locally, push `hq/20260913`, push the application
+branch, mark PR 15 ready, and merge it into `main`. Before Batch 4 starts, the
+owner decides two things: whether to authorize a separate slice for the
+keep-alive stall (recommended, because Batch 4 must extend the route matrix),
+and the four Batch 4 questions posted on 2026-09-14 — the 4a deterministic /
+4b comprehension-study split, study participants and gate tasks, whether the
+tax "cheaper" verdict stays withheld, and confirming that an incomplete
+forecast never blocks a legitimate close. Batch 4 is not authorized by this
+revision.

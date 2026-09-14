@@ -1,0 +1,172 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T092700_dac2_guided_inputs_batch3_walkthrough_bugs_delivered
+type: closeout
+recorded_at: 2026-09-14T09:27:00:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Deliver Batch 3: costs captured in familiar language before
+    classification, explicit section knowledge states, total-amount lines,
+    disclosed quantity defaults, plain-first asset wording, and no AI or LLM
+    product behavior.
+  scope:
+    - plans.variable_cost_state and fixed_cost_state; unclassified_expenses; variable_cost_lines.total_amount, with migration, rollback, and round-trip proof.
+    - Capture-then-classify page, confirm-none controls, disclosed sellable-yield default, total-or-per-unit lines, assets and starting-capital copy.
+    - Deterministic, PostgreSQL, server-rendered, HTTP, and real-Chrome proof.
+    - The two items the owner's 2026-09-14 walkthrough left open at 3037457.
+  out_of_scope:
+    - Batch 4 result-wide language, close review, history, and orchard-owner comprehension.
+    - Any change to forecast_mode, Quick mode, depreciation arithmetic, or the close snapshot shape.
+    - The root cause of the keep-alive navigation stall described below.
+    - Physical-phone, non-Chromium, landscape, zoom, changed-font, deployment, and tax-filing proof.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      This record supersedes the owner-walkthrough-open closeout at
+      application head 3037457 and moves the application head to 1e390a7
+      (three commits above it on feat/guided-inputs-batch3). Both walkthrough
+      items are delivered; the earlier Batch 3 completions recorded at
+      3037457 stand unchanged.
+    - >-
+      Assets page (b344936): the page resource was keyed on the plan id alone
+      and the four actions lived below it, so nothing could ask it to read
+      again after "รวมในฤดูนี้". The page now keys its resource on a refresh
+      counter that each action bumps once it has succeeded; a failed action
+      leaves the page alone so its error stays beside its form; Transition
+      keeps the current content on screen while the page reads itself again.
+      No server function, store, or schema change.
+    - >-
+      Fixed-costs page (e3e2e7b): one list in two labelled groups. "กรอกเอง"
+      holds the rows the owner types here and the unknown / confirmed-none
+      question when there are none; "ของที่ใช้หลายปี · ค่าเสื่อม" lists each
+      asset included in the season as a read-only row with its yearly
+      depreciation, the secondary term ต้นทุนไม่ใช่เงินสด, and a link to the
+      assets page, or says none is included with the same link. One total
+      closes the list, computed by the same analysis the dashboard uses: a
+      figure once the manual group is entered or confirmed, "ยังไม่รู้" while
+      that group is unanswered even when depreciation is already listed, with
+      a note naming the listed depreciation. The counted-depreciation note
+      from 3037457 is removed. No schema, calculation, hub, or snapshot change.
+    - >-
+      Proof for the assets page: the real-Chrome journey no longer reloads
+      after the create, include, and starting-capital actions. It waits for
+      the new asset, the "รวมในฤดูนี้" status, the 20,000.00 บาท/ปี
+      depreciation figure, and the saved capital to appear, and a marker on
+      window proves no navigation happened in between. Run against the
+      previous assets page (mutant), the proof fails at the first of those
+      waits; run against the fix, it passes.
+    - >-
+      Proof for the fixed-costs page: three server-rendered tests replace the
+      counted-note test. They assert both groups with their rows and links
+      and no input inside the asset group; the total equal to
+      calc::analyze_with_assets(..).cost.fixed_cost with assets (56,000.00),
+      without (36,000.00), and asset-only once confirmed (20,000.00); and the
+      fixed-cost-state control present only inside the manual group, absent
+      once a row exists, with the live profit 1,580,000.00 once confirmed.
+      The real-Chrome journey reads both groups, flips the manual answer to
+      unknown and back, and watches the total and the live profit follow.
+    - >-
+      The navigation-timeout diagnosis now covers every reload in the journey
+      as well as the matrix navigations, and reports Chrome's request timing
+      so a stall says whether the request reached the wire and on which kind
+      of connection.
+  not_completed:
+    - >-
+      The real-Chrome proof did not pass twice in a row at this application
+      code. With the application unchanged since e3e2e7b it ran seven times:
+      three full passes (30 routes at 320, 360, 393, and 412 pixels, including
+      both new journeys) and four stalls, each a single navigation timeout on
+      a route this batch did not touch (health at 412px, comparison at 360px,
+      the hub reload after a mode switch, assets at 412px, market). The owner
+      chose on 2026-09-14 to accept the proof as recorded here and to keep the
+      stall investigation out of this batch. No stall was ever an assertion
+      of this batch's own journeys.
+    - >-
+      Batch 4 is not implemented or authorized by this closeout.
+    - >-
+      Human comprehension and physical-device behavior remain unproved and are
+      not claimed.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: 19d1614e1fa8de9b3ea851eff10c598911ee1fa4
+    branch: hq/20260913
+    working_tree: clean-before-this-closeout
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: dac2-durian-smart-account
+    base: 28dc6a7b53f245319ae6526f1ea7eafc7d5c5f69
+    head: 1e390a7
+    branch: feat/guided-inputs-batch3
+    pushed: false
+    pull_request:
+      number: 15
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/15
+      state: draft-until-this-closeout-is-pushed
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-local-postgresql-and-http
+    eye_truth: closed-local-playwright-chrome-with-stalls-recorded
+    device_truth: pending-not-claimed
+    human_comprehension: pending-batch4
+  checks:
+    - ./scripts/check.sh passed at application head 1e390a7 (calc 73, store lib 1, web lib 42, plan_ssr 30, analysis_ssr 12, assets_ssr 4, clippy -D warnings, cargo leptos build, calc wasm, dependency-boundary and AI/LLM scans).
+    - ./scripts/test-plans.sh passed at that head (plan_form 18, plan_ssr 30, analysis_ssr 12, assets_ssr 4, store plans 21, store assets 4, plan_server 1).
+    - cargo test -p web --features ssr --test auth_http passed at that head, including the no-store assertion.
+    - >-
+      ./scripts/check-responsive.sh passed 30 routes at 320, 360, 393, and
+      412 pixels in real Chrome three times with the application code at
+      e3e2e7b or later, and stalled four times as described under
+      not_completed. The mutant run against the pre-fix assets page failed
+      at the wait for the created asset, as intended.
+    - Disk stayed between 56 and 78 GB free across every run; the application target directory was 21 GB at the end and was left in place so the owner can start the application without a rebuild.
+    - bun run check and bun run wake passed in CIEL HQ before this closeout.
+
+unresolved:
+  - >-
+    Keep-alive navigation stall, now with evidence and no cause. In every
+    diagnosed stall the server answered the same URL with the same cookie in
+    15 to 18 ms over a fresh connection, while Chrome's request had been
+    sent at +0 ms on a reused connection (no connect phase) and received
+    nothing for the full timeout. The stall is therefore on the server side
+    of an existing keep-alive connection (hyper 1.9 via axum 0.8.9 with
+    tower-sessions), not disk, which stayed above 56 GB free, and not
+    Chrome's connection queue. A phone browser reuses connections the same
+    way, so this is a candidate product defect rather than only proof
+    flakiness. Today's rate, four stalls in nine runs, is higher than the
+    one-per-run seen on 2026-09-13. Recommended: a separate owner-authorized
+    slice before Batch 4, since Batch 4 must extend the route matrix and
+    cannot carry a fifty-percent stall rate.
+  - The classify questions, cost wording, and the two-group fixed-costs list are hypotheses until Batch 4's comprehension study.
+  - Guided fields bind values as properties, so server-rendered markup shows empty fields until hydration; the browser proof waits for hydration and the flash is not measured.
+  - Existing plans with selected assets and no fixed rows read as unknown until the owner confirms the manual group; no data was rewritten to guess.
+  - Closed seasons remain immutable and no correction policy exists.
+  - The application remains localhost-only with its existing deployment debts.
+  - Physical-device, non-Chromium, landscape, zoom, and altered-font proof remain open.
+
+next_action:
+  action: >-
+    Owner: walk through the assets page and the fixed-costs page locally at
+    1e390a7 (docker compose up, cargo leptos serve with DATABASE_URL and
+    SESSION_KEY). If satisfied, push hq/20260913 so this closeout is on the
+    remote, then push feat/guided-inputs-batch3, mark application PR 15
+    ready, and merge it into main. Then decide the stall investigation and
+    the four Batch 4 questions already posted (4a/4b split, comprehension
+    study participants and tasks, tax verdict withheld, close never blocked
+    by an incomplete forecast). Run cargo clean in the application checkout
+    after the local walkthrough so the target directory does not grow again.
+  acceptance_check:
+    - Clicking "รวมในฤดูนี้" shows "รวมในฤดูนี้" and the new depreciation figure without a reload, in real Chrome.
+    - The fixed-costs page lists manual rows and included-asset depreciation rows in two labelled groups with one total equal to the dashboard fixed cost.
+    - The unknown / confirmed-none question applies only to the manual group and asset-only fixed cost reads as a known figure once confirmed.
+    - Every Batch 3 proof-contract row has Closed or Pending status with an owner.
