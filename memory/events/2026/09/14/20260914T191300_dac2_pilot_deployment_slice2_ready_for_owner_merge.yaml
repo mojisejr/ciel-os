@@ -1,0 +1,145 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T191300_dac2_pilot_deployment_slice2_ready_for_owner_merge
+type: closeout
+recorded_at: 2026-09-14T19:13:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - Slice 2 - rate limiting on the account doors, the https/secure-cookie start check, startup checks naming the variable, the pilot notice, tests, and the re-measured route matrix.
+  out_of_scope:
+    - GitHub Actions, GHCR, render.yaml, any external account (slices 3 and 4).
+    - CAPTCHA, lockout, abuse handling beyond the budget.
+    - Any change to results, wording, schema, calc, close snapshot, or forecast_mode.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Two budgets per client address guard the account doors, each written
+      as attempts/seconds in the environment. RATE_LIMIT_ACCOUNT, default
+      5/3600, covers registration, verification resend, and the
+      password-reset request, the routes that send a message;
+      RATE_LIMIT_LOGIN, default 10/300, covers login, the verification link
+      and form, and the reset itself. Everything else is unlimited. The
+      limiter is an in-process sliding window keyed by budget and address,
+      swept when it grows past 4096 keys; a refused attempt is not counted.
+    - >-
+      A refused request gets 429 with Retry-After. A browser form, by its
+      Accept header, sees a plain page - "รอสักครู่", the sentence naming the
+      wait, then "(rate limit)" as the secondary term; a hydrated form sees
+      the same sentence in the server-function error encoding and shows it
+      where it shows every other message.
+    - >-
+      Forms now show a server's message as written: the transport prefix
+      "error running server function" led every auth message before this
+      slice and is dropped in one place, app::plain_message. This is a
+      display rule for auth forms, not a result-surface change.
+    - >-
+      The client address is the connection's peer unless
+      CLIENT_ADDRESS_SOURCE=forwarded-for, which reads the first
+      X-Forwarded-For entry; the choice for Render is left to slice 4.
+    - >-
+      Every variable the server needs is read and refused by name before the
+      first connection: DATABASE_URL and SESSION_KEY missing, a flag not
+      true/false, a limit that does not parse, an https APP_BASE_URL with
+      COOKIE_SECURE unset or false. Values are never printed.
+    - >-
+      PILOT_NOTICE=true shows a one-line notice on every page - "นี่คือสำเนาทดลอง
+      ข้อมูลที่กรอกใช้เพื่อการศึกษาและอาจถูกลบ (pilot)". The notice is always in the
+      App markup and hidden by the stylesheet; the shell puts data-pilot on
+      <html>, outside what the body hydrates, so localhost and the study
+      address hydrate the same tree.
+    - >-
+      Tests: seven gate unit tests, four gate_http tests over a router with
+      the middleware and injected peer addresses, one shell_ssr test, two
+      settings tests, one app test. check.sh runs the new suites; the three
+      proof scripts widen the budgets so a rerun inside the window is not
+      refused, with the default limits proved by gate_http.
+  not_completed:
+    - Application pull request 18 awaits owner review and merge; CIEL HQ pull request 72 carries the slice-1 merge record, the slice-2 authorization, and this closeout.
+    - Slices 3 and 4 are not implemented or authorized by this closeout.
+    - Whether Render's forwarding header is trusted, and therefore whether CLIENT_ADDRESS_SOURCE changes, is decided in slice 4.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: ed4a798
+    branch: docs/dac2-pilot-slice2
+    working_tree: clean-before-this-closeout
+    pull_request:
+      number: 72
+      url: https://github.com/mojisejr/ciel-os/pull/72
+      state: draft
+  application:
+    repository: dac2-durian-smart-account
+    base: c75d8bd
+    head: 5e7f3aa
+    branch: feat/pilot-network-gate
+    pull_request:
+      number: 18
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/18
+      state: draft
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-local-http-and-container
+    eye_truth: closed-local-playwright-chrome-against-the-container
+    device_truth: pending-not-claimed
+    human_comprehension: pending-guided-inputs-4b
+  checks:
+    - ./scripts/check.sh passed at application head 5e7f3aa - 197 tests across ten suites, clippy -D warnings, cargo leptos build, calc and hydrate dependency boundaries, AI/LLM surface grep.
+    - >-
+      IMAGE=dac2:slice2 ./scripts/check-container.sh passed with
+      PILOT_NOTICE=true - 38 routes at 320, 360, 393, and 412 pixels, stall
+      probe 15 routes for 40 rounds with zero stalls, uid 10001.
+    - >-
+      On the container with default limits, ten wrong-password login posts
+      answered 302 and the eleventh 429 with Retry-After 299. With Accept
+      text/html the body was the plain page and "รอสักครู่" preceded "rate
+      limit"; with Accept application/json the body was
+      "ServerError|ลองหลายครั้งติดกันแล้ว กรุณารอ 5 นาที แล้วลองใหม่อีกครั้ง".
+    - >-
+      Real Chrome at 360 pixels, eleven submissions of the hydrated login
+      form - the form message read exactly the refusal sentence with no
+      prefix; screenshots of the notice and the refusal were reviewed.
+    - >-
+      Startup refusals on the container - APP_BASE_URL=https://dac2.example
+      without COOKIE_SECURE stopped with "APP_BASE_URL is https:// so
+      COOKIE_SECURE must be true"; RATE_LIMIT_LOGIN=lots stopped naming
+      RATE_LIMIT_LOGIN; a missing DATABASE_URL stopped with "DATABASE_URL
+      must be set".
+    - bun run check and bun run wake passed in CIEL HQ before this closeout.
+
+unresolved:
+  - The limiter is one process's memory; a second instance would count separately. One instance is the plan's shape.
+  - Behind Render every peer is the proxy, so with CLIENT_ADDRESS_SOURCE=peer the whole public would share one budget; slice 4 must set forwarded-for or the gate is too tight. Recorded here so slice 4 cannot miss it.
+  - Participants sharing one venue address during an in-person 4b session share the account budget of five per hour; the runbook in slice 4 says to raise RATE_LIMIT_ACCOUNT for the day.
+  - Thai wording of the notice and the refusal are hypotheses until 4b.
+  - The 32 MiB worker stack and the one-worker mitigation are carried unchanged from slice 1.
+  - Free-tier figures remain external claims until slice 4.
+
+next_action:
+  action: >-
+    Owner reviews application pull request 18 at 5e7f3aa, tries the gate
+    and the notice with the README's docker run line plus PILOT_NOTICE=true,
+    and merges; owner merges CIEL HQ pull request 72. After both
+    repositories return to clean main equal to fetched origin/main, the
+    owner authorizes slice 3, the GitHub Actions build to GHCR, by a
+    decision naming plan revision 0.1 slice 3, and decides there whether
+    the application repository becomes public for unlimited Actions minutes
+    or stays private on the 2,000-minute budget.
+  acceptance_check:
+    - Application pull request 18 merges at 5e7f3aa or a later head whose closeout is recorded.
+    - Both local repositories return to clean main equal to fetched origin/main.
+    - Slice 3 begins only from that merged state and a recorded decision that settles the repository's visibility.
