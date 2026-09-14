@@ -1,0 +1,139 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T153600_dac2_pilot_deployment_slice1_ready_for_owner_merge
+type: closeout
+recorded_at: 2026-09-14T15:36:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - Slice 1 - a container image configured entirely by the environment, proved against the local compose services with the route matrix and the stall probe.
+  out_of_scope:
+    - Rate limiting, the https/secure-cookie start check, and the pilot notice (slice 2).
+    - GitHub Actions, GHCR, render.yaml, any external account (slices 3 and 4).
+    - Any change to results, wording, schema, calc, close snapshot, or forecast_mode.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      A multi-stage Dockerfile builds the application on rust:1.88-bookworm
+      with cargo-leptos 0.3.7 from its published binary and leaves a
+      debian:bookworm-slim image (249 MB, linux/arm64 on the owner's machine)
+      holding the binary, target/site, and a CA bundle, running as uid 10001.
+      .dockerignore keeps target, node_modules, .env, and .git out of the
+      context. Cache mounts hold the registry and target between builds.
+    - >-
+      The binary reads its Leptos configuration from LEPTOS_* variables when
+      crates/web/Cargo.toml is absent and from the file otherwise; PORT, when a
+      host sets it, replaces the port alone; COOKIE_SECURE sets the cookie
+      Secure flag; the mail configuration is validated before the server binds
+      and the relay host, port, and mode are printed without credentials.
+    - >-
+      SMTP_TLS=starttls selects a STARTTLS relay over rustls with SMTP_USERNAME
+      and SMTP_PASSWORD; unset or off keeps the plaintext Mailpit path; any
+      other word, a missing login, or a non-numeric port stops the process
+      naming the variable. The rules are pure functions over a lookup and are
+      unit-tested without touching the process environment; lettre gains the
+      tokio1-rustls-tls feature on the rustls and ring already in the lock.
+    - >-
+      Running the release binary for the first time found it aborting with a
+      worker stack overflow on the dashboard with the default 2 MiB stack and
+      on the analysis page at 8 MiB, natively on macOS as well as in the
+      container; the debug build cargo leptos serve produces does not. The
+      runtime is now built by hand with one worker thread, unchanged, and a
+      32 MiB worker stack; 16 MiB was the smallest size that passed the whole
+      route matrix.
+    - >-
+      scripts/check-container.sh builds or reuses the image, runs it against
+      the compose services with environment variables alone, and points the
+      responsive proof and the stall probe at it. README gains "Run the
+      container locally" and .env.example gains the new names.
+  not_completed:
+    - Application pull request 17 awaits owner review and merge; CIEL HQ pull request 71 carries the plan, both opening records, and this closeout.
+    - Slices 2, 3, and 4 are not implemented or authorized by this closeout.
+    - The image has not run on linux/amd64 or on any host outside the owner's machine.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: bc91270
+    branch: docs/dac2-pilot-deployment-plan
+    working_tree: clean-before-this-closeout
+    pull_request:
+      number: 71
+      url: https://github.com/mojisejr/ciel-os/pull/71
+      state: draft
+  application:
+    repository: dac2-durian-smart-account
+    base: c97d71e0a53948e451fe5d0340b36af487e1d8b2
+    head: c766752
+    branch: feat/pilot-container
+    pull_request:
+      number: 17
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/17
+      state: draft
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-local-postgresql-and-http
+    eye_truth: closed-local-playwright-chrome-against-the-container
+    device_truth: pending-not-claimed
+    human_comprehension: pending-guided-inputs-4b
+  checks:
+    - ./scripts/check.sh passed at application head c766752 - fmt, 73 calc, 7 store, 50 web (including 9 new mail and settings tests), 32 plan_ssr, 15 analysis_ssr, 4 assets_ssr, clippy -D warnings, cargo leptos build, calc and hydrate dependency boundaries, AI/LLM surface grep.
+    - cargo test -p web --test mailpit --features ssr passed against the compose Mailpit through the reshaped Mailer.
+    - >-
+      SKIP_BUILD=1 IMAGE=dac2:slice1 ./scripts/check-container.sh passed - the
+      container answered on 0.0.0.0:3000 as uid 10001, the responsive proof
+      measured 38 routes at 320, 360, 393, and 412 pixels, and the stall probe
+      ran 15 routes for 40 rounds with zero stalls.
+    - >-
+      With PORT=4321 the container bound 4321. With COOKIE_SECURE=false the
+      session cookie observed by real Chrome after login was Secure=false,
+      HttpOnly, SameSite=Lax; with COOKIE_SECURE=true it was Secure=true.
+      COOKIE_SECURE=yes and SMTP_TLS=tls each stopped the process with the
+      variable named.
+    - >-
+      Stack measurement with RUST_MIN_STACK on the native release binary
+      against the full responsive proof - 2 MiB aborted at /plans/:id/dashboard,
+      4 and 8 MiB aborted at /plans/:id/analysis, 16, 32, and 256 MiB passed.
+      After the runtime change the native release binary passed with no
+      environment override.
+    - >-
+      First Docker build on the 3.8 GiB default VM took 50 minutes 38 seconds
+      and produced a runtime layer with empty /etc/passwd and /etc/group; the
+      runtime stage was rebuilt with --no-cache-filter after the VM was raised
+      to 6 GiB and the user resolved. Warm rebuilds after a source change take
+      under a minute on the cache mounts.
+    - bun run check and bun run wake passed in CIEL HQ before this closeout.
+
+unresolved:
+  - The 32 MiB worker stack is a measured setting, not an explanation; why the release build's SSR futures for the dashboard and analysis pages need more than 8 MiB is not established and belongs with the leptos race in the upstream conversation.
+  - The image built here is linux/arm64; linux/amd64 is first built in slice 3 and first run in slice 4.
+  - The empty-passwd runtime layer from the low-memory build is recorded as observed and not explained; the rebuilt layer is correct.
+  - The one-worker stall mitigation is carried unchanged; the upstream race is still unfixed.
+  - Every free-tier figure in the plan remains an external claim until slice 4.
+  - The application remains reachable only on the owner's machine until slice 4.
+
+next_action:
+  action: >-
+    Owner reviews application pull request 17 at c766752, tries the image
+    with the README's docker run line, and merges; owner merges CIEL HQ pull
+    request 71. After both repositories return to clean main equal to
+    fetched origin/main, the owner authorizes slice 2 by a decision naming
+    plan revision 0.1 slice 2, and the network gate starts from the merged
+    application main.
+  acceptance_check:
+    - Application pull request 17 merges at c766752 or a later head whose closeout is recorded.
+    - Both local repositories return to clean main equal to fetched origin/main.
+    - Slice 2 begins only from that merged state and a recorded decision.

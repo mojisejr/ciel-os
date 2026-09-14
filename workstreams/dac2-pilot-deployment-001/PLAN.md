@@ -5,7 +5,7 @@
 **Execution lane:** single
 **Plan revision:** 0.1
 **Execution phase:** 1
-**Execution state:** executing
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -332,9 +332,13 @@ whatever the free tiers turn out to be at signup.
 
 ## Next executable action
 
-Record the owner's slice-1 authorization decision against this plan revision.
-Then pass the application start gate on clean fetched `main` at `c97d71e`,
-create `feat/pilot-container`, and implement slice 1 with a draft application
-pull request from the first commit. Commit HQ records on
-`docs/dac2-pilot-deployment-plan` until this plan's own pull request merges,
-then on the next topic branch.
+Slice 1 is delivered and awaits merge: application pull request 17 at
+`c766752` on `feat/pilot-container`, closeout recorded on 2026-09-14. It found
+that the release binary overflows the default 2 MiB worker stack on the
+dashboard and analysis pages, which the debug build never showed; the runtime
+now reserves 32 MiB for its single worker, measured against the full route
+matrix. After the owner merges the application pull request and this plan's
+CIEL HQ pull request 71, and both repositories return to clean fetched `main`,
+the owner authorizes slice 2 by a decision naming plan revision 0.1 slice 2.
+Slice 2 starts from the merged application `main` on a topic branch
+`feat/pilot-network-gate`.
