@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T211500_dac2_license_agpl_decided
+type: decision
+recorded_at: 2026-09-14T21:15:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - Choose the license of the public application repository and add it inside slice 3.
+  out_of_scope:
+    - Relicensing any other repository.
+    - A contributor license agreement or a trademark policy.
+
+outcome:
+  status: license-decided
+  decision: >-
+    On 2026-09-14 the owner chose the GNU Affero General Public License,
+    version 3 or later, for dac2-durian-smart-account. The owner's aim is
+    that the second Durian Academy cohort and their teacher can use, change,
+    and carry the application on, while anyone who offers a changed copy as
+    a service must offer its source under the same terms. The owner first
+    considered forbidding commercial use, understood that this would not be
+    open source and that PolyForm Noncommercial was the standard way to do
+    it, and chose the AGPL instead so the work stays open source. The
+    LICENSE file is the verbatim gnu.org text; the README carries the notice
+    with the copyright holder written as the owner's GitHub name until the
+    owner names a person or entity. This record's status word is deliberately
+    one the delivery machinery does not act on: it is a decision inside
+    slice 3, not a slice authorization.
+  constraints:
+    - The LICENSE text is not edited; the notice lives in README.
+    - Contributions are accepted under the same license, stated in README.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: fb97be9
+    branch: docs/dac2-pilot-slice3
+    working_tree: one-committed-record-before-this-one
+  application:
+    repository: dac2-durian-smart-account
+    base: d16c216
+    head: 1056f5e
+    branch: feat/pilot-image-from-git
+    pull_request:
+      number: 19
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/19
+      state: draft
+  checks:
+    - LICENSE fetched from https://www.gnu.org/licenses/agpl-3.0.txt, 661 lines, first line "GNU AFFERO GENERAL PUBLIC LICENSE".
+
+unresolved:
+  - The copyright holder is written as "mojisejr"; the owner may name a person or entity, and the notice changes in the same pull request if so.
+  - Commits before this one carry no license header; the LICENSE file and README notice cover the repository as a whole, which is the usual practice.
+
+next_action:
+  action: >-
+    Continue slice 3 - wait for the pull-request check to pass on PR 19,
+    then merge, confirm the published image, add the required status check,
+    and record the slice-3 closeout.
+  acceptance_check:
+    - PR 19 contains LICENSE and the README notice at its merged head.

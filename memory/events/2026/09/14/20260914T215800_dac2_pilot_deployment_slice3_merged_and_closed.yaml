@@ -1,0 +1,138 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T215800_dac2_pilot_deployment_slice3_merged_and_closed
+type: closeout
+recorded_at: 2026-09-14T21:58:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - Slice 3 - the image built from Git by GitHub Actions and published to GHCR, the license, the required status check, and the proof that the published image runs.
+  out_of_scope:
+    - render.yaml, any deploy hook, any external account (slice 4).
+    - Any change to results, wording, schema, calc, close snapshot, or forecast_mode.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      .github/workflows/ci.yml runs scripts/check.sh on every pull request
+      and, on a push to main or a manual dispatch, builds the linux/amd64
+      image from the slice-1 Dockerfile and publishes it to
+      ghcr.io/mojisejr/dac2-durian-smart-account tagged by full commit SHA
+      and as main. permissions is empty at the top; check holds contents
+      read, image adds packages write; the registry login is the workflow's
+      own token, so no secret was created. Every action is pinned to a full
+      commit SHA with its release in a comment. Nothing deploys.
+    - >-
+      The owner chose the GNU Affero General Public License, version 3 or
+      later, recorded beside this closeout; LICENSE is the verbatim gnu.org
+      text and README carries the notice with the copyright holder written
+      as mojisejr. README also gains "The image from Git" with the image
+      name, the tag policy, and the statement that deployment is a separate
+      owner action.
+    - >-
+      The owner merged application PR 19 into main on 2026-09-14T14:29:23Z
+      as fddab20; the checkout is back on clean main and the topic branch is
+      deleted. The push run published the image; the main manifest digest is
+      sha256:9346f770fb516aa4871ac8d528667eb2a894e187df3c74dd16472edca944d8fc
+      with tags main and fddab20e9a28af628db9ba4cdbd844bf44da32e1, 47.9 MB
+      compressed, labelled with the source repository and revision.
+    - >-
+      Branch protection on main now requires the check job to pass and the
+      branch to be up to date before merge; enforce_admins, the pull-request
+      requirement, and the force-push and deletion blocks are unchanged.
+      Applied through gh with the owner's authorization by writing the full
+      protection payload with every existing value preserved.
+  not_completed:
+    - CIEL HQ pull request 73 carries the slice-2 merge record, the slice-3 authorization, the license decision, and this closeout, and awaits the owner.
+    - Slice 4 is not implemented or authorized by this closeout.
+    - The published image has run on the owner's machine under amd64 emulation only, not yet on an amd64 host.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: 7328e5e
+    branch: docs/dac2-pilot-slice3
+    working_tree: clean-before-this-closeout
+    pull_request:
+      number: 73
+      url: https://github.com/mojisejr/ciel-os/pull/73
+      state: draft
+  application:
+    repository: dac2-durian-smart-account
+    base: d16c216
+    head: fddab20
+    branch: main
+    pull_request:
+      number: 19
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/19
+      state: merged
+      merged_at: 2026-09-14T14:29:23Z
+    image:
+      name: ghcr.io/mojisejr/dac2-durian-smart-account
+      tags: [main, fddab20e9a28af628db9ba4cdbd844bf44da32e1]
+      digest: sha256:9346f770fb516aa4871ac8d528667eb2a894e187df3c74dd16472edca944d8fc
+      platform: linux/amd64
+  proof_lanes:
+    hard_gate: closed-on-the-runner-and-locally
+    api_truth: closed-published-image-against-local-postgresql
+    eye_truth: closed-local-playwright-chrome-against-the-published-image
+    device_truth: pending-not-claimed
+    human_comprehension: pending-guided-inputs-4b
+  checks:
+    - >-
+      Pull-request run 34853665855 on 1056f5e - check succeeded in 11 min 23 s
+      cold (toolchain 17 s, cargo-leptos 1 s, scripts/check.sh 10 min 30 s,
+      cache save 27 s); image skipped as designed. An earlier run on bada63e
+      was cancelled by the second push, as the concurrency rule intends.
+    - >-
+      Push run 34855936908 on fddab20 - check succeeded in 10 min 59 s, image
+      succeeded in 8 min 56 s (build and push 8 min 35 s); the whole run took
+      20 minutes of runner time, free on a public repository.
+    - >-
+      An anonymous registry token fetched the main manifest with HTTP 200 and
+      listed both tags, proving the image is public without a login; docker
+      pull on the owner's machine brought down the amd64 image with the
+      revision and source labels set.
+    - >-
+      SKIP_BUILD=1 IMAGE=ghcr.io/…:fddab20e… ./scripts/check-container.sh
+      passed under amd64 emulation - 38 routes at 320, 360, 393, and 412
+      pixels, stall probe 15 routes for 40 rounds with zero stalls, uid 10001.
+    - >-
+      gh api on the branch protection after the change reports contexts
+      ["check"], strict true, enforce_admins true, pull request required,
+      force pushes and deletions blocked.
+    - bun run check and bun run wake passed in CIEL HQ before this closeout.
+
+unresolved:
+  - Docker RUN cache mounts are not carried by the Actions layer cache, so every main build is cold; at 9 minutes per image and free minutes on a public repository this is acceptable for the pilot and is not pursued.
+  - The image has not run on an amd64 host; slice 4 is the first.
+  - The copyright holder reads mojisejr until the owner names a person or entity.
+  - Behind Render CLIENT_ADDRESS_SOURCE must become forwarded-for and an in-person study day needs a wider RATE_LIMIT_ACCOUNT; both bind slice 4.
+  - The 32 MiB worker stack and the one-worker mitigation are carried unchanged.
+  - Free-tier figures remain external claims until slice 4.
+
+next_action:
+  action: >-
+    Owner merges CIEL HQ pull request 73. Then the owner authorizes slice 4
+    by a decision naming plan revision 0.1 slice 4, and creates the Neon
+    project, the Brevo sender, and the Render web service, holding every
+    credential in an owner-controlled location; the agent prepares
+    render.yaml and the runbook and operates the Render MCP only on explicit
+    per-action authorization. The first deploy uses image tag
+    fddab20e9a28af628db9ba4cdbd844bf44da32e1 or a later main tag whose
+    closeout is recorded.
+  acceptance_check:
+    - HQ pull request 73 merges and the checkout returns to clean main.
+    - A slice-4 decision is recorded before any external object is created.

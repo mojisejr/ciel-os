@@ -4,7 +4,7 @@
 **State:** active
 **Execution lane:** single
 **Plan revision:** 0.1
-**Execution phase:** 2
+**Execution phase:** 3
 **Execution state:** idle
 **Parallelism:** none
 
@@ -332,16 +332,15 @@ whatever the free tiers turn out to be at signup.
 
 ## Next executable action
 
-Slices 1 and 2 are delivered. Slice 1 merged at application `c75d8bd`. Slice
-2, the network gate, awaits merge: application pull request 18 at `5e7f3aa`
-on `feat/pilot-network-gate`, closeout recorded on 2026-09-14. Two facts from
-slice 2 bind slice 4: behind Render every peer is the proxy, so
-`CLIENT_ADDRESS_SOURCE=forwarded-for` must be set there or the whole public
-shares one budget; and participants on one venue address share the account
-budget, so the runbook raises `RATE_LIMIT_ACCOUNT` for an in-person study day.
-After the owner merges the application pull request and CIEL HQ pull request
-72, and both repositories return to clean fetched `main`, the owner authorizes
-slice 3 by a decision naming plan revision 0.1 slice 3 and settles whether the
-application repository becomes public (unlimited Actions minutes) or stays
-private (2,000 minutes a month). Slice 3 starts from the merged application
-`main` on a topic branch `feat/pilot-image-from-git`.
+Slices 1, 2, and 3 are merged; application `main` is `fddab20` and the image
+`ghcr.io/mojisejr/dac2-durian-smart-account:fddab20e9a28af628db9ba4cdbd844bf44da32e1`
+(digest `sha256:9346f770…`) is public on GHCR, built for `linux/amd64` by the
+push run in 20 minutes. The repository is licensed AGPL-3.0-or-later and
+`main` requires the `check` job. What remains is slice 4: the owner authorizes
+it by a decision naming plan revision 0.1 slice 4, creates the Neon project,
+the Brevo sender, and the Render web service, and holds every credential; the
+agent prepares `render.yaml` and the runbook and operates the Render MCP only
+on explicit per-action authorization. Two facts from slice 2 bind that work:
+`CLIENT_ADDRESS_SOURCE=forwarded-for` behind Render, and a wider
+`RATE_LIMIT_ACCOUNT` on an in-person study day. Slice 4 starts from the merged
+application `main` on a topic branch `feat/pilot-render`.

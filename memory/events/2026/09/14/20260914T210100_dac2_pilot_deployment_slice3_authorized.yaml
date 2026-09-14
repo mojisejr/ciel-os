@@ -1,0 +1,91 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T210100_dac2_pilot_deployment_slice3_authorized
+type: decision
+recorded_at: 2026-09-14T21:01:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - A GitHub Actions workflow that runs scripts/check.sh on every pull request and, on a push to main, builds the linux/amd64 image and publishes it to ghcr.io/mojisejr/dac2-durian-smart-account tagged by commit and as main.
+    - Repository settings the owner asked the agent to apply through gh - required status checks on main once the workflow exists; nothing that loosens the protection already in place.
+    - README records the image name, the tag policy, and that deployment is a separate owner action.
+  out_of_scope:
+    - Any deploy hook or automatic deploy; render.yaml; any external account (slice 4).
+    - Any change to results, wording, schema, calc, close snapshot, or forecast_mode.
+    - Choosing the open-source license, which is the owner's and is recorded when chosen.
+
+outcome:
+  status: decided
+  decision: >-
+    On 2026-09-14, after slice 2 merged at application d16c216, the owner
+    authorized slice 3, the image built from Git, against plan revision 0.1.
+    The owner decided the application repository is public: DAC2 is open
+    source for the second Durian Academy cohort to use and for their teacher
+    to carry on, and a public repository has unlimited Actions minutes where
+    a private one would draw on the account-wide 2,000-minute budget shared
+    with every other private repository. The owner asked the agent to apply
+    the repository settings the slice needs through gh, with care for
+    security and nothing broken. Observed before this decision: the
+    repository has been public since its creation on 2026-09-07 with branch
+    protection on main already requiring a pull request, enforced for
+    administrators, with force pushes and deletions blocked; secret scanning
+    and push protection are on; default workflow permissions are read-only;
+    first-time contributors' workflow runs need approval; no LICENSE file
+    exists. A read-only scan of all 63 commits found no credential, no
+    tracked .env, no private key, and no binary over 300 KB; the only
+    personal datum is the owner's commit author address.
+  constraints:
+    - Actions are pinned to a full commit SHA, never a floating tag; workflow permissions are the least each job needs and packages write is granted only to the publishing job.
+    - The workflow publishes an image; it never deploys. No Render hook, key, or webhook enters the repository.
+    - Branch protection is only tightened - required status checks added - never loosened; enforce_admins stays on.
+    - No secret enters a repository file, workflow, event, or response; publishing to GHCR uses the workflow's own GITHUB_TOKEN.
+    - The image built in Actions comes from the same Dockerfile slice 1 proved, for linux/amd64.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: fb97be9
+    branch: docs/dac2-pilot-slice3
+    working_tree: clean-main-before-this-branch
+    pull_request: draft-after-this-commit
+  application:
+    repository: dac2-durian-smart-account
+    base: d16c216
+    branch: main
+    working_tree: clean
+  repository_settings_observed:
+    - visibility public since creation; no PublicEvent in recent history
+    - branch protection main - required_pull_request_reviews present with 0 approvals required, enforce_admins true, allow_force_pushes false, allow_deletions false
+    - actions permissions enabled, allowed_actions all, default_workflow_permissions read, fork PR approval first_time_contributors
+    - secret_scanning enabled, push_protection enabled, license null
+
+unresolved:
+  - The open-source license is not chosen. Until a LICENSE file exists the code is public but all rights are reserved, which does not let the cohort or the teacher reuse it; the owner chooses and records it, MIT or Apache-2.0 being the usual choices for this purpose.
+  - The owner's commit author address is in every commit of a public repository; that is the owner's to accept or change for future commits.
+  - Cold Actions build time for a Rust and wasm image on a two-vCPU runner is unknown; the closeout records it.
+  - Docker RUN cache mounts are not carried by the Actions layer cache, so a main build may be cold every time; the closeout records whether that is acceptable for the pilot's cadence.
+
+next_action:
+  action: >-
+    Pass the application start gate on clean fetched main at d16c216, create
+    feat/pilot-image-from-git, add the workflow with SHA-pinned actions,
+    open a draft application pull request so the pull-request job runs
+    against it, record the run's minutes, and after merge confirm the image
+    on GHCR by pulling it on the owner's machine. Then add the workflow's
+    check as a required status check on main and record the slice-3
+    closeout on this HQ branch.
+  acceptance_check:
+    - The pull-request job passes on the application pull request and its minutes are recorded.
+    - After merge the image ghcr.io/mojisejr/dac2-durian-smart-account:main exists, its digest is recorded, and pulling and running it on the owner's machine passes the slice-1 acceptance.
+    - main requires the workflow's check; enforce_admins remains true.
