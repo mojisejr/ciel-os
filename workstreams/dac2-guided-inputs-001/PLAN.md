@@ -800,9 +800,9 @@ above was fixed against these decisions before application code changed.
 
 ## Next executable action
 
-Batch 4a is delivered at application head `952e78d` on
-`feat/guided-inputs-batch4` (draft PR 16); the closeout recorded on 2026-09-14
-cites it with every gate closed: step 0 found the cause of the keep-alive
+Batch 4a is delivered at application head `aaa9a42` on
+`feat/guided-inputs-batch4` (draft PR 16); the closeouts recorded on 2026-09-14
+cite it with every gate closed: step 0 found the cause of the keep-alive
 stall (a cross-thread race in leptos 0.8.20's SSR Suspense path), mitigated by
 one worker thread and reproduced by `scripts/check-stall.sh`. Owner: walk
 through the result surfaces locally and read the rewritten ⓘ sentences in
