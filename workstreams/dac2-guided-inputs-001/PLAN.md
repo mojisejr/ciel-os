@@ -718,13 +718,12 @@ code changed.
 
 ## Next executable action
 
-Batch 3 is delivered at application head `1e390a7` on
-`feat/guided-inputs-batch3`; the closeout recorded on 2026-09-14 cites it and
-records the real-Chrome proof as three passes and four keep-alive navigation
-stalls on untouched routes, which the owner accepted. Owner: walk through the
-assets and fixed-costs pages locally, push `hq/20260913`, push the application
-branch, mark PR 15 ready, and merge it into `main`. Before Batch 4 starts, the
-owner decides two things: whether to authorize a separate slice for the
+Batch 3 is merged: application PR 15 landed on `main` as `26455db` on
+2026-09-14 after the owner's local walkthrough, and the application checkout
+is back on clean `main`. The closeout at `1e390a7` records the real-Chrome
+proof as three passes and four keep-alive navigation stalls on untouched
+routes, which the owner accepted. Before Batch 4 starts, the owner decides two
+things: whether to authorize a separate slice for the
 keep-alive stall (recommended, because Batch 4 must extend the route matrix),
 and the four Batch 4 questions posted on 2026-09-14 — the 4a deterministic /
 4b comprehension-study split, study participants and gate tasks, whether the

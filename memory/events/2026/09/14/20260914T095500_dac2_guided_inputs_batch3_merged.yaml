@@ -1,0 +1,92 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T095500_dac2_guided_inputs_batch3_merged
+type: closeout
+recorded_at: 2026-09-14T09:55:00:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Deliver Batch 3: costs captured in familiar language before
+    classification, explicit section knowledge states, total-amount lines,
+    disclosed quantity defaults, plain-first asset wording, and no AI or LLM
+    product behavior.
+  scope:
+    - Record the owner's merge of application PR 15 and return the application checkout to clean main.
+  out_of_scope:
+    - Batch 4 and the keep-alive stall investigation, both awaiting owner decisions.
+
+outcome:
+  status: merged
+  completed:
+    - >-
+      The owner walked through the assets and fixed-costs pages locally at
+      1e390a7, found them acceptable, and merged application PR 15 into
+      main on 2026-09-14T02:46:11Z as 26455db. The Batch 3 closeout at
+      1e390a7 stands unchanged; this record only carries the merge.
+    - >-
+      The application checkout is back on clean main at 26455db, equal to
+      fetched origin/main; the local feat/guided-inputs-batch3 branch is
+      deleted. cargo clean removed the 44 GiB target directory after the
+      development server was confirmed stopped; the disk has 77 GB free.
+    - >-
+      This completes the third of four declared batches. Batch 4 is not
+      authorized by this record.
+  not_completed:
+    - Batch 4 (results, close, history, comprehension proof) awaits the owner's answers to the four questions posted on 2026-09-14.
+    - The keep-alive navigation stall recorded at 1e390a7 remains unresolved and uninvestigated; a separate slice before Batch 4 is recommended.
+    - Human comprehension and physical-device behavior remain unproved and are not claimed.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: 68a81ac
+    branch: hq/20260913
+    working_tree: clean-before-this-closeout
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: dac2-durian-smart-account
+    base: 28dc6a7b53f245319ae6526f1ea7eafc7d5c5f69
+    head: 26455db
+    branch: main
+    pull_request:
+      number: 15
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/15
+      state: merged
+      merged_at: 2026-09-14T02:46:11Z
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-local-postgresql-and-http
+    eye_truth: closed-local-playwright-chrome-with-stalls-recorded
+    device_truth: pending-not-claimed
+    human_comprehension: pending-batch4
+  checks:
+    - gh pr view 15 reports MERGED with merge commit 26455db; git pull --ff-only brought local main to that commit with a clean working tree.
+    - No proof was rerun for this record; the proof evidence is the closeout at application head 1e390a7.
+    - bun run check and bun run wake passed in CIEL HQ before this closeout.
+
+unresolved:
+  - Keep-alive navigation stall with wire-level evidence and no cause, as recorded at 1e390a7.
+  - The classify questions, cost wording, and the two-group fixed-costs list are hypotheses until Batch 4's comprehension study.
+  - Existing plans with selected assets and no fixed rows read as unknown until the owner confirms the manual group.
+  - Closed seasons remain immutable and no correction policy exists.
+  - The application remains localhost-only with its existing deployment debts.
+  - Physical-device, non-Chromium, landscape, zoom, and altered-font proof remain open.
+
+next_action:
+  action: >-
+    Owner decides, in this order: whether to authorize a separate slice for
+    the keep-alive stall before Batch 4, and the four Batch 4 questions
+    (4a deterministic / 4b comprehension-study split, study participants and
+    gate tasks, tax "cheaper" verdict withheld, close never blocked by an
+    incomplete forecast). Batch 4 starts only after a decision record
+    against plan revision 0.4 or a revised plan, from clean main at 26455db.
+    hq/20260913 stays unpushed until the owner or coordinator carries it.
+  acceptance_check:
+    - Application main at 26455db contains b344936, e3e2e7b, and 1e390a7.
+    - The next DAC2 record is a decision, not application work.
