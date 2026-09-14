@@ -5,7 +5,7 @@
 **Execution lane:** single  
 **Plan revision:** 0.5
 **Execution phase:** 4
-**Execution state:** executing
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -800,10 +800,14 @@ above was fixed against these decisions before application code changed.
 
 ## Next executable action
 
-Batch 4a is authorized. In the application checkout, from clean `main` at
-`26455db`, open `feat/guided-inputs-batch4` and begin step 0: investigate the
-keep-alive navigation stall within a six-hour box, then proceed through the 4a
-deliverable in proof-contract order. Record a closeout citing the head, keep
-the application PR draft until that closeout is committed, and mark it ready
-once the owner or coordinator has pushed `hq/20260913`. 4b starts only after
-4a merges and the owner fixes its protocol.
+Batch 4a is delivered at application head `952e78d` on
+`feat/guided-inputs-batch4` (draft PR 16); the closeout recorded on 2026-09-14
+cites it with every gate closed: step 0 found the cause of the keep-alive
+stall (a cross-thread race in leptos 0.8.20's SSR Suspense path), mitigated by
+one worker thread and reproduced by `scripts/check-stall.sh`. Owner: walk
+through the result surfaces locally and read the rewritten ⓘ sentences in
+`DESIGN.md`, push `hq/20260913` when the standing branch is ready, mark PR 16
+ready, and merge it into `main`. Then decide the 4b protocol (participant
+count, recruiter, location, remote or in person, and the gate tasks drafted
+above) and whether to report the leptos race upstream. 4b starts only after
+4a merges and that protocol is recorded.
