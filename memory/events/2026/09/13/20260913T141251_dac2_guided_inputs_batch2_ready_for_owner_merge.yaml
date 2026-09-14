@@ -1,0 +1,146 @@
+schema_version: ciel.event.v0.1
+id: evt_20260913T141251_dac2_guided_inputs_batch2_ready_for_owner_merge
+type: closeout
+recorded_at: 2026-09-13T14:12:51:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Deliver Batch 2: market, production, and price asked as familiar
+    questions with explicit branches, a truthfully named buyer quantity, and
+    no AI or LLM product behavior.
+  scope:
+    - Rename market_plans.demand_kg to buyer_committed_kg with migration, rollback script, and round-trip proof.
+    - Detailed yield_source and price_source with direct kilogram and average-price fields; the unselected branch is kept.
+    - Grade share entry by percent or kilograms with the conversion shown in place; stored share unchanged.
+    - Market fields that state optionality and calculation effect; four-knowledge-state proof; real-Chrome branch journey.
+  out_of_scope:
+    - Batch 3 cost knowledge states and expense-first capture; Batch 4 result language and human comprehension.
+    - Any change to forecast_mode, Quick mode, or the frozen close snapshot.
+    - Physical-phone, non-Chromium, landscape, zoom, changed-font, deployment, and tax-filing proof.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      market_plans.demand_kg is renamed to buyer_committed_kg by migration
+      202609130001 with values unchanged. A store test steps a legacy row
+      forward through the migration and back through the rollback script and
+      asserts the same values, the derived/by-grade defaults, and that the
+      current store still derives the legacy yield exactly as before.
+    - >-
+      yield_estimates carries yield_source (direct or derived) with
+      sellable_yield_kg and price_source (average or by_grade) with
+      average_price_per_kg. Pure tests prove direct and derived, and average
+      and by-grade, agree on equivalent fixtures, that only the selected
+      branch feeds the result, that a stored unselected figure never leaks,
+      and that a selected branch without its figure never falls back.
+    - >-
+      Blank, valid zero, and entered values round-trip distinctly for the new
+      fields and the renamed quantity through PostgreSQL.
+    - >-
+      The market page asks who will buy and what a buyer said they would
+      take; every one of its seven fields states that it is optional and
+      whether it changes a calculation or is kept as planning context. SSR
+      assertions enforce both statements on every field and the absence of
+      the whole-market wording.
+    - >-
+      The production page offers a two-option branch chooser for yield and
+      for price, asks only the selected branch, quotes the other branch's
+      figure beside the entry, and keeps its facts. Grade shares may be typed
+      as a percentage or in kilograms with the converted figure shown under
+      each entry; kilogram entry is disabled with a written reason while the
+      sellable total is unknown or zero.
+    - >-
+      Formal terms (ผลผลิตขายได้, สัดส่วนเกรด, ราคาขายเฉลี่ยถ่วงน้ำหนัก,
+      ยอดรับซื้อที่คาดไว้) appear only as secondary labels; SSR assertions
+      reject them in any primary question or heading.
+    - >-
+      Four knowledge-state fixtures (total kg plus one price, tree facts with
+      grades unknown, grade sales known in kilograms, buyer quantity unknown)
+      assert the main result availability and the named missing dependency.
+    - >-
+      The server test saves a branch switch through the section endpoint and
+      confirms the kept grade list and derived facts. The real-Chrome journey
+      switches yield and price branches without losing typed facts, saves,
+      refreshes, resumes through the market page and browser back, converts
+      a kilogram grade entry, and passes the 29-route matrix at 320, 360,
+      393, and 412 pixels.
+    - >-
+      A grade list kept while the average price is selected no longer has to
+      total 100% to save, and the completeness check omits the grade total
+      when there is no grade list to total. DESIGN.md records the branch
+      chooser. The market-fulfillment explanation names the buyer quantity.
+    - >-
+      Application dependency and source checks found no AI, LLM, model API,
+      prompt, embedding, vector store, or inference runtime surface.
+  not_completed:
+    - Application pull request 14 awaits owner review and merge; the CIEL HQ record rides on hq/20260913 until the owner decides to merge that branch.
+    - Batches 3 and 4 are not implemented or authorized by this closeout.
+    - Human comprehension and physical-device behavior remain unproved and are not claimed.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: 3ec2fb9615b3e0bfefa384fc95e19b93faf348ba
+    branch: hq/20260913
+    working_tree: clean-before-this-closeout
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: dac2-durian-smart-account
+    base: 43fe8b3dd5d27c691daebd280951b03979a06f91
+    head: 7ea83ef9da43781bc319b06809c79aaa0a856a89
+    branch: feat/guided-inputs-batch2
+    pull_request:
+      number: 14
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/14
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-local-postgresql-and-http
+    eye_truth: closed-local-playwright-chrome
+    device_truth: pending-not-claimed
+    human_comprehension: pending-batch4
+  checks:
+    - ./scripts/check.sh passed at application head 7ea83ef9da43781bc319b06809c79aaa0a856a89.
+    - ./scripts/test-plans.sh passed at that head (store plans 18, store assets 4, plan_ssr 23, plan_server 1, plan_form 16).
+    - cargo test -p web --features ssr --test auth_http passed at that head.
+    - >-
+      ./scripts/check-responsive.sh passed 29 routes at 320, 360, 393, and
+      412 pixels in real Chrome at that head, including the Batch 2 branch
+      journey. One earlier run of the same script timed out on the first
+      matrix route while the machine was under cargo lock contention and
+      passed unchanged on rerun; it is recorded here rather than hidden.
+    - >-
+      bun run wake passed in CIEL HQ before this closeout. bun run check did
+      not: test/projects/validate.test.ts fails because commit ff4f8ad from
+      another lane registered projects/bazi-sft-dataset without updating the
+      expected registry list. That failure is outside this workstream's paths
+      and is reported to the HQ coordinator rather than edited here.
+
+unresolved:
+  - Which production entry form likely owners know best remains unresearched; both branches ship without a default beyond the prior derived behavior.
+  - Grade entry unit is browser state, not stored; a reopened page shows percentages with the kilogram equivalent beside them.
+  - Explicit unknown and confirmed-none cost-section states remain Batch 3 schema work.
+  - Current tax arithmetic is not established as complete or current for an owner's filing situation.
+  - Closed seasons remain immutable and no correction policy exists.
+  - The application remains localhost-only with its existing deployment debts.
+  - Physical-device, non-Chromium, landscape, zoom, and altered-font proof remain open.
+
+next_action:
+  action: >-
+    The owner reviews application pull request 14 at head
+    7ea83ef9da43781bc319b06809c79aaa0a856a89, marks it ready, and merges it;
+    the HQ coordinator decides when hq/20260913 merges. After both
+    repositories return to clean current main, re-estimate Batch 3 from the
+    merged schema and record a fresh owner decision before adding cost
+    knowledge states.
+  acceptance_check:
+    - Application pull request 14 merges at the recorded head.
+    - The HQ record on hq/20260913 reaches main through the owner's merge decision.
+    - Batch 3 begins only from that merged state and a fresh owner decision.

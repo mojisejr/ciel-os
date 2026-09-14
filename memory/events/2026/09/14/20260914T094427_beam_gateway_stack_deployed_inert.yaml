@@ -1,0 +1,124 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T094427_beam_gateway_stack_deployed_inert
+type: closeout
+recorded_at: 2026-09-14T09:44:27:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-beam-gateway-001
+  lane: single
+  objective: >-
+    Put Beam Checkout behind the existing v2 payment port so the MuMate v2 shop
+    takes real money through Beam (PromptPay and card) with Omise kept installed
+    and selectable as the rollback, proven by a live charge and a live refund.
+
+outcome:
+  status: deployed-inert
+  completed:
+    - >-
+      Slice 1 acceptance met: migration 0027 applied to production by the owner
+      by hand before any merge (information_schema.columns answered
+      gateway | 'omise'::text); PR 650 merged to main at a1c60a0 with
+      PAYMENT_GATEWAY unset.
+    - >-
+      The whole stack is on mootech-fe main at ccc0074, whose tree equals the
+      head of PR 653 (35746c1) byte for byte: 650 → a1c60a0, 651 (via 654)
+      → 0bea0cf, 652 → 7cf392d, 653 → ccc0074. All four topic branches deleted.
+      Production is still Omise: PAYMENT_GATEWAY is not set on Vercel.
+    - >-
+      Production Lighthouse webhook registered by the owner against
+      https://bazichart.mumate.co/api/v2/payment/webhook-beam after slice 2
+      was live (route no longer answers 503), with charge.succeeded,
+      charge.failed, refund.succeeded, refund.failed, payment_link.paid.
+    - >-
+      Vercel Production scope now holds BEAM_MERCHANT_ID (13 chars),
+      BEAM_API_KEY (44) and BEAM_WEBHOOK_HMAC_KEY (44, from the file's
+      BEAM_WEBHOOK_SECRET), added by the owner running a script that piped
+      values from the ignored file to vercel env add --sensitive; no value
+      passed through a transcript. V2_PREVIEW_KEY and OMISE_RETURN_ORIGIN_V2
+      confirmed present on Production, so the v2 gate and the return origin
+      the Payment Link path needs both exist.
+    - >-
+      PRs 650-653 flipped from draft to ready by the owner; the agent's
+      gh pr edit / gh pr ready and vercel env add calls were denied by the
+      session's permission classifier and routed back to the owner rather
+      than to a peer session.
+  evidence_of_limits:
+    - >-
+      PR 651 was merged into its stacked base feat/beam-gateway-seam
+      (d0a4449), not main, because 650 was merged without deleting the seam
+      branch so GitHub never retargeted 651. Repaired by PR 654
+      (seam → main, tree identical to 651's head) and a manual retarget of
+      652 to main; GitHub's stale diff on 652 (17 files against the old main)
+      was refreshed by re-setting the base, after which it showed the 8
+      slice-3 files that local git diff main...card-links already showed.
+    - >-
+      The owner has not yet re-run a production Omise quote after ccc0074;
+      the "behaviour unchanged" check in the 0.6 decision's acceptance is
+      reasoned from the selector (unset ⇒ omiseGateway) and the full green
+      suite, not yet observed on production.
+    - >-
+      Nothing has been sent to Beam Production. Slices 2-4 acceptance is still
+      open; it closes only on the production run behind the v2 gate.
+
+evidence:
+  plan: workstreams/mootech-fe-beam-gateway-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "1"
+  repository:
+    head: 19d1614e1fa8de9b3ea851eff10c598911ee1fa4
+    branch: hq/20260913
+    working_tree: plan-and-this-event-modified-before-this-closeout
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: mootech-fe
+    main: ccc0074
+    merges:
+      - "650 feat/beam-gateway-seam → main @ a1c60a0 (2026-09-13T22:00:30Z)"
+      - "651 feat/beam-gateway-promptpay → feat/beam-gateway-seam @ d0a4449 (mis-targeted; carried by 654)"
+      - "654 feat/beam-gateway-seam → main @ 0bea0cf (2026-09-14T00:04:55Z)"
+      - "652 feat/beam-gateway-card-links → main @ 7cf392d (2026-09-14T02:30:23Z)"
+      - "653 feat/beam-gateway-ui → main @ ccc0074 (2026-09-14T02:42:28Z)"
+    production:
+      migration_0027: applied (column gateway text DEFAULT 'omise' observed)
+      payment_gateway_env: unset
+      beam_env: BEAM_MERCHANT_ID, BEAM_API_KEY, BEAM_WEBHOOK_HMAC_KEY in Vercel Production scope
+      webhook: registered in production Lighthouse, five events
+  proof_contract: workstreams/mootech-fe-beam-gateway-001/PLAN.md#1-wire-the-seam-without-changing-what-production-does
+
+unresolved:
+  - Whether CARD is enabled on the company account (KYM) — decides whether the Payment Link half of the run can happen.
+  - Production Omise quote and charge not yet re-observed after the stack deployed (expected unchanged).
+  - Open Beam questions (expiresAt vs expiryTime, redirectUrl params, linkSettings restriction) get answered on the production run.
+  - The 04:45 decision record carries evidence.slice none, which Wake rejects; a valid later decision (the slice-2 authorization) supersedes the reading.
+
+lessons:
+  - >-
+    Merging a stacked PR without deleting its branch leaves the next PR
+    pointed at the old base; the next merge then lands on the wrong branch.
+    Delete-branch on every merge, and confirm the retarget before the next.
+  - >-
+    GitHub does not recompute a PR's diff when its base branch moves; the
+    Files-changed count can lag the real merge-base. Re-setting the base
+    forces a refresh; local git diff base...head is the truth meanwhile.
+  - >-
+    Production secret writes and PR state flips are the owner's clicks in
+    this session's permission mode; prepare the exact command or script,
+    never route the write through a peer session.
+
+next_action:
+  action: >-
+    Owner: (1) open /v2/shop behind the gate once and confirm the quote still
+    names Omise (behaviour unchanged after ccc0074); (2) ask the team whether
+    CARD is enabled; (3) set the smallest test price in /ops/packages;
+    (4) record the slice-2 authorization (evidence.slice "2"), then set
+    PAYMENT_GATEWAY=beam on Vercel Production, redeploy, and run the PromptPay
+    purchase behind the gate; watch the webhook delivery in Lighthouse and the
+    row on our side; refund; record the observation as a slice-2 closeout.
+    Rollback at any point: PAYMENT_GATEWAY=omise (or unset) + redeploy.
+  acceptance_check:
+    - A production Omise quote after ccc0074 behaves as before and a new v2_payment row reads gateway = omise.
+    - A production Beam PromptPay charge behind the gate reaches charge.succeeded, the webhook shows 200 in Lighthouse, and the row is APPROVED with a subscription provisioned.
+    - A refund on that charge revokes the row (gateway_reversed) via refund.succeeded.

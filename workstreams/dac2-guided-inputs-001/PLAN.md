@@ -3,8 +3,8 @@
 **Workstream:** `dac2-guided-inputs-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 0.2
-**Execution phase:** 1
+**Plan revision:** 0.5
+**Execution phase:** 4
 **Execution state:** idle
 **Parallelism:** none
 
@@ -32,6 +32,43 @@ An optional or explicitly unknown answer may be deferred; a result whose real
 dependencies are absent remains unavailable with a link to the exact missing
 question. The application never fills a missing fact or forces unrelated
 sections merely to reach the requested result.
+
+Later on 2026-09-13, after application PR 13 and CIEL HQ PR 69 merged and both
+repositories returned to clean fetched `main`, the owner re-examined the merged
+schema and authorized Batch 2. Inspection found no blocker: `demand_kg` feeds
+only the market gap and fulfillment ratio in `calc/revenue.rs`, never the main
+profit result; direct sellable kilograms and one average price already exist as
+Quick facts on `plans`; derived yield lives in `yield_estimates` and grade
+prices in `grade_mix`; `forecast_mode` is frozen into
+`season_actual_outcomes` and is therefore not touched. The owner decided the
+three open data-contract questions recorded under **Batch 2 owner decision**
+below. Batch 2 remains bounded to market, production, and price; it does not
+pull Batch 3 cost knowledge states or Batch 4 result language forward.
+
+Later on 2026-09-13, after application PR 14 merged at
+`28dc6a7` and the owner had walked through Batch 2 in the local application,
+the owner authorized Batch 3. CIEL HQ had not yet carried the Batch 2 closeout
+to `origin/main`: this round records every lane on the standing branch
+`hq/20260913`, whose merge timing the owner controls, so Batch 3 starts from
+that branch rather than from `main` and this deviation is recorded here rather
+than hidden. Inspection of the merged schema found no blocker: an empty cost
+list is indistinguishable from an unknown one, variable rows require quantity
+times unit price, and the harvest, transport, and packing quantity default is
+stated once in prose rather than shown beside the field. The owner decided the
+three data-contract questions recorded under **Batch 3 owner decision** below.
+Batch 3 remains bounded to costs, assets, and investment; it does not pull
+Batch 4 result language or the comprehension study forward.
+
+On 2026-09-14, after application PR 15 merged at `26455db` and the owner
+had walked through Batch 3 locally, the owner authorized Batch 4 against plan
+revision 0.5 and decided the four questions recorded under **Batch 4 owner
+decision** below. Batch 4 is split into **4a**, all deterministic application
+work in one PR, and **4b**, the comprehension study with likely orchard owners
+in its own record. The keep-alive navigation stall found during Batch 3 is
+folded into 4a as its time-boxed first step rather than a separate slice, so
+the wider route matrix 4a needs is not built on a stalling proof. CIEL HQ
+records stay on the standing branch `hq/20260913` whose push timing the owner
+controls.
 
 The product boundary remains explicit:
 
@@ -423,6 +460,24 @@ needed earlier than Batch 2.
 
 ### 2. Batch 2 — sell and harvest in familiar branches
 
+#### Execution proof contract
+
+This contract was fixed before application code changed.
+
+| Definition of done | Executable proof | Lane | Prover |
+|---|---|---|---|
+| `demand_kg` is renamed to an accurately named buyer-committed quantity without changing stored values | migration and rollback fixtures round-trip existing rows; store tests read the renamed column; no code path references the old name | Hard Gate + API Truth | implementation agent |
+| Detailed production offers direct kilograms or derived-from-orchard facts, never both silently | `yield_source` round-trips through PostgreSQL; pure tests prove direct and derived paths agree on equivalent fixtures and that only the selected source feeds sellable kilograms | Hard Gate + API Truth | implementation agent |
+| Detailed price offers one average or by-grade prices, never both silently | `price_source` round-trips; pure tests prove average and weighted-grade paths agree on equivalent fixtures and that the unselected source is preserved, not deleted | Hard Gate + API Truth | implementation agent |
+| Grade share accepts percent or kilograms with the conversion shown in place | stored value remains a share; SSR assertions show the converted figure beside the entry and reject a hidden conversion; kilogram entry with unknown total sellable kilograms stays explicitly unavailable | Hard Gate | implementation agent |
+| Market fields state whether they are optional and whether they change a calculation or are saved as planning context | SSR copy assertions require both statements on every market field | Hard Gate | implementation agent |
+| Four knowledge states produce the truthful result set | fixtures for total-kg-plus-one-price, trees-known-grades-unknown, grade-sales-known, and buyer-unknown assert the main result availability and the named missing dependency for unavailable market comparison | Hard Gate | implementation agent |
+| Blank, explicit unknown, valid zero, and entered value round-trip distinctly | store tests persist and read back each state for the new source and quantity fields | API Truth | implementation agent |
+| Refresh, back, interrupted resume, branch switching, and phone geometry hold | real-Chrome journey at 320, 360, 393, and 412 pixels switches production and price branches without losing the other branch's entered facts | Eye Truth | implementation agent |
+| Formal terms appear as secondary language at the point of relevance | SSR assertions find ผลผลิตขายได้, สัดส่วนเกรด, ราคาขายเฉลี่ยถ่วงน้ำหนัก, and ยอดรับซื้อที่คาดไว้ only as secondary labels, never as the primary question | Hard Gate | implementation agent |
+| DAC2 remains deterministic with no AI/LLM product surface | executable source and dependency scan plus current calculation suites | Hard Gate | implementation agent |
+| Orchard-owner comprehension and physical-device behavior are not overclaimed | closeout leaves Human Comprehension and Device Truth pending unless separately executed | Device Truth | owner for later human/device proof |
+
 #### Deliverable
 
 - Replace the Market page with familiar buyer/channel questions. Every field is
@@ -454,10 +509,30 @@ exist, while optional market comparisons stay unavailable with a useful reason.
 | Knowledge state | Blank, explicit unknown, known zero where valid, and entered value round-trip distinctly. |
 | Browser | Refresh, back, interrupted resume, branch switching, and phone geometry pass in real Chrome. |
 
-Estimate: **28-42 engineering hours**, medium-low confidence because the
-market compatibility and alternate forecast-source schema require design review.
+Estimate: **28-42 engineering hours**. Re-estimated on 2026-09-13 from the
+merged schema at medium confidence: every schema change is additive or a
+rename, so no existing row is rewritten; the effort sits in the three input
+pages and the four-knowledge-state proof matrix.
 
 ### 3. Batch 3 — spend, own, and invest without classifying first
+
+#### Execution proof contract
+
+This contract was fixed before application code changed.
+
+| Definition of done | Executable proof | Lane | Prover |
+|---|---|---|---|
+| Each cost section carries an explicit `unknown`, `confirmed_none`, or `entered_items` state | migration adds the two `plans` columns with defaults and checks; store tests round-trip all three states, derive `entered_items` from rows, revert to `unknown` when the last row is removed, and refuse `confirmed_none` while rows exist | Hard Gate + API Truth | implementation agent |
+| Confirmed none is a known zero; unknown withholds only dependent results | pure tests: confirmed-none variable and fixed sections yield zero cost, cash flow, and a defined total; unknown keeps total cost, cost per kg, and profit unavailable while revenue stays available; assets still add depreciation to a confirmed-none fixed section | Hard Gate | implementation agent |
+| A remembered expense can be captured before classification and never becomes a zero-valued cost row | `unclassified_expenses` table, store round-trip, and pure tests proving captured amounts do not enter any cost total; the hub and result state name the count of unclassified items and link to them | Hard Gate + API Truth | implementation agent |
+| A variable line accepts a total amount or quantity times unit price, never both silently | check constraint and store round-trip for `total_amount`; pure tests prove a total-only line contributes its total, yields no per-unit efficiency figure, and that a line with both entered is rejected as an input issue | Hard Gate + API Truth | implementation agent |
+| The sellable-yield quantity default is disclosed beside each line it applies to | SSR assertions find the applied kilogram figure beside blank harvest, transport, and packing quantities and no such note beside an explicit override | Hard Gate | implementation agent |
+| Classification is asked as familiar questions after capture | SSR assertions on the classify flow: the variable/fixed, cash/non-cash, and multi-year questions appear in plain wording with the formal term secondary, and classifying moves the item into the chosen section with its amount intact | Hard Gate | implementation agent |
+| Section state, unclassified items, and total-amount lines duplicate deliberately and freeze at close | store tests: duplicate copies all three; finalize snapshots the resulting cost figures; a closed plan refuses state, capture, and classification changes; cross-owner access is refused | API Truth | implementation agent |
+| Assets and starting capital are framed as things used for years and money put in | SSR assertions on the assets page require the familiar wording as primary and สินทรัพย์, ค่าเสื่อมราคา, มูลค่าคงเหลือ, อายุการใช้งาน, and เงินลงทุน as secondary labels | Hard Gate | implementation agent |
+| Refresh, back, capture-then-classify, confirm-none, and phone geometry hold | real-Chrome journey captures an expense, leaves, returns, classifies it, confirms a section has none, sees the result change, and passes the route matrix at 320, 360, 393, and 412 pixels | Eye Truth | implementation agent |
+| DAC2 remains deterministic with no AI/LLM product surface | executable source and dependency scan plus current calculation suites | Hard Gate | implementation agent |
+| Orchard-owner comprehension and physical-device behavior are not overclaimed | closeout leaves Human Comprehension and Device Truth pending unless separately executed | Device Truth | owner for later human/device proof |
 
 #### Deliverable
 
@@ -490,54 +565,104 @@ does not change after the asset is edited.
 | Security/history | Cross-owner negative tests and post-close mutation controls pass. |
 | Browser | Row capture, later classification, defaults, assets, and phone geometry pass with JavaScript and server-rendered navigation. |
 
-Estimate: **30-45 engineering hours**, medium-low confidence because cost-row
-capture and persisted section knowledge states touch schema, store, calculation,
-and UI together.
+Estimate: **30-45 engineering hours**. Re-estimated on 2026-09-13 from the
+merged schema at medium confidence: the three schema changes are additive
+(two state columns, one table, one nullable column with a check), the
+calculation change is confined to `cost.rs`, and the effort sits in the
+capture-and-classify flow, the two cost pages, and the assets copy.
 
 ### 4. Batch 4 — results, close, history, and comprehension proof
 
-#### Deliverable
+Batch 4 is delivered as **4a** (deterministic application work, one PR, one
+closeout) and **4b** (the comprehension study, its own record, started only
+after 4a merges and participants exist).
 
-- Apply plain-first/formal-second language to Dashboard, all four Analysis tabs,
-  Demo, close review, comparison, and History.
+#### 4a execution proof contract
+
+This contract was fixed before application code changed.
+
+| Definition of done | Executable proof | Lane | Prover |
+|---|---|---|---|
+| Step 0: the keep-alive navigation stall has a named cause and a fix, or a recorded time-box with a proof-side mitigation and an open product risk | the real-Chrome proof passes three consecutive runs at the 4a head; every stall during 4a is diagnosed with wire timing and listed in the closeout; if the cause is found, a regression reproduces it without the browser | Eye Truth + API Truth | implementation agent |
+| Dashboard, all four Analysis tabs, Demo, close review, comparison, and History lead with familiar wording and keep the formal term secondary | SSR assertions per surface find กำไรสุทธิ, จุดคุ้มทุน, ROI, กระแสเงินสด, ราคาขายเฉลี่ยถ่วงน้ำหนัก, ส่วนเกินต่อหน่วย, ส่วนเผื่อความปลอดภัย, KPI, and ปีฐาน only as secondary labels, never as the leading heading | Hard Gate | implementation agent |
+| Every displayed figure states its unit and can be traced to its inputs; explanation copy makes arithmetic observations only | SSR assertions reject a forbidden-phrase list (ไม่ควร, ต้องเร่ง, สาเหตุ, เพราะ...จึง, แนะนำให้, ควรทำ) on every result surface and require a link to the owning input question beside each explanation | Hard Gate | implementation agent |
+| Readiness is named by decision — first estimate, market comparison, cash view, investment view, health self-review, final close — and hub, dashboard, and analysis agree | pure readiness table with one fixture per decision; SSR assertions render hub, dashboard, and analysis from the same fixture and compare their readiness statements | Hard Gate | implementation agent |
+| An unavailable result names the exact missing question with a link and never shows zero | SSR fixtures for each knowledge state, including an unknown cost section and a confirmed-none section, assert the named dependency and the absence of a zero figure | Hard Gate | implementation agent |
+| Tax remains a dated planning estimate with assumptions and exclusions before its first figure and no comparative verdict | existing SSR copy assertions extended to the reworded tab | Hard Gate | implementation agent |
+| An incomplete forecast never blocks a legitimate close; the review names which comparisons will be unavailable; comparison and history show unavailable rows, not zero, for a season closed with an unknown section | store, SSR, and HTTP tests close a plan whose cost section is unknown, read the frozen snapshot, and assert the review warning and the unavailable comparison rows; a confirmed-none section closes with a known zero | Hard Gate + API Truth | implementation agent |
+| Health and target results read as self-assessment and owner-set targets, never verdicts | SSR assertions reject verdict labels such as ต้องเร่งปรับปรุง and require the self-assessment framing | Hard Gate | implementation agent |
+| Every public, account, season, Detailed, asset, close, comparison, history, error, empty, loading, and unknown-route state holds at phone widths | real-Chrome matrix at 320, 360, 393, and 412 pixels extended to those states, no horizontal overflow, obscured action, or sub-48px target | Eye Truth | implementation agent |
+| DAC2 remains deterministic with no AI/LLM product surface | executable source and dependency scan plus current calculation suites | Hard Gate | implementation agent |
+| Orchard-owner comprehension and physical-device behavior are not overclaimed | 4a closeout leaves Human Comprehension pending for 4b and Device Truth pending | Device Truth | owner for later human/device proof |
+
+#### 4a deliverable
+
+- **Step 0 (time-box 6 hours):** investigate the keep-alive navigation stall
+  from the evidence recorded at application `1e390a7` — a request sent on a
+  reused connection receives nothing while a fresh connection answers in
+  under 20 ms. Find and fix the cause in the hyper/axum/tower-sessions path
+  if it lies within the box; otherwise mitigate on the proof side (a fresh
+  browser context per route and a diagnosed retry) and record the stall as
+  an open product risk, never as fixed.
+- Apply plain-first/formal-second language to Dashboard, all four Analysis
+  tabs, Demo, close review, comparison, and History.
 - Put unit and formula consistency ahead of explanation prose. Replace causal,
   diagnostic, fearful, and prescriptive claims with arithmetic observations and
   a link to the exact owner-entered fact.
 - Reframe readiness by named decision: first financial estimate, market
   comparison, cash view, investment view, health self-review, and final close.
 - Keep tax clearly separated as a dated planning estimate with its reviewed
-  assumptions and exclusions; do not present filing advice.
-- At close, show which forecast comparisons will be unavailable without blocking
-  legitimate actual capture unless the owner separately changes that policy.
-- Run an unassisted comprehension study with likely orchard owners. Measure task
-  completion, correct interpretation, hesitation, recovery, and confidence;
-  preference alone is not acceptance.
+  assumptions and exclusions; the "cheaper" verdict stays withheld.
+- At close, show which forecast comparisons will be unavailable without
+  blocking legitimate actual capture. A season closed with an unknown section
+  shows those comparisons as unavailable, not zero.
 - Complete the real-Chrome route matrix for every public, account, season,
-  Detailed, asset, close, comparison, history, error, empty, and loading state.
+  Detailed, asset, close, comparison, history, error, empty, loading, and
+  unknown-route state.
 
-#### What the owner can try after merge
+#### 4b deliverable
+
+- Run an unassisted comprehension study with likely orchard owners. Measure
+  task completion, correct interpretation, hesitation, recovery, and
+  confidence; preference alone is not acceptance.
+- Draft gate tasks, to be confirmed at the 4a closeout: create a season and
+  reach the first profit figure; capture a remembered cost and classify it;
+  include a multi-year asset in a season; close a season; explain one result
+  back in the participant's own words; find why one result is unavailable.
+- Participant count, recruiter, location, and remote-or-in-person are decided
+  by the owner at the 4a closeout.
+
+#### What the owner can try after 4a merges
 
 Open any result and understand the plain meaning before encountering the formal
 term, trace the number to its inputs, see exactly why a result is unavailable,
 close a season with incomplete optional analysis, and compare actual history
-without interpreting a subjective score as a diagnosis.
+without interpreting a subjective score as a diagnosis. Navigate between
+pages repeatedly without a page ever stalling.
 
 #### Proof and estimate
 
 | Proof | Gate |
 |---|---|
-| Formula/copy contract | Every displayed label, unit, formula, explanation, and source input agrees; behavior-changing copy mutants are caught by SSR snapshots or assertions. |
-| Tax boundary | Reviewed rule source, effective date, assumptions, exclusions, fixtures, and visible disclaimer exist before any comparative verdict. |
-| Full browser matrix | All routes and material states pass at 320, 360, 393, and 412 pixels with no horizontal overflow, obscured action, or sub-48px activation target. |
-| Human comprehension | Likely orchard owners finish agreed core tasks unassisted and correctly explain the result; findings and failed tasks are retained, not averaged away. |
+| Stall | Three consecutive real-Chrome passes at the 4a head; every stall diagnosed and listed. |
+| Formula/copy contract | Every displayed label, unit, formula, explanation, and source input agrees; behavior-changing copy mutants are caught by SSR assertions. |
+| Readiness | Hub, dashboard, and analysis name the same decision readiness from the same fixture. |
+| Close boundary | Unknown sections freeze as unknown and read as unavailable after close; confirmed none freezes as zero. |
+| Tax boundary | Dated estimate, assumptions, exclusions, and no comparative verdict. |
+| Full browser matrix | All routes and material states pass at 320, 360, 393, and 412 pixels. |
+| Human comprehension (4b) | Likely orchard owners finish agreed core tasks unassisted and correctly explain the result; findings and failed tasks are retained, not averaged away. |
 
-Estimate: **22-36 engineering and research hours**, excluding participant
-recruitment and scheduling. Confidence is medium-low until the study protocol
-and participant access are agreed.
+Estimate: **4a 26-38 engineering hours** (step 0 6-8 within it), **4b 8-14
+research hours** excluding participant recruitment and scheduling.
+Re-estimated on 2026-09-14 from merged `main` at `26455db` at medium
+confidence for 4a: the eight result surfaces already have SSR harnesses
+(`plan_ssr`, `analysis_ssr`), the route matrix has thirty routes to extend,
+and no schema change is expected because readiness is derived and the close
+snapshot already freezes section states. Confidence for 4b is low until the
+protocol is agreed.
 
-Total current estimate: **98-151 engineering/research hours plus participant
-recruitment**. Re-estimate at each batch boundary from the merged schema and
-observed comprehension failures.
+Total current estimate: **102-165 engineering/research hours plus participant
+recruitment**.
 
 ## Delivery order and ownership
 
@@ -574,6 +699,84 @@ confirmed these boundaries:
 4. Existing market-demand data is not relabelled in Batch 1. Its compatibility
    decision belongs to Batch 2.
 
+## Batch 2 owner decision
+
+The owner authorized Batch 2 against plan revision 0.3 on 2026-09-13 after the
+merged-schema re-estimate and decided these three data-contract questions:
+
+1. **`demand_kg` is renamed in a migration**, not duplicated and not merely
+   relabelled. The new column name states what the arithmetic actually uses:
+   the quantity a buyer said they would take. Stored values are unchanged. The
+   rationale is that no owner data beyond the development account exists, one
+   column with one meaning is preferable to two overlapping ones, and the
+   migration with its rollback fixture is itself part of what CIEL dogfoods.
+2. **Detailed gains explicit source columns.** A detailed plan records
+   `yield_source` (direct kilograms or derived from trees, fruit, weight, and
+   loss) and `price_source` (one average or by grade), each with its direct
+   field. Quick mode is unchanged and `forecast_mode` with its frozen close
+   snapshot is not touched. The unselected branch's facts are preserved, not
+   deleted, when the owner switches.
+3. **Grade share stays a stored percentage.** The owner may enter either a
+   percentage or kilograms; the application shows the converted figure beside
+   the entry rather than converting silently, and kilogram entry stays
+   unavailable with a named reason while total sellable kilograms are unknown.
+   A separate kilogram-per-grade column is deferred until research shows it is
+   needed.
+
+The proof contract above was fixed against these decisions before application
+code changed.
+
+## Batch 3 owner decision
+
+The owner authorized Batch 3 against plan revision 0.4 on 2026-09-13 after the
+merged-schema re-estimate and decided these three data-contract questions:
+
+1. **Section knowledge state lives in two columns on `plans`**:
+   `variable_cost_state` and `fixed_cost_state`, each
+   `unknown | confirmed_none | entered_items` with default `unknown`, so every
+   existing row keeps its current meaning. The store derives `entered_items`
+   whenever rows exist, reverts to `unknown` — never silently to
+   `confirmed_none` — when the last row is removed, and refuses
+   `confirmed_none` while rows exist.
+2. **A remembered expense may be kept before it is classified.** A new
+   `unclassified_expenses` table holds name, amount, and note per season. Its
+   amounts enter no calculation; while any exist the hub and the result name
+   the count and link to the classify step. Classifying moves the item into
+   the chosen section with its amount intact and deletes the capture.
+3. **A variable line may carry a total amount instead of quantity times unit
+   price.** `variable_cost_lines.total_amount` is nullable; a line with a
+   total and a quantity or unit price is rejected as an input issue rather
+   than resolved silently. A total-only line contributes its total and yields
+   no per-unit efficiency figure. The quantity default for harvest,
+   transport, and packing is shown beside the field as the applied figure,
+   not implied.
+
+The proof contract above was fixed against these decisions before application
+code changed.
+
+## Batch 4 owner decision
+
+The owner authorized Batch 4 against plan revision 0.5 on 2026-09-14 after the
+merged-`main` re-estimate and decided:
+
+1. **Batch 4 is split into 4a and 4b.** 4a carries all deterministic work,
+   including the keep-alive stall as a time-boxed step 0, in one application
+   PR. 4b, the comprehension study, has its own record and starts after 4a
+   merges and participants exist.
+2. **The 4b protocol is decided at the 4a closeout.** The draft gate tasks
+   above stand until then; participant count, recruiter, and location are
+   open.
+3. **The tax "cheaper" verdict stays withheld.** No tax-rule review is in
+   scope; the tab remains a dated planning estimate with visible assumptions
+   and exclusions.
+4. **An incomplete forecast never blocks a legitimate close.** The review
+   names which comparisons will be unavailable; comparison and history show
+   those rows as unavailable, never zero. No schema change is needed: the
+   close snapshot already freezes section states.
+
+No data-contract question requires a migration in 4a. The proof contract
+above was fixed against these decisions before application code changed.
+
 ## Unresolved risks
 
 - No likely orchard owner has yet completed this proposed guided journey
@@ -582,9 +785,12 @@ confirmed these boundaries:
   based estimate, grade kilograms, or grade percentages; Batch 2 must preserve
   alternatives until research supports a default.
 - Existing `demand_kg` rows do not contain provenance proving “total market
-  demand” or “buyer commitment”. A copy-only reinterpretation would create
-  historical semantic drift.
-- Explicit confirmed-none state for cost sections probably requires a migration.
+  demand” or “buyer commitment”. The owner accepted the rename because only
+  development data exists; the decision record, not the data, carries that
+  reasoning.
+- Explicit confirmed-none state for cost sections requires the Batch 3
+  migration decided above; nothing before it can express a known-empty
+  section.
 - Current tax arithmetic has not been established here as complete or current
   for an individual owner's filing situation.
 - Closed seasons remain immutable and no correction policy exists.
@@ -594,8 +800,12 @@ confirmed these boundaries:
 
 ## Next executable action
 
-The owner reviews and merges the Batch 1 application and CIEL HQ pull requests
-at their recorded heads. After both repositories return to clean `main` equal
-to fetched `origin/main`, re-estimate the market and production compatibility
-work from the merged schema and record a fresh owner decision for Batch 2 before
-implementation.
+Batch 4a is merged: application PR 16 landed on `main` as `c97d71e` on
+2026-09-14 after the owner's local walkthrough, and the application checkout
+is back on clean `main`. Batches 1, 2, 3, and 4a are complete. What remains is
+4b, the comprehension study, which starts only after the owner records its
+protocol — participant count, recruiter, location, remote or in person, and
+the gate tasks drafted above — and after the owner decides whether to report
+the leptos SSR Suspense race upstream. The keep-alive stall is mitigated by one
+worker thread in the application and recorded, with its diagnosis, in the
+2026-09-14 lessons record.

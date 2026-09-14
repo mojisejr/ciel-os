@@ -1,0 +1,75 @@
+schema_version: ciel.event.v0.1
+id: evt_20260913T142853_beam_gateway_d1_d3_decided
+type: decision
+recorded_at: 2026-09-13T14:28:53:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-beam-gateway-001
+  lane: single
+  objective: >-
+    Put Beam Checkout behind the existing v2 payment port so the MuMate v2 shop
+    takes real money through Beam (PromptPay and card) with Omise kept installed
+    and selectable as the rollback, proven by a live charge and a live refund.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner settled the three open decisions of plan revision 0.1 on
+    2026-09-13, and the plan moved to revision 0.2 to carry them. D1: cards go
+    through Beam Payment Links (hosted page, top-level redirect) and PromptPay
+    stays in-app through the Charges API, chosen over negotiating a CVV/3DS
+    exemption; no publishable key or browser tokenizer is needed. D2: the Beam
+    merchant account belongs to the company; the owner holds the Developer role
+    on it. D3: purchases are paused with the existing /ops/packages is_active
+    toggle; no env flag is built. No slice is authorized by this record.
+  constraints:
+    - "Card data never reaches mootech-fe; routing PAN or CVV through it needs a new owner decision."
+    - "Payment Link rows hold link:<id> until payment_link.paid resolves the ch_ id; refund and reconcile work by the resolved charge id."
+    - "The reconciler must include link: rows; only pending: remains a placeholder."
+    - Omise stays installed and selectable; PAYMENT_GATEWAY unset or omise restores today's behaviour exactly.
+
+evidence:
+  plan: workstreams/mootech-fe-beam-gateway-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: 9fc3319a14714561c5f99a04275d5a7004ee49d7
+    branch: hq/20260913
+    working_tree: plan-and-this-event-modified-before-this-decision
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: mootech-fe
+    base: e57827afcbe1dba8098fc0da063e5fb2524c4b3e
+    branch: main
+    working_tree: clean
+  owner_statements:
+    - D2 the company owns the Beam account and has added the owner as Developer.
+    - D3 accepted as the existing /ops/packages toggle after the env-flag option was withdrawn as slower on Vercel.
+    - D1 chosen as option ข without contacting Beam about an exemption.
+
+unresolved:
+  - Whether the company account has completed KYM so that CARD is enabled on Payment Links; PromptPay works before KYM, cards may not.
+  - Playground access and API keys for both environments are not yet created; they live in the company's Lighthouse, never in a repository.
+  - Whether linkSettings can restrict a Payment Link to card only when the account default enables more methods.
+  - Which query params, if any, Beam appends to redirectUrl after a paid link.
+  - Which database Vercel Preview points at; Preview holds no payment secrets today.
+  - Beam open questions listed in the plan (rate limits, webhook timeout and IPs, max amount, settlement schedule, dispute flow, expiryTime versus expiresAt).
+
+next_action:
+  action: >-
+    The company's Lighthouse account owner completes the Lighthouse checklist
+    the agent handed the owner (KYM/CARD enabled, store name and logo, Playground
+    sign-up and notification to Beam, Playground and Production API keys into
+    the company vault, webhooks for both environments pointing at
+    /api/v2/payment/webhook-beam with charge.succeeded, charge.failed,
+    refund.succeeded, refund.failed, payment_link.paid, HMAC keys into the
+    vault, Payment Link defaults). In parallel, the owner may authorize slice 1,
+    which changes no production behaviour and does not depend on Beam
+    credentials; that authorization is a separate decision record naming slice 1.
+  acceptance_check:
+    - Playground merchant id, API key, and webhook HMAC key exist in the company vault and in the Vercel Preview scope; none appear in any repository file.
+    - CARD is confirmed enabled on the company account, or slice 3 is re-sequenced behind KYM.
+    - A decision record naming slice 1 exists before any application branch is created.

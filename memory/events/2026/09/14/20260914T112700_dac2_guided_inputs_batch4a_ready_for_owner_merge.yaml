@@ -1,0 +1,176 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T112700_dac2_guided_inputs_batch4a_ready_for_owner_merge
+type: closeout
+recorded_at: 2026-09-14T11:27:00:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Deliver the results-close-history batch: plain-first language on every
+    result surface, readiness named by decision, a close that never blocks on
+    an incomplete forecast, a complete phone-width route matrix, and the
+    keep-alive stall resolved or recorded, without changing DAC2's
+    deterministic no-AI product boundary.
+  scope:
+    - Step 0, time-boxed to six hours: the keep-alive navigation stall recorded at application 1e390a7.
+    - Dashboard, four Analysis tabs, Demo, close review, comparison, and History copy and structure.
+    - Readiness by named decision shared by hub, dashboard, and analysis.
+    - Close review naming unavailable comparisons; comparison and history showing unavailable, not zero, for seasons closed with an unknown section.
+    - Real-Chrome route matrix extended to error, empty, loading, and unknown-route states.
+    - Deterministic, PostgreSQL, server-rendered, HTTP, and real-Chrome proof.
+  out_of_scope:
+    - 4b, the comprehension study with likely orchard owners, which has its own record after 4a merges.
+    - Tax-rule review or any comparative tax verdict.
+    - Any schema change, any change to forecast_mode, Quick mode, depreciation arithmetic, or the close snapshot shape.
+    - Reporting the leptos race upstream, which is the owner's external action.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Step 0 found the cause, not only a mitigation, in about two and a half
+      hours of the six-hour box. A framing proxy between Chrome and the
+      server showed the stalled response had sent its headers and its
+      Suspense fallback and never its resolved chunk; the database was idle
+      and nothing panicked. A browser-free probe (scripts/check-stall.sh)
+      reproduced it by reading whole responses over persistent sockets while
+      other sockets downloaded the wasm bundle: 8 stalls in 900 pages on the
+      default multi-thread tokio runtime, 0 in 1,800 pages with one worker
+      thread. The Suspense machinery in leptos 0.8.20 / reactive_graph
+      0.2.14 races between the thread rendering the page and the thread
+      resolving its resource: the Suspense effect gives up silently when
+      try_read meets lock contention and waits for a change that never
+      comes, and the async-derived waker path checks its flag before
+      registering the waker. The application now runs on one worker thread
+      (c139bd7), with the reason in a comment; the fix belongs upstream. The
+      proof's stall diagnosis now covers every navigation and reload and
+      captures request timing, the application's sockets, and the database
+      sessions at the moment of a stall.
+    - >-
+      Readiness is named by decision (c755e90). PlanForm::decision_readiness
+      yields one statement for each of six decisions — profit, buyer
+      comparison, cash, investment, self-assessment, and close — and the
+      hub, the dashboard, and the analysis page render the same list: ready,
+      or the single missing fact with a link to the page that asks it, or
+      the optional fact that would add the result. Closing is always ready.
+    - >-
+      The dashboard no longer withholds every figure until profit exists.
+      Its hero is the profit figure or the missing question with a button;
+      every tile and row shows its value or the reason it is absent, never
+      a zero; every label leads with the owner's question and keeps the
+      accounting term as a secondary label. The browser-only sample renders
+      the same figures without links. Analysis panels compare KPI rows to
+      the owner's own target, answer the completeness rules as plain
+      questions with the rule's formal name second, say how the owner scored
+      themselves instead of grading the orchard, and read the tax figures
+      and the scenario heading plainly. The health input page asks how ready
+      the orchard looks to its owner on a 1-5 scale instead of labelling 1
+      as urgent repair.
+    - >-
+      Eight ⓘ sentences (0de14cb) were rewritten in DESIGN.md first, since
+      the wording is the owner's, and mirrored in explanations.rs: profit
+      versus cash no longer predicts collapse; break-even kilograms no longer
+      double as price tolerance; weighted price names its two inputs instead
+      of one permitted way to raise it; contribution per kilogram no longer
+      says a season should not be attempted; market fulfillment, fertilizer,
+      and electricity figures no longer infer a fix, a wasted input, or a
+      leak; loss share no longer grades itself; the tax text no longer
+      describes a recommendation it is not. Every explanation names the page
+      holding its inputs and the sheet ends with a link there.
+    - >-
+      The close and review pages (2e08c9d) list the six comparisons with
+      "จะเทียบได้" or "จะเทียบไม่ได้" from the same forecast snapshot the
+      close writes, say that an incomplete forecast does not stop the close,
+      and on a detailed season name the missing question with a link. The
+      comparison page says "เทียบไม่ได้ ตอนปิดยังไม่มีประมาณการตัวนี้" and
+      "ไม่มีตอนปิด" for a frozen forecast without a figure; the history table
+      says the same for a missing previous season; every compared figure
+      leads with the owner's words. The tax "cheaper" verdict stays
+      withheld, as decided.
+    - >-
+      The real-Chrome matrix (952e78d) grew from 30 to 38 routes at 320,
+      360, 393, and 412 pixels: unknown route, missing season, missing
+      section, comparison before close, review without a draft, entry and
+      review after close, the empty season list and history measured before
+      any season exists, and the hub's loading fallback measured during a
+      hydrated navigation whose data request is held back. Its first run
+      found the recovery links on every not-found page at 21 pixels, under
+      the 48-pixel rule; they are buttons now.
+    - >-
+      Application dependency and source checks found no AI, LLM, model API,
+      prompt, embedding, vector store, or inference runtime surface. No
+      schema changed.
+  not_completed:
+    - >-
+      4b, the comprehension study, is not started; its protocol is decided
+      by the owner now that 4a is ready, per the Batch 4 decision.
+    - >-
+      Every result wording in 4a is a hypothesis until 4b. The owner reviews
+      the rewritten ⓘ sentences in DESIGN.md during the pre-merge
+      walkthrough, since that text is theirs.
+    - >-
+      The leptos race is mitigated, not fixed. Reporting it upstream and
+      removing the one-worker line on a fixed release are owner decisions.
+    - >-
+      Physical-device, non-Chromium, landscape, zoom, and altered-font proof
+      remain open and are not claimed.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4a"
+  repository:
+    head: 6551fd0
+    branch: hq/20260913
+    working_tree: clean-before-this-closeout
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: dac2-durian-smart-account
+    base: 26455db
+    head: 952e78d
+    branch: feat/guided-inputs-batch4
+    pushed: true
+    pull_request:
+      number: 16
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/16
+      state: draft-until-this-closeout-is-pushed
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-local-postgresql-and-http
+    eye_truth: closed-local-playwright-chrome-three-consecutive-passes
+    device_truth: pending-not-claimed
+    human_comprehension: pending-batch4b
+  checks:
+    - ./scripts/check.sh passed at application head 952e78d (calc 73, store lib 1, web lib 42, plan_ssr 32, analysis_ssr 15, assets_ssr 4, clippy -D warnings, cargo leptos build, calc wasm, dependency-boundary and AI/LLM scans).
+    - ./scripts/test-plans.sh passed at that head (plan_form 18, plan_ssr 32, analysis_ssr 15, assets_ssr 4, store plans 22, store assets 4, plan_server 1).
+    - cargo test -p web --features ssr --test auth_http passed at that head.
+    - ./scripts/check-stall.sh passed at that head: 15 routes x 40 rounds under wasm-download load, 0 stalls. Across step 0 the same probe found 8 stalls in 900 pages on the multi-thread runtime and 0 in 1,800 with one worker.
+    - ./scripts/check-responsive.sh passed three consecutive runs at that head, each 38 routes at 320, 360, 393, and 412 pixels in real Chrome plus the eight empty-state measurements, with no stall. Before step 0 the same proof had stalled in four of nine runs.
+    - bun run check and bun run wake passed in CIEL HQ before this closeout.
+
+unresolved:
+  - The leptos SSR Suspense race is mitigated by a single worker thread, which also serialises server rendering; a deployment serving more than a few owners at once should revisit this line and the upstream status.
+  - Every result wording is a hypothesis until 4b; the rewritten ⓘ sentences await the owner's reading.
+  - Guided fields bind values as properties, so server-rendered markup shows empty fields until hydration; the proofs wait for hydration and the flash is not measured.
+  - Closed seasons remain immutable and no correction policy exists.
+  - The application remains localhost-only with its existing deployment debts.
+  - Physical-device, non-Chromium, landscape, zoom, and altered-font proof remain open.
+
+next_action:
+  action: >-
+    Owner: walk through the dashboard, analysis, close, comparison, and
+    history pages locally at 952e78d and read the rewritten ⓘ sentences in
+    DESIGN.md; if satisfied, push hq/20260913 when the standing branch is
+    ready, mark application PR 16 ready, and merge it into main. Then decide
+    the 4b protocol — participant count, recruiter, location, remote or in
+    person, and the gate tasks drafted in PLAN.md — and whether to report the
+    leptos race upstream. Run cargo clean in the application checkout after
+    the local walkthrough.
+  acceptance_check:
+    - Every 4a proof-contract row has Closed or Pending status with an owner.
+    - The real-Chrome proof passed three consecutive runs at the 4a head.
+    - No 4b claim and no tax verdict entered the 4a diff.

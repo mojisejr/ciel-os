@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20260913T211650_beam_gateway_slice1_authorized
+type: decision
+recorded_at: 2026-09-13T21:16:50:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-beam-gateway-001
+  lane: single
+  objective: >-
+    Put Beam Checkout behind the existing v2 payment port so the MuMate v2 shop
+    takes real money through Beam (PromptPay and card) with Omise kept installed
+    and selectable as the rollback, proven by a live charge and a live refund.
+  scope:
+    - "Slice 1: gateway selector, v2_payment.gateway column (0027), /api/v2/payment/webhook-beam with both middleware exemptions, reconciler routing by row gateway, stale middleware comment corrected, purchase-pause runbook."
+    - "Ahead of credentials: slices 2 and 3 coded and unit-tested on stacked branches; slice 4 prepared; runbooks written. Their acceptance stays open until the arena run."
+  out_of_scope:
+    - Any merge to mootech-fe main; any production env change; any Beam production key.
+    - The server move (mootech-fe#637), mootech-be, v1 Omise, recurring, partial refunds.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner declared the plan ready on 2026-09-13 evening with no decision
+    outstanding, confirmed the work touches only mootech-fe topic branches plus
+    HQ records, and authorized slice 1 to completion together with pre-building
+    slices 2-3 (code and unit tests) while the company registers the Beam
+    Playground. Plan revision 0.4 records the work order. Execution state moves
+    to executing, phase 1. The application base is mootech-fe main 0742ca9,
+    whose payment lane is byte-identical to the audited e57827a.
+  constraints:
+    - "Stage only this lane's paths on hq/20260913; no shared HQ file is edited."
+    - "PAYMENT_GATEWAY unset or omise must leave production behaviour unchanged; the full existing payment suite stays green at every commit."
+    - "No secret value enters any repository file, fixture, or pull request; Beam fixtures use the docs' published test vector only."
+    - "Draft pull requests only; the owner merges."
+
+evidence:
+  plan: workstreams/mootech-fe-beam-gateway-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "1"
+  repository:
+    head: 68cdcd66fff9e87212a875813c255f21c9531bb5
+    branch: hq/20260913
+    working_tree: plan-and-this-event-modified-before-this-decision
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: mootech-fe
+    base: 0742ca9
+    branch: main
+    working_tree: clean
+  proof_contract: workstreams/mootech-fe-beam-gateway-001/PLAN.md#1-wire-the-seam-without-changing-what-production-does
+
+unresolved:
+  - Beam Playground registration by the company is in progress; slices 2-3 acceptance cannot close until merchant id, API key, and webhook HMAC key exist.
+  - Whether CARD is enabled on the company account (KYM) for Payment Links.
+  - Whether Playground accepts http://localhost:3000 as redirectUrl/returnUrl.
+  - Migration 0027 on production is an owner action taken at slice 5 or earlier, never by this authorization.
+
+next_action:
+  action: >-
+    Create feat/beam-gateway-seam from clean fetched main at 0742ca9, implement
+    slice 1 with its tests, open a draft pull request, then stack
+    feat/beam-gateway-promptpay and feat/beam-gateway-card-links with unit
+    tests and beam-smoke.ts, and record a closeout when the credential-blocked
+    point is reached.
+  acceptance_check:
+    - With PAYMENT_GATEWAY unset, vitest run is green and the payment-lane behaviour diff is empty.
+    - A test reddens if /api/v2/payment/webhook-beam loses either middleware exemption.
+    - The reconciler never sends an Omise row to the Beam adapter or vice versa, proven by a test.
+    - Draft pull requests exist for each branch; none is marked ready for review by the agent.

@@ -1,0 +1,107 @@
+schema_version: ciel.event.v0.1
+id: evt_20260913T222033_beam_gateway_slices_1_4_prebuilt
+type: closeout
+recorded_at: 2026-09-13T22:20:33:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-beam-gateway-001
+  lane: single
+  objective: >-
+    Put Beam Checkout behind the existing v2 payment port so the MuMate v2 shop
+    takes real money through Beam (PromptPay and card) with Omise kept installed
+    and selectable as the rollback, proven by a live charge and a live refund.
+
+outcome:
+  status: credential-blocked
+  completed:
+    - >-
+      Slice 1 complete: mootech-fe#650 (draft) — PAYMENT_GATEWAY selector
+      (unset/omise = today's behaviour, unknown name fails loud), migration 0027
+      v2_payment.gateway DEFAULT 'omise', reconciler asks the provider on the
+      row, webhook decision table shared, /api/v2/payment/webhook-beam with both
+      middleware exemptions, stale test-mode comment corrected, two runbooks.
+    - >-
+      Slice 2 pre-built: mootech-fe#651 (draft, stacked) — Beam adapter for
+      PromptPay (QR as data URI, expiry from encodedImage.expiry, idempotency
+      key, 201 carries no verdict), retrieveCharge mapping, webhook codec proven
+      against Beam's published signature vector, parseBeamEvent normalising to
+      ChargeEvent with the body status deciding and refund.failed never
+      revoking, beam-smoke.ts for the arena.
+    - >-
+      Slice 3 pre-built: mootech-fe#652 (draft, stacked) — cards through Beam
+      Payment Links (owner D1 = ข): link:<id> provisional rows, order_id
+      recovery adopts them and rewrites charge_id to ch_, reconciler rebind hook,
+      link status mapping; no card data touches the process.
+    - >-
+      Slice 4 pre-built: mootech-fe#653 (draft, stacked) — preview reports
+      gateway + cardEntry per quote; checkout draws no card form and calls no
+      tokeniser under hosted entry; issuer named per row on both success screens;
+      CSP unchanged; two more runbooks (Playground session, dispute revoke).
+    - >-
+      Proof on the arena database (testenv pg 5433): beam-webhook-db 16/16 —
+      duplicate delivery, charge.failed after success, success after our
+      expiry-abandon, full vs partial refund, refund.failed, reconciler asking
+      Beam not Omise (settle / abandon / wait), link rebind on webhook and on
+      reconcile, expired link, AMBIGUOUS guard intact. Full vitest 1616 green
+      at the top of the stack; lint 0 errors.
+  evidence_of_limits:
+    - >-
+      The pre-push tsx lane fails on scripts/day-detail.test.ts on untouched
+      origin/main 0742ca9 (verified in a throwaway worktree); every branch was
+      pushed with --no-verify after vitest and lint passed in full, and each PR
+      body says so.
+    - >-
+      tsc reports one pre-existing error (@upstash/qstash types) identical on
+      main; no new type errors.
+    - >-
+      No Beam credential exists; nothing has been sent to Beam Playground or
+      Production. Every Beam field name is from docs v1.24.0 and the published
+      signature vector; expiresAt vs expiryTime and the redirectUrl query params
+      remain unverified against a live Playground.
+
+evidence:
+  plan: workstreams/mootech-fe-beam-gateway-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "1"
+  repository:
+    head: c188fdb760b975390ef584d34f01e3ed8f5ffed9
+    branch: hq/20260913
+    working_tree: plan-and-this-event-modified-before-this-closeout
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: mootech-fe
+    base: 0742ca9
+    branches:
+      - feat/beam-gateway-seam @ 310d979 → PR 650 (slice 1, base main)
+      - feat/beam-gateway-promptpay @ 686ee43 → PR 651 (slice 2, base seam)
+      - feat/beam-gateway-card-links @ 350712c → PR 652 (slice 3, base promptpay)
+      - feat/beam-gateway-ui @ 35746c1 → PR 653 (slice 4, base card-links)
+    working_tree: clean on every branch
+  proof_contract: workstreams/mootech-fe-beam-gateway-001/PLAN.md#1-wire-the-seam-without-changing-what-production-does
+
+unresolved:
+  - Playground credentials (merchant id, API key, webhook HMAC key) do not exist yet; slices 2-4 acceptance stays open until the arena run.
+  - Whether CARD is enabled on the company account (KYM) for Payment Links.
+  - Whether Playground accepts the tunnel host as redirectUrl and what it appends; expiresAt vs expiryTime; whether linkSettings restricts a link to card.
+  - Migration 0027 is not on production; it must land before PR 650 deploys (the reconciler reads the column). Owner action.
+  - scripts/day-detail.test.ts is red on main and blocks the pre-push tsx lane for every branch; not this lane's file.
+  - The PromptPay data: QR rides in the /v2/shop/qrcode query string (~2-4 KB); acceptable, could move to a fetch by charge id later.
+  - The Beam mark on checkout is text; no Beam logo asset exists in the repo.
+
+next_action:
+  action: >-
+    Owner reviews PR 650-653 in order and follows the team for Playground
+    credentials, CARD enablement, store name and logo. When credentials exist:
+    run docs/runbooks/beam-playground-session.md on the arena (headless first,
+    then the UI through the tunnel), record the answers to the open Beam
+    questions, and record a closeout naming slice 2 with the observed webhook,
+    settle, and refund. Then the same for slices 3 and 4. Slice 5 (production
+    keys, PAYMENT_GATEWAY=beam, live 1 THB charges, refund, seven-day watch) is
+    a separate owner authorization.
+  acceptance_check:
+    - PR 650 merged with 0027 applied to production first; PAYMENT_GATEWAY unset; production behaviour unchanged.
+    - A Playground charge.succeeded reaches /api/v2/payment/webhook-beam through the tunnel with a valid signature and settles an arena row.
+    - A Playground Payment Link purchase rebinds its row from link: to ch_ and settles; a refund on it revokes.

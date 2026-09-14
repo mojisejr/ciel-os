@@ -1,0 +1,9 @@
+schema_version: ciel.project.v0.1
+id: bazi-sft-dataset
+# Bazi engine + sinsae annotation tool (Next.js 16). Deployed branch is pdf-dev,
+# not main (owner-confirmed 2026-09-13). mootech-fe calls it via BAZI_BASE_URL and
+# mootech-be shares its Supabase database; the three move together.
+repository:
+  vcs: git
+  canonical_remote: github.com/mojisejr/bazi-sft-dataset
+  default_branch: pdf-dev

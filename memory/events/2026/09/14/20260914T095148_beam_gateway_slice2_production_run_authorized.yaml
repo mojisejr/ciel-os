@@ -1,0 +1,79 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T095148_beam_gateway_slice2_production_run_authorized
+type: decision
+recorded_at: 2026-09-14T09:51:48:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-beam-gateway-001
+  lane: single
+  objective: >-
+    Put Beam Checkout behind the existing v2 payment port so the MuMate v2 shop
+    takes real money through Beam (PromptPay and card) with Omise kept installed
+    and selectable as the rollback, proven by a live charge and a live refund.
+  scope:
+    - "Slice 2 acceptance on Production behind the V2_PREVIEW_KEY gate (plan rev 0.6): PAYMENT_GATEWAY=beam, one PromptPay purchase of the cheapest active package at its real price, the webhook delivery observed in Lighthouse and the row on our side, then one refund."
+    - "If slice 2 closes, the same session may continue into slice 3 (one card purchase through a Payment Link, then its refund) and slice 4 (the screens on real rows), each recorded as its own closeout."
+  out_of_scope:
+    - "Slice 5's seven-day watch and rollback rehearsal; retiring Omise; any change to mootech-be or v1."
+    - "Any code change during the run; a defect found stops the run, PAYMENT_GATEWAY goes back to unset, and the fix is a new slice on a new branch."
+
+outcome:
+  status: decided
+  decision: >-
+    On 2026-09-14 the owner confirmed the three preconditions and authorized
+    the slice-2 production run. (1) The stack is on main at ccc0074 and a
+    production /v2/shop visit through the gate still quotes Omise, so the
+    deploy changed nothing. (2) The team reports KYM complete and CARD enabled
+    on the company account, so the Payment Link half (slice 3) can follow in
+    the same session. (3) The test purchase uses the cheapest active package
+    at its real catalogue price — the owner chose realism over the plan's
+    "smallest price /ops/packages allows"; no price is lowered for the test,
+    and the charge is refunded afterwards. Execution state moves to executing,
+    phase 2.
+  constraints:
+    - "PAYMENT_GATEWAY=beam is set only in the Vercel Production scope and only after this record exists; rollback is PAYMENT_GATEWAY unset (or omise) plus redeploy, at any moment, without a code change."
+    - "Only the team reaches the v2 payment screens (V2_PREVIEW_KEY confirmed present on Production); v1 keeps paying through mootech-be's Omise client and is untouched."
+    - "One purchase per step, refunded before the next step; every observation (Beam charge id, webhook status in Lighthouse, our row status, refund) is recorded in a closeout; no secret, card data or personal data enters a record — Beam request ids may."
+    - "The run stops at the first unexpected 4xx from Beam, a webhook that does not reach 200, or a row that does not settle; nothing is retried by hand against production before the cause is recorded."
+
+evidence:
+  plan: workstreams/mootech-fe-beam-gateway-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "2"
+  repository:
+    head: 0acdc97b90b05644eecbc2b01dc69518c8991476
+    branch: hq/20260913
+    working_tree: plan-and-this-event-modified-before-this-decision
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: mootech-fe
+    main: ccc0074
+    production:
+      migration_0027: applied
+      payment_gateway_env: unset-at-decision-time
+      beam_env: BEAM_MERCHANT_ID, BEAM_API_KEY, BEAM_WEBHOOK_HMAC_KEY present in Vercel Production scope
+      webhook: registered in production Lighthouse on /api/v2/payment/webhook-beam, five events
+      card_enabled: yes (KYM complete, owner report 2026-09-14)
+  proof_contract: workstreams/mootech-fe-beam-gateway-001/PLAN.md#2-beam-adapter-for-promptpay-webhook-and-reconcile--headless
+
+unresolved:
+  - expiresAt vs expiryTime on the PromptPay charge — answered by the first production call.
+  - What Beam appends to redirectUrl and whether linkSettings restricts a link to card — answered on the slice-3 purchase.
+  - Which package is cheapest is a DB fact (payment_package); the owner picks it on the screen.
+
+next_action:
+  action: >-
+    Owner sets PAYMENT_GATEWAY=beam in Vercel Production, redeploys, opens
+    /v2/shop through the gate, buys the cheapest active package by PromptPay
+    and pays the QR; then reads the webhook delivery in Lighthouse and the row
+    via /api/v2/payment/status; then refunds the charge from Lighthouse and
+    confirms the row reads gateway_reversed. The agent records the slice-2
+    closeout with the observations, then the owner decides whether the card
+    purchase (slice 3) follows in the same session.
+  acceptance_check:
+    - The quote names Beam and cardEntry hosted; the PromptPay QR renders from a data URI with an expiry that matches Beam's encodedImage.expiry.
+    - Lighthouse shows charge.succeeded delivered to /api/v2/payment/webhook-beam with 200; the row is APPROVED with gateway = beam and the subscription provisioned.
+    - refund.succeeded is delivered with 200 and the row reads gateway_reversed; the subscription is revoked.

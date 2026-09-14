@@ -1,0 +1,108 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T131500_dac2_guided_inputs_batch4a_walkthrough_repairs
+type: closeout
+recorded_at: 2026-09-14T13:15:00:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Deliver the results-close-history batch: plain-first language on every
+    result surface, readiness named by decision, a close that never blocks on
+    an incomplete forecast, a complete phone-width route matrix, and the
+    keep-alive stall resolved or recorded, without changing DAC2's
+    deterministic no-AI product boundary.
+  scope:
+    - The four layout seams the owner found while walking through 952e78d, fixed at their shared pattern.
+  out_of_scope:
+    - 4b, tax-rule review, schema changes, and reporting the leptos race upstream, as before.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      This record supersedes the 4a closeout at application head 952e78d
+      and moves the head to aaa9a42, one commit above it. Everything that
+      closeout recorded stands; this one carries the owner's walkthrough
+      findings and their repair.
+    - >-
+      The owner walked through 952e78d and sent four screenshots: a
+      readiness sentence folded into a two-line oval pill; the two
+      season-action buttons touching; the advanced-planning card with a
+      doubled top edge and an empty band under its heading; and the analysis
+      health block showing "ยังไม่มีข้อมูล" in bold as if it were a figure.
+      The owner asked for the root cause of each rather than a per-page
+      patch, folded into this PR.
+    - >-
+      Each seam was a shared pattern. The status pill assumed a word; it is
+      now a rounded tag that never shrinks into itself, and the title block
+      is the flexible flex item, so a short tag stays on the line and a
+      sentence drops under the title. The season-action card had no layout
+      rule; it stacks its buttons full-width like every other action group.
+      The advanced-planning details carried the generic details border on
+      top of its card border and a 48px summary with top-aligned text; the
+      border is gone, the summary centres, its note reads as a note. The
+      health block rendered six placeholder rows through score(None); it
+      now renders by data state — one route to the questions when nothing
+      is answered, the rows when scored, a quiet "ยังตอบไม่ครบ 2 ข้อ" for a
+      half-answered dimension. Decision rows became whole-row links with
+      the same compact tag as the section cards, instead of 48px tag-shaped
+      links, so the two lists read as one pattern.
+    - >-
+      Verified by element screenshots at 412 pixels before commit, and by
+      the same gates as the delivery closeout at aaa9a42.
+    - >-
+      Noted for the record: cargo leptos serve does not watch the sources;
+      cargo leptos watch does. Earlier caution about editing sources during
+      a proof run was unnecessary, and a stylesheet edit needs a server
+      restart to be served.
+  not_completed:
+    - 4b and the other items carried by the 4a closeout are unchanged.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4a"
+  repository:
+    head: 6db257a
+    branch: hq/20260913
+    working_tree: clean-before-this-closeout
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: dac2-durian-smart-account
+    base: 26455db
+    head: aaa9a42
+    branch: feat/guided-inputs-batch4
+    pushed: true
+    pull_request:
+      number: 16
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/16
+      state: draft-until-this-closeout-is-pushed
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-local-postgresql-and-http
+    eye_truth: closed-local-playwright-chrome-three-consecutive-passes
+    device_truth: pending-not-claimed
+    human_comprehension: pending-batch4b
+  checks:
+    - ./scripts/check.sh passed at application head aaa9a42.
+    - ./scripts/test-plans.sh and cargo test -p web --features ssr --test auth_http passed at that head (plan_form 18, plan_ssr 32, analysis_ssr 15, assets_ssr 4, store plans 22, store assets 4, plan_server 1, auth_http 1).
+    - ./scripts/check-stall.sh passed at that head, 0 stalls in 600 pages.
+    - ./scripts/check-responsive.sh passed three consecutive runs at that head, 38 routes at 320, 360, 393, and 412 pixels plus the empty-state measurements.
+    - bun run check and bun run wake passed in CIEL HQ before this closeout.
+
+unresolved:
+  - As carried by the 4a closeout at 952e78d: the leptos race is mitigated not fixed; wording is a hypothesis until 4b; hydration flash unmeasured; closed seasons immutable; localhost-only; physical-device proof open.
+
+next_action:
+  action: >-
+    Owner: a last look at aaa9a42 if wanted (the server is running at
+    http://127.0.0.1:3000), then push hq/20260913 when the standing branch
+    is ready, mark application PR 16 ready, and merge it into main. Then
+    decide the 4b protocol and the upstream report. Run cargo clean in the
+    application checkout after the walkthrough.
+  acceptance_check:
+    - PR 16 head is aaa9a42 and every 4a proof-contract row has Closed or Pending status with an owner.
