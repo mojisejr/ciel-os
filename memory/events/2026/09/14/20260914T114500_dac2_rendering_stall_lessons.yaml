@@ -1,0 +1,150 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T114500_dac2_rendering_stall_lessons
+type: closeout
+recorded_at: 2026-09-14T11:45:00:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Keep what the rendering-stall investigation taught, so the next
+    intermittent defect in a Rust / Leptos / tokio application is approached
+    from what worked here rather than from memory. This record is a record,
+    not a delivery: it names no slice and its status is ignored by Wake.
+  scope:
+    - The defect: about one server-rendered page in a hundred sent its Suspense fallback and never its resolved chunk, across Batches 2, 3, and 4a.
+    - How it was narrowed, what each step ruled in or out, and how long each took.
+    - What a first Rust project owner needs to know about the runtime concepts involved.
+  out_of_scope:
+    - The delivery itself, recorded at evt_20260914T112700_dac2_guided_inputs_batch4a_ready_for_owner_merge.
+    - Fixing leptos upstream.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      What it looked like from outside, and why that misled for two batches.
+      A page navigation timed out; a fresh request to the same URL answered
+      in under 20 ms; the disk had been nearly full once. Each closeout
+      recorded the stall honestly but attributed it to the disk, and each
+      rerun passed, so the stall looked like flakiness. It was a real
+      server defect at about 1% per page, which a proof run of 120 pages
+      hits roughly half the time. Lesson: an intermittent failure whose
+      rerun passes is not evidence of flakiness; it is evidence of a rate.
+      Count the rate before naming the cause, and distrust any cause that
+      was not observed at the moment of failure.
+    - >-
+      The diagnosis ladder that worked, in order, with cost. (1) Ask the
+      proof to say which side stalled: fetch the same URL without the
+      browser and list the requests the browser still had open, with
+      Chrome's request timing. Ten minutes; it showed the request was sent
+      on a reused keep-alive connection with no reply, while a fresh
+      connection answered. (2) Capture the server side at the same moment:
+      lsof on the port and pg_stat_activity. Ten minutes; it showed both
+      ends of the socket ESTABLISHED and every database connection idle, so
+      the server held the connection and was not waiting on the database.
+      (3) Notice that "server answered in 18 ms" measured only headers, not
+      the end of the body, so the earlier evidence was consistent with a
+      response that started and never finished. (4) Put a small HTTP
+      framing proxy between Chrome and the server that logs every request
+      and response boundary per connection. Forty minutes to write; on the
+      first stall it showed headers plus 968 bytes containing the Suspense
+      fallback and </html>, then silence. That was the moment the defect
+      became specific: a streaming server render whose resolved chunk never
+      arrives. (5) Reproduce without the browser. The first probe, 600
+      sequential page reads, found nothing; the second added concurrent
+      wasm downloads to keep the server busy the way a browser does, and
+      found 3 stalls in 300 pages in four minutes. A four-minute reproducer
+      is what turns an investigation into an experiment. (6) Read the
+      library code with the symptom in hand: the Suspense effect that gives
+      up silently on try_read contention, and a check-then-register waker.
+      (7) Test the hypothesis with one variable: one worker thread. 0 in
+      600, then 0 in 1,200 more, against 5 in 600 on the control. Total
+      about two and a half hours from step 1 to a committed mitigation.
+    - >-
+      Rust and Leptos concepts that mattered, for an owner on their first
+      Rust project. Tokio runs async tasks on a pool of worker threads by
+      default (#[tokio::main]); two tasks that share state can interleave
+      at every await point and, across threads, between any two
+      instructions. Leptos server rendering streams: it sends the page shell
+      with a placeholder for each Suspense, then a chunk per resolved
+      resource, and the HTTP body ends only when every Suspense has
+      resolved. A resource on the server is a future spawned on the runtime,
+      so the thread rendering the page and the thread resolving the
+      resource are different threads. try_read on a lock returns None when
+      the lock is held rather than waiting; code that treats None as "check
+      again later" must guarantee a later. A lost wakeup is when a waiter
+      checks a flag, the producer flips the flag and wakes nobody, and then
+      the waiter registers; the fix is register first, then check. None of
+      this is visible from the application code, which is why the earlier
+      search of the DAC2 sources for locks and blocking calls found nothing.
+    - >-
+      The mitigation and its honest shape. worker_threads = 1 removes the
+      interleaving, so the race cannot happen, at the cost of rendering one
+      page at a time; for a localhost application with a few owners that is
+      acceptable and reversible. It is written in the code with the reason
+      and the reproducer, so a future upgrade of leptos can test whether the
+      line is still needed by running scripts/check-stall.sh with it removed.
+      A mitigation recorded as a fix would have hidden a deployment risk.
+    - >-
+      What to keep doing. Make the proof carry its own diagnosis so a
+      failure names the layer, not the symptom. Prefer a browser-free
+      reproducer to rerunning a browser proof. Change one variable and keep
+      a control run. Time-box the investigation and decide in advance what
+      happens when the box ends without a cause. Write the closeout so the
+      next session starts from evidence, not from a hunch that happened to
+      be written down.
+  not_completed:
+    - >-
+      This record uses type closeout because the event schema supports only
+      closeout and decision. AGENTS.md reserves a knowledge type for when a
+      recorded proof demonstrates the need; this is the first such proof,
+      and adding the type is a src/ change for the owner or the HQ
+      coordinator to decide, not for this lane.
+    - The upstream leptos issue is not reported; that is the owner's external action.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.5"
+  repository:
+    head: 33ddfdc
+    branch: hq/20260913
+    working_tree: clean-before-this-record
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: dac2-durian-smart-account
+    head: 952e78d
+    branch: feat/guided-inputs-batch4
+    references:
+      - crates/web/src/main.rs — the one-worker line and its comment
+      - scripts/stall-probe.mjs and scripts/check-stall.sh — the browser-free reproducer
+      - scripts/responsive.mjs navigateOrDiagnose — the proof-side diagnosis (request timing, sockets, database sessions)
+      - commit c139bd7 — the mitigation with the measured rates
+  library_references:
+    - reactive_graph 0.2.14 src/computed/async_derived/future_impls.rs poll (check-then-register)
+    - reactive_graph 0.2.14 src/computed/async_derived/arc_async_derived.rs notify_subs
+    - leptos 0.8.20 src/suspense_component.rs to_html_async_with_buf (try_read paths)
+  proof_lanes:
+    hard_gate: not-applicable-record
+    api_truth: not-applicable-record
+    eye_truth: not-applicable-record
+    device_truth: not-applicable-record
+    human_comprehension: not-applicable-record
+  checks:
+    - Rates cited are from the runs recorded in the Batch 4a closeout: 8 stalls in 900 pages on the multi-thread runtime, 0 in 1,800 with one worker, three consecutive real-Chrome passes at 952e78d.
+
+unresolved:
+  - Whether CIEL adds a knowledge event type on the strength of this record is an owner decision.
+  - The race is reasoned from the library source and confirmed by experiment, not by a unit test inside the library; an upstream maintainer may name the mechanism differently.
+
+next_action:
+  action: >-
+    Owner reads this record; if the lesson is worth keeping as a class of
+    memory, decide with the HQ coordinator whether to add the knowledge
+    event type to src/events/types.ts and AGENTS.md. Otherwise this closeout
+    stands as the record. No application work follows from it.
+  acceptance_check:
+    - Wake lists this event as a record, not as the workstream's delivery.
