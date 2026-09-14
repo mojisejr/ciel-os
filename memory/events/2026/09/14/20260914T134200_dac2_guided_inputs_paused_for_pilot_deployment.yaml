@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T134200_dac2_guided_inputs_paused_for_pilot_deployment
+type: decision
+recorded_at: 2026-09-14T13:42:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Deliver the results-close-history batch: plain-first language on every
+    result surface, readiness named by decision, a close that never blocks on
+    an incomplete forecast, a complete phone-width route matrix, and the
+    keep-alive stall resolved or recorded, without changing DAC2's
+    deterministic no-AI product boundary.
+  scope:
+    - Pause this workstream after 4a merged, until dac2-pilot-deployment-001 delivers a public address.
+  out_of_scope:
+    - The 4b protocol decision, which is taken when this workstream resumes.
+    - Any application work.
+
+outcome:
+  status: paused
+  decision: >-
+    On 2026-09-14, with batches 1, 2, 3, and 4a merged and application main
+    at c97d71e, the owner observed that 4b cannot run while the application
+    is reachable only on the owner's machine, opened
+    dac2-pilot-deployment-001 to put DAC2 on a public HTTPS address at zero
+    cost, and paused this workstream until that workstream's slice 4
+    closes. The plan's State is set to paused and its next executable action
+    records how to resume. The status word on this record is deliberately
+    one the delivery machinery does not act on: this is a record about the
+    workstream, not a delivery and not a slice authorization.
+  constraints:
+    - No application work runs from this lane while paused.
+    - A defect found in the deployed application returns here as a decision rather than being fixed in the deployment workstream.
+    - On resume, the 4b decision names evidence.slice "4", the slice this plan declares; the 4a authorization that named "4a" is left as recorded.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.5"
+  slice: none
+  repository:
+    head: 82cba008d9f40c74c781b02f9cf560d0288bae70
+    branch: docs/dac2-pilot-deployment-plan
+    working_tree: clean-main-before-this-branch
+    pull_request: draft-after-this-commit
+  application:
+    repository: dac2-durian-smart-account
+    base: c97d71e0a53948e451fe5d0340b36af487e1d8b2
+    branch: main
+    working_tree: clean
+  related_workstream: workstreams/dac2-pilot-deployment-001/PLAN.md
+
+unresolved:
+  - The leptos SSR Suspense race, mitigated not fixed, as recorded at aaa9a42 and in the lessons record.
+  - Every result wording is a hypothesis until 4b.
+  - Closed seasons remain immutable and no correction policy exists.
+  - The application remains localhost-only until dac2-pilot-deployment-001 slice 4 closes.
+  - Physical-device, non-Chromium, landscape, zoom, and altered-font proof remain open.
+
+next_action:
+  action: >-
+    Nothing runs here until dac2-pilot-deployment-001 closes its slice 4.
+    Then the owner sets State back to active and records the 4b protocol
+    decision against plan revision 0.5 slice 4.
+  acceptance_check:
+    - bun run wake reports this workstream paused with no same-project overlap against dac2-pilot-deployment-001.
+    - The 4b decision, when recorded, is reported as authorizing plan revision 0.5 slice 4.

@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T134900_dac2_pilot_deployment_slice1_authorized
+type: decision
+recorded_at: 2026-09-14T13:49:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - Multi-stage Dockerfile and .dockerignore producing a runtime image with the binary and target/site only.
+    - Leptos configuration read from LEPTOS_* environment variables with the Cargo.toml values as fallback.
+    - COOKIE_SECURE flag, defaulting to false for localhost.
+    - SMTP_TLS selecting STARTTLS with SMTP_USERNAME and SMTP_PASSWORD, defaulting to today's plaintext Mailpit path.
+    - README "Run the container locally" section and .env.example names.
+    - Container proof - responsive matrix and stall probe against the running container.
+  out_of_scope:
+    - Rate limiting, the https/secure-cookie start check, and the pilot notice (slice 2).
+    - GitHub Actions, GHCR, render.yaml, any external account (slices 3 and 4).
+    - Any change to results, wording, schema, calc, close snapshot, or forecast_mode.
+
+outcome:
+  status: decided
+  decision: >-
+    On 2026-09-14, after reading plan revision 0.1 as opened in CIEL HQ pull
+    request 71, the owner authorized slice 1, the container and
+    environment-driven configuration, against that plan revision. The owner
+    chose to record the plan and this authorization before any application
+    work; the HQ plan pull request stays a draft for the owner to merge and
+    carries this decision on the same branch.
+  constraints:
+    - The one-worker Tokio runtime is carried into the container unchanged; the stall probe against the container must record zero stalls.
+    - No secret enters the Dockerfile, the image, a repository file, or an event; .env.example lists names only.
+    - The application pull request stays a draft until its closeout is on the PR head, per the application README procedure.
+    - No result wording, schema, or calc change enters the slice-1 diff.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 4b9b0b1
+    branch: docs/dac2-pilot-deployment-plan
+    working_tree: clean-before-this-decision
+    pull_request:
+      number: 71
+      url: https://github.com/mojisejr/ciel-os/pull/71
+      state: draft
+  application:
+    repository: dac2-durian-smart-account
+    base: c97d71e0a53948e451fe5d0340b36af487e1d8b2
+    branch: main
+    working_tree: clean
+
+unresolved:
+  - The wasm build time inside Docker on the owner's machine is unknown; the slice estimate of 4-6 hours can slip on it.
+  - Whether the runtime image should be distroless or debian-slim is decided by what the binary needs at run time (CA certificates for TLS to Neon and Brevo) and recorded in the closeout.
+  - The free-tier facts in the plan remain external claims until slice 4.
+
+next_action:
+  action: >-
+    Pass the application start gate on clean fetched main at c97d71e, create
+    feat/pilot-container, add the Dockerfile and environment plumbing, open a
+    draft application pull request from the first commit, prove the
+    container locally with the responsive matrix and stall probe, run
+    scripts/check.sh, and record the slice-1 closeout on this HQ branch.
+  acceptance_check:
+    - docker build succeeds from a clean checkout and docker run with environment variables alone serves the application against the local compose services.
+    - scripts/check-responsive.sh and scripts/check-stall.sh pass against the container with zero stalls.
+    - scripts/check.sh passes and the diff contains no wording, schema, or calc change.
