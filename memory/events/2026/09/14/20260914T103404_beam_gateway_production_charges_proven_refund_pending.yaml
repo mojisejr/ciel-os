@@ -1,0 +1,104 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T103404_beam_gateway_production_charges_proven_refund_pending
+type: closeout
+recorded_at: 2026-09-14T10:34:04:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-beam-gateway-001
+  lane: single
+  objective: >-
+    Put Beam Checkout behind the existing v2 payment port so the MuMate v2 shop
+    takes real money through Beam (PromptPay and card) with Omise kept installed
+    and selectable as the rollback, proven by a live charge and a live refund.
+
+outcome:
+  status: charges-proven-refund-pending
+  completed:
+    - >-
+      Slice 2 charge half proven on Production behind the v2 gate: the owner
+      set PAYMENT_GATEWAY=beam, redeployed, and bought the annual package at
+      its real test price (THB 35) by PromptPay. Beam charge
+      ch_3JIiEZinMzCUyvbnHVHGelSMjqJ SUCCEEDED, amount 3500 satang, source API,
+      referenceId 3313627258 = our order id; created 03:01:11Z, paid
+      03:02:12Z, settled 03:02:26Z. Our success screen showed the row APPROVED,
+      the subscription active to 2027-09-01, and "ออกโดย Beam Checkout" from
+      the row's gateway. expiresAt is the accepted field (the 201 came back).
+    - >-
+      Slice 3 charge half proven: the owner bought QI_60 (THB 35) by card. Beam
+      Payment Link f89FfTFdQZ PAID; linkSettings honoured card-only (qrPromptPay,
+      eWallets, mobileBanking, BNPL, installments all disabled); redirectUrl
+      returned exactly /v2/shop/result?state=PAYING&order=1410190689&package_code=QI_60;
+      charge ch_3JIlky1b8pKoIpbaNQQB8jyU0qZ SUCCEEDED, source PAYMENT_LINK,
+      sourceId f89FfTFdQZ, VISA last4 5136, referenceId 1410190689 = our order
+      id. Our success screen showed the QI balance increased, so the link: row
+      was adopted by order_id recovery, rebound to ch_, and settled.
+    - >-
+      Slice 4 proven on real rows: checkout named Beam Checkout as issuer, drew
+      no card form, hopped to pay.beamcheckout.com and back; both success
+      screens rendered on Beam rows.
+    - >-
+      Before the first purchase the agent confirmed production
+      /api/v2/payment/webhook-beam answers 405 to GET and 401 to an unsigned
+      POST (adapter present, HMAC key loaded, fail closed).
+    - >-
+      No 4xx from Beam, no manual retry, no rollback needed. Every Beam fact
+      above was read by the agent with GET /api/v1/charges and
+      GET /api/v1/payment-links/{id} using the production credentials piped
+      from the owner's ignored file; no value entered any transcript.
+  evidence_of_limits:
+    - >-
+      Neither charge is refunded yet. The owner holds only developer access to
+      Lighthouse and chose to refund both at once afterwards; refund.succeeded →
+      gateway_reversed → revoke has therefore not run against real money.
+    - >-
+      Webhook delivery status (200 in Lighthouse) has not been seen by the
+      agent or the owner; the team reported the QR purchase "passed" from
+      Lighthouse. Vercel runtime logs are stream-only from the CLI/API used, so
+      whether the rows settled by webhook or by the status poll is unrecorded.
+      The refund step will show it: refunds settle only through the webhook.
+    - >-
+      The plan's "smallest price /ops/packages allows" was replaced by the
+      owner's choice of real catalogue prices (THB 35 for both purchases).
+
+evidence:
+  plan: workstreams/mootech-fe-beam-gateway-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "2"
+  repository:
+    head: c14579325d5e32a22d19853d014c99782bd27f8c
+    branch: hq/20260913
+    working_tree: this-event-added-before-this-closeout
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: mootech-fe
+    main: ccc0074
+    production:
+      payment_gateway_env: beam (set 2026-09-14 after the slice-2 authorization; still behind V2_PREVIEW_KEY)
+      beam_charges:
+        - "ch_3JIiEZinMzCUyvbnHVHGelSMjqJ · QR_PROMPT_PAY · 3500 satang · SUCCEEDED · referenceId 3313627258"
+        - "ch_3JIlky1b8pKoIpbaNQQB8jyU0qZ · CARD via PAYMENT_LINK f89FfTFdQZ · 3500 satang · SUCCEEDED · referenceId 1410190689"
+      beam_answers:
+        expiresAt_vs_expiryTime: expiresAt accepted on both charge and link
+        linkSettings_card_only: honoured
+        redirectUrl: returned verbatim, no extra query params observed on the link record
+  proof_contract: workstreams/mootech-fe-beam-gateway-001/PLAN.md#2-beam-adapter-for-promptpay-webhook-and-reconcile--headless
+
+unresolved:
+  - Two refunds (Lighthouse by the team, or API by the owner-run script) and the refund.succeeded webhook observed → rows gateway_reversed, subscription and QI revoked.
+  - Webhook delivery statuses in Lighthouse for both charge.succeeded events, to be read when the team or owner opens the webhook log.
+  - Whether PAYMENT_GATEWAY stays beam into the slice-5 seven-day watch or returns to omise first — owner's call, no urgency (v2 gated, v1 untouched).
+
+next_action:
+  action: >-
+    Owner refunds both charges in full (team via Lighthouse, or the owner runs
+    the prepared API script), then reports; the agent reads the charges from
+    Beam (status/refundedAmount), asks the owner to confirm the subscription
+    and QI balance were revoked on the account, and records the slice-2, 3
+    and 4 closeouts. Slice 5 (seven-day watch, rollback rehearsal, opening v2
+    beyond the gate) is a separate owner authorization.
+  acceptance_check:
+    - Both charges read REFUNDED (or refundedAmount = 3500) at Beam.
+    - refund.succeeded delivered with 200; the two rows read gateway_reversed; the annual subscription and the QI_60 balance are revoked.
