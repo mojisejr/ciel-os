@@ -800,14 +800,12 @@ above was fixed against these decisions before application code changed.
 
 ## Next executable action
 
-Batch 4a is delivered at application head `aaa9a42` on
-`feat/guided-inputs-batch4` (draft PR 16); the closeouts recorded on 2026-09-14
-cite it with every gate closed: step 0 found the cause of the keep-alive
-stall (a cross-thread race in leptos 0.8.20's SSR Suspense path), mitigated by
-one worker thread and reproduced by `scripts/check-stall.sh`. Owner: walk
-through the result surfaces locally and read the rewritten ⓘ sentences in
-`DESIGN.md`, push `hq/20260913` when the standing branch is ready, mark PR 16
-ready, and merge it into `main`. Then decide the 4b protocol (participant
-count, recruiter, location, remote or in person, and the gate tasks drafted
-above) and whether to report the leptos race upstream. 4b starts only after
-4a merges and that protocol is recorded.
+Batch 4a is merged: application PR 16 landed on `main` as `c97d71e` on
+2026-09-14 after the owner's local walkthrough, and the application checkout
+is back on clean `main`. Batches 1, 2, 3, and 4a are complete. What remains is
+4b, the comprehension study, which starts only after the owner records its
+protocol — participant count, recruiter, location, remote or in person, and
+the gate tasks drafted above — and after the owner decides whether to report
+the leptos SSR Suspense race upstream. The keep-alive stall is mitigated by one
+worker thread in the application and recorded, with its diagnosis, in the
+2026-09-14 lessons record.
