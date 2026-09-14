@@ -5,7 +5,7 @@
 **Execution lane:** single
 **Plan revision:** 0.6
 **Execution phase:** 2
-**Execution state:** executing
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -364,6 +364,18 @@ production; the production webhook is registered against
 production run, which needs a slice-2 authorization first. Execution phase
 stays 2, state idle. Record:
 `memory/events/2026/09/14/20260914T094427_beam_gateway_stack_deployed_inert.yaml`.
+
+**Paused by the owner (2026-09-14 late morning):** both live charges
+succeeded on Production (PromptPay `ch_3JIiEZinMzCUyvbnHVHGelSMjqJ`, card via
+Payment Link `f89FfTFdQZ` → `ch_3JIlky1b8pKoIpbaNQQB8jyU0qZ`, THB 35 each);
+`expiresAt`, card-only `linkSettings` and the verbatim `redirectUrl` are
+confirmed. **Not yet run against real money — deliberately deferred:** the
+two refunds and therefore the `refund.succeeded` → `gateway_reversed` →
+revoke path; the webhook delivery statuses in Lighthouse have not been read
+by us. `PAYMENT_GATEWAY=beam` stays on Production behind the v2 gate. Record:
+`memory/events/2026/09/14/20260914T103404_beam_gateway_production_charges_proven_refund_pending.yaml`.
+Execution state returns to idle; resuming means the two refunds first, then
+the slice-2/3/4 closeouts, then a slice-5 authorization.
 
 ## Sequence with the server move
 
