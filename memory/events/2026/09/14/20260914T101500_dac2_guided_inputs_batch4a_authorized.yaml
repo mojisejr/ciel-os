@@ -1,0 +1,100 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T101500_dac2_guided_inputs_batch4a_authorized
+type: decision
+recorded_at: 2026-09-14T10:15:00:z
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-guided-inputs-001
+  lane: single
+  objective: >-
+    Deliver the results-close-history batch: plain-first language on every
+    result surface, readiness named by decision, a close that never blocks on
+    an incomplete forecast, a complete phone-width route matrix, and the
+    keep-alive stall resolved or recorded, without changing DAC2's
+    deterministic no-AI product boundary.
+  scope:
+    - Step 0, time-boxed to six hours: the keep-alive navigation stall recorded at application 1e390a7.
+    - Dashboard, four Analysis tabs, Demo, close review, comparison, and History copy and structure.
+    - Readiness by named decision shared by hub, dashboard, and analysis.
+    - Close review naming unavailable comparisons; comparison and history showing unavailable, not zero, for seasons closed with an unknown section.
+    - Real-Chrome route matrix extended to error, empty, loading, and unknown-route states.
+    - Deterministic, PostgreSQL, server-rendered, HTTP, and real-Chrome proof.
+  out_of_scope:
+    - 4b, the comprehension study with likely orchard owners, which has its own record after 4a merges.
+    - Tax-rule review or any comparative tax verdict.
+    - Any schema change, any change to forecast_mode, Quick mode, depreciation arithmetic, or the close snapshot shape.
+    - AI, LLM, generated advice, deployment, and production data.
+
+outcome:
+  status: decided
+  decision: >-
+    After application PR 15 merged at 26455db and the owner walked through
+    Batch 3 locally, the owner authorized Batch 4 against plan revision 0.5
+    and split it into 4a and 4b. The owner chose to fold the keep-alive
+    stall into 4a as a time-boxed first step rather than open a separate
+    slice, accepted the re-estimate of 26-38 hours for 4a and 8-14 hours
+    for 4b excluding recruitment, and asked for 4a to run through to its
+    closeout without further check-ins unless something blocks. CIEL HQ
+    records stay on the standing branch hq/20260913, which the owner is
+    keeping unpushed while another session works on it.
+  constraints:
+    - >-
+      Step 0 ends at six hours whether or not the cause is found. Without a
+      cause, the proof gains a fresh browser context per route and a
+      diagnosed retry, and the stall is recorded as an open product risk,
+      never as fixed.
+    - >-
+      Every result surface leads with familiar wording; formal terms stay
+      as readable secondary labels; explanation copy makes arithmetic
+      observations with a link to the owning input, never a diagnosis or a
+      prescription.
+    - >-
+      Readiness is named by decision and the same rule serves hub,
+      dashboard, and analysis.
+    - >-
+      The tax tab stays a dated planning estimate with assumptions and
+      exclusions before its first figure; the cheaper verdict stays
+      withheld.
+    - >-
+      An incomplete forecast never blocks a legitimate close; unknown
+      sections read as unavailable after close, confirmed none as zero.
+    - >-
+      Human comprehension remains unproved until 4b.
+
+evidence:
+  plan: workstreams/dac2-guided-inputs-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4a"
+  repository:
+    head: 0acdc97
+    branch: hq/20260913
+    working_tree: clean-before-this-decision
+    pull_request: none-until-owner-merge-decision
+  application:
+    repository: dac2-durian-smart-account
+    base: 26455db
+    branch: main
+    working_tree: clean
+  proof_contract: workstreams/dac2-guided-inputs-001/PLAN.md#4-batch-4--results-close-history-and-comprehension-proof
+
+unresolved:
+  - The keep-alive stall has wire-level evidence and no cause; step 0 may end without one.
+  - The 4b protocol, participant count, recruiter, and location are decided at the 4a closeout.
+  - Every result wording in 4a is a hypothesis until 4b.
+  - Physical-phone, non-Chromium, landscape, zoom, and changed-font behavior remain unproved.
+  - Closed-season correction policy and localhost-only deployment debts remain outside 4a.
+
+next_action:
+  action: >-
+    Create the application topic branch feat/guided-inputs-batch4 from clean
+    fetched main at 26455db, run step 0 within its box, then implement the
+    4a proof contract in order, and open a draft application pull request
+    from the first commit. Commit HQ records to hq/20260913 and open no
+    CIEL HQ pull request.
+  acceptance_check:
+    - Every 4a proof-contract row has Closed or Pending status with an owner.
+    - The real-Chrome proof passes three consecutive runs at the 4a head.
+    - No 4b claim and no tax verdict enters the 4a diff.

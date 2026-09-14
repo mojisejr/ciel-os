@@ -3,9 +3,9 @@
 **Workstream:** `dac2-guided-inputs-001`  
 **State:** active  
 **Execution lane:** single  
-**Plan revision:** 0.4
-**Execution phase:** 3
-**Execution state:** idle
+**Plan revision:** 0.5
+**Execution phase:** 4
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -58,6 +58,17 @@ stated once in prose rather than shown beside the field. The owner decided the
 three data-contract questions recorded under **Batch 3 owner decision** below.
 Batch 3 remains bounded to costs, assets, and investment; it does not pull
 Batch 4 result language or the comprehension study forward.
+
+On 2026-09-14, after application PR 15 merged at `26455db` and the owner
+had walked through Batch 3 locally, the owner authorized Batch 4 against plan
+revision 0.5 and decided the four questions recorded under **Batch 4 owner
+decision** below. Batch 4 is split into **4a**, all deterministic application
+work in one PR, and **4b**, the comprehension study with likely orchard owners
+in its own record. The keep-alive navigation stall found during Batch 3 is
+folded into 4a as its time-boxed first step rather than a separate slice, so
+the wider route matrix 4a needs is not built on a stalling proof. CIEL HQ
+records stay on the standing branch `hq/20260913` whose push timing the owner
+controls.
 
 The product boundary remains explicit:
 
@@ -562,48 +573,96 @@ capture-and-classify flow, the two cost pages, and the assets copy.
 
 ### 4. Batch 4 — results, close, history, and comprehension proof
 
-#### Deliverable
+Batch 4 is delivered as **4a** (deterministic application work, one PR, one
+closeout) and **4b** (the comprehension study, its own record, started only
+after 4a merges and participants exist).
 
-- Apply plain-first/formal-second language to Dashboard, all four Analysis tabs,
-  Demo, close review, comparison, and History.
+#### 4a execution proof contract
+
+This contract was fixed before application code changed.
+
+| Definition of done | Executable proof | Lane | Prover |
+|---|---|---|---|
+| Step 0: the keep-alive navigation stall has a named cause and a fix, or a recorded time-box with a proof-side mitigation and an open product risk | the real-Chrome proof passes three consecutive runs at the 4a head; every stall during 4a is diagnosed with wire timing and listed in the closeout; if the cause is found, a regression reproduces it without the browser | Eye Truth + API Truth | implementation agent |
+| Dashboard, all four Analysis tabs, Demo, close review, comparison, and History lead with familiar wording and keep the formal term secondary | SSR assertions per surface find กำไรสุทธิ, จุดคุ้มทุน, ROI, กระแสเงินสด, ราคาขายเฉลี่ยถ่วงน้ำหนัก, ส่วนเกินต่อหน่วย, ส่วนเผื่อความปลอดภัย, KPI, and ปีฐาน only as secondary labels, never as the leading heading | Hard Gate | implementation agent |
+| Every displayed figure states its unit and can be traced to its inputs; explanation copy makes arithmetic observations only | SSR assertions reject a forbidden-phrase list (ไม่ควร, ต้องเร่ง, สาเหตุ, เพราะ...จึง, แนะนำให้, ควรทำ) on every result surface and require a link to the owning input question beside each explanation | Hard Gate | implementation agent |
+| Readiness is named by decision — first estimate, market comparison, cash view, investment view, health self-review, final close — and hub, dashboard, and analysis agree | pure readiness table with one fixture per decision; SSR assertions render hub, dashboard, and analysis from the same fixture and compare their readiness statements | Hard Gate | implementation agent |
+| An unavailable result names the exact missing question with a link and never shows zero | SSR fixtures for each knowledge state, including an unknown cost section and a confirmed-none section, assert the named dependency and the absence of a zero figure | Hard Gate | implementation agent |
+| Tax remains a dated planning estimate with assumptions and exclusions before its first figure and no comparative verdict | existing SSR copy assertions extended to the reworded tab | Hard Gate | implementation agent |
+| An incomplete forecast never blocks a legitimate close; the review names which comparisons will be unavailable; comparison and history show unavailable rows, not zero, for a season closed with an unknown section | store, SSR, and HTTP tests close a plan whose cost section is unknown, read the frozen snapshot, and assert the review warning and the unavailable comparison rows; a confirmed-none section closes with a known zero | Hard Gate + API Truth | implementation agent |
+| Health and target results read as self-assessment and owner-set targets, never verdicts | SSR assertions reject verdict labels such as ต้องเร่งปรับปรุง and require the self-assessment framing | Hard Gate | implementation agent |
+| Every public, account, season, Detailed, asset, close, comparison, history, error, empty, loading, and unknown-route state holds at phone widths | real-Chrome matrix at 320, 360, 393, and 412 pixels extended to those states, no horizontal overflow, obscured action, or sub-48px target | Eye Truth | implementation agent |
+| DAC2 remains deterministic with no AI/LLM product surface | executable source and dependency scan plus current calculation suites | Hard Gate | implementation agent |
+| Orchard-owner comprehension and physical-device behavior are not overclaimed | 4a closeout leaves Human Comprehension pending for 4b and Device Truth pending | Device Truth | owner for later human/device proof |
+
+#### 4a deliverable
+
+- **Step 0 (time-box 6 hours):** investigate the keep-alive navigation stall
+  from the evidence recorded at application `1e390a7` — a request sent on a
+  reused connection receives nothing while a fresh connection answers in
+  under 20 ms. Find and fix the cause in the hyper/axum/tower-sessions path
+  if it lies within the box; otherwise mitigate on the proof side (a fresh
+  browser context per route and a diagnosed retry) and record the stall as
+  an open product risk, never as fixed.
+- Apply plain-first/formal-second language to Dashboard, all four Analysis
+  tabs, Demo, close review, comparison, and History.
 - Put unit and formula consistency ahead of explanation prose. Replace causal,
   diagnostic, fearful, and prescriptive claims with arithmetic observations and
   a link to the exact owner-entered fact.
 - Reframe readiness by named decision: first financial estimate, market
   comparison, cash view, investment view, health self-review, and final close.
 - Keep tax clearly separated as a dated planning estimate with its reviewed
-  assumptions and exclusions; do not present filing advice.
-- At close, show which forecast comparisons will be unavailable without blocking
-  legitimate actual capture unless the owner separately changes that policy.
-- Run an unassisted comprehension study with likely orchard owners. Measure task
-  completion, correct interpretation, hesitation, recovery, and confidence;
-  preference alone is not acceptance.
+  assumptions and exclusions; the "cheaper" verdict stays withheld.
+- At close, show which forecast comparisons will be unavailable without
+  blocking legitimate actual capture. A season closed with an unknown section
+  shows those comparisons as unavailable, not zero.
 - Complete the real-Chrome route matrix for every public, account, season,
-  Detailed, asset, close, comparison, history, error, empty, and loading state.
+  Detailed, asset, close, comparison, history, error, empty, loading, and
+  unknown-route state.
 
-#### What the owner can try after merge
+#### 4b deliverable
+
+- Run an unassisted comprehension study with likely orchard owners. Measure
+  task completion, correct interpretation, hesitation, recovery, and
+  confidence; preference alone is not acceptance.
+- Draft gate tasks, to be confirmed at the 4a closeout: create a season and
+  reach the first profit figure; capture a remembered cost and classify it;
+  include a multi-year asset in a season; close a season; explain one result
+  back in the participant's own words; find why one result is unavailable.
+- Participant count, recruiter, location, and remote-or-in-person are decided
+  by the owner at the 4a closeout.
+
+#### What the owner can try after 4a merges
 
 Open any result and understand the plain meaning before encountering the formal
 term, trace the number to its inputs, see exactly why a result is unavailable,
 close a season with incomplete optional analysis, and compare actual history
-without interpreting a subjective score as a diagnosis.
+without interpreting a subjective score as a diagnosis. Navigate between
+pages repeatedly without a page ever stalling.
 
 #### Proof and estimate
 
 | Proof | Gate |
 |---|---|
-| Formula/copy contract | Every displayed label, unit, formula, explanation, and source input agrees; behavior-changing copy mutants are caught by SSR snapshots or assertions. |
-| Tax boundary | Reviewed rule source, effective date, assumptions, exclusions, fixtures, and visible disclaimer exist before any comparative verdict. |
-| Full browser matrix | All routes and material states pass at 320, 360, 393, and 412 pixels with no horizontal overflow, obscured action, or sub-48px activation target. |
-| Human comprehension | Likely orchard owners finish agreed core tasks unassisted and correctly explain the result; findings and failed tasks are retained, not averaged away. |
+| Stall | Three consecutive real-Chrome passes at the 4a head; every stall diagnosed and listed. |
+| Formula/copy contract | Every displayed label, unit, formula, explanation, and source input agrees; behavior-changing copy mutants are caught by SSR assertions. |
+| Readiness | Hub, dashboard, and analysis name the same decision readiness from the same fixture. |
+| Close boundary | Unknown sections freeze as unknown and read as unavailable after close; confirmed none freezes as zero. |
+| Tax boundary | Dated estimate, assumptions, exclusions, and no comparative verdict. |
+| Full browser matrix | All routes and material states pass at 320, 360, 393, and 412 pixels. |
+| Human comprehension (4b) | Likely orchard owners finish agreed core tasks unassisted and correctly explain the result; findings and failed tasks are retained, not averaged away. |
 
-Estimate: **22-36 engineering and research hours**, excluding participant
-recruitment and scheduling. Confidence is medium-low until the study protocol
-and participant access are agreed.
+Estimate: **4a 26-38 engineering hours** (step 0 6-8 within it), **4b 8-14
+research hours** excluding participant recruitment and scheduling.
+Re-estimated on 2026-09-14 from merged `main` at `26455db` at medium
+confidence for 4a: the eight result surfaces already have SSR harnesses
+(`plan_ssr`, `analysis_ssr`), the route matrix has thirty routes to extend,
+and no schema change is expected because readiness is derived and the close
+snapshot already freezes section states. Confidence for 4b is low until the
+protocol is agreed.
 
-Total current estimate: **98-151 engineering/research hours plus participant
-recruitment**. Re-estimate at each batch boundary from the merged schema and
-observed comprehension failures.
+Total current estimate: **102-165 engineering/research hours plus participant
+recruitment**.
 
 ## Delivery order and ownership
 
@@ -695,6 +754,29 @@ merged-schema re-estimate and decided these three data-contract questions:
 The proof contract above was fixed against these decisions before application
 code changed.
 
+## Batch 4 owner decision
+
+The owner authorized Batch 4 against plan revision 0.5 on 2026-09-14 after the
+merged-`main` re-estimate and decided:
+
+1. **Batch 4 is split into 4a and 4b.** 4a carries all deterministic work,
+   including the keep-alive stall as a time-boxed step 0, in one application
+   PR. 4b, the comprehension study, has its own record and starts after 4a
+   merges and participants exist.
+2. **The 4b protocol is decided at the 4a closeout.** The draft gate tasks
+   above stand until then; participant count, recruiter, and location are
+   open.
+3. **The tax "cheaper" verdict stays withheld.** No tax-rule review is in
+   scope; the tab remains a dated planning estimate with visible assumptions
+   and exclusions.
+4. **An incomplete forecast never blocks a legitimate close.** The review
+   names which comparisons will be unavailable; comparison and history show
+   those rows as unavailable, never zero. No schema change is needed: the
+   close snapshot already freezes section states.
+
+No data-contract question requires a migration in 4a. The proof contract
+above was fixed against these decisions before application code changed.
+
 ## Unresolved risks
 
 - No likely orchard owner has yet completed this proposed guided journey
@@ -718,15 +800,10 @@ code changed.
 
 ## Next executable action
 
-Batch 3 is merged: application PR 15 landed on `main` as `26455db` on
-2026-09-14 after the owner's local walkthrough, and the application checkout
-is back on clean `main`. The closeout at `1e390a7` records the real-Chrome
-proof as three passes and four keep-alive navigation stalls on untouched
-routes, which the owner accepted. Before Batch 4 starts, the owner decides two
-things: whether to authorize a separate slice for the
-keep-alive stall (recommended, because Batch 4 must extend the route matrix),
-and the four Batch 4 questions posted on 2026-09-14 — the 4a deterministic /
-4b comprehension-study split, study participants and gate tasks, whether the
-tax "cheaper" verdict stays withheld, and confirming that an incomplete
-forecast never blocks a legitimate close. Batch 4 is not authorized by this
-revision.
+Batch 4a is authorized. In the application checkout, from clean `main` at
+`26455db`, open `feat/guided-inputs-batch4` and begin step 0: investigate the
+keep-alive navigation stall within a six-hour box, then proceed through the 4a
+deliverable in proof-contract order. Record a closeout citing the head, keep
+the application PR draft until that closeout is committed, and mark it ready
+once the owner or coordinator has pushed `hq/20260913`. 4b starts only after
+4a merges and the owner fixes its protocol.
