@@ -1,0 +1,88 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T134100_dac2_pilot_deployment_workstream_opened
+type: decision
+recorded_at: 2026-09-14T13:41:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - Slice 1, container and environment-driven configuration.
+    - Slice 2, network gate - rate limiting, secure-cookie requirement, pilot notice, startup checks.
+    - Slice 3, GitHub Actions build publishing an image to GHCR, no automatic deploy.
+    - Slice 4, owner-provisioned Render, Neon, and Brevo, first deploy, public proof, runbook, measurements.
+  out_of_scope:
+    - Any change to results, wording, schema, calc, close snapshot, or forecast_mode.
+    - Custom domain, paid instances, backups, retention, monitoring, alerting.
+    - The 4b protocol itself and the leptos race upstream report.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner opened this workstream on 2026-09-14 after Batch 4a of
+    dac2-guided-inputs-001 merged at application c97d71e, observing that 4b
+    cannot run while the application is reachable only on the owner's
+    machine. The owner chose to deploy before 4b and asked for a stack that
+    is free in every part. After a research pass the owner accepted the
+    stack recorded in the plan: Render free web service running a Docker
+    image, Neon free PostgreSQL over the direct endpoint, Brevo free SMTP,
+    GitHub Actions building to GHCR, a Render subdomain. Vercel was rejected
+    because the application is a long-running Axum process whose one-worker
+    stall mitigation a function runtime cannot guarantee; Supabase was
+    rejected because its seven-day pause would leave a participant facing a
+    dead database. This decision opens the workstream and its plan revision
+    0.1 and authorizes no slice; slice 1 waits on its own decision.
+  constraints:
+    - Every external account, credential, and external write is the owner's; the agent prepares descriptors and operates the Render MCP only on explicit per-action authorization.
+    - No secret enters a repository file, event, pull request, or response.
+    - The deployment is a pilot carrying study data only and says so on its surface.
+    - The one-worker mitigation is carried unchanged; no schema, calc, or wording change enters this workstream.
+    - Free-tier figures in the plan are external claims re-verified at signup in slice 4.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 82cba008d9f40c74c781b02f9cf560d0288bae70
+    branch: docs/dac2-pilot-deployment-plan
+    working_tree: clean-main-before-this-branch
+    pull_request: draft-after-this-commit
+  application:
+    repository: dac2-durian-smart-account
+    base: c97d71e0a53948e451fe5d0340b36af487e1d8b2
+    branch: main
+    working_tree: clean
+  observed_in_application:
+    - crates/web/src/main.rs binds 127.0.0.1:3000 from crates/web/Cargo.toml, runs one Tokio worker thread on purpose, sets the session cookie Secure=false, and runs migrations at start.
+    - crates/web/src/mail.rs uses a plaintext builder_dangerous SMTP transport with Mailpit defaults and no credentials.
+    - README.md records that a network deployment requires rate limiting, real SMTP, HTTPS, and the Secure cookie first, and that no deployment configuration exists.
+    - No Dockerfile, .github/workflows, or deploy descriptor exists; .sqlx offline data exists; leptos_config 0.8.10 honours LEPTOS_* environment overrides.
+  research_basis:
+    - Public pricing and documentation pages of Render, Koyeb, Neon, Supabase, Aiven, Fly.io, Google Cloud Run, Cloudflare, Brevo, and Resend read on 2026-09-14; recorded in the plan as external, unverified claims.
+
+unresolved:
+  - Render free-tier region availability (Singapore preferred) and Neon free-plan regions are not established.
+  - Whether Render's spin-up and Neon's compute suspension compound on a study's first request; measured in slice 4.
+  - Whether 512 MB and 0.1 CPU serve a Leptos SSR process to several phones without stalls; measured in slice 4.
+  - dac2-guided-inputs-001 is paused by a decision recorded beside this one and resumes only after slice 4 closes.
+
+next_action:
+  action: >-
+    Owner authorizes slice 1 by a decision naming plan revision 0.1 slice 1.
+    Then pass the application start gate on clean fetched main at c97d71e,
+    create feat/pilot-container, and implement slice 1 with a draft
+    application pull request from the first commit. This HQ branch carries
+    the plan and both opening records as a draft pull request for the owner
+    to merge.
+  acceptance_check:
+    - A slice-1 decision is recorded before any application branch exists.
+    - bun run wake reports dac2-pilot-deployment-001 active and dac2-guided-inputs-001 paused with no same-project overlap.

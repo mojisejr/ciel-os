@@ -1,7 +1,7 @@
 # DAC2 — guided inputs and teachable accounting language
 
 **Workstream:** `dac2-guided-inputs-001`  
-**State:** active  
+**State:** paused  
 **Execution lane:** single  
 **Plan revision:** 0.5
 **Execution phase:** 4
@@ -799,6 +799,24 @@ above was fixed against these decisions before application code changed.
   open unless a later batch executes them explicitly.
 
 ## Next executable action
+
+**Paused on 2026-09-14.** Batches 1, 2, 3, and 4a are merged; application
+`main` is `c97d71e`. 4b, the comprehension study, needs likely orchard owners
+to open the application on their own phones, and the application is reachable
+only on the owner's machine. The owner therefore opened
+`dac2-pilot-deployment-001` to put DAC2 on a public HTTPS address on a
+zero-cost stack, and paused this workstream until that one delivers. No
+application work is pending from this lane while paused; a defect found in the
+deployed application returns here as a decision, not to the deployment plan.
+
+Resume by editing **State** back to `active` and recording the 4b protocol
+decision — participant count, recruiter, location, remote or in person, the
+gate tasks drafted above, and whether to report the leptos SSR Suspense race
+upstream — against plan revision 0.5 with `evidence.slice: "4"`, the slice
+this plan declares. The earlier 4a authorization named `4a`, which the plan
+does not declare; it is left as recorded and the 4b decision names `4`.
+
+The record before the pause read:
 
 Batch 4a is merged: application PR 16 landed on `main` as `c97d71e` on
 2026-09-14 after the owner's local walkthrough, and the application checkout
