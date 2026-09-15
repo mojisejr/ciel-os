@@ -1,0 +1,125 @@
+schema_version: ciel.event.v0.1
+id: evt_20260915T101900_dac2_pilot_deployment_slice4_checkpoint
+type: closeout
+recorded_at: 2026-09-15T10:19:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - A checkpoint inside slice 4 so the session can end and the next one, single or multi, resumes from a record rather than from memory.
+  out_of_scope:
+    - Finishing slice 4; the items below name what remains. This record's status word is deliberately one the delivery machinery does not act on.
+
+outcome:
+  status: checkpoint
+  completed:
+    - >-
+      The pilot is live at https://dac2-pilot.onrender.com - Render free web
+      service dac2-pilot (srv-dak17dp42hec73bk6ha0) in Singapore running
+      ghcr.io/mojisejr/dac2-durian-smart-account:c495e5447f66ec0f56c5106ce9f9ffb742f929b4
+      (manifest sha256:cf79f103f2d007500a5e347c05005ee341e05c95f62fdf80999111bacc40765b),
+      Neon free PostgreSQL over its direct endpoint, Brevo's HTTP API for
+      mail. The owner created every account and object and pasted the three
+      secrets in the Render dashboard; the agent set the non-secret variables
+      through the Render MCP and never saw a secret.
+    - >-
+      Application PR 20 merged as c495e54: MAIL_TRANSPORT=brevo-api, mail
+      failures logged by cause, render.yaml, the README runbook, 201 tests
+      in 12 suites. The push run built the image in 7 min 21 s after a
+      7 min 37 s check.
+    - >-
+      Proved on the public address: HTTP/2 over HTTPS with the pilot notice
+      on; the wasm bundle served; the start-up log showing the database
+      probe, "mail via the Brevo HTTP API (key configured)", the gate
+      reading x-forwarded-for, and listening on 10000; ten wrong logins
+      answering 500 and the eleventh 429 with Retry-After through the proxy;
+      a registration reaching Brevo in 1.6 s; the verification mail arriving
+      in the owner's inbox and its link verifying the account. Neon woke in
+      0.9 s on its first query.
+    - >-
+      Two free-tier facts differ from the research and are recorded in the
+      lessons record beside this one: free Render blocks outbound SMTP, and
+      Brevo blocks unknown IPs by default (the owner deactivated the
+      blocking for the pilot).
+  not_completed:
+    - >-
+      Password reset from the public address: the owner reports no reset
+      mail. Not yet diagnosed - by design for an unverified account, the
+      account budget (5 per hour per address, shared by register, resend,
+      and reset), or a delivery failure the log would name.
+    - The responsive route matrix and the stall probe have not yet been run against the public address.
+    - Cold-start measurements - Render after 15 idle minutes, Neon after 5, and whether a ping to / wakes the database - are not taken.
+    - The owner's phone walkthrough on a mobile network is half done - register and verify, not yet login, season, first profit figure, close, history.
+    - The runbook does not yet name the Brevo key prefix, the IP-blocking setting, or the From rewrite.
+    - The service's autoDeploy field reads yes; image-backed services do not redeploy on a tag change, but the setting has not been switched to no in the dashboard.
+    - The final slice-4 closeout, which finishes the workstream, is not recorded.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.1"
+  # No slice named on purpose: this is a record about the workstream mid-slice,
+  # not a delivery of slice 4; the final closeout names the slice.
+  repository:
+    head: 8f65e95
+    branch: docs/dac2-pilot-slice4
+    working_tree: two-committed-records-before-this-one
+    pull_request:
+      number: 74
+      url: https://github.com/mojisejr/ciel-os/pull/74
+      state: draft
+  application:
+    repository: dac2-durian-smart-account
+    base: fddab20
+    head: c495e54
+    branch: main
+    working_tree: clean
+    pull_request:
+      number: 20
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/20
+      state: merged
+  deployment:
+    render_service: srv-dak17dp42hec73bk6ha0
+    url: https://dac2-pilot.onrender.com
+    image_tag: c495e5447f66ec0f56c5106ce9f9ffb742f929b4
+    region: singapore
+    plan: free
+  proof_lanes:
+    hard_gate: closed
+    api_truth: partly-closed-public-http-registration-verification-gate
+    eye_truth: pending-public-route-matrix
+    device_truth: partly-owner-phone-register-and-verify
+    human_comprehension: pending-guided-inputs-4b
+  checks:
+    - Recorded in the lessons record beside this one and in the slice-3 closeout; no proof was rerun for this checkpoint.
+
+unresolved:
+  - Everything under not_completed.
+  - Behind the proxy all requests from the owner's machine share one address with the agent's probes; the account budget of five per hour is easy to hit while testing. Raise RATE_LIMIT_ACCOUNT during a test session as the runbook says for a study day.
+  - The 32 MiB worker stack and the one-worker mitigation are carried unchanged.
+
+next_action:
+  action: >-
+    In the next session, after Wake: read this record and the lessons
+    record, then (1) diagnose the password reset with the owner - which
+    address, whether verified, whether the Render log names a delivery
+    failure; (2) run scripts/responsive.mjs and scripts/stall-probe.mjs with
+    DAC2_BASE_URL=https://dac2-pilot.onrender.com after raising
+    RATE_LIMIT_ACCOUNT for the session; (3) leave the service idle twenty
+    minutes and measure the first request, then the first database query;
+    (4) the owner finishes the phone walkthrough; (5) a small application
+    change carries the lessons into the runbook and any reset fix; (6)
+    record the final slice-4 closeout as ready-for-owner-merge, which
+    finishes the workstream, and then dac2-guided-inputs-001 resumes with
+    the 4b decision. The plan's Execution state is set to idle at this
+    checkpoint so the lane is not reported as claimed while no session runs.
+  acceptance_check:
+    - The next DAC2 pilot record is either the reset diagnosis or the final slice-4 closeout, and it cites this checkpoint.

@@ -1,0 +1,135 @@
+schema_version: ciel.event.v0.1
+id: evt_20260915T101800_dac2_pilot_mail_and_render_lessons
+type: closeout
+recorded_at: 2026-09-15T10:18:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - What the first deployment of DAC2 to Render, Neon, and Brevo taught that the providers' documentation and the 2026-09-14 research did not say, kept so the next setup does not rediscover it.
+  out_of_scope:
+    - Slice-4 delivery status, which the checkpoint record beside this one carries.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      (1) Free Render web services block outbound SMTP. Ports 25, 465, and
+      587 are closed for free instances since 2025-09-26 (Render changelog);
+      paid instances keep 465 and 587. The research pass had not found it.
+      The symptom is not an error: a registration answered 200 after exactly
+      60 seconds, the SMTP client's connect timeout, and the application
+      swallowed the failure. Diagnosed by timing - the same relay answered a
+      STARTTLS handshake in 0.7 s from the owner's machine, and a
+      database-only request on Render took 0.9 s - not by any log line.
+      Remedy: send over HTTPS through the mail provider's API
+      (MAIL_TRANSPORT=brevo-api). Rule for next time: on a free host, assume
+      no SMTP egress and plan the HTTP path from the start.
+    - >-
+      (2) Silent mail failure is a diagnosis trap. The application deliberately
+      answers "if this address can register, a link was sent" whether or not
+      the send succeeded, so a broken mail path is invisible from the browser
+      and, before slice 4, from the log too. Remedy shipped: a failed
+      delivery is written to the log by cause and status, never with the
+      recipient. Rule: every fire-and-forget side effect logs its failure.
+    - >-
+      (3) Brevo has two kinds of key and only one works with the HTTP API.
+      SMTP keys begin xsmtpsib- and live under SMTP & API > SMTP; API keys
+      begin xkeysib- and live under SMTP & API > API Keys. The HTTP API
+      answers 401 to an SMTP key. Check the prefix before anything else.
+    - >-
+      (4) Brevo blocks unknown IP addresses by default on a new account, and
+      the list is shared by API and SMTP keys. The dashboard shows a banner
+      "Unauthorized IP addresses are blocked for your SMTP keys"; the API
+      answers 401 Unauthorized to a request from an unlisted address, which
+      reads the same as a bad key. Render free instances have no dedicated
+      IP but do publish per-region outbound ranges (service > Connect >
+      Outbound). For the pilot the owner chose Settings > Security >
+      Authorized IPs > Deactivate blocking; the alternative is to list the
+      Render Singapore outbound ranges. Either way it must be done before the
+      first send, and the banner is the only warning.
+    - >-
+      (5) A Gmail sender is rewritten. Brevo verifies a gmail.com sender but
+      warns it is not compliant with Google, Yahoo, and Microsoft's sender
+      requirements (no DKIM or DMARC can be set for gmail.com), and rewrites
+      the From header to its own brevosend.com domain "on behalf of" the
+      sender. Mail still arrives; it may land in spam. A sender on an owned,
+      authenticated domain is the fix and is out of the pilot's zero-cost
+      scope.
+    - >-
+      (6) The Render MCP cannot create an image-backed service or change a
+      service's image; both are dashboard actions (+ New > Web Service >
+      Existing Image; Settings > Image URL, then Manual Deploy > Deploy
+      latest reference). The MCP does set environment variables, trigger
+      redeploys of the current image, and read logs, and setting a variable
+      redeploys by itself. The MCP connection also dropped once on a DNS
+      failure and did not return within the session; the dashboard is the
+      fallback. Image-backed services do not redeploy when a tag moves,
+      which is what the plan wanted.
+    - >-
+      (7) Render sets PORT=10000 and WEB_CONCURRENCY=1 for a free web service;
+      the binary honours PORT, and LEPTOS_SITE_ADDR=0.0.0.0:10000 was set as
+      well. Behind Render's proxy every peer is the proxy, and
+      CLIENT_ADDRESS_SOURCE=forwarded-for made the rate limit count real
+      clients - verified by an eleventh login answering 429 while the
+      service saw one proxy address.
+    - >-
+      (8) Neon's free compute did wake on the first query in about 0.9 s and
+      answered in 0.2 s after; the direct endpoint with sslmode=require
+      worked with sqlx and the session store without a pooler. Migrations
+      at process start ran against it on the first deploy.
+    - >-
+      (9) reqwest 0.13 with the rustls feature pulls in aws-lc-rs, a second
+      TLS provider beside the ring the binary already carries through sqlx
+      and lettre; with rustls-no-provider reqwest panics "No provider set"
+      unless handed a ClientConfig. The working shape is
+      rustls-no-provider plus an explicit ring-backed rustls::ClientConfig
+      with webpki roots, proved against the real API by a bogus key
+      answering 401 in 0.95 s.
+  not_completed:
+    - Whether Brevo's From rewrite lands verification mail in spam for Thai mobile providers is unmeasured.
+    - Whether the account's IP blocking re-arms itself after 30 days is unknown; if verification mail stops with 401 in a month, check Authorized IPs first.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 8f65e95
+    branch: docs/dac2-pilot-slice4
+    working_tree: one-committed-record-before-this-one
+  application:
+    repository: dac2-durian-smart-account
+    head: c495e54
+    branch: main
+    pull_request:
+      number: 20
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/20
+      state: merged
+  external_references:
+    - https://render.com/changelog/free-web-services-will-no-longer-allow-outbound-traffic-to-smtp-ports
+    - https://help.brevo.com/hc/en-us/articles/5740111683858-Authorize-and-block-IP-addresses-for-API-and-SMTP-security
+    - https://help.brevo.com/hc/en-us/articles/14925263522578-Comply-with-Gmail-Yahoo-and-Microsoft-s-requirements-for-email-senders
+    - https://render.com/docs/deploying-an-image
+  checks:
+    - Registration through SMTP on Render answered 200 in 60.2 s twice; the relay answered STARTTLS from the owner's machine in 0.7 s; a database-only login on Render took 0.9 s then 0.2 s.
+    - After MAIL_TRANSPORT=brevo-api at c495e54, registration answered in 0.79 s and the log read "verification mail not delivered: Brevo API answered 401 Unauthorized" with an xkeysib- key; after the owner deactivated IP blocking it answered in 1.6 s and the verification mail reached the owner's inbox and its link verified the account.
+
+unresolved:
+  - Password reset from the public address is reported by the owner as sending nothing; whether that is the by-design refusal for an unverified account, the account budget, or a delivery failure is undiagnosed and is the first item of the next session.
+
+next_action:
+  action: >-
+    Carry these into the runbook where they are not yet written (Brevo key
+    prefix, IP blocking, From rewrite) in the next application change, and
+    read this record before the next Brevo or Render setup.
+  acceptance_check:
+    - The README runbook names the key prefix, the IP-blocking setting, and the From rewrite.

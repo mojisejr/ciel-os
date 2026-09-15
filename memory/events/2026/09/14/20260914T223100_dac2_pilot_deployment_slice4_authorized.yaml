@@ -1,0 +1,83 @@
+schema_version: ciel.event.v0.1
+id: evt_20260914T223100_dac2_pilot_deployment_slice4_authorized
+type: decision
+recorded_at: 2026-09-14T22:31:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - Owner-created Neon project, Brevo sender and SMTP key, and Render web service from the published image, every credential in the owner's own store.
+    - Non-secret environment variables set by the agent through the Render MCP; deploys triggered and logs read through it; the four secrets pasted by the owner in the dashboard.
+    - render.yaml descriptor and a moderator runbook in the application README.
+    - Public proof - route matrix and stall probe against the public address, a real registration through Brevo, cold-start measurements, rate-limit behaviour behind the proxy.
+  out_of_scope:
+    - A custom domain, paid instances, backups, monitoring, alerting.
+    - Any change to results, wording, schema, calc, close snapshot, or forecast_mode.
+    - The 4b protocol, which is recorded in dac2-guided-inputs-001 after this slice closes.
+
+outcome:
+  status: decided
+  decision: >-
+    On 2026-09-14, after slice 3 merged at application fddab20 and CIEL HQ
+    PR 73 merged, the owner authorized slice 4 against plan revision 0.1 and
+    began it: Neon project and Brevo sender created, a Render project named
+    DAC2 opened. The owner granted the agent permission to operate the
+    Render MCP and CLI tools on the owner's behalf for this slice, asked to
+    be told step by step who does what, and asked that nothing be broken.
+    The Render MCP cannot create an image-backed service, so the owner
+    creates the web service in the dashboard from the published image and
+    pastes the four secrets there; the agent sets the non-secret variables,
+    triggers deploys, and reads logs through the MCP. Observed through the
+    MCP before this decision: the owner's workspace tea-cspv7bogph6c73d0657g
+    already runs mootech-be in Singapore, so the region is available.
+  constraints:
+    - The agent never receives, prints, or stores DATABASE_URL, SESSION_KEY, SMTP_USERNAME, or SMTP_PASSWORD; the owner pastes them in the dashboard and keeps them in the owner's own store.
+    - CLIENT_ADDRESS_SOURCE=forwarded-for behind Render, as slice 2 recorded; the runbook raises RATE_LIMIT_ACCOUNT for an in-person study day.
+    - The service deploys the image tag named in a closeout, never a moving tag, and never automatically.
+    - Brevo's authorized-IP restriction, if kept, lists Render's Singapore outbound ranges; the owner chooses between adding them and disabling the restriction.
+    - Free instance type; any paid change is the owner's separate decision.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "4"
+  repository:
+    head: 8f65e95
+    branch: docs/dac2-pilot-slice4
+    working_tree: clean-main-before-this-branch
+    pull_request: draft-after-this-commit
+  application:
+    repository: dac2-durian-smart-account
+    base: fddab20
+    branch: main
+    working_tree: clean
+    image: ghcr.io/mojisejr/dac2-durian-smart-account:fddab20e9a28af628db9ba4cdbd844bf44da32e1
+  render_observed:
+    workspace: tea-cspv7bogph6c73d0657g
+    existing_service: mootech-be in singapore on the docker runtime
+    mcp_limit: create_web_service supports repository builds only, not an existing image
+
+unresolved:
+  - Brevo blocks SMTP from unauthorized IP addresses by default; the owner decides between adding Render's Singapore outbound ranges and disabling the restriction, recorded in the closeout.
+  - Free-tier region, spin-up, and Neon suspend figures are verified in this slice and recorded.
+  - The image has not yet run on an amd64 host.
+
+next_action:
+  action: >-
+    Owner creates the Render web service dac2-pilot from the published image
+    in Singapore on the free instance with the four secrets, and reports the
+    service URL and the verified Brevo sender address. Agent sets the
+    non-secret variables through the MCP, triggers a deploy, reads the
+    startup log, then runs the public proof.
+  acceptance_check:
+    - The service's startup log shows the gate reading x-forwarded-for, the relay as STARTTLS with login, and listening on the port Render assigns.
+    - No secret value appears in any record, response, or repository file.
