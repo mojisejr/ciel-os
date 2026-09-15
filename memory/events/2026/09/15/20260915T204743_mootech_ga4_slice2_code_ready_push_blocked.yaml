@@ -1,0 +1,134 @@
+schema_version: ciel.event.v0.1
+id: evt_20260915T204743_mootech_ga4_slice2_code_ready_push_blocked
+type: closeout
+recorded_at: 2026-09-15T20:47:43+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-ga4-instrumentation-001
+  lane: single
+  objective: >-
+    Give the team the share of v2 members active each day, and the login and
+    sign_up events under it, counting signed-in members only on real hosts,
+    with a consent switch that governs the tag.
+  scope:
+    - Slice 2 checkpoint - code complete and green on a local topic branch; the push is blocked by a lint failure that predates this lane.
+  out_of_scope:
+    - Merge, Vercel secret, GTM v4 publish, DebugView - owner actions tomorrow.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      mootech-fe topic branch feat/ga4-members-not-cookies at 061145b, one
+      commit on main 3913947, 15 files, +507/-4. New - lib/analytics/events.ts
+      (the allowlist and the forbidden-key pattern), lib/analytics/track.ts
+      (the one door - refuses unlisted events, undeclared keys, forbidden keys
+      even when declared, non-scalar values, and withdrawn consent),
+      lib/analytics/consent.ts (cookie mumate-ca, opt-out default,
+      applyAnalyticsConsent through the gtag arguments shim),
+      lib/analytics/identity.ts (HMAC-SHA256 keyed user_id, null without a
+      key, never the raw id), pages/api/v2/analytics/identity.ts (hands the
+      hash and the engine's latest analytics consent to the browser as
+      first-party cookies), components/analytics-identity.tsx (sends login
+      once per login when cookie-truth status turns authed; clears on anon),
+      scripts/analytics-track.test.ts. Changed - pages/_app.tsx (gtag shim,
+      consent default, identity push before the GTM loader, the component
+      mounted), pages/_document.tsx (lang=th),
+      features/v2-first-run/hooks/useSaveOnboarding.ts (sign_up on the
+      onboarded_at write), features/v2-settings/components/ConsentScreen.tsx
+      (writes mumate-ca, updates consent mode, sends consent_update),
+      lib/ops/analytics.ts and pages/ops/analytics.tsx (members total, new
+      today Asia/Bangkok, new 7d from user.onboarded_at), .env.example
+      (ANALYTICS_USER_ID_KEY), vitest.config.mts (the new spec registered).
+    - >-
+      Proof at 061145b - scripts/analytics-track.test.ts 33 passed; three
+      mutants run and restored, each reddening the test it names (forbidden
+      pattern deleted -> 19 fail through the poisoned-list test; consent
+      check deleted -> the mumate-ca=0 test fails; raw-id fallback -> the
+      no-key test fails); full vitest 166 files, 1654 passed, 0 failed, 159
+      skipped as before; tsc --noEmit clean; eslint clean on every changed
+      file.
+    - >-
+      Deviation from plan D5, taken deliberately and made a one-line switch -
+      consent mode default is granted, not denied, because the app's own
+      consent screen is opt-out (analytics def true, "ปิดแล้ว: ใช้งานได้ตามปกติ");
+      default denied would contradict that screen and drop every pre-login
+      visitor. ANALYTICS_STORAGE_DEFAULT in lib/analytics/consent.ts is the
+      place to flip it. Only analytics_storage is set; ad_* is left alone for
+      the team's own tags.
+    - >-
+      gtm/GTM-MLZC4FRC.v4.json written under this workstream and copied to
+      ~/Downloads - the Google tag gains user_id (DLV - user_id) and user
+      property member_state, and three GA4 event tags (login, sign_up,
+      consent_update) fire on custom-event triggers, all still behind the
+      hostname exception. Referenced variables and trigger ids cross-checked.
+  not_completed:
+    - >-
+      The branch is not pushed and no PR exists. .githooks/pre-push runs npm
+      run lint and lint fails on main itself -
+      features/v2-calendar/components/day-detail/YearMonthFortune.tsx:74
+      carries two react/no-unescaped-entities errors from 98bedb1; the file is
+      untouched by this branch (git diff main is empty for it). The hook
+      therefore blocks every push from this checkout, not only this one. The
+      owner's standing instruction for tonight was to stop on a blocker, so
+      the agent stopped rather than fix a file outside the lane's paths or
+      bypass the hook.
+    - Nothing on Vercel, GTM or GA4 changed tonight.
+
+evidence:
+  plan: workstreams/mootech-ga4-instrumentation-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: 350ec3abcfa6fa4c17d586d3ac078d6209aa70f2
+    branch: hq/20260915
+    working_tree: gtm-v4-json-and-this-event-untracked-before-this-closeout
+    pull_request: none-until-hq-round-closes
+  application:
+    repository: mootech-fe
+    base: 391394797179bcb3359c57b09e59053fef77448e
+    branch: feat/ga4-members-not-cookies
+    head: 061145b
+    working_tree: clean
+    pushed: false
+    pull_request: none - push blocked by the pre-push lint gate
+  checks:
+    - npx vitest run scripts/analytics-track.test.ts - 33 passed.
+    - npx vitest run - 166 files passed, 14 skipped; 1654 tests passed, 159 skipped, 0 failed.
+    - npx tsc --noEmit - clean. npx eslint on the changed files - clean.
+    - npm run lint - 2 errors, both in features/v2-calendar/components/day-detail/YearMonthFortune.tsx:74, present on main.
+    - bun run check and Wake run after this event; results in the commit message.
+
+unresolved:
+  - >-
+    How to get past the lint gate is the owner's call tomorrow - (a) let this
+    PR carry the two-character escape fix in YearMonthFortune.tsx (outside the
+    lane's claimed paths, so it needs a word), or (b) a separate tiny PR first;
+    either way the branch pushes unchanged afterwards.
+  - >-
+    The GTM v4 JSON uses the current export vocabulary for GA4 event tags
+    (eventSettingsTable with parameter / parameterValue, configSettingsTable,
+    userProperties). If GTM's import preview shows a field empty in the tag
+    editor, the vocabulary is off and the agent rewrites it before publish;
+    Preview on bazichart after a login is the check.
+  - >-
+    A first-run re-completion refreshes onboarded_at (BE consent.service is
+    idempotent by intent), so members_new_today could count a re-run and
+    sign_up could fire twice for such an account; normal accounts pass
+    first-run once because the gate hides it afterwards.
+  - >-
+    GA4 active users require an engaged session; members_total counts
+    accounts. The slice-3 percentage inherits both definitions.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In the morning the owner picks (a) or (b) for the lint gate; the agent
+    pushes feat/ga4-members-not-cookies and opens the draft PR with the
+    checklist (ANALYTICS_USER_ID_KEY on Vercel, import v4, DebugView walk),
+    then the owner reviews and merges when satisfied.
+  acceptance_check:
+    - The branch head reported here matches what is pushed; the PR diff is the 15 files above plus, if (a), the one-line lint fix.
