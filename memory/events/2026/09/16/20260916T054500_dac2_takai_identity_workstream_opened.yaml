@@ -1,0 +1,86 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T054500_dac2_takai_identity_workstream_opened
+type: decision
+recorded_at: 2026-09-16T05:45:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-takai-identity-001
+  lane: single
+  objective: >-
+    Give the DAC2 application a name of its own - ตาไก๊, spoken บัญชีตาไก๊,
+    Takai in English - and an entry screen that a durian grower recognises at
+    once and passes on by word of mouth, with Durian Academy cohort 2 as the
+    byline rather than the name, so later cohorts and teachers can adopt it.
+  scope:
+    - Open the workstream at plan revision 0.1 and authorize slice 1, the design section in DESIGN.md, with no code.
+  out_of_scope:
+    - Cohort, teacher, or group features; removing the demo route; any working screen after login.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On the morning of 2026-09-16, after the pilot deployment closed, the
+    owner asked for a better first screen and a real name, shared a login
+    mockup as the mood, and answered four rounds of alignment questions. The
+    owner chose: the login screen is the entry screen at "/" with the demo
+    link removed; the application has its own two-language name rather than
+    the cohort's; the mascot is ตาไก๊, drawn from the owner, whose name the
+    owner picked because it is what Thai farmers are called - easy to say,
+    easy to remember - and the owner wanted the name on the application
+    ("ถ้าเป็นชื่อแอพ ก็น่าจะเท่ห์"); the identity set is small (name,
+    mascot, entry screen, header, title, favicon, mail); the mascot bust
+    enters the public repository directly and the large source does not;
+    the agent drafts the DESIGN.md section and the owner decides; no group
+    or teacher feature is built now ("ผมแค่บอกให้ฟังเฉยๆ"). The owner
+    directed that this work proceeds on the standing branch hq/20260915
+    now, before that branch merges ("เราจะทำใน hq/20260915 นี่เลยครับ ยังไม่
+    merge hq ตอนนี้"). That is the owner's confirmation of the overlap Wake
+    reports: dac2-pilot-deployment-001 still occupies the application
+    project until its closeout reaches origin/main, and this workstream
+    touches the same project; the pilot workstream has no code left to do,
+    so the overlap is one of records, not of files. Slice 1 is authorized by
+    this decision.
+  authorizes:
+    - Slice 1 of plan revision 0.1 - the DESIGN.md section on a draft application pull request, no code.
+  does_not_authorize:
+    - Slice 2 code or slice 3 deploy; each needs its own decision after the preceding closeout.
+
+evidence:
+  plan: workstreams/dac2-takai-identity-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 59db38574aa1b4dfea6e2795e25f2ec6db8bb38e
+    branch: hq/20260915
+    working_tree: plan-and-this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: dac2-durian-smart-account
+    head: c495e5447f66ec0f56c5106ce9f9ffb742f929b4
+    branch: main
+    working_tree: clean
+  assets:
+    location: owner-controlled git-ignored directory outside every repository
+    bust: 256x256 PNG with alpha, 40 KB - enters the repository in slice 2
+    source: 1024x1536 PNG, solid background, 3.1 MB - does not enter
+  preceding_records:
+    - memory/events/2026/09/16/20260916T052000_dac2_pilot_deployment_slice4_closed.yaml
+
+unresolved:
+  - The tagline sentence is not yet written; slice 1 proposes it and the owner decides.
+  - The hat-mark favicon is a proposal; if it does not read at sixteen pixels the fallback is a plain wordmark initial.
+  - dac2-guided-inputs-001 stays paused with the deferred pilot proof; this workstream does not absorb it.
+
+next_action:
+  action: >-
+    Branch the application repository from clean main, write the "Identity
+    and the entry screen" section into DESIGN.md with every Thai string
+    verbatim, open a draft pull request, and ask the owner to read it in
+    session. Record the slice-1 closeout citing the approved head.
+  acceptance_check:
+    - Wake lists dac2-takai-identity-001 as active at revision 0.1 with no validation error or warning.
+    - The draft pull request exists with the DESIGN.md section only.
