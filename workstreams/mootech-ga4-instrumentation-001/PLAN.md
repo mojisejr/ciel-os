@@ -3,7 +3,7 @@
 **Workstream:** `mootech-ga4-instrumentation-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -12,8 +12,8 @@
 
 Give the team one number they asked for and can trust — **the share of v2
 members active each day** — and the two events under it, `login` and
-`sign_up`, measured on the app host `bazichart.mumate.co` alone, with a
-consent switch that actually governs the tag. Everything else the team may
+`sign_up`, measured so that only signed-in members count and only real hosts
+feed the property, with a consent switch that actually governs the tag. Everything else the team may
 want later (conversion buttons, purchase, feature use) is designed to hang off
 the same seam but is not built here.
 
@@ -26,10 +26,12 @@ The team's ask, relayed by the owner from a chat with พี่ปอง (Janjar
 
 The owner's two decisions the same day, which this plan rests on:
 
-1. **DAU is the app's, not the landing site's.** `mumate.co` is a WordPress
-   marketing site; the product lives at `bazichart.mumate.co` and stays there
-   through the v2 launch (`mootech-fe#606`) and the server move
-   (`mootech-fe#637` §4.6). Mixing the two hides the real number.
+1. **DAU means members of the app, not visitors of the landing site.**
+   `mumate.co` is a WordPress marketing site; the product lives at
+   `bazichart.mumate.co` and stays there through the v2 launch
+   (`mootech-fe#606`) and the server move (`mootech-fe#637` §4.6). The
+   owner first asked for a separate property and then, the same evening,
+   chose to keep one property and count members only (D1, revised).
 2. **The denominator is every v2 member, from the database, from now on.**
    "Total users" means accounts, not visitors, and v2 accounts specifically —
    not the v1 `member` table. The percentage is `active members ÷ v2 members`.
@@ -112,16 +114,23 @@ Revenue and QI stay there; GA is for behaviour before and around them.
 
 ## Decisions — recorded 2026-09-15
 
-- **D1 Split, don't filter.** The app gets its own GA4 property ("MuMate
-  App", web stream `bazichart.mumate.co`). GTM chooses the measurement ID
-  from `Page Hostname` through a lookup table: `mumate.co` and
-  `www.mumate.co` keep `G-EBZKXSF579`; `bazichart.mumate.co` gets the new
-  ID; any other hostname (Vercel previews, localhost) fires nothing. The
-  landing property keeps its history; the app property starts clean on the
-  day the container is published. Rationale: พี่ปอง should open one property
-  and read DAU without building a filter; a single property with hostname
-  comparisons was the alternative and was rejected as something a non-GA
-  reader will forget to apply.
+- **D1 One property, guarded by hostname (revised 0.2).** The app and the
+  landing site keep sharing the existing property `G-EBZKXSF579`. GTM adds a
+  trigger exception so the tag fires only on `mumate.co`, `www.mumate.co`
+  and `bazichart.mumate.co`; Vercel previews and localhost fire nothing.
+  The 0.1 text proposed a separate "MuMate App" property chosen by a
+  hostname lookup table; the owner reversed it on 2026-09-15 evening after
+  finding that a property can only be created with Editor rights on the GA
+  *account*, which the team granted at property level only. The reversal
+  costs nothing the team asked for: the percentage's numerator is active
+  users with `member_state = member` (D2), which no landing visitor ever
+  carries, so the landing cannot pollute it; and because both hosts sit
+  under `.mumate.co`, the `_ga` cookie is shared and a person who arrives
+  through the landing and enters the app is one user without cross-domain
+  setup — something the split would have lost. What the team accepts: the
+  unfiltered "active users" card keeps counting landing visitors, so the
+  app-only view before slice 2 needs a hostname filter in Explorations, and
+  the number worth trusting arrives with slice 2.
 - **D2 A person is an account.** After the member id exists the app sets GA
   `user_id` to a keyed hash of the member id (HMAC with a server-side secret,
   never the raw id, never LINE/Google/Facebook ids) and the user property
@@ -156,31 +165,26 @@ Revenue and QI stay there; GA is for behaviour before and around them.
 
 ## Execution slices and acceptance criteria
 
-### 1. Split the property and clean the account — no code
+### 1. Guard the container and clean the property — no code
 
-The agent writes `gtm/GTM-MLZC4FRC.v3.json` under this directory: a
-Lookup Table variable `GA4 Measurement ID by Host` keyed on `Page
-Hostname` (`mumate.co`, `www.mumate.co` → `G-EBZKXSF579`;
-`bazichart.mumate.co` → the new ID; default empty), the existing tag
-re-pointed at that variable, and a trigger exception so the tag does not
-fire when the variable is empty. The owner, guided step by step: creates the
-GA4 property "MuMate App" with web stream `https://bazichart.mumate.co`
-(enhanced measurement on, Google Signals off until consent mode exists),
-sets event data retention to 14 months on both properties, removes the
-key-event mark from `qualify_lead` and `close_convert_lead` on the old
-property, imports the JSON into the GTM workspace (merge, overwrite
-conflicts), runs Preview on `bazichart.mumate.co/v2` and on `mumate.co`, and
-publishes as version 3 "Split app and landing by hostname".
+The agent writes `gtm/GTM-MLZC4FRC.v3.json` under this directory: a trigger
+exception `Not a MuMate host` on `Page Hostname` not matching
+`^(www\.)?mumate\.co$|^bazichart\.mumate\.co$`, attached to the existing
+tag; the measurement ID stays `G-EBZKXSF579`. The owner, guided step by
+step: sets event data retention to 14 months, removes the key-event mark
+from `qualify_lead` and `close_convert_lead`, imports the JSON into the GTM
+workspace (merge, overwrite conflicts), runs Preview on
+`bazichart.mumate.co/v2`, on `mumate.co` and on a Vercel preview URL, and
+publishes as version 3 "Guard hostnames".
 
 Slice 1 is done when: the public
 `https://www.googletagmanager.com/gtm.js?id=GTM-MLZC4FRC` fetched after
-publish contains both measurement IDs and a hostname predicate (the agent
-reads it); the app property's Realtime shows a visit made on
-`bazichart.mumate.co` and the landing property's Realtime does not; a visit
-to a Vercel preview URL registers in neither; retention reads 14 months on
-both properties; and a closeout records the new measurement ID, stream id,
-the GTM version number, and the exact date the app property started
-counting — the date the team's DAU series begins.
+publish contains the hostname predicate and still one measurement ID (the
+agent reads it); Realtime shows a visit made on `bazichart.mumate.co` and a
+visit to a Vercel preview URL does not appear; retention reads 14 months;
+the two seeded key events are unmarked; and a closeout records the GTM
+version number and the date the guard took effect — the date from which the
+series is clean of preview traffic.
 
 ### 2. `login`, `sign_up`, identity and the denominator — one pull request
 
@@ -230,7 +234,7 @@ candidates for a set-2 plan revision, not as work started.
 
 | Step | Owner (in the Google UIs, Vercel, GitHub) | Agent (repository, JSON, verification) |
 |---|---|---|
-| 1 | Creates the app property and stream; sets retention; unstars seeded key events; imports the JSON; runs Preview; publishes | Authors the container JSON; writes the click-by-click guide; reads the public container after publish; records the closeout |
+| 1 | Sets retention; unstars seeded key events; imports the JSON; runs Preview on three hosts; publishes | Authors the container JSON; writes the click-by-click guide; reads the public container after publish; records the closeout |
 | 2 | Reviews and merges the PR (a production deploy); sets `ANALYTICS_USER_ID_KEY` on Vercel; imports and publishes v4; walks DebugView with a fresh account | Writes the code and tests; runs the suites; prepares v4 JSON; runs the read-only SQL cross-check; records the closeout |
 | 3 | Sends one screenshot or export a day; shows the page to พี่ปอง | Records the rows, computes the percentage, writes the page, records the closeout |
 
@@ -263,9 +267,26 @@ in v1 pages beyond the shared loader they already carry.
 ## Rollback contract
 
 - Slice 1: re-publish GTM version 2 — the previous live version — from the
-  Versions tab; the app property keeps its rows and can be deleted or left.
+  Versions tab; retention and the key-event marks revert in the same screens.
 - Slice 2: revert the PR; the GTM event tags fire on nothing and can stay or
   be removed in a later version; unset the secret.
-- Nothing in this plan writes to the landing site or the old property
-  except the retention setting and the two key-event marks, both reversible
-  in the same screen.
+- Nothing in this plan writes to the landing site; the property changes are
+  the retention setting and the two key-event marks, both reversible.
+
+## Revision 0.2 — one property, not two (2026-09-15 evening)
+
+Revision 0.1 planned a second GA4 property for the app. Creating one needs
+Editor rights on the GA account, and the owner holds Administrator on the
+property only; the owner chose not to depend on the team for account-level
+access and asked whether one property would do. It does, for the reasons in
+D1: the members-only numerator (D2) excludes landing visitors by
+construction, and the shared `.mumate.co` cookie keeps a landing-to-app
+visitor as one person. Slice 1 shrinks to the hostname guard, retention and
+the key-event marks, all within the owner's current rights. The owner also
+approved this lane running in parallel with `mootech-fe-beam-gateway-001`
+on `mootech-fe`; the file sets do not overlap (`lib/payment/**`,
+`pages/api/v2/payment/**`, `middleware.ts`, `features/v2-shop/**` are
+beam's; this lane adds `lib/analytics/**` and touches
+`pages/_document.tsx`, `lib/ops/analytics.ts`, the login round-trip and
+`pages/api/v2/onboarding.ts`; `pages/_app.tsx` is shared and this lane
+rebases on it).
