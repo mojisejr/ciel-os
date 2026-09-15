@@ -1,0 +1,172 @@
+schema_version: ciel.event.v0.1
+id: evt_20260915T114122_mootech_ga4_research_baseline
+type: closeout
+recorded_at: 2026-09-15T11:41:22+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-ga4-instrumentation-001
+  lane: single
+  objective: >-
+    Proposed, not yet opened. Make Google Analytics on MuMate answer the owner's
+    behaviour questions (acquisition channel, onboarding-to-purchase funnel,
+    feature use, PWA install, retention) with events the code sends on purpose,
+    a purchase signal that respects the payment-lane CSP, and a consent switch
+    that actually governs the tag. This event records the research baseline the
+    owner asked to keep before any plan exists; no PLAN.md is created and Wake
+    will not list this workstream until one is.
+  scope:
+    - Read-only research over mootech-fe, mootech-be, bazi-sft-dataset, the public GTM container, and the GA4 property the owner now administers.
+    - The question list the owner takes to the team before this lane starts.
+  out_of_scope:
+    - Any code, GTM, or GA4 change. Nothing was modified in any system.
+    - Opening the workstream, a plan, or a slice; those need an owner decision.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Local checkouts were fast-forwarded to their remotes with no other change:
+      mootech-fe main ccc0074 -> 3913947 (PRs #655-#671), mootech-be main
+      57da359 already current, bazi-sft-dataset pdf-dev d2d4dad -> 1de7235 in
+      both the detached main checkout and the bazi-testenv worktree that holds
+      the branch. The untracked .claude/INCUBATED_BY in bazi predates this
+      session and was left alone.
+    - >-
+      Code finding: mootech-fe loads Google Tag Manager container GTM-MLZC4FRC on
+      every page since the init commit defb0c7 (2026-06-06): the inline loader in
+      pages/_app.tsx and the noscript iframe in pages/_document.tsx. No gtag.js,
+      no measurement ID, and no dataLayer.push exist anywhere in the code, so the
+      site sends nothing but what the container sends by itself.
+    - >-
+      Code finding: the payment lane (/v2/shop/checkout, /v2/shop/qrcode,
+      /v2/shop/result) carries a Content-Security-Policy in middleware.ts that
+      deliberately shuts GTM out (mootech-fe#493, 2026-08-28), locked by
+      scripts/csp-payment-path.test.ts and e2e/v2-csp-teeth.spec.ts. A purchase
+      event therefore cannot be fired through GTM on those screens; the owner's
+      standing rule is that this stays closed.
+    - >-
+      Code finding: the PDPA consent screen (features/v2-settings/components/
+      ConsentScreen.tsx) offers an 'analytics' switch persisted through
+      /api/consent, but nothing reads it on the tag side; GTM fires regardless.
+      pages/_document.tsx also declares lang="en" on a Thai-language app.
+    - >-
+      mootech-be and bazi-sft-dataset carry no web analytics. Their 'analytics'
+      code is the internal /ops revenue and tier reporting (lib/ops/analytics.ts,
+      bazi src/app/api/ops/analytics) and the analytic_sacred_thing domain module.
+    - >-
+      Container finding, read from the public gtm.js and confirmed by the owner's
+      workspace export (GTM-MLZC4FRC_workspace3.json, kept outside the
+      repository): account 6307897573, container 227123257 named www.mumate.co,
+      exactly one tag 'GA4 Configuration - Main Site' of type googtag sending to
+      G-EBZKXSF579 on the built-in Initialization - All Pages trigger, five
+      built-in variables, no custom trigger, no other vendor tag, and
+      consentSettings NOT_SET. Live version 2 'PageView' was created and
+      published 2026-08-12 by mootech.co@gmail.com over version 1 'Empty
+      Container'; no workspace change is pending.
+    - >-
+      Production finding: https://mumate.co (www redirects there) serves both
+      GTM snippets, so page views have reached the property since 2026-08-12,
+      about two months after the snippet entered the code.
+    - >-
+      GA4 property finding, read by the owner in the GA4 UI on 2026-09-15 and
+      relayed with screenshots: one web data stream 'Mumate', stream id
+      12016428670, URL https://www.mumate.co, measurement ID G-EBZKXSF579
+      matching the container, enhanced measurement on; Realtime showed the
+      owner's own visit, proving data arrives; event data retention is 2 months;
+      key events list holds qualify_lead and close_convert_lead (starred, the
+      lead-generation defaults Google seeds) and purchase (unstarred), all three
+      with no stream data in 28 days; the owner's account nonthasak.l@gmail.com
+      is Administrator on both the property and the container.
+    - >-
+      Readiness verdict: no blocker. Access is sufficient, the property is the
+      one the container feeds, the container has nothing that a change could
+      break, and data is arriving. The question list below is what the owner
+      takes to the team before the lane opens.
+  not_completed:
+    - No event specification, plan, or slice exists; nothing here authorizes work.
+    - The GA4 report history itself (which pages, which sources since 2026-08-12) was not read.
+    - GA4 property access list beyond the owner's own row, Google Signals, internal-traffic filter, and any Search Console or Ads link were not read.
+    - The 'team' who created the container on 2026-08-12 is the owner's own company account; whether another person also holds access was not established.
+
+evidence:
+  plan: none-yet
+  plan_revision: none
+  slice: none
+  repository:
+    head: 67cd6cd3c5c56732b7c5a23acef2771af9da224c
+    branch: hq/20260915
+    working_tree: clean-before-this-closeout
+    pull_request: none-until-hq-round-closes
+  application:
+    repository: mootech-fe
+    head: 391394797179bcb3359c57b09e59053fef77448e
+    branch: main
+    working_tree: clean
+    files_read:
+      - pages/_app.tsx
+      - pages/_document.tsx
+      - middleware.ts
+      - scripts/csp-payment-path.test.ts
+      - e2e/v2-csp-teeth.spec.ts
+      - features/v2-settings/components/ConsentScreen.tsx
+      - lib/ops/analytics.ts
+      - .env.example
+  backend:
+    repository: mootech-be
+    head: 57da35941c805e490cf99570eaccdbe5c395e018
+    branch: main
+  engine:
+    repository: bazi-sft-dataset
+    head: 1de723587fda5c88247a1587a39eb774bc58a927
+    branch: pdf-dev (main checkout detached at that commit; branch held by the bazi-testenv worktree)
+  external_records:
+    - https://www.googletagmanager.com/gtm.js?id=GTM-MLZC4FRC fetched 2026-09-15, 352,805 bytes, parsed for tags and triggers.
+    - GTM workspace export GTM-MLZC4FRC_workspace3.json, exportTime 2026-09-15 04:38:08, held by the owner outside the repository.
+    - GA4 UI screenshots relayed by the owner on 2026-09-15 (data stream, key events) and the GTM versions tab.
+    - mootech-fe#493 (payment-lane CSP decision), mootech-fe#637 (infra move, open), mootech-fe#606 (launch, gated).
+  checks:
+    - bun run wake ran first; reconciliation expected-evolution from checkpoint 8f65e95.
+    - bun run check run after this event was written; result recorded in the commit message.
+  owner_statements_not_reverified:
+    - Enhanced measurement is on, retention is 2 months, and the owner is Administrator on both systems, as read from the owner's UI session.
+
+unresolved:
+  - >-
+    Data retention at 2 months means the first month of collected data starts
+    expiring in mid-October 2026; raising it to 14 months is a one-click,
+    no-downside change that still waits on the owner's say-so.
+  - >-
+    The two seeded key events qualify_lead and close_convert_lead measure
+    nothing and will mislead anyone reading the key-events report; removing
+    them is a decision for the plan, not this record.
+  - >-
+    Because the payment lane shuts GTM out, the purchase signal must come from
+    the server (GA4 Measurement Protocol on the APPROVED webhook) or from a
+    screen after /result; the server path keeps #493 intact and is the
+    preferred shape, but it needs an api_secret created in the GA4 stream and
+    an owner decision on what identifier, if any, joins the server hit to the
+    browser session.
+  - >-
+    Birth date and time, LINE identity, and email must never travel as event
+    parameters; the event specification has to say so explicitly because the
+    consent switch today governs nothing.
+  - >-
+    GTM Publish is a production deploy that bypasses Git and this repository's
+    review gate; who may publish, and how a publish is announced, is not yet a
+    rule anywhere.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner puts the recorded question list to the team. When the answers are
+    in, the owner decides whether to open mootech-ga4-instrumentation-001; if
+    so, the agent writes PLAN.md revision 0.1 with an event specification as
+    slice 1 and records the opening decision. Until then nothing changes in the
+    code, the container, or the property.
+  acceptance_check:
+    - This event validates under bun run check and Wake reports no validation error.
+    - Wake still lists no mootech-ga4-instrumentation-001 workstream, because no plan exists.
+    - The three application checkouts remain clean at the heads recorded above.
