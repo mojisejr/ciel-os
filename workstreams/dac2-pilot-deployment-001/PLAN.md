@@ -5,7 +5,7 @@
 **Execution lane:** single
 **Plan revision:** 0.1
 **Execution phase:** 4
-**Execution state:** executing
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -332,15 +332,13 @@ whatever the free tiers turn out to be at signup.
 
 ## Next executable action
 
-Slices 1, 2, and 3 are merged; application `main` is `fddab20` and the image
-`ghcr.io/mojisejr/dac2-durian-smart-account:fddab20e9a28af628db9ba4cdbd844bf44da32e1`
-(digest `sha256:9346f770…`) is public on GHCR, built for `linux/amd64` by the
-push run in 20 minutes. The repository is licensed AGPL-3.0-or-later and
-`main` requires the `check` job. What remains is slice 4: the owner authorizes
-it by a decision naming plan revision 0.1 slice 4, creates the Neon project,
-the Brevo sender, and the Render web service, and holds every credential; the
-agent prepares `render.yaml` and the runbook and operates the Render MCP only
-on explicit per-action authorization. Two facts from slice 2 bind that work:
-`CLIENT_ADDRESS_SOURCE=forwarded-for` behind Render, and a wider
-`RATE_LIMIT_ACCOUNT` on an in-person study day. Slice 4 starts from the merged
-application `main` on a topic branch `feat/pilot-render`.
+Slices 1, 2, and 3 are merged and slice 4 is live but not finished: the pilot
+answers at <https://dac2-pilot.onrender.com> on image tag `c495e5447f…`,
+registration and verification work through Brevo's HTTP API, and the
+2026-09-15 checkpoint record lists what remains — the password-reset
+diagnosis, the public route matrix and stall probe, cold-start measurements,
+the owner's phone walkthrough, the runbook additions, and the final closeout.
+The lessons record of the same day carries what Render and Brevo taught that
+their documentation did not. The next session starts from those two records,
+on a topic branch from clean `main`, and finishes slice 4 with a closeout that
+says `ready-for-owner-merge`; only then does `dac2-guided-inputs-001` resume.
