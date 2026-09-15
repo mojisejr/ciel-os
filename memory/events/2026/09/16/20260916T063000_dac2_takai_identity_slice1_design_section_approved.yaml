@@ -1,0 +1,96 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T063000_dac2_takai_identity_slice1_design_section_approved
+type: closeout
+recorded_at: 2026-09-16T06:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-takai-identity-001
+  lane: single
+  objective: >-
+    Give the DAC2 application a name of its own - ตาไก๊, spoken บัญชีตาไก๊,
+    Takai in English - and an entry screen that a durian grower recognises at
+    once and passes on by word of mouth, with Durian Academy cohort 2 as the
+    byline rather than the name, so later cohorts and teachers can adopt it.
+  scope:
+    - Slice 1 of plan revision 0.1 - the "Identity and the entry screen" section of DESIGN.md, proposed on a draft application pull request and approved by the owner in session. No code.
+  out_of_scope:
+    - Slice 2 code and slice 3 deploy; each needs its own decision.
+
+outcome:
+  status: slice-closed
+  completed:
+    - >-
+      DESIGN.md revision 0.9 gains the section "Identity and the entry
+      screen": the three forms of the name and where each is used; the
+      mascot files, sizes, and the 112-pixel circle; the straw-hat mark as
+      favicon with its fallback; the entry screen at "/" top to bottom with
+      every visible Thai string verbatim, including the proposed tagline
+      "คิดกำไรขาดทุนสวนทุเรียน ให้รู้ก่อนขาย", the one-line pilot notice, and
+      the cohort byline; the signed-in redirect to /plans; what is removed
+      from the old landing and login pages; and the contrast of every new
+      text computed from the document's own tables. Open questions updated.
+    - >-
+      Mail: the section proposes plain text with the new sender name and
+      subjects and no image, because the mails are plain text today and an
+      HTML mail with an embedded image is the shape most likely to be
+      filtered. This departs from the plan's "mascot heads each mail"; the
+      owner accepted the departure in session ("เรื่องเมลล์เอาตามคุนครับ").
+    - >-
+      Committed as 0f2cf0e on docs/takai-identity from main c495e54, pushed,
+      and opened as draft pull request 21 by the agent under the owner's
+      explicit per-action permission given in session.
+    - >-
+      The owner approved the section as summarised in session ("งั้นเอาตามนี้")
+      before the pull request existed; the pull request is where the owner
+      reads the full diff, and any later edit rides into slice 2 rather than
+      reopening this slice.
+  not_completed:
+    - The hat mark is not yet drawn; whether it reads at sixteen pixels is decided in slice 2.
+
+evidence:
+  plan: workstreams/dac2-takai-identity-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  authorized_by: memory/events/2026/09/16/20260916T054500_dac2_takai_identity_workstream_opened.yaml
+  repository:
+    head: 2ca028f
+    branch: hq/20260915
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: dac2-durian-smart-account
+    base: c495e5447f66ec0f56c5106ce9f9ffb742f929b4
+    head: 0f2cf0e
+    branch: docs/takai-identity
+    working_tree: clean
+    pull_request:
+      number: 21
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/21
+      state: draft
+    changed: DESIGN.md only, +162 -2
+  checks:
+    - The section's contrast figures are the document's own table values (light 7.43, 7.84, 6.07; dark 10.96, 8.36, 8.74), not new measurements.
+    - git status on the application checkout clean on docs/takai-identity after push.
+
+unresolved:
+  - The tagline is a proposal the owner accepted in summary; reading it on the screen in slice 2 may change it.
+  - Whether the mascot ever appears in mail is an open question in DESIGN.md, deferred out of this workstream.
+  - dac2-guided-inputs-001 remains paused with the deferred pilot proof.
+
+next_action:
+  action: >-
+    The owner authorizes slice 2 in session. Then, on the same topic branch
+    and pull request: copy the bust into public/ as WebP and PNG, draw the
+    hat mark, make "/" the entry screen with the signed-in redirect, remove
+    the landing card and the demo link, reshape the login card to the
+    section, set the title and favicon, rename the mail sender and subjects
+    and update the two tests that pin them, retitle the README, run
+    scripts/check.sh and the local layout proof with the entry screen in
+    the route matrix, and record the slice-2 closeout on the pull request
+    head.
+  acceptance_check:
+    - Slice 2 begins only after an owner decision event or an in-session authorization recorded in its closeout.
+    - Pull request 21 stays draft until the slice-2 closeout is on its head.
