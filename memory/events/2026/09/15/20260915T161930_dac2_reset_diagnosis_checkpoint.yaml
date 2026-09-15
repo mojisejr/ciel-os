@@ -1,0 +1,150 @@
+schema_version: ciel.event.v0.1
+id: evt_20260915T161930_dac2_reset_diagnosis_checkpoint
+type: closeout
+recorded_at: 2026-09-15T16:19:30+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - >-
+      Research-only diagnosis of the public password-reset path and a
+      client-neutral checkpoint for the next session. No application change,
+      database mutation, provider configuration change, or public reset
+      request was authorized or performed.
+  out_of_scope:
+    - Implementing or deploying a reset fix.
+    - Completing slice 4 or resuming guided-inputs batch 4b.
+
+outcome:
+  status: checkpoint
+  completed:
+    - >-
+      Traced the reset request from the Leptos form through canonical email
+      lookup, the verified-account guard, token issuance, and Brevo delivery.
+      The handler returns the same public sentence for known, unknown,
+      unverified, and internal-failure paths, but silently discards database,
+      token, mail-configuration, and delivery errors.
+    - >-
+      The owner reported that the same test account completed verification and
+      could log in. Login and reset read the same users row and both require
+      email_verified_at to be non-null, so the observed login rules out the
+      proposed cause that verification failed to update the production row.
+      This is an inference from the production login behavior, not a direct
+      SQL observation.
+    - >-
+      Identified two live alternatives that the current implementation cannot
+      distinguish after the fact: the shared account budget of five requests
+      per hour per client address may refuse register, resend, and reset
+      together; or Brevo delivery may fail after token issuance while the
+      reset handler emits no safe diagnostic log.
+    - >-
+      Identified a separate privacy defect: verified accounts wait for token
+      writes and synchronous Brevo delivery, with a twenty-second client
+      timeout, while unknown or unverified accounts return after lookup. Equal
+      response text therefore does not provide equal response timing.
+    - >-
+      Confirmed existing controls in source: a 32-byte random token stored only
+      as a SHA-256 hash, one token per user, one-hour expiry, transactional
+      single use, no automatic login, and session invalidation through the
+      changed password hash.
+    - >-
+      cargo test -p web --features ssr --lib passed 62 tests. Three read-only
+      research lanes independently reached the same diagnostic-blind-spot and
+      timing conclusions. The application checkout remained clean at c495e54,
+      equal to origin/main.
+    - >-
+      Read-only Render logs showed the deployed process configured for the
+      Brevo HTTP API and a fresh process startup at 2026-09-15T08:01:25Z. They
+      contained no reset delivery outcome because that path logs none. The new
+      startup means cold-start measurement needs a new idle window.
+  not_completed:
+    - >-
+      No direct production SQL query was obtained. The owner-open Neon Console
+      rendered blank, the shell has no production DATABASE_URL, and the local
+      ignored .env points to a local database. No credential was revealed or
+      copied to work around that boundary.
+    - >-
+      The exact cause of the missing reset mail is not proved. A controlled
+      request with a verified account and observable safe delivery outcome is
+      still required.
+    - No reset code, tests, runbook, deployment, or provider setting was changed.
+    - Public responsive, stall, cold-start, and remaining phone-walkthrough proof are still pending from the earlier slice-4 checkpoint.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 09874a2974c5da53c7e0e16f4c8225a276238dea
+    branch: hq/20260915
+    working_tree: clean-before-this-event
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: dac2-durian-smart-account
+    head: c495e5447f66ec0f56c5106ce9f9ffb742f929b4
+    branch: main
+    working_tree: clean
+  source:
+    reset_request: checkouts/dac2-durian-smart-account/crates/web/src/auth.rs
+    user_lookup: checkouts/dac2-durian-smart-account/crates/store/src/users.rs
+    verification_transaction: checkouts/dac2-durian-smart-account/crates/store/src/verification_tokens.rs
+    reset_transaction: checkouts/dac2-durian-smart-account/crates/store/src/reset_tokens.rs
+    mail_delivery: checkouts/dac2-durian-smart-account/crates/web/src/mail.rs
+    network_gate: checkouts/dac2-durian-smart-account/crates/web/src/gate.rs
+    integration_test: checkouts/dac2-durian-smart-account/crates/web/tests/auth_http.rs
+  checks:
+    - cargo test -p web --features ssr --lib: 62 passed, 0 failed
+    - git -C checkouts/dac2-durian-smart-account status --short --branch: main equals origin/main and is clean
+    - gh pr list for ciel-os and dac2-durian-smart-account: no open pull requests
+
+unresolved:
+  - >-
+    The minimum operational fix is safe reason-coded logging for reset token,
+    configuration, and delivery failures without email, token, API key, or
+    provider response body, plus endpoint-level negative controls for Brevo
+    refusal and timeout.
+  - >-
+    Uniform response timing needs an explicit design. The current synchronous
+    provider call leaks account state through latency; making delivery
+    asynchronous introduces reliability and lifecycle choices on a free
+    process and must not be invented as a hidden infrastructure expansion.
+  - >-
+    The gate is per process and per client address only. It has no per-account
+    throttle, resets when the process restarts, and repeated successful
+    requests invalidate previously issued reset links.
+  - >-
+    The deployment plan says application defects return to
+    dac2-guided-inputs-001, while the earlier checkpoint mentions carrying any
+    reset fix in a small application change. A checkpoint cannot silently
+    expand plan authority; the owner must choose the authorized repair boundary
+    before code changes begin.
+  - >-
+    The standing HQ branch is local, one commit ahead of origin/main before
+    this event, and intentionally has no pull request while the multi-session
+    round continues. Merge timing remains the owner's decision.
+
+next_action:
+  action: >-
+    The next Claude session runs Wake and reads this event together with
+    memory/events/2026/09/15/20260915T101900_dac2_pilot_deployment_slice4_checkpoint.yaml.
+    First obtain the owner's explicit choice of repair boundary: either revise
+    the deployment slice to authorize the minimum reset repair or return the
+    defect to dac2-guided-inputs-001 as its plan requires. Once authorized,
+    add safe reset outcome logging and endpoint-level provider-failure tests,
+    resolve the timing design without adding unapproved infrastructure, run
+    local database and Brevo-stand-in proof, then make one controlled public
+    reset request with the owner's verified test account while observing safe
+    Render and Brevo outcomes. After reset is proved, start a fresh idle window
+    and resume the cold-start measurement.
+  acceptance_check:
+    - The next session can state from repository evidence why verification-row failure is ruled out and why missing reset mail remains undiagnosed.
+    - No application or provider mutation begins before the owner authorizes the repair boundary.
+    - A future public reset proof distinguishes gate refusal, token failure, provider failure, and successful delivery without exposing account data or reset tokens.
