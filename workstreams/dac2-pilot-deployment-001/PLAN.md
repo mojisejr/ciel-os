@@ -3,9 +3,9 @@
 **Workstream:** `dac2-pilot-deployment-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** 4
-**Execution state:** idle
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -257,19 +257,40 @@ pull it, run it.
 - Free-tier facts from the research table re-verified at signup, with any
   difference recorded in the closeout.
 
-**Acceptance**
+**Acceptance (revised 0.2, owner decision of 2026-09-16)**
 
 - Over the public HTTPS address from a phone on a mobile network: register,
-  receive the verification mail through Brevo, log in, create a season, reach
-  the first profit figure, close a season, and view history.
-- `scripts/check-responsive.sh` pointed at the public address passes the full
-  route matrix; the stall probe pointed at it records zero stalls.
-- Cold-start time from a spun-down service and from a suspended Neon compute
-  is measured and recorded, together with whether the study-day ping wakes the
-  database.
-- Render shows no deploy configuration that bypasses the owner: no auto-deploy
-  on push.
+  receive the verification mail through Brevo, log in, request and complete a
+  password reset, create a season, and reach the first profit figure. Closing
+  a season and viewing history on the public address are left to the owner's
+  and the first testers' own use; defects they meet return to
+  `dac2-guided-inputs-001` as the out-of-scope rule below already says.
+- The application talks to Neon over the direct endpoint, not the pooler, as
+  the connection rule above requires; this is read from the running service,
+  not assumed from a record.
+- Render shows no deploy configuration that bypasses the owner. For an
+  image-backed service with no repository link and a tag pinned to a commit
+  hash this holds by structure; the `autoDeploy` field is inert and the
+  dashboard offers no switch for it.
 - No credential appears in `render.yaml`, the workflow, the events, or the PR.
+
+**Deferred by the owner in revision 0.2 — not acceptance for this slice**
+
+- The responsive route matrix and the stall probe against the public address.
+  The deployed image is byte-for-byte the one that passed both locally; the
+  one-worker stall mitigation is inside it; and during the narrow pilot the
+  owner is present with every tester. Both scripts also depend on Mailpit for
+  the verification link and cannot run unchanged against Brevo.
+- Cold-start measurement. Spin-down and wake were observed on 2026-09-15
+  (a fresh instance at 19:16 and again at 20:47 local time, each on a
+  visitor's first request); the number was not taken. The runbook already
+  opens the service before a session, so the number changes no procedure.
+- The runbook lines on the Brevo key prefix, the IP-blocking setting, and the
+  From rewrite, and the one-line reset delivery log; they ride with the next
+  small application change under `dac2-guided-inputs-001`.
+
+These are owed before study 4b is scheduled, and `dac2-guided-inputs-001`
+carries them as its first items on resume.
 
 **Owner can try:** open the address on their phone, hand it to someone else,
 and watch them use it.
@@ -330,15 +351,22 @@ whatever the free tiers turn out to be at signup.
 - The one-worker mitigation is carried into the container unchanged; the
   upstream race is still unfixed.
 
+## Revision history
+
+- **0.1** (2026-09-14): plan as authorized; four slices.
+- **0.2** (2026-09-16): slice-4 acceptance narrowed by the owner for the
+  narrow pilot after the reset path was proved and the direct endpoint was
+  switched on 2026-09-15. The route matrix, stall probe, cold-start number,
+  runbook lines, and reset delivery log move to `dac2-guided-inputs-001`. No
+  deliverable of slices 1-3 changes.
+
 ## Next executable action
 
-Slices 1, 2, and 3 are merged and slice 4 is live but not finished: the pilot
-answers at <https://dac2-pilot.onrender.com> on image tag `c495e5447f…`,
-registration and verification work through Brevo's HTTP API, and the
-2026-09-15 checkpoint record lists what remains — the password-reset
-diagnosis, the public route matrix and stall probe, cold-start measurements,
-the owner's phone walkthrough, the runbook additions, and the final closeout.
-The lessons record of the same day carries what Render and Brevo taught that
-their documentation did not. The next session starts from those two records,
-on a topic branch from clean `main`, and finishes slice 4 with a closeout that
-says `ready-for-owner-merge`; only then does `dac2-guided-inputs-001` resume.
+Slices 1, 2, and 3 are merged and slice 4 is live at
+<https://dac2-pilot.onrender.com> on image tag `c495e5447f…`. Against
+revision 0.2 the slice is finished: registration, verification, login, and
+password reset are proved on the public address; the owner reached the first
+profit figure of a season from a phone; the service runs on the Neon direct
+endpoint; no deploy path bypasses the owner. The closeout that says
+`ready-for-owner-merge` finishes this workstream. `dac2-guided-inputs-001`
+then resumes with the 4b decision and carries the deferred items above.
