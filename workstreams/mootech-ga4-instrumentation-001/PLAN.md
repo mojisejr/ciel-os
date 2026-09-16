@@ -3,7 +3,7 @@
 **Workstream:** `mootech-ga4-instrumentation-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -213,22 +213,56 @@ user in Realtime; `/ops` shows the three member counts and they match a
 direct SQL count the agent runs read-only; and a closeout records the GTM
 version, the PR, and the first day both events exist.
 
-### 3. Seven days of the number, read with the team
+### 3. Seven days of the number, read with the team (revised 0.3)
 
-No new code. For seven consecutive days after slice 2 is live the agent
-records, from the owner's daily screenshot or GA4 export: active users with
-`member_state = member` (1-day), the same for 7-day, `login` and `sign_up`
-counts, and `members_total` from `/ops`; computes the daily percentage; and
-compares GA's `sign_up` count with the growth of `members_total` (they must
-agree within the day boundary, or D3 is wrong). The number and the method
-are written up in one page for พี่ปอง.
+No new code. The slice has a prerequisite that revision 0.2 missed: GA4
+reports, Explorations and comparisons cannot filter on a user property
+until it is registered as a **user-scoped custom dimension** (Admin → Data
+display → Custom definitions → Create custom dimension, scope User, user
+property `member_state`), and Google states the dimension becomes usable
+"after 24-48 hours from when the custom data was sent and the custom
+dimension was created". DebugView showed `member_state` on 2026-09-16
+without registration; the reports will not. The owner registers the
+dimension first, then builds one saved Exploration from the agent's guide
+(`ga4/exploration-setup.md`): rows by date, filter `member_state = member`,
+metrics 1-day active users, 7-day active users, `login` count, `sign_up`
+count. Whether hits sent before registration are reported under the new
+dimension is not stated by Google and is treated as unverified; the seven
+days therefore start on the first day the Exploration shows a row, not on
+the v4 publish date.
 
-Slice 3 is done when: seven daily rows exist in the closeout; the `sign_up`
-versus `members_total` reconciliation is within one day's boundary effects
-or the discrepancy is explained; the team has read the page and said whether
-the number answers their question; and the closeout lists what the team asks
-for next (conversion buttons, purchase from the server, feature cards) as
-candidates for a set-2 plan revision, not as work started.
+For seven consecutive days from that first day the Exploration accumulates
+the rows on its own. The owner opens it once around day 2 to confirm rows
+exist, and exports it once on day 7 — one export, not seven screenshots.
+The agent reconstructs `members_total` for each of the seven days from
+`onboarded_at` with a read-only query (the same query slice 2's cross-check
+used), computes the daily percentage, and compares GA's `sign_up` count
+with the growth of `members_total` (they must agree within the day
+boundary, or D3 is wrong). The difference between GA's counts and the
+database's is itself a finding: it measures how much ad blockers and
+consent withdrawals make GA undercount members, which is the fact the
+follow-on below needs.
+
+The deliverable is one page for พี่ปอง in two parts — a **report** (the
+seven rows, the percentage, the `sign_up` reconciliation, the
+undercount, what the number can and cannot say) and a **runbook** (where
+each of her five asks lives, how to open the Exploration and `/ops`, which
+number is fresh and which lags 24-48 hours, and how to check for herself
+that the two screens agree). The runbook is the part she keeps.
+
+Slice 3 is done when: seven daily rows exist in the closeout; the
+`sign_up` versus `members_total` reconciliation is within one day's
+boundary effects or the discrepancy is explained; the team has read the
+page and said whether the number answers their question; and the closeout
+lists what the team asks for next as candidates for a follow-on, not as
+work started. The first candidate is already named: the percentage has no
+screen — GA cannot hold the denominator (it never receives account counts
+and its calculated metrics combine GA metrics only) and `/ops` has no
+numerator — so a small follow-on workstream would add a per-day member
+activity mark written from the app's own request path and show DAU and the
+percentage in `/ops` from the database alone, numerator and denominator
+from one population. That follow-on is out of this plan's scope and waits
+for the seven-day reading and the owner's word.
 
 ## What each side does
 
@@ -236,7 +270,7 @@ candidates for a set-2 plan revision, not as work started.
 |---|---|---|
 | 1 | Sets retention; unstars seeded key events; imports the JSON; runs Preview on three hosts; publishes | Authors the container JSON; writes the click-by-click guide; reads the public container after publish; records the closeout |
 | 2 | Reviews and merges the PR (a production deploy); sets `ANALYTICS_USER_ID_KEY` on Vercel; imports and publishes v4; walks DebugView with a fresh account | Writes the code and tests; runs the suites; prepares v4 JSON; runs the read-only SQL cross-check; records the closeout |
-| 3 | Sends one screenshot or export a day; shows the page to พี่ปอง | Records the rows, computes the percentage, writes the page, records the closeout |
+| 3 | Registers the `member_state` custom dimension; builds the Exploration from the guide; checks it once around day 2; exports it once on day 7; shows the page to พี่ปอง | Writes the Exploration guide; reconstructs the denominator by day with a read-only query; records the rows, computes the percentage, reconciles `sign_up`; writes the report and runbook; records the closeout |
 
 ## Authority boundary
 
@@ -290,3 +324,25 @@ beam's; this lane adds `lib/analytics/**` and touches
 `pages/_document.tsx`, `lib/ops/analytics.ts`, the login round-trip and
 `pages/api/v2/onboarding.ts`; `pages/_app.tsx` is shared and this lane
 rebases on it).
+
+## Revision 0.3 — slice 3 needs the dimension registered, and one export (2026-09-16 morning)
+
+Slices 1 and 2 are delivered. Before slice 3 the owner asked whether
+พี่ปอง's five asks (DAU, total users, the percentage, recurring users,
+login and sign_up) could be read from the GA or GTM dashboards. Reading
+the code on `mootech-fe` main d82ee31 and the engine on `pdf-dev` 1de7235
+answered: GTM has no reports; GA holds DAU, recurring, login and sign_up
+but only after `member_state` is registered as a user-scoped custom
+dimension, which no slice had done; `/ops` holds total users and new
+members; nothing holds the percentage. The engine's `/api/ops/analytics`
+returns `qiEconomy` and `chat` only — the `dau` field the lessons record
+worried about does not exist, so nothing competes with GA's number.
+
+The owner weighed pulling GA into `/ops` through the Data API and counting
+activity in the database, chose to go light-to-heavy — show the team the
+number first, then decide — and kept slice 3 with three changes: the
+custom-dimension prerequisite and its 24-48 hour wait; one export on day 7
+with the denominator reconstructed by query, instead of a daily
+screenshot; and the deliverable named as report plus runbook. The
+database-side percentage in `/ops` is recorded as the first follow-on
+candidate, not authorized. D1-D6 stand.
