@@ -5,7 +5,7 @@
 **Execution lane:** single
 **Plan revision:** 0.1
 **Execution phase:** 1
-**Execution state:** executing
+**Execution state:** idle
 **Parallelism:** proposed
 
 ## Objective and owner agreement
@@ -211,9 +211,10 @@ any sentence.
 
 ## Next executable action
 
-Slice 1 is authorized by the opening decision of 2026-09-16. The agent
-branches the application repository from `main` (`87516bf`), writes the
-"ลดหย่อนภาษี" section into `DESIGN.md` with every Thai string verbatim and the
-suggested-name list, revises the tax explanation, opens a draft pull
-request, and asks the owner to read it. The slice-1 closeout cites the
-approved head; slice 2 needs its own owner decision.
+Finished. Slice 1 (DESIGN.md section, PR 23 merged as e11a502), slice 2 (the
+change, PR 24 merged as 5d37f0e), and slice 3 (the owner's deploy of image
+5d37f0e as dep-dal85j0ae00c73fsvmsg with the migration applied on Neon,
+then three lines entered from the owner's phone) are closed; the final
+closeout of 2026-09-16 finishes the workstream. What remains for the tax
+screen - outside income, per-deduction rules, a cross-year view - is out of
+scope here and opens only as its own workstream if the owner asks.
