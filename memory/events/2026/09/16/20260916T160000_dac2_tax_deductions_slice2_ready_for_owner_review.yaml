@@ -1,0 +1,140 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T160000_dac2_tax_deductions_slice2_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-16T16:00:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-tax-deductions-001
+  lane: single
+  objective: >-
+    Let an orchard owner write down, for a season, what they deduct from
+    taxable income and how much - one line per deduction, a name and an
+    amount - so the tax estimate uses their own deductions instead of a
+    fixed 60,000, and so they can open that season later and see what they
+    deducted that year.
+  scope:
+    - Slice 2 of plan revision 0.1 - the application change across calc, store, web, a migration and tests, on one pull request, proved locally and tried by the owner.
+  out_of_scope:
+    - Slice 3, the deploy; the owner merges, the push run builds, the owner sets the tag on Render.
+
+outcome:
+  status: slice-closed
+  completed:
+    - >-
+      Application commit de90ebf on feat/tax-deductions from main e11a502
+      (18 files, +767 -64), pushed, pull request 24 opened ready for review
+      at the owner's request after the owner ran it locally and approved
+      ("โอเคเลย"). The agent pushed and opened it under the owner's
+      per-action permission in session.
+    - >-
+      calc: TaxDeductionLine and Plan.tax_deductions; tax::calculate sums
+      the lines for both methods; the PERSONAL_ALLOWANCE constant is
+      removed; TaxMethodAnalysis carries the deduction total and whether
+      it exceeded income after expense; TaxAnalysis carries the count and
+      total. The workbook sample states its 60,000 as a line, so the golden
+      fixture passes as an explicit assumption. Four new unit tests.
+    - >-
+      store: migration 202609160001_tax_deduction_lines with its rollback -
+      a table with blank names and negative amounts refused by check
+      constraints; read, save and duplicate carry the lines through the
+      existing replace_sections path. Three new tests: round trip, duplicate
+      and freeze; the table's constraints; a legacy season through the
+      migration and rollback.
+    - >-
+      web: hub section "ลดหย่อนภาษี" after the cost sections with name and
+      amount rows, a datalist of twelve suggested names that fill the name
+      only, nothing pre-filled, a running total, a 48-pixel button to the
+      tax screen, and the closed-season rendering; the tax screen's state
+      line in both states with the way to the section, "หักลดหย่อนอีก" per
+      method, the caption for a zero from deductions above income; the
+      revised explanation; blank rows dropped, half rows field errors;
+      readiness labels may now be owned strings. Three new SSR tests.
+    - >-
+      Proof: scripts/check.sh passed end to end; scripts/check-responsive.sh
+      passed 39 routes at 320, 360, 393 and 412 pixels on two consecutive
+      runs, after one real finding (the section's analysis link was 17
+      pixels high; it is a 48-pixel button now) and three seeding-phase
+      flakes at steps unrelated to this change, each reproduced clean by
+      hand; the proof now reports the page's messages when a value never
+      appears. calc 77, store 25, analysis_ssr 17, plan_ssr 33 pass.
+    - >-
+      Read from the running application: with no lines the tax screen
+      showed the warning line and the button and deducted 0.00; with two
+      lines (60,000 and 9,000) it showed "หักลดหย่อนแล้ว 2 รายการ รวม
+      69,000.00 บาท" and the flat method's taxable income fell from
+      658,350.00 to 589,350.00 and its tax from 51,252.50 to 40,902.50.
+  not_completed:
+    - The pull request is not merged; the owner merges it when ci is green.
+    - The deploy is slice 3.
+
+departures_from_plan_or_design:
+  - >-
+    The plan named a tax_deduction_state column; none was added. With no
+    "confirmed none" the two states are read from the rows, and a column
+    that must agree with the rows is one more thing to get wrong.
+  - >-
+    DESIGN.md draws the line editor as a bottom sheet; the application
+    renders every section's lines as in-page rows, this one included, for
+    consistency with the sections beside it. The strings are the design's.
+  - >-
+    A closed season's read-only amount renders as PlanField always has,
+    without a thousands separator; unchanged here and noted for a later
+    pass across all sections.
+
+evidence:
+  plan: workstreams/dac2-tax-deductions-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  authorized_by: in-session owner authorization on 2026-09-16 after the slice-1 closeout ("ลุย slice 2 ได้เลยครับ")
+  repository:
+    head: 63c0aba
+    branch: hq/20260915
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: dac2-durian-smart-account
+    base: e11a502
+    head: de90ebf
+    branch: feat/tax-deductions
+    working_tree: clean
+    pull_request:
+      number: 24
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/24
+      state: open-ready-for-review
+    paths:
+      - crates/calc/src/{plan.rs,analysis.rs,tax.rs,lib.rs,sample.rs}
+      - crates/store/src/plans/{read.rs,write.rs}, crates/store/tests/plans.rs
+      - crates/web/src/{plan_form.rs,plan_ui.rs,analysis_ui.rs,explanations.rs}, crates/web/tests/{analysis_ssr.rs,plan_ssr.rs}
+      - migrations/202609160001_tax_deduction_lines.sql, migrations/rollback/202609160001_tax_deduction_lines.sql
+      - scripts/responsive.mjs, style/main.css
+  checks:
+    - scripts/check.sh - exit 0
+    - scripts/check-responsive.sh - passed at 320, 360, 393, 412px, twice
+    - cargo test -p calc - 77 passed; cargo test -p store --tests - 25 passed; analysis_ssr 17, plan_ssr 33 passed
+    - screenshots of the section and both tax-screen states inspected
+
+unresolved:
+  - >-
+    The layout proof's seeding phase flaked three times today at three
+    different steps with no server error; each was clean by hand. The
+    cause is not established; the proof now reports what the page said.
+  - >-
+    The one season on the pilot will read "not yet entered" after deploy
+    and its tax figure will rise by the 60,000 it no longer assumes, as the
+    owner decided; the screen's sentence is the mitigation.
+
+next_action:
+  action: >-
+    The owner merges pull request 24. The push run on main publishes the
+    image tagged with the merge commit; the owner sets that tag on the
+    Render service (no environment change this time). The agent reads the
+    run, the deploy and the start-up log for the migration, checks the
+    section and the tax screen on the public address with the owner, and
+    records the slice-3 closeout as ready-for-owner-merge, which finishes
+    the workstream.
+  acceptance_check:
+    - Pull request 24 merged and the ci image job green on main.
+    - The start-up log on Render shows the migration applied with no error; the section and both tax-screen states work on the owner's phone.
