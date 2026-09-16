@@ -1,0 +1,108 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T193000_dac2_tax_deductions_slice3_deployed_checkpoint
+type: closeout
+recorded_at: 2026-09-16T19:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-tax-deductions-001
+  lane: single
+  objective: >-
+    Let an orchard owner write down, for a season, what they deduct from
+    taxable income and how much - one line per deduction, a name and an
+    amount - so the tax estimate uses their own deductions instead of a
+    fixed 60,000, and so they can open that season later and see what they
+    deducted that year.
+  scope:
+    - A checkpoint inside slice 3 at the end of the owner's day - the merge, the image, the deploy and the migration are done and read back; the owner's phone check is not, so this is a record, not the workstream's delivery.
+  out_of_scope:
+    - The final slice-3 closeout; it waits for the owner's check on the public address tomorrow.
+
+outcome:
+  status: checkpoint
+  completed:
+    - >-
+      Pull request 24 merged by the owner as
+      5d37f0e22b0d20b9aa15791c58f02f4e227987bf. ci run 35068712749 on main
+      passed: check 07:28-07:34Z, image 07:34-07:41Z, manifest pushed for
+      the tag 5d37f0e... Merged branches docs/tax-deductions and
+      feat/tax-deductions deleted locally and on origin at the owner's
+      word; the checkout is on main 5d37f0e equal to origin/main, clean.
+    - >-
+      The owner set the image URL on the Render service and deployed:
+      dep-dal85j0ae00c73fsvmsg, trigger service_updated, live at 11:51:54Z
+      (18:51 +07:00), digest
+      sha256:92960a36e44e657978ea0a7e7afed60ad6ecf39fbd105f905cdfdb6e27ccd3e3.
+      No environment variable changed. The new instance logged the database
+      probe, the Brevo line, the gate line, pilot notice shown, and
+      listening, with no error.
+    - >-
+      Read from the pilot database over the direct endpoint, read-only:
+      migration 202609160001 "tax deduction lines" installed at 18:51:51
+      +07:00 with success true; table tax_deduction_lines present with
+      plan_id, owner_id, position, name, amount, all NOT NULL; zero lines;
+      the one existing season intact. The public address answers 200 on /
+      and /login.
+  not_completed:
+    - >-
+      The owner's check on a phone over the public address - the hub row,
+      the section, both tax-screen states after entering a line - is
+      tomorrow's first step; the final slice-3 closeout follows it.
+
+evidence:
+  plan: workstreams/dac2-tax-deductions-001/PLAN.md
+  plan_revision: "0.1"
+  # No slice named on purpose: a record inside slice 3, not its delivery.
+  repository:
+    head: 76c6bf1
+    branch: hq/20260915
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: dac2-durian-smart-account
+    head: 5d37f0e22b0d20b9aa15791c58f02f4e227987bf
+    branch: main
+    working_tree: clean
+    pull_request:
+      number: 24
+      merged_as: 5d37f0e
+  deployment:
+    render_service: srv-dak17dp42hec73bk6ha0
+    url: https://dac2-pilot.onrender.com
+    image_tag: 5d37f0e22b0d20b9aa15791c58f02f4e227987bf
+    image_digest: sha256:92960a36e44e657978ea0a7e7afed60ad6ecf39fbd105f905cdfdb6e27ccd3e3
+    deploy: dep-dal85j0ae00c73fsvmsg
+    ci_run: 35068712749
+  database_observation:
+    method: psql over the direct endpoint as the application role, default_transaction_read_only on, SELECT only
+    at: 2026-09-16T18:55+07:00
+    migration_202609160001: success at 18:51:51 +07:00
+    tax_deduction_lines: 0 rows
+    plans: 1
+  checks:
+    - gh run view 35068712749 - check success, image success
+    - Render list_deploys and list_logs for dep-dal85j0ae00c73fsvmsg - live, start-up lines present, no error
+    - psql on _sqlx_migrations and information_schema.columns - as recorded above
+    - curl https://dac2-pilot.onrender.com/ and /login - HTTP 200
+
+unresolved:
+  - >-
+    The one season on the pilot now reads "not yet entered" and its tax
+    estimate no longer assumes 60,000; the screen's sentence is the
+    mitigation the owner chose.
+  - The layout proof's seeding-phase flakes remain unexplained; the proof now reports what the page said.
+
+next_action:
+  action: >-
+    Tomorrow: the owner opens the public address on a phone, finds the hub
+    row and the section, sees the tax screen's not-yet-entered line, enters
+    a line or two, saves, and sees the tax screen change; the agent confirms
+    the rows by read-only SQL and records the slice-3 closeout as
+    ready-for-owner-merge with Execution state idle in the same commit,
+    which finishes the workstream. Then the owner decides the round close
+    of hq/20260915 from HQ.
+  acceptance_check:
+    - The next record for this workstream is the slice-3 closeout citing this checkpoint.
+    - tax_deduction_lines on the pilot database has at least one row written through the application before that closeout.

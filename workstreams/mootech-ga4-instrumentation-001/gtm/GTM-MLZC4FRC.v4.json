@@ -1,0 +1,533 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2026-09-15 13:50:00",
+    "containerVersion": {
+        "path": "accounts/6307897573/containers/227123257/versions/0",
+        "accountId": "6307897573",
+        "containerId": "227123257",
+        "containerVersionId": "0",
+        "name": "Members, login, sign_up",
+        "description": "mootech-ga4-instrumentation-001 slice 2: the Google tag carries user_id (keyed hash from mumate-aid) and user property member_state; GA4 event tags for login, sign_up and consent_update read the dataLayer the app pushes through lib/analytics/track.ts. Consent mode defaults come from the page, not the container.",
+        "container": {
+            "path": "accounts/6307897573/containers/227123257",
+            "accountId": "6307897573",
+            "containerId": "227123257",
+            "name": "www.mumate.co",
+            "publicId": "GTM-MLZC4FRC",
+            "usageContext": [
+                "WEB"
+            ],
+            "tagIds": [
+                "GTM-MLZC4FRC"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "tagId": "3",
+                "name": "GA4 Configuration - Main Site",
+                "type": "googtag",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "tagId",
+                        "value": "G-EBZKXSF579"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "configSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "user_id"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - user_id}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "userProperties",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "name",
+                                        "value": "member_state"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "{{DLV - member_state}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "firingTriggerId": [
+                    "2147479573"
+                ],
+                "blockingTriggerId": [
+                    "10"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "tagId": "11",
+                "name": "GA4 Event - login",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "login"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "method"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - method}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "user_id"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - user_id}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-EBZKXSF579"
+                    }
+                ],
+                "firingTriggerId": [
+                    "20"
+                ],
+                "blockingTriggerId": [
+                    "10"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "tagId": "12",
+                "name": "GA4 Event - sign_up",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "sign_up"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "method"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - method}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "user_id"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - user_id}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-EBZKXSF579"
+                    }
+                ],
+                "firingTriggerId": [
+                    "21"
+                ],
+                "blockingTriggerId": [
+                    "10"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "tagId": "13",
+                "name": "GA4 Event - consent_update",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "consent_update"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "analytics"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - analytics}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-EBZKXSF579"
+                    }
+                ],
+                "firingTriggerId": [
+                    "22"
+                ],
+                "blockingTriggerId": [
+                    "10"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "triggerId": "10",
+                "name": "Exception - Not a MuMate host",
+                "type": "INIT",
+                "filter": [
+                    {
+                        "type": "MATCH_REGEX",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page Hostname}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "^(www\\.)?mumate\\.co$|^bazichart\\.mumate\\.co$"
+                            },
+                            {
+                                "type": "BOOLEAN",
+                                "key": "negate",
+                                "value": "true"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "triggerId": "20",
+                "name": "CE - login",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "login"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "triggerId": "21",
+                "name": "CE - sign_up",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "sign_up"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "triggerId": "22",
+                "name": "CE - consent_update",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "consent_update"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "variableId": "30",
+                "name": "DLV - user_id",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "user_id"
+                    }
+                ]
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "variableId": "31",
+                "name": "DLV - member_state",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "member_state"
+                    }
+                ]
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "variableId": "32",
+                "name": "DLV - method",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "method"
+                    }
+                ]
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "variableId": "33",
+                "name": "DLV - analytics",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "analytics"
+                    }
+                ]
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "type": "PAGE_URL",
+                "name": "Page URL"
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "type": "PAGE_HOSTNAME",
+                "name": "Page Hostname"
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "type": "PAGE_PATH",
+                "name": "Page Path"
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "type": "REFERRER",
+                "name": "Referrer"
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "type": "EVENT",
+                "name": "Event"
+            }
+        ]
+    }
+}

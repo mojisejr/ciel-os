@@ -1,0 +1,203 @@
+schema_version: ciel.event.v0.1
+id: evt_20260915T202600_dac2_reset_proved_direct_endpoint_checkpoint
+type: closeout
+recorded_at: 2026-09-15T20:26:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - >-
+      A checkpoint inside slice 4 at the end of the owner's day: the password
+      reset defect is closed by observation, the database connection was
+      switched to the Neon direct endpoint by the owner, one earlier record is
+      corrected, and the owner's decision to narrow the remaining slice-4
+      proof for the narrow pilot is written down so tomorrow's session resumes
+      from a record. No application code changed.
+  out_of_scope:
+    - The final slice-4 closeout; the owner's phone walkthrough is not finished and the plan revision that narrows acceptance is not yet recorded as a decision.
+
+outcome:
+  status: checkpoint
+  completed:
+    - >-
+      The DAC2 lane moved from the codex session back to a Claude session.
+      HQ acknowledged the handover on the standing branch hq/20260915.
+    - >-
+      The owner granted read access to the pilot database through an
+      owner-controlled, git-ignored local file. The agent connected with psql
+      as the application role, set default_transaction_read_only on every
+      session, and ran SELECT only. No secret was echoed, copied, or recorded.
+    - >-
+      Direct database observation before any new request: one users row
+      (id 11) with email_verified_at 2026-09-15 15:02:26 +07:00, ten
+      migrations all successful, zero rows in password_reset_tokens, zero rows
+      in every season table. Because reset_tokens::issue deletes only on
+      re-issue or consume and never on expiry, an empty table meant no reset
+      token had ever been committed for this user, which ruled out delivery
+      failure after issuance for every earlier attempt.
+    - >-
+      Controlled public reset at 19:18:51 +07:00 with the owner's verified
+      account: a password_reset_tokens row appeared (32-byte hash, one-hour
+      expiry), the mail reached the owner's inbox, the owner set a new
+      password, the row was consumed (zero rows at 19:22:33), and login with
+      the new password succeeded. The reset path is proved end to end on the
+      public address: gate, lookup, verified guard, token issue, Brevo
+      delivery, consume.
+    - >-
+      The earlier "no reset mail" is explained by evidence, not proved: the
+      report was recorded at 10:19 +07:00 and the surviving account was
+      verified at 15:02 +07:00; the handler is silent by design for an
+      unverified address. Earlier account rows (ids 1-10) no longer exist, so
+      the attempt itself cannot be inspected.
+    - >-
+      Render log confirmed the remaining diagnostic gap: the reset handler is
+      the only mail path that discards its delivery result (let _ =) while
+      register and resend log failures by cause. The process had cold-started
+      at 19:16:36 +07:00 when the owner opened the site and logged nothing at
+      the reset request, which a working delivery and a failed one would both
+      produce.
+    - >-
+      Correction of the slice-4 checkpoint recorded at 10:19 +07:00: the
+      service was not on the Neon direct endpoint. Its DATABASE_URL pointed at
+      the -pooler host, and every proof so far (migrations, register, verify,
+      login, reset) ran through the pooler without error. The agent verified
+      the direct host reachable with the same credentials; the owner then
+      changed DATABASE_URL in the Render dashboard to the direct host. Deploy
+      dep-dakjtsrl550s73ffuctg (trigger service_updated, same image
+      c495e5447f66ec0f56c5106ce9f9ffb742f929b4, same digest) went live at
+      19:50:10 +07:00 after fifteen seconds; the new instance logged the
+      database probe, the Brevo line, the gate line, and listening; the public
+      address answered 200 on / and /login.
+    - >-
+      Auto-deploy acceptance read from the service itself: the service is
+      image-backed with no repository link and an image tag pinned to a commit
+      hash. The autoDeploy field reads yes with trigger commit, but no commit
+      can reach Render; a deploy occurs only on a manual deploy, a deploy hook
+      call, or an environment change. The dashboard shows no auto-deploy
+      setting for an image-backed service. The acceptance "no auto-deploy on
+      push" holds by structure, not by a switch.
+    - >-
+      The two proof scripts were read before running them and both depend on
+      Mailpit to fetch the verification link, so they cannot run unchanged
+      against the public address. No script was changed.
+  not_completed:
+    - >-
+      The owner's phone walkthrough after login: create a season, reach the
+      first profit figure, close the season, view history. The season tables
+      are still empty on the pilot database, so no one has yet completed the
+      application's main path on the public address.
+    - >-
+      Responsive route matrix, stall probe, and cold-start measurement were
+      not run. The owner decided in session to defer them for the narrow
+      pilot; see the decision below. The plan revision recording that
+      narrowing is not yet written.
+    - The runbook additions (Brevo key prefix, IP-blocking setting, From rewrite) and the one-line reset delivery log are not made; they go with the next small application change.
+    - RATE_LIMIT_ACCOUNT was left at its default; the agent's attempt to raise it through the Render MCP was denied by the client's auto-mode classifier, and it was not needed once the probes were deferred.
+
+decision_recorded_in_session:
+  by: owner
+  at: 2026-09-15T20:00:00+07:00
+  text: >-
+    For the narrow pilot, the owner defers the responsive route matrix, the
+    stall probe, and the cold-start measurement: the deployed image is the
+    same bytes that passed the matrix locally; the one-worker stall
+    mitigation is inside the image and the moderator is present during a
+    study; the runbook already opens the service ten minutes before a
+    session. The owner keeps three cheap items before handing the address to
+    anyone: the direct endpoint (done today), the auto-deploy reading (done
+    today), and one full phone walkthrough through season, first profit,
+    close, and history. This narrows slice-4 acceptance and is a plan
+    revision; it takes effect only when recorded as a decision event with
+    the revised plan, which is the first action of the next session.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.1"
+  # No slice named on purpose: a record about the workstream mid-slice.
+  repository:
+    head: 7c64c0b43cf3f9e705ee8f452e508f9dd035d38f
+    branch: hq/20260915
+    working_tree: untracked-files-of-another-lane-present-and-untouched
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: dac2-durian-smart-account
+    head: c495e5447f66ec0f56c5106ce9f9ffb742f929b4
+    branch: main
+    working_tree: clean
+  deployment:
+    render_service: srv-dak17dp42hec73bk6ha0
+    url: https://dac2-pilot.onrender.com
+    image_tag: c495e5447f66ec0f56c5106ce9f9ffb742f929b4
+    deploy_after_endpoint_change: dep-dakjtsrl550s73ffuctg
+    database_endpoint: neon-direct-since-2026-09-15T19:50+07:00
+    auto_deploy_field: yes-inert-image-backed-no-repository
+  database_observation:
+    method: psql as the application role over the direct endpoint, default_transaction_read_only on, SELECT only
+    credential_location: owner-controlled git-ignored local file, not recorded
+    users: 1
+    password_reset_tokens_before_request: 0
+    password_reset_tokens_after_request: 1
+    password_reset_tokens_after_consume: 0
+    season_tables: empty
+  source:
+    reset_request: checkouts/dac2-durian-smart-account/crates/web/src/auth.rs
+    reset_transaction: checkouts/dac2-durian-smart-account/crates/store/src/reset_tokens.rs
+    mail_delivery: checkouts/dac2-durian-smart-account/crates/web/src/mail.rs
+    proof_scripts: checkouts/dac2-durian-smart-account/scripts/responsive.mjs and scripts/stall-probe.mjs
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-for-auth-including-reset
+    eye_truth: deferred-by-owner
+    device_truth: partly-owner-phone-register-verify-login-reset
+    human_comprehension: pending-guided-inputs-4b
+  checks:
+    - psql SELECT over the direct endpoint after the switch - users 1, migrations 10 successful
+    - Render deploy list and log for dep-dakjtsrl550s73ffuctg - live, start-up lines present, no error
+    - curl https://dac2-pilot.onrender.com/ and /login after the switch - HTTP 200, HTTP/2
+
+unresolved:
+  - >-
+    The reset handler still cannot say why a delivery failed. Today's
+    diagnosis was possible only because the database was read directly; the
+    one-line change that logs the reset delivery result by cause, matching
+    register and resend, remains to be made.
+  - >-
+    The response-timing side channel on the reset request, found by the
+    codex session, is unchanged and is proposed as a recorded known issue for
+    the pilot rather than a change.
+  - >-
+    The database credential the agent used is the application's owner role,
+    not a read-only role. The agent enforced read-only per session. A
+    dedicated read-only role is the smaller grant if this access continues.
+  - >-
+    The previous checkpoint's statement that the service used the direct
+    endpoint was wrong from 2026-09-14 until 19:50 +07:00 today. Nothing
+    observed in that window failed because of it.
+  - >-
+    The standing HQ branch carries untracked files from the GA lane at this
+    checkpoint; they belong to that lane and were not staged here.
+
+next_action:
+  action: >-
+    Tomorrow's session runs Wake and reads this record with the slice-4
+    checkpoint of 10:19 +07:00. First, record the owner's narrowing as a
+    decision event with the revised plan so that slice-4 acceptance matches
+    what will actually be proved. Then the owner finishes the phone
+    walkthrough (season, first profit, close, history) and the agent confirms
+    the rows in the season tables by read-only SQL. Then record the final
+    slice-4 closeout as ready-for-owner-merge, which finishes the workstream,
+    and resume dac2-guided-inputs-001 with the 4b decision and the small
+    application change (runbook lines, reset delivery log).
+  acceptance_check:
+    - The next DAC2 record is either the narrowing decision or the final slice-4 closeout, and it cites this checkpoint.
+    - Season tables on the pilot database are non-empty before the final closeout is recorded.
+    - No application, provider, or database mutation by the agent occurs before the owner authorizes it in session.

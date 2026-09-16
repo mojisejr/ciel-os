@@ -1,0 +1,115 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T222000_dac2_tax_deductions_slice3_closed
+type: closeout
+recorded_at: 2026-09-16T22:20:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-tax-deductions-001
+  lane: single
+  objective: >-
+    Let an orchard owner write down, for a season, what they deduct from
+    taxable income and how much - one line per deduction, a name and an
+    amount - so the tax estimate uses their own deductions instead of a
+    fixed 60,000, and so they can open that season later and see what they
+    deducted that year.
+  scope:
+    - Slice 3 of plan revision 0.1 - the deploy, read back, and the owner's own use on the public address. This closeout finishes the workstream.
+  out_of_scope:
+    - Outside income, per-deduction rules, a cross-year view; any of these is its own workstream.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Deployed by the owner as recorded in the checkpoint of 19:30 +07:00:
+      pull request 24 merged as 5d37f0e22b0d20b9aa15791c58f02f4e227987bf, ci
+      run 35068712749 green, Render deploy dep-dal85j0ae00c73fsvmsg live at
+      18:51:54 +07:00 on digest sha256:92960a36..., migration 202609160001
+      applied on Neon at 18:51:51 +07:00 with no error in the start-up log
+      and no environment change.
+    - >-
+      The owner used it on the public address the same evening
+      ("ผมลองทดสอบเรียบร้อยแล้วครับ"): read back by SELECT over the direct
+      endpoint at 22:13 +07:00, the season "สวนมะขาม" 2569 carries three
+      deduction lines written through the application in order - บุตร
+      30,000; คู่สมรส 30,000; ประกันชีวิต 100,000 - total 160,000. The
+      Render log between the deploy and the check holds no error or
+      warning line.
+    - >-
+      With those lines the tax screen's state reads "หักลดหย่อนแล้ว 3 รายการ
+      รวม 160,000.00 บาท" and both methods subtract 160,000; the agent
+      cannot sign in as the owner to screenshot it, and the owner's report
+      plus the rows are the evidence.
+    - >-
+      Across the workstream: DESIGN.md revision 0.10 (PR 23), the change
+      across calc, store, web, one migration and tests (PR 24), and the
+      deploy. The fixed 60,000 is gone from the calculation; the estimate
+      deducts what the owner entered, and nothing until then, saying so.
+  not_completed:
+    - Nothing of this workstream. The plan's three slices are closed.
+
+evidence:
+  plan: workstreams/dac2-tax-deductions-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  authorized_by: in-session owner authorization on 2026-09-16 after the slice-2 closeout; the owner performed every outward action of the slice
+  repository:
+    head: 154323f
+    branch: hq/20260915
+    working_tree: plan-execution-state-and-this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch-owner-closes-round-from-hq
+  application:
+    repository: dac2-durian-smart-account
+    head: 5d37f0e22b0d20b9aa15791c58f02f4e227987bf
+    branch: main
+    working_tree: clean
+    pull_requests:
+      - number: 23
+        merged_as: e11a502
+      - number: 24
+        merged_as: 5d37f0e
+  deployment:
+    render_service: srv-dak17dp42hec73bk6ha0
+    url: https://dac2-pilot.onrender.com
+    image_tag: 5d37f0e22b0d20b9aa15791c58f02f4e227987bf
+    image_digest: sha256:92960a36e44e657978ea0a7e7afed60ad6ecf39fbd105f905cdfdb6e27ccd3e3
+    deploy: dep-dal85j0ae00c73fsvmsg
+    ci_run: 35068712749
+  database_observation:
+    method: psql over the direct endpoint as the application role, default_transaction_read_only on, SELECT only
+    at: 2026-09-16T22:13+07:00
+    tax_deduction_lines: 3 rows on plan 1, positions 0-2, total 160000
+    migration_202609160001: success
+  checks:
+    - psql on tax_deduction_lines joined to plans - three rows as recorded
+    - Render list_logs 11:52Z-15:15Z at level error/warn - none
+    - owner's report of the phone check - in session
+  preceding_records:
+    - memory/events/2026/09/16/20260916T193000_dac2_tax_deductions_slice3_deployed_checkpoint.yaml
+    - memory/events/2026/09/16/20260916T160000_dac2_tax_deductions_slice2_ready_for_owner_review.yaml
+
+unresolved:
+  - >-
+    The layout proof's seeding-phase flakes (three today at different
+    steps, each clean by hand) are unexplained; the proof now reports what
+    the page said when a value never appears.
+  - >-
+    Read-only amounts on a closed season render without a thousands
+    separator in every section; a later pass, not this workstream.
+  - >-
+    dac2-guided-inputs-001 stays paused with the deferred pilot proof
+    (route matrix and stall probe on the public address, cold-start
+    number, runbook lines, reset delivery log).
+
+next_action:
+  action: >-
+    The owner closes the round from HQ when ready: push hq/20260915, open
+    the pull request, merge. The three DAC2 workstreams on the branch are
+    then merged records. Any further application work - the owner has
+    named none - opens as its own workstream after alignment.
+  acceptance_check:
+    - Wake reports dac2-tax-deductions-001 finished by this closeout for slice 3 with no validation error.
+    - The next DAC2 record, if any, opens a new workstream rather than extending this one.

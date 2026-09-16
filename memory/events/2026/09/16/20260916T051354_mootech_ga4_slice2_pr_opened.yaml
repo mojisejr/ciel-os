@@ -1,0 +1,112 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T051354_mootech_ga4_slice2_pr_opened
+type: closeout
+recorded_at: 2026-09-16T05:13:54+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-ga4-instrumentation-001
+  lane: single
+  objective: >-
+    Give the team the share of v2 members active each day, and the login and
+    sign_up events under it, counting signed-in members only on real hosts,
+    with a consent switch that governs the tag.
+  scope:
+    - Slice 2 checkpoint - the pull request exists on the current main and is ready for the owner's review.
+  out_of_scope:
+    - Merge, the Vercel secret, GTM v4 publish, the DebugView walk - owner actions that finish the slice.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Morning sync found origin/main 57 commits ahead of last night's base
+      (PRs #672-#693, all merged 2026-09-15 while this lane worked). Local
+      main fast-forwarded to b775a80; the topic branch rebased onto it with no
+      conflict (the only shared file, vitest.config.mts, took both include
+      lines). New head adc0a32 = b775a80 + one commit, 15 files, +507/-4.
+    - >-
+      Last night's blocker resolved upstream - b1009eb (PR #672) fixed the
+      YearMonthFortune.tsx lint error; npm run lint on the rebased branch
+      reads 0 errors, 135 warnings, all pre-existing.
+    - >-
+      Re-proven on the new base - full vitest 167 files, 1662 tests passed,
+      0 failed, 159 skipped as before; tsc --noEmit clean; eslint 0 errors.
+    - >-
+      A second pre-existing red gate surfaced - the pre-push tsx lane fails
+      on scripts/day-detail.test.ts (yams label expected "เหง็กอ๋วง · ดี",
+      mapper now returns "ดี" since Jaroensak's 2b9912e of 2026-09-14). Run on
+      bare main it fails identically; no calendar file is in this branch's
+      diff. Diagnosed as a stale test, not a product defect.
+    - >-
+      The owner approved pushing with --no-verify and an issue for the team;
+      the agent's own --no-verify push was refused by the session's
+      permission classifier, so the owner ran the push.
+      origin/feat/ga4-members-not-cookies = adc0a32, verified by fetch.
+      mootech-fe#694 records the stale test, the earlier lint slip, and why
+      the local-only hook lets main go red.
+    - >-
+      mootech-fe#695 opened against main as ready-for-review (not draft) at
+      the owner's instruction, head adc0a32, GitHub reports MERGEABLE. The
+      description carries the why, the file table, the consent-default
+      deviation from D5, the mutant results, and the owner's post-merge
+      checklist (ANALYTICS_USER_ID_KEY, GTM v4 import and publish, DebugView,
+      /ops cross-check).
+  not_completed:
+    - The PR is not merged; nothing on Vercel Production, GTM or GA4 has changed.
+    - Vercel's preview deployment for the PR was still building when this event was written; its result is read before the slice is called free of blockers.
+    - >-
+      A first attempt at this event left a 0-byte file in this directory for
+      a few minutes (a shell redirect with no input), which failed HQ's
+      check; it was removed and this file written in its place.
+
+evidence:
+  plan: workstreams/mootech-ga4-instrumentation-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: 814130127d879a46541ff5de3ee2439f0a7fa5c7
+    branch: hq/20260915
+    working_tree: only-this-event-untracked-before-this-closeout
+    pull_request: none-until-hq-round-closes
+  application:
+    repository: mootech-fe
+    base: b775a80
+    branch: feat/ga4-members-not-cookies
+    head: adc0a32
+    pushed: true
+    pull_request:
+      number: 695
+      url: https://github.com/mojisejr/mootech-fe/pull/695
+      state: open-ready-for-review
+  external_records:
+    - https://github.com/mojisejr/mootech-fe/issues/694
+  checks:
+    - git rev-list origin/main..feat/ga4-members-not-cookies = 1; behind = 0.
+    - npx vitest run on adc0a32 - 167 files passed, 1662 tests passed, 0 failed.
+    - npm run lint on adc0a32 - 0 errors.
+    - npx tsx scripts/day-detail.test.ts on bare main b775a80 - fails with the same assertion.
+    - bun run check and Wake run after this event; results in the commit message.
+
+unresolved:
+  - >-
+    The tsx-lane gate stays red on main until the calendar owner answers
+    whether dropping the deity from the yam label was intended (#694); every
+    hook-abiding push in the team is blocked meanwhile.
+  - >-
+    The GTM v4 JSON vocabulary for GA4 event tags is unverified against a
+    real import until the owner's import preview shows populated fields.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner reviews and merges #695, sets ANALYTICS_USER_ID_KEY on Vercel
+    Production and redeploys, imports and publishes GTM v4, and walks
+    DebugView with the agent guiding; the agent cross-checks /ops against a
+    read-only SQL count and records the slice-2 closeout.
+  acceptance_check:
+    - DebugView shows login with method and a 32-hex user_id, then sign_up for a fresh account.
+    - One person on two browsers is one active user in Realtime.
+    - /ops members total matches the read-only SQL count.

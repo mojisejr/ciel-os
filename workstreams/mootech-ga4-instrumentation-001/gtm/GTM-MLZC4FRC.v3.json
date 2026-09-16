@@ -1,0 +1,117 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2026-09-15 12:45:00",
+    "containerVersion": {
+        "path": "accounts/6307897573/containers/227123257/versions/0",
+        "accountId": "6307897573",
+        "containerId": "227123257",
+        "containerVersionId": "0",
+        "name": "Guard hostnames",
+        "description": "mootech-ga4-instrumentation-001 slice 1: the GA4 configuration tag fires only on mumate.co, www.mumate.co and bazichart.mumate.co. Vercel previews and localhost fire nothing. Measurement ID unchanged.",
+        "container": {
+            "path": "accounts/6307897573/containers/227123257",
+            "accountId": "6307897573",
+            "containerId": "227123257",
+            "name": "www.mumate.co",
+            "publicId": "GTM-MLZC4FRC",
+            "usageContext": [
+                "WEB"
+            ],
+            "tagIds": [
+                "GTM-MLZC4FRC"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "tagId": "3",
+                "name": "GA4 Configuration - Main Site",
+                "type": "googtag",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "tagId",
+                        "value": "G-EBZKXSF579"
+                    }
+                ],
+                "firingTriggerId": [
+                    "2147479573"
+                ],
+                "blockingTriggerId": [
+                    "10"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "triggerId": "10",
+                "name": "Exception - Not a MuMate host",
+                "type": "INIT",
+                "filter": [
+                    {
+                        "type": "MATCH_REGEX",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page Hostname}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "^(www\\.)?mumate\\.co$|^bazichart\\.mumate\\.co$"
+                            },
+                            {
+                                "type": "BOOLEAN",
+                                "key": "negate",
+                                "value": "true"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "type": "PAGE_URL",
+                "name": "Page URL"
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "type": "PAGE_HOSTNAME",
+                "name": "Page Hostname"
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "type": "PAGE_PATH",
+                "name": "Page Path"
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "type": "REFERRER",
+                "name": "Referrer"
+            },
+            {
+                "accountId": "6307897573",
+                "containerId": "227123257",
+                "type": "EVENT",
+                "name": "Event"
+            }
+        ]
+    }
+}

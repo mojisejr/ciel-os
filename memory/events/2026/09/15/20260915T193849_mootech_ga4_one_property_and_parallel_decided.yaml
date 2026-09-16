@@ -1,0 +1,89 @@
+schema_version: ciel.event.v0.1
+id: evt_20260915T193849_mootech_ga4_one_property_and_parallel_decided
+type: decision
+recorded_at: 2026-09-15T19:38:49+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-ga4-instrumentation-001
+  lane: single
+  objective: >-
+    Give the team the share of v2 members active each day, and the login and
+    sign_up events under it, counting signed-in members only on real hosts,
+    with a consent switch that governs the tag.
+  scope:
+    - Plan revision 0.2 - slice 1 becomes the GTM hostname guard, 14-month retention, and unmarking the two seeded key events, all within property-level rights.
+    - Slices 2 and 3 unchanged.
+  out_of_scope:
+    - A second GA4 property; account-level access requests to the team.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner found that creating a GA4 property needs Editor on the GA
+    account and the team granted Administrator on the property only. Rather
+    than depend on the team, the owner proposed keeping one property for
+    landing and app ("รวม landing page ไปด้วยเลย ... สะดวกเราด้วย"), reasoning
+    that the landing has few pages and funnels into bazichart.mumate.co. The
+    agent agreed because the numerator is members-only (D2) and the shared
+    .mumate.co cookie keeps a landing-to-app visitor as one person. The owner
+    directed "แก้แผนครับ" and approved this lane running in parallel with
+    mootech-fe-beam-gateway-001 on mootech-fe ("parallel ได้ครับ") after
+    reading that lane's recorded state (charges proven, refunds pending,
+    slice 5 unauthorized) and the non-overlapping file sets. This event
+    authorizes plan revision 0.2 slice 1.
+  constraints:
+    - The measurement ID stays G-EBZKXSF579; no property is created.
+    - Only three hostnames feed the tag - mumate.co, www.mumate.co, bazichart.mumate.co.
+    - pages/_app.tsx is shared with the beam lane; this lane rebases on it and never edits middleware.ts CSP.
+    - The parallel approval covers this lane's record; the beam lane's own record is routed by the owner and HQ, not written here.
+
+evidence:
+  plan: workstreams/mootech-ga4-instrumentation-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: 14f43af0cdb426f40b1faac82ba1612c250b8732
+    branch: hq/20260915
+    working_tree: plan-revision-and-this-event-uncommitted-before-this-decision
+    pull_request: none-until-hq-round-closes
+  application:
+    repository: mootech-fe
+    base: 391394797179bcb3359c57b09e59053fef77448e
+    branch: main
+    working_tree: clean
+  beam_lane_state_read_not_reverified:
+    - memory/events/2026/09/14/20260914T103404_beam_gateway_production_charges_proven_refund_pending.yaml - slices 2-4 proven on production, two refunds pending, PAYMENT_GATEWAY=beam behind the v2 gate, slice 5 unauthorized.
+  owner_statements_not_reverified:
+    - The GA UI offered "create account" but not "create property" to nonthasak.l@gmail.com.
+    - The landing site sends visitors on to bazichart.mumate.co.
+  checks:
+    - bun run check and Wake run after this event; results in the commit message.
+
+unresolved:
+  - >-
+    Before slice 2 ships, the property's unfiltered active-user cards count
+    landing visitors; an app-only read needs a hostname filter in
+    Explorations, and the team should not quote the unfiltered card as DAU.
+  - >-
+    The landing-to-app cookie sharing is expected from GA's default cookie
+    domain (auto, top-level) and is not yet observed; slice 3's reconciliation
+    or a two-host visit in DebugView during slice 2 should confirm it.
+  - >-
+    The beam lane's lifecycle still reads owner-confirmation-required until
+    its own record carries a parallelism decision; that is the owner's and
+    HQ's routing.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The agent authors gtm/GTM-MLZC4FRC.v3.json and gives the owner the
+    click-by-click guide for retention, the key-event marks, import, Preview
+    on three hosts and publish; then reads the public container and records
+    the slice-1 closeout.
+  acceptance_check:
+    - Wake reports mootech-ga4-instrumentation-001 authorized for plan 0.2 slice 1 with no validation error.
+    - The public container after publish carries the hostname predicate and one measurement ID.

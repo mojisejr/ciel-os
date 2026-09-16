@@ -1,0 +1,91 @@
+schema_version: ciel.event.v0.1
+id: evt_20260915T192156_mootech_ga4_workstream_opened
+type: decision
+recorded_at: 2026-09-15T19:21:56+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-ga4-instrumentation-001
+  lane: single
+  objective: >-
+    Give the team the share of v2 members active each day, and the login and
+    sign_up events under it, measured on bazichart.mumate.co alone with a
+    consent switch that governs the tag.
+  scope:
+    - Split the app into its own GA4 property through a hostname lookup in GTM; retention and seeded key events cleaned (slice 1).
+    - One mootech-fe pull request for track(), keyed-hash user_id, login, sign_up, consent mode, lang=th, and the member denominator in /ops (slice 2).
+    - Seven days of the number read with the team (slice 3).
+  out_of_scope:
+    - Conversion-button events, purchase and the Measurement Protocol, feature and QI events, Data API pulls into /ops, cross-domain, marketing pixels, v1.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner directed on 2026-09-15 that DAU is the app's alone, not the
+    WordPress landing site's ("ไม่ต้องรวม ไม่งั้นไม่รู้ค่าจริง"), that the
+    denominator is every v2 member from the database from now on ("ให้ใช้
+    ข้อมูลของ v2 ตั้งแต่นี้ไปเลย"), and authorized opening this workstream
+    with plan revision 0.1. No slice is authorized by this event; slice 1
+    waits on the owner's go in the same session.
+  constraints:
+    - No birth data, identity, or raw id ever leaves the app as an analytics field.
+    - The payment-lane CSP stays as it is; no tag fires on the three shop paths.
+    - Google-side changes and the PR merge are owner actions per instance; the agent prepares, guides, and verifies.
+    - GTM publishes get a notice in chat first, including the team's own pixel tags.
+
+evidence:
+  plan: workstreams/mootech-ga4-instrumentation-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 7c64c0b43cf3f9e705ee8f452e508f9dd035d38f
+    branch: hq/20260915
+    working_tree: only-this-workstream-directory-and-this-event-untracked-before-this-decision
+    pull_request: none-until-hq-round-closes
+  application:
+    repository: mootech-fe
+    base: 391394797179bcb3359c57b09e59053fef77448e
+    branch: main
+    working_tree: clean
+  research_basis:
+    - memory/events/2026/09/15/20260915T114122_mootech_ga4_research_baseline.yaml
+    - Hostname split found 2026-09-15 by fetching mumate.co (WordPress 6.9.4 headers, wp-json link) and bazichart.mumate.co (Vercel, Next.js headers); both serve GTM-MLZC4FRC.
+    - Database read at mootech-fe 3913947 - user.onboarded_at exists, no last_seen or created_at on member or user.
+    - mootech-fe#606 and #637 keep the app origin at bazichart.mumate.co.
+  owner_statements_not_reverified:
+    - The team chat of 2026-09-15 18:56-18:58 with Janjarat as relayed by the owner.
+  checks:
+    - bun run check passed 44 tests after the plan was added.
+    - Wake result recorded in the commit message.
+
+unresolved:
+  - >-
+    GA4's active-user definition needs an engaged session, so a member who
+    opens the app for under ten seconds and leaves is not active; the team's
+    number inherits that definition until slice 3 shows whether it matters.
+  - >-
+    Whether the register-login round-trip response distinguishes a new
+    member from an existing one is not yet read; D3 avoids depending on it by
+    using first-run completion for sign_up, but login on a brand-new account
+    will fire before sign_up on the same day.
+  - >-
+    A member who onboarded before slice 2 ships never fires sign_up; the
+    denominator counts them, the sign_up series does not, and the slice-3
+    reconciliation must start from the slice-2 date.
+  - >-
+    Consent mode default denied may lower measured DAU relative to today's
+    unconditioned tag; the team should know the series changes meaning at
+    the slice-2 publish, which is why slice 1 records the start date.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner reads the plan summary and says go for slice 1; the agent then
+    authors gtm/GTM-MLZC4FRC.v3.json and the click-by-click guide, and the
+    owner performs the Google-side steps while the agent verifies the public
+    container after publish.
+  acceptance_check:
+    - Wake lists mootech-ga4-instrumentation-001 as active, idle, lifecycle authorized-none or needs-owner-decision, with three declared slices and no validation error.
+    - No file in mootech-fe changes before a slice-2 decision.

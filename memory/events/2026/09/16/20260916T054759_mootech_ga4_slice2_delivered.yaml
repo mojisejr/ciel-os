@@ -1,0 +1,131 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T054759_mootech_ga4_slice2_delivered
+type: closeout
+recorded_at: 2026-09-16T05:47:59+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-ga4-instrumentation-001
+  lane: single
+  objective: >-
+    Give the team the share of v2 members active each day, and the login and
+    sign_up events under it, counting signed-in members only on real hosts,
+    with a consent switch that governs the tag.
+  scope:
+    - Slice 2 closed - the code is on production, the container is published, login carries a keyed user_id in GA4, and the denominator is on /ops.
+  out_of_scope:
+    - Slice 3 (seven days of the number) - not authorized by this record.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      mootech-fe#695 merged by the owner 2026-09-16 05:17 +07:00 as d82ee31
+      on main. Vercel production deployed it; the agent polled
+      https://bazichart.mumate.co/v2 until the served HTML read lang="th"
+      (two checks after the first miss), which only the new build emits.
+    - >-
+      The owner set ANALYTICS_USER_ID_KEY on Vercel Production and redeployed
+      before the container went live; the key lives in the owner's ignored
+      .assets file and nowhere in any repository.
+    - >-
+      GTM-MLZC4FRC version 4 "Members, login, sign_up" published 2026-09-16
+      by the owner from gtm/GTM-MLZC4FRC.v4.json (merge import, preview read
+      1 modified, 10 added, 0 deleted). The first import attempt was refused
+      for an unknown column - configSettingsTable rows use parameter /
+      parameterValue, not configParameter / configValue - and the file was
+      corrected before the successful import. The agent read the public
+      gtm.js after publish - one measurement ID; the Google tag carries
+      user_id from the DLV and user property member_state; three gaawe tags
+      fire on custom events login, sign_up, consent_update; the hostname
+      exception blocks all four tags on a non-MuMate host.
+    - >-
+      Proof in GTM Preview before publish - the app pushed
+      dataLayer.push({event:"login", method:"google"}); GA4 Event - login
+      fired with method "google" and user_id a 32-hex value; the other three
+      tags correctly did not fire on that event.
+    - >-
+      Proof in GA4 DebugView after publish (05:40:32 +07:00, via the Preview
+      session's debug flag since the owner could not install the debugger
+      extension) - the login event arrived with user properties member_state
+      and user_id equal to the same 32-hex value seen in Preview; GA also
+      attached its own non_personalized_ads property from consent mode.
+    - >-
+      Denominator cross-check - /ops/analytics shows "สมาชิก v2 ทั้งหมด 15 ·
+      วันนี้ +0 · 7 วัน +4"; the agent's read-only psql against the production
+      pooler returned 15 | 0 | 4 with first onboarded_at 2026-08-13 06:12:37
+      and last 2026-09-15 14:37:33 UTC. The two agree exactly.
+    - >-
+      Owner-visible consequence recorded for the team - from version 4 on,
+      GA4 active users can be filtered to member_state = member, and a person
+      on several devices is one user_id. The clean series for the percentage
+      starts 2026-09-16 (v4 publish), not 2026-09-15 20:05 (v3).
+  not_completed:
+    - >-
+      sign_up has not been observed - the owner chose to defer the fresh-
+      account walk. It will be seen from the first real first-run completion
+      after the v4 publish, and slice 3's sign_up-versus-members_total
+      reconciliation is the check.
+    - >-
+      One-person-two-devices = one active user has not been observed in
+      Realtime - deferred with the same reasoning; user_id in DebugView is
+      the mechanism, the count is the outcome still to be read.
+    - The /ops page's "เศรษฐกิจ QI · engine: Unauthorized" line predates this lane (engine OPS_ADMIN_SECRET) and was not touched.
+
+evidence:
+  plan: workstreams/mootech-ga4-instrumentation-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: 76ddec7b313548e7907ce974e16cb685ef55f2b1
+    branch: hq/20260915
+    working_tree: only-this-event-untracked-before-this-closeout
+    pull_request: none-until-hq-round-closes
+  application:
+    repository: mootech-fe
+    head: d82ee31
+    branch: main
+    working_tree: clean-after-merge
+    pull_request:
+      number: 695
+      url: https://github.com/mojisejr/mootech-fe/pull/695
+      state: merged
+  external_state:
+    gtm_container: GTM-MLZC4FRC live version 4 "Members, login, sign_up", 4 tags, 4 triggers, 4 variables, published 2026-09-16 by the owner
+    ga4_property: G-EBZKXSF579 receiving login with user_id and member_state since 2026-09-16 05:40 +07:00
+    vercel: ANALYTICS_USER_ID_KEY set on Production; value never seen by the agent
+  external_records:
+    - https://github.com/mojisejr/mootech-fe/issues/694
+  checks:
+    - Public gtm.js parsed after v4 publish - rules [[init->add googtag],[login->add 1],[sign_up->add 2],[consent_update->add 3],[init unless host->block 0..3]].
+    - psql read-only (SET default_transaction_read_only=on) member count - 15 / 0 / 4, matching /ops.
+    - bun run check and Wake run after this event; results in the commit message.
+  owner_statements_not_reverified:
+    - The Vercel secret was set and a redeploy triggered before v4 went live (consistent with user_id appearing in Preview and DebugView).
+    - Screenshots of the import preview, the tag editor, Preview, DebugView, and /ops as relayed 2026-09-16 morning.
+
+unresolved:
+  - sign_up unobserved until a real first-run completes under v4; slice 3 reconciles the count against members_total growth.
+  - Two-device identity merge unobserved in Realtime; expected from user_id, not yet read.
+  - >-
+    Consent default is granted (opt-out, matching the app's own screen), a
+    deliberate deviation from plan D5 made a one-line constant; the owner
+    accepted it by merging #695 with that text in the description.
+  - Enhanced measurement still records form_submit on the passkey gate; slice 1 carried this and it is unchanged.
+  - >-
+    mootech-fe main's tsx-lane gate is still red on scripts/day-detail.test.ts
+    (#694); the team's next push from a hook-enabled machine hits it.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner decides whether to authorize slice 3 - seven daily readings of
+    active members (member_state = member), login, sign_up and members_total,
+    the percentage computed, and one page for พี่ปอง. That decision must
+    repeat outcome.parallelism: approved while the beam lane stays active on
+    mootech-fe, or Wake will read this lane as owner-confirmation-required.
+  acceptance_check:
+    - Wake reports slice 2 delivered for plan 0.2 with no validation error and the workstream not complete.
+    - GA4 Realtime shows login events from real members on the first day after v4.

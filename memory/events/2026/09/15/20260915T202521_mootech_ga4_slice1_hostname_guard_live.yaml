@@ -1,0 +1,123 @@
+schema_version: ciel.event.v0.1
+id: evt_20260915T202521_mootech_ga4_slice1_hostname_guard_live
+type: closeout
+recorded_at: 2026-09-15T20:25:21+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-ga4-instrumentation-001
+  lane: single
+  objective: >-
+    Give the team the share of v2 members active each day, and the login and
+    sign_up events under it, counting signed-in members only on real hosts,
+    with a consent switch that governs the tag.
+  scope:
+    - Slice 1 of plan revision 0.2 - GTM hostname guard, 14-month retention, seeded key events removed.
+  out_of_scope:
+    - Any mootech-fe change; slices 2 and 3.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      GTM container GTM-MLZC4FRC version 3 "Guard hostnames" is live,
+      published 2026-09-15 20:05 +07:00 by the owner (Nonthasak.L@gmail.com)
+      over version 2 "PageView" of 2026-08-12. The version holds one tag,
+      one trigger and five built-in variables: the tag GA4 Configuration -
+      Main Site still sends to G-EBZKXSF579 on Initialization - All Pages and
+      now carries the exception trigger Exception - Not a MuMate host, a
+      MATCH_REGEX on Page Hostname against
+      ^(www\.)?mumate\.co$|^bazichart\.mumate\.co$ with negate true.
+    - >-
+      The container definition the owner imported is committed as
+      workstreams/mootech-ga4-instrumentation-001/gtm/GTM-MLZC4FRC.v3.json
+      (identifiers only). GTM's import preview read 1 modified, 1 added,
+      0 deleted, and the tag editor showed both the firing trigger and the
+      exception attached before publish.
+    - >-
+      Preview in Chrome (Tag Assistant does not connect from the Comet
+      browser) proved both sides of the guard: on bazichart.mumate.co the
+      tag fired three times across the gate page and /v2 pages with no tag
+      in "not fired"; on mootech-fe.vercel.app the tag was listed as not
+      fired, none fired, and the Google tag G-EBZKXSF579 did not load at all.
+    - >-
+      The agent read the public https://www.googletagmanager.com/gtm.js?id=GTM-MLZC4FRC
+      after publish (352,965 bytes): one measurement ID G-EBZKXSF579; predicates
+      _eq(event, gtm.init) and _re(HOST, the regex above); rules
+      [[if 0, add 0], [if 0, unless 1, block 0]] - add the tag on init, block
+      it unless the host matches.
+    - >-
+      GA4 Realtime after publish showed one active user in the last five
+      minutes and a page_view on the "MuMate · preview" gate page, so hits
+      from bazichart.mumate.co reach the property under version 3. The same
+      screen showed three users in thirty minutes for one person testing in
+      Chrome and Preview tabs - the cookie-not-person effect slice 2 exists
+      to remove.
+    - >-
+      GA4 property settings, read from the owner's screenshots: event data
+      retention 14 months and user data retention 14 months with reset on new
+      activity on (was 2 months); the key-events list now holds only
+      purchase, unstarred - qualify_lead and close_convert_lead were removed
+      entirely rather than unmarked.
+    - >-
+      The guard took effect on 2026-09-15 20:05 +07:00; from that instant
+      the property receives no page views from Vercel preview hosts or
+      localhost. That is the date the clean series begins.
+  not_completed:
+    - No mootech-fe change; login, sign_up, user_id, consent mode and the member denominator are slice 2.
+    - The property's unfiltered active-user cards still count landing visitors and multiple cookies per person until slice 2.
+    - The GTM overview's "container quality: 2 issues" advisories were not opened; they are Google's generic suggestions and not part of this slice.
+
+evidence:
+  plan: workstreams/mootech-ga4-instrumentation-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: c31eb2e56d3c1a5595a2d940336d62be4187442f
+    branch: hq/20260915
+    working_tree: gtm-json-and-this-event-untracked-before-this-closeout
+    pull_request: none-until-hq-round-closes
+  application:
+    repository: mootech-fe
+    head: 391394797179bcb3359c57b09e59053fef77448e
+    branch: main
+    working_tree: clean-and-unchanged-by-this-slice
+  external_state:
+    gtm_container: GTM-MLZC4FRC (account 6307897573, container 227123257), live version 3, published 2026-09-15T20:05+07:00
+    ga4_property_stream: G-EBZKXSF579, stream 12016428670, retention 14 months event and user
+  checks:
+    - Regex tested locally against seven hostnames before the JSON left the repository (three real hosts fire; vercel.app, localhost, dev.mumate.co, bazichart.mumate.co.evil.com do not).
+    - Public container fetched after publish and parsed; rules and predicates match the JSON.
+    - bun run check and Wake run after this event; results in the commit message.
+  owner_statements_not_reverified:
+    - Realtime, retention and key-events screens as screenshotted by the owner on 2026-09-15 evening.
+    - Tag Assistant results on bazichart.mumate.co and mootech-fe.vercel.app as screenshotted by the owner.
+
+unresolved:
+  - >-
+    Enhanced measurement records form_submit on the /v2 passkey gate form
+    (seen in Preview as "ส่งฟอร์ม"); GA receives form id and destination,
+    not field values, so nothing secret leaves, but the event is noise.
+    Slice 2 should decide whether to switch form interactions off in
+    enhanced measurement.
+  - >-
+    Tag Assistant Preview does not connect from the Comet browser; Chrome
+    works. Worth a line in the team's GTM notes so the next person does not
+    lose time on it.
+  - >-
+    The landing-to-app cookie sharing under .mumate.co is still expected,
+    not observed; slice 2's DebugView walk should visit both hosts.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner decides whether to authorize slice 2 (the mootech-fe pull
+    request for track(), keyed-hash user_id, login, sign_up, consent mode,
+    lang=th and the member denominator in /ops). If authorized, the agent
+    starts on a topic branch from mootech-fe main 3913947 and asks the owner
+    to create ANALYTICS_USER_ID_KEY on Vercel before the PR merges.
+  acceptance_check:
+    - Wake reports slice 1 delivered for plan 0.2 with no validation error, and the workstream not complete (slices 2 and 3 open).
+    - The public container keeps the hostname predicate on the next read.

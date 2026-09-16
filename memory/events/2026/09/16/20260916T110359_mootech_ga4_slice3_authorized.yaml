@@ -1,0 +1,81 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T110359_mootech_ga4_slice3_authorized
+type: decision
+recorded_at: 2026-09-16T11:03:59+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-ga4-instrumentation-001
+  lane: single
+  objective: >-
+    Give the team the share of v2 members active each day, and the login and
+    sign_up events under it, counting signed-in members only on real hosts,
+    with a consent switch that governs the tag.
+  scope:
+    - Slice 3 of plan revision 0.3 - the owner registers member_state as a user-scoped custom dimension and builds one Exploration from ga4/exploration-setup.md; seven days accumulate in GA; one export on day 7; the agent reconstructs the denominator by query, reconciles sign_up against member growth, and writes one page for the team - report plus runbook.
+    - Plan revision 0.3 itself - the custom-dimension prerequisite, one export instead of daily screenshots, report plus runbook as the deliverable, and the database-side percentage in /ops named as the first follow-on candidate.
+  out_of_scope:
+    - Any code in mootech-fe. The follow-on that shows DAU and the percentage in /ops from the database is a separate workstream, opened only after the seven-day reading and on the owner's word.
+    - Pulling GA data into /ops through the Data API.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On 2026-09-16 morning the owner asked what พี่ปอง wanted to see and
+    whether GA or GTM could show it. The agent read mootech-fe main d82ee31
+    and the engine pdf-dev 1de7235: GTM has no reports; GA can show DAU,
+    recurring, login and sign_up only once member_state is registered as a
+    custom dimension, which no slice had done; /ops shows total members and
+    new members; no screen shows the percentage, because GA never holds the
+    denominator and /ops has no numerator. The owner weighed the Data API
+    pull and database-side counting, judged both heavier than the moment
+    needs, and chose light-to-heavy ("เริ่มจากเบาไปหนัก ทำให้เค้าเห็นของที่
+    เค้าต้องการเห็นก่อนแล้วค่อยเดินต่อ"): run slice 3 as revised, deliver the
+    report and runbook, and revisit the /ops percentage with the seven-day
+    numbers in hand. The owner then said start ("ผมว่าเราพร้อมเริ่มเลยนะ ทำใน
+    hq branch นี้แหละ ... เริ่มกันเลยครับ"). The owner approved this lane
+    continuing in parallel with the beam-gateway lane on mootech-fe when
+    plan 0.2 was authorized; slice 3 touches no mootech-fe file, and the
+    approval is repeated here so Wake reads it from the latest decision.
+  constraints:
+    - No mootech-fe change in this slice. The lane's writes are workstreams/mootech-ga4-instrumentation-001/** and memory/events/**/*mootech_ga4_* on hq/20260915.
+    - The seven days start on the first day the Exploration shows a row with member_state = member, not on the v4 publish date; the closeout names that date.
+    - The agent's database access stays read-only, the same pooler query slice 2 used for the cross-check, and no member identifier enters an event or the report.
+    - The GA UI steps are the owner's; the agent prepares and verifies from the owner's screenshots and CSV export.
+
+evidence:
+  plan: workstreams/mootech-ga4-instrumentation-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: aae3ff6743549e2962a12ef33e911e5dc5daac5e
+    branch: hq/20260915
+    working_tree: plan-0.3-and-guide-staged-with-this-decision
+    pull_request: none-until-hq-round-closes
+  application:
+    repository: mootech-fe
+    base: d82ee31e604564f40bbd9ed9fb65892cdc11a1c0
+    branch: main
+    working_tree: clean
+  sources:
+    - workstreams/mootech-ga4-instrumentation-001/ga4/exploration-setup.md
+    - https://support.google.com/analytics/answer/14239618 - user-scoped custom dimension steps and the 24-48 hour wait (read 2026-09-16)
+    - ~/ghq/github.com/mojisejr/bazi-sft-dataset src/app/api/ops/analytics/route.ts at 1de7235 - returns qiEconomy and chat only, no dau
+
+unresolved:
+  - Whether hits sent before the custom dimension was created are reported under it is not stated by Google; treated as unverified, hence the start-date rule above.
+  - Whether the owner already registered member_state on 2026-09-16 is unknown until the owner reads the Custom definitions page; the guide asks first.
+  - sign_up has still not been observed from a real first-run; the reconciliation in this slice is the check.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner follows ga4/exploration-setup.md steps 1-2 today and tells the
+    agent the registration time; the agent waits for the day-2 check, then
+    the day-7 export, then reconstructs the denominator, reconciles, and
+    writes the report and runbook.
+  acceptance_check:
+    - Wake reports slice 3 authorized for plan 0.3 with no validation error and the lane no longer owner-confirmation-required.

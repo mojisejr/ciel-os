@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20260915T203517_mootech_ga4_slice2_authorized
+type: decision
+recorded_at: 2026-09-15T20:35:17+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-ga4-instrumentation-001
+  lane: single
+  objective: >-
+    Give the team the share of v2 members active each day, and the login and
+    sign_up events under it, counting signed-in members only on real hosts,
+    with a consent switch that governs the tag.
+  scope:
+    - Slice 2 of plan revision 0.2 - one mootech-fe pull request for track(), keyed-hash user_id, login, sign_up, consent mode, lang=th and the member denominator in /ops; GTM v4 JSON prepared.
+  out_of_scope:
+    - Merging the PR, setting the Vercel secret, publishing GTM v4, the DebugView walk - owner actions tomorrow.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner authorized slice 2 on 2026-09-15 evening before leaving for
+    the night ("go slice 2 ถ้าไม่ติดอะไรครับ เจอกันที่ PR"), with two
+    standing instructions: stop and wait for the morning on any blocker or
+    anything that looks risky, and meet at the pull request - nothing is
+    merged tonight. The agent works on a topic branch from mootech-fe main
+    3913947 and opens a draft PR if the outward write is permitted in this
+    session; otherwise the branch stays local and is reported.
+  constraints:
+    - No merge, no production change, no GTM publish tonight.
+    - The mootech-fe paths this lane claims - lib/analytics/** (new), pages/_app.tsx (GTM loader and consent default), pages/_document.tsx (lang), lib/ops/analytics.ts and the /ops screen, the login round-trip client, the first-run onboarding client, .env.example, scripts/*analytics*.test.ts, plus the ciel-os workstream directory.
+    - Not touched - lib/payment/**, pages/api/v2/payment/**, middleware.ts, features/v2-shop/**.
+
+evidence:
+  plan: workstreams/mootech-ga4-instrumentation-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: f6073b2225e626f46b08b956146bf13f6b793336
+    branch: hq/20260915
+    working_tree: clean-before-this-decision
+    pull_request: none-until-hq-round-closes
+  application:
+    repository: mootech-fe
+    base: 391394797179bcb3359c57b09e59053fef77448e
+    branch: main
+    working_tree: clean
+
+unresolved:
+  - Consent mode default denied changes what pre-login visitors contribute; the PR makes the default a single named constant so the owner can flip it at review.
+  - Whether git push and gh pr are permitted in this session is unknown until tried; a denial is not a blocker for the code, only for the PR link.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The agent implements slice 2 on a topic branch, runs the suites, and
+    either opens a draft PR or reports the local branch; a checkpoint
+    closeout records where things stand for the owner's morning.
+  acceptance_check:
+    - Wake reports slice 2 authorized for plan 0.2 with no validation error.

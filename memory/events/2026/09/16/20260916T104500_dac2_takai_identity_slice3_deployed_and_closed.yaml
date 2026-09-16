@@ -1,0 +1,113 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T104500_dac2_takai_identity_slice3_deployed_and_closed
+type: closeout
+recorded_at: 2026-09-16T10:45:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-takai-identity-001
+  lane: single
+  objective: >-
+    Give the DAC2 application a name of its own - ตาไก๊, spoken บัญชีตาไก๊,
+    Takai in English - and an entry screen that a durian grower recognises at
+    once and passes on by word of mouth, with Durian Academy cohort 2 as the
+    byline rather than the name, so later cohorts and teachers can adopt it.
+  scope:
+    - Slice 3 of plan revision 0.1 - the owner's deploy of the merged change to the public address, read back by the agent. This closeout finishes the workstream.
+  out_of_scope:
+    - The further work the owner named at closeout; it opens as its own workstream after alignment.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Pull request 22 merged by the owner as 87516bfec3c30a70f2a8946543fd055241b253ef.
+      The ci run on main passed: check 02:39-02:44Z, image 02:44-02:52Z,
+      manifest pushed for tags 87516bf... and main.
+    - >-
+      The owner changed MAIL_FROM in the Render dashboard (deploy
+      dep-dal02cdbedkc73aonsjg on the old image at 02:38Z), then set the
+      image URL to the new tag and deployed: dep-dal0phlbedkc73ar3j60,
+      trigger service_updated, live at 03:28:21Z, image digest
+      sha256:d1565686b3afb1b09611208561bfb995c18f51bc9a169ee9a1e9c3acbde46b07.
+      The new instance logged the database probe, the Brevo line, the gate
+      line, pilot notice shown, and listening, with no error.
+    - >-
+      Read from the public address by the agent: "/" answers 200 over HTTP/2
+      with the title บัญชีตาไก๊ · Takai, the SVG favicon and 180px icon
+      links, the entry-screen class, the WebP bust, the tagline, the
+      one-line pilot notice and the cohort byline; the landing heading, the
+      demo link and "DAC2 — Durian Smart Account" are absent; /login renders
+      the same screen; /register keeps the header with the hat mark; /demo
+      still answers 200 by URL; the four assets are served with the right
+      content types (WebP 13,572 B, PNG 39,616 B, SVG 452 B, PNG 2,532 B).
+    - >-
+      The owner tested on their own phone over the public address and
+      confirmed the screen and the mail ("ผมทดสอบแล้ว"). The mail sender name
+      is governed by the Render MAIL_FROM variable, which the agent cannot
+      read; the owner's test is the evidence that it took.
+    - >-
+      Housekeeping the owner asked for: the two merged remote branches
+      docs/takai-identity and feat/takai-entry deleted; the application
+      checkout at main 87516bf equal to origin/main, clean; cargo clean
+      freed 21.6 GiB, leaving 57 GiB free.
+  not_completed:
+    - Nothing of this workstream. The plan's three slices are closed.
+
+evidence:
+  plan: workstreams/dac2-takai-identity-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  authorized_by: in-session owner authorization on 2026-09-16 after the slice-2 closeout; the owner performed every outward action of the slice
+  repository:
+    head: 566d35a
+    branch: hq/20260915
+    working_tree: plan-execution-state-and-this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch-owner-closes-round-from-hq
+  application:
+    repository: dac2-durian-smart-account
+    head: 87516bfec3c30a70f2a8946543fd055241b253ef
+    branch: main
+    working_tree: clean
+    pull_requests:
+      - number: 21
+        merged_as: 54201d6
+      - number: 22
+        merged_as: 87516bf
+  deployment:
+    render_service: srv-dak17dp42hec73bk6ha0
+    url: https://dac2-pilot.onrender.com
+    image_tag: 87516bfec3c30a70f2a8946543fd055241b253ef
+    image_digest: sha256:d1565686b3afb1b09611208561bfb995c18f51bc9a169ee9a1e9c3acbde46b07
+    deploy: dep-dal0phlbedkc73ar3j60
+    ci_run: 35048796461
+  checks:
+    - gh run view 35048796461 - check success, image success
+    - Render list_deploys and list_logs for dep-dal0phlbedkc73ar3j60 - live, start-up lines present, no error
+    - curl of /, /login, /register, /demo and the four assets on the public address - as recorded above
+    - owner's phone and mail test - reported in session
+
+unresolved:
+  - >-
+    The reset delivery log, the runbook lines, the route matrix and stall
+    probe on the public address, and the cold-start number remain with
+    dac2-guided-inputs-001 as the pilot deployment closeout assigned them;
+    nothing here changed that.
+  - >-
+    The tester's missing reset mail of 2026-09-15 20:48 is still
+    unexplained; the tester was checking spam.
+  - >-
+    The mascot in mail stays an open question in DESIGN.md.
+
+next_action:
+  action: >-
+    The owner closes the round from HQ when ready: push hq/20260915, open
+    the pull request, merge. The owner has further work in mind for the
+    application and wants it as a separate workstream; it is aligned in
+    session before a plan is written, and dac2-guided-inputs-001 still
+    holds the deferred pilot proof for whenever study 4b is scheduled.
+  acceptance_check:
+    - Wake reports dac2-takai-identity-001 finished by this closeout for slice 3 with no validation error or warning.
+    - The next application workstream opens with its own plan and decision, not inside this one.

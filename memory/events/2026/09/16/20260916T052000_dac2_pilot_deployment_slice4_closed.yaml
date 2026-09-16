@@ -1,0 +1,148 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T052000_dac2_pilot_deployment_slice4_closed
+type: closeout
+recorded_at: 2026-09-16T05:20:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-pilot-deployment-001
+  lane: single
+  objective: >-
+    Put the DAC2 application on a public HTTPS address, backed by a hosted
+    PostgreSQL and a real mail relay, at zero recurring cost, so that likely
+    orchard owners can open it on their own phones and the comprehension
+    study 4b of dac2-guided-inputs-001 becomes possible.
+  scope:
+    - Slice 4 against plan revision 0.2 - provision, deploy, and prove the public address. This closeout finishes the workstream.
+  out_of_scope:
+    - The items revision 0.2 defers to dac2-guided-inputs-001.
+    - The 4b protocol decision, recorded in dac2-guided-inputs-001.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      The pilot is public at https://dac2-pilot.onrender.com - Render free web
+      service dac2-pilot (srv-dak17dp42hec73bk6ha0, Singapore) running
+      ghcr.io/mojisejr/dac2-durian-smart-account:c495e5447f66ec0f56c5106ce9f9ffb742f929b4,
+      Neon free PostgreSQL over the direct endpoint since 2026-09-15 19:50
+      +07:00 (deploy dep-dakjtsrl550s73ffuctg), Brevo's HTTP API for mail.
+      The owner created every account and object and holds every credential;
+      the agent set non-secret variables through the Render MCP on 2026-09-14
+      and 15 and read logs and deploys through it; every later provider change
+      was the owner's own action.
+    - >-
+      Proved on the public address, from the owner's phone and a second
+      tester's: register, verification mail through Brevo, verify, log in,
+      request a password reset, receive the mail, set a new password, log in
+      again; the wrong-login gate answering 429 after ten attempts; the
+      account budget shared by register, resend, and reset. Two accounts exist
+      on the pilot database, both verified.
+    - >-
+      Reached the first profit figure of a season on the public address: the
+      owner's season "สวนมะขาม", harvest year 2569, quick forecast mode, with
+      yield estimate, market plan, and KPI target rows present on 2026-09-16
+      morning, read by SELECT over the direct endpoint. Closing and history
+      were not exercised and revision 0.2 no longer requires them here.
+    - >-
+      The application repository holds render.yaml, the moderator runbook,
+      and the Brevo HTTP transport from PR 20 (merged as c495e54); no
+      credential is in render.yaml, the workflow, any event, or any PR.
+    - >-
+      Free-tier facts that differed from the research are recorded in the
+      lessons record of 2026-09-15: free Render blocks outbound SMTP, Brevo
+      blocks unknown IPs by default and its SMTP and API keys differ.
+    - >-
+      Deploy path read from the service: image-backed, no repository link,
+      tag pinned to a commit hash; the autoDeploy field is inert. Nothing
+      deploys without the owner.
+    - >-
+      Slice-4 diagnosis records: the reset diagnosis checkpoint of 2026-09-15
+      16:19 (codex), the reset-proved checkpoint of 20:26 (claude), and the
+      decision of 2026-09-16 05:15 that narrowed acceptance. The earlier
+      statement that the service used the direct endpoint was corrected in
+      the 20:26 record.
+  not_completed:
+    - >-
+      Deferred to dac2-guided-inputs-001 by revision 0.2: the responsive
+      route matrix and stall probe against the public address, the cold-start
+      number, the runbook lines on the Brevo key prefix, IP blocking, and the
+      From rewrite, and the one-line reset delivery log.
+    - >-
+      Closing a season and viewing history on the public address; left to
+      the owner's and testers' own use.
+
+evidence:
+  plan: workstreams/dac2-pilot-deployment-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "4"
+  authorized_by: memory/events/2026/09/16/20260916T051500_dac2_pilot_deployment_slice4_acceptance_narrowed.yaml
+  repository:
+    head: 597843ed7dc86dca582b3d7eb26bbba0562e322d
+    branch: hq/20260915
+    working_tree: plan-revision-and-two-events-in-this-commit
+    pull_request: none-standing-multi-session-branch-owner-closes-round-from-hq
+  application:
+    repository: dac2-durian-smart-account
+    head: c495e5447f66ec0f56c5106ce9f9ffb742f929b4
+    branch: main
+    working_tree: clean
+    pull_request:
+      number: 20
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/20
+      state: merged
+  deployment:
+    render_service: srv-dak17dp42hec73bk6ha0
+    url: https://dac2-pilot.onrender.com
+    image_tag: c495e5447f66ec0f56c5106ce9f9ffb742f929b4
+    region: singapore
+    plan: free
+    database_endpoint: neon-direct
+    latest_deploy: dep-dakjtsrl550s73ffuctg
+  database_observation:
+    method: psql over the direct endpoint as the application role, default_transaction_read_only on, SELECT only; credential in an owner-controlled git-ignored file
+    at: 2026-09-16T05:05+07:00
+    users: 2 verified
+    plans: 1 (owner, quick mode) with yield_estimates, market_plans, kpi_targets rows
+    season_actual_outcomes: 0
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-auth-including-reset
+    eye_truth: deferred-to-guided-inputs
+    device_truth: owner-phone-register-verify-login-reset-season-first-profit
+    human_comprehension: pending-guided-inputs-4b
+  checks:
+    - Render deploy list and log for dep-dakjtsrl550s73ffuctg - live, start-up lines present, no error
+    - curl https://dac2-pilot.onrender.com/ and /login after the endpoint switch - HTTP 200, HTTP/2
+    - psql SELECT on 2026-09-16 05:05 +07:00 - users 2, plans 1, migrations 10 successful
+    - bun run check and bun run wake before this commit - recorded in the commit that carries this event
+
+unresolved:
+  - >-
+    A tester's reset on 2026-09-15 20:48:52 issued a token and the tester
+    reported no mail; the same address had received its verification mail
+    forty-eight seconds earlier. Spam is being checked. The reset handler
+    logs nothing, so the cause cannot be read from the service.
+  - >-
+    The pilot has two verified accounts and one season; deleting pilot data
+    between studies is an owner action recorded in the 4b protocol.
+  - >-
+    The one-worker mitigation and the 32 MiB worker stack are carried
+    unchanged; the upstream race is still unfixed.
+  - >-
+    Free-tier terms are external claims as of 2026-09-15 and can change.
+
+next_action:
+  action: >-
+    The owner closes the round from HQ: push hq/20260915, open the pull
+    request, merge. Then resume dac2-guided-inputs-001: record the 4b
+    protocol decision, and open its first small application change with the
+    deferred items - runbook lines, reset delivery log, a Mailpit-free path
+    for the two proof scripts - before any study is scheduled. A separate
+    workstream for the application's name and first screen is being aligned
+    in session and opens after this merge.
+  acceptance_check:
+    - Wake reports dac2-pilot-deployment-001 finished by this closeout for slice 4 with no validation error or warning.
+    - dac2-guided-inputs-001 resumes with the deferred items listed in its next record.

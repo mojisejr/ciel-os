@@ -1,0 +1,178 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T093755_mootech_ga4_lessons
+type: closeout
+recorded_at: 2026-09-16T09:37:55+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-ga4-instrumentation-001
+  lane: single
+  objective: >-
+    Keep what the two-day Google Analytics round (2026-09-15/16) taught about
+    GA4, GTM, Vercel, the team's repository gates, and working in this
+    harness, so the next analytics or config task starts from what worked
+    here. This record is a record, not a delivery: it names no slice and its
+    status is ignored by Wake.
+  scope:
+    - Lessons from research, slices 1 and 2, and the OPS_ADMIN_SECRET repair that followed.
+  out_of_scope:
+    - The deliveries themselves (recorded in the slice-1 and slice-2 closeouts).
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      GA vs GTM, for an owner who had never used either. GTM is the box the
+      site loads once; GA4 is one thing plugged into the box. Access to GA4
+      alone shows the reports but not what is being sent; access to GTM alone
+      shows the wiring but not the data. Ask for both, and ask which Google
+      account owns them. What the box contains is also PUBLIC - fetching
+      https://www.googletagmanager.com/gtm.js?id=<container> and parsing the
+      "var data = {...}" block lists every tag, trigger and variable without
+      any credential. That read was the fastest audit of the round and the
+      proof used after each publish.
+    - >-
+      Levels of access matter more than roles. Administrator on a GA4
+      PROPERTY cannot create a property; that needs Editor on the ACCOUNT.
+      The owner hit this on the first click of slice 1 and the plan was
+      revised to one property rather than waiting on the team. The revision
+      turned out better: both hosts sit under .mumate.co, so the _ga cookie
+      is shared and a landing-to-app visitor is one user for free, and the
+      team's number never depended on the split because it counts members
+      (member_state) rather than hosts.
+    - >-
+      Look at the hostnames before designing anything. mumate.co is a
+      WordPress marketing site and bazichart.mumate.co is the app; both load
+      the same container into the same property. Nothing in either
+      repository says so - it was found by curl -D and the wp-json Link
+      header. A plan written from the code alone would have measured the
+      wrong thing.
+    - >-
+      Ask what the number IS before instrumenting. "DAU per total users"
+      hid three definitions: GA counts cookies, not people (the owner alone
+      read as three users); GA's "total users" is visitors in a date range,
+      not accounts; and the database knows the denominator (onboarded_at)
+      but not who was active today (no last_seen on member or user). The
+      shape that followed - numerator from GA with a keyed user_id and
+      member_state, denominator from the database on /ops - is the whole
+      design, and it came from those three questions, not from GA docs.
+    - >-
+      GTM import JSON is worth writing by hand and it will be wrong once.
+      Import lets a container change travel as a reviewable file instead of
+      fifteen clicks; the vocabulary is strict and the error names the line
+      ("unknown column"): configSettingsTable rows are parameter /
+      parameterValue like eventSettingsTable, userProperties rows are name /
+      value; custom-event triggers are type CUSTOM_EVENT with {{_event}};
+      data-layer variables are type v with dataLayerVersion 2. Merge with
+      overwrite-conflicts, read the preview counts (1 modified, N added, 0
+      deleted), then read the tag editor for empty fields before publishing.
+    - >-
+      Tag Assistant Preview needs Chrome; the Comet browser could not
+      connect. Preview also flags GA4 hits as debug, so DebugView works from
+      a Preview session without installing the debugger extension - useful
+      when an extension cannot be installed.
+    - >-
+      Consent commands must be pushed as an Arguments object. Define
+      window.gtag = function(){dataLayer.push(arguments)} before the loader
+      and call gtag('consent', ...); a plain array push is silently ignored.
+      Read the app's own consent screen before choosing the default: this
+      app is opt-out (analytics def true), so consent mode defaults to
+      granted and drops to denied on a stored withdrawal - plan D5 said the
+      opposite and was corrected during implementation, as a one-line
+      constant, and stated in the PR.
+    - >-
+      Identity for analytics is a server-side keyed hash or nothing. HMAC
+      over the member id with a Vercel-only key; an unset key sends no
+      user_id rather than falling back. Reading the cookie synchronously in
+      the inline loader means the first page view after login already
+      carries the person; the login event fires once per browser login by
+      the absence of that cookie plus a session flag, and clears on logout.
+      An allowlist of events and a forbidden-key pattern tested with a
+      POISONED list (a forbidden key written into the allowlist) is the only
+      test that proves the pattern matters - the first mutant survived
+      until the test was written that way.
+    - >-
+      Team gates that run only on the pusher's machine go red on main
+      without anyone noticing. Twice in two days mootech-fe main failed its
+      own pre-push hook (a lint error in #664, a stale test after 2b9912e)
+      because the hook is local and #321 archived the server CI. The lane
+      lost an evening to the first and needed --no-verify for the second;
+      #694 records it for the team. Always run the hook's gates on bare
+      main before blaming the branch.
+    - >-
+      Sync twice: at session start and again before pushing. The team
+      merged 22 PRs during one working day; a branch based on the morning's
+      main rebased cleanly only because the diff touched one shared line.
+      Compare origin/main..branch (ahead) and branch..origin/main (behind)
+      and say both numbers to the owner - "is ours the latest?" was the
+      owner's first question the next morning.
+    - >-
+      In this harness, outward writes are the owner's. git push --no-verify
+      (CI bypass) and vercel env add (secret-store write) were refused by
+      the auto-mode classifier even with the owner's explicit go; the
+      pattern that worked was: diagnose fully, hand the owner one pasteable
+      command with no trailing comments (zsh treated a Thai comment as
+      arguments), then verify the outcome from here. One vercel env write
+      did pass later in the session; do not rely on that.
+    - >-
+      Compare secrets by length and hash, never by value. OPS_ADMIN_SECRET
+      on the engine differed from the FE's (the engine's pulled as empty,
+      then as 66 characters after a pipe carried a newline); printing
+      lengths and sha256 prefixes found both without any value entering the
+      transcript. When piping a value into vercel env add, tr -d '"\r\n'
+      first, and read the length back after.
+    - >-
+      Shell slips cost a round each - a cat > file with no input hung on
+      stdin and left a 0-byte event that failed HQ's check; a # comment on
+      a copied command line was not a comment in the owner's zsh. Write the
+      file in one heredoc, and give the owner commands with nothing after
+      the last argument.
+    - >-
+      Wake reads the LATEST plan-authorizing decision for parallelism; a
+      later slice decision without outcome.parallelism: approved flips a
+      lane back to owner-confirmation-required and flips the other lane on
+      the same project too. Repeat the approval on every slice decision
+      while two lanes share a project.
+  not_completed:
+    - Nothing delivered by this record; slice 3 and the /ops presentation remain owner decisions.
+
+evidence:
+  plan: workstreams/mootech-ga4-instrumentation-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: a4e77aeb6e6bc7781c84487f5340da7c8f610041
+    branch: hq/20260915
+    working_tree: only-this-event-untracked-before-this-closeout
+    pull_request: none-until-hq-round-closes
+  sources:
+    - memory/events/2026/09/15/20260915T114122_mootech_ga4_research_baseline.yaml
+    - memory/events/2026/09/15/20260915T202521_mootech_ga4_slice1_hostname_guard_live.yaml
+    - memory/events/2026/09/16/20260916T054759_mootech_ga4_slice2_delivered.yaml
+    - mootech-fe#694, #695; GTM-MLZC4FRC versions 3 and 4
+  ops_secret_repair:
+    - >-
+      2026-09-16: /ops/analytics showed "engine: Unauthorized". FE and
+      engine both had OPS_ADMIN_SECRET on Vercel Production but the values
+      differed (FE 64 chars; engine pulled empty, later 66 after a piped
+      newline). The owner ran the rm/add/redeploy commands the agent
+      prepared; the final add with tr -d '"\r\n' set a 64-char value equal
+      to the FE's, engine redeploy ltdsbqyqq went Ready, and a probe with
+      the FE secret returned 200 with 12 qiEconomy rows. Outside this
+      workstream's scope; recorded here because it was found by it.
+
+unresolved:
+  - >-
+    The engine's /api/ops/analytics also returns a dau field of its own;
+    what it counts (chat, QI, or any engine call) is unread and must be
+    understood before slice 3 places it next to GA's number.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None for this record. The owner decides slice 3 and whether the /ops
+    analytics presentation becomes its own work.
+  acceptance_check:
+    - This event validates and Wake lists it as a record, not a delivery.

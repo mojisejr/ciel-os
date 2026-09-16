@@ -1,0 +1,88 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T112000_dac2_tax_deductions_workstream_opened
+type: decision
+recorded_at: 2026-09-16T11:20:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-tax-deductions-001
+  lane: single
+  objective: >-
+    Let an orchard owner write down, for a season, what they deduct from
+    taxable income and how much - one line per deduction, a name and an
+    amount - so the tax estimate uses their own deductions instead of a
+    fixed 60,000, and so they can open that season later and see what they
+    deducted that year.
+  scope:
+    - Open the workstream at plan revision 0.1 and authorize slice 1, the DESIGN.md section, with no code.
+  out_of_scope:
+    - Income from outside the orchard, the bracket ladder, the flat-expense rate, deduction caps or rules, the history page.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On 2026-09-16, after dac2-takai-identity-001 closed, the owner asked
+    whether the application had any way to enter tax deductions and whether
+    the 60,000 was fixed. The agent read calc::tax and the tax screen and
+    confirmed both: a constant, no input, nothing stored. The owner then
+    stated the need - lines of name and amount, entered one by one, per
+    season, kept so the year can be looked at again - and answered two
+    rounds of alignment questions. The owner chose: the owner enters every
+    line and every amount, with no pre-filled personal allowance
+    ("ต้องมากรอกเองแต่แรกดีกว่า"); until something is entered the estimate
+    deducts nothing and says so, with a way to the section (Q9 = ก);
+    suggested names as autocomplete, amounts always typed ("ให้เค้าใส่เอง");
+    lines belong to the season; a closed season locks them; income from
+    outside the orchard is not touched ("focus ที่สวนอย่างเดียว"); looking
+    back means opening that season. The owner confirmed the shared summary
+    with one word ("ตรง"). Both finished DAC2 workstreams on this branch
+    still occupy the application project until hq/20260915 reaches
+    origin/main; the owner directed this work to start on the same branch
+    now, and that overlap is recorded here as approved. Slice 1 is
+    authorized by this decision.
+  authorizes:
+    - Slice 1 of plan revision 0.1 - the DESIGN.md section on a draft application pull request, no code.
+  does_not_authorize:
+    - Slice 2 code or slice 3 deploy; each needs its own decision after the preceding closeout.
+
+evidence:
+  plan: workstreams/dac2-tax-deductions-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: f0ea59d
+    branch: hq/20260915
+    working_tree: plan-and-this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: dac2-durian-smart-account
+    head: 87516bfec3c30a70f2a8946543fd055241b253ef
+    branch: main
+    working_tree: clean
+  source_read:
+    - checkouts/dac2-durian-smart-account/crates/calc/src/tax.rs
+    - checkouts/dac2-durian-smart-account/crates/web/src/analysis_ui.rs
+    - checkouts/dac2-durian-smart-account/crates/calc/src/plan.rs
+    - checkouts/dac2-durian-smart-account/migrations/202609070002_persistence.sql
+    - checkouts/dac2-durian-smart-account/DESIGN.md
+  preceding_records:
+    - memory/events/2026/09/16/20260916T104500_dac2_takai_identity_slice3_deployed_and_closed.yaml
+
+unresolved:
+  - The suggested-name list is the agent's draft; the owner edits it in slice 1.
+  - Existing seasons lose the implicit 60,000 until their owners enter lines; the screen's sentence is the mitigation the owner accepted.
+  - dac2-guided-inputs-001 stays paused with the deferred pilot proof.
+
+next_action:
+  action: >-
+    Branch the application repository from main 87516bf, write the
+    "ลดหย่อนภาษี" section into DESIGN.md with every Thai string verbatim and
+    the suggested-name list, revise the "ภาษี สองวิธี" explanation, open a
+    draft pull request, and ask the owner to read it. Record the slice-1
+    closeout citing the approved head.
+  acceptance_check:
+    - Wake lists dac2-tax-deductions-001 as active at revision 0.1 with no validation error or warning and no unapproved overlap.
+    - The draft pull request exists with DESIGN.md only.

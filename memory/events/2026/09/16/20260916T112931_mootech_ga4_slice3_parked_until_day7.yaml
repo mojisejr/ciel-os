@@ -1,0 +1,69 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T112931_mootech_ga4_slice3_parked_until_day7
+type: closeout
+recorded_at: 2026-09-16T11:29:31+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-ga4-instrumentation-001
+  lane: single
+  objective: >-
+    Give the team the share of v2 members active each day, and the login and
+    sign_up events under it, counting signed-in members only on real hosts,
+    with a consent switch that governs the tag.
+  scope:
+    - Checkpoint for slice 3 of plan 0.3 - the preparation is done and the slice now waits on Google's processing window and seven days of data. Nothing is executing; the owner is free for other work.
+  out_of_scope:
+    - The seven-day reading itself, the report and runbook, and the final closeout - they follow the owner's day-7 export.
+
+outcome:
+  status: recorded
+  completed:
+    - Plan revision 0.3 and the slice-3 decision (parallelism approved) committed at 69f5296; Wake reads the lane authorized.
+    - ga4/exploration-setup.md (English-label reference) and ga4/slice3-runbook-th.md (Thai-menu runbook with the owner's four check-ins) committed at 69f5296 and 2cfef97.
+    - The owner registered member_state as a user-scoped custom dimension "Member state" on G-EBZKXSF579 on 2026-09-16, screenshot-verified; logged in ga4/slice3-log.md at dbd5fb6.
+    - ga4/team-update-2026-09-16.md committed at 42285f3 - the owner's summary for the team of what is built, what is visible now, what waits and why, and the finish window of about 24-26 September.
+    - The lessons record's open item on the engine's dau field is closed - bazi-sft-dataset pdf-dev 1de7235 /api/ops/analytics returns qiEconomy and chat only.
+  not_completed:
+    - The Exploration is not built yet; Google's 24-48 hour window for the new dimension runs to 2026-09-17/18.
+    - D1 (first day the Exploration shows a member row) is unknown, so day 7 is unknown; expected 2026-09-23/24.
+    - sign_up from a real first-run and the two-device merge remain unobserved.
+
+evidence:
+  plan: workstreams/mootech-ga4-instrumentation-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: 42285f3fd2b1322a65ed7aaf1d2e3b16f4f2b902
+    branch: hq/20260915
+    working_tree: clean-before-this-event
+    pull_request: none-until-hq-round-closes
+  application:
+    repository: mootech-fe
+    base: d82ee31
+    branch: main
+    working_tree: clean-untouched-this-slice
+  sources:
+    - workstreams/mootech-ga4-instrumentation-001/ga4/slice3-log.md
+    - workstreams/mootech-ga4-instrumentation-001/ga4/slice3-runbook-th.md
+    - workstreams/mootech-ga4-instrumentation-001/ga4/team-update-2026-09-16.md
+
+unresolved:
+  - The HQ round is expected to close before day 7; the slice-3 closeout goes to whatever standing branch the next re-brief names. A cold session should read ga4/slice3-log.md first - it is the running state.
+  - Whether hits sent before the dimension was created are reported under it is unverified; D1 is defined by observation, not by the v4 date.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Nothing until the owner reports check-in 2 (first Exploration row, with
+    a screenshot, expected 2026-09-17/18). Then: record D1 in
+    ga4/slice3-log.md; wait for the day-7 CSV export (D1+6); reconstruct
+    members_total by day with the read-only onboarded_at query; compute the
+    percentage; reconcile sign_up against member growth; measure the GA
+    undercount; write ga4/report-for-team.md (report + runbook); after the
+    team's answer, write the slice-3 closeout and decide with the owner
+    whether the /ops percentage follow-on ("3-lite") opens.
+  acceptance_check:
+    - Wake lists this event as the lane's latest record with a next action naming the owner's check-in 2, no validation error, lane still authorized at plan 0.3 slice 3.
