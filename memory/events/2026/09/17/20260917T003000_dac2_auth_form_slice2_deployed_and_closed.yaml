@@ -1,0 +1,114 @@
+schema_version: ciel.event.v0.1
+id: evt_20260917T003000_dac2_auth_form_slice2_deployed_and_closed
+type: closeout
+recorded_at: 2026-09-17T00:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-auth-form-001
+  lane: single
+  objective: >-
+    Let a grower register, sign in, and reset a password on a phone without
+    typing blind: every password field gets a show/hide control, the two
+    screens that set a password ask for it twice, and the minimum length
+    drops from fifteen characters to six.
+  scope:
+    - Slice 2 of plan revision 0.1, the last declared slice - the owner's deploy of the merged change and the check on the public address from a phone.
+  out_of_scope:
+    - Strength meters, breached-password lists, rate limits, lockout, sessions, tokens, mail; any of these is its own workstream.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Deployed by the owner: after the slice-1 closeout the owner said
+      "เดินต่อเลยครับ slice2"; ci run 35123988347 on main 0970c6c went green
+      (check, image); the owner set the image tag on the Render service;
+      deploy dep-dalcmv61egvs73e4rc4g on digest sha256:89efe53e... went
+      live at 2026-09-17 00:02 +07:00, trigger service_updated, no
+      migration and no environment change. The start-up log holds the
+      stack probe, the Brevo key line, the gate line, the pilot notice and
+      the listening line, and no error or warning.
+    - >-
+      The public address serves the change: /register returned HTTP 200
+      over HTTP/2 with two show/hide buttons at aria-pressed="false",
+      minlength="6" on both fields, the password_confirm field and the
+      six-character hint, and no trace of the fifteen; /login serves one
+      button and no confirm field.
+    - >-
+      The owner tried it from a phone on the public address and reported
+      it passed - the eye, the six characters, and two fields that differ
+      refused with the mismatch sentence ("ลองเรียบร้อยครับ ผ่าน ใส่ไม่ตรง
+      บอกว่าไม่ตรง ปิดจบได้"). The agent cannot sign in as the owner; the
+      owner's report and the served markup are the evidence.
+    - >-
+      Across the workstream: DESIGN.md revision 0.11, the change across
+      store, web, style, tests and the two proof scripts on PR 25, merged
+      as 0970c6c, and the deploy. Every password field has the eye; the
+      two screens that set a password ask twice; six characters is the
+      floor.
+  not_completed:
+    - Nothing of this workstream. The plan's two slices are closed.
+
+evidence:
+  plan: workstreams/dac2-auth-form-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  authorized_by: in-session owner authorization on 2026-09-16 after the slice-1 closeout ("เดินต่อเลยครับ slice2"); the owner performed every outward action of the slice
+  repository:
+    head: 8373a3e
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: dac2-durian-smart-account
+    head: 0970c6c2cedd4ccbb43d9218268fa0465aa6299d
+    branch: main
+    working_tree: clean
+    pull_requests:
+      - number: 25
+        merged_as: 0970c6c
+  deployment:
+    render_service: srv-dak17dp42hec73bk6ha0
+    url: https://dac2-pilot.onrender.com
+    image_tag: 0970c6c2cedd4ccbb43d9218268fa0465aa6299d
+    image_digest: sha256:89efe53edb9d9df4fda866fa8598517c31d4cd257f2727f74b71f95802b3f565
+    deploy: dep-dalcmv61egvs73e4rc4g
+    ci_run: 35123988347
+  checks:
+    - Render list_deploys - dep-dalcmv61egvs73e4rc4g live on the 0970c6c tag; the 5d37f0e deploy deactivated
+    - Render list_logs app type from 17:01Z forward - start-up lines only, no error or warning
+    - curl https://dac2-pilot.onrender.com/register and /login - HTTP 200, markup as recorded
+    - owner's report of the phone check - in session
+  preceding_records:
+    - memory/events/2026/09/16/20260916T234500_dac2_auth_form_slice1_merged.yaml
+    - memory/events/2026/09/16/20260916T230500_dac2_auth_form_workstream_opened.yaml
+
+unresolved:
+  - >-
+    Six characters with no composition rule is the owner's choice for a
+    narrow pilot; if the pilot ever holds real records the floor is a
+    decision to revisit.
+  - >-
+    The layout proof's seeding-phase flake recurred once during slice 1 at
+    the fixed-costs step; still unexplained, clean on rerun.
+  - >-
+    The tester's missing reset mail of 2026-09-15 stays unexplained; the
+    reset handler still logs nothing. dac2-guided-inputs-001 stays paused
+    with the deferred pilot proof (route matrix and stall probe on the
+    public address, cold-start number, runbook lines, reset delivery log)
+    and the 4b protocol decision.
+
+next_action:
+  action: >-
+    HQ closes the round when ready: push hq/20260917, open the pull
+    request, merge. This workstream is then a merged record. Any further
+    DAC2 application work - defects the owner's friends report, the small
+    items already noted (thousands separator on a closed season, the
+    mascot in mail) - opens as its own workstream after alignment, or
+    dac2-guided-inputs-001 resumes with its 4b decision.
+  acceptance_check:
+    - Wake reports dac2-auth-form-001 finished by this closeout for slice 2 with no validation error.
+    - The next DAC2 record, if any, opens a new workstream or resumes dac2-guided-inputs-001 rather than extending this one.

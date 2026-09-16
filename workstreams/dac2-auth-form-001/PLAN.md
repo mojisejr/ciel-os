@@ -4,7 +4,7 @@
 **State:** active
 **Execution lane:** single
 **Plan revision:** 0.1
-**Execution phase:** 2
+**Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
 
@@ -184,12 +184,10 @@ two different passwords, press the eye on each screen.
 
 ## Next executable action
 
-Slice 1 is closed: application PR 25 (`a780892` from `5d37f0e`) merged by
-the owner as `0970c6c` on 2026-09-16 after a local try; the closeout of
-23:45 +07:00 cites it. What remains is slice 2, the deploy, which needs the
-owner's word to the session: the ci run on `main` publishes the image tagged
-`0970c6c…`, the owner sets that tag on the Render service (no migration, no
-environment change), the agent reads the run, the deploy and the start-up
-log, and the owner tries the three screens on the public address from a
-phone. The slice-2 closeout, recorded ready-for-owner-merge, finishes the
-workstream.
+Finished. Slice 1 (DESIGN.md 0.11 and the change, PR 25 merged as `0970c6c`)
+and slice 2 (the owner's deploy of image `0970c6c` as
+`dep-dalcmv61egvs73e4rc4g`, then the eye, the confirm field and a
+six-character password tried from the owner's phone on the public address)
+are closed; the closeout of 2026-09-17 00:30 +07:00 finishes the workstream.
+What was kept out - strength rules, rate limits, sessions, mail - opens only
+as its own workstream if the owner asks.
