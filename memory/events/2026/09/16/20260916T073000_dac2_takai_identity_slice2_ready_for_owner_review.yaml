@@ -1,0 +1,122 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T073000_dac2_takai_identity_slice2_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-16T07:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-takai-identity-001
+  lane: single
+  objective: >-
+    Give the DAC2 application a name of its own - ตาไก๊, spoken บัญชีตาไก๊,
+    Takai in English - and an entry screen that a durian grower recognises at
+    once and passes on by word of mouth, with Durian Academy cohort 2 as the
+    byline rather than the name, so later cohorts and teachers can adopt it.
+  scope:
+    - Slice 2 of plan revision 0.1 - the application change, on its own draft pull request, proved locally and tried by the owner. The pull request is the owner's to review and merge.
+  out_of_scope:
+    - Slice 3, the deploy; it needs the merge, the push run, and the owner's tag and MAIL_FROM change on Render.
+
+outcome:
+  status: slice-closed
+  completed:
+    - >-
+      The owner authorized slice 2 in session after merging the slice-1
+      pull request 21 ("merged แล้วครับ ... เราเริ่มงานได้"), which departs
+      from the plan's "slices 1 and 2 share one pull request": the owner
+      chose to merge the design section first, so slice 2 has its own
+      branch feat/takai-entry from main 54201d6.
+    - >-
+      Application commits ace1685 (the change, 14 files, +216 -74) and
+      5ab8a8f (DESIGN.md aligned with what shipped), pushed, draft pull
+      request 22 opened by the agent under the owner's per-action
+      permission ("เปิด PR มาเลยครับ").
+    - >-
+      What the change does: "/" and "/login" render the entry screen from
+      the design section - mascot circle, wordmark, tagline, form without
+      hints, button, two links, one-line pilot notice, cohort byline; the
+      landing card and demo link are removed and the /demo route stays; a
+      signed-in visitor to either address is redirected to /plans in the
+      login middleware; the shared strip and header step aside on the entry
+      screen only; document title, SVG favicon and 180px icon; mail sender
+      and subjects renamed with their two tests updated; render.yaml
+      MAIL_FROM renamed; FormField hint made optional; public/ gains the
+      bust as WebP and PNG, the hat mark, and the icon.
+    - >-
+      Two things decided while building, both written back into DESIGN.md
+      in 5ab8a8f: the favicon sits on a cream disc because a dark tab bar
+      made the green hat faint, and the bust size rule is per file because
+      a phone fetches one file, not both (14 KB WebP, 40 KB PNG). The hat
+      was checked at 16, 32 and 64 pixels on light and dark; it reads, so
+      the letter fallback was not shipped.
+    - >-
+      Proof: scripts/check.sh passed end to end (format, every suite, clippy
+      with warnings denied, cargo leptos build, wasm dependency boundary);
+      scripts/check-responsive.sh passed 38 routes at 320, 360, 393 and 412
+      pixels on two consecutive runs, with home and login now measured
+      signed out. The first two runs failed in the seeding phase at two
+      different, unrelated steps with no server error, right after a cold
+      build; the script now reports the HTTP status of the two save steps
+      so a next failure says what it got.
+    - >-
+      The owner ran the application locally from this branch with the pilot
+      notice on, tried it, and said OK ("ผมว่า โอเคละ").
+  not_completed:
+    - The pull request is a draft; the owner reviews, marks it ready, and merges.
+    - The image is not built or deployed; that is slice 3.
+
+evidence:
+  plan: workstreams/dac2-takai-identity-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  authorized_by: in-session owner authorization on 2026-09-16 after the slice-1 closeout; no separate decision event was recorded
+  repository:
+    head: a2353cb
+    branch: hq/20260915
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: dac2-durian-smart-account
+    base: 54201d6
+    head: 5ab8a8f
+    branch: feat/takai-entry
+    working_tree: clean
+    pull_request:
+      number: 22
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/22
+      state: draft
+    slice_1_pull_request:
+      number: 21
+      merged_as: 54201d6
+  checks:
+    - scripts/check.sh - exit 0
+    - scripts/check-responsive.sh - passed at 320, 360, 393, 412px, twice
+    - cargo test -p web --features ssr --test shell_ssr - 3 passed, including the two new entry-screen and shell tests
+    - the hat mark rendered at 16, 32, 64px on light and dark backgrounds and inspected
+
+unresolved:
+  - >-
+    The Render environment variable MAIL_FROM still says DAC2 and overrides
+    render.yaml; the owner changes it in the dashboard at deploy time or
+    the mails keep the old sender name.
+  - >-
+    The layout proof's seeding phase flaked twice after a cold build; the
+    cause was not established. The improved error message is the only
+    change made for it.
+  - >-
+    How the entry screen looks on the owner's own phone over the public
+    address is seen in slice 3, not here.
+
+next_action:
+  action: >-
+    The owner reviews and merges pull request 22. The push run on main
+    publishes the image tagged with the merge commit; the owner then sets
+    that tag on the Render service and changes MAIL_FROM in the dashboard.
+    The agent reads the run, the deploy and the log, checks the public
+    address and a registration mail, and records the slice-3 closeout as
+    ready-for-owner-merge, which finishes the workstream.
+  acceptance_check:
+    - Pull request 22 merged and the ci image job green on main.
+    - https://dac2-pilot.onrender.com/ shows the entry screen; a mail arrives from บัญชีตาไก๊.
