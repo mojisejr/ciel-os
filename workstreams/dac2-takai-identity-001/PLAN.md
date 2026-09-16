@@ -5,7 +5,7 @@
 **Execution lane:** single
 **Plan revision:** 0.1
 **Execution phase:** 1
-**Execution state:** executing
+**Execution state:** idle
 **Parallelism:** proposed
 
 ## Objective and owner agreement
@@ -220,9 +220,8 @@ or wait for slice 3 and open the public address.
 
 ## Next executable action
 
-Slice 1 is authorized by the opening decision of 2026-09-16. The agent
-branches the application repository from clean `main` (`c495e54`), writes the
-"Identity and the entry screen" section into `DESIGN.md` with every Thai
-string verbatim, opens a draft pull request, and asks the owner to read it.
-The slice-1 closeout cites the approved head; slice 2 needs its own owner
-decision after that closeout.
+Finished. Slice 1 (design section, PR 21 merged as 54201d6), slice 2 (the
+change, PR 22 merged as 87516bf), and slice 3 (the owner's deploy of image
+87516bf as dep-dal0phlbedkc73ar3j60 with MAIL_FROM renamed) are closed; the
+final closeout of 2026-09-16 finishes the workstream. What the owner wants
+next is a separate workstream and is aligned before it opens.
