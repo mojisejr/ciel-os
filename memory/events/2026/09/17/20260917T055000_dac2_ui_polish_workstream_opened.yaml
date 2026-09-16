@@ -1,0 +1,102 @@
+schema_version: ciel.event.v0.1
+id: evt_20260917T055000_dac2_ui_polish_workstream_opened
+type: decision
+recorded_at: 2026-09-17T05:50:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-ui-polish-001
+  lane: single
+  objective: >-
+    Fix the things a person notices in the first minute with ตาไก๊ that
+    have nothing to do with understanding it - browser-blue controls, a
+    once-a-year form at the top of the hub, the same six-row list on three
+    screens, satang on million-baht figures, a mascot the app does not use
+    as its own icon - so the owner's friends' first feedback is about the
+    application and not its finish.
+  scope:
+    - Open the workstream at plan revision 0.1 and authorize slice 1, one application pull request carrying the DESIGN.md revision and the change.
+  out_of_scope:
+    - The dashboard's card layout, icons on cards, the KPI row format, a seasons chart, the × button, input formatting, the comprehension study.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On the evening of 2026-09-16 the owner asked whether ตาไก๊ should
+    follow three UI mockups from 2026-09-11, whether the agent had better
+    ideas, and whether to let people use it first. The agent read the
+    mockups, DESIGN.md 0.11 and the running application at 0970c6c with a
+    seeded season, and put the comparison in a report the owner read
+    overnight: two thirds of the mockups were already decided against on
+    purpose with reasons that stand; seven finish defects need no user
+    data; the larger questions wait for the comprehension study. The
+    report closed with eight questions, each with the agent's lean. On the
+    morning of 2026-09-17 the owner answered every one "เอาตามคุน" - polish
+    first as one pull request, the decision list in full only on the hub,
+    the season row instead of the form, whole baht for amounts, verdict
+    rows only once a target exists, no icons yet, the 4b study with three
+    friends after this deploys, no one has tried it seriously yet - and
+    added one: the hat mark becomes ตาไก๊ himself. The agent noted that
+    DESIGN.md chose the hat because a face blurs at sixteen pixels; the
+    owner chose the face. The only other open DAC2 workstream is paused;
+    the owner directed this work to start now on the standing branch, and
+    that is recorded here as approved. Slice 1 is authorized by this
+    decision.
+  authorizes:
+    - Slice 1 of plan revision 0.1 - the design revision and the change on one draft application pull request.
+  does_not_authorize:
+    - Slice 2, the deploy; it needs its own decision after the slice-1 closeout.
+
+evidence:
+  plan: workstreams/dac2-ui-polish-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 8b780bb
+    branch: hq/20260917
+    working_tree: plan-and-this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: dac2-durian-smart-account
+    head: 0970c6c2cedd4ccbb43d9218268fa0465aa6299d
+    branch: main
+    working_tree: clean
+  source_read:
+    - checkouts/dac2-durian-smart-account/DESIGN.md
+    - checkouts/dac2-durian-smart-account/crates/web/src/plan_ui.rs
+    - checkouts/dac2-durian-smart-account/crates/web/src/analysis_ui.rs
+    - checkouts/dac2-durian-smart-account/crates/web/src/assets.rs
+    - checkouts/dac2-durian-smart-account/crates/web/src/app.rs
+    - checkouts/dac2-durian-smart-account/style/main.css
+    - checkouts/dac2-durian-smart-account/public/
+    - memory/events/2026/09/14/20260914T044909_dac2_guided_inputs_batch3_owner_walkthrough_findings.yaml
+  owner_inputs:
+    - .assets/durian-smart-account-for-farmer/ui-design-images/ (three mockups, 2026-09-11, not tracked)
+    - the owner's eight answers in session, 2026-09-17 morning
+  preceding_records:
+    - memory/events/2026/09/17/20260917T003000_dac2_auth_form_slice2_deployed_and_closed.yaml
+
+unresolved:
+  - A face at sixteen pixels is a blur; the owner chose it knowing that. The hat silhouette stays in Git history.
+  - Whole-baht display can differ from the sum of displayed lines by a baht; the calculation is untouched.
+  - dac2-guided-inputs-001 stays paused; its 4b protocol (three friends, their own phones, a ten-minute call each) is the next DAC2 decision after this deploys.
+
+next_action:
+  action: >-
+    Branch the application repository from main 0970c6c; set accent-color;
+    make DecisionList's compact prop render one line and use it on the
+    dashboard's ready state and the analysis page; turn the hub's
+    season-details card into one row with a disclosure; add baht_amount()
+    and route every amount through it while rates keep two places; format
+    the closed season's read-only numbers; cut the mascot into 32, 64 and
+    180 px icons and put him in the favicon links and the header; revise
+    DESIGN.md to 0.12; update tests; run check.sh and
+    check-responsive.sh; open a draft pull request; ask the owner to read
+    the diff and try it locally. Record the slice-1 closeout citing the
+    approved head.
+  acceptance_check:
+    - Wake lists dac2-ui-polish-001 as active at revision 0.1 slice 1 with no validation error or warning and no unapproved overlap.
+    - The draft pull request exists with the design revision and the change together.
