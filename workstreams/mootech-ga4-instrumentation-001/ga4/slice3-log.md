@@ -14,3 +14,8 @@ D1 (first day the Exploration shows a member row): _pending_ → day 7 = D1 + 6.
 ## Lessons to carry into the final record
 
 - A parked checkpoint on the final declared slice with `status: recorded` triggers Wake's "would otherwise finish the workstream" warning (src/portfolio/read.ts:566-588) and it stays until the real closeout reaches a delivery state. Use `slice: none` on such checkpoints, as the lessons record did. Known warning carried in the round PR body by HQ.
+
+## Candidates noticed during slice 3 (not started — for the closeout's "what next" list)
+
+- **GTM v5: exclude `/ops` paths.** Realtime on 2026-09-16 showed page views for "Ops Dashboard" and "Ops · Analytics" — the tag fires on the ops screens because they live on bazichart.mumate.co. Admins carry no member_state, so the members-only numbers are unaffected, but total page views and "all users" are inflated by staff. One trigger exception on Page Path `^/ops` would remove it. Low priority; owner publishes.
+- **Realtime illustration for the team:** the same screen read 4 active users (cookies) against 1 Member state — the gap the members-only design exists for. Reuse in the report.
