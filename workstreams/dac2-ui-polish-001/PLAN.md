@@ -4,7 +4,7 @@
 **State:** active
 **Execution lane:** single
 **Plan revision:** 0.1
-**Execution phase:** 2
+**Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
 
@@ -202,13 +202,9 @@ tap แก้ on the hub row; look at the tab icon.
 
 ## Next executable action
 
-Slice 1 is closed: application PR 26 (`615f571` from `0970c6c`) is a draft
-the owner tried locally on 2026-09-17 and approved; the closeout of 11:45
-+07:00 cites it. What remains is slice 2, the deploy, which needs the
-owner's word to the session: the owner marks the pull request ready and
-merges, the ci run on `main` publishes the image tagged with the merge
-commit, the owner sets that tag on the Render service (no migration, no
-environment change), the agent reads the run, the deploy and the start-up
-log, and the owner tries it on a phone. The slice-2 closeout, recorded
-ready-for-owner-merge, finishes the workstream; the owner then sends the
-address to friends.
+Finished. Slice 1 (DESIGN.md 0.12 and the change, PR 26 tried locally by
+the owner) and slice 2 (the owner's merge as `d1475e6` and deploy of that
+image as `dep-daln9t2jnfac73a5pn40`, live at 12:05 +07:00 on 2026-09-17
+with a clean start-up log and the new mark served) are closed; the
+closeout of 12:08 +07:00 finishes the workstream. The owner sends the
+address to friends today; what they report opens as its own record.
