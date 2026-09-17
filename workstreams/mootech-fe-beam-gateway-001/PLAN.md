@@ -1,7 +1,7 @@
 # MuMate v2 — Beam Checkout as the second payment gateway, Omise as rollback
 
 **Workstream:** `mootech-fe-beam-gateway-001`
-**State:** active
+**State:** paused
 **Execution lane:** single
 **Plan revision:** 0.6
 **Execution phase:** 5
@@ -389,7 +389,9 @@ or on Beam. Two facts corrected against the 2026-09-14 record: both purchases
 were `QI_60`, no subscription was involved; and a refund does **not** claw QI
 back (`lib/payment/repo.ts:285-289` leaves that undecided) — an owner
 decision before v2 opens beyond the gate. Execution phase is 5, state idle,
-parked by the owner. Record:
+parked by the owner; plan State set to **paused** on 2026-09-17 so the
+portfolio reads the park as a fact and the lane no longer counts as an
+active overlap on mootech-fe. Record:
 `memory/events/2026/09/16/20260916T235500_beam_gateway_slices_2_to_4_closed_parked.yaml`.
 
 ## Sequence with the server move
