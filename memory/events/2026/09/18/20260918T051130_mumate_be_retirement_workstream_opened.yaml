@@ -1,0 +1,96 @@
+schema_version: ciel.event.v0.1
+id: evt_20260918T051130_mumate_be_retirement_workstream_opened
+type: decision
+recorded_at: 2026-09-18T05:11:30+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Take the legacy NestJS backend mootech-be out of the MuMate system
+    completely, so v1 and v2 both keep working with mootech-fe talking only to
+    the bazi engine and Supabase, and Render can be suspended and deleted -
+    before the server move, so the move carries two containers, not three.
+  scope:
+    - Open the workstream at plan revision 0.1 with four slices and authorize slice 1 (identity, consent, friend writes, image upload move into the frontend).
+    - Record the four decisions the owner took this morning and the four open questions with their defaults.
+    - Keep the three read-only research reports beside the plan as its evidence.
+  out_of_scope:
+    - Slices 2-4; each needs its own decision after the preceding closeout.
+    - Any change to mootech-fe, mootech-be, bazi-sft-dataset, Render, or Vercel in this record.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On 2026-09-18 morning the owner raised a concern before the server move:
+    the backend costs money and would otherwise have to move too, so retire it
+    first, keeping v1 and v2 working "100%" with only the frontend and the
+    engine left. The owner authorized read-only research by sub-agents. Three
+    passes ran against mootech-fe main 1312292, mootech-be main 57da359 and
+    bazi-sft-dataset pdf-dev 04bc2bd and are filed under
+    workstreams/mumate-be-retirement-001/research/. What they established:
+    the backend has no user authentication of its own; nothing but the
+    frontend calls it; v1 payment is dead in fact (sales closed 2026-08-24,
+    expired Omise key, webhook already moved to v2); the frontend already
+    declares every backend table but one (consent); 26 live call sites
+    collapse into eleven pieces of work, ten of them small, and one large -
+    the v1 chart compute - whose correctness can be proven by replaying every
+    stored log_calculate row. The agent presented three paths for the chart
+    (verbatim port; engine substitution, which breaks v1 my-destiny; verbatim
+    port proven by replay) and recommended the third. The owner answered
+    "เอาตามนี้ เปิด workstream เลย". This record opens the workstream and
+    authorizes slice 1. The workstream overlaps mootech-fe with
+    mootech-ga4-instrumentation-001 (active, slice 3 parked until day 7) and
+    with the parked beam lane; the file sets are disjoint (identity, consent,
+    friend, upload routes versus GTM/GA and lib/payment), and the owner's
+    direction to start now is recorded here as approval of that overlap.
+  authorizes:
+    - Slice 1 of plan revision 0.1 - register-login, consent, member-with-friend writes, and image upload served by mootech-fe, on a draft pull request, with no behaviour change elsewhere.
+  does_not_authorize:
+    - Slice 2 (chart port + replay), slice 3 (v1 leftovers, payment freeze, dead code), slice 4 (backend leaves the system); each needs its own decision.
+    - Suspending or deleting the Render service; merging any pull request.
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 8b7202d
+    branch: hq/20260917
+    working_tree: plan-research-and-this-event-in-one-commit
+    pull_request: none-until-hq-round-closes
+  application:
+    mootech-fe: main 1312292, untouched
+    mootech-be: main 57da359, untouched
+    bazi-sft-dataset: pdf-dev 04bc2bd, untouched
+  sources:
+    - workstreams/mumate-be-retirement-001/research/be-inventory.md
+    - workstreams/mumate-be-retirement-001/research/fe-call-sites.md
+    - workstreams/mumate-be-retirement-001/research/consumers-and-decisions.md
+    - workstreams/mumate-be-decoupling-001/PLAN.md (superseded, left paused)
+  preceding_records:
+    - memory/events/2026/09/17/20260917T203053_mumate_infra_move_afternoon_checkpoint.yaml
+  owner_statements_not_reverified:
+    - The backend is a meaningful share of the monthly hosting cost.
+
+unresolved:
+  - Q1 LINE profile check at login (default drop), Q2 v1 MATE chat (default off), Q3 v1 matching (default repoint to the v2 lane), Q4 member code redemption (default port) - owner may override before the slice that touches each.
+  - Column-level parity between the backend entities and lib/db/schema.ts is unverified beyond table names.
+  - mumate-infra-move-001 (proposed) now waits on this workstream's slice 4 or an owner decision to run both in parallel; its plan text about a third container is superseded.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Branch mootech-fe from main 1312292 (feat/be-retirement-identity),
+    implement slice 1 per the plan - register-login route from the session,
+    consent table migration and the onboarding write, member-with-friend
+    POST/PUT/PUT profile/GET new-friend, profile-image upload - repoint the
+    four endpoint.ts constants to localApi, prove on the arena with the
+    backend host dead, open a draft pull request, and record the slice-1
+    closeout citing the approved head.
+  acceptance_check:
+    - Wake lists mumate-be-retirement-001 as active at revision 0.1, phase 1, idle, authorized for slice 1, with no validation error and no unapproved overlap.
