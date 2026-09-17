@@ -1,0 +1,82 @@
+schema_version: ciel.event.v0.1
+id: evt_20260917T143251_owner_contract_observation_deferred
+type: closeout
+recorded_at: 2026-09-17T14:32:51+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-owner-operating-contract-001
+  lane: single
+  objective: >-
+    Keep the owner operating contract (OWNER.md) a short record of confirmed
+    working patterns and response rules, changed only by explicit owner
+    decision. This event records that an observation round happened and that
+    the owner chose to change nothing, so a later session can find the
+    suggestion when a related situation arises.
+  scope:
+    - The owner asked mid-session on 2026-09-17, after a long round spanning three lanes (GA4, Beam, infra move), for the agent's assessment of the owner and whether OWNER.md, a closeout, or CIEL itself needed changing.
+  out_of_scope:
+    - Any change to OWNER.md, AGENTS.md, or CIEL. None was made.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Agent observation offered (interpretation, not a rule): the owner's
+      confirmation questions ("ถูกป่ะ", "ใช่มั๊ย") function as requests for
+      verification with evidence, not requests for agreement - twice this
+      session the agent disagreed and the owner accepted the correction. The
+      owner catches boundary questions the agent misses (session context
+      contamination, project-scoped knowledge kept out of CIEL, parallelism
+      being repository state rather than session state). The owner states
+      trade-offs explicitly and asks that records match reality even when
+      unflattering.
+    - >-
+      Agent suggestion offered: a possible pattern 2 for OWNER.md of about six
+      lines - confirmation questions are verification requests; steps on
+      systems the owner is still new to (infra, external consoles) are given
+      click-by-click with labels confirmed from the owner's screen, not from
+      memory; commands the harness blocks are handed over as one pasteable
+      line the owner runs and the agent verifies. Also noted that OWNER.md's
+      pattern 1 could be shortened at the same time, and that doing so now
+      would itself be a side issue by pattern 1's own rule.
+    - >-
+      Agent view on CIEL's necessity, given as evidence not verdict: after a
+      /clear this session reconstructed three lanes from records alone; a
+      wrong statement in the 2026-09-14 Beam record was corrected by appending
+      a new record; three sessions shared one branch through HQ claims and
+      ack tokens. The cost is per-event weight and bookkeeping the owner must
+      understand, and the standing risk that CIEL becomes the project. The
+      agent's position: necessary at its current size, valuable in proportion
+      to what is not added to it.
+    - >-
+      Owner decision: change nothing now. "ทุกอย่างยังดีอยู่" - the
+      observation is kept so it can be found when a related situation appears.
+  evidence_of_limits:
+    - This is one session's observation and the owner's own framing of it; it is not a confirmed pattern and must not be read as one.
+
+evidence:
+  plan: workstreams/ciel-owner-operating-contract-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 052c85f66336b0f42bd1661f9a27f56f38da726b
+    branch: hq/20260917
+    working_tree: clean-before-this-event
+    pull_request: none-until-hq-round-closes
+
+unresolved:
+  - Whether pattern 2 as suggested is worth adopting is undecided; the owner deferred it deliberately.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Nothing. If a future session sees a related situation - a confirmation
+    question answered with agreement instead of evidence, an infra step given
+    without verified labels, or a blocked command not handed over as one
+    line - it may cite this record when suggesting the pattern again; the
+    owner decides then.
+  acceptance_check:
+    - Wake lists this event with no validation error; OWNER.md unchanged.
