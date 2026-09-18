@@ -1,21 +1,33 @@
 # MuMate — retire `mootech-be`: every live responsibility moves into `mootech-fe`
 
 **Workstream:** `mumate-be-retirement-001`
-**State:** active
+**State:** paused
 **Execution lane:** single
-**Plan revision:** 0.1
-**Execution phase:** 1
+**Plan revision:** 0.2
+**Execution phase:** none
 **Execution state:** idle
-**Parallelism:** proposed
+**Parallelism:** none
 
 ## Objective and owner agreement
 
 Take the legacy NestJS backend `mootech-be` out of the MuMate system completely,
 so that v1 and v2 both keep working with `mootech-fe` talking only to the bazi
 engine and to Supabase, and the Render service can be suspended and then
-deleted. This happens **before** the server move (`mumate-infra-move-001`,
-proposed), so the move carries two containers instead of three and the
-move's P5 phase disappears.
+deleted.
+
+## Why this plan is paused before slice 1
+
+On 2026-09-18 afternoon the owner separated the team's v2 launch from the
+owner's infrastructure lane. The migration now reproduces the launched system
+first, including `mootech-be`, while the old Vercel and Render stack stays live.
+Only after the DigitalOcean stack matches production, passes a controlled
+maintenance-window flip, and is stable does backend retirement become a
+candidate again.
+
+That decision supersedes this plan's former ordering rule that retirement must
+finish before the server move. No slice ran and no application repository was
+changed for this workstream. Its inventory remains useful evidence, but it must
+be re-measured against the post-launch revisions before resumption.
 
 The owner's direction, 2026-09-18 morning:
 
@@ -131,9 +143,10 @@ rows keep working because their readers are already local.
 **D3 · Dead code is deleted, not ported.** Constants, wrappers, and components
 with no mounted caller are removed in slice 3.
 
-**D4 · Sequenced before the server move.** `mumate-infra-move-001` opens after
-this workstream's slice 4 closeout or after the owner decides to run them in
-parallel on disjoint files; either way BE never becomes a container on DO.
+**D4 · Superseded at revision 0.2.** `mumate-infra-move-001` now moves the
+launched FE + BE + Bazi system as-is. BE therefore becomes a DigitalOcean
+container in that workstream. This retirement plan stays paused until the
+migration's observation period closes and the owner explicitly reopens it.
 
 **Open questions the owner has not decided** (each has a proposed default the
 slice will follow unless the owner says otherwise before that slice starts):
