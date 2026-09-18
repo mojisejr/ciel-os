@@ -1,0 +1,83 @@
+schema_version: ciel.event.v0.1
+id: evt_20260918T060500_cu12_sprint004_workstream_opened
+type: decision
+recorded_at: 2026-09-18T06:05:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-004
+  lane: single
+  objective: >-
+    Give the simulator an opt-in door-physics mode that matches what the
+    owner recalls of the real cabinet, and tester-provoked faults, so SMC v2
+    can be built and proven against the simulator alone.
+  scope:
+    - Open the workstream at plan revision 0.1; slice 1, the opt-in door physics, waits for the owner's own word.
+  out_of_scope:
+    - Slice 2 (faults and trace) until the application's gateway exists; any hardware-fidelity claim; USB, COM, electrical or multi-board work.
+
+outcome:
+  status: decided
+  decision: >-
+    While opening smc-v2-app-001 on 2026-09-18 the owner asked whether the
+    simulator had to be finished first or the application could start
+    against it as it is. The agent's reading: the simulator already covers
+    the application's happy path, and what it lacks - a board that does
+    not answer, error ASK codes, a wire trace - is best shaped once the
+    application's gateway exists. The owner agreed. The owner then
+    recalled that after Unlock the real cabinet's door pops open and the
+    hook reads 0 until closed by hand; the agent proposed an opt-in
+    physics mode so that developing against the simulator does not need a
+    typed "hook N unlocked" after every unlock, with the default left
+    unchanged for the existing tests, as a small slice to run beside the
+    application's first slice. This decision opens the workstream and
+    authorizes no slice; slice 1 starts on a separate decision once the
+    owner says so, and slice 2 waits for the gateway.
+  authorizes:
+    - Nothing. The plan is recorded; no slice may execute on this event.
+  does_not_authorize:
+    - Slice 1 until the owner authorizes it; slice 2 until smc-v2-app-001 slice 1 has shown which faults the gateway must survive.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-004/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 1236bdf
+    branch: hq/20260917
+    working_tree: plan-and-this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: 6f0594b3d0099c6df5e20dcd5ce2ad55bf1fec10
+    branch: main
+    working_tree: clean
+    tests: 15 passing at 6988b8f per the sprint-003 closeouts
+  owner_observation:
+    recorded_as: owner-recalled from use, 2026-09-18; not measured
+    door_after_unlock: After Unlock the door pops open and the hook bit reads 0; it stays 0 until the door is closed by hand, then reads 1.
+  source_read:
+    - checkouts/cu12-simulator/src/device.rs
+    - checkouts/cu12-simulator/src/hook_state.rs
+    - checkouts/cu12-simulator/src/control.rs
+    - checkouts/cu12-simulator/docs/protocol-evidence.md
+    - .assets/cu12-simulator/reference/CU12 Protocol and Introduction-12.08.2022.pdf (page 8 unlocking time, page 6 ASK codes)
+  preceding_records:
+    - memory/events/2026/09/05/20260905T071700_cu12_hook_scenarios_final_closeout.yaml
+    - memory/events/2026/09/18/20260918T060000_smc_v2_app_workstream_opened.yaml
+
+unresolved:
+  - The physics mode encodes a recollection; if real hardware later shows the hook staying 1 while the door is open, the mode and the application's state machine both change.
+  - The unlocking time used is the manual's 550 ms; the hardware page says 500 ms (SPEC-AMBIGUITY-001). Either is a model value here, overridable.
+  - The sprint-003 plan still reads State active with its final closeout merged; nothing depends on it and it is not edited.
+
+next_action:
+  action: >-
+    Obtain the owner's decision authorizing slice 1 and record it; then pass
+    the start gate in checkouts/cu12-simulator, branch
+    feat/door-physics, add the opt-in physics to hook_state and device with
+    its tests and documentation, run the three cargo checks, open a draft
+    pull request, and record the slice-1 closeout on its head.
+  acceptance_check:
+    - Wake lists cu12-simulator-sprint-004 as active at revision 0.1 awaiting an owner decision, with no validation error or warning and no overlap on cu12-simulator.

@@ -19,7 +19,8 @@ test("validates the committed project registry", async () => {
     expect.stringContaining("projects/mootech-be/project.yaml"),
     expect.stringContaining("projects/mootech-fe/project.yaml"),
     expect.stringContaining("projects/pilot-task-ledger/project.yaml"),
-    expect.stringContaining("projects/pilot-task-report/project.yaml")
+    expect.stringContaining("projects/pilot-task-report/project.yaml"),
+    expect.stringContaining("projects/smc-v2/project.yaml")
   ]);
 });
 
