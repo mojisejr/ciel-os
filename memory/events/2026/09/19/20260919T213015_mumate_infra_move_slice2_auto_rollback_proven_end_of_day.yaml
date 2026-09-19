@@ -1,0 +1,128 @@
+schema_version: ciel.event.v0.1
+id: evt_20260919T213015_mumate_infra_move_slice2_auto_rollback_proven_end_of_day
+type: closeout
+recorded_at: 2026-09-19T21:30:15+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    End-of-day checkpoint for slice 2: the unhealthy-deploy → automatic
+    rollback path is now genuinely proven after it exposed a third deploy.sh
+    defect; PRs #3 and #4 merged; #5 open with the rollback fixes; the
+    Discord alert trail is confirmed by the owner. What remains needs the
+    Team Owner (Spaces key, Droplet delete) and one merge.
+  scope:
+    - Sync local and host checkouts to main after #3/#4.
+    - Produce a second image and force the unhealthy-deploy path.
+    - Fix and re-prove the automatic rollback.
+  out_of_scope:
+    - Backup/restore-verify and the timed rebuild (Team Owner inputs).
+    - DNS, public hostname, enabled timers.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Owner merged mumate-infra #3 (pgtmp SSL) and #4 (pull-failure
+      restore): main 9e9f5bb. Local checkout and /opt/mumate synced to it;
+      the host's local dogfood-test branch deleted. Owner confirmed the
+      Discord channel shows the alert trail in order (🚨 first deploy, ✅
+      deploy ok, ↩️ rollback ok, ⚠️ pull failed + restored).
+    - >-
+      Second image for the rollback proof. The owner's re-dispatch on main
+      rebuilt 0705378 (run 35448336255, same tag, harmless). GitHub's Run
+      workflow takes a branch, and the workflow file at 7e609c6 predates the
+      push input, so the agent pushed branch rollback-target/7e609c6-ci on
+      mootech-be = 7e609c6 + cherry-pick of 4f24dcd (workflow file only,
+      application source identical to 7e609c6), dispatched container-build
+      with push=true (run 35448515382, success) → ghcr.io/mojisejr/
+      mootech-be:46f57a2a203c19cbbfa7d472a52e1745ecfd7c09, public (manifest
+      200). Keep the branch while the image is referenced.
+    - >-
+      Unhealthy-deploy path, attempt 1 (host on 25fe716 = rollback gets its
+      own ROLLBACK_TIMEOUT): HEALTH_TIMEOUT=1 bin/deploy.sh BE_TAG=46f57a2…
+      → timed out → step 5 → alert "rolled back to last-good, service
+      healthy" and .env back to 0705378 — BUT the running container was
+      still 46f57a2 (ops-status ❌ configured ≠ running). Root cause: step 3
+      exports the new tags into the shell; shell variables override .env in
+      compose interpolation, so the rollback's up -d saw the new tag and
+      recreated nothing. The automatic rollback had never actually rolled
+      back; bin/rollback.sh (fresh shell) was unaffected. Third deploy.sh
+      defect of the day, again caught by ops-status.
+    - >-
+      Fix: re-source .env.last-good (set -a; . LAST_GOOD; set +a) before the
+      rollback's up -d, plus the separate ROLLBACK_TIMEOUT (default 120 s)
+      so a short HEALTH_TIMEOUT cannot condemn a good last-good. mumate-infra
+      PR #5 (infra/rollback-full-timeout @ 43fa71a) carries both.
+    - >-
+      Unhealthy-deploy path, attempt 2 (host on 43fa71a): HEALTH_TIMEOUT=1
+      bin/deploy.sh BE_TAG=46f57a2… → timed out at 1 s → automatic rollback
+      → container recreated on 0705378, healthy, .env = last-good, ops-status
+      ✅, alert ⚠️ "rolled back to last-good, service healthy", exit 1; 37 s
+      wall clock. Automatic rollback PROVEN. The forced failure is a timeout
+      (the new image is functionally identical to the old), i.e. the
+      "deploy too slow" class; a crash-loop image would follow the same
+      step-5 path.
+  not_completed:
+    - backup → restore-verify: no Spaces key (Team Owner).
+    - Timed host reconstruction ≤ 30 min: needs the Team Owner to delete a Droplet (or a third Droplet); Droplet 601957333 still exists, powered off, billed.
+    - PR #5 unmerged; /opt/mumate is on branch infra/rollback-full-timeout (43fa71a) until it merges.
+  evidence_of_limits:
+    - Three real defects in deploy.sh surfaced only because the dogfood ran the failure paths for real; the dry-runs of the seed PR proved nothing about them. ops-status's configured = running = /health.sha check caught two of the three — keep it as the acceptance gate after every deploy.
+    - The DO PreToolUse guard blocked a bare "git push" once (treated as push-to-main); pushes must name the branch. No push to any main happened.
+    - Droplet automated backups are retained and billed for four weeks after a destroy (DO docs, fetched 2026-09-19); the broken Droplet has backups enabled.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: a238c2d
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: main 9e9f5bb (#3, #4 merged); PR #5 infra/rollback-full-timeout @ 43fa71a open; local checkout main, clean
+    mootech-be: main 0705378; branch rollback-target/7e609c6-ci @ 46f57a2 (image source, keep); images 0705378… and 46f57a2… public on GHCR; local checkout main, clean
+    mootech-fe: main b4c34fd clean
+    bazi-sft-dataset: detached 5a501b2, only the pre-existing untracked .claude/INCUBATED_BY
+  host:
+    droplet: 601959538 mumate-1 168.144.140.118 / reserved 167.99.29.220
+    checkout: /opt/mumate on infra/rollback-full-timeout 43fa71a
+    running: be 0705378d88… healthy, caddy 2.10.0, pgtmp 17.6 ssl on
+    env: alert.env, be.env (dogfood variant) 600; no backup.env
+    timers: both disabled, none active
+  discord: owner-confirmed screenshot of the alert trail (🚨 ✅ ↩️ ⚠️) at 20:37 local
+  previous_checkpoint: memory/events/2026/09/19/20260919T204454_mumate_infra_move_slice2_dogfood_first_deploy_and_rollback.yaml
+  authorizing_decision: memory/events/2026/09/19/20260919T065020_mumate_infra_move_slice2_authorized.yaml
+
+unresolved:
+  - Team Owner: Spaces access key mumate-backup-key (Limited, bucket mumate-backups, Read/Write/Delete); destroy Droplet 601957333 mumate-1-broken-cloudinit-20260919.
+  - Owner: merge mumate-infra #5, then the host returns to main.
+  - mumate-infra is bound at ~/ghq/github.com/mojisejr/mumate-infra, not checkouts/; moving or symlinking it into checkouts/ was deferred by the owner on 2026-09-19 ("เดี๋ยวค่อยว่ากัน") — carry until decided.
+  - Host access today is root and deploy, both via the single key ~/.ssh/mumate_do on the owner's machine; owner and agent are indistinguishable in sshd logs. A second key per actor (same deploy user, distinct comment) would give attribution cheaply; separate users are not needed for slice 2. Owner to decide.
+  - Firewall port 22 allows two owner ISP addresses (101.109.54.79, 223.204.231.197); prune the stale one at closeout.
+  - be.env on the host carries the real provider keys with DB pointed at pgtmp; acceptable only while BE stays loopback-bound with cron off.
+  - Both API tokens expire ~2026-11-19.
+  - BE /health sha "unknown" on Render; bazi public-calc ~242 MB on Vercel; verify-architecture red on mootech-fe main — carried.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: merge mumate-infra #5; relay to the Team Owner the Spaces key
+    and the Droplet destroy; place the Spaces key + Supabase read URL as
+    backup.env fields in .assets/mumate/infra-mumate/ and tell the agent.
+    Agent: host git checkout main && git pull --ff-only; write env/
+    backup.env (values never printed) → bin/backup.sh → bin/restore-verify.sh;
+    once a Droplet can be destroyed, the timed reconstruction (do-create.sh
+    with --alert-email, cloud-init, deploy key, env, deploy) against the
+    30-minute DoD; prune the stale firewall address; slice-2 closeout naming
+    mumate-infra head, image SHAs, every DO resource, every proof with its
+    timestamp, and the three deploy.sh defects.
+  acceptance_check:
+    - Wake lists this event with no validation error; mumate-infra-move-001 active at revision 0.1, slice 2 authorized, phase 2 idle.
+    - ssh deploy@168.144.140.118 'cd /opt/mumate && bin/ops-status.sh' → be configured = running = 0705378d88… ✅, timers none.
