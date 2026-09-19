@@ -1,0 +1,157 @@
+schema_version: ciel.event.v0.1
+id: evt_20260919T195525_mumate_infra_move_slice2_steps2_3_done_spaces_key_blocked
+type: closeout
+recorded_at: 2026-09-19T19:55:25+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Steps 2 and 3 of the slice-2 resume sequence are done and step 4 is
+    dry-run-ready. Record what was verified, the one thing the owner's
+    DigitalOcean role could not do (create a Spaces access key), why the
+    lane is skipping it for now, and the workaround options, so nobody later
+    wonders why the backup proof came after the Droplet.
+  scope:
+    - Verify the two doctl contexts against the company Team.
+    - Verify the GHCR image is public and pullable anonymously.
+    - Create the dedicated ssh key pair and dry-run bin/do-create.sh.
+    - Record the Spaces access key finding with sources.
+  out_of_scope:
+    - Creating any DigitalOcean resource (waits for the owner's go in this session).
+    - Changing the owner's Team role or asking the Team Owner for anything; the owner does that.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Step 2 — tokens. Team mumate payment method confirmed by the team.
+      Owner created mumate-agent-read (43 scopes) and mumate-agent-ops (106
+      scopes) and ran doctl auth init for contexts mumate-read and
+      mumate-ops. Agent verified: `doctl account get --context mumate-read`
+      → Team mumate, status active, droplet limit 10 (owner's email).
+      mumate-ops returns 403 on account get (no account:read scope) — harmless,
+      do-create.sh uses the read context for that step. Both contexts list
+      ssh-key / droplet / reserved-ip / firewall / project / monitoring /
+      region: Team is empty except the default project first-project
+      (9a208f5e-3529-43d9-ad62-b85fad6c7cb1) and no alerts. Both tokens
+      EXPIRE IN 2 MONTHS (~2026-11-19) — must be rotated before the
+      observation window ends.
+    - >-
+      Step 3 — image. Owner dispatched mootech-be container-build on main
+      0705378 with push=true (run 35429579918, success, 2026-09-19T07:31Z);
+      pushed ghcr.io/mojisejr/mootech-be:0705378d884114a4fd0e73aed59656638f335fdc
+      (manifest digest sha256:4be0edb10a448af8583b0790abe1fe9e557a3d32a0bcdc5c7ec57eaa12884b0e).
+      Owner set the package public; agent verified an anonymous manifest
+      fetch returns 200 (13 layers). Package lives under the user account:
+      github.com/users/mojisejr/packages/container/package/mootech-be.
+    - >-
+      Step 4 prep. The only key on the machine, ~/.ssh/mimivibe_do, belongs
+      to another account, so a dedicated pair was generated locally:
+      ~/.ssh/mumate_do (ed25519, no passphrase for now, fingerprint
+      SHA256:0OB35JE5nGOUdtSslWPOuhRE1VwbQbNjq8uX/p8DzuQ). Owner IP for port
+      22 = 101.109.54.79 (ISP address, may change; firewall is updatable via
+      mumate-ops). `bin/do-create.sh --dry-run --ssh-key mumate_do --owner-ip
+      101.109.54.79` printed every command cleanly; the rendered cloud-init
+      carries the new public key. Size s-2vcpu-4gb ($24/mo) and image
+      ubuntu-24-04-x64 exist in sgp1; backups flag adds ~20%.
+    - >-
+      Spaces bucket mumate-backups exists in sgp1 (owner created it in the
+      console ~3 h before this record; 0 objects; CDN off).
+  not_completed:
+    - >-
+      Spaces access key. In Team mumate the console page Spaces Object
+      Storage → Access Keys shows only the empty-state illustration with NO
+      "Create Access Key" button for the owner (role: Modifier), even with
+      the bucket present. The API confirms zero Spaces keys exist. The owner
+      first landed on API → Tokens → custom scopes and ticked spaces_key
+      there; that would have produced an API token, not a Spaces key, and
+      was stopped before generation.
+    - No DigitalOcean resource created yet (owner's go pending in this session).
+    - Discord webhook not created yet (needed only for alert.env at step 5).
+  evidence_of_limits:
+    - >-
+      Research (DigitalOcean docs, fetched 2026-09-19): predefined role
+      Modifier = "Full access except delete" on shared resources, so by the
+      docs it should be able to create Spaces keys (permission
+      spaces_key:create exists); the Spaces docs say keys are created only
+      in the control panel at Spaces Object Storage → Access Keys → Create
+      Access Key and "cannot currently be created, edited, or deleted using
+      the DigitalOcean API or CLI". Nothing in the docs explains the missing
+      button. Root cause therefore UNVERIFIED — best guess is a UI gate on a
+      permission the predefined Modifier role lacks. The agent's earlier
+      suggestion of `doctl spaces keys create` as a fallback is withdrawn
+      as unverified against the docs (the read token can LIST keys via API,
+      so the API surface exists, but creation was not tested).
+    - The 2-month token expiry was noticed from the console screenshot, not from the API.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 0ac03b5
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: main 1517f63 clean (cloud-init.rendered.yaml is generated at run time and not committed)
+    mootech-be: main 0705378 clean; image ghcr.io/mojisejr/mootech-be:0705378d884114a4fd0e73aed59656638f335fdc public
+    mootech-fe: main b4c34fd clean
+    bazi-sft-dataset: detached 5a501b2, only the pre-existing untracked .claude/INCUBATED_BY
+  digitalocean:
+    team: mumate (owner role Modifier)
+    contexts: mumate-read (ok), mumate-ops (ok for compute/projects/monitoring; 403 on account)
+    resources: none yet; project first-project 9a208f5e-3529-43d9-ad62-b85fad6c7cb1 (default); bucket mumate-backups sgp1 (no key)
+  sources:
+    - https://docs.digitalocean.com/platform/teams/roles/predefined/
+    - https://docs.digitalocean.com/products/spaces/how-to/manage-access/
+    - https://docs.digitalocean.com/platform/teams/roles/permissions/spaces_key/create/
+  authorizing_decision: memory/events/2026/09/19/20260919T065020_mumate_infra_move_slice2_authorized.yaml
+  previous_checkpoint: memory/events/2026/09/19/20260919T110243_mumate_infra_move_slice2_prs_merged_awaiting_payment_method.yaml
+
+unresolved:
+  - >-
+    Spaces access key for mumate-backups. Options, in order of preference:
+    (A) the DigitalOcean Team Owner creates it in the console (Limited
+    access, bucket mumate-backups, Read/Write/Delete, name mumate-backup-key)
+    and hands the owner the key pair — no code change; (B) interim endpoint
+    swap: backup.sh / restore-verify.sh only need an S3-compatible
+    SPACES_ENDPOINT + bucket + key, so any store the owner already controls
+    (a Space in the owner's personal DO account, or another S3 provider)
+    works by editing env/backup.env alone — but production data would then
+    sit outside the company Team, so this is the owner's call and must be
+    swapped back; (C) a MinIO container on the Droplet as the S3 endpoint —
+    the agent can do this end-to-end and it proves the backup → restore-
+    verify mechanics, but it is on-host, so it does NOT satisfy the
+    off-host backup DoD and would be recorded as a mechanical proof only.
+    Decision pending; the lane proceeds with the Droplet regardless because
+    steps 4, first deploy, rollback proof, alert proof, and deploy-user
+    proof do not need the key.
+  - Both API tokens expire ~2026-11-19; rotation needed before the 7-day observation after cutover.
+  - Owner IP 101.109.54.79 is an ISP address; a change locks the owner out of port 22 until the firewall rule is updated via mumate-ops.
+  - Whether the owner's DO role can delete a Droplet (needed for the reconstruction proof); if not, snapshot/recreate or record as unresolved.
+  - cloud-init will try an anonymous HTTPS clone of the private mumate-infra repo, which will fail (|| true); the owner then adds a read-only deploy key per runbook 03 §2.
+  - BE /health sha "unknown" on Render (no build arg); bazi public-calc function ~242 MB on Vercel (launch-team file); verify-architecture red on mootech-fe main — carried from the slice-1 records.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    With the owner's explicit go in-session: run `bin/do-create.sh --ssh-key
+    mumate_do --owner-ip 101.109.54.79` (context mumate-ops), then assign the
+    reserved IP to the Droplet and both resources to project mumate-prod;
+    record every ID in the next checkpoint. In parallel the owner asks the
+    Team Owner for the Spaces key (option A) and creates the Discord webhook.
+    After the Droplet is up: owner adds the deploy key if the clone failed,
+    places env/be.env and env/alert.env (backup.env when the key arrives);
+    agent runs the dogfood in this order — first deploy by SHA 0705378,
+    deliberate failed deploy → automatic rollback, alert test, deploy-user
+    permission proof — and does backup → restore-verify as soon as
+    backup.env exists (option C only if the owner chooses it for a
+    mechanical proof). No DNS, no public hostname, no enabled timer.
+  acceptance_check:
+    - Wake lists this event with no validation error and reads mumate-infra-move-001 active at revision 0.1 with slice 2 authorized, phase 2 idle.
+    - A reader of this event knows why the backup proof is ordered after the Droplet and which three options exist for the Spaces key.
