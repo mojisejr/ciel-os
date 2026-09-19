@@ -1,0 +1,157 @@
+schema_version: ciel.event.v0.1
+id: evt_20260919T204454_mumate_infra_move_slice2_dogfood_first_deploy_and_rollback
+type: closeout
+recorded_at: 2026-09-19T20:44:54+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Slice-2 dogfood, first pass: env placed, first deploy by SHA healthy,
+    alert path proven, deliberate failed deploy exercised twice (once
+    exposing a defect, once with the fix), manual rollback proven, deploy
+    user's sudo boundary proven, public surface checked. Two more
+    mumate-infra PRs opened. Records what remains and exactly what the
+    owner must supply for it.
+  scope:
+    - Place env/alert.env and env/be.env (dogfood variant) on the host.
+    - Deploy mootech-be 0705378 through bin/deploy.sh and prove health.
+    - Exercise failure and rollback paths; fix what they expose.
+    - Prove the deploy user's boundary and the public surface.
+  out_of_scope:
+    - Backup and restore-verify (no Spaces key yet).
+    - Unhealthy-after-up automatic rollback (needs a second image in GHCR).
+    - Timed host reconstruction (needs the Team Owner's delete).
+    - DNS, public hostname, enabled timers.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Owner granted in-session permission to read .assets/mumate/infra-mumate/
+      (git-ignored) and to place secrets on the host. The agent processed
+      values only through awk/scp pipelines; no secret value was printed.
+      env/alert.env built from the owner's WEBHOOK_URL; env/be.env built from
+      the owner's Render export (mootech-be.env) with the dogfood overrides
+      from env/README.md: DB_TYPE/HOST/PORT/USERNAME/PASSWORD/DATABASE →
+      the disposable pgtmp (mumate / mumate-restore-verify / mumate_verify —
+      not secrets, never leave the compose network), DB_SYNCHRONIZE=false,
+      MORNING_CRON_ENABLED=false, MIGRATION_ENABLED=false; PORT/APP_PORT
+      dropped (compose sets PORT=3000). Both files 600 deploy:deploy. The
+      production Supabase credentials therefore sit in be.env but are NOT
+      used by this deployment; every outbound provider key is the real one,
+      so no test traffic may be fired at this BE (cron off, BE bound to
+      127.0.0.1:4000, Caddy serves only :80 /healthz).
+    - >-
+      Reading the Render env over ssh/API was refused by the auto-mode
+      classifier (Production Reads); the owner exported the file by hand
+      instead. Render MCP: one workspace (tea-cspv7bogph6c73d0657g), service
+      mootech-be = srv-d8nc4j8k1i2s73d7e030; dac2-pilot untouched.
+    - >-
+      bin/alert.sh test → Discord "[alert:sent]" at 13:29:21Z; every later
+      deploy/rollback alert also sent (owner to confirm visually).
+    - >-
+      First deploy attempt (mumate-infra main 2e60d25, after the owner
+      merged PR #2) FAILED health in 120 s: mootech-be app.module.ts sets
+      ssl:{rejectUnauthorized:false} unconditionally and the alpine pgtmp
+      served no SSL ("The server does not support SSL connections" on every
+      TypeORM retry). deploy.sh took its rollback path correctly; with no
+      last-good yet it ended "deploy FAILED and rollback is NOT healthy —
+      human needed" (alert sent) — the honest outcome for a first deploy.
+      Fix = mumate-infra PR #3 (infra/pgtmp-ssl @ 7fc0246): pgtmp on
+      postgres:17.6 (debian, has openssl) generating a self-signed cert once
+      and starting with ssl=on — the arena's recipe. Proven locally:
+      sslmode=require → TLSv1.3.
+    - >-
+      First deploy, second attempt, host on branch infra/pgtmp-ssl (config
+      from git, nothing hand-edited): bin/deploy.sh
+      BE_TAG=0705378d884114a4fd0e73aed59656638f335fdc --profile
+      restore-verify → healthy in 26 s wall clock; ops-status: be
+      configured = running = /health.sha 0705378d8841 ✅, caddy /healthz ok,
+      timers none; alert "deploy ok" sent.
+    - >-
+      Deliberate failed deploy #1 (tag deadbeef…, not in GHCR): pull
+      failed, running service untouched, BUT .env was left pointing at the
+      bad tag with no alert — a real defect; ops-status caught it
+      (configured ≠ running ❌), deploy.sh did not. Recovered with
+      bin/rollback.sh: dry-run then real, 1.8 s, alert "rollback ok",
+      ops-status green — manual rollback proven. Fix = mumate-infra PR #4
+      (infra/deploy-pull-failure @ 9726ca5): pull failure restores
+      .env.last-good, alerts, exits 1.
+    - >-
+      Deliberate failed deploy #2 with the fix (host on a local branch
+      dogfood-test = #3 + #4 merged, not pushed): pull failed → .env
+      restored to 0705378 immediately, alert "deploy FAILED at pull … .env
+      restored to last-good, running service untouched", exit 1, service
+      still healthy. Pull-failure path proven.
+    - >-
+      Deploy-user boundary (as deploy, sudo -n): systemctl and journalctl
+      ALLOWED; cat /etc/shadow, root shell, apt-get, ufw disable, writing
+      /etc/hosts all DENIED; docker ALLOWED (group); reads its own env files.
+      systemctl enable mumate-backup.timer is ALLOWED by design (runbook
+      enables timers by hand) — exercised and immediately disabled again;
+      zero active timers after. PasswordAuthentication no confirmed.
+    - >-
+      Public surface via reserved IP 167.99.29.220: :80/healthz → 200, :80/
+      → 404, :4000 unreachable (BE loopback only). No hostname, no TLS
+      certificate, nothing else exposed.
+  not_completed:
+    - Unhealthy-after-up automatic rollback: needs a second mootech-be image in GHCR to deploy over the healthy one; only 0705378 exists.
+    - backup → restore-verify: no Spaces key (Team Owner asked).
+    - Timed host reconstruction ≤ 30 min: components proven piecemeal today, not as one timed run; needs the Team Owner to delete a Droplet or a third Droplet.
+    - PRs #3 and #4 unmerged; host checkout is on the unpushed local branch dogfood-test until they merge (then git checkout main && git pull --ff-only).
+  evidence_of_limits:
+    - The docker group makes deploy root-equivalent on the host through the socket; the sudo boundary is a guard against accidents, not a security boundary. Known and accepted in the control-room design.
+    - The 26 s deploy time includes an already-pulled caddy image; a cold host pulls more.
+    - Alert delivery is asserted by alert.sh's "[alert:sent]" (HTTP accepted); the owner has not yet confirmed seeing the messages in Discord.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 38efdb1
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: main 2e60d25 (PR #2 merged); PR #3 infra/pgtmp-ssl @ 7fc0246 open; PR #4 infra/deploy-pull-failure @ 9726ca5 open; local checkout on infra/deploy-pull-failure, clean
+    mootech-be: main 0705378; image 0705378d884114a4fd0e73aed59656638f335fdc running on mumate-1
+    mootech-fe: main b4c34fd clean
+    bazi-sft-dataset: detached 5a501b2, only the pre-existing untracked .claude/INCUBATED_BY
+  host:
+    droplet: 601959538 mumate-1 168.144.140.118 / reserved 167.99.29.220
+    checkout: /opt/mumate on local branch dogfood-test (abe21e6 = 7fc0246 + 9726ca5)
+    running: be 0705378d88… healthy, caddy 2.10.0, pgtmp 17.6 (ssl on), volumes pgtmp_data caddy_data caddy_config
+    env: env/alert.env, env/be.env (dogfood variant) 600 deploy:deploy; no backup.env
+    timers: mumate-backup.timer disabled, mumate-health.timer disabled
+  previous_checkpoint: memory/events/2026/09/19/20260919T202022_mumate_infra_move_slice2_step4_do_resources_created.yaml
+  authorizing_decision: memory/events/2026/09/19/20260919T065020_mumate_infra_move_slice2_authorized.yaml
+
+unresolved:
+  - Spaces access key (Team Owner) — blocks backup.env and the backup → restore-verify proof.
+  - Delete of Droplet 601957333 (Team Owner) — also the enabler for a timed reconstruction proof.
+  - Second GHCR image for the unhealthy-rollback proof: owner dispatches mootech-be container-build on 7e609c6 (the previous production SHA, useful as a real rollback target anyway) with push=true; agent then deploys it with HEALTH_TIMEOUT=5 to force the rollback path and restores 0705378.
+  - be.env on the host holds the real provider keys; acceptable only while BE stays loopback-bound with cron off. Rotate or replace with the committed dummy env if the host is ever exposed before cutover.
+  - Both API tokens expire ~2026-11-19; owner IP allow-list has two ISP addresses.
+  - BE /health sha "unknown" on Render; bazi public-calc ~242 MB on Vercel; verify-architecture red on mootech-fe main — carried.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: merge mumate-infra #3 and #4; dispatch mootech-be container-build
+    on 7e609c6 with push=true; confirm the Discord messages arrived; chase
+    the Team Owner for the Spaces key and the Droplet delete. Agent, in
+    order as each arrives: host git checkout main && git pull --ff-only and
+    delete the local dogfood-test branch; unhealthy-rollback proof with
+    HEALTH_TIMEOUT=5 BE_TAG=7e609c6…; backup.env → bin/backup.sh →
+    bin/restore-verify.sh; timed reconstruction; remove the stale owner IP
+    from the firewall; slice-2 closeout naming mumate-infra head, the be
+    image SHA, every DO resource, and every proof with its timestamp.
+  acceptance_check:
+    - Wake lists this event with no validation error; mumate-infra-move-001 active at revision 0.1, slice 2 authorized, phase 2 idle.
+    - ssh deploy@168.144.140.118 'cd /opt/mumate && bin/ops-status.sh' shows be configured = running = 0705378d88… ✅ and timers none.
+    - curl http://167.99.29.220/healthz → 200; :4000 unreachable.
