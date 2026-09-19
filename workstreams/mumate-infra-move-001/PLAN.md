@@ -64,10 +64,8 @@ The owner confirmed on 2026-09-18:
 | `mootech-fe` | Public FE, API routes, maintenance gate, and first container | `/Users/non/ghq/github.com/mojisejr/mootech-fe` |
 | `mootech-be` | Existing backend carried unchanged in the first migration | `/Users/non/ghq/github.com/mojisejr/mootech-be` |
 | `bazi-sft-dataset` | Bazi engine and its scheduled jobs | `/Users/non/ghq/github.com/mojisejr/bazi-sft-dataset` |
+| `mumate-infra` | Control room: compose, Caddy, deploy/rollback, backup, timers, runbooks (private; registered 2026-09-19 in slice 2) | `/Users/non/ghq/github.com/mojisejr/mumate-infra` |
 | `ciel-os` | Plan, decisions, and migration continuity | `.` |
-
-The future `mumate-infra` control-room repository is not listed as a project
-until it exists and has a verified Git identity. Slice 2 owns that registration.
 
 ## Boundaries
 
