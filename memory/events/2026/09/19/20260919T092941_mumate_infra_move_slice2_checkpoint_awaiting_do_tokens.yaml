@@ -1,0 +1,119 @@
+schema_version: ciel.event.v0.1
+id: evt_20260919T092941_mumate_infra_move_slice2_checkpoint_awaiting_do_tokens
+type: closeout
+recorded_at: 2026-09-19T09:29:41+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Checkpoint of slice 2 (control room + dogfood BE) at the point where the
+    session ends: everything that needs no DigitalOcean access is built and
+    waiting as pull requests; every DigitalOcean step waits for the owner's
+    tokens, which wait for the company Team's payment method. Written so a
+    fresh session can Wake and continue without this chat.
+  scope:
+    - Record what exists (repository seed, workflow PR, CIEL registration) with heads.
+    - Record the exact blocker and the exact resume sequence.
+  out_of_scope:
+    - Closing slice 2 (no Droplet exists; nothing was dogfooded).
+    - Any DNS, scheduler, production, or provider change.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      mojisejr/mumate-infra (private) seeded: main = 4274c47 (one-line README,
+      the single direct seed the CIEL README allows for an empty repository,
+      done through the GitHub API); default branch corrected to main after
+      GitHub had defaulted to the first pushed branch. PR #1 (infra/control-
+      room-seed @ b47b67a) carries the whole control room: docker-compose.yml
+      (be + caddy default; fe/bazi profile full; pgtmp profile restore-verify;
+      tags are git SHAs, latest impossible), Caddyfile with no public hostname
+      (:80 /healthz only), bin/ deploy (validate → keep last-good → pull → up →
+      wait healthy 120 s → automatic rollback on failure) · rollback ·
+      ops-status (configured = running = /health sha) · backup (pg_dump →
+      Spaces, streamed, retention) · restore-verify (into disposable pgtmp,
+      verification query must change) · alert (Discord) · do-create (every
+      doctl create/update call, no delete) · render-cloud-init; cloud-init
+      (deploy user with sudo only systemctl/journalctl, docker, swap, ufw,
+      fail2ban); systemd backup/health timers installed disabled; env/*.example
+      only; pre-push guard (refuse direct main, validate compose/Caddyfile/bin/
+      gitleaks); three Thai runbooks. Local proof: compose config and caddy
+      validate pass, deploy/rollback/ops-status dry-runs behave.
+    - >-
+      mootech-be PR #28 (infra/ghcr-push @ 4f24dcd from main 7e609c6): the
+      manual container-build workflow gains input push=true → retags the
+      smoke-tested image ghcr.io/mojisejr/mootech-be:<full sha> and pushes with
+      GITHUB_TOKEN (packages: write); no PAT, no secret, never latest.
+    - >-
+      CIEL: projects/mumate-infra registered (a02ddfa), bound locally at
+      ~/ghq/github.com/mojisejr/mumate-infra; the plan's project table lists it.
+    - >-
+      Owner-side: the company Team mumate has the owner as a member; a
+      teammate added a payment method but the owner's view of Team mumate
+      billing still shows none — most likely added in the teammate's personal
+      context. The owner sent the teammate the check-and-redo steps (switch to
+      Team mumate top-left → Billing → Payment Methods → add there; confirm
+      Members shows the owner, not Pending).
+  not_completed:
+    - No DigitalOcean token exists on this machine (doctl has only the default context); no Droplet, Reserved IP, firewall, project, alert, or Spaces bucket exists.
+    - PR #1 and mootech-be#28 are not merged; no image is on GHCR.
+    - Steps 3-11 of the slice-2 sequence (Droplet, env, first deploy, backup/restore proof, failed-deploy rollback proof, alert proof, deploy-user proof, host reconstruction, closeout) have not started.
+  evidence_of_limits:
+    - Every bin/*.sh has been exercised only in --dry-run or on a host with no stack; the healthy-wait parser and the rollback path are unproven until the Droplet dogfood.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: a02ddfa03a9bdafe1d28c7f9c35bab50f7e56335
+    branch: hq/20260917
+    working_tree: this-event-and-plan-state-modified-before-this-record
+    pull_request: none-until-owner-merge-decision
+  application:
+    mumate-infra:
+      main: 4274c47 (seed)
+      pull_request: https://github.com/mojisejr/mumate-infra/pull/1 @ b47b67a
+      local_checkout: main, clean
+    mootech-be:
+      main: 7e609c6 (production)
+      pull_request: https://github.com/mojisejr/mootech-be/pull/28 @ 4f24dcd
+      local_checkout: main, clean
+    mootech-fe: main b4c34fd clean (untouched since the slice-1 merge)
+    bazi-sft-dataset: detached at origin/pdf-dev 5a501b2, only the pre-existing untracked .claude/INCUBATED_BY
+  arena: testenv Postgres mumate_testenv_pg still running with the anonymised 2026-09-18 dump; stack.sh restore already done; line-stub stopped
+  authorizing_decision: memory/events/2026/09/19/20260919T065020_mumate_infra_move_slice2_authorized.yaml
+
+unresolved:
+  - Company Team mumate payment method: teammate to re-add inside the Team context; until then the owner cannot create the two scoped API tokens (mumate-agent-read, mumate-agent-ops) and no DO resource can exist.
+  - Whether the owner's DO role can delete a Droplet (needed for the reconstruction proof); if not, snapshot/recreate or record as unresolved.
+  - GHCR package visibility flips to public once, by the owner, after the first push.
+  - BE /health sha "unknown" on Render (no build arg); bazi public-calc function ~242 MB on Vercel (launch-team file); verify-architecture red on mootech-fe main — all carried from the slice-1 records.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Fresh session: bun run wake, read OWNER.md, this event, and the slice-2
+    decision. Then in order: (1) owner merges mumate-infra#1 and mootech-be#28;
+    (2) once Team mumate billing shows the card, owner creates the two tokens
+    in the Team context and runs doctl auth init --context mumate-read and
+    --context mumate-ops; agent verifies with `doctl account get --context
+    mumate-read` that the account is the company Team before anything else;
+    (3) owner dispatches mootech-be container-build with push=true and sets
+    the package public; (4) owner names the DO ssh key / ~/.ssh/*.pub and the
+    owner IP for port 22; agent runs bin/do-create.sh --dry-run, then for real,
+    and records a closeout with every resource ID; (5) owner creates Spaces
+    mumate-backups + key, the Discord webhook, and places env/be.env,
+    backup.env, alert.env on the host; (6) agent runs the dogfood: first
+    deploy by SHA, backup → restore-verify, deliberate failed deploy →
+    automatic rollback, alert test, deploy-user permission proof, host
+    reconstruction; (7) slice-2 closeout naming mumate-infra head, the be PR,
+    and every DO resource. No DNS, no public hostname, no enabled timer.
+  acceptance_check:
+    - Wake lists this event with no validation error and reads mumate-infra-move-001 active at revision 0.1 with slice 2 authorized, phase 2 idle.
+    - mumate-infra and mootech-be local checkouts are on clean main; the two PR branches exist on their remotes.
