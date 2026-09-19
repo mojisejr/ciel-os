@@ -1,0 +1,147 @@
+schema_version: ciel.event.v0.1
+id: evt_20260919T202022_mumate_infra_move_slice2_step4_do_resources_created
+type: closeout
+recorded_at: 2026-09-19T20:20:22+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Step 4 of slice 2 done with the owner's in-session go: every
+    DigitalOcean resource for the control room exists under Team mumate,
+    the host mumate-1 is bootstrapped and holds the control room checkout,
+    and the three defects the first real run exposed are fixed in
+    mumate-infra PR #2. Records every ID so the closeout and the
+    reconstruction proof can cite them.
+  scope:
+    - Create ssh key, Droplet, Reserved IP, firewall, project, three alert policies.
+    - Diagnose the first Droplet's empty cloud-init, fix the template, create a replacement.
+    - Register a read-only deploy key and land the checkout at /opt/mumate.
+  out_of_scope:
+    - Placing any secret on the host (owner, step 5).
+    - Deleting the broken Droplet (Team Owner only).
+    - DNS, public hostname, enabled timers, first deploy (step 6).
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Owner said go in this session (option A chosen for the Spaces key: the
+      owner asks the Team Owner; message text handed over). bin/do-create.sh
+      ran for real under context mumate-ops; alerts were created by hand
+      after the script's alert step failed (see defects).
+    - >-
+      DigitalOcean resources (Team mumate, sgp1): ssh key mumate_do id
+      59434540 (fp 79:a2:6a:26:66:90:62:89:12:00:10:5b:ff:86:6d:36) ·
+      Droplet mumate-1 id 601959538 public 168.144.140.118 private
+      10.104.0.3 (s-2vcpu-4gb, ubuntu-24-04-x64, backups+monitoring on,
+      tags mumate,prod) · Reserved IP 167.99.29.220 assigned to 601959538 ·
+      firewall mumate-web dc94f372-bc32-4a18-a55f-fdbb2d13df2d by tag
+      mumate (22 from 101.109.54.79/32 and 223.204.231.197/32; 80, 443
+      tcp+udp open) · project mumate-prod 50147b8b-95ef-420d-ab1d-
+      82719180a0ef holding the Droplet and the Reserved IP · alert policies
+      (tag mumate, email to the owner's DO account, 5m window): cpu>80
+      6e8b102a-64b5-4757-9577-ef04e23efc78, memory>85 c425654a-aa00-442d-
+      91e5-0001fdfc3730, disk>80 934f54df-4d08-4314-b71b-66c7a4495bd6.
+    - >-
+      Host mumate-1 (verified over ssh as deploy and root): cloud-init
+      status done with no warnings; user deploy in group docker with sudo
+      limited to systemctl/journalctl; Docker 29.8.1 + Compose v5.5.1;
+      2 GB swap; ufw active (22/80/443 tcp, 443 udp); fail2ban active;
+      PasswordAuthentication no; /opt/mumate = mumate-infra main 1517f63
+      cloned over ssh with a read-only deploy key (GitHub deploy key id
+      163799279 "mumate-1 deploy (read-only, 2026-09-19)", generated on the
+      host, registered via gh by the agent); env/ 700 deploy:deploy, only
+      *.example inside; systemd mumate-backup.timer and mumate-health.timer
+      installed DISABLED, zero active timers; bin/ops-status.sh runs and
+      reports every service not running and caddy down (nothing deployed).
+    - >-
+      mumate-infra PR #2 (infra/cloud-init-ascii @ dfbd95e from main
+      1517f63): cloud-init.yaml ASCII-only; render-cloud-init.sh refuses
+      non-ASCII; do-create.sh reads the real key id after import, requires
+      --alert-email, cleans the rendered file on exit; runbook 03 updated.
+      The replacement Droplet was created from this branch's template.
+    - >-
+      Owner IP moved from 101.109.54.79 to 223.204.231.197 during the run
+      (ISP); the second address was added to the port-22 rule via
+      mumate-ops (compute firewall add-rules), exactly as the previous
+      record warned.
+  not_completed:
+    - No env file on the host; nothing deployed; caddy down. Step 5 (owner) next.
+    - Spaces access key still absent (Team Owner asked, option A). backup.env cannot be written yet.
+    - Discord webhook not created yet.
+    - Broken Droplet 601957333 still exists: renamed mumate-1-broken-cloudinit-20260919 and POWERED OFF (still billed until the Team Owner deletes it in the console — the ops token has no delete on purpose).
+  evidence_of_limits:
+    - >-
+      Defect 1 (root cause of the first Droplet): DigitalOcean user-data
+      turned the template's Thai / section-sign / em-dash comment bytes into
+      mojibake, cloud-init logged "Failed loading yaml blob. unacceptable
+      character #x0080" and "Failed at merging in cloud config part from
+      part-001: empty cloud config", then reported status done. The OS came
+      up with no deploy user, no docker, no ufw; only DO's droplet-agent ran.
+      Read from /var/log/cloud-init.log and cloud-init status --long on
+      601957333 as root.
+    - Defect 2: do-create.sh used the literal placeholder <new> as the ssh key id after import; droplet create returned 422. Worked around by re-running (key then existed).
+    - Defect 3: doctl monitoring alert create requires --emails or Slack; the script passed neither. Alerts were created by hand with the owner's DO email.
+    - Because the replacement Droplet was created by hand (droplet create + reserved-ip assign + project assign only), the end-to-end do-create.sh run on a clean Team is still unproven; the reconstruction proof in step 6 covers it.
+    - The deploy key was registered by the agent via gh (runbook 03 says owner); the owner had said to go without stopping on non-blockers. Read-only, revocable at github.com/mojisejr/mumate-infra/settings/keys.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: bc83b26
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: main 1517f63; PR #2 infra/cloud-init-ascii @ dfbd95e open; local checkout on infra/cloud-init-ascii, clean
+    mootech-be: main 0705378; image ghcr.io/mojisejr/mootech-be:0705378d884114a4fd0e73aed59656638f335fdc public
+    mootech-fe: main b4c34fd clean
+    bazi-sft-dataset: detached 5a501b2, only the pre-existing untracked .claude/INCUBATED_BY
+  digitalocean:
+    team: mumate
+    droplet_live: 601959538 mumate-1 168.144.140.118 / reserved 167.99.29.220 / private 10.104.0.3
+    droplet_broken: 601957333 mumate-1-broken-cloudinit-20260919 165.22.243.189 (off, awaiting Team Owner delete)
+    firewall: dc94f372-bc32-4a18-a55f-fdbb2d13df2d mumate-web
+    project: 50147b8b-95ef-420d-ab1d-82719180a0ef mumate-prod
+    ssh_key: 59434540 mumate_do
+    alerts: [6e8b102a-64b5-4757-9577-ef04e23efc78, c425654a-aa00-442d-91e5-0001fdfc3730, 934f54df-4d08-4314-b71b-66c7a4495bd6]
+    spaces: bucket mumate-backups sgp1, no key yet
+  host:
+    checkout: /opt/mumate @ 1517f63 (deploy key 163799279)
+    timers: mumate-backup.timer disabled, mumate-health.timer disabled
+  authorizing_decision: memory/events/2026/09/19/20260919T065020_mumate_infra_move_slice2_authorized.yaml
+  previous_checkpoint: memory/events/2026/09/19/20260919T195525_mumate_infra_move_slice2_steps2_3_done_spaces_key_blocked.yaml
+
+unresolved:
+  - Team Owner actions pending: create the Spaces key (option A) and delete Droplet 601957333 (costs ~$24/mo while it exists, even powered off).
+  - be.env for the slice-2 dogfood must point DB_HOST at the disposable pgtmp (env/README.md), not production Supabase, and keep MORNING_CRON_ENABLED off, so the DO backend never acts on production while Render is live.
+  - Both API tokens expire ~2026-11-19.
+  - Owner ISP IP changes lock port 22 until the firewall rule is updated; two addresses are now allowed and the stale one should be removed at closeout.
+  - PR #2 is unmerged; /opt/mumate on the host is main 1517f63 (the fix only affects host creation, not deploy).
+  - BE /health sha "unknown" on Render; bazi public-calc ~242 MB on Vercel; verify-architecture red on mootech-fe main — carried.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner (step 5): (a) create the Discord webhook for the infra channel;
+    (b) write env/be.env from the Render environment with DB_HOST=pgtmp and
+    MORNING_CRON_ENABLED=false for the dogfood, env/alert.env with the
+    webhook, and scp both to deploy@168.144.140.118:/opt/mumate/env/ then
+    chmod 600; (c) backup.env when the Spaces key arrives; (d) merge
+    mumate-infra#2. Agent (step 6), as soon as be.env and alert.env exist:
+    bin/deploy.sh BE_TAG=0705378d884114a4fd0e73aed59656638f335fdc →
+    ops-status all green → bin/alert.sh test (owner confirms in Discord) →
+    deliberate failed deploy (bad tag) → automatic rollback observed →
+    deploy-user permission proof → backup → restore-verify once backup.env
+    exists → reconstruction proof once the Team Owner can delete → slice-2
+    closeout. No DNS, no public hostname, no enabled timer.
+  acceptance_check:
+    - Wake lists this event with no validation error; mumate-infra-move-001 active at revision 0.1, slice 2 authorized, phase 2 idle.
+    - doctl --context mumate-read compute droplet list shows 601959538 active with reserved 167.99.29.220 and 601957333 off.
+    - ssh deploy@168.144.140.118 'git -C /opt/mumate log -1 --oneline' prints 1517f63 and systemctl list-timers "mumate-*" prints none.
