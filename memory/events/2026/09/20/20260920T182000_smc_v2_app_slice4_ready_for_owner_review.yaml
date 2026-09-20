@@ -1,0 +1,105 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T182000_smc_v2_app_slice4_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-20T18:20:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only; this
+    closeout delivers slice 4 of plan revision 0.3 - the desktop, with the
+    slice-5 screens folded in - for the owner's acceptance run.
+  scope:
+    - smc-v2 feat/desktop, draft pull request 5, head e40cad0 on main 4e55e1e.
+  out_of_scope:
+    - The owner's acceptance run itself; slice 6 (Windows); real hardware.
+
+outcome:
+  status: ready-for-owner-review
+  completed:
+    - >-
+      smc-v2 pull request 5 (feat/desktop, five commits 9faa11c 7603ad0
+      1419334 c2c4910 e40cad0 on 4e55e1e): crates/api (bridge types),
+      crates/app (Tauri 2 shell - logic on a plain state, thin command
+      wrappers, board retry, license verdict, first-run admin, 10-minute
+      session, inactive slots, daily chores, CSV export), crates/ui
+      (Leptos screens to DESIGN.md - shell frame, four-state cards with
+      the door timer, every dialog of the load and dispense flows,
+      เคลียร์ช่อง, เข้าสู่ระบบ, Admin's four tabs, บันทึก with date range and
+      paging, activation, expired banner; Thai strings in text.rs;
+      Tailwind 3 + DaisyUI 4; Prompt bundled under the OFL). cabinet
+      gains finish_dispense; store gains name/slot filters, paging and a
+      count.
+    - >-
+      Checks on e40cad0: cargo fmt --check; cargo test --workspace 55
+      passed (the new tests/shell.rs drives first-run admin, users, a load
+      and a dispense with the simulator playing the door, log paging, CSV,
+      a slot switched off, the license gate, backup, session end); cargo
+      clippy -D warnings native and for wasm32-unknown-unknown.
+    - >-
+      cargo tauri build --bundles app produced Smart Medication Cart.app
+      (16 MB, arm64, ad-hoc signed); launched against the simulator on
+      tcp:127.0.0.1:5077 it opened the store, connected, polled, wrote the
+      daily backup and registered as a foreground application. The .dmg
+      step failed on Finder scripting rights and is skipped.
+    - >-
+      The screens were checked visually without the shell through
+      crates/ui/mock (a window.__TAURI__ stand-in and a Playwright script
+      in headless Chromium, 22 scenarios), because this harness has no
+      screen-capture right on the owner's Mac. Two defects were found
+      and fixed that way - a token name colliding with DaisyUI's (the
+      menu came out mint) and invoke arguments serialised as JS Maps
+      (no argument reached the shell) - and the card's date/time collided
+      with the big number until the loaded card's number was set to 40 px.
+    - >-
+      Machine: trunk 0.21.14 installed; the DAC2 build cache (34 GB) and
+      smc-v2 incremental caches were deleted when the disk ran out
+      mid-build (198 MB free, now 35 GB); both regenerate with cargo.
+  not_completed:
+    - The owner's acceptance run - load → dispense → clear for one HN and a door-left-open case against the simulator, screen against actions rows - and the expired-state check in the UI with a license from smc-license.
+  boundaries:
+    - Nothing on Windows; nothing on real hardware; the .dmg is not produced on this machine.
+    - Five commits were made on main by mistake before the branch existed; main was reset to 4e55e1e and the commits moved to feat/desktop before anything was pushed. origin/main is untouched.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "4"
+  repository:
+    head: "6967922"
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "e40cad0"
+    branch: feat/desktop
+    base: "4e55e1e"
+    pull_request: https://github.com/mojisejr/smc-v2/pull/5
+    working_tree: clean-equal-to-origin
+    tests: 55 passed
+    bundle: target/release/bundle/macos/Smart Medication Cart.app (not tracked)
+  preceding_records:
+    - memory/events/2026/09/20/20260920T190000_smc_v2_app_slice4_authorized.yaml
+
+unresolved:
+  - Decisions the agent took from DESIGN.md's leans, for the owner to confirm on the run - the ordinary end of a dispense ("ไม่มีแล้ว") clears the slot under the operator's own PIN (cabinet finish_dispense), while the card's reset and admin's ปิดการใช้งาน need an admin PIN; a user is switched off rather than deleted so the log keeps the name; the first admin is set from the Admin button on first run.
+  - The daily backup runs on the hour-chore's first tick after start and once per UTC day; the backup folder defaults to the data directory's backups/.
+  - DESIGN.md open questions stand - expiry in UTC, operator name on the open-door card, the SMC fallback mark (the logo is a drawn placeholder), door-label order, HN scan on the home screen.
+  - Slice 6 will need the Windows COM path proven and the .msi built on the owner's Windows machine; the simulator's TCP mode is the target there.
+
+next_action:
+  action: >-
+    The owner runs the acceptance on this Mac - simulator in stdin mode
+    with door physics, the app from PR 5 (README → Running the desktop),
+    first admin set up, one operator created, load → dispense → clear for
+    one HN, a door left open past 60 s, and the expired banner with a
+    license from smc-license - and reports what the screen and the log
+    showed; the closeout records it as owner observation, the pull request
+    is marked ready and merged, then slice 6 gets its decision.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 active at revision 0.3 with this closeout as the latest event and smc-v2 bound at 4e55e1e on main with feat/desktop ahead by five.
