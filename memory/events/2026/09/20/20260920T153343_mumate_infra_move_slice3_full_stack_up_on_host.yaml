@@ -1,0 +1,138 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T153343_mumate_infra_move_slice3_full_stack_up_on_host
+type: closeout
+recorded_at: 2026-09-20T15:33:43+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Slice 3, steps (a)-(e): staging release images built per target, the
+    shadow env assembled with the approved strip list and the recovered
+    sensitive values, and FE + Bazi running healthy beside BE on mumate-2
+    behind the unchanged slice-2 Caddy (no hostname serves yet). Records
+    what was learned about Vercel "sensitive" variables and the exact env
+    provenance, so the next rebuild is one command.
+  scope:
+    - GitHub Environment "staging" variables and release builds (tag <sha>-staging) for FE and Bazi.
+    - Shadow env files fe.env / bazi.env: provenance of every recovered value.
+    - Full-profile deploy on the host and capacity measurement.
+  out_of_scope:
+    - BE re-pointed at Supabase (step f — stop-and-confirm next).
+    - Caddy hostnames live (mumate-infra#8 unmerged) and the owner's smoke.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Images. mootech-fe#716/#717 and bazi#40/#41 merged; GitHub
+      Environments "staging" created in both repos (via API) with the public
+      build values: FE NEXTAUTH_URL=https://app.staging.mumate.co,
+      HOST=app.staging.mumate.co, NEXT_PUBLIC_BACKEND_URL=https://api.staging.mumate.co,
+      NEXT_PUBLIC_ENABLE_CHAT=false, the two Omise publishable keys and the
+      VAPID public key as in production; Bazi NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+      as in production (a pk_test_ key). Release builds: mootech-fe
+      921f449cfa4ade8da66e1fe845ce3466dc99746f-staging (rebuilt after the
+      launch team merged #721 on top of the first 83295e8 build),
+      bazi-sft-dataset 911c87a68a3890314e0f96b6a01c6ac53bb4cd4f-staging.
+      Verified on the host before running: FE bundle contains
+      api.staging.mumate.co and no host.docker.internal / smoke placeholder;
+      Bazi bundle has no pk_test_dummy. Images 632 MB / 590 MB.
+    - >-
+      Vercel "sensitive" variables. vercel env pull (and the API, and the
+      dashboard) never reveal values of type "sensitive": FE 20 of 77, Bazi
+      4 of 52 came back empty, including Bazi's APP_DATABASE_URL, which made
+      the first Bazi container report db: error (zod .url() rejects "").
+      Recovered without any Vercel access: AI_CONSUME_SECRET, CONSENT_SECRET,
+      CREDIT_ENFORCE from the BE Render export (shared FE↔BE values);
+      OPEN_WEBUI_API_TOKEN for Bazi from the FE export; BEAM_API_KEY,
+      BEAM_MERCHANT_ID, BEAM_WEBHOOK_HMAC_KEY (← BEAM_WEBHOOK_SECRET) from the
+      owner's .assets/mumate/.env-from-beam.md; GEMINI_API_KEY and OPS_ADMINS
+      from the owner's addition.env; APP_DATABASE_URL built from the BE
+      Supabase credentials on the transaction pooler port 6543 (Bazi's
+      client sets prepare:false for that pooler) after the owner confirmed
+      it is the MuMate Supabase database, not Neon (Neon holds Bazi's own 60
+      tables and stays as DATABASE_URL). Six FE-internal secrets were
+      generated fresh for the shadow (64 hex each): ANALYTICS_USER_ID_KEY,
+      CALC_NONCE_SECRET, GLASS_BOX_KEY, OPS_DASHBOARD_KEY, V2_PREVIEW_KEY,
+      WHATIF_KEY — they gate shadow-only pages and hashes, nothing shared.
+      Still empty on purpose or pending: GITHUB_TOKEN (ops activity page;
+      owner will rotate later), QSTASH_CURRENT_SIGNING_KEY,
+      QSTASH_NEXT_SIGNING_KEY, QSTASH_URL (irrelevant while QSTASH_TOKEN is
+      stripped). Strip list applied as decided: VERCEL_*, TURBO_*, NX_DAEMON,
+      VERCEL_TOKEN, LAUNCH_DEPLOY_HOOK_URL, LAUNCH_KEY, RENDER_API_KEY,
+      QSTASH_TOKEN — every stripped name grep-verified as either unread by
+      app code or fail-closed by design (LAUNCH_KEY hides /launch;
+      QSTASH_TOKEN absent = no scheduling).
+    - >-
+      Host. fe.env 53 vars, bazi.env 31 vars, 600 deploy:deploy, no quotes,
+      no duplicates. First full-profile deploy: FE healthy, Bazi unhealthy
+      (empty APP_DATABASE_URL) → deploy.sh rolled .env back, BE untouched.
+      Second deploy after the fixes: COMPOSE_PROFILES=restore-verify
+      bin/deploy.sh BE_TAG=0705378… FE_TAG=921f449…-staging
+      BAZI_TAG=911c87a…-staging --profile full → healthy in 14 s;
+      ops-status: be/fe/bazi configured = running = /health.sha ✅, caddy ok,
+      timers none. FE /api/health db ok 5 ms (Supabase), Bazi /api/health
+      "symbolic-engine-ready" db ok 7 ms (Supabase via 6543). Memory idle:
+      be 108 MB, fe 64 MB, bazi 167 MB, pgtmp 30 MB, caddy 21 MB — 1.03 GB
+      of 3.9 GB used; no resize needed at this stage.
+    - >-
+      Safety as it stands: Caddy is the slice-2 file (mumate-infra#8
+      unmerged), so nothing reaches fe/bazi from outside; no cron in any
+      container (Vercel crons absent, BE MORNING_CRON_ENABLED=false, timers
+      disabled); the owner's IP changed a 4th time (101.109.13.197 added).
+  not_completed:
+    - Step (f): BE still on pgtmp; FE→BE calls on the shadow would hit an empty database until BE is re-pointed at Supabase (stop-and-confirm).
+    - mumate-infra#8 (Caddy hostnames + TLS) unmerged; the owner's smoke not started.
+    - OAuth callback URLs for app.staging.mumate.co not yet registered at Google/LINE/Facebook/Twitter.
+  evidence_of_limits:
+    - The first-deploy rollback for a service that had no last-good tag left fe/bazi containers running with configured= empty; harmless here (BE unaffected) but deploy.sh's rollback semantics for a brand-new service are undefined and worth a follow-up.
+    - Bazi's production APP_DATABASE_URL port (5432 vs 6543) is unknown; 6543 was chosen from the client's prepare:false comment and works.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 7c62e55cfac304294df76f275b35bfda53ebb454
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mootech-fe: main 921f449 (#716, #717, #721 merged); image 921f449…-staging live on mumate-2
+    bazi-sft-dataset: pdf-dev 911c87a (#40, #41 merged); image 911c87a…-staging live
+    mootech-be: main 0705378; image 0705378 live (DB still pgtmp)
+    mumate-infra: main b294752 (#1-#7 merged); PR #8 open; host /opt/mumate b294752
+  host:
+    droplet: mumate-2 602035792 / reserved 167.99.29.220
+    env: be.env, fe.env, bazi.env, alert.env, backup.env (600)
+    running: be, fe, bazi, caddy (slice-2 Caddyfile), pgtmp
+  github_environments:
+    mootech-fe/staging: [NEXTAUTH_URL, HOST, NEXT_PUBLIC_BACKEND_URL, NEXT_PUBLIC_ENABLE_CHAT, NEXT_PUBLIC_OMISE_KEY, NEXT_PUBLIC_OMISE_KEY_V2, NEXT_PUBLIC_VAPID_PUBLIC_KEY]
+    bazi-sft-dataset/staging: [NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY]
+  owner_inputs: .assets/mumate/infra-mumate/{mootech-fe.env, bazi.env, mootech-be.env, addition.env}, .assets/mumate/.env-from-beam.md — git-ignored, values never printed
+  authorizing_decision: memory/events/2026/09/20/20260920T081119_mumate_infra_move_slice3_authorized.yaml
+  previous_record: memory/events/2026/09/20/20260920T144757_mumate_infra_move_slice3_staging_dns_delegated_and_zone_created.yaml
+
+unresolved:
+  - Team Owner destroy of Droplet 601959538 still pending.
+  - GITHUB_TOKEN for the shadow FE: owner to rotate and supply later; QSTASH signing keys only if QStash is ever enabled on the shadow.
+  - OAuth provider callback URLs for the staging hostname (owner/team consoles).
+  - Port-22 policy: four owner addresses in two days.
+  - Everything carried in the slice-3 decision record.
+
+next_action:
+  action: >-
+    Step (f), with the owner's explicit go: rewrite env/be.env on the host
+    with the Render DB_* values (Supabase session pooler 5432) instead of
+    pgtmp, keep MORNING_CRON_ENABLED=false and MIGRATION_ENABLED=false,
+    redeploy BE, prove /health db ok and that no cron log line appears;
+    then merge mumate-infra#8 and prove https on the three hostnames; then
+    the owner's smoke with their own account (after registering the
+    staging OAuth callback URLs).
+  acceptance_check:
+    - ssh mumate 'cd /opt/mumate && bin/ops-status.sh' → three ✅ lines, caddy ok, timers none.
+    - curl http://127.0.0.1:3100/api/health on the host → db ok.
