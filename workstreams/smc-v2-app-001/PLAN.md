@@ -3,7 +3,7 @@
 **Workstream:** `smc-v2-app-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -249,16 +249,28 @@ exists, an owner-reviewed pull request in `smc-v2`.
   carries yes (the default) or the owner's no; the pull request is merged
   before slice 4 starts.
 
-### 4. The desktop — Tauri 2 and Leptos, identical to legacy
+### 4. The desktop — Tauri 2 and Leptos, built to `DESIGN.md`
 
 **Deliverable**
 
-- Tauri 2 shell; Leptos client with the legacy Tailwind and DaisyUI classes;
-  screens: home with the twelve slots live from the poller, load, dispense,
-  lock-wait, clear-or-continue, admin (slots, users, port, backup folder),
-  logs with search by HN, user and date range and CSV export. Thai only.
+- Tauri 2 shell (`crates/app`) over the `cabinet` service; Leptos client
+  (`crates/ui`) with the Tailwind and DaisyUI classes `DESIGN.md` quotes;
+  Prompt bundled (OFL). Screens as `DESIGN.md` specifies them: the shell
+  with the left menu, the board line and the expired banner; หน้าหลัก with
+  the twelve cards in their four live states; ลงทะเบียน, รอใส่ยา, จ่ายยา,
+  รอเอายาออก, ยังมียาอีกไหม, เคลียร์ช่อง, เข้าสู่ระบบ; Admin with its four
+  tabs — ช่องยา, ผู้ใช้งาน, การเชื่อมต่อ, ข้อมูลและใบอนุญาต; บันทึก with the three
+  filters, the date range, pagination and CSV export behind an admin PIN;
+  the activation screen. Thai only.
+- **The screens of slice 5 are delivered here** (revision 0.3, owner
+  2026-09-20: "รวม ถ้าไม่ทำให้ซับซ้อนมากขึ้น แต่ทำให้จบไวขึ้น"): the
+  activation screen, the expired banner, the license row and the
+  ส่งข้อมูลให้ช่าง and backup controls in the last admin tab, all on the
+  slice-5 backend already merged. Slice 5 keeps only what is not a screen.
 - Tauri commands are the only bridge; the UI never touches the port or the
   database; state reaches the UI as events.
+- Delivered as one topic branch with a checkpoint commit per screen group,
+  reported as each lands, and one draft pull request.
 
 **Acceptance**
 
@@ -266,7 +278,10 @@ exists, an owner-reviewed pull request in `smc-v2`.
   completes load → dispense → clear for one HN and a door-left-open case,
   and the screen and the `actions` rows agree with what the owner did;
   recorded as owner observation in the closeout.
-- `cargo tauri build` produces a running macOS bundle.
+- Expired state proven in the UI with a license issued by `smc-license`:
+  load refused, dispense allowed, banner shown.
+- `cargo fmt --check`, `cargo test`, `cargo clippy --all-targets -- -D
+  warnings` pass; `cargo tauri build` produces a running macOS bundle.
 
 ### 5. Operations — license, system log, backup, diagnostics
 
@@ -275,10 +290,10 @@ exists, an owner-reviewed pull request in `smc-v2`.
 - `crates/license`: Ed25519 verification of a signed payload (customer,
   machine code, issued, expiry or lifetime); machine code from the Windows
   MachineGuid (IOPlatformUUID on macOS for development), shown as twelve
-  characters; activation screen accepting pasted text or a `.lic` file;
-  the expired policy above; last-seen-time rollback guard. `smc-license`
-  CLI binary: `issue` and `inspect`, the private key path given by the
-  owner at run time.
+  characters; the expired policy above; last-seen-time rollback guard.
+  `smc-license` CLI binary: `issue` and `inspect`, the private key path
+  given by the owner at run time. (The activation screen moved to slice 4
+  in revision 0.3.)
 - System log via `tracing-appender`: daily JSON-line files, 30 kept, at the
   platform data directory; the wire hex trace included.
 - Daily database backup to the configured folder, 30 kept; the
@@ -290,7 +305,8 @@ exists, an owner-reviewed pull request in `smc-v2`.
   issue → application verify round trip; log rotation; the zip's contents
   listed.
 - Expired state proven in the UI: load refused, dispense allowed, banner
-  shown.
+  shown — met in slice 4 from revision 0.3; slice 5's own closeout records
+  the backend checks (delivered on smc-v2 pull request 3) and points at it.
 
 ### 6. Windows — build and prove on the owner's Windows machine
 

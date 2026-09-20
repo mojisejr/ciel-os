@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T190000_smc_v2_app_slice4_authorized
+type: decision
+recorded_at: 2026-09-20T19:00:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only; this
+    decision revises the plan to 0.3 (the slice-5 screens move into slice 4)
+    and authorizes slice 4, the desktop.
+  scope:
+    - Revise plan 0.2 to 0.3 - slice 4 delivers every screen DESIGN.md names, including the activation screen, the expired banner and the license, backup and diagnostics controls that revision 0.2 placed in slice 5.
+    - Authorize slice 4 of revision 0.3.
+  out_of_scope:
+    - Slice 6 (Windows); the non-screen remainder of slice 5, which is already merged.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner, present, read the slice-4 walkthrough on 2026-09-20 evening -
+    what is built, what the agent does step by step, what the owner does
+    and when - and said go. Two questions were settled: the slice-5 screens
+    are folded into slice 4 "ถ้าไม่ทำให้ซับซ้อนมากขึ้น แต่ทำให้จบไวขึ้น และ
+    ดีกว่า", because they share the shell and separating them would reopen
+    the same code; and the agent installs trunk and whatever else the
+    toolchain needs, checking the machine end to end "ให้ระบบทำงานได้อย่าง
+    ปกติ และมีประสิทธิภาพ ... และปลอดภัย". The machine before this decision:
+    cargo-tauri 2.6.2, node 22.18.0, rust 1.88.0 with wasm32 and the
+    Windows target, the simulator built at checkouts/cu12-simulator; trunk
+    absent, being installed as this is written. DESIGN.md is merged on
+    smc-v2 main 4e55e1e with all twenty-four deviations accepted, so slice
+    4 builds against it as it stands. The owner is not needed until the
+    acceptance run at the end, about twenty minutes at the machine with the
+    simulator.
+  authorizes:
+    - Slice 4 of plan revision 0.3 - crates/app (Tauri 2 shell and commands over the cabinet service) and crates/ui (Leptos screens per DESIGN.md), Prompt bundled, on one topic branch from smc-v2 main 4e55e1e with a checkpoint commit per screen group, delivered as draft pull request 5.
+    - Installing trunk and any further build tool the slice needs on this machine.
+  does_not_authorize:
+    - Slice 6.
+    - Any change to DESIGN.md beyond adding to its open questions.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "4"
+  repository:
+    head: "2a708dc"
+    branch: hq/20260917
+    working_tree: plan-revision-and-this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "4e55e1e"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/20/20260920T183000_smc_v2_app_slice3_merged.yaml
+
+unresolved:
+  - DESIGN.md open questions - expiry in UTC or local, operator name on the open-door card, the SMC fallback mark, door-label order, HN scan on the home screen; the agent takes DESIGN.md's stated leans and lists any it had to decide in the closeout.
+  - The production signing key does not exist; the development key in .assets/smc-v2/ signs the licenses used to prove the expired state.
+
+next_action:
+  action: >-
+    Install trunk; branch feat/desktop from smc-v2 main 4e55e1e; build the
+    Tauri shell and the Leptos screens in the order the walkthrough gave -
+    skeleton, shell and home, load flow, dispense flow, admin, log,
+    license screens, bundle - with a checkpoint commit and a report at
+    each; open draft pull request 5; record the closeout ready for the
+    owner's acceptance run.
+  acceptance_check:
+    - Wake lists smc-v2-app-001 as active at revision 0.3 with slice 4 authorized once this event is committed.
