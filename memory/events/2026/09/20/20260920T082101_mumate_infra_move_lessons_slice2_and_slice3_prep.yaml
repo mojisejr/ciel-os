@@ -1,0 +1,156 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T082101_mumate_infra_move_lessons_slice2_and_slice3_prep
+type: closeout
+recorded_at: 2026-09-20T08:21:01+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Lessons from slice 2 and the slice-3 preparation (2026-09-19/20), asked
+    for by the owner so the next slice, the next host, and the next person
+    do not rediscover them. Also the sync point after the three merges
+    (mumate-infra#7, mootech-fe#717, bazi#41).
+  scope:
+    - Record every defect and surprise with its cause, the fix, and the rule that follows.
+    - Record the state after the merges and what the lane waits on.
+  out_of_scope:
+    - Any new work; nothing on the host or in DigitalOcean changed except one firewall address.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Sync after the owner merged mumate-infra#7 (main b294752), mootech-fe#717
+      (main 6c8837b), bazi-sft-dataset#41 (pdf-dev 60c05f0): local checkouts
+      and /opt/mumate on mumate-2 are on those heads; BE 0705378 still
+      healthy. The owner's ISP address changed a third time
+      (101.109.54.71); added to the port-22 rule.
+    - >-
+      LESSON 1 — DO user-data must be pure ASCII. Thai / § / — in cloud-init
+      comments were mangled by DigitalOcean's metadata path; cloud-init
+      failed the YAML parse, applied an EMPTY config, and still reported
+      "status: done". The Droplet looked fine and had nothing on it. Rule:
+      render-cloud-init.sh refuses non-ASCII; after every create run
+      `cloud-init status --long` on the host and read the WARNING lines.
+    - >-
+      LESSON 2 — dry-run proves syntax, not behaviour. Eight real defects
+      (placeholder key id, alert needs an email, pgtmp without SSL, pull
+      failure leaving .env dirty, rollback that never rolled back, shared
+      rollback timeout, ops-status dying silently, non-ASCII user-data)
+      survived every dry-run and appeared only when the failure paths ran
+      for real on a host. Rule: every slice budgets time to run the failure
+      paths, not just the happy path; ops-status's configured = running =
+      /health.sha check is the acceptance gate after each deploy because it
+      caught what the scripts did not.
+    - >-
+      LESSON 3 — exported shell variables beat .env in docker compose. The
+      automatic rollback wrote last-good to .env but the shell still held
+      the exported new tag, so compose kept the new container and the
+      script reported success. Rule: after restoring a file compose reads,
+      re-source it (set -a; . file; set +a) or run compose in a fresh
+      shell; never trust a "rolled back" message without ops-status.
+    - >-
+      LESSON 4 — mootech-be requires SSL to Postgres unconditionally
+      (app.module.ts). Any Postgres it talks to, including throwaway ones,
+      must serve a certificate; the alpine postgres image has no openssl,
+      the debian one does. Same recipe as the arena.
+    - >-
+      LESSON 5 — restore-verify's teardown removes the database the slice-2
+      BE borrows. Use --keep while BE points at pgtmp; if forgotten, re-up
+      pgtmp and BE reconnects by itself. Goes away in slice 3 when BE uses
+      Supabase.
+    - >-
+      LESSON 6 — Next.js images are per-target. NEXT_PUBLIC_* and
+      NEXTAUTH_URL are inlined at build; a smoke image with placeholders
+      cannot serve any host, and one commit needs a staging build and a
+      production build. Rule: release builds take public values from
+      GitHub Environment variables and tag <sha>-staging / <sha>; the
+      control room accepts the suffix and compares the SHA part. Caught
+      before any deploy, by reading the Dockerfile before assembling env.
+    - >-
+      LESSON 7 — GitHub "Run workflow" takes a branch, not a commit, and
+      runs the workflow file AT that ref. To build an old commit with a new
+      workflow input, push a branch = old commit + cherry-pick of the
+      workflow change (rollback-target/7e609c6-ci); the image tag is then
+      that branch head's SHA, truthfully.
+    - >-
+      LESSON 8 — DigitalOcean role Modifier could not see "Create Access
+      Key" for Spaces even with the bucket present, although the docs say it
+      should; the Team Owner created it in two minutes. Rule: ask the Team
+      Owner early for anything under Spaces keys and deletes; do not spend
+      hours on the why. The API token created on the "Tokens" page is NOT a
+      Spaces key.
+    - >-
+      LESSON 9 — the owner's ISP address changes daily (three addresses in
+      two days). Each change locks port 22 until the firewall rule gains it.
+      Options recorded: keep the allow-list and add addresses via
+      mumate-ops, or open 22 to the world and rely on key-only auth +
+      fail2ban. Undecided; the allow-list stays for now.
+    - >-
+      LESSON 10 — a rebuilt host behind the same reserved IP changes the ssh
+      host key; the warning "REMOTE HOST IDENTIFICATION HAS CHANGED" is
+      expected after every rebuild (ssh-keygen -R <ip>). A plain
+      `ssh deploy@ip` fails without the key: use the ~/.ssh/config alias
+      `ssh mumate`.
+    - >-
+      LESSON 11 — the harness refuses some outward writes in auto mode
+      (reading production env over ssh/API, a bare "git push", --no-verify
+      unless the owner says so in the turn). Rule: name the branch on every
+      push; hand the owner one pasteable line when refused; the owner's
+      explicit instruction in the same turn unlocks --no-verify for a gate
+      that is red on main for the team's own reasons.
+    - >-
+      LESSON 12 — the shadow FE env must not carry keys that act on
+      production infrastructure: VERCEL_TOKEN (the launch button flips
+      production maintenance and redeploys), LAUNCH_DEPLOY_HOOK_URL,
+      LAUNCH_KEY, RENDER_API_KEY; and QSTASH_TOKEN, or a reminder created on
+      the shadow is pushed twice. Found by the scheduler audit, not by
+      running anything.
+    - >-
+      LESSON 13 — read the app's own env before promising a single source of
+      truth: Bazi owns a Neon database and Clerk auth on top of Supabase.
+      Provider dependencies must be listed from the real env, not from the
+      architecture diagram.
+  not_completed:
+    - Nothing new; the lane waits on the team.
+  evidence_of_limits:
+    - These lessons come from one host, one week, one operator pair; they are rules of thumb for this system, not general truths.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 914d1d02b2e456adff08dfb0f40b8ff91b68a05a
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: main b294752 (#1-#7 merged); local main clean; host /opt/mumate b294752
+    mootech-fe: main 6c8837b (#716, #717 merged); local main clean
+    bazi-sft-dataset: pdf-dev 60c05f0 (#40, #41 merged); local detached at it, only the pre-existing untracked .claude/INCUBATED_BY
+    mootech-be: main 0705378; rollback-target/7e609c6-ci @ 46f57a2 kept
+  host: mumate-2 602035792 / 167.99.29.220; be 0705378 healthy; firewall 22 from 223.204.231.197/32 and 101.109.54.71/32
+  related_records:
+    - memory/events/2026/09/20/20260920T052052_mumate_infra_move_slice2_control_room_closeout.yaml
+    - memory/events/2026/09/20/20260920T081119_mumate_infra_move_slice3_authorized.yaml
+
+unresolved:
+  - Team: NS delegation of staging.mumate.co; destroy of Droplet 601959538; whether the owner gets DNS editor rights for slice 4.
+  - Port-22 policy (allow-list vs open + key-only) — owner to decide.
+  - Everything carried in the slice-3 decision record.
+
+next_action:
+  action: >-
+    Wait for the team's NS delegation. Then, in order: DO zone + A records,
+    staging Environment variables in both repos, release builds
+    (target=staging), Caddyfile + profile full PR, shadow env with the
+    strip list shown first, the two stop-and-confirm steps, the owner's
+    smoke. Nothing else is pending on the agent.
+  acceptance_check:
+    - Wake lists this event with no validation error; mumate-infra-move-001 phase 3 executing.
+    - A reader of this event can list the thirteen lessons without opening any other record.
