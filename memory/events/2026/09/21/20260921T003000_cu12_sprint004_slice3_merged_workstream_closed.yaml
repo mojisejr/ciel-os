@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20260921T003000_cu12_sprint004_slice3_merged_workstream_closed
+type: closeout
+recorded_at: 2026-09-21T00:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-004
+  lane: single
+  objective: >-
+    Door physics and tester-provoked faults, aimable at one command, so
+    SMC v2 can be built and proven against the simulator alone. All three
+    slices of revision 0.2 are on main; the workstream is finished.
+  scope:
+    - Record the owner's merge of simulator pull request 4 and the checkout's return to main; close the workstream.
+  out_of_scope:
+    - The observation of SMC v2 against the faults - smc-v2-app-001's record, made with the owner at the screen.
+
+outcome:
+  status: merged
+  completed:
+    - >-
+      The owner merged cu12-simulator pull request 4 as 17771d5 ("merged
+      PR4"). Local main 17771d5 equals origin/main, clean; feat/fault-targets
+      is gone locally and on the remote (GitHub removed it on merge); the
+      debug binary is rebuilt from main.
+    - >-
+      Sprint 4 delivered every slice of plan revision 0.2: slice 1 door
+      physics (PR 2, 1c2232b); slice 2 drop/ask faults, show, trace (PR 3,
+      7037547); slice 3 command targets on drop and ask (PR 4, 17771d5).
+      33 tests. Framing, checksum, addressing and the three commands are
+      unchanged; default behaviour is unchanged; no dependency was added.
+  not_completed:
+    - Nothing; the plan has no further slice.
+  boundaries:
+    - Physics is a recollection and faults are tester input; neither is a hardware claim.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-004/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: "5ec3086"
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+    merged_pull_requests:
+      - { number: 2, merge: "1c2232b", slice: "1" }
+      - { number: 3, merge: "7037547", slice: "2" }
+      - { number: 4, merge: "17771d5", slice: "3" }
+  preceding_records:
+    - memory/events/2026/09/21/20260921T001500_cu12_sprint004_slice3_ready_for_owner_review.yaml
+
+unresolved:
+  - Real hardware may show the hook staying set while the door is open, or a board that loses its response still unlocking; either changes the model and the SMC v2 state machine.
+
+next_action:
+  action: >-
+    None for this workstream. In smc-v2-app-001, with the owner at the Mac
+    against simulator main 17771d5: hook N locked, ask 11 unlock → register
+    → the refusal on screen and the ยกเลิก row; drop 3 unlock → the same
+    after the gateway's retries; physics off → the no-pop warning and
+    ยกเลิก; drop 20 → ตู้: ไม่ตอบสนอง and recovery; record as owner
+    observation there.
+  acceptance_check:
+    - Wake shows cu12-simulator-sprint-004 with this record as its latest, simulator bound at 17771d5 clean.
