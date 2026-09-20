@@ -1,0 +1,88 @@
+schema_version: ciel.event.v0.1
+id: evt_20260921T001500_cu12_sprint004_slice3_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-21T00:15:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-004
+  lane: single
+  objective: >-
+    Faults an application must survive, provoked from the tester's
+    terminal - now aimable at one command so they reach an Unlock through
+    a polling application.
+  scope:
+    - Close slice 3 of plan revision 0.2 on the pull request that carries it; the plan's last slice.
+  out_of_scope:
+    - smc-v2 changes; the owner's step-1 run, which follows the merge.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Simulator commit 91df674 on feat/fault-targets from main 7037547,
+      pushed, pull request 4 opened and marked ready. drop <n> and ask
+      <hex> take an optional last word - status, unlock or version -
+      naming the request the fault waits for; requests for other commands
+      pass untouched; a request takes the first pending fault that applies
+      to it; show prints the target beside each fault (FAULTS drop status,
+      ask 11 unlock). Without the word the slice-2 form is unchanged.
+    - >-
+      Four tests added, 33 in all: queue order with targets and rejection
+      of unknown words; over TCP ask 11 unlock survives three status polls
+      then refuses the Unlock with the literal 0x11 frame and no hook
+      moves, drop 2 unlock times out two Unlocks with status reads answered
+      between them, drop 1 status lets an Unlock and a version read pass
+      then silences the next status; on macOS the unlock aim through the
+      PTY. README and docs/protocol-evidence.md record the form and the
+      owner's run that motivated it. No wire meaning, opcode or
+      dependency; fmt, test and clippy -D warnings pass.
+  not_completed:
+    - Nothing of slice 3.
+  boundaries:
+    - The target is a tester convenience; the board's answers are exactly those of slice 2.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-004/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  authorized_by: memory/events/2026/09/20/20260920T234500_cu12_sprint004_plan_0_2_slice3_authorized.yaml
+  repository:
+    head: "4dfdef5"
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    base: "7037547"
+    head: "91df674"
+    branch: feat/fault-targets
+    pull_request:
+      number: 4
+      url: https://github.com/mojisejr/cu12-simulator/pull/4
+      base: main
+      state: ready-for-review
+    checks:
+      - cargo fmt --check
+      - cargo test (33 passed, 4 new)
+      - cargo clippy --all-targets -- -D warnings
+  owner_observation: none yet; the owner's step-1 run against the desktop follows the merge.
+  preceding_records:
+    - memory/events/2026/09/20/20260920T234500_cu12_sprint004_plan_0_2_slice3_authorized.yaml
+
+unresolved:
+  - The owner's steps 2 and 3 (no-pop with physics off; drop 20 board lost) and, after this merge, step 1 (ask 11 unlock, drop 3 unlock) are still to be observed on the desktop and recorded under smc-v2-app-001.
+
+next_action:
+  action: >-
+    The owner reviews and merges pull request 4; the checkout returns to
+    main and the closeout records it. Then, with the owner at the Mac: the
+    rebuilt simulator with physics, hook N locked, ask 11 unlock → register
+    → the refusal on screen and the ยกเลิก row in the log; drop 3 unlock →
+    the same after the gateway's retries; record as owner observation
+    under smc-v2-app-001.
+  acceptance_check:
+    - Pull request 4's head is 91df674 when the owner reads it.
+    - After the merge, origin/main contains 91df674 and the local checkout is clean on it.
