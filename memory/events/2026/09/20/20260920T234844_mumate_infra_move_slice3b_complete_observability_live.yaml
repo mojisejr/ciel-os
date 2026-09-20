@@ -1,0 +1,118 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T234844_mumate_infra_move_slice3b_complete_observability_live
+type: closeout
+recorded_at: 2026-09-20T23:48:44+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Slice 3b of plan 0.2 is complete: the control room observes the whole
+    shadow stack - request-level access logs with request ids, on-host
+    reading, health timer to Discord, DigitalOcean and Better Stack
+    outside checks by e-mail, and Grafana Cloud holding redacted logs,
+    host metrics, synthetic checks and alerts to Discord. Every DoD 3b
+    item in PLAN.md revision 0.2 passed with the owner watching. Slice 3
+    continues with 3c behind the churn gate; this record names no slice
+    because slice 3 is not finished.
+  scope:
+    - The DoD 3b session, the synthetic checks, the follow-up PR 12.
+  out_of_scope:
+    - Step 3c (rebuild + parity smoke), slice 4, any application repository.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Owner created the three synthetic HTTP checks in the UI
+      (mumate-fe/be/bazi-staging, 180 s, 2 locations, 29,760 executions
+      per month each ≈ 89k of the free 100k, labels service=…); probes
+      seen in the access log (synthetic-monitoring-agent/v0.65.0).
+    - >-
+      DoD 3b, all four items: (1) bazi stopped 16:33:00 UTC and a 502
+      induced with request_id f09eb3c1-86b8-4b06-9aa7-05a9c6b94785; the
+      owner found the line in Explore with {service="caddy"} |
+      request_id="…" (screenshot: 23:33:00.639, host
+      bazi.staging.mumate.co, curl). (2) {service="be"} |= "email:" over
+      24 h returned nothing in Loki; the host's docker log holds 48 such
+      lines - redaction works at the pipe. (3) Discord received the
+      health-timer alert and Grafana's "mumate 5xx burst (firing)" at
+      23:34 (routed through discord-infra; alertmanager groups confirm).
+      (4) 2852 MB available with every container up. bazi restored
+      16:44:36 UTC, healthy, ops-status three ✅ + alloy ready.
+    - >-
+      Findings from the session, each already acted on: the 5xx count
+      (588 in 5 min) was mostly an internet scanner (280 hits on
+      /.docker/…, /.env style paths, spoofed browser UA) that got 502
+      instead of 404 while bazi was down - PR 12 makes Caddy answer
+      dotfile paths itself; the 5xx-burst rule emitted
+      DatasourceNoData when there were no 5xx - noDataState set to OK via
+      API at 23:34 and in the repo; the Discord title lacked host for
+      log alerts - template now prints alertname · service · host;
+      Grafana 13.3 returns 410 on the receiver-test endpoint - webhook
+      verified directly and by the real alert.
+    - >-
+      PR 12 opened, https://github.com/mojisejr/mumate-infra/pull/12
+      (Caddyfile @dotfiles → 404 tested on 2.10.0; observability/grafana
+      in sync with the stack; runbook 04 lessons). Host unchanged until
+      merge + owner go.
+    - >-
+      Layer B DoD list in PLAN.md 0.2 is therefore complete: induced 5xx
+      in Grafana by request id ✅; Discord within ten minutes ✅ (health
+      timer ~2 min, Grafana ~2 min after the 5 m window); BE personal-data
+      line absent from Loki ✅; ≥ 2 GB free ✅; compose config and
+      repository checks ✅; PRs 9, 10, 11 merged after owner review ✅.
+  not_completed:
+    - Synthetic Monitoring per-check alert thresholds are not enabled; SyntheticCheckFailedExecutionsBreach did not fire during the 11-minute outage. Owner enables them in the UI (check → Alerting → failed executions > 50 % over 5 min); not a DoD item.
+    - PR 12 merge and its caddy recreate.
+    - Dashboard "mumate ops" (listed in runbook §7) not built yet; Explore queries cover the need until slice 5.
+  evidence_of_limits:
+    - Alert evidence from Grafana came through the log rule, not the synthetic rule; both routes are configured, one is proven.
+    - Redaction is at the pipe: the host's own docker logs still contain personal data until layer C fixes the application.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: "112aace59b0eac1ea52b32beb6ff28d3456c2445"
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main 0518128 = host /opt/mumate; PR 12 open (infra/observability-followups)"
+    mootech-fe: "shadow 921f449-staging (churn gate)"
+    mootech-be: "0705378"
+    bazi-sft-dataset: "shadow 911c87a-staging (churn gate)"
+  host: "mumate-2: be/fe/bazi/caddy/alloy up and healthy after the test; 2852 MB available"
+  grafana:
+    stack: https://patientspringbok701.grafana.net
+    synthetic_checks: [mumate-fe-staging, mumate-be-staging, mumate-bazi-staging]
+    alerts_fired_in_test: ["mumate 5xx burst → discord-infra 23:34 +07:00"]
+  outside_checks:
+    better_stack: "3 monitors, e-mail"
+    digitalocean: "3 tag-bound policies, e-mail"
+  authorizing_decision: memory/events/2026/09/20/20260920T214501_mumate_infra_move_plan_0_2_observability_before_flip.yaml
+  previous_record: memory/events/2026/09/20/20260920T231650_mumate_infra_move_slice3b_alloy_live_grafana_provisioned.yaml
+
+unresolved:
+  - PR 12 merge + caddy recreate; SM per-check alerts (owner, UI).
+  - Token expiry dates (alloy write token, service-account token) to be noted beside the DO tokens.
+  - Vercel Security Checkpoint on the owner's IP for bazichart.mumate.co.
+  - Carried: Facebook/Twitter callbacks, port-22 policy, GITHUB_TOKEN rotation, Vercel bazi missing SUPABASE_* values.
+
+next_action:
+  action: >-
+    Owner merges PR 12 (caddy recreate with owner go). Then step 3c per
+    PLAN.md 0.2: watch the launch team's merge rate; at a quiet point (no
+    merge to mootech-fe main or bazi pdf-dev for two hours) rebuild the
+    shadow from the current revisions after re-pulling and diffing the
+    Vercel environment, and walk the remaining parity DoD with the owner
+    while watching Grafana; ask the team once for a test-mode payment
+    webhook; slice-3 closeout after that with the slice-4 preconditions
+    reported.
+  acceptance_check:
+    - PLAN.md 0.2 DoD 3c items each have a recorded pass.
