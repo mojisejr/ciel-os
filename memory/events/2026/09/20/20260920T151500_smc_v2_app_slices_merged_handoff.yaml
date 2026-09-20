@@ -1,0 +1,100 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T151500_smc_v2_app_slices_merged_handoff
+type: closeout
+recorded_at: 2026-09-20T15:15:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    record hands the workstream to the next session: slices 1 and 2 and the
+    backend of slice 5 are merged on smc-v2 main; slice 3 is next and needs
+    the owner present.
+  scope:
+    - Record the merged state of every child repository and the exact next step, so a fresh session resumes from Wake alone.
+  out_of_scope:
+    - Any code; slices 3, 4, 6 and the UI half of 5.
+
+outcome:
+  status: handoff
+  completed:
+    - >-
+      The owner reviewed and merged smc-v2 pull requests 1, 2 and 3 in
+      order: merge commits 361514a, d7d425f, ce03acd. main ce03acd equals
+      origin/main; the three topic branches are gone locally and remotely;
+      a revert branch the owner created by a mis-click was never merged and
+      the owner deleted it. cargo test --workspace on main: 54 passed.
+    - >-
+      cu12-simulator: pull request 2 (door physics, 82a9749) merged as
+      1c2232b; main equals origin/main; topic branch gone; 20 tests.
+      cu12-simulator-sprint-004 slice 1 is delivered; slice 2 (faults and
+      trace) is not authorized and waits until the application's screens
+      exist.
+    - >-
+      smc-v2 main now holds: crates/cu12 (gateway, transports, poller),
+      crates/workflow (the state machine), crates/store (SQLite, argon2
+      PINs, append-only actions), crates/cabinet (the service the shell
+      will call), crates/license with the smc-license issuer (development
+      key embedded; private half in the ignored .assets/smc-v2/),
+      crates/ops (JSON system log, VACUUM INTO backup, diagnostics zip).
+      No user interface exists yet.
+    - >-
+      CIEL HQ: this lane's commits this round are c265c20, b249a44,
+      aee93a6, 4c1f822, 7ec9313 and this one, all on the standing branch
+      hq/20260917, which the owner keeps open for other sessions; the owner
+      tells HQ when the round's pull request opens.
+  not_completed:
+    - Slice 3 (design capture), slice 4 (the desktop), slice 5's screens, slice 6 (Windows).
+  boundaries:
+    - Nothing has run on Windows; nothing has touched real hardware.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 7ec9313
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: ce03acd
+    branch: main
+    working_tree: clean-equal-to-origin
+    merged_pull_requests:
+      - { number: 1, merge: 361514a, slice: "1" }
+      - { number: 2, merge: d7d425f, slice: "2" }
+      - { number: 3, merge: ce03acd, slice: "5 backend" }
+  simulator:
+    repository: cu12-simulator
+    head: 1c2232bd
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/20/20260920T150000_smc_v2_app_slice1_ready_for_owner_review.yaml
+    - memory/events/2026/09/20/20260920T150500_smc_v2_app_slice2_ready_for_owner_review.yaml
+    - memory/events/2026/09/20/20260920T151000_smc_v2_app_slice5_backend_ready_for_owner_review.yaml
+    - memory/events/2026/09/20/20260920T093000_cu12_sprint004_slice1_ready_for_owner_review.yaml
+
+unresolved:
+  - Slice 3 needs the owner at the machine: running the legacy application (README of /Users/non/dev/smc/smc-app - build cli/, generate a test-mode license, export-env, copy license.lic, npm run dev:ds12) writes .env, license.lic and a database into the owner's legacy checkout, so the agent does not run it unattended. If the DS12 controller blocks the home screen, the simulator in PTY mode stands in for the board.
+  - Slice 4 needs trunk installed (cargo-tauri 2.6.2 is present, node 22 is present).
+  - The production signing key does not exist; the owner generates it with smc-license keygen before selling and the public constant in crates/license/src/pubkey.rs is replaced.
+  - Expiry is judged in UTC; whether to add a day of grace or judge in local time is decided with the slice-5 screens.
+  - Review choices the owner may still change: PIN 4-8 digits and unique among active users; a nurse may cancel a door that did not pop; "reconciled" rows on every start for doors found open.
+  - cu12-simulator-sprint-003 and cu12-e2e-lab-001 read merged-needs-sync on the standing branch only because the checkout is not on main.
+
+next_action:
+  action: >-
+    With the owner present, record the decision authorizing slice 3 of
+    plan revision 0.1, run the legacy application on the owner's Mac,
+    screenshot every screen and dialog into the owner-controlled
+    .assets/smc-v2/legacy-screens/, write DESIGN.md in smc-v2 with the
+    numbered deviations for the owner to accept or decline, open the pull
+    request, and record the slice-3 closeout. Then slice 4.
+  acceptance_check:
+    - A fresh session's Wake shows smc-v2-app-001 active at revision 0.1 with slice 5 the latest authorized decision, smc-v2 bound at ce03acd clean, and this record as the latest event of the workstream.
