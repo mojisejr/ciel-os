@@ -1,0 +1,106 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T171153_mumate_infra_move_slice3_owner_smoke_passed_latency_compared
+type: closeout
+recorded_at: 2026-09-20T17:11:53+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Slice 3 checkpoint: the owner's own smoke on the shadow passed after
+    the CORS fix, and at the owner's request (go given in this session)
+    the shadow was compared against production for latency with
+    read-only GETs from the owner's network in Thailand.
+  scope:
+    - The owner's manual smoke result.
+    - A read-only latency comparison of production (Vercel + Render) against the shadow (mumate-2, sgp1) on unauthenticated endpoints.
+  out_of_scope:
+    - Authenticated paths, Bazi calculation (writes to storage), load testing, any change to either stack.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Owner smoke: after the CORS fix the owner logged in on
+      https://app.staging.mumate.co and "เข้าไปเล่นนั่นนี่ได้เรียบร้อย" -
+      login and navigation inside /v2 work on the shadow. Acceptance check
+      2 of the 164938 record is met by the owner's word; no error report.
+    - >-
+      Latency probe, 20 requests per endpoint per stack, sequential with
+      0.3 s gaps, User-Agent ciel-latency-probe; two modes - cold (new
+      TCP+TLS per request, first two dropped) and warm (20 requests on one
+      reused connection, so TTFB ~ server time + one RTT). Measured from
+      the owner's Mac in Thailand. Endpoints: FE /v2 HTML, FE /api/health,
+      FE static chunk framework-945b357d4a851f4b.js (identical file on
+      both, 140001 B), BE /health, Bazi /api/health.
+    - >-
+      Results, median ms (p95) for 200 responses only:
+      FE /v2 HTML cold TTFB prod 166 (306) vs shadow 147 (177); total prod 168 vs shadow 191; shadow warm TTFB 57.
+      FE /api/health cold TTFB prod 165 (256) vs shadow 136 (143); shadow warm 47.
+      FE static js cold TTFB prod 126 (136) vs shadow 134 (147); total prod 154 vs shadow 252; shadow warm total 55.
+      BE /health cold TTFB prod (Render via Cloudflare BKK edge) 92 (161) vs shadow 135 (153); warm prod 60 (149) vs shadow 44 (48).
+      Bazi /api/health cold TTFB prod 582 (604) vs shadow 132 (148); warm prod 504 (769) vs shadow 47 (55).
+    - >-
+      Connection setup: dns+tcp+tls median prod FE ~79 ms (edge in BKK, tcp
+      11-12 ms, tls ~63 ms), Render ~32 ms (Cloudflare BKK), shadow ~86-90
+      ms (sgp1 droplet, tcp ~38 ms, tls ~45 ms). Server-side wait after
+      TLS: prod FE 85-87 ms vs shadow 48-60 ms; Bazi prod 503 ms vs shadow
+      48 ms.
+    - >-
+      Root cause of the Bazi gap is visible in the headers and health body:
+      x-vercel-id sin1::iad1 - the Vercel bazi function runs in iad1 (US
+      East) while Supabase is in Singapore, health reports dbLatencyMs 213
+      on production vs 6 on the shadow. FE and BE production functions run
+      near the database (dbLatencyMs 3).
+  not_completed:
+    - >-
+      Warm-connection numbers for production FE are missing: after ~60
+      probe requests Vercel's firewall put the probing IP behind a
+      Security Checkpoint (HTTP 403, x-vercel-mitigated: challenge,
+      x-vercel-challenge-token). All 60 warm FE requests and the last 3
+      cold static requests were challenge pages and are excluded. Probing
+      stopped; the challenge was still active for this IP at the time of
+      the record. It affects only the probing IP (a browser passes the
+      JS challenge automatically); no impact on other users.
+  evidence_of_limits:
+    - One vantage point, one time of day, unauthenticated endpoints only; the shadow carries no user traffic while production does. Direction, not a load test.
+    - The FE static asset comparison favours Vercel's CDN by design (edge in BKK vs a single sgp1 origin); the ~100 ms total gap on a 140 kB file is transfer time over the longer path, not server time.
+    - Slice 4 will put the real domain behind the same Caddy; if Cloudflare or another edge is put in front later, the setup and static-transfer numbers change again.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: "d1abdf16429eaaf174ae70cc9f2fd327841b2f6e"
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mootech-fe: "production bazichart.mumate.co (Vercel, sin1 edge); shadow 921f449…-staging"
+    mootech-be: "production mootech-be.onrender.com (Cloudflare BKK edge, sha unknown); shadow 0705378, CORS incl. staging origin"
+    bazi-sft-dataset: "production bazi-sft-dataset.vercel.app (function iad1, dbLatencyMs 213); shadow 911c87a…-staging (dbLatencyMs 6)"
+    mumate-infra: main c864827; host /opt/mumate c864827
+  hostnames: app/api/bazi.staging.mumate.co over HTTPS, all healthy; ops-status three ✅, timers none
+  authorizing_decision: memory/events/2026/09/20/20260920T081119_mumate_infra_move_slice3_authorized.yaml
+  previous_record: memory/events/2026/09/20/20260920T165751_mumate_infra_move_slice3_cors_fix_applied_owner_smoke_next.yaml
+  method: "curl -s -o /dev/null -w '%{time_namelookup},%{time_connect},%{time_appconnect},%{time_starttransfer},%{time_total},%{http_code},%{size_download}' per request; warm mode = 20 URLs in one curl invocation (num_connects 1)"
+
+unresolved:
+  - Vercel Security Checkpoint on the owner's IP for bazichart.mumate.co until Vercel lifts it; if the owner's browser shows the checkpoint page once, that is this probe.
+  - Production Bazi function region (iad1) far from Supabase - a finding for the launch team, independent of the move.
+  - Caddy access logging (PR pending); Facebook / Twitter callbacks; remaining parity DoD items (FE→Bazi, storage, payment callback, maintenance bypass, no duplicate jobs).
+  - Everything carried in the previous records and the slice-3 decision record.
+
+next_action:
+  action: >-
+    Continue slice 3: open the Caddy access-log PR on mumate-infra, then
+    walk the remaining DoD items with the owner (FE→Bazi call, storage,
+    payment callback path, maintenance bypass, duplicate-job check), one
+    CIEL record per smoke session; slice-3 closeout when the list is
+    exercised, then an owner decision for slice 4.
+  acceptance_check:
+    - Each remaining DoD item has a recorded pass with the command or screen that proved it.
