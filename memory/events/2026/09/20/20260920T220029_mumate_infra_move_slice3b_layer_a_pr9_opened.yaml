@@ -1,0 +1,90 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T220029_mumate_infra_move_slice3b_layer_a_pr9_opened
+type: closeout
+recorded_at: 2026-09-20T22:00:29+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Slice 3b (plan 0.2) checkpoint: layer A of the observability base is
+    on mumate-infra pull request 9 for the owner's review. Nothing on the
+    host changed; the owner said go for this work ("ลุยของเราต่อได้เลย")
+    as long as it does not touch the launch team's fix work, and it does
+    not - only mumate-infra is touched.
+  scope:
+    - mumate-infra PR 9 (branch infra/observability-base) and its verification.
+  out_of_scope:
+    - Host changes (after merge, with the owner's go), layer B, DO alert policies and Better Stack (owner accounts), any application repository.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Owner decided no note to the launch team about the Vercel Bazi
+      function region: the team plans to move servers anyway. Item closed.
+    - >-
+      PR 9 opened, https://github.com/mojisejr/mumate-infra/pull/9, one
+      commit on infra/observability-base off main c864827: Caddyfile
+      snippet (observed) on every site (JSON access log to stdout,
+      log_append request_id, X-Request-ID to browser and upstream, :80
+      /healthz skipped); compose caddy json-file 50m x 5 + label; new
+      bin/logs.sh (read-only, --since --tail -f --grep --rid --errors
+      --access, merged by timestamp); cloud-init enables
+      mumate-health.timer at first boot (ops timer, not an application
+      scheduler; backup timer unchanged); runbooks/04-observability.md
+      (symptom → where → command, request-id workflow, DO alert policies
+      via doctl with flags checked against doctl help, Better Stack
+      monitors, layer-A limits); README updated.
+    - >-
+      Verification before the PR: caddy validate + caddy fmt clean on
+      2.10.0; compose config ok; pre-push hook green. The snippet was run
+      on a local caddy 2.10.0 with a Cookie and an Authorization header:
+      both logged as REDACTED, the secret strings absent from the line,
+      the same uuid in the response header, the upstream's received
+      header, and the log's request_id; /healthz produced no access line;
+      Origin is logged. logs.sh dry-tested read-only on mumate-2 from /tmp
+      (MUMATE_ROOT=/opt/mumate), copies removed afterwards.
+  not_completed:
+    - Host steps (pull, recreate caddy, enable timer), DO alert policies, Better Stack monitors, DoD 3b layer-A checks - after merge with the owner's go.
+    - Layer B PR - after the owner creates the Grafana Cloud account.
+  evidence_of_limits:
+    - Application logs still lack the request id (layer C, deferred); Caddy ↔ app correlation is by time until then.
+    - Log retention is on-host only until layer B.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: "ee7eab8897a6ca0241db0c857d36a184bf7b99c1"
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main c864827 = host; PR 9 branch infra/observability-base, 1 commit"
+    mootech-fe: "origin/main 26e237a (not rebuilt; churn gate)"
+    mootech-be: "0705378"
+    bazi-sft-dataset: "origin/pdf-dev 8ca0f9a (not rebuilt; churn gate)"
+  authorizing_decision: memory/events/2026/09/20/20260920T214501_mumate_infra_move_plan_0_2_observability_before_flip.yaml
+  previous_record: memory/events/2026/09/20/20260920T171153_mumate_infra_move_slice3_owner_smoke_passed_latency_compared.yaml
+
+unresolved:
+  - Better Stack and Grafana Cloud free-tier limits to confirm at signup (owner).
+  - Vercel Security Checkpoint on the owner's IP for bazichart.mumate.co.
+  - Everything carried in the previous records: Facebook/Twitter callbacks, mumate-1 destroy, port-22 policy, GITHUB_TOKEN rotation, Vercel bazi missing SUPABASE_* values.
+
+next_action:
+  action: >-
+    Owner reviews and merges PR 9; then, with the owner's go, the host
+    steps in the PR description (pull, recreate caddy, enable the health
+    timer), DO alert policies with the create/update token, Better Stack
+    monitors on the owner's account, and the layer-A DoD checks, recorded
+    as one CIEL event. In parallel the owner creates the Grafana Cloud
+    account for layer B.
+  acceptance_check:
+    - After the caddy recreate, bin/logs.sh --access --since 5m shows JSON lines with request_id for the three hostnames and none for :80 /healthz.
+    - systemctl list-timers shows mumate-health.timer active; stopping a container raises a Discord alert within 10 minutes.
