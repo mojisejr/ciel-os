@@ -1,0 +1,116 @@
+schema_version: ciel.event.v0.1
+id: evt_20260921T003500_smc_v2_app_fault_paths_observed_by_owner
+type: closeout
+recorded_at: 2026-09-21T00:35:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only.
+    This record adds the owner's observation of the fault paths that the
+    slice-4 acceptance could not reach - the refused unlock, the door
+    that does not pop, and the board that stops answering - on the desktop
+    from smc-v2 main 78dfbf3 against cu12-simulator main 17771d5.
+  scope:
+    - Record owner observation of the ยกเลิก and board-lost paths; no code, no slice.
+  out_of_scope:
+    - Slice 6 (Windows); any change to smc-v2.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Setting, 2026-09-20 23:00-23:25 on the Mac: the .app from PR 5
+      (bundle of 18:10, code 1419334), SMC_DATA_DIR=/tmp/smc-dev with the
+      one-year development license reinstalled, simulator on
+      tcp:127.0.0.1:5077 with CU12_SIM_TRACE=1 - first the owner's own
+      terminal with door physics on, then the agent's process with physics
+      off, stdin through a pipe the agent typed into while the owner
+      clicked. Every hook but 2 reads open after a simulator start, so the
+      slot in use was closed with hook N locked first.
+    - >-
+      Step 1a, ask 11 unlock then register HN 1111 in slot 11: the dialog
+      showed ตู้ไม่ตอบสนอง ลองใหม่อีกครั้ง, the slot stayed ว่าง; actions 49-50
+      load-requested → cancelled "unlock failed: board answered: failed
+      operation (0x11)"; trace FAULT ask 11 on the 0x81 frame. Step 1b,
+      drop 3 unlock then register HN 111111: the same after about 1.5 s;
+      actions 51-52, gateway log three "no response" at 500 ms and
+      "unlock failed; slot put back". Then a normal load of 111111 into
+      slot 11 completed (actions 53-55).
+    - >-
+      Step 2a, physics off, register HN 2222 in slot 3: after 2 s the wait
+      dialog showed ประตูไม่เด้ง ลองดึงประตู หรือยกเลิก with a ยกเลิก button
+      (screenshot shown); the agent typed hook 3 unlocked and the dialog
+      moved on by itself; hook 3 locked completed the load - actions 64-67
+      load-requested → door-did-not-open "hook still engaged 2335 ms after
+      unlock" → door-opened → load-completed. Step 2b, HN 3333 in slot 4,
+      the owner pressed ยกเลิก: the card returned to ว่าง, actions 68-70
+      … → cancelled "Load cancelled before the door opened", slots row
+      empty. Step 2c, unplanned: dispense from slot 3 with physics off →
+      the same warning, the owner cancelled, actions 71-73 dispense-
+      requested → door-did-not-open → cancelled.
+    - >-
+      Step 3, drop 20 then drop 90: the board line turned ตู้: ไม่ตอบสนอง,
+      the ว่าง cards and จ่ายยา were disabled - the owner's words "ตู้ไม่
+      ตอบสนองจะกด จ่ายยาไม่ได้ และกด อะไรไม่ได้เลย", which is DESIGN.md
+      deviation 7 as accepted; when the queue drained the line returned to
+      ตู้: เชื่อมต่อแล้ว by itself and the cards worked again ("กลับมาเป็น
+      ปกติ"). 38 poll failures in the system log, no slot changed, no
+      action row written for the outage. The first drop 20 lasted only
+      about 20 s and the owner looked after it had passed; drop 90 was
+      the observed run.
+  not_completed:
+    - Whether the บันทึก page opens while the board is down was not checked.
+    - Slice 6.
+  boundaries:
+    - Simulator only; the faults are tester input; nothing here is a hardware claim.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.3"
+  repository:
+    head: "e7e867a"
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "78dfbf3"
+    branch: main
+    working_tree: clean-equal-to-origin
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  owner_observation:
+    system_log: /tmp/smc-dev/logs/smc.log.2026-09-20 (development data directory, not tracked)
+    actions_rows: 49-73 in /tmp/smc-dev/smc.sqlite
+    simulator_trace: session scratchpad sim-trace-20260920.txt, 1014 lines (not tracked)
+  preceding_records:
+    - memory/events/2026/09/20/20260920T200000_smc_v2_app_slice4_merged_handoff.yaml
+    - memory/events/2026/09/21/20260921T003000_cu12_sprint004_slice3_merged_workstream_closed.yaml
+
+unresolved:
+  - >-
+    Finding - the gateway never reopens its transport. When the simulator
+    process ended (TCP closed) the application stayed on the dead socket
+    and did not reconnect; the owner had to restart the application. On
+    Windows an unplugged and replugged USB-RS485 adapter would look the
+    same. Not in plan 0.3; a candidate for a small slice before or with
+    slice 6, at the owner's decision.
+  - After a simulator start every hook but 2 reads open; the store's loaded slots then read "door open". A tester types hook N locked; the simulator has no close-all word.
+  - Slice 6 waits for the owner's Windows machine; production keygen before the first sale; the DESIGN.md open questions.
+
+next_action:
+  action: >-
+    The owner decides whether the transport-reopen finding becomes a slice
+    of plan 0.4 (gateway reopens the endpoint after an I/O error with a
+    backoff, BoardError meanwhile) before slice 6, or is folded into slice
+    6's Windows proof. Slice 6 itself waits for the Windows machine.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 active at revision 0.3 with this record as its latest event.
