@@ -3,7 +3,7 @@
 **Workstream:** `mumate-infra-move-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** 3
 **Execution state:** executing
 **Parallelism:** proposed
@@ -38,6 +38,22 @@ The owner confirmed on 2026-09-18:
 - The company DigitalOcean Team exists and billing is ready. The owner is a
   Modifier, so company-side Owner action remains required for billing, deletion,
   and any role change.
+
+The owner added on 2026-09-20 evening (revision 0.2):
+
+- This lane's job is operations: keep the system up, see what is happening
+  across all of it, and find the cause of an incident quickly. Product features
+  stay with the launch team.
+- The move does not continue on the original path until the control room can
+  observe the whole stack: request-level logs, service and host alerts, an
+  outside uptime check, and log search that survives the host.
+- Free tiers only, chosen for what works today; a paid tier needs a fresh owner
+  decision.
+- Application-side observability (error tracking, structured logs, removing
+  personal data from application logs) is deferred; the owner decides on it
+  after the move, once the launch team is out of its post-launch fix cycle.
+- While the launch team merges fixes several times an hour, the shadow is not
+  rebuilt and parity smoke does not run; both wait for a quiet point.
 
 ## Authoritative records and starting evidence
 
@@ -156,7 +172,8 @@ Create the private `mumate-infra` repository and register it in CIEL after the
 repository exists. Provision one company-owned `sgp1` Droplet only after the
 owner approves the exact size and operation. Build the smallest control room:
 Compose, Caddy, firewall, deploy/rollback, backup/restore, timers disabled by
-default, `ops status`, and at most three runbooks.
+default, `ops status`, and at most three runbooks (slice 3 of revision 0.2 adds
+a fourth for observability).
 
 Dogfood with BE first: deploy, deliberately fail a deployment, observe automatic
 rollback, restore a backup into a disposable database, prove an alert reaches
@@ -169,20 +186,72 @@ secrets; deployed SHA and configured SHA agree; failed deploy returns to the
 last-good image; backup restore changes a real verification query; no scheduler
 or public hostname can reach production users.
 
-### 3. The launch-equivalent stack runs in parallel without double work
+### 3. The launch-equivalent stack runs in parallel, observed, without double work
 
-Deploy all three services behind private/staging hostnames. Point both stacks at
-the same Supabase project, but keep every DigitalOcean cron/timer disabled and
-use controlled test identities. After each launch-team merge, rebuild from the
-new production revision and rerun parity smoke.
+Revision 0.2 splits the slice into three steps. Step 3a is done; 3b and 3c
+follow in that order.
 
-DoD: login, FE-to-BE calls, FE-to-Bazi calls, storage, payment callback handling,
-maintenance bypass, and representative v1/v2 paths work on the shadow stack;
-the observed database host is Supabase; no duplicate reminder, reconciliation,
-or daily Bazi job is emitted; every running container reports the exact tested
-Git SHA.
+**3a. Shadow stack (done 2026-09-20).** All three services run on the control
+room host behind `app/api/bazi.staging.mumate.co` over HTTPS, against the
+production Supabase project, every DigitalOcean cron/timer disabled, the
+owner's own account as the controlled identity. The owner's login and `/v2`
+navigation passed; a read-only latency comparison against production is on
+record.
+
+**3b. Observability base, in `mumate-infra` only.** Two pull requests, free
+tiers only, no application repository touched, no rebuild required.
+
+- Layer A, on the host: Caddy JSON access log on every site with a request id
+  injected as `X-Request-ID` and written to the log, credentials redacted;
+  Caddy log rotation sized for access logs; `bin/logs.sh` to read every
+  container's log in one command, filtered by service, time, pattern, or
+  request id; `mumate-health.timer` enabled on the host and by cloud-init on a
+  new host; DigitalOcean monitoring alert policies for CPU, memory, and disk;
+  an outside uptime check (Better Stack free tier, or another free service if
+  its free tier does not fit) on the three staging health routes; runbook
+  `04-observability.md` mapping symptom to place to command.
+- Layer B, off the host: one Grafana Alloy container (compose profile `obs`)
+  ships every container's log, labelled by service and host, to Grafana Cloud
+  free tier (Loki), redacting the known personal-data lines from the BE log
+  before they leave the host, and ships host metrics to the same account;
+  Grafana alerts to Discord for 5xx bursts per service, failed health, a
+  container whose log stops, and certificate errors; dashboards and alert
+  rules exported into the repository. The owner creates the Grafana Cloud and
+  uptime accounts and holds their tokens like every other secret.
+
+DoD 3b: an induced 5xx on the shadow appears in Grafana with its request id
+within a minute and the same id is found by `bin/logs.sh --rid`; stopping a
+service container raises a Discord alert from Grafana and an email from
+DigitalOcean or the uptime check inside ten minutes; the BE personal-data line
+is absent from Loki; the host has at least 2 GB of memory free with every
+container up; `docker compose config` and `bun run check`-equivalent repository
+checks pass; both pull requests merged after owner review.
+
+**3c. Parity smoke on a rebuilt shadow, gated on churn.** Rebuild FE from
+`main` and Bazi from `pdf-dev` once at a quiet point (no merge to either for at
+least two hours), re-pull and diff the Vercel environment first, then walk the
+remaining smoke items with the owner while watching the new logs. Payment
+callback handling needs the launch team to point a test-mode webhook at the
+shadow once.
+
+DoD 3c: login, FE-to-BE calls, FE-to-Bazi calls, storage, payment callback
+handling, maintenance bypass, and representative v1/v2 paths work on the shadow
+stack; the observed database host is Supabase; no duplicate reminder,
+reconciliation, or daily Bazi job is emitted (proven from one overnight of
+shadow logs); every running container reports the exact tested Git SHA.
+
+The slice-3 closeout also reports the flip preconditions for slice 4: the
+launch team's merge rate over the previous two days, whether a 24-hour release
+freeze is agreed, and how the final Bazi commit will be named given that
+`pdf-dev` receives direct pushes without pull requests.
 
 ### 4. A rehearsed two-hour maintenance flip moves the real domains
+
+Preconditions (revision 0.2): slice 3b's observability is live so the window
+is watched from Grafana and the uptime check, not from a terminal; the launch
+team's merge rate has stayed below about three merges a day for two consecutive
+days; the team has agreed a 24-hour release freeze and named the final commit of
+each of the three repositories.
 
 At least 24 hours before the window, reduce the relevant DNS TTL and record the
 old values. Freeze application releases, fetch the team's final production SHA,
@@ -215,7 +284,10 @@ smoke result; the rollback command and evidence remain usable.
 Keep Vercel and Render warm but with their duplicate schedulers disabled.
 Observe application errors, health, authentication, Bazi latency, payment
 settlement/provisioning, webhook delivery, cron outcomes, database connections,
-CPU, memory, disk, and backup restore evidence.
+CPU, memory, disk, and backup restore evidence, using the slice-3b dashboards
+and alerts as the daily evidence. The deferred application-side observability
+decision (error tracking, structured logs, personal data out of application
+logs) is put to the owner at this slice's closeout.
 
 The default observation window is seven days. The owner may explicitly shorten
 it only after reviewing the same evidence and accepting the loss of the warm
@@ -233,10 +305,12 @@ the recovery path, and every unresolved risk.
 |---|---:|---|---|
 | 1 · container parity | 12-20 h | heavy, one review per app PR | current production branches |
 | 2 · control room + dogfood | 10-16 h | heavy, production/secret boundary | slice 1; owner approvals; DO Team Owner for deletes |
-| 3 · parallel parity | 8-14 h plus team trial | heavy integration review | slices 1-2; current launch SHA |
+| 3 · parallel parity + observability | 8-14 h done in 3a; 3b 6-10 h; 3c 4-8 h plus team trial | heavy integration review | slices 1-2; a quiet point in the launch team's merges for 3c |
 | 4 · live flip | 6-10 h prep plus <=2 h window | owner-attended heavy review | slice 3; release freeze; DNS access |
 | 5 · observation/retirement | 3-6 h active over <=7 days | owner cancellation review | slice 4 stability |
 
-Total active effort is approximately 39-66 hours plus the observation window.
+Total active effort is approximately 49-84 hours plus the observation window.
 Only slice 1 is authorized by the opening decision; every production-affecting
-slice receives a new owner decision after the preceding closeout.
+slice receives a new owner decision after the preceding closeout. Revision 0.2
+(2026-09-20) was authorized for slice 3 by
+`memory/events/2026/09/20/20260920T214501_mumate_infra_move_plan_0_2_observability_before_flip.yaml`.
