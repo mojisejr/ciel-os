@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T085600_cu12_sprint004_slice1_authorized
+type: decision
+recorded_at: 2026-09-20T08:56:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-004
+  lane: single
+  objective: >-
+    Opt-in door physics for the simulator so SMC v2 can be developed
+    against it without typing every door pop by hand.
+  scope:
+    - Authorize slice 1 of plan revision 0.1, CU12_SIM_PHYSICS=door.
+  out_of_scope:
+    - Slice 2, faults and trace, until smc-v2-app-001 slice 1 has shown what the gateway needs.
+
+outcome:
+  status: decided
+  decision: >-
+    Same conversation as the smc-v2-app-001 slice-1 decision of this
+    morning: the owner answered "1, 2 คุนทำได้เลยครับ ลุย" to the request
+    for the word on slice 1 of both workstreams, and directed the agent to
+    keep going while away if nothing blocks. Slice 1 is authorized by this
+    decision; slice 2 is not.
+  authorizes:
+    - Slice 1 of plan revision 0.1 - the opt-in door physics with its tests and documentation, on a draft pull request in cu12-simulator.
+  does_not_authorize:
+    - Slice 2.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-004/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: b069f73
+    branch: hq/20260917
+    working_tree: this-event-and-the-smc-v2-decision-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: 6f0594b3d0099c6df5e20dcd5ce2ad55bf1fec10
+    branch: main
+    working_tree: clean
+  preceding_records:
+    - memory/events/2026/09/18/20260918T060500_cu12_sprint004_workstream_opened.yaml
+    - memory/events/2026/09/20/20260920T085500_smc_v2_app_slice1_authorized.yaml
+
+unresolved:
+  - The physics mode encodes the owner's recollection of the cabinet; real hardware has not confirmed it.
+
+next_action:
+  action: >-
+    Pass the start gate in checkouts/cu12-simulator; branch
+    feat/door-physics; implement the timer-driven hook clear after Unlock
+    behind CU12_SIM_PHYSICS=door with CU12_SIM_UNLOCK_MS; add tests and
+    documentation; run fmt, test and clippy; open a draft pull request;
+    record the slice-1 closeout on its head; mark it ready for the owner.
+  acceptance_check:
+    - Wake lists cu12-simulator-sprint-004 as active at revision 0.1 slice 1 authorized.
