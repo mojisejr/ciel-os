@@ -1,0 +1,109 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T081119_mumate_infra_move_slice3_authorized
+type: decision
+recorded_at: 2026-09-20T08:11:19+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Build a DigitalOcean replacement that matches the FE + BE + Bazi system
+    launched by the product team, keeps Supabase as the single source of
+    truth, and moves the real domains under an owner-controlled maintenance
+    window. Slice 3: the launch-equivalent stack runs on the control room
+    host behind private staging hostnames, against the same Supabase, with
+    every duplicate scheduler off and only controlled identities.
+  scope:
+    - Authorize slice 3 of plan revision 0.1 and record the owner's answers to the slice-3 decisions.
+    - Record the two findings made while preparing (Bazi's own Neon database; Next.js build-time public values) and how they shape the slice.
+  out_of_scope:
+    - Any change to the real domains, DNS TTL, Vercel/Render production settings, or provider webhooks (slice 4).
+    - Enabling any timer or cron on DigitalOcean.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On 2026-09-20, after the slice-2 closeout (host rebuilt from repo +
+    secrets in 6 min 35 s; deploy, rollback, backup/restore, alerts, and
+    the deploy-user boundary all proven), the owner opened slice 3 and
+    decided: (1) staging hostnames live under a subdomain the team
+    delegates to the company DigitalOcean DNS by NS record —
+    staging.mumate.co → ns1/ns2/ns3.digitalocean.com — so the infra lane
+    manages api/bazi/app.staging.mumate.co itself; the team keeps
+    mumate.co; the team is asked in the same breath whether the owner gets
+    DNS editor rights for the slice-4 flip. Until the delegation lands,
+    nothing that needs a hostname starts. (2) Bazi's source of truth is
+    branch pdf-dev. (3) Droplet size: measure with all three containers up
+    before resizing. (4) BE keeps Supabase session pooling on port 5432 as
+    on Render (a long-running process with its own pool; transaction mode
+    is for serverless clients and is revisited only if connections run
+    out). (5) The owner's own account nonthasak.l@gmail.com is the test
+    identity; real charges on the shadow stack are acceptable to the owner.
+    (6) mootech-ga4-instrumentation-001 also touches mootech-fe; the owner
+    approved parallel execution (that lane is idle until 22 Sep).
+    Findings accepted: Bazi also owns a Neon database and Clerk auth (its
+    Vercel env), which stay where they are — "Supabase single source of
+    truth" is true for MuMate data, and Neon is a recorded provider
+    dependency, not a migration target. Next.js inlines NEXT_PUBLIC_* and
+    NEXTAUTH_URL at build time, so FE and Bazi images are per-target: the
+    push workflow builds a release image from GitHub Environment public
+    variables (staging | production) and tags <sha>-staging or <sha>; the
+    control room accepts the suffix. The owner chose this over changing
+    application code.
+  authorizes:
+    - Slice 3 of plan revision 0.1 as written in the plan, sequenced: (a) FE/Bazi push-capable workflows (mootech-fe#716, bazi#40 merged) and their release-build follow-ups (mootech-fe#717, bazi#41) plus mumate-infra#7; (b) the scheduler audit; (c) shadow env files assembled from the owner's Render/Vercel exports with the agent showing the strip/override list before placement; (d) Caddy hostnames + compose profile full; (e) FE + Bazi up on the host for capacity measurement before hostnames; (f) BE re-pointed at production Supabase with MORNING_CRON_ENABLED=false; (g) DNS records under staging.mumate.co, TLS via Caddy; (h) parity smoke by the owner; (i) rebuilds after each launch-team merge; (j) closeout.
+    - Stripping from the shadow FE env every key that could act on production infrastructure (VERCEL_TOKEN, LAUNCH_DEPLOY_HOOK_URL, LAUNCH_KEY, RENDER_API_KEY) and QSTASH_TOKEN (so a reminder created on the shadow is fired once, by production), and every Vercel/Turbo system variable.
+    - The agent setting the public (non-secret) GitHub Environment variables in mootech-fe and bazi-sft-dataset once the hostnames exist.
+  does_not_authorize:
+    - Any DNS change outside staging.mumate.co; any change to the real domains, Vercel, Render, Supabase, Omise/Beam/LINE provider consoles.
+    - Enabling MORNING_CRON_ENABLED, any mumate-* timer, or any cron path on the host.
+    - Steps (e) and (f) without the agent stopping first and stating why the step cannot collide with the live stack.
+    - Slices 4-5.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: 54751676bd057c09089d2609b66226f9c735c8cf
+    branch: hq/20260917
+    working_tree: this-event-and-plan-state-modified-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mootech-fe: main 0f47b58 (#716 merged); PR #717 open; smoke image ghcr.io/mojisejr/mootech-fe:0f47b58… pushed (not deployable, placeholders inlined)
+    bazi-sft-dataset: pdf-dev 027e1dd (#40 merged); PR #41 open; smoke image ghcr.io/mojisejr/bazi-sft-dataset:027e1dd… pushed (same caveat)
+    mootech-be: main 0705378; live on mumate-2
+    mumate-infra: main cad5f96 (#6 merged); PR #7 open
+  audit:
+    be: "@Cron 06:00 and 09:00 in-process, gated by MORNING_CRON_ENABLED (default off in cronjob.util.ts)"
+    fe: "Vercel crons push-reminders */1, reconcile-payment */15, manifest-morning hourly — Vercel-only, all check CRON_SECRET; QStash one-shot pushes enqueued by POST /api/v2/reminders with callback to the request origin; /api/launch/go|rollback use VERCEL_TOKEN to flip production"
+    bazi: "Vercel crons bazi-alerts 00:00, qi-quota-reset 17:00, account-purge 17:30 — Vercel-only, all check auth; LINE webhook registered at LINE points at production"
+  previous_closeout: memory/events/2026/09/20/20260920T052052_mumate_infra_move_slice2_control_room_closeout.yaml
+  owner_inputs: .assets/mumate/infra-mumate/{mootech-be.env (Render), mootech-fe.env, bazi.env (Vercel production, pulled 2026-09-20)} — git-ignored, 600, never printed
+
+unresolved:
+  - staging.mumate.co delegation (team) and whether the owner gets DNS editor rights for slice 4.
+  - Team Owner destroy of Droplet 601959538 mumate-1-retired-20260920.
+  - OAuth logins (Google/LINE/Facebook/Twitter) on the shadow need the staging callback URL added at each provider — additive, owner/team console work, listed when the hostname exists.
+  - NEXT_PUBLIC_GTM_ID is not a Dockerfile ARG; analytics on the shadow will be unset unless the Dockerfile gains it (launch-team file; not changed here).
+  - Whether the Neon database used by Bazi needs any change at cutover (expected: none — same URL from any host).
+  - mumate-infra bound at ~/ghq, not checkouts/ — deferred by the owner 2026-09-19.
+  - Both DO API tokens expire ~2026-11-19.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: merge mootech-fe#717, bazi#41, mumate-infra#7; chase the NS
+    delegation and the Droplet destroy. Agent: when the delegation lands —
+    create the DO zone staging.mumate.co, A records api/bazi/app →
+    167.99.29.220, set the staging Environment variables in both repos,
+    dispatch release builds (target=staging), Caddyfile + profile full PR,
+    then the stop-and-confirm steps (e) and (f), then the owner's smoke.
+    Every deploy = one CIEL record; the slice closes with all three SHAs
+    and the smoke result.
+  acceptance_check:
+    - Wake reads mumate-infra-move-001 active at revision 0.1 with slice 3 authorized, phase 3 executing, parallelism approved.
