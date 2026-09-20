@@ -1,0 +1,104 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T220956_mumate_infra_move_slice3b_layer_a_live_ops_status_gap_pr10
+type: closeout
+recorded_at: 2026-09-20T22:09:56+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Slice 3b (plan 0.2) checkpoint: PR 9 merged by the owner and applied
+    on mumate-2 with the owner's go - access log with request ids is live,
+    the health timer runs. The DoD alert test found that ops-status
+    treated a stopped fe/bazi as fine, so the timer stayed silent; the
+    one-line fix is PR 10. DO alert policies were found to exist already,
+    bound to the tag mumate, and were renamed.
+  scope:
+    - Host steps of PR 9; layer-A DoD checks; the finding and PR 10; DO alert policy verification.
+  out_of_scope:
+    - Better Stack and Grafana Cloud (owner is signing up), layer B, any application repository.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      PR 9 merged (mumate-infra main 5a5cb40). Host: git pull --ff-only,
+      compose config and caddy validate clean, caddy recreated
+      (--force-recreate --no-deps). The three hostnames answered 200 with
+      an X-Request-Id each; bin/logs.sh --access --since 5m showed exactly
+      those three JSON lines with matching request_id and no Cookie value;
+      :80 /healthz produced no line. ops-status: be/fe/bazi ✅.
+    - >-
+      mumate-health.timer enabled (systemctl enable --now); list-timers
+      shows it firing every 5 minutes; the service runs clean when healthy.
+    - >-
+      DoD "induced 5xx found by request id": with bazi stopped,
+      https://bazi.staging.mumate.co/api/health returned 502 with
+      X-Request-Id f4a9f6e2-…; bin/logs.sh --rid found the Caddy line
+      (status 502, uri /api/health) and --errors --since 2m listed it.
+      bazi restarted and healthy.
+    - >-
+      DoD "stopped container → Discord within 10 min" FAILED and exposed
+      a gap: with bazi stopped, ops-status.sh --json still said ok:true,
+      because slice 2 counted only be as required. The health timer
+      therefore sent nothing. Fix: any service whose *_TAG is configured
+      (not the unset placeholder) is required. Verified from /tmp on the
+      host (healthy → ok:true; bazi stopped → ok:false, exit 1, line ❌),
+      opened as https://github.com/mojisejr/mumate-infra/pull/10 together
+      with a runbook 04 §5 correction. Host files untouched; the timer
+      picks the fix up on its next run after merge + pull.
+    - >-
+      DigitalOcean alert policies: three already exist from slice 2 (CPU
+      > 80 % 5 m, RAM > 85 % 5 m, disk > 80 %) bound to tag mumate, which
+      mumate-2 carries, e-mailing the owner; renamed from "mumate-1 …" to
+      "mumate (tag) …" with the create/update token. Nothing created.
+    - >-
+      Droplet 601959538 (mumate-1) returns 404 and is absent from the
+      droplet list: the Team Owner has destroyed it. Item closed.
+  not_completed:
+    - The Discord alert proof waits for PR 10 merge + pull, then the stop-bazi test is repeated.
+    - Better Stack monitors and the Grafana Cloud account (owner, in progress); layer B PR.
+  evidence_of_limits:
+    - Access-log retention is on the host only (50 MB × 5) until layer B.
+    - The alert path to Discord is proven only at the alert.sh level (slice 2) until the repeated test after PR 10.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: "c072d672d78a988ff684f82921f88110c71b9f3b"
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main 5a5cb40 = host /opt/mumate; PR 10 open (fix/ops-status-required-services, 2 commits)"
+    mootech-fe: "shadow 921f449-staging (churn gate; origin/main 26e237a at last check)"
+    mootech-be: "0705378"
+    bazi-sft-dataset: "shadow 911c87a-staging (churn gate)"
+  host: "mumate-2 602035792, tags mumate,prod; caddy recreated; mumate-health.timer active; be/fe/bazi healthy"
+  digitalocean_alert_policies:
+    - "6e8b102a-64b5-4757-9577-ef04e23efc78 cpu > 80 5m tag mumate"
+    - "c425654a-aa00-442d-91e5-0001fdfc3730 memory > 85 5m tag mumate"
+    - "934f54df-4d08-4314-b71b-66c7a4495bd6 disk > 80 5m tag mumate"
+  authorizing_decision: memory/events/2026/09/20/20260920T214501_mumate_infra_move_plan_0_2_observability_before_flip.yaml
+  previous_record: memory/events/2026/09/20/20260920T220029_mumate_infra_move_slice3b_layer_a_pr9_opened.yaml
+
+unresolved:
+  - PR 10 merge, then the repeated Discord alert test.
+  - Better Stack and Grafana Cloud free-tier limits to confirm at signup (owner).
+  - Vercel Security Checkpoint on the owner's IP for bazichart.mumate.co.
+  - Carried: Facebook/Twitter callbacks, port-22 policy, GITHUB_TOKEN rotation, Vercel bazi missing SUPABASE_* values.
+
+next_action:
+  action: >-
+    Owner merges PR 10; host git pull --ff-only; stop bazi, wait for the
+    timer (≤ 5 min), confirm the Discord message, start bazi - recorded
+    as the layer-A closing check. Then Better Stack monitors on the
+    owner's account and the layer B PR once the Grafana Cloud account
+    exists.
+  acceptance_check:
+    - journalctl -u mumate-health.service shows "[alert:sent]" and the message is visible in Discord within 10 minutes of stopping bazi.
