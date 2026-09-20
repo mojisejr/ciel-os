@@ -1,0 +1,93 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T144757_mumate_infra_move_slice3_staging_dns_delegated_and_zone_created
+type: closeout
+recorded_at: 2026-09-20T14:47:57+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Slice 3, hostname step: the team delegated staging.mumate.co to
+    DigitalOcean DNS and, with the owner's go, the agent created the zone
+    and the three staging A records. Records the DO resource touch and the
+    verified resolution so the next steps (release builds, Caddy) can cite
+    it.
+  scope:
+    - Verify the team's NS delegation at the parent nameserver.
+    - Create the DO zone staging.mumate.co in project mumate-prod; add A records api, bazi, app → 167.99.29.220.
+    - Verify public resolution.
+  out_of_scope:
+    - Any record outside staging.mumate.co; any Caddy, env, or deploy change (next steps, each with its own record).
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Team (Namecheap, zone mumate.co): three NS records host "staging" →
+      ns1/ns2/ns3.digitalocean.com, TTL 60 min. Verified at the parent
+      (dns1.registrar-servers.com answers the delegation); mumate.co itself
+      untouched. Screenshot from the owner 2026-09-20 10:52.
+    - >-
+      DigitalOcean (Team mumate, context mumate-ops): zone staging.mumate.co
+      created (SOA/NS TTL 1800), assigned to project mumate-prod
+      50147b8b-95ef-420d-ab1d-82719180a0ef; A records api 1832812777, bazi
+      1832812778, app 1832812779 → 167.99.29.220, TTL 300 (short on purpose
+      while slice 3 iterates).
+    - >-
+      Resolution verified within 20 s from 1.1.1.1 and 8.8.8.8 for all three
+      names, and directly from ns1.digitalocean.com. The host answers
+      http://api.staging.mumate.co/healthz 200 and / 404 — the slice-2
+      Caddyfile, no hostname mapping, no TLS yet.
+    - >-
+      Public build values read from the Vercel production exports (shapes
+      only): FE production NEXTAUTH_URL is https://bazichart.mumate.co, BE
+      URL https://mootech-be.onrender.com, Bazi URL
+      https://bazi-sft-dataset.vercel.app; NEXT_PUBLIC_ENABLE_CHAT=false;
+      HOST and NEXT_PUBLIC_WHATIF_API_URL empty; Bazi's Clerk publishable
+      key is a pk_test_ key in production; NEXT_PUBLIC_LIFF_ID unset.
+  not_completed:
+    - Staging Environment variables and release builds (next).
+    - Caddyfile hostnames + TLS (next, via PR).
+  evidence_of_limits:
+    - The DO token could create the zone and records (domain scope confirmed by a 404-not-403 probe on 2026-09-20); no delete was needed or available.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 4c1f8225a34f76c30e5e228bd0c5d5129946e830
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  digitalocean:
+    zone: staging.mumate.co (project mumate-prod)
+    records: [api 1832812777, bazi 1832812778, app 1832812779 → 167.99.29.220 TTL 300]
+    host: mumate-2 602035792 / reserved 167.99.29.220
+  application:
+    mumate-infra: main b294752; host /opt/mumate b294752; be 0705378 healthy
+    mootech-fe: main 6c8837b
+    bazi-sft-dataset: pdf-dev 60c05f0
+  authorizing_decision: memory/events/2026/09/20/20260920T081119_mumate_infra_move_slice3_authorized.yaml
+
+unresolved:
+  - Team Owner destroy of Droplet 601959538 still pending.
+  - Whether the owner gets DNS editor rights at Namecheap for the slice-4 flip (asked with the delegation).
+  - Owner ISP address churn (three addresses in two days; port-22 policy undecided).
+  - Everything carried in the slice-3 decision record.
+
+next_action:
+  action: >-
+    Set the GitHub Environment "staging" variables in mootech-fe
+    (NEXTAUTH_URL=https://app.staging.mumate.co, HOST=app.staging.mumate.co,
+    NEXT_PUBLIC_BACKEND_URL=https://api.staging.mumate.co, the Omise/VAPID
+    public keys as in production, NEXT_PUBLIC_ENABLE_CHAT=false) and in
+    bazi-sft-dataset (the Clerk publishable key as in production), dispatch
+    container-build with push=true target=staging on main / pdf-dev, verify
+    the <sha>-staging images pull; then the Caddyfile PR.
+  acceptance_check:
+    - dig +short A api.staging.mumate.co @1.1.1.1 → 167.99.29.220 (same for bazi, app).
+    - doctl --context mumate-read compute domain records list staging.mumate.co shows the three A records.
