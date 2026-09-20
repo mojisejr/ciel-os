@@ -1,0 +1,91 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T165751_mumate_infra_move_slice3_cors_fix_applied_owner_smoke_next
+type: closeout
+recorded_at: 2026-09-20T16:57:51+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Slice 3 checkpoint: with the owner's go (given directly in this
+    session), the shadow BE now accepts the staging FE origin, so the
+    browser can mint MEMBER_ID against api.staging.mumate.co. The owner
+    has registered LINE as well as Google callbacks and will run the
+    smoke by hand; nothing else was changed.
+  scope:
+    - The CORS_ORIGINS change on the shadow BE and its verification.
+  out_of_scope:
+    - Caddy access logging PR, the remaining parity smoke items, any change to production, Vercel, Render, or Supabase.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Owner said go for the CORS fix only, having registered the LINE and
+      Google OAuth callbacks on the shadow; the owner will run the smoke
+      themselves. Baseline re-verified first: preflight with Origin
+      https://app.staging.mumate.co against https://api.staging.mumate.co/
+      returned 204 without access-control-allow-origin.
+    - >-
+      On host mumate-2 (/opt/mumate at mumate-infra c864827): env/be.env
+      backed up to env/be.env.bak-20260920-cors, CORS_ORIGINS changed
+      from https://bazichart.mumate.co to
+      https://bazichart.mumate.co,https://app.staging.mumate.co (BE splits
+      on commas, mootech-be src/main.ts), BE recreated with
+      docker compose up -d --force-recreate --no-deps be; same image
+      0705378d884114a4fd0e73aed59656638f335fdc, healthy within the first
+      poll; the container reports the new value.
+    - >-
+      Acceptance check 1 of the previous record passed: the same preflight
+      now returns access-control-allow-origin: https://app.staging.mumate.co;
+      the production origin https://bazichart.mumate.co is still allowed;
+      a foreign origin gets no allow-origin header. bin/ops-status.sh:
+      be/fe/bazi configured = running = /health SHA, all healthy; caddy
+      ok; timers none.
+  not_completed:
+    - Acceptance check 2 (the owner reaches the /v2 home on the shadow after login) is the owner's own smoke, not yet reported.
+    - Caddy access log PR, the rest of the parity smoke.
+  evidence_of_limits:
+    - This is a shadow-only deviation from the Render value, like NEXTAUTH_URL; it reverts naturally when the real domain flips in slice 4. It is not in mumate-infra because env files are owner-held, not repository files.
+    - Twitter and Facebook callbacks remain unregistered on the shadow.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: "2a708dc024efc21a31c60b037a4110c8ab6875b0"
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mootech-fe: "shadow image 921f449…-staging (= Vercel production SHA)"
+    mootech-be: "shadow image 0705378 on Supabase, CORS_ORIGINS now production + staging origin"
+    bazi-sft-dataset: shadow image 911c87a…-staging
+    mumate-infra: main c864827; host /opt/mumate c864827
+  hostnames: app/api/bazi.staging.mumate.co over HTTPS, all healthy
+  authorizing_decision: memory/events/2026/09/20/20260920T081119_mumate_infra_move_slice3_authorized.yaml
+  previous_record: memory/events/2026/09/20/20260920T164938_mumate_infra_move_slice3_first_smoke_login_blocked_by_cors.yaml
+  commands:
+    - "curl -X OPTIONS -H 'Origin: https://app.staging.mumate.co' -H 'Access-Control-Request-Method: POST' https://api.staging.mumate.co/ → access-control-allow-origin: https://app.staging.mumate.co"
+    - "ssh mumate 'docker exec mumate-be-1 sh -c \"echo $CORS_ORIGINS\"' → https://bazichart.mumate.co,https://app.staging.mumate.co"
+
+unresolved:
+  - Owner's smoke result on /v2 (Google and LINE login, MEMBER_ID minted, v2 home renders).
+  - Caddy access logging (PR pending).
+  - OAuth callbacks for Facebook / Twitter on the shadow.
+  - Everything carried in the previous record and the slice-3 decision record.
+
+next_action:
+  action: >-
+    The owner runs the smoke on https://app.staging.mumate.co (Google and
+    LINE login, /v2 home) and reports the result in this session. On
+    success, continue the parity smoke item by item with one CIEL record
+    per smoke session and open the Caddy access-log PR; on failure,
+    diagnose from the FE and BE container logs before changing anything
+    else.
+  acceptance_check:
+    - The owner reaches the /v2 home on the shadow after login with Google, and again with LINE.
