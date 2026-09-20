@@ -1,0 +1,111 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T231650_mumate_infra_move_slice3b_alloy_live_grafana_provisioned
+type: closeout
+recorded_at: 2026-09-20T23:16:50+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Slice 3b (plan 0.2) checkpoint: PR 11 merged and alloy is live on
+    mumate-2 shipping redacted logs and host metrics to Grafana Cloud;
+    the owner chose route ก (service-account token) and the Grafana-side
+    objects were created from the repository definitions, except the
+    synthetic checks, which the plugin API refuses for a service account
+    and the owner creates in the UI.
+  scope:
+    - alloy start on the host; Grafana contact point, policy, folder, alert rules via API; SM initialization by the owner.
+  out_of_scope:
+    - Synthetic checks (owner, UI), the DoD checks that need the owner's screen, any application repository.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      PR 11 merged (mumate-infra main 0518128); host pulled; .env gained
+      MUMATE_HOST=mumate-2, MUMATE_ENV=staging; docker compose --profile
+      full up -d alloy; /-/ready "Alloy is ready."; ops-status "alloy:
+      ready", be/fe/bazi ✅; memory 1063/3915 MB used, 2852 MB available
+      (DoD ≥ 2 GB free ✅). Within two minutes alloy had read 1616 docker
+      entries and sent 788 to Loki with 0 dropped by Loki (the difference
+      is the on-host redaction) and 178 samples to Prometheus; no 401/429.
+      Only warning: udev directory absent in the container (disk label
+      metadata only).
+    - >-
+      Owner confirmed lines in Explore ({host="mumate-2"}) - screenshot
+      shows alloy's own startup lines with the correct labels.
+    - >-
+      Owner created service account mumate-infra (Admin) with a 1-year
+      token and put it, plus the Discord webhook URL, in the git-ignored
+      .assets file; the agent used both through environment variables
+      without printing them. Verified: /api/org ok, role Admin, Grafana
+      13.3.0; datasources grafanacloud-logs (Loki) and grafanacloud-prom
+      (Prometheus).
+    - >-
+      Created via API with X-Disable-Provenance (editable in the UI):
+      contact point discord-infra (type discord); default notification
+      policy → discord-infra, group_by alertname+service, wait 30s,
+      interval 5m, repeat 4h; folder mumate; alert rules
+      mumate-5xx-burst (warning, for 5m), mumate-log-silence (critical,
+      NoData → Alerting), mumate-host-disk (< 15 % free, 10m),
+      mumate-host-mem (< 10 % available, 10m); both groups at 1-minute
+      evaluation. Grafana's receiver-test endpoint returns 410 on 13.3,
+      so the webhook was verified by a direct 204 post and the message
+      appeared in Discord; the real alert path is proven by the DoD test.
+    - >-
+      Owner initialized Synthetic Monitoring (plugin settings show apiHost,
+      stackId, publisherToken). The plugin's resource API returns 500 for
+      the service-account token on every path tried, so the three HTTP
+      checks are created by the owner in the UI from
+      observability/grafana/synthetic-checks.json (Singapore + Tokyo, 3
+      min, labels service/env, sensitivity high).
+  not_completed:
+    - Synthetic checks (owner, UI) and the DoD checks that need the owner's screen: induced 502 by request_id within a minute; {service="be"} |= "email:" empty in Loki; stop bazi → Discord from Grafana and from the health timer.
+    - Slice-3b closing record after those.
+  evidence_of_limits:
+    - The write-only alloy token and the plugin API behaviour mean the agent cannot read Loki or SM state; verification of those items is by the owner's screen.
+    - alloy's own log is shipped too (labelled service=alloy); acceptable volume, filter with service!="alloy" when reading.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: "ffc51e5655c7676fbd730e48517404374b883a96"
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main 0518128 = host /opt/mumate (PR 9, 10, 11 merged)"
+    mootech-fe: "shadow 921f449-staging (churn gate)"
+    mootech-be: "0705378"
+    bazi-sft-dataset: "shadow 911c87a-staging (churn gate)"
+  host: "mumate-2: be/fe/bazi/caddy/alloy up; alloy grafana/alloy:v1.10.0; 2852 MB available"
+  grafana:
+    stack: https://patientspringbok701.grafana.net
+    contact_point: discord-infra
+    folder: mumate
+    alert_rules: [mumate-5xx-burst, mumate-log-silence, mumate-host-disk, mumate-host-mem]
+    service_account: "mumate-infra (Admin), token owner-held, 1-year expiry"
+  authorizing_decision: memory/events/2026/09/20/20260920T214501_mumate_infra_move_plan_0_2_observability_before_flip.yaml
+  previous_record: memory/events/2026/09/20/20260920T225458_mumate_infra_move_slice3b_layer_b_pr11_opened_alloy_env_placed.yaml
+
+unresolved:
+  - Synthetic checks in the UI (owner), then the remaining DoD checks.
+  - Token expiry dates (alloy write token, service-account token) to be noted beside the DO tokens.
+  - Vercel Security Checkpoint on the owner's IP for bazichart.mumate.co.
+  - Carried: Facebook/Twitter callbacks, port-22 policy, GITHUB_TOKEN rotation, Vercel bazi missing SUPABASE_* values.
+
+next_action:
+  action: >-
+    Owner creates the three synthetic checks in the UI; then the DoD
+    session: agent induces a 502 and hands the request_id to the owner
+    for Explore; owner runs the BE e-mail query; agent stops bazi for
+    about four minutes and both Discord routes are observed; then the
+    slice-3b closing record and the return to the plan's 3c churn gate.
+  acceptance_check:
+    - The three checks show Up from both probes.
+    - The four DoD 3b items in PLAN.md revision 0.2 are quoted with their evidence in the closing record.
