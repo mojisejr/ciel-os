@@ -3,7 +3,7 @@
 **Workstream:** `cu12-simulator-sprint-004`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -102,6 +102,39 @@ application's gateway exists (after `smc-v2-app-001` slice 1).
   observed as a client timeout, not as a delay.
 - The checks above pass; README and the evidence note describe the faults
   as tester-provoked.
+
+### 3. Command-targeted faults (revision 0.2)
+
+**Why.** On 2026-09-20 the owner ran SMC v2 against slice 2 and typed
+`ask 11` before an Unlock; the application's status poll, sent every two
+seconds, consumed the fault first (`02 00 00 80 11 00 03 96` in the
+application's system log at 15:30:29Z). Against a polling application,
+"the next request" can never be the Unlock by hand. Slice 2 stands as
+specified; this slice adds the missing aim.
+
+**Deliverable**
+
+- An optional last word on `drop` and `ask` naming the command the fault
+  waits for: `status` (Get Status `0x80`), `unlock` (`0x81`) or `version`
+  (`0x8F`) — `ask 11 unlock`, `drop 3 unlock`, `drop 5 status`. Without
+  it, the fault is consumed by the next answered request as in slice 2.
+- A targeted fault lets requests for other commands pass untouched and is
+  consumed by the first request of its command; faults stay in one queue
+  in the order typed, and a request takes the first pending fault that
+  applies to it. `show` prints the target beside each fault.
+- README and `docs/protocol-evidence.md` gain the form and the reason.
+
+**Acceptance**
+
+- Over TCP: with `ask 11 unlock` queued, three Get Status requests are
+  answered normally, then the first Unlock gets the literal `0x11` frame
+  and moves no hook; with `drop 2 unlock`, two Unlocks are client timeouts
+  while status reads between them are answered; with `drop 1 status`, an
+  Unlock passes and the next status read times out. On macOS the unlock
+  case repeats through the PTY.
+- Slice-2 forms and every earlier test pass unchanged; `cargo fmt
+  --check`, `cargo test`, `cargo clippy --all-targets -- -D warnings`
+  pass; no dependency added.
 
 ## Boundaries and delivery
 

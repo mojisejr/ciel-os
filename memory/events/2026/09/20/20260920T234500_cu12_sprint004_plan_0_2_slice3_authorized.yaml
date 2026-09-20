@@ -1,0 +1,78 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T234500_cu12_sprint004_plan_0_2_slice3_authorized
+type: decision
+recorded_at: 2026-09-20T23:45:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-004
+  lane: single
+  objective: >-
+    Faults an application must survive, provoked from the tester's
+    terminal. This decision revises the plan to 0.2 with a third slice -
+    command-targeted faults - because slice 2's "next request" cannot
+    reach an Unlock while the application polls.
+  scope:
+    - Revise plan 0.1 to 0.2 - add slice 3, an optional command word on drop and ask (status, unlock, version).
+    - Authorize slice 3 of revision 0.2.
+  out_of_scope:
+    - Any change to slice-2 semantics without the word; any new opcode; smc-v2 changes.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner ran the desktop against the merged simulator following the
+    session's steps and, at step 1, typed "ask 11" then registered an HN.
+    The application's Get Status poll consumed the fault first - system
+    log 2026-09-20T15:30:29Z "cu12 board refused ask=failed operation
+    (0x11) rx=02 00 00 80 11 00 03 96", "poll failed" - and the Unlock
+    never met it; the dialog's "ประตูช่องนี้ยังเปิดอยู่" was the fresh
+    fixture (02 00, only hook 2 closed), not a fault. The agent explained
+    that slice 2 works as specified but cannot aim at an Unlock by hand
+    against a two-second poll, proposed a command word on drop and ask,
+    and recommended a plan revision over a new workstream because the
+    sprint's objective - faults the application must survive, from the
+    terminal - is what this completes. The owner asked "เปิด workstream
+    ใหม่ด้วยมั๊ย", took the recommendation, and said "โอเค ลุยได้ครับ".
+    The application itself survived the failed poll: one warning, polling
+    resumed - noted for smc-v2-app-001's record.
+  authorizes:
+    - Slice 3 of plan revision 0.2 - drop <n> [status|unlock|version] and ask <hex> [status|unlock|version], show with targets, tests over TCP and the macOS PTY, README and evidence note, on a draft pull request in cu12-simulator from main 7037547.
+  does_not_authorize:
+    - Anything in smc-v2; any hardware claim.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-004/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: "fb02290"
+    branch: hq/20260917
+    working_tree: plan-revision-and-this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "7037547"
+    branch: main
+    working_tree: clean-equal-to-origin
+  application_observation:
+    repository: smc-v2
+    head: "78dfbf3"
+    system_log: /tmp/smc-dev/logs/smc.log.2026-09-20 at 15:30:29Z (development data directory, not tracked)
+  preceding_records:
+    - memory/events/2026/09/20/20260920T230000_cu12_sprint004_slice2_merged_workstream_closed.yaml
+
+unresolved:
+  - The owner's steps 2 (physics off, no-pop warning) and 3 (drop 20, board lost) can run on slice 2 as merged; step 1 (unlock refused) waits for this slice.
+  - After a simulator restart every hook but 2 reads open; the tester closes the slot in use with hook N locked before registering. A close-all convenience is not in scope.
+
+next_action:
+  action: >-
+    Branch feat/fault-targets from cu12-simulator main 7037547; add the
+    target to Fault, the parser, the device match and show; tests over
+    TCP and the PTY; docs; fmt, test, clippy; draft pull request 4;
+    closeout on its head; ready for the owner.
+  acceptance_check:
+    - Wake lists cu12-simulator-sprint-004 at revision 0.2 with slice 3 authorized by this record.
