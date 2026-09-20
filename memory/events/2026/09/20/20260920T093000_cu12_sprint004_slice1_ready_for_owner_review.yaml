@@ -1,0 +1,102 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T093000_cu12_sprint004_slice1_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-20T09:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-004
+  lane: single
+  objective: >-
+    Opt-in door physics so SMC v2 can be developed against the simulator
+    without typing every door pop by hand.
+  scope:
+    - Close slice 1 of plan revision 0.1 on the draft pull request that carries it.
+  out_of_scope:
+    - Slice 2 (faults and trace); any hardware-fidelity claim.
+
+outcome:
+  status: slice-closed
+  completed:
+    - >-
+      Simulator commit 82a9749 on feat/door-physics from main 6f0594b,
+      pushed, draft pull request 2 opened with the CIEL template. With
+      CU12_SIM_PHYSICS=door a hook reads unlocked once the unlocking time
+      (550 ms default, CU12_SIM_UNLOCK_MS to change) has passed after the
+      Unlock ACK naming it; unlock-all pops all twelve; the ACK itself
+      moves nothing; closing stays the tester's "hook N locked". Unset,
+      nothing changes.
+    - >-
+      src/device.rs: DoorPhysics, VirtualCu12::with_door_physics, a timer
+      thread per Unlock clearing the named hook(s) through the existing
+      atomic HookState. src/main.rs: the two variables, an invalid value
+      refused at start, a stderr line announcing the mode.
+    - >-
+      tests/door_physics.rs: device-level tests (ACK moves nothing and the
+      hook pops after the time; unlock-all pops every door and an
+      already-open hook stays open; no physics leaves hooks exactly as
+      before) and two separate-process TCP scenarios through an
+      independent client with literal vectors - the door pops and the
+      tester closes it, fixture hook 2 untouched throughout; the default
+      process never moves a hook. Bounded polling, no fixed sleep as
+      synchronisation.
+    - >-
+      README section "Door physics, opt-in" and an evidence-note section
+      naming the model as the owner's recollection of 2026-09-18, not a
+      measurement, and recording the owner's confirmation that the
+      twelve-hook mapping matches the cabinet in use.
+    - >-
+      Checks at 82a9749 on macOS: cargo fmt --check, cargo test (20 passed:
+      15 existing, 5 new), cargo clippy --all-targets -- -D warnings, git
+      diff --check. No dependency added.
+  departures:
+    - >-
+      The PTY scenario the plan mentions is covered over TCP instead, which
+      runs on every platform; the PTY transport shares the same device
+      and stream loop and its own regression tests are unchanged. A PTY
+      variant would repeat the same bytes through a different pipe.
+  boundaries:
+    - No opcode, framing or checksum change; no fault injection; no trace.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-004/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  authorized_by: memory/events/2026/09/20/20260920T085600_cu12_sprint004_slice1_authorized.yaml
+  repository:
+    head: b249a44
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    base: 6f0594b3d0099c6df5e20dcd5ce2ad55bf1fec10
+    head: 82a9749
+    branch: feat/door-physics
+    pull_request:
+      number: 2
+      url: https://github.com/mojisejr/cu12-simulator/pull/2
+      base: main
+      state: draft-until-this-closeout-is-committed
+    checks:
+      - cargo fmt --check
+      - cargo test (20 passed)
+      - cargo clippy --all-targets -- -D warnings
+      - git diff --check
+  owner_observation: none yet; the owner is away and has not run the mode.
+
+unresolved:
+  - The model is a recollection; real hardware may show the hook staying set while the door is open, in which case the mode and the SMC v2 state machine both change.
+  - 550 ms is the manual's software default; the hardware page says 500 ms. Neither is claimed.
+
+next_action:
+  action: >-
+    Mark pull request 2 ready for review; the owner reviews and merges it,
+    then the checkout returns to a clean main equal to origin/main and the
+    topic branch is removed. Slice 2 waits for smc-v2-app-001 slice 1 to
+    show which faults the gateway must survive.
+  acceptance_check:
+    - Pull request 2's head is 82a9749 when the owner reads it.
+    - After the merge, origin/main contains 82a9749 and the local checkout is clean on it.
