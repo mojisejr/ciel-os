@@ -1,0 +1,90 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T174500_smc_v2_app_slice3_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-20T17:45:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only; this
+    closeout delivers slice 3 of plan revision 0.2 - DESIGN.md captured from
+    the legacy source - for the owner's review.
+  scope:
+    - DESIGN.md at the root of smc-v2, on feat/design-capture, as draft pull request 4.
+  out_of_scope:
+    - Any UI code; the owner's answers to the deviations; slices 4 and 6 and the UI half of 5.
+
+outcome:
+  status: ready-for-owner-review
+  completed:
+    - >-
+      Three read-only surveys of the legacy renderer at
+      /Users/non/dev/smc/smc-app 7116171 (shell and theme; dialogs and
+      journeys; settings, logs and models) returned the structure with
+      Tailwind and DaisyUI class strings, literal colours, Thai strings
+      and file:line references. Nothing was run there and nothing written.
+    - >-
+      smc-v2 DESIGN.md, 768 lines, commit 2848052 on feat/design-capture
+      (parent ce03acd = main), pushed; draft pull request 4 open, head
+      2848052. Sections: how the document is used, who uses it, seven
+      principles, window, colour tokens with computed contrast, type,
+      space and shape, motion, the shell, components, every screen and
+      dialog with its copy, user flows including door-did-not-pop,
+      door-left-open, restart and board loss, twenty-four numbered
+      deviations with a default of yes, eight non-negotiable rules, open
+      questions.
+    - >-
+      Contrast findings that became deviations: the legacy's #5495F6 for
+      HN text reaches 2.8:1 on the card and its #00FF55 lock icon 1.3:1;
+      DESIGN.md moves that text to #2563EB (4.8:1) and the icon to
+      #15803D while keeping the legacy's red-empty, green-loaded meaning
+      with a state word beside each icon.
+  not_completed:
+    - The owner's reading and the yes/no on each deviation.
+  boundaries:
+    - No screenshots exist; the design is judged by the owner from the document and, later, from the running slice-4 build against the simulator.
+    - Nothing here has run on Windows or touched real hardware.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: "2e28128"
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "2848052"
+    branch: feat/design-capture
+    base: "ce03acd"
+    pull_request: https://github.com/mojisejr/smc-v2/pull/4
+    working_tree: clean-equal-to-origin
+    files_changed:
+      - DESIGN.md
+  legacy_source:
+    path: /Users/non/dev/smc/smc-app
+    revision: "7116171"
+    read_only: true
+  preceding_records:
+    - memory/events/2026/09/20/20260920T170000_smc_v2_app_slice3_revised_and_authorized.yaml
+
+unresolved:
+  - Deviations 3, 4, 5, 6, 7, 9, 10, 20-24 are the agent's proposals, not yet the owner's word; they default to yes in the table.
+  - Open questions in DESIGN.md - expiry in UTC or local, operator name on the open-door card, the SMC fallback mark, the physical door-label order, HN scan on the home screen.
+  - Slice 4 needs trunk installed; Prompt must be bundled (OFL) - both slice-4 tasks.
+
+next_action:
+  action: >-
+    The owner reads DESIGN.md on pull request 4, edits the Owner column of
+    the deviation table and anything else directly on the branch, marks
+    the pull request ready and merges it. Then a decision authorizing
+    slice 4 of revision 0.2 (Tauri 2 shell and Leptos screens against the
+    merged DESIGN.md), with trunk installed first.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 active at revision 0.2 with this closeout as the latest event and smc-v2 bound at ce03acd on main with feat/design-capture ahead by one.
