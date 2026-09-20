@@ -1,0 +1,106 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T225458_mumate_infra_move_slice3b_layer_b_pr11_opened_alloy_env_placed
+type: closeout
+recorded_at: 2026-09-20T22:54:58+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Slice 3b (plan 0.2) checkpoint: the owner created the Grafana Cloud
+    stack and the write token; the agent verified both endpoints, placed
+    env/alloy.env on the host at the owner's request, and opened
+    mumate-infra pull request 11 with layer B. Nothing runs yet.
+  scope:
+    - Grafana Cloud stack facts, token verification, env/alloy.env placement, PR 11.
+  out_of_scope:
+    - Starting alloy on the host (after merge, owner go), Grafana-side objects, any application repository.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Grafana Cloud free stack patientspringbok701.grafana.net, region
+      ap-southeast-1 (Prometheus prometheus-prod-37-prod-ap-southeast-1
+      instance 3598780; Loki logs-prod-020 instance 1795061). Access
+      policy token (glc_, scopes logs:write + metrics:write per the
+      owner) handled through the owner's git-ignored .assets file without
+      printing its value; the first Loki attempt with the "<stack>-logs"
+      name returned 401, the numeric instance id returns 204; Prometheus
+      returns 400 on an empty body (auth accepted).
+    - >-
+      env/alloy.env written on mumate-2 (owner's explicit request, steps
+      8-9 of the owner's instructions), chmod 600, five variables; both
+      pushes re-verified from the host. LOKI_USER_ID added to the owner's
+      .assets copy for their record.
+    - >-
+      PR 11 opened, https://github.com/mojisejr/mumate-infra/pull/11,
+      branch infra/observability-layer-b: alloy/config.alloy (docker
+      discovery limited to the mumate project → labels service/host/env →
+      redaction → Loki; bounded node-exporter → Prometheus; alloy fmt and
+      validate clean on v1.10.0), compose service alloy (profiles full +
+      obs, socket and /proc /sys / read-only, 256 MB, readiness on
+      loopback), env/alloy.env.example, .env MUMATE_HOST/MUMATE_ENV,
+      ops-status alloy line, observability/grafana/ (contact point +
+      policy, 3 synthetic checks, 4 alert rules), runbook 04 §7, README.
+    - >-
+      Redaction proven offline before the PR (fake be and caddy containers
+      → the same loki.process stages → loki.echo): BE object-dump lines
+      (name, email, tel, id_token) and lone braces dropped; e-mail and
+      Thai mobile masked inside a Nest line; caddy JSON passed intact. A
+      24-hour profile of the real BE log had 772 such dump lines with keys
+      name, email, tel, dob, gender, picture_url, refer_code, id_token.
+    - >-
+      Better Stack has no Discord integration (official integrations
+      list); recorded in the previous event, runbook §6 corrected in PR
+      10; uptime → Discord comes from Grafana Synthetic Monitoring.
+  not_completed:
+    - Host start of alloy and the Grafana-side objects (after merge, owner go).
+    - The owner's choice for creating Grafana-side objects: service-account token + repo definitions (recommended) or UI by hand.
+    - DoD 3b checks that need Grafana.
+  evidence_of_limits:
+    - The agent cannot read Loki (token is write-only by design); DoD verification in Grafana is done through the owner's screen or a read-scoped token the owner may add later.
+    - Alloy reads the docker socket (read-only mount, but the Docker API itself is not restricted by the mount flag); accepted for a first-party Grafana image, noted in compose.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: "934b9f73800c12e516246745a0b350d5d791ec56"
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main 65c9676 = host; PR 11 open (infra/observability-layer-b, 1 commit)"
+    mootech-fe: "shadow 921f449-staging (churn gate)"
+    mootech-be: "0705378"
+    bazi-sft-dataset: "shadow 911c87a-staging (churn gate)"
+  grafana_cloud:
+    stack: https://patientspringbok701.grafana.net
+    region: ap-southeast-1
+    loki: "https://logs-prod-020.grafana.net instance 1795061"
+    prometheus: "https://prometheus-prod-37-prod-ap-southeast-1.grafana.net instance 3598780"
+    token: "access policy, logs:write + metrics:write, owner-held; expiry per the owner"
+  authorizing_decision: memory/events/2026/09/20/20260920T214501_mumate_infra_move_plan_0_2_observability_before_flip.yaml
+  previous_record: memory/events/2026/09/20/20260920T222621_mumate_infra_move_slice3b_layer_a_complete.yaml
+
+unresolved:
+  - Owner's choice ก (service-account token) / ข (UI) for the Grafana-side objects.
+  - Token expiry date for mumate-alloy-write to be noted beside the DO tokens (~2026-11-19).
+  - Vercel Security Checkpoint on the owner's IP for bazichart.mumate.co.
+  - Carried: Facebook/Twitter callbacks, port-22 policy, GITHUB_TOKEN rotation, Vercel bazi missing SUPABASE_* values.
+
+next_action:
+  action: >-
+    Owner reviews and merges PR 11; with the owner's go: .env gets
+    MUMATE_HOST/MUMATE_ENV, docker compose --profile full up -d alloy,
+    readiness and ops-status checked, first lines confirmed in the
+    owner's Grafana Explore; then the Grafana-side objects from
+    observability/grafana/ by the owner's chosen route; then the DoD 3b
+    checks and the slice-3b closing record.
+  acceptance_check:
+    - ops-status shows alloy: ready; the owner sees {host="mumate-2"} lines in Explore within a minute of start.
