@@ -3,7 +3,7 @@
 **Workstream:** `smc-v2-app-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -65,9 +65,15 @@ owner decided:
   on every screen** — the patient and the treatment come first, the money
   is settled afterwards. A clock turned backwards is detected by
   remembering the last time seen.
-- **The UI is the legacy UI, identically,** colours and all, captured into
-  `DESIGN.md` first so no time goes to design; only what breaks a best
-  practice is corrected, each correction listed for the owner.
+- **The UI keeps the legacy UI's shape** ("ทรงเดิม", the owner's word on
+  2026-09-20): the same shell, palette, type, grid, screens and Thai
+  strings, captured into `DESIGN.md` from the legacy source so no time goes
+  to design; what breaks a best practice or fights the polling model is
+  corrected, each correction a numbered deviation the owner accepts or
+  declines. Revision 0.1 said "identically, colours and all" and captured
+  from screenshots; revision 0.2 captures from source because the legacy
+  application cannot be run on the owner's Mac without the hardware and the
+  setup it wants (owner, 2026-09-20).
 - **Stack.** Rust throughout because the owner wants to learn it: Tauri 2 for
   the desktop shell and the backend (gateway, workflow, SQLite via sqlx,
   license, logs), Leptos (client-side) with the legacy's Tailwind and
@@ -201,24 +207,47 @@ exists, an owner-reviewed pull request in `smc-v2`.
 - A restart mid-transition ends in a state the owner can explain from the
   `actions` rows alone.
 
-### 3. Design capture — `DESIGN.md` from the legacy screens
+### 3. Design capture — `DESIGN.md` from the legacy source
 
 **Deliverable**
 
-- Run the legacy application on the owner's Mac (test-mode license);
-  screenshot every screen and dialog at the target resolution into the
-  owner-controlled `.assets/smc-v2/legacy-screens/` (not tracked).
-- `DESIGN.md` in `smc-v2`: palette (`#F9FFFF`, `#F3F3F3`, `#615858`, the
-  DaisyUI theme), type, the twelve-slot grid, the navbar, each dialog
-  (input slot, dispense, lock wait, clear or continue, reset, auth, new
-  user), the settings tabs, the logs page — as they are.
-- A numbered list of every deviation from best practice with its fix,
-  for the owner to accept or decline one by one before slice 4.
+- Read the legacy renderer at `/Users/non/dev/smc/smc-app` (`7116171`,
+  read-only): `tailwind.config.js`, `globals.css`, `_document.tsx`, the
+  pages, the shared shell, the slot components, every dialog, the settings
+  tabs, the logs page, the Electron window size. No run, no screenshot, no
+  write into the legacy checkout.
+- `DESIGN.md` at the root of `smc-v2`, in the shape of the DAC2 design
+  document: the owner edits it, an agent implementing a UI slice follows
+  it; prose in English, every user-facing string in Thai verbatim. It
+  records: the window; the shell (left column with logo and vertical menu,
+  right panel `#F3F3F3` with the 50 px left radius); the palette
+  (`#F3F3F3`, `#F6F6F6`, `#615858`, `#5495F6`, `#F9324A`, the DaisyUI
+  `light` tokens) and Prompt self-hosted; the 4 × 3 slot grid and the card
+  in its states; each dialog with its fields, buttons and copy; the admin
+  tabs; the logs page; the activation screen and the expired banner from
+  slice 5.
+- A numbered list of every deviation from the legacy, each with what the
+  legacy does, what changes, why, and a default answer of **yes** that the
+  owner flips to **no** where the legacy is to be kept. The owner settled
+  the following on 2026-09-20 and they are written as accepted: the card
+  shows four live states from the poller (ว่าง, มียา, ประตูเปิด with a
+  timer, ปิดใช้งาน) with a word beside the colour; the wait dialogs close
+  on the hook observation and have no ตกลง button, with a ยกเลิก only when
+  the door did not pop; the emergency `!` leaves the wait dialogs and lives
+  in the admin slot tab; the reset button on an occupied card stays but
+  asks for an admin PIN and a reason; the logs page is open to everyone
+  with a date-range filter and its CSV export asks for an admin PIN, xlsx
+  cut; admin has four tabs — ช่องยา, ผู้ใช้งาน, การเชื่อมต่อ, ข้อมูลและ
+  ใบอนุญาต — with the broken "all slots" buttons cut, a confirmation
+  before deleting a user, and an admin able to change their own PIN.
+- Delivered as an owner-reviewed pull request in `smc-v2` holding only
+  `DESIGN.md`.
 
 **Acceptance**
 
-- The owner reads `DESIGN.md` beside the screenshots and confirms
-  "เหมือนเดิม"; each deviation carries the owner's yes or no.
+- The owner reads `DESIGN.md` and confirms "ทรงเดิม"; every deviation
+  carries yes (the default) or the owner's no; the pull request is merged
+  before slice 4 starts.
 
 ### 4. The desktop — Tauri 2 and Leptos, identical to legacy
 
