@@ -1,0 +1,101 @@
+schema_version: ciel.event.v0.1
+id: evt_20260921T093000_smc_v2_app_macos_closure_research
+type: closeout
+recorded_at: 2026-09-21T09:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only.
+    This record hands over the morning's research and the proposal that
+    the owner asked for - finish every platform-independent problem on
+    macOS first, so the Windows slice meets only Windows problems - ahead
+    of the HQ round pull request. Nothing is decided by it.
+  scope:
+    - Record what was researched and proposed on 2026-09-21 morning, so a fresh session resumes from Wake alone.
+  out_of_scope:
+    - Any code; any plan revision - that waits for the owner's decision.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Research, 2026-09-21 morning. (1) The application already retries a
+      board that never opened (crates/app/src/lib.rs, RECONNECT_EVERY 5 s)
+      but a transport that dies after opening is never reopened - the
+      gateway thread keeps the dead socket; the fix belongs in
+      crates/cu12/src/gateway.rs and is testable on the Mac by killing and
+      restarting the simulator. (2) cargo check --target
+      x86_64-pc-windows-msvc from this Mac passes for cu12 (COM via
+      serialport), license (MachineGuid from the registry) and workflow;
+      store, ops, cabinet, api and app stop only at libsqlite3-sys, which
+      needs the Windows C toolchain - so the Windows-only code paths
+      type-check before any Windows machine is touched. (3) Screen
+      functions the owner has never exercised, all platform-independent:
+      CSV export, the ส่งข้อมูลให้ช่าง zip, backup now and the folder
+      picker, user delete confirmation, an admin changing their own PIN,
+      the emergency ! unlock, reset of an occupied card with admin PIN and
+      reason, disabling a slot, the clock-suspect banner, a wrong-machine
+      or tampered license, restart with a door open, the บันทึก page while
+      the board is down, and a real USB barcode scanner into the dialogs
+      (Enter in the HN field focuses the PIN field). (4) DESIGN.md open
+      questions still needing the owner - expiry UTC or local, HN scan on
+      the home screen, operator name on the open-door card, the SMC
+      fallback mark (needed before Windows), and whether the expired
+      banner may be dismissed for a shift; door-label order needs the
+      real cabinet.
+    - >-
+      Proposal put to the owner, not yet decided - plan revision 0.4
+      inserting before Windows: 6a robustness (gateway reopen with tests;
+      restart with a door open reconciles), 6b Windows cross-check as a
+      script (cargo check and clippy on the Windows target for the crates
+      that can), 6c design decisions applied to DESIGN.md and the UI, 6d an
+      owner walkthrough of every function in (3) on the Mac with fixes in
+      the same slice; then Windows as slice 7 holding only MSVC and the
+      SQLite C build, COM with a real adapter, MachineGuid, %ProgramData%
+      permissions, WebView2 and fonts, the .msi, window state, the
+      simulator built on Windows, and DPI. Production keygen and real
+      hardware stay outside.
+  not_completed:
+    - The owner's decision on plan 0.4; every slice named above.
+  boundaries:
+    - No code was changed this morning; the Windows-target check was run read-only.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "4a1a759"
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "78dfbf3"
+    branch: main
+    working_tree: clean-equal-to-origin
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/21/20260921T003500_smc_v2_app_fault_paths_observed_by_owner.yaml
+
+unresolved:
+  - The gateway never reopens a dead transport (from the 003500 record).
+  - Slice 6 waits for the owner's Windows machine; production keygen before the first sale.
+
+next_action:
+  action: >-
+    The owner decides on plan revision 0.4 (6a-6d before Windows) or
+    names what to cut; the agent then records the revision and its first
+    decision and starts 6a, which needs nobody at the machine. Until then
+    the workstream stands at revision 0.3 with slices 1-5 delivered.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 active at revision 0.3 with this record as its latest event and the 0.4 proposal in it.
