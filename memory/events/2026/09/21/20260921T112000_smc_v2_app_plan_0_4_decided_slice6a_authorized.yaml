@@ -1,0 +1,95 @@
+schema_version: ciel.event.v0.1
+id: evt_20260921T112000_smc_v2_app_plan_0_4_decided_slice6a_authorized
+type: decision
+recorded_at: 2026-09-21T11:20:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    decision adopts plan revision 0.4 - the proposal's 6a to 6d on the Mac
+    before Windows, numbered slices 6 to 9 in the plan with Windows as
+    slice 10 - answers the five DESIGN.md open questions, and authorizes
+    slice 6 (6a).
+  scope:
+    - Revise plan 0.3 to 0.4 as proposed in the 093000 record, unchanged.
+    - Record the owner's five answers for slice 6c.
+    - Authorize slice 6 (the proposal's 6a).
+  out_of_scope:
+    - Slices 7-10 (6b, 6c, 6d, Windows) - each gets its own decision or is started under the owner's standing direction and recorded when it starts.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner, present and speaking directly on 2026-09-21 late morning,
+    read the plan-0.4 walkthrough (6a gateway reopen and restart with a door
+    open; 6b Windows cross-check script; 6c the DESIGN.md questions with the
+    agent's lean on each; 6d owner walkthrough of every function never
+    exercised; Windows as slice 7 holding only Windows problems) and said
+    "รับ 0.4 ทั้งชุด เลยครับลุยๆ". On 6c the owner answered "123 ตามคุณว่า,
+    4 logo ผมอยากได้ logo เดิมเลยครับที่ตัวเก่าใช้ คุณไปหามา, 5 เอาตามคุณ" -
+    so 1 expiry is judged in local time with one day of grace; 2 no HN scan
+    on the home screen; 3 the operator's name goes on the ประตูเปิด card;
+    4 the default mark is the legacy's own logo, which the agent located
+    read-only in the legacy renderer at
+    renderer/public/images/deprecision.png (PNG 1280x1280, shown at 86x85
+    on home, logs, management, about, document and error pages; the other
+    file, logo.png, is a Windows icon resource) - a file in the data
+    directory still overrides it per deviation 23; 5 the expired banner may
+    be dismissed for one shift of 8 hours, returning after that and on
+    every start, load refused throughout. PLAN.md carries the five answers
+    under slice 8 (6c) and the door-label order stays open until the real
+    cabinet. CIEL numbers slices as integers, so the proposal's 6a-6d are
+    slices 6-9 and Windows is slice 10; the headings keep the proposal
+    names.
+  authorizes:
+    - Slice 6 (6a) of plan revision 0.4 - the gateway reopens a dead transport, with a spawned-simulator kill-and-restart test through one Gateway handle; restart with a door open walked on the desktop; on a topic branch of smc-v2 from main 78dfbf3 as a draft pull request. Nobody needs to be at the machine.
+  does_not_authorize:
+    - Slice 10 (Windows) - waits for the owner's machine.
+    - Writing into the legacy checkout; the logo is copied out of it, the checkout is not touched.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "240b649"
+    branch: hq/20260921
+    working_tree: plan-revision-and-this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "78dfbf3"
+    branch: main
+    working_tree: clean-equal-to-origin
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  legacy_source:
+    path: /Users/non/dev/smc/smc-app
+    revision: "7116171"
+    read_only: true
+    files_read: renderer/pages/home.tsx:100-110, renderer/public/images/deprecision.png, renderer/public/images/logo.png (file type only)
+  preceding_records:
+    - memory/events/2026/09/21/20260921T093000_smc_v2_app_macos_closure_research.yaml
+    - memory/events/2026/09/21/20260921T003500_smc_v2_app_fault_paths_observed_by_owner.yaml
+
+unresolved:
+  - Door-label order on the physical cabinet - needs the real cabinet.
+  - Production keygen before the first sale; real hardware may change the state machine.
+
+next_action:
+  action: >-
+    Branch feat/gateway-reopen from smc-v2 main 78dfbf3; make the gateway
+    thread keep its endpoint and reopen after a non-timeout I/O error with a
+    short back-off; add the kill-and-restart simulator test; walk restart
+    with a door open on the built desktop against the simulator; open the
+    draft pull request; record the slice-6 closeout on its head.
+  acceptance_check:
+    - Wake lists smc-v2-app-001 as active at revision 0.4, execution phase 6, with this record as its latest event.
