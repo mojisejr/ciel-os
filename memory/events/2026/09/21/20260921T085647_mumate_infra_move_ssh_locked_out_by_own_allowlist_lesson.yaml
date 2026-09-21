@@ -1,0 +1,95 @@
+schema_version: ciel.event.v0.1
+id: evt_20260921T085647_mumate_infra_move_ssh_locked_out_by_own_allowlist_lesson
+type: closeout
+recorded_at: 2026-09-21T08:56:47+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Morning record (2026-09-21): the agent could not reach mumate-2 over
+    SSH; the shadow itself was healthy. Cause: the DigitalOcean cloud
+    firewall from slice 2 allows port 22 only from three fixed addresses
+    and the owner's home address changed overnight. Fixed with the
+    owner's go by updating the rule; recorded as experience per the
+    owner's request, with the durable options for step 6 of today's plan.
+  scope:
+    - The lock-out, its diagnosis, the rule change, overnight evidence from the new observability.
+  out_of_scope:
+    - Step 3c rebuild (separate go), the durable port-22 policy decision.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Symptom 08:4x +07:00: ssh mumate timed out on 167.99.29.220 while
+      https app/api/bazi.staging.mumate.co answered 200 (~250 ms) and
+      :80/healthz 200 on the same address, and doctl showed the droplet
+      active - so not an outage, a network-path problem to port 22 only.
+    - >-
+      Cause: cloud firewall mumate-web (dc94f372-…) inbound tcp/22 =
+      101.109.13.197/32, 101.109.54.71/32, 223.204.231.197/32; the last
+      is the owner's home address of 2026-09-20 (visible as client_ip in
+      yesterday's access log); this morning the ISP had moved it to
+      223.204.241.131. The firewall did exactly what slice 2 asked.
+    - >-
+      Fix with the owner's go: doctl compute firewall add-rules
+      tcp/22 223.204.241.131/32, remove-rules tcp/22 223.204.231.197/32
+      (create/update token, no delete scope needed); ssh ok within
+      seconds; uptime 1 day 3 h 43 m; ops-status three ✅, caddy ok,
+      alloy ready, 1147/3915 MB.
+    - >-
+      Overnight evidence (first night with the observability base): 0
+      5xx on real paths in 10 h; 106 scanner probes on dotfile paths
+      answered 404 by Caddy; health timer sent 0 alerts since the DoD
+      test; alloy 8851 lines sent, 0 dropped; fail2ban active.
+  not_completed:
+    - The durable port-22 policy - two options for the owner in today's plan step 6: (a) open 22 to the world with key-only auth + fail2ban (already present), or (b) keep the allowlist and add bin/ssh-allow.sh that puts the current address into the rule via doctl before each session; the agent leans (b) because the shadow becomes production.
+    - The two other allowlisted addresses (101.109.13.197, 101.109.54.71) are not identified in the records; the owner confirms whether they are still needed.
+  evidence_of_limits:
+    - Any morning may start like this until the durable option is chosen; the workaround costs one doctl command and a go.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: "2cdc6b3f6b24ea8a7f0038655111c32fec203759"
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main ebc71c5 = host /opt/mumate"
+    mootech-fe: "shadow 921f449-staging; origin/main 7b42d14 quiet since 2026-09-20 22:04"
+    mootech-be: "0705378"
+    bazi-sft-dataset: "shadow 911c87a-staging; origin/pdf-dev 9e44873 quiet since 2026-09-20 21:28"
+  digitalocean:
+    firewall: "mumate-web dc94f372-bc32-4a18-a55f-fdbb2d13df2d; tcp/22 now 101.109.13.197/32, 101.109.54.71/32, 223.204.241.131/32; 80/443 open"
+    droplet: "mumate-2 602035792 active, reserved 167.99.29.220, direct 165.22.50.201"
+  lesson: >-
+    An address allowlist on the management port and a residential
+    connection do not mix without a self-service update path; the
+    control room must be able to let its own operator back in through
+    the same repository-and-token route it uses for everything else, or
+    the policy should be key-only plus fail2ban. Diagnose by separating
+    "service down" from "my path down": public health routes, the
+    provider's droplet status, then the firewall rules - in that order,
+    before touching anything.
+  authorizing_decision: memory/events/2026/09/20/20260920T214501_mumate_infra_move_plan_0_2_observability_before_flip.yaml
+  previous_record: memory/events/2026/09/20/20260920T235246_mumate_infra_move_slice3b_pr12_applied_handoff_to_3c.yaml
+
+unresolved:
+  - Durable port-22 policy (owner decision, plan step 6 today).
+  - Identity of the two other allowlisted addresses.
+  - Carried: SM per-check alerts, token expiry notes, Facebook/Twitter callbacks, GITHUB_TOKEN rotation, Vercel bazi missing SUPABASE_* values, payment test webhook from the team, Vercel Security Checkpoint on the owner's IP.
+
+next_action:
+  action: >-
+    Awaiting the owner's go for step 3c (rebuild the shadow while the
+    churn gate is open: fe quiet > 10 h, bazi > 11 h, be unchanged), then
+    the remaining parity smoke per PLAN.md 0.2 and the slice-3 closeout.
+  acceptance_check:
+    - 3c starts only on the owner's word and only while the two-hour quiet condition still holds at that moment.
