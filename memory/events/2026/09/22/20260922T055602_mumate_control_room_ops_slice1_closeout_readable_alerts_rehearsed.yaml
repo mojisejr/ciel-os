@@ -1,0 +1,136 @@
+schema_version: ciel.event.v0.1
+id: evt_20260922T055602_mumate_control_room_ops_slice1_closeout_readable_alerts_rehearsed
+type: closeout
+recorded_at: 2026-09-22T05:56:02+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-control-room-ops-001
+  lane: single
+  objective: >-
+    Slice 1 closeout: an alert a person reads in three seconds, on Discord and
+    on the phone, from both the host's health timer and Grafana; one ops page;
+    the owner's runbook; the token register; and the agent reading the same
+    incident through the Grafana API. Proven by two induced outages of bazi on
+    the shadow with the owner watching Discord and the phone.
+  scope:
+    - Every DoD 1 item in PLAN.md revision 0.1, with what passed, what was found, and what was fixed live.
+    - The two findings that go to PR 14 (routing lesson, log-silence rule) and the one limit accepted (Better Stack push is paid).
+  out_of_scope:
+    - Slice 2 (Tailscale, public port 22), slice 3 (watcher), slice 4 (Beszel, backup proof) - each needs its own decision.
+    - Applying PR 14's rule and template in the Grafana UI (owner, after merge).
+
+outcome:
+  status: slice-complete-pr-merged-followup-pr-open
+  completed:
+    - >-
+      mumate-infra PR 13 merged by the owner (main df5e0ca) and applied on
+      mumate-2 with the owner's go: git pull, dry run of health-notify.sh
+      with a throwaway state file ("healthy"), bridge under systemd verified
+      (empty stdout, exit 0), first real timer tick 22:12:04Z logged "healthy"
+      through the new path; the raw-JSON fallback never fired again.
+    - >-
+      Owner's UI work verified through the API with the Viewer token: per-check
+      alerts on all three synthetic checks (ProbeFailedExecutionsTooHigh 2 of 2
+      in 5 min, TLS < 14 d); runbook_url on all four mumate rules; dashboard
+      "mumate ops" (uid mumate-ops) imported; Discord contact point title and
+      message from contact-points.yaml saved (the first save had not taken -
+      Test does not save - caught by the API check and redone).
+    - >-
+      Phone push: the Grafana mobile app signed in to the stack; IRM
+      integration mumate-alerting, escalation chain mumate-owner (notify the
+      owner), IRM notification rules Mobile push / Mobile push important;
+      Test from the contact point and a demo alert both rang the phone.
+    - >-
+      Rehearsal 1 (bazi stopped 22:13:21Z, started 22:27:37Z): Synthetic alert
+      firing 22:15:50Z, phone rang 22:19Z; timer 🔴 "mumate-2 · bazi ล่ม" at
+      22:17:18Z with one line per failing service, the raw ops-status line in
+      a code block, the still-healthy services, host summary, since-when, and
+      the first command in the footer; ticks at 22:22 and 22:27 silent ("still
+      DOWN - next reminder in 24/19 min"); timer 🟢 "กลับมาปกติแล้ว (ล่ม 15 นาที)"
+      at 22:32:37Z; Synthetic resolved 22:31:50Z; the owner read both Discord
+      messages without help and saw bazi DOWN on the dashboard from the phone.
+      Grafana's own Discord message was missing - see finding 1.
+    - >-
+      Finding 1, fixed live by the owner: the child route "alertname =~ .+ ->
+      mumate-irm (continue)" that the agent had prescribed replaced the parent
+      receiver, so Grafana alerts reached the phone but Discord showed "No
+      delivery attempts". Fix: Grafana IRM added as a second integration on
+      discord-infra, child route deleted (API: default receiver discord-infra,
+      routes []). The agent's routing instruction was wrong; continue affects
+      siblings, not the parent.
+    - >-
+      Rehearsal 2 (bazi stopped 22:44:22Z, started 22:48:40Z): Synthetic
+      firing 22:46Z with receiver discord-infra - Discord message from Grafana
+      in the new template (title, "→ runbook", "ดูใน Grafana") and phone push,
+      confirmed by the owner; timer 🔴 22:48:24Z; timer 🟢 22:53:29Z ("ล่ม 5
+      นาที"); Synthetic resolved 22:55Z. All three channels from both sources.
+    - >-
+      Viewer token in env/grafana-read.env on the Mac (from the owner's
+      assets file, never printed): reads /api/user, active alerts, rule state,
+      contact points and policies, and Loki through /api/ds/query - used for
+      every verification above instead of ssh reads.
+    - >-
+      mumate-infra draft PR 14 (839aca9, infra/alerting-followups): definitions
+      match the stack (one contact point, no child route), log-silence rule
+      re-scoped to host silence, Discord title red when no severity label.
+  not_completed:
+    - Better Stack push notifications are a paid feature; Better Stack stays email-only. The phone is covered by Grafana IRM (one push channel, not two).
+    - PR 14's rule and template changes are not yet in the stack (owner applies in the UI after review).
+    - Expiry dates in env/README.md are still blank.
+  evidence_of_limits:
+    - >-
+      Finding 2: the rule "mumate log silence" as written (per service, < 1
+      line in 15 min) can never fire for one silent service - a silent service
+      returns no series - and would be wrong anyway: over 24 h fe wrote 0
+      lines, be 25, bazi 24, caddy 15,786. Container death is detected by the
+      health timer (4-5 min) and the synthetic probes (3 min); the rule is
+      re-scoped in PR 14 to "nothing from the host for 15 min".
+    - The health timer's message reaches Discord only; the phone is reached through Grafana (synthetic and log/host rules). A host-side incident that Grafana cannot see (for example alloy down) reaches the phone only via the DigitalOcean e-mail policies.
+    - Synthetic per-check alerts carry no severity label; until PR 14's title template is applied they render orange, not red.
+    - The unit file on mumate-2 is still the pre-slice-1 one; the bridge in ops-status.sh provides the behaviour. Replacing it needs root (slice 2).
+
+evidence:
+  plan: workstreams/mumate-control-room-ops-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "23ce074ccf35ee57db118bef39ef8c49717903ef"
+    branch: hq/20260921
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main df5e0ca (PR 13 merged) = host /opt/mumate; PR 14 draft https://github.com/mojisejr/mumate-infra/pull/14 head 839aca9"
+  grafana_stack:
+    contact_points: "discord-infra = discord + oncall (IRM integration mumate-alerting); mumate-irm (oncall) unused; policy tree: receiver discord-infra, routes []"
+    rules: "ProbeFailedExecutionsTooHigh [5m], TLSTargetCertificateCloseToExpiring, mumate 5xx burst, mumate log silence, mumate host disk, mumate host memory - all with runbook_url except the two SM rules (UI fields)"
+    dashboard: "mumate ops, uid mumate-ops"
+    state_history_rehearsal_1: "ProbeFailedExecutionsTooHigh Normal->Alerting 22:15:50Z, ->Normal 22:31:50Z; SyntheticCheckFailedExecutionsBreach 22:17:40Z->22:33:40Z"
+  host_journal:
+    rehearsal_1: "22:17:18Z [alert:sent] 🔴 mumate-2 · bazi ล่ม; 22:22:34Z still DOWN next reminder 24 min; 22:27:36Z still DOWN 19 min; 22:32:37Z [alert:sent] 🟢 กลับมาปกติแล้ว (ล่ม 15 นาที)"
+    rehearsal_2: "22:48:24Z [alert:sent] 🔴 mumate-2 · bazi ล่ม; 22:53:29Z [alert:sent] 🟢 (recovered after 5 min)"
+  owner_observations:
+    - "Discord: 🔴 05:17 and 🟢 05:32 (+07) from the timer, read without help (screenshot in chat); Grafana's message absent in rehearsal 1, present at 05:46 in rehearsal 2"
+    - "Phone: rang 05:19 (rehearsal 1) and again in rehearsal 2"
+    - "Dashboard on the phone showed bazi DOWN during the outage"
+  authorizing_decision: memory/events/2026/09/21/20260921T111554_mumate_control_room_ops_workstream_opened_slice1_authorized.yaml
+  previous_record: memory/events/2026/09/21/20260921T113128_mumate_control_room_ops_slice1_pr13_opened_readable_alerts.yaml
+
+unresolved:
+  - PR 14 review and merge; then the owner applies the title template and the host-log-silence rule in the UI; the agent verifies through the API.
+  - Expiry dates in env/README.md (owner).
+  - Slice 2 decision: Tailscale ACL and auth key, DO console root password, break-glass proof, then the port-22 rule removal - including the two unidentified addresses.
+  - Carried: backup proof on mumate-2 and Droplet Backups (slice 4); server-side watcher and application-side observability (after the flip); migration-lane items (3c go, payment test webhook, Facebook/Twitter callbacks, GITHUB_TOKEN rotation, Vercel bazi SUPABASE_* values, Vercel Security Checkpoint).
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner reviews PR 14 and decides slice 2 (Tailscale). With that decision:
+    ACL and tagged auth key from the owner, install on mumate-2 while public
+    22 stays open, prove SSH over the tailnet from the Mac and the phone,
+    prove both break-glass routes, then remove the three port-22 entries.
+  acceptance_check:
+    - Wake lists mumate-control-room-ops-001 with slice 1 closed and no validation error; the migration lane unchanged at 0.2.
+    - PR 14 merged and applied before slice 2 changes the firewall, so the phone route and the rule are settled first.
