@@ -1,0 +1,97 @@
+schema_version: ciel.event.v0.1
+id: evt_20260921T113128_mumate_control_room_ops_slice1_pr13_opened_readable_alerts
+type: closeout
+recorded_at: 2026-09-21T11:31:28+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-control-room-ops-001
+  lane: single
+  objective: >-
+    Slice 1 checkpoint: the repository side of "alerts a human reads in three
+    seconds" is on mumate-infra pull request 13 for the owner's review.
+    Nothing on the host, in Grafana, or in Discord changed; the first real
+    Discord post is the apply step after merge.
+  scope:
+    - What PR 13 contains, what was tested locally and what was not, the one design compromise (timer bridge) and why.
+    - The owner's UI steps and the Viewer token that the rehearsal needs.
+  out_of_scope:
+    - Applying on the host, the Grafana UI changes, the rehearsal (DoD 1) - after merge with the owner's go.
+    - Slices 2-4.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      mumate-infra PR 13 (draft) at 2824688 on branch infra/readable-alerts:
+      bin/health-notify.sh (new; posts on state change only - red once,
+      red again when the failing set changes, orange every 30 min while
+      broken, green on recovery with outage length; state in
+      /var/tmp/mumate-health.state; exit 0 always), bin/alert.sh with
+      --embed (colour by level, fields, footer; plain mode unchanged for
+      deploy/rollback/backup), Grafana contact-point template (severity
+      emoji, runbook_url, Grafana link) and runbook_url on all four rules,
+      dashboard-mumate-ops.json (8 panels), runbooks/00-owner-3-minutes.md,
+      token and expiry register in env/README.md, runbook 04 and README
+      updated, synthetic-checks.json notes the per-check alerting the owner
+      turns on in the UI.
+    - >-
+      Tested locally: bash -n on every script; docker compose config -q and
+      caddy validate (the pre-push checks); the state machine against a stub
+      ops-status through all six transitions; the timer bridge (under
+      INVOCATION_ID ops-status hands over with empty stdout and exit 0; the
+      child call does not recurse); plain-mode alert text with quotes.
+    - >-
+      Local checkout returned to main (= origin/main ebc71c5); the topic
+      branch is pushed.
+  not_completed:
+    - Discord rendering of the embed and the Grafana template are unverified until applied (webhook and UI are owner-held).
+    - The host still runs the pre-slice-1 unit file; the bridge in ops-status.sh gives the new behaviour without root. Replacing the unit waits for slice 2's break-glass.
+  evidence_of_limits:
+    - >-
+      Design compromise: the deploy user cannot write /etc/systemd (sudo is
+      systemctl and journalctl only), so ops-status.sh --json under systemd
+      execs health-notify.sh instead of changing the unit. It is a documented
+      bridge (runbook 04 section 3) to remove once a host runs the repo's unit.
+    - >-
+      Correction to the morning's gap list: deploy.sh and rollback.sh already
+      post success lines to Discord (deploy ok / rollback ok); that gap was
+      wrong. reboot-required and fail2ban in ops-status remain for slice 4.
+    - The harness classifier still refuses read-only ssh to mumate-2 in this session; the apply step will be attempted with the narrowest commands and reported either way.
+
+evidence:
+  plan: workstreams/mumate-control-room-ops-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: "240b6494e58219f4d9793397b7ad8f754a1e7458"
+    branch: hq/20260921
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main ebc71c5 = host /opt/mumate; PR 13 draft https://github.com/mojisejr/mumate-infra/pull/13 head 2824688 (infra/readable-alerts)"
+  authorizing_decision: memory/events/2026/09/21/20260921T111554_mumate_control_room_ops_workstream_opened_slice1_authorized.yaml
+  local_tests:
+    - "bash -n bin/*.sh; BE_TAG=0000000 FE_TAG=0000000 BAZI_TAG=0000000 docker compose config -q; caddy validate (caddy:2.10.0-alpine) - all pass"
+    - "stub ops-status in the scratchpad: ok -> bazi down (red once) -> still down (silent) -> be+bazi+caddy+alloy (red, changed) -> after REPEAT (orange) -> ok (green, 'recovered after N min')"
+    - "INVOCATION_ID=abc ops-status.sh --json -> stdout empty, stderr 'healthy', rc 0; MUMATE_HEALTH_CHILD=1 -> normal JSON path"
+
+unresolved:
+  - Owner UI steps before the rehearsal: contact point title/message and runbook_url annotations applied (or PUT via the provisioning API); dashboard imported; per-check alert + SSL expiry on the three synthetic checks; Grafana IRM and Better Stack apps with push; service account mumate-reader (Viewer) token in env/grafana-read.env on the Mac.
+  - Expiry dates in env/README.md are blank until the owner fills them.
+  - Whether "mumate ops" already existed in the stack - the import will show.
+  - Carried: two unidentified port-22 addresses (slice 2); backup proof on mumate-2 (slice 4); server-side watcher and application-side observability (after the flip); migration-lane items (Facebook/Twitter callbacks, GITHUB_TOKEN rotation, Vercel bazi SUPABASE_* values, payment test webhook, Vercel Security Checkpoint).
+
+next_action:
+  action: >-
+    Owner reviews and merges PR 13; with the owner's go: git pull on
+    mumate-2, dry-run health-notify.sh with a throwaway state file, confirm
+    the next timer tick logs "healthy"; owner does the Grafana UI steps and
+    the phone apps; then the DoD-1 rehearsal (stop bazi, watch Discord and
+    the phone, start bazi, watch for green, no repeat inside 30 min) and the
+    slice-1 closeout.
+  acceptance_check:
+    - PR 13 merged; journalctl -u mumate-health.service shows "healthy" from health-notify.sh; no raw-JSON Discord message appears again.
+    - DoD 1 as written in PLAN.md.
