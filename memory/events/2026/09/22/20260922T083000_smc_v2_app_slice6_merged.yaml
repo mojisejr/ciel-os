@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20260922T083000_smc_v2_app_slice6_merged
+type: closeout
+recorded_at: 2026-09-22T08:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. Slice
+    6 (6a) is merged; this record closes it and syncs the checkout.
+  scope:
+    - Record the merge of smc-v2 pull request 6 and the checkout back on main.
+  out_of_scope:
+    - Slices 7-10.
+
+outcome:
+  status: merged
+  completed:
+    - >-
+      The owner merged smc-v2 pull request 6 (feat/gateway-reopen 043ac99)
+      into main as 8c68e8d at 2026-09-21T21:56:19Z and said so on the
+      morning of 2026-09-22 ("อรุณสวัสดิ์ merged แล้วครับ"). The checkout was
+      fetched, switched to main, fast-forwarded to 8c68e8d, and the topic
+      branch deleted locally; working tree clean, equal to origin.
+    - >-
+      Slice 6 stands delivered as recorded in the 20260921T121500 closeout:
+      gateway reopen through the same handle, the restart-with-door-open
+      scenario, and the wait dialog reopened after a restart (DESIGN.md
+      deviation 25), all walked by the owner on the built desktop.
+  not_completed:
+    - Slices 7-10.
+  boundaries:
+    - Nothing changed in smc-v2 by this record.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "04dd863"
+    branch: hq/20260921
+    working_tree: this-event-and-the-slice-7-decision-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "8c68e8d"
+    branch: main
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/smc-v2/pull/6
+    merged_at: "2026-09-21T21:56:19Z"
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/21/20260921T121500_smc_v2_app_slice6_ready_for_owner_review.yaml
+
+unresolved:
+  - The no-pop and left-open warn flags are not persisted by the tick, so a restart re-records the warning once (noted in pull request 6); the owner has not asked for a change.
+  - Door-label order on the physical cabinet; production keygen before the first sale; real hardware may change the state machine.
+
+next_action:
+  action: >-
+    Slice 7 (6b, the Windows cross-check script) starts under the owner's
+    standing direction, recorded in the decision of the same commit.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 with slice 6 merged and this record among its events.
