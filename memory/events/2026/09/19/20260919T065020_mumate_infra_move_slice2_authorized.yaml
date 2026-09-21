@@ -1,0 +1,100 @@
+schema_version: ciel.event.v0.1
+id: evt_20260919T065020_mumate_infra_move_slice2_authorized
+type: decision
+recorded_at: 2026-09-19T06:50:20+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Build a DigitalOcean replacement that matches the FE + BE + Bazi system
+    launched by the product team, keeps Supabase as the single source of truth,
+    and moves the real domains under an owner-controlled maintenance window.
+    Slice 2: the control room can create, deploy, fail, restore, and report,
+    dogfooded with BE, with no production, DNS, or scheduler change.
+  scope:
+    - Authorize slice 2 of plan revision 0.1 and record the owner's answers to the slice-2 decisions.
+    - Record the operating arrangement the owner chose for the agent as the lane's DevOps operator inside CIEL.
+  out_of_scope:
+    - Any DNS, hostname, scheduler, production environment, or provider-cancellation change (slices 3-5).
+    - The Bazi source-of-truth branch, final hostnames, and the pre-launch Droplet size (slice 3).
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On 2026-09-19, after slice 1 closed and its three PRs reached production,
+    the owner opened slice 2 and decided: (1) the control room lives in the
+    private repository mojisejr/mumate-infra (created empty by the owner);
+    every change goes through a pull request merged by the owner, never a
+    direct push — GitHub Free offers no branch protection on a private
+    repository, so the same .githooks/pre-push guard the application repos
+    use enforces this on the machine, and CIEL's merge-is-an-owner-action rule
+    covers the rest. (2) The agent operates DigitalOcean on the owner's behalf
+    through doctl with two owner-created tokens in the company Team context:
+    mumate-agent-read (read only) and mumate-agent-ops (create/read/update on
+    droplet, firewall, reserved_ip, ssh_key, tag, project, monitoring, image;
+    no delete scope). Deletion, billing, membership, Spaces object keys, DNS,
+    and every secret value stay with the owner. The owner decides in chat, the
+    agent operates, records each resource touch as a closeout, and objects
+    (and waits) on new cost, irreversibility, production data, user exposure,
+    or unclear authority. (3) Alerts go to the owner's existing Discord, a
+    channel of the owner's choosing, via a webhook placed in the server env by
+    the owner. (4) Spaces bucket mumate-backups (sgp1, ~$5/month) is approved
+    for this slice because the backup/restore proof needs an off-host target.
+    (5) Defaults accepted unless the owner objects: GHCR images public (the
+    three repositories are already public; the Droplet pulls without a token);
+    Droplet s-2vcpu-4gb in sgp1, Ubuntu 24.04, weekly backups, Reserved IP,
+    Cloud Firewall (22 from the owner's address only, 80, 443).
+  authorizes:
+    - Slice 2 of plan revision 0.1 as written in the plan, sequenced as the eleven steps the agent laid out in chat (repository seed, BE image to GHCR by SHA via the existing manual workflow, Droplet + firewall + Reserved IP, owner-placed env, first deploy, backup to Spaces and restore into a disposable database, deliberate failed deploy with automatic rollback, alert proof, deploy-user permission proof, host reconstruction, closeout).
+    - Registering projects/mumate-infra in CIEL once the repository has its first commit.
+    - One small mootech-be pull request extending container-build.yml to push ghcr.io/mojisejr/mootech-be:<sha> on manual dispatch.
+  does_not_authorize:
+    - Deleting any DigitalOcean resource (Team Owner action).
+    - Any DNS record, public hostname serving users, enabled scheduler, production environment, Vercel or Render change.
+    - Storing a secret value in any repository, event, or response.
+    - Slices 3-5.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: 86b6153d5d86723ff99af37c93ee30bb2afb5ca1
+    branch: hq/20260917
+    working_tree: shared-standing-branch-own-paths-only
+  external_record:
+    - https://github.com/mojisejr/mootech-fe/issues/637 (sections 6, 8, 9 carry the control-room design this slice implements)
+    - https://github.com/mojisejr/mumate-infra (private, empty at decision time)
+  prior_records:
+    - memory/events/2026/09/19/20260919T053427_mumate_infra_move_slice1_container_parity_closeout.yaml
+    - memory/events/2026/09/19/20260919T060828_mumate_infra_move_slice1_merged_to_production.yaml
+  observed_state:
+    doctl: 1.168.0 on the owner's machine, only the default context, no Team token yet
+    application_merged_revisions:
+      mootech-be: 7e609c6 (Render live)
+      mootech-fe: b4c34fd
+      bazi-sft-dataset: 5a501b2 (pdf-dev)
+
+unresolved:
+  - Whether the owner's DigitalOcean role (Modifier) can complete step 10 (destroy and recreate the host) without the Team Owner; if not, the step records snapshot/recreate or stays unresolved.
+  - Token scopes are set by the owner in the DO console; the agent verifies with `doctl account get` before creating anything and reports the first refusal instead of working around it.
+  - The agent's harness may refuse an outward-write command; the recorded fallback is one pasteable line for the owner, never a workaround.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner creates the two tokens and runs doctl auth init for contexts
+    mumate-read and mumate-ops. Agent, in parallel: seed mumate-infra on a
+    topic branch (compose, Caddyfile, bin scripts with --dry-run, systemd units
+    disabled by default, cloud-init, env examples, pre-push guard, three Thai
+    runbooks), open the first PR, and prepare the mootech-be workflow PR. No
+    DigitalOcean resource is created before `doctl account get` names the
+    company Team and this decision is committed.
+  acceptance_check:
+    - Wake lists mumate-infra-move-001 active at revision 0.1 with slice 2 authorized and no validation error.
+    - No DigitalOcean resource, DNS record, or production setting changes in this decision.

@@ -1,0 +1,109 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T222621_mumate_infra_move_slice3b_layer_a_complete
+type: closeout
+recorded_at: 2026-09-20T22:26:21+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Slice 3b (plan 0.2), layer A complete: every on-host and free
+    outside-check item of the observability base is live on mumate-2 and
+    each DoD check for layer A passed, including the Discord alert from
+    the real timer path after the ops-status fix. Layer B (Grafana Cloud)
+    is next; the owner is creating the account.
+  scope:
+    - PR 10 merged and applied; the repeated alert test; Better Stack monitors; the Discord finding about Better Stack.
+  out_of_scope:
+    - Layer B (Alloy → Grafana Cloud, Discord contact point, synthetic monitoring), any application repository.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      PR 10 merged (mumate-infra main 65c9676): ops-status requires every
+      service with a configured tag; runbook 04 §5 (DO alert policies
+      exist, tag-bound) and §6 (Better Stack alerts by e-mail). Host
+      pulled; ops-status ok:true with everything up.
+    - >-
+      DoD "stopped container → alert within 10 minutes", real path: bazi
+      stopped 15:23:13 UTC; the timer's natural run at 15:25:12 UTC logged
+      "[alert:sent] 🚨 ops-status unhealthy: {ok:false … bazi … (not
+      running) ❌}" - Discord reached about two minutes after the stop.
+      bazi started again, healthy, ops-status three ✅.
+    - >-
+      Better Stack (owner's account, free tier, e-mail to the owner):
+      three monitors mumate FE/BE/Bazi staging on the three health routes,
+      3-minute interval, all Up. The new access log shows the probes
+      (User-Agent "Better Stack Better Uptime Bot", nine source IPs, 200
+      on all three hostnames) - both the monitor and the log proven at
+      once.
+    - >-
+      Finding, corrected in runbook 04 before it misled anyone: Better
+      Stack has no Discord integration (official integrations list:
+      Slack, Teams, e-mail, webhooks, Grafana, …). Uptime-to-Discord moves
+      to Grafana Cloud Synthetic Monitoring in layer B (free tier 100k
+      API test executions/month; three checks every three minutes ≈ 43k),
+      using the same Discord contact point as the log alerts. Result: two
+      independent outside checkers (Better Stack → e-mail, Grafana →
+      Discord).
+    - >-
+      Layer A DoD tally: induced 5xx found by request id ✅ (previous
+      record); stopped container → Discord ≤ 10 min ✅; DO alert policies
+      cover the host by tag ✅; outside uptime check ✅ (e-mail); access
+      log with request id, credentials redacted ✅; bin/logs.sh ✅; health
+      timer from first boot in cloud-init ✅ and enabled on mumate-2 ✅.
+  not_completed:
+    - Layer B - the two DoD 3b checks that need it: the induced 5xx visible in Grafana within a minute, and the BE personal-data line absent from Loki.
+    - Memory headroom check (≥ 2 GB free with every container up) is measured after Alloy is added.
+  evidence_of_limits:
+    - Access-log retention is still host-only until layer B ships it.
+    - >-
+      Better Stack free tier: "URL becomes unavailable" only (keyword
+      matching is billable), so a 200 with a wrong body is not caught
+      there; the health routes return non-200 when the database check
+      fails, which is the case that matters.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: "7e245d3af5ba21e76b126e2f80674cbd86476338"
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main 65c9676 = host /opt/mumate (PR 9 and 10 merged)"
+    mootech-fe: "shadow 921f449-staging (churn gate)"
+    mootech-be: "0705378"
+    bazi-sft-dataset: "shadow 911c87a-staging (churn gate)"
+  host: "mumate-2 602035792; be/fe/bazi healthy; mumate-health.timer active; caddy 2.10.0 with access log"
+  outside_checks:
+    better_stack: "3 monitors (app/api/bazi.staging health routes), 3 min, e-mail, all Up at 2026-09-20 ~22:20 +07:00"
+    digitalocean: "3 alert policies bound to tag mumate (cpu 80/5m, mem 85/5m, disk 80), e-mail"
+  authorizing_decision: memory/events/2026/09/20/20260920T214501_mumate_infra_move_plan_0_2_observability_before_flip.yaml
+  previous_record: memory/events/2026/09/20/20260920T220956_mumate_infra_move_slice3b_layer_a_live_ops_status_gap_pr10.yaml
+
+unresolved:
+  - Grafana Cloud account (owner, in progress) → layer B PR.
+  - Vercel Security Checkpoint on the owner's IP for bazichart.mumate.co.
+  - Carried: Facebook/Twitter callbacks, port-22 policy, GITHUB_TOKEN rotation, Vercel bazi missing SUPABASE_* values.
+
+next_action:
+  action: >-
+    Layer B: once the owner has the Grafana Cloud stack, open the
+    mumate-infra PR adding Grafana Alloy (compose profile obs, mem limit,
+    docker log source labelled by mumate.service, redaction of the BE
+    personal-data lines, host metrics), env/alloy.env.example, the
+    Synthetic Monitoring checks and Discord contact point as exported
+    provisioning files, and runbook 04 updates; owner creates the tokens
+    and places env/alloy.env on the host; then the DoD 3b checks that need
+    Grafana, and the slice-3b closing record.
+  acceptance_check:
+    - An induced 502 on the shadow is visible in Grafana Explore by request_id within a minute.
+    - A query for the BE user-object dump returns nothing in Loki while the same line exists in the host's docker log.
+    - Stopping bazi raises a Discord message from Grafana (synthetic check) and from the health timer.

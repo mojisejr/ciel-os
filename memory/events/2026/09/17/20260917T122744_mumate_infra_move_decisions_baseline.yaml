@@ -1,0 +1,150 @@
+schema_version: ciel.event.v0.1
+id: evt_20260917T122744_mumate_infra_move_decisions_baseline
+type: closeout
+recorded_at: 2026-09-17T12:27:44+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Proposed, not yet opened. Move mootech-fe and bazi-sft-dataset (with
+    mootech-be riding along as a third container) from Vercel and Render to
+    one DigitalOcean sgp1 Droplet run from a project control room
+    (mumate-infra), with Supabase kept as the database, so the system has one
+    origin, fixed cost, working in-process state, and an operator model of
+    owner-approves / agent-executes. This event records the decisions and the
+    re-verification the owner asked to keep before any plan exists; no
+    PLAN.md is created and Wake will not list this workstream until one is.
+  scope:
+    - The owner's decisions of 2026-09-17 on cutover order, the fe flip method, launch sequencing, and the ops model.
+    - Read-only re-verification of mootech-fe#637 against mootech-fe main 1312292, bazi-sft-dataset pdf-dev 04bc2bd, mootech-be main 57da359 (all fast-forwarded to origin first).
+    - Where the ops knowledge lives and how a session finds it, settled against CIEL's instruction-file hygiene.
+  out_of_scope:
+    - Any change to any repository, server, DNS, or DO account. Nothing was modified in any system except two comments on mootech-fe#637, posted with the owner's explicit go.
+    - Opening the workstream, a plan, or a slice; those need an owner decision when P0/P1 begins.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Decision: cutover order stays bazi -> be -> fe. bazi first because its
+      rollback is one env value on Vercel, it carries no OAuth, payment,
+      cookie, or DNS coupling, and it proves the whole DO chain (Caddy, TLS,
+      GHCR pull, compose, backup, systemd timer) before the main domain moves.
+    - >-
+      Decision: the fe flip uses a maintenance window and accepts downtime,
+      replacing the zero-downtime intent of #637 section 6.4 step 4. Owner's
+      reason: a new version is being launched anyway; readiness matters more
+      than zero downtime. What a staging hostname cannot prove (OAuth
+      callbacks, Beam and LINE webhooks, push to real devices, the real
+      domain's certificate) is tested on the real domain behind /maintenance
+      with MAINTENANCE_BYPASS_KEY before users are let in. The gate already
+      exists in mootech-fe middleware.ts:338-382 and already lets /api/auth,
+      /api/cron, both payment webhooks, and /api/health through.
+    - >-
+      Decision: move before launch (#606): P0 -> P1 -> P2 -> P3 -> seven quiet
+      days -> launch, matching the plan's rule that P3 and the launch are at
+      least two weeks apart.
+    - >-
+      Decision: the DO parallel run stands - all three containers on staging
+      hostnames for the team to try, cron timers on DO disabled throughout
+      (same database; a second push-reminders runner would double-notify real
+      users), team on test accounts only, temporary OAuth callbacks added for
+      the staging hostname where the provider allows it.
+    - >-
+      Decision: the operator model is owner-approves / agent-executes. Ops
+      lives in a project control room, a repository mumate-infra cloned under
+      ciel-os/checkouts/, with its own CLAUDE.md, a single bin/ops CLI, four
+      approval tiers expressed as Claude Code allow/deny rules in that repo,
+      runbooks, and three session kinds (incident, deploy, weekly review).
+      CIEL holds only the project registry entry and the workstream's events;
+      no CIEL rule or file changes. Rationale and the full design are in the
+      two #637 comments of 2026-09-17.
+    - >-
+      Placement proven, not assumed: a nested CLAUDE.md under the working
+      directory is loaded by Claude Code the moment the agent reads a file in
+      that directory; the same file outside the working directory is not
+      loaded; only CLAUDE.md is read, not AGENTS.md. Probe directories were
+      created and removed in this session. So a ciel-os session that never
+      touches checkouts/mumate-infra never sees the ops rules.
+    - >-
+      Re-verification, mootech-fe: crons are now three (manifest-morning
+      hourly, added 2026-09-15 by #359), not two. New runtime env since the
+      plan was measured: PAYMENT_GATEWAY, BEAM_API_BASE, BEAM_MERCHANT_ID,
+      BEAM_API_KEY, BEAM_WEBHOOK_HMAC_KEY, ANALYTICS_USER_ID_KEY, QSTASH_TOKEN,
+      QSTASH_CURRENT_SIGNING_KEY, QSTASH_NEXT_SIGNING_KEY (Vercel also holds
+      QSTASH_URL). No new build-time NEXT_PUBLIC_* value; the GTM id is a
+      constant in pages/_app.tsx:23. The four mootech-be dependencies of v2
+      are unchanged. Dockerfile still bakes .env, no .dockerignore, no
+      output standalone, lib/db max 1, ops health polls Vercel - as measured.
+    - >-
+      Re-verification, new external callback: Upstash QStash (lib/push/qstash.ts,
+      2026-09-13) posts back to /api/v2/push/fire for one-shot reminders. That
+      route sits behind guardV2 (V2_PREVIEW_KEY cookie, so a QStash machine
+      gets 401 today) and is absent from the maintenance allow-list, so during
+      the maintenance window a delivery would be rewritten to /maintenance
+      with HTTP 200 and lost. Exact-match exemptions in both gates, mirroring
+      webhook-beam, are required before P3.
+    - >-
+      Re-verification, bazi-sft-dataset: three crons unchanged; the edge route
+      unchanged; no Dockerfile; new env OPS_ADMIN_SECRET and OPS_ADMINS; files
+      read through process.cwd() at runtime are more than #637 lists
+      (life-path-scores.json, shinse-chat-index.generated.json, the
+      canonical-knowledge corpus roots, the hybrid-retrieval distilled roots),
+      so the container COPY list must come from running every route in the
+      image, not from enumeration.
+    - >-
+      Local checkouts fast-forwarded before verification: mootech-fe main
+      d82ee31 -> 1312292 (#696-#706); bazi-sft-dataset pdf-dev 1de7235 ->
+      04bc2bd in both the bazi-testenv worktree and the detached main
+      checkout; mootech-be already current. The untracked .claude/INCUBATED_BY
+      in bazi predates this session and was left alone.
+  evidence_of_limits:
+    - >-
+      Whether QStash deliveries to production currently succeed or fail with
+      401 is unverified; the owner reads the Upstash console.
+    - >-
+      Whether Facebook OAuth accepts a second callback host for staging is
+      unverified.
+    - >-
+      #637's own unverified list stands (bazi build memory, after() under Next
+      16 standalone, real image sizes, current bills).
+
+evidence:
+  plan: none-yet
+  plan_revision: none
+  slice: none
+  repository:
+    head: f1a03d05a3e9f25294ad83b292b72cb07e92aca7
+    branch: hq/20260917
+    working_tree: clean-before-this-event
+    pull_request: none-until-hq-round-closes
+  external_record:
+    - mootech-fe#637 - the plan (2026-09-13) and its comments; two comments added 2026-09-17 by the agent with the owner's go - "Sync 2026-09-17" (decisions + re-verification + fe flip checklist) and "section 8 revised" (ops = owner + agent, control room design).
+  application:
+    mootech-fe: main 1312292, untouched
+    bazi-sft-dataset: pdf-dev 04bc2bd, untouched
+    mootech-be: main 57da359, untouched
+  owner_statements_not_reverified:
+    - The company will create the DO Team, add its card, and invite the owner as Owner; nothing is created in the owner's personal DO account.
+    - The launch (#606) waits for the move.
+
+unresolved:
+  - The company-side DO Team has not been created; it blocks every DO resource (P2 step 1).
+  - The bazi source-of-truth question (pdf-dev vs merging main), GHCR visibility, hostnames, Droplet size, and the infra repo name remain open per #637 section 10.
+  - Beam lane mootech-fe-beam-gateway-001 is parked with one QR refund refused by Beam and slice 5 unauthorized; it does not block P0 or P1.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the owner says P0/P1 begins: open workstream mumate-infra-move-001
+    with a PLAN.md whose evidence points at #637 and its 2026-09-17 comments,
+    register projects/mumate-infra/project.yaml once the repository exists,
+    and take slice 1 = P0 (two indexes, Neon cancellation) plus P1
+    (containerize fe, bazi, be behind no behaviour change). In parallel the
+    owner asks the company to create the DO Team.
+  acceptance_check:
+    - Wake shows no validation error after this event and does not list mumate-infra-move-001 as a workstream (no PLAN.md yet).

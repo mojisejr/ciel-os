@@ -1,0 +1,90 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T235246_mumate_infra_move_slice3b_pr12_applied_handoff_to_3c
+type: closeout
+recorded_at: 2026-09-20T23:52:46+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    End-of-day handoff (2026-09-20): PR 12 merged by the owner and applied
+    on mumate-2 - Caddy now answers dotfile probes at the edge and the
+    repository matches the configured Grafana stack. Slice 3b is closed
+    (previous record); this is the last touch of the day and the cold
+    entry point for tomorrow's step 3c. The owner asked for the closeout
+    to be tidied and HQ informed before sleeping.
+  scope:
+    - PR 12 host steps and verification; the state a fresh session needs for 3c.
+  out_of_scope:
+    - Step 3c itself, slice 4, any application repository.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      PR 12 merged (mumate-infra main ebc71c5); host pulled; caddy
+      recreated. Verified over the public hostnames: bazi /.env,
+      /.docker/laravel/app/.env, /.git/config → 404 answered by Caddy
+      (access log shows the 404s, nothing proxied); /api/health and
+      /health on all three hosts → 200 with X-Request-Id; ops-status
+      three ✅, caddy ok, alloy ready, 1064/3915 MB used.
+    - >-
+      Day's result for the owner's question "can the control room see the
+      whole system and find causes fast": yes for the shadow - request
+      log with ids, on-host reader, health timer → Discord, DO + Better
+      Stack → e-mail, Grafana Cloud with redacted logs, host metrics,
+      synthetic checks and log/host alerts → Discord; four DoD items
+      proven with the owner watching. Twelve mumate-infra PRs merged in
+      total, four today (9-12).
+  not_completed:
+    - Step 3c (rebuild + remaining parity smoke) - gated on the launch team's churn.
+    - Synthetic Monitoring per-check alert thresholds (owner, UI).
+    - Dashboard "mumate ops" (Explore suffices until slice 5).
+  evidence_of_limits:
+    - Churn at 23:5x +07:00: mootech-fe main 7b42d14, 29 merges today, last at 22:04, 45 commits ahead of the shadow's 921f449; bazi pdf-dev 9e44873, last push 21:28, 10 ahead of 911c87a; mootech-be unchanged at 0705378. The two-hour quiet condition may hold overnight; it must be re-measured before any rebuild.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: "05784c1417f2c8b10e3a81fe8f4bbe0466482448"
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main ebc71c5 = host /opt/mumate (PRs 1-12 merged)"
+    mootech-fe: "shadow 921f449-staging; origin/main 7b42d14"
+    mootech-be: "0705378 = origin/main"
+    bazi-sft-dataset: "shadow 911c87a-staging; origin/pdf-dev 9e44873"
+  host: "mumate-2 602035792: be/fe/bazi/caddy/alloy healthy; mumate-health.timer active; env files be/fe/bazi/alert/backup/alloy present (owner-held)"
+  observability:
+    grafana: "https://patientspringbok701.grafana.net - Loki/Prom instances 1795061/3598780, contact point discord-infra, folder mumate (4 rules), 3 synthetic checks"
+    better_stack: "3 monitors, e-mail"
+    digitalocean: "3 tag-bound policies, e-mail"
+  authorizing_decision: memory/events/2026/09/20/20260920T214501_mumate_infra_move_plan_0_2_observability_before_flip.yaml
+  previous_record: memory/events/2026/09/20/20260920T234844_mumate_infra_move_slice3b_complete_observability_live.yaml
+
+unresolved:
+  - SM per-check alerts (owner, UI); token expiry dates for glc_/glsa_ tokens to be noted beside the DO tokens (~2026-11-19).
+  - Vercel Security Checkpoint on the owner's IP for bazichart.mumate.co (from the latency probe; clears on its own).
+  - Carried: Facebook/Twitter callbacks on the shadow, port-22 policy, GITHUB_TOKEN rotation, Vercel bazi missing SUPABASE_* values, payment test webhook to request from the team for 3c.
+
+next_action:
+  action: >-
+    Tomorrow (2026-09-21), cold entry here → PLAN.md 0.2 step 3c: measure
+    the launch team's merge rate (mootech-fe main, bazi pdf-dev) and, if
+    no merge for two hours, re-pull and diff the Vercel environment, build
+    FE from main and Bazi from pdf-dev as -staging images, deploy with
+    bin/deploy.sh --profile full, then walk the remaining DoD items with
+    the owner (FE→Bazi, storage, maintenance bypass; overnight duplicate-
+    job check from Loki; payment callback via the team) while watching
+    Grafana; slice-3 closeout with the slice-4 preconditions after that.
+    If the team is still merging several times an hour, do not rebuild;
+    report the rate to the owner and use the time for the SM alert
+    thresholds and the mumate ops dashboard.
+  acceptance_check:
+    - A rebuild happens only after a measured two-hour quiet window and an env re-pull + diff recorded in the 3c event.

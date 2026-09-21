@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T213000_cu12_sprint004_slice2_authorized
+type: decision
+recorded_at: 2026-09-20T21:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-004
+  lane: single
+  objective: >-
+    Tester-provoked faults and a stderr trace for the simulator so that
+    SMC v2's no-pop (ยกเลิก) and board-lost paths can be shown on the Mac
+    before any Windows or hardware work.
+  scope:
+    - Authorize slice 2 of plan revision 0.1 - drop <n>, ask <hex>, show reporting pending faults, CU12_SIM_TRACE=1.
+  out_of_scope:
+    - smc-v2-app-001 slice 6 (Windows) - the owner's Windows machine is not ready.
+    - Real CU12 hardware - the owner asked whether the system could be tried against the real cabinet and, told that nothing has been proven on hardware, chose not to hurry it.
+
+outcome:
+  status: decided
+  decision: >-
+    After the session re-brief the owner was offered four next steps: A,
+    sprint-004 slice 2 on the Mac; B, smc-v2 slice 6 on Windows; C,
+    production keygen and the DESIGN.md questions; D, park. The owner
+    answered "ตอนนี้เครื่อง window ยังไม่พร้อมครับ เราน่าจะไป A กันก่อนครับ",
+    adding that on their own trial the application and the simulator
+    worked well enough to feel usable. Slice 2 is authorized by this
+    decision, unrevised: smc-v2-app-001 slice 1 raised no need for a
+    disconnect fault - the application's gateway treats a silent board as
+    a timeout, and the board-lost path is exactly what drop <n> provokes.
+  authorizes:
+    - Slice 2 of plan revision 0.1 - faults and trace with their tests and documentation, on a draft pull request in cu12-simulator.
+  does_not_authorize:
+    - smc-v2-app-001 slice 6; any hardware work; any change to smc-v2 main.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-004/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "f2cb05f"
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "1c2232b"
+    branch: main
+    working_tree: clean-equal-to-origin
+  application:
+    repository: smc-v2
+    head: "78dfbf3"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/20/20260920T200000_smc_v2_app_slice4_merged_handoff.yaml
+    - memory/events/2026/09/20/20260920T085600_cu12_sprint004_slice1_authorized.yaml
+
+unresolved:
+  - smc-v2-app-001 slice 6 waits for the owner's Windows machine.
+  - Production keygen before the first sale; the DESIGN.md open questions.
+
+next_action:
+  action: >-
+    Pass the start gate in checkouts/cu12-simulator; branch feat/faults-trace
+    from main 1c2232b; add drop <n> and ask <hex> to control.rs with show
+    reporting pending faults, apply them in device.rs to the next
+    response(s) only; add CU12_SIM_TRACE=1 hex-with-timestamp on stderr;
+    tests over TCP and the macOS PTY with literal bytes, a dropped response
+    observed as a client timeout; README and docs/protocol-evidence.md;
+    fmt, test, clippy; open a draft pull request; record the closeout on
+    its head; mark it ready for the owner.
+  acceptance_check:
+    - Wake lists cu12-simulator-sprint-004 as active at revision 0.1 with slice 2 authorized by this record.

@@ -1,0 +1,76 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T123000_smc_v2_app_slice5_authorized_out_of_order
+type: decision
+recorded_at: 2026-09-20T12:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only; this
+    decision starts slice 5 - license, system log, backup, diagnostics -
+    ahead of slices 3 and 4.
+  scope:
+    - Authorize slice 5 of plan revision 0.1 under the owner's standing direction, out of the plan's order.
+  out_of_scope:
+    - Slices 3, 4 and 6; the UI half of slice 5's acceptance (the expired state on screen) waits for slice 4.
+
+outcome:
+  status: decided
+  decision: >-
+    Slice 2 reached its acceptance at smc-v2 13c1bd6 on feat/workflow-store:
+    the workflow crate (8 tests), the store (6), and the cabinet service
+    with five scenarios through the gateway and the spawned simulator -
+    load, dispense, clear; door physics and a door left open; a door that
+    does not open and its cancellation; a restart mid-transition reconciled
+    from the doors; a board gone silent - 40 tests in the workspace, fmt and
+    clippy clean. The plan orders slice 3 (design capture from the legacy
+    application) and slice 4 (the desktop) next; both need the owner - to
+    run the legacy application with a test-mode license and to confirm
+    "เหมือนเดิม" against the screenshots - and the owner is away. Slice 5's
+    crates need nobody: the Ed25519 license and its issuer, the machine
+    code, the daily JSON system log, the database backup and the
+    diagnostics archive are backend work with deterministic tests. Under
+    the owner's standing direction to keep going when nothing blocks, the
+    agent takes slice 5's backend now and leaves its on-screen acceptance
+    to follow slice 4. Recorded as a departure from the plan's order, not a
+    change to the plan.
+  authorizes:
+    - Slice 5 of plan revision 0.1 - crates/license with the smc-license issuer binary, and crates/ops (system log, backup, diagnostics) - with tests; the UI acceptance deferred to after slice 4.
+  does_not_authorize:
+    - Slices 3, 4 and 6.
+    - Generating the production signing key; a development key pair is generated for the build and the owner replaces it before selling.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "5"
+  repository:
+    head: aee93a6
+    branch: hq/20260917
+    working_tree: written-while-HQ-holds-commits-for-the-round-close
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    slice_2_head: 13c1bd6
+    branch: feat/workflow-store
+  standing_direction: memory/events/2026/09/20/20260920T085500_smc_v2_app_slice1_authorized.yaml
+  preceding_records:
+    - memory/events/2026/09/20/20260920T101500_smc_v2_app_slice2_authorized.yaml
+
+unresolved:
+  - Out-of-order execution is the agent's reading of "keep going"; the owner may put slice 3 first on return, in which case the slice-5 branch simply waits.
+  - The slice-1 and slice-2 closeouts wait for the remote's main to exist.
+
+next_action:
+  action: >-
+    Branch feat/license-ops from feat/workflow-store; build crates/license
+    (payload, Ed25519 verify, machine code, expiry policy, rollback guard),
+    the smc-license binary (keygen, issue, inspect), and crates/ops (daily
+    JSON log with 30-day retention, VACUUM INTO backup with 30 kept, the
+    diagnostics zip); run fmt, test and clippy; commit.
+  acceptance_check:
+    - Wake lists smc-v2-app-001 as active at revision 0.1 with slice 5 authorized once this event is committed.

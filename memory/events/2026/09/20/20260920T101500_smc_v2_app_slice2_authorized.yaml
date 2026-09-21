@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T101500_smc_v2_app_slice2_authorized
+type: decision
+recorded_at: 2026-09-20T10:15:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only; this
+    decision starts slice 2, the slot workflow, the store and the PIN.
+  scope:
+    - Authorize slice 2 of plan revision 0.1 under the owner's standing direction of 2026-09-20 morning.
+  out_of_scope:
+    - Slices 3 to 6; each gets its own decision.
+
+outcome:
+  status: decided
+  decision: >-
+    Slice 1 of this plan reached its acceptance on 2026-09-20 at smc-v2
+    283798c on feat/cu12-gateway: 21 tests including the spawned-simulator
+    scenarios, fmt and clippy clean on macOS and on the Windows target.
+    The owner's standing direction from the same morning - "ถ้าไม่ติด
+    blocker อะไรก็ยาวๆ เลยครับ", recorded in the slice-1 decision - covers
+    starting the next slice without a pause while the owner is away. The
+    one blocker met so far is external and does not touch slice 2: the
+    harness refuses the one-time seed push to the empty remote, so the
+    slice-1 pull request waits for the owner's push; slice 2 stacks on the
+    slice-1 branch locally and needs no remote. Slice 2 is authorized by
+    this decision on that basis; the owner may revoke it on return, in
+    which case the branch is discarded unmerged.
+  authorizes:
+    - Slice 2 of plan revision 0.1 - crates/workflow (the pure per-slot state machine) and crates/store (sqlx SQLite, migrations, users with argon2 PINs, slots, append-only actions, settings, restart reconciliation) with their scenario tests through the gateway and the simulator.
+  does_not_authorize:
+    - Slices 3 to 6.
+    - Any remote write to smc-v2 before the owner has seeded main.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: aee93a6
+    branch: hq/20260917
+    working_tree: written-while-HQ-holds-commits-for-the-round-close
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    slice_1_head: 283798c
+    branch: feat/cu12-gateway
+    remote: github.com/mojisejr/smc-v2 exists, private, empty; seed push waits for the owner
+  standing_direction: memory/events/2026/09/20/20260920T085500_smc_v2_app_slice1_authorized.yaml
+  preceding_records:
+    - memory/events/2026/09/20/20260920T085500_smc_v2_app_slice1_authorized.yaml
+
+unresolved:
+  - This decision is recorded from a standing direction, not from a fresh word on slice 2; the owner's return settles it.
+  - The slice-1 closeout is not yet recorded because its pull request cannot exist before the seed push.
+
+next_action:
+  action: >-
+    Branch feat/workflow-store from feat/cu12-gateway; build crates/workflow
+    and crates/store with the tests the plan names; run fmt, test and
+    clippy; when the remote has main, push both branches and open the
+    draft pull requests in order; record the closeouts on their heads.
+  acceptance_check:
+    - Wake lists smc-v2-app-001 as active at revision 0.1 with slice 2 authorized once this event is committed.

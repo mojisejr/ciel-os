@@ -1,0 +1,90 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T230500_dac2_auth_form_workstream_opened
+type: decision
+recorded_at: 2026-09-16T23:05:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-auth-form-001
+  lane: single
+  objective: >-
+    Let a grower register, sign in, and reset a password on a phone without
+    typing blind: every password field gets a show/hide control, the two
+    screens that set a password ask for it twice, and the minimum length
+    drops from fifteen characters to six.
+  scope:
+    - Open the workstream at plan revision 0.1 and authorize slice 1, one application pull request carrying the DESIGN.md revision and the change.
+  out_of_scope:
+    - Strength meters, breached-password lists, rate limits, lockout, sessions, tokens, mail, the entry screen beyond the field row.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On the evening of 2026-09-16, after hq/20260915 merged as ciel-os#75 and
+    this session took over the DAC2 lane, the owner named the one change
+    that is certain from using the public pilot on a phone: a show/hide
+    control on the password field, a confirm-password field, and a minimum
+    of six characters instead of fifteen. The agent read the store rule,
+    the three auth screens, the server functions, the HTTP test and the two
+    browser proof scripts, and put three questions to the owner. The owner
+    answered: the eye goes on the sign-in field too ("ใช่"); six characters
+    with no composition rule stands, digits alone included ("เอาตามนั้น");
+    and the work opens as its own workstream ("เปิด workstream มาได้เลย").
+    The confirm check is a web-layer rule; the store keeps the single
+    length rule. The only other open DAC2 workstream is paused; the owner
+    directed this work to start now on the standing branch, and that is
+    recorded here as approved. Slice 1 is authorized by this decision.
+  authorizes:
+    - Slice 1 of plan revision 0.1 - the design revision and the change on one draft application pull request.
+  does_not_authorize:
+    - Slice 2, the deploy; it needs its own decision after the slice-1 closeout.
+
+evidence:
+  plan: workstreams/dac2-auth-form-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 9543db4
+    branch: hq/20260917
+    working_tree: plan-and-this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: dac2-durian-smart-account
+    head: 5d37f0e22b0d20b9aa15791c58f02f4e227987bf
+    branch: main
+    working_tree: clean
+  source_read:
+    - checkouts/dac2-durian-smart-account/crates/store/src/users.rs
+    - checkouts/dac2-durian-smart-account/crates/web/src/auth.rs
+    - checkouts/dac2-durian-smart-account/crates/web/src/app.rs
+    - checkouts/dac2-durian-smart-account/crates/web/src/analysis_ui.rs
+    - checkouts/dac2-durian-smart-account/crates/web/tests/auth_http.rs
+    - checkouts/dac2-durian-smart-account/scripts/stall-probe.mjs
+    - checkouts/dac2-durian-smart-account/scripts/responsive.mjs
+    - checkouts/dac2-durian-smart-account/style/main.css
+    - checkouts/dac2-durian-smart-account/DESIGN.md
+    - workstreams/dac2-durian-smart-account-001/PLAN.md
+  preceding_records:
+    - memory/events/2026/09/16/20260916T222000_dac2_tax_deductions_slice3_closed.yaml
+
+unresolved:
+  - Six characters with no composition rule is the owner's choice for a narrow pilot; revisited as its own decision if the pilot ever holds real records.
+  - The show/hide button is inert until the page hydrates; the 2026-09-14 keep-alive stall in the hydrated form is not resolved by this work.
+  - The tester's missing reset mail of 2026-09-15 stays unexplained; dac2-guided-inputs-001 stays paused with the deferred pilot proof.
+
+next_action:
+  action: >-
+    Branch the application repository from main 5d37f0e, lower the store
+    rule to six with its test, add the confirm parameter and mismatch
+    sentence to the two server functions, build the PasswordField with its
+    show/hide button and use it on register, sign-in and reset, revise
+    DESIGN.md to 0.11, update the HTTP test and the two proof scripts, run
+    check.sh and check-responsive.sh, open a draft pull request, and ask
+    the owner to read the diff and try the three screens locally. Record
+    the slice-1 closeout citing the approved head.
+  acceptance_check:
+    - Wake lists dac2-auth-form-001 as active at revision 0.1 slice 1 with no validation error or warning and no unapproved overlap.
+    - The draft pull request exists with the design revision and the change together.

@@ -1,0 +1,113 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T151000_smc_v2_app_slice5_backend_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-20T15:10:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only; this
+    records the backend half of slice 5 - license, system log, backup,
+    diagnostics - on its pull request. The slice is not closed: its
+    on-screen acceptance waits for slice 4.
+  scope:
+    - Record slice 5's crates on the pull request that carries them.
+  out_of_scope:
+    - The activation screen, the red banner, and the expired behaviour on screen.
+
+outcome:
+  status: prepared
+  completed:
+    - >-
+      Application commit d67f8f5 on feat/license-ops from 13c1bd6, pushed,
+      draft pull request 3 opened (base feat/workflow-store, stacked).
+    - >-
+      crates/license: payload {v, customer, machine, issued, expires, note}
+      signed with Ed25519 into one line "SMC1.<payload>.<sig>" in URL-safe
+      base64; open() verifies against a public key; check() gives Valid,
+      Expired, WrongMachine, ClockRolledBack (today more than a day before
+      the last day seen), Invalid or Missing, with allows_load (Valid only)
+      and allows_dispense (Valid, Expired, ClockRolledBack). Machine code:
+      SHA-256 of the OS machine identifier (Windows MachineGuid via reg
+      query, macOS IOPlatformUUID via ioreg, Linux /etc/machine-id) shown as
+      twelve Crockford-base32 characters in three groups; normalise()
+      forgives case, spaces and o/i/l. A dependency-free UTC Date with
+      +days/+months/+years (month ends clamped). 7 tests.
+    - >-
+      smc-license binary: keygen --out (refuses to overwrite), issue --key
+      --customer --machine with --days/--months/--years/--lifetime and
+      --out, inspect (embedded key or --pubkey), machine. Tried end to end:
+      a yearly and a lifetime license issued for this Mac's code
+      X71V-ZXS8-8XXD and inspected.
+    - >-
+      A development key pair generated; the public half is embedded in
+      crates/license/src/pubkey.rs with KEY_LABEL "development"; the
+      private half is at .assets/smc-v2/dev-license-signing.key in CIEL HQ,
+      ignored by Git, owner-controlled.
+    - >-
+      crates/ops: start_log(dir) - daily JSON-line files via
+      tracing-appender, DEBUG by default so every CU12 byte is in it,
+      SMC_LOG to change; data_dir() per platform; prune_older_than and
+      keep_newest; backup_database through VACUUM INTO with the newest 30
+      kept; diagnostics_archive writing one .zip (about.txt, database/,
+      logs/) through a stored-entries ZIP writer of our own with CRC-32,
+      verified against the system unzip -t and extraction. 7 tests
+      including the log in its own process.
+    - >-
+      Checks at d67f8f5: fmt; cargo test --workspace (54 passed); clippy
+      -D warnings on macOS; cu12, workflow and license clippy-clean on
+      x86_64-pc-windows-msvc.
+  departures:
+    - >-
+      Taken ahead of slices 3 and 4 under the owner's standing direction,
+      recorded in the authorizing decision; the slice stays open.
+    - >-
+      The plan said "system log at the platform data directory"; the
+      directory is resolved from ProgramData and HOME rather than a
+      directories crate, and the archive is written without a zip crate.
+  boundaries:
+    - No UI; the license is not yet consulted by the cabinet service (the shell does that in slice 4 with the expired policy).
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "5"
+  authorized_by: memory/events/2026/09/20/20260920T123000_smc_v2_app_slice5_authorized_out_of_order.yaml
+  repository:
+    head: d8d2fdb
+    branch: hq/20260917
+    working_tree: three-closeouts-and-the-registry-flip-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    base: 13c1bd6
+    head: d67f8f5
+    branch: feat/license-ops
+    pull_request:
+      number: 3
+      url: https://github.com/mojisejr/smc-v2/pull/3
+      base: feat/workflow-store
+      state: draft-until-this-record-is-committed
+    checks:
+      - cargo fmt --check
+      - cargo test --workspace (54 passed)
+      - cargo clippy --workspace --all-targets -- -D warnings
+  preceding_records:
+    - memory/events/2026/09/20/20260920T150500_smc_v2_app_slice2_ready_for_owner_review.yaml
+
+unresolved:
+  - The production signing key does not exist; the owner generates it before the first sale and the public constant is replaced.
+  - Expiry is judged in UTC on both sides, so a license can read expired up to seven hours before Thai midnight; a one-day grace in the issuer or a local-date check is a small later decision.
+  - Retention of the system log (30 days) and backups (30 copies) are not yet scheduled by anything; the shell's daily task does that in slice 4.
+
+next_action:
+  action: >-
+    Mark pull request 3 ready; the owner reviews it after pull request 2.
+    Slice 5 closes only after slice 4 shows the activation screen, the red
+    banner and the expired policy on screen.
+  acceptance_check:
+    - Pull request 3's head is d67f8f5 when the owner reads it.

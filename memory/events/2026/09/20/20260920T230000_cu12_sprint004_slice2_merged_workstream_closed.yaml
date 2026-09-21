@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T230000_cu12_sprint004_slice2_merged_workstream_closed
+type: closeout
+recorded_at: 2026-09-20T23:00:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-004
+  lane: single
+  objective: >-
+    Door physics and tester-provoked faults so SMC v2 can be built and
+    proven against the simulator alone. Both slices are on main; the
+    workstream is finished.
+  scope:
+    - Record the owner's merge of simulator pull request 3 and the checkout's return to main; close the workstream.
+  out_of_scope:
+    - The observation of SMC v2 against the faults - that is smc-v2-app-001's record, made with the owner at the screen.
+
+outcome:
+  status: merged
+  completed:
+    - >-
+      The owner merged cu12-simulator pull request 3 as 7037547 ("merged #3
+      แล้วครับ"). Local main 7037547 equals origin/main, clean; the topic
+      branch feat/faults-trace is deleted locally and on the remote; the
+      debug binary is rebuilt from main.
+    - >-
+      Sprint 4 delivered both slices of plan revision 0.1: slice 1, opt-in
+      door physics (PR 2, 1c2232b); slice 2, drop/ask faults, show with
+      the pending queue, and CU12_SIM_TRACE (PR 3, 7037547). 29 tests.
+      Framing, checksum, addressing and the three commands are unchanged;
+      default behaviour is unchanged; no dependency was added.
+  not_completed:
+    - Nothing; the plan has no further slice.
+  boundaries:
+    - The physics is a recollection and the faults are tester input; neither is a hardware claim.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-004/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "c0220d9"
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "7037547"
+    branch: main
+    working_tree: clean-equal-to-origin
+    merged_pull_requests:
+      - { number: 2, merge: "1c2232b", slice: "1" }
+      - { number: 3, merge: "7037547", slice: "2" }
+  preceding_records:
+    - memory/events/2026/09/20/20260920T223000_cu12_sprint004_slice2_ready_for_owner_review.yaml
+
+unresolved:
+  - Real hardware may show the hook staying set while the door is open, or a board that loses its response still unlocking; either changes the model and the SMC v2 state machine.
+
+next_action:
+  action: >-
+    None for this workstream. In smc-v2-app-001: the owner runs the
+    desktop against the merged simulator with ask 11, drop 3, physics off
+    and drop 20 (the steps given in the session) and reports what the
+    screen, the log page and the system log showed; record it as owner
+    observation there.
+  acceptance_check:
+    - Wake shows cu12-simulator-sprint-004 with this record as its latest, simulator bound at 7037547 clean.

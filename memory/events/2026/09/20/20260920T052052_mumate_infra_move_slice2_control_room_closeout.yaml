@@ -1,0 +1,174 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T052052_mumate_infra_move_slice2_control_room_closeout
+type: closeout
+recorded_at: 2026-09-20T05:20:52+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Build a DigitalOcean sgp1 replacement for the exact MuMate system the
+    product team launches, keep Supabase as the single source of truth,
+    prove it in parallel, then flip inside an owner-controlled maintenance
+    window. Slice 2: the control room can create, deploy, fail, restore,
+    and report — proven by dogfooding mootech-be on a company-owned
+    Droplet, with every DoD item exercised for real.
+  scope:
+    - Private mumate-infra control room (compose, Caddy, deploy/rollback, backup/restore-verify, alert, ops-status, disabled timers, three Thai runbooks) — PRs #1-#5 merged, #6 open.
+    - Company Team resources: Droplet, Reserved IP, firewall, project, alert policies, Spaces bucket + key.
+    - Dogfood on BE: deploy by SHA, failed deploy (pull failure and unhealthy-after-up) → automatic rollback, manual rollback, backup → restore-verify, alert to Discord, deploy-user boundary, timed host reconstruction.
+  out_of_scope:
+    - FE and Bazi on the host, hostnames, TLS certificates, enabled timers, production Supabase as BE's database (slice 3).
+    - Cutover, DNS, maintenance window (slice 4+).
+
+outcome:
+  status: slice-complete-pr-open
+  completed:
+    - >-
+      DoD "a new host can be reconstructed from the repository plus
+      owner-held secrets": PROVEN 2026-09-20 in 6 min 35 s wall clock
+      (target ≤ 30 min): bin/do-create.sh --name mumate-2 (idempotent, PR #6
+      branch) → Droplet 602035792 active at +47 s → cloud-init done +307 s
+      (ASCII template, no warnings) → deploy key generated on the host and
+      registered read-only via gh (GitHub key 163832697) → clone main 2a048d3
+      to /opt/mumate → systemd units installed disabled → the three env
+      files streamed old host → new host through an ssh tar pipe (never on
+      the laptop) → bin/deploy.sh BE_TAG=0705378… healthy at +380 s →
+      Reserved IP 167.99.29.220 reassigned → :80/healthz 200 at +395 s. The
+      control room now lives on mumate-2 (165.22.50.201, private 10.104.0.2).
+    - >-
+      DoD "deployed SHA and configured SHA agree": bin/ops-status.sh prints
+      configured = running = /health.sha per service and exits 1 otherwise;
+      it caught two of the three deploy.sh defects found this slice.
+    - >-
+      DoD "failed deploy returns to the last-good image": PROVEN for both
+      failure classes — pull failure (tag not in GHCR → .env restored, alert,
+      exit 1, service untouched; PR #4) and unhealthy after up (HEALTH_TIMEOUT
+      forced timeout on image 46f57a2… → container recreated on 0705378…,
+      healthy, alert, 37 s; PR #5). Manual bin/rollback.sh 1.8 s.
+    - >-
+      DoD "backup restore changes a real verification query": PROVEN
+      2026-09-20 — bin/backup.sh streamed pg_dump of production Supabase to
+      s3://mumate-backups/pg/mumate-1-20260919T220406Z.sql.gz (131,758,971
+      bytes, 94 s); bin/restore-verify.sh restored it into the disposable
+      pgtmp: tables 0 → 184, "user" rows 5,018, 70 s, alert 🧪 sent. BE
+      still pointed at pgtmp (slice-2 dogfood), so the un-kept teardown took
+      its database away for ~1 min; recovered by re-upping pgtmp, BE
+      reconnected by itself. Runbook 02 now says --keep is mandatory in
+      slice 2.
+    - >-
+      DoD "no scheduler or public hostname can reach production users":
+      both timers installed disabled and verified inactive on both hosts;
+      Caddy serves only :80 /healthz (200) and 404 elsewhere; BE bound to
+      127.0.0.1:4000 and unreachable from outside; MORNING_CRON_ENABLED=false
+      and DB_HOST=pgtmp in the dogfood be.env; no DNS record, no hostname,
+      no certificate.
+    - >-
+      Alert reaches the chosen channel: Discord webhook via bin/alert.sh;
+      the owner confirmed the trail (🧪 ✅ ↩️ ⚠️ 🚨) by screenshot on
+      2026-09-19.
+    - >-
+      Deploy user has only the intended access: sudo limited to systemctl
+      and journalctl (shadow, root shell, apt, ufw, /etc writes denied),
+      docker group, password login off, fail2ban active — proven on
+      mumate-1 and identical cloud-init on mumate-2.
+    - >-
+      DigitalOcean (Team mumate, owner role Modifier): ssh key mumate_do
+      59434540 · Droplet mumate-2 602035792 (live) · Droplet 601959538
+      renamed mumate-1-retired-20260920 and powered off (Team Owner to
+      destroy; its GitHub deploy key 163799279 already removed) · Droplet
+      601957333 (broken cloud-init) destroyed by the Team Owner overnight ·
+      Reserved IP 167.99.29.220 → mumate-2 · firewall mumate-web
+      dc94f372-bc32-4a18-a55f-fdbb2d13df2d (22 from 223.204.231.197/32 only;
+      stale 101.109.54.79 removed) · project mumate-prod 50147b8b-95ef-420d-
+      ab1d-82719180a0ef · alert policies 6e8b102a…, c425654a…, 934f54df…
+      (tag mumate, email) · Spaces bucket mumate-backups sgp1 + key
+      mumate-backup-key created by the Team Owner (Modifier saw no Create
+      button; cause unverified).
+    - >-
+      mumate-infra: #1 seed, #2 ASCII cloud-init + do-create fixes, #3 pgtmp
+      SSL, #4 pull-failure restore, #5 rollback re-source + own timeout —
+      all merged, main 2a048d3; #6 idempotent do-create + ops-status fix +
+      runbooks (infra/rebuild-idempotent) open. mootech-be: #28 merged;
+      branch rollback-target/7e609c6-ci @ 46f57a2 is the source of the
+      second image and must stay while that tag is a rollback target.
+    - >-
+      Defects found only by running the failure paths for real: (1) DO
+      user-data mangles non-ASCII → empty cloud-config; (2) placeholder key
+      id → 422; (3) alert create needs an email; (4) plain pgtmp has no SSL
+      but BE demands it; (5) pull failure left .env on the bad tag; (6) the
+      automatic rollback never rolled back (exported tags beat .env); (7)
+      rollback shared the deploy timeout; (8) ops-status died silently on an
+      unreachable /health. Every one is fixed on main or in #6.
+  not_completed:
+    - PR #6 not yet merged; mumate-2 runs main 2a048d3 (without #6, which only affects host creation and ops-status's failure output).
+    - Droplet 601959538 (retired mumate-1) still exists powered off until the Team Owner destroys it (~$24/mo plus backups retained four weeks after destroy).
+  evidence_of_limits:
+    - The forced unhealthy deploy is a timeout on a functionally identical image, not a crashing image; a crash-loop follows the same step-5 path but was not exercised with a real broken build.
+    - Owner and agent share one machine, one key, one deploy user — indistinguishable in sshd logs; see unresolved.
+    - Backups contain production data and now live in the company Spaces and, during restore-verify, on the host's disposable volume; nothing leaves the Team.
+    - The 6 min 35 s rebuild used a warm laptop (doctl contexts, gh auth, known hosts) and a healthy old host to copy env from; from owner-held files instead of the old host the env step is a scp, not slower.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: 38e1a18
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra:
+      main: 2a048d3 (PRs #1-#5 merged)
+      pull_request: https://github.com/mojisejr/mumate-infra/pull/6 (infra/rebuild-idempotent, open)
+      local_checkout: main, clean
+    mootech-be:
+      main: 0705378 (production on Render unchanged at runtime)
+      images: ghcr.io/mojisejr/mootech-be:0705378d884114a4fd0e73aed59656638f335fdc (live), :46f57a2a203c19cbbfa7d472a52e1745ecfd7c09 (rollback target, branch rollback-target/7e609c6-ci)
+      local_checkout: main, clean
+    mootech-fe: main b4c34fd clean
+    bazi-sft-dataset: detached 5a501b2, only the pre-existing untracked .claude/INCUBATED_BY
+  host:
+    live: mumate-2 602035792 165.22.50.201 / reserved 167.99.29.220; /opt/mumate main 2a048d3; be 0705378… healthy; caddy 2.10.0; pgtmp 17.6 ssl on; env be/alert/backup 600; timers disabled
+    retired: mumate-1 601959538 168.144.140.118 off, still holds env files and the running stack until destroyed
+  backups: s3://mumate-backups/pg/mumate-1-20260919T220406Z.sql.gz 131,758,971 bytes (keep 14 d)
+  timings:
+    first_deploy_s: 26
+    manual_rollback_s: 1.8
+    auto_rollback_s: 37
+    backup_s: 94
+    restore_verify_s: 70
+    host_rebuild_s: 395
+  previous_checkpoint: memory/events/2026/09/19/20260919T213015_mumate_infra_move_slice2_auto_rollback_proven_end_of_day.yaml
+  authorizing_decision: memory/events/2026/09/19/20260919T065020_mumate_infra_move_slice2_authorized.yaml
+
+unresolved:
+  - Owner: merge mumate-infra #6; Team Owner: destroy Droplet 601959538 mumate-1-retired-20260920.
+  - Attribution on the host: owner and agent use the same key (~/.ssh/mumate_do) and user (deploy). Lightweight option = a second key per actor on the same user (sshd logs the fingerprint); separate users only if more than two operators. Owner to decide; not needed for slice 3.
+  - mumate-infra is bound at ~/ghq/github.com/mojisejr/mumate-infra, not checkouts/; move or symlink deferred by the owner on 2026-09-19.
+  - be.env on the host carries the real provider keys with DB pointed at pgtmp; acceptable only while BE stays loopback-bound with cron off. Slice 3 decides BE's real database wiring and whether to rotate.
+  - Both API tokens expire ~2026-11-19; the port-22 allow-list is one ISP address and changes when the owner's network does.
+  - Alert policy descriptions still say "mumate-1"; cosmetic, tag-scoped, cover mumate-2.
+  - Why a Modifier sees no Create Access Key button for Spaces stays unverified; the Team Owner path works.
+  - BE /health sha "unknown" on Render; bazi public-calc ~242 MB on Vercel; verify-architecture red on mootech-fe main — carried.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Slice 2 is complete pending the owner's merge of #6 and the Team
+    Owner's destroy of the retired Droplet. Next is an owner decision to
+    authorize slice 3 (the launch-equivalent stack — FE + Bazi containers
+    on mumate-2 beside BE, BE re-pointed at production Supabase with every
+    duplicate scheduler still disabled, private-host proof with controlled
+    test identities). That decision must repeat outcome.parallelism:
+    approved because mootech-ga4-instrumentation-001 also touches
+    mootech-fe. Until then the lane is idle; the host keeps running the BE
+    dogfood at ~$29/mo.
+  acceptance_check:
+    - Wake lists this event with no validation error and reads mumate-infra-move-001 active at revision 0.1, phase 2 idle, slice 2 closed by this record.
+    - ssh deploy@167.99.29.220 'cd /opt/mumate && bin/ops-status.sh' prints be configured = running = 0705378d88… ✅, caddy ok, timers none.
+    - doctl --context mumate-read compute reserved-ip get 167.99.29.220 shows droplet mumate-2 602035792.

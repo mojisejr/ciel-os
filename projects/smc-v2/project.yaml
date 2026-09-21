@@ -1,0 +1,6 @@
+schema_version: ciel.project.v0.1
+id: smc-v2
+repository:
+  vcs: git
+  canonical_remote: github.com/mojisejr/smc-v2
+  default_branch: main

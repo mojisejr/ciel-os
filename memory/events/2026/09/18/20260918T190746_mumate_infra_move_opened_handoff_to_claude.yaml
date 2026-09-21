@@ -1,0 +1,129 @@
+schema_version: ciel.event.v0.1
+id: evt_20260918T190746_mumate_infra_move_opened_handoff_to_claude
+type: closeout
+recorded_at: 2026-09-18T19:07:46+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Close this planning session with reconstructable evidence so a fresh Claude
+    session can Wake, read the authorized migration plan, and start slice 1
+    without relying on this chat.
+  scope:
+    - Record the owner-aligned lift-and-shift boundary and the workstream opening commit.
+    - Record what was verified, what was not implemented, and the next executable action.
+    - Carry forward repository drift and unrelated shared-checkout work that the next session must preserve.
+  out_of_scope:
+    - Any application implementation, pull request, deployment, DigitalOcean resource, DNS, environment, database, or provider change.
+    - Closing slice 1 or offering the five-slice workstream for merge.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Plan revision 0.1 opened at commit f3dad7f with five slices: container
+      parity, the mumate-infra control room and dogfood, launch-equivalent
+      parallel proof, a two-hour maintenance flip, and an observation period.
+    - >-
+      The owner confirmed that the product team launches independently while
+      this lane reproduces the launched FE + mootech-be + Bazi topology first;
+      Supabase remains the unchanged single source of truth.
+    - >-
+      Slice 1 is authorized. It is limited to container and truthful readiness
+      support on three draft application pull requests and authorizes no
+      production or DigitalOcean change.
+    - >-
+      mumate-be-retirement-001 moved to paused revision 0.2 before any slice
+      ran, because retiring BE conflicts with reproducing the launched topology.
+    - >-
+      The existing maintenance implementation was re-read on mootech-fe
+      origin/main 17d5c67: MAINTENANCE_MODE=on gates users; ?bypass=<key>
+      sets the secure HTTP-only mnt_bypass cookie for 24 hours and redirects
+      to a clean URL; auth, cron, Omise webhook, and Beam webhook remain
+      allow-listed. The focused Vitest run passed 20 of 20 tests.
+    - >-
+      mootech-fe#637 remains the external migration record and its Oracle HQ
+      board status was changed from ยังไม่ถึงคิว to กำลังทำ. A 2026-09-18
+      comment records the new launch-independent ordering and CIEL checkpoint.
+    - >-
+      The company DigitalOcean Team exists and billing is ready. The owner is
+      a Modifier and controls the migration flip; the Team Owner remains needed
+      for billing, deletion, and membership actions outside that role.
+  not_completed:
+    - No Slice 1 application branch, image, test run, or draft pull request exists.
+    - The private mumate-infra repository and CIEL project registration do not exist; slice 2 owns them.
+    - No DigitalOcean resource was created and no production setting changed.
+    - No provider cancellation, DNS change, scheduler change, or Supabase write occurred.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: f3dad7fce48a8a41d07b5c07564b20b810725c33
+    branch: hq/20260917
+    working_tree: shared-standing-branch-with-unrelated-work-preserved
+  opening_event: memory/events/2026/09/18/20260918T162212_mumate_infra_move_workstream_opened.yaml
+  paused_conflict_event: memory/events/2026/09/18/20260918T162211_mumate_be_retirement_paused_for_lift_and_shift.yaml
+  external_record:
+    issue: https://github.com/mojisejr/mootech-fe/issues/637
+    checkpoint_comment: https://github.com/mojisejr/mootech-fe/issues/637#issuecomment-5728033941
+    board_status_observed: กำลังทำ
+  application_observation:
+    mootech-fe:
+      local_head: 131229236de1cc699ed45a3fcb2098b811b6285a
+      fetched_origin_main: 17d5c67
+      working_tree: clean
+      note: local main is behind and must not be used as the slice-1 branch base
+    mootech-be:
+      local_head: 57da35941c805e490cf99570eaccdbe5c395e018
+      fetched_origin_main: 57da35941c805e490cf99570eaccdbe5c395e018
+      working_tree: clean
+    bazi-sft-dataset:
+      local_head: 04bc2bd9e24d1aa29a43a4c7568e274a23b08984
+      fetched_origin_pdf_dev: 04bc2bd9e24d1aa29a43a4c7568e274a23b08984
+      working_tree: contains-pre-existing-untracked-.claude/INCUBATED_BY
+  checks:
+    - bun run check - 44 passed, 0 failed
+    - bun bin/ciel.ts wake - no validation errors; mumate-infra-move-001 authorized at revision 0.1 slice 1
+    - bunx vitest run scripts/maintenance-allowlist.test.ts in mootech-fe - 20 passed, 0 failed
+
+unresolved:
+  - >-
+    The shared HQ checkout still contains unrelated uncommitted SMC v2 and
+    CU12 paths plus test/projects/validate.test.ts. The next session must not
+    stage, edit, or commit them as part of MuMate work.
+  - >-
+    mootech-fe local main is behind fetched origin/main. Slice 1 starts only
+    after the normal clean-main start gate and a fresh fetch identify the
+    team's current production revision.
+  - >-
+    The launch team may keep merging while slices 1-3 run. Every image and
+    parity claim must name and re-prove the current production SHA.
+  - >-
+    The private infra repository name, final hostnames, Droplet size, GHCR
+    visibility, and BE pool mode remain slice-2 decisions; they do not block
+    slice 1.
+  - >-
+    Wake retains one pre-existing warning on the GA4 closeout status. It is not
+    caused by this workstream and must not divert slice 1.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In the fresh Claude session, run bun run wake from the CIEL root, read
+    OWNER.md and workstreams/mumate-infra-move-001/PLAN.md, then start slice 1.
+    Pass the clean-main start gate independently in mootech-fe, mootech-be,
+    and bazi-sft-dataset; fetch the current production branches; create one
+    isolated topic branch per application; re-verify the plan's expected
+    paths; implement container and truthful readiness parity only; run
+    image-level smoke and repository checks; open three draft pull requests.
+    Do not create DigitalOcean resources or change production.
+  acceptance_check:
+    - Claude can reconstruct the current objective, scope, authorization, repository drift, and next action from Wake plus the plan without this chat.
+    - Slice 1 begins from freshly fetched production revisions, not the stale mootech-fe local main.
+    - Unrelated shared-checkout files remain untouched.

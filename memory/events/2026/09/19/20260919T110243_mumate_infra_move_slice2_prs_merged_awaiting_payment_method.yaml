@@ -1,0 +1,99 @@
+schema_version: ciel.event.v0.1
+id: evt_20260919T110243_mumate_infra_move_slice2_prs_merged_awaiting_payment_method
+type: closeout
+recorded_at: 2026-09-19T11:02:43+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Step 1 of the slice-2 resume sequence is done: the owner merged both
+    pull requests. Record the merged heads, the tidied local checkouts, and
+    the single remaining blocker (company Team payment method) so the next
+    session starts at step 2 without re-deriving anything.
+  scope:
+    - Verify both merges on their remotes and fast-forward the bound local checkouts.
+    - Delete the two merged local topic branches; leave the remote branches to the owner.
+    - Restate the blocker and the remaining sequence unchanged.
+  out_of_scope:
+    - Closing slice 2 (still no DigitalOcean resource, no image on GHCR, nothing dogfooded).
+    - Any DNS, scheduler, production, or provider change.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      mojisejr/mumate-infra PR #1 merged: main = 1517f63 (merge of
+      infra/control-room-seed @ b47b67a). Local checkout fast-forwarded to
+      1517f63, clean; local branch infra/control-room-seed deleted.
+      origin/infra/control-room-seed still exists.
+    - >-
+      mojisejr/mootech-be PR #28 merged: main = 0705378 (merge of
+      infra/ghcr-push @ 4f24dcd on 7e609c6). Local checkout fast-forwarded
+      to 0705378, clean; local branch infra/ghcr-push deleted.
+      origin/infra/ghcr-push still exists. Nothing deployed: the container-
+      build workflow is manual-dispatch only and has not been dispatched.
+    - >-
+      HQ re-brief received this session (ciel-os-69 holds the MuMate lane
+      under hq/20260917; HQ is ciel-os-a3; the CU12/SMC lane is ciel-os-8e).
+  not_completed:
+    - No DigitalOcean token exists on this machine; no Droplet, Reserved IP, firewall, project, alert, or Spaces bucket exists.
+    - No image is on GHCR; the package cannot be made public until the first push.
+    - Steps 2-7 of the resume sequence have not started.
+  evidence_of_limits:
+    - Merge state read from a fetch of each project's origin at record time, not from the GitHub PR pages.
+    - The arena testenv Postgres (mumate_testenv_pg, up 4 days, anonymised 2026-09-18 dump) is still running; left as is because a later dogfood step may reuse it. The owner may stop it.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 525d1f794402bf82ac01ab1fb5e2fdd2199f3b55
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra:
+      main: 1517f63 (PR #1 merged; control room complete on main)
+      local_checkout: main 1517f63, clean, no topic branches
+    mootech-be:
+      main: 0705378 (PR #28 merged; production on Render unchanged at runtime, workflow only)
+      local_checkout: main 0705378, clean, no infra topic branches
+    mootech-fe: main b4c34fd clean (untouched)
+    bazi-sft-dataset: detached at origin/pdf-dev 5a501b2, only the pre-existing untracked .claude/INCUBATED_BY
+  arena: mumate_testenv_pg still running (healthy) with the anonymised 2026-09-18 dump
+  authorizing_decision: memory/events/2026/09/19/20260919T065020_mumate_infra_move_slice2_authorized.yaml
+  previous_checkpoint: memory/events/2026/09/19/20260919T092941_mumate_infra_move_slice2_checkpoint_awaiting_do_tokens.yaml
+
+unresolved:
+  - Company Team mumate payment method: the team is adding it; until the owner's view of Team mumate billing shows the card, the two scoped tokens (mumate-agent-read, mumate-agent-ops) cannot be created and no DO resource can exist.
+  - Whether the owner's DO role can delete a Droplet (needed for the reconstruction proof); if not, snapshot/recreate or record as unresolved.
+  - GHCR package visibility flips to public once, by the owner, after the first push.
+  - BE /health sha "unknown" on Render (no build arg); bazi public-calc function ~242 MB on Vercel (launch-team file); verify-architecture red on mootech-fe main — all carried from the slice-1 records.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Wait for the owner to say Team mumate billing shows the card. Then, in
+    order: (2) owner creates the two tokens in the Team context and runs
+    doctl auth init --context mumate-read and --context mumate-ops; agent
+    verifies with `doctl account get --context mumate-read` that the account
+    is the company Team before anything else; (3) owner dispatches mootech-be
+    container-build with push=true on main 0705378 and sets the package
+    public; (4) owner names the DO ssh key / ~/.ssh/*.pub and the owner IP
+    for port 22; agent runs bin/do-create.sh --dry-run, then for real, and
+    records a closeout with every resource ID; (5) owner creates Spaces
+    mumate-backups + key, the Discord webhook, and places env/be.env,
+    backup.env, alert.env on the host; (6) agent runs the dogfood: first
+    deploy by SHA, backup → restore-verify, deliberate failed deploy →
+    automatic rollback, alert test, deploy-user permission proof, host
+    reconstruction; (7) slice-2 closeout naming mumate-infra head, the be
+    image SHA, and every DO resource. No DNS, no public hostname, no enabled
+    timer.
+  acceptance_check:
+    - Wake lists this event with no validation error and reads mumate-infra-move-001 active at revision 0.1 with slice 2 authorized, phase 2 idle.
+    - mumate-infra local main is 1517f63 and mootech-be local main is 0705378, both clean with no local topic branch.

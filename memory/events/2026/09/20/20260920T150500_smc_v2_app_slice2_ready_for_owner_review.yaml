@@ -1,0 +1,114 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T150500_smc_v2_app_slice2_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-20T15:05:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only; this
+    closes slice 2 - the slot workflow, the store and the PIN.
+  scope:
+    - Close slice 2 of plan revision 0.1 on the pull request that carries it.
+  out_of_scope:
+    - The UI; the license; the system log.
+
+outcome:
+  status: slice-closed
+  completed:
+    - >-
+      Application commit 13c1bd6 on feat/workflow-store from 283798c,
+      pushed, draft pull request 2 opened (base feat/cu12-gateway, stacked).
+    - >-
+      crates/workflow: Cabinet::step(Input) -> Result<Vec<Effect>, Refusal>
+      over twelve SlotStates - Empty, AwaitOpen, Open, Loaded - with Load,
+      Dispense by HN, Cancel, Clear (admin, loaded only), ForceClear (admin,
+      any), Observed, Tick. One HN holds one slot; nothing starts while a
+      door reads open, before the first observation, or while another slot
+      is in transition; a door not open after 2 s and a door open beyond
+      60 s are each warned once and recorded; a restore is reconciled with
+      the doors on the first observation. 8 tests.
+    - >-
+      crates/store: sqlx SQLite, migrations/0001_init.sql - users (argon2id
+      PIN hash; the PIN alone identifies the user, so it is unique among
+      active users; 4 to 8 digits), slots (state as JSON plus the columns
+      screens read), actions with triggers that refuse UPDATE and DELETE,
+      settings. 6 tests, in memory and on a file that survives reopen.
+    - >-
+      crates/cabinet: Service::start(endpoint, store, config) opens the
+      board, restores the slots, starts the poller and the tick;
+      load/dispense/cancel/clear/force_clear take a PIN and return
+      WrongPin, NotAdmin, Refused(Refusal) or Board(GatewayError); snapshot()
+      and a broadcast of Events for the shell. Background tasks hold only a
+      Weak to the core, so dropping the last handle closes the board. An
+      unlock the board refuses puts the slot back and writes "cancelled"
+      with the reason after "load-requested".
+    - >-
+      Five scenarios through the spawned simulator, asserting on the
+      actions rows: load then dispense then clear with the tester playing
+      the door (rows: load-requested, door-opened, load-completed,
+      dispense-requested, door-opened, dispense-completed, cleared - admin
+      on the last, the nurse on the rest) and a second service restoring
+      the store; door physics popping the door and a door left open warned;
+      a door that does not open warned, another slot refused meanwhile, and
+      the cancel; a restart with the door open, closed while down,
+      completed on restart; a board gone silent reported, a load against it
+      failing cleanly with "unlock failed" recorded.
+    - >-
+      Checks at 13c1bd6: fmt; cargo test --workspace (40 passed); clippy
+      -D warnings; rust-toolchain.toml pins 1.88 with the Windows and wasm
+      targets, as DAC2 does, because sqlx's tree needs 1.88.
+  departures:
+    - >-
+      The plan named two crates; a third, cabinet, was needed to run the
+      scenarios the plan asked for through the gateway and the simulator.
+      It is the application core the desktop shell will call, not extra
+      scope.
+    - >-
+      Every start records one "reconciled" row per slot whose door reads
+      open on the first observation. Against the simulator's fixture that
+      is eleven rows; against a cabinet with its doors closed, none.
+  boundaries:
+    - Timings in the scenarios are shortened (50 ms poll, 400 ms grace, 800 ms left-open); production defaults are 500 ms / 2 s / 2 s / 60 s.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  authorized_by: memory/events/2026/09/20/20260920T101500_smc_v2_app_slice2_authorized.yaml
+  repository:
+    head: d8d2fdb
+    branch: hq/20260917
+    working_tree: three-closeouts-and-the-registry-flip-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    base: 283798c
+    head: 13c1bd6
+    branch: feat/workflow-store
+    pull_request:
+      number: 2
+      url: https://github.com/mojisejr/smc-v2/pull/2
+      base: feat/cu12-gateway
+      state: draft-until-this-closeout-is-committed
+    checks:
+      - cargo fmt --check
+      - cargo test --workspace (40 passed)
+      - cargo clippy --workspace --all-targets -- -D warnings
+  preceding_records:
+    - memory/events/2026/09/20/20260920T150000_smc_v2_app_slice1_ready_for_owner_review.yaml
+
+unresolved:
+  - store, cabinet and ops cannot be cross-checked for Windows from macOS (the SQLite C build needs a Windows toolchain); slice 6.
+  - Whether a nurse should be able to cancel a dispense that did not pop, or only an admin, was decided here as the nurse; the owner may change it in review.
+
+next_action:
+  action: >-
+    Mark pull request 2 ready; the owner reviews it after merging pull
+    request 1.
+  acceptance_check:
+    - Pull request 2's head is 13c1bd6 when the owner reads it.

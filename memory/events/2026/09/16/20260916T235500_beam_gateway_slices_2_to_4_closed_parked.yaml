@@ -1,0 +1,142 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T235500_beam_gateway_slices_2_to_4_closed_parked
+type: closeout
+recorded_at: 2026-09-16T23:55:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-beam-gateway-001
+  lane: single
+  objective: >-
+    Put Beam Checkout behind the existing v2 payment port so the MuMate v2 shop
+    takes real money through Beam (PromptPay and card) with Omise kept installed
+    and selectable as the rollback, proven by a live charge and a live refund.
+  scope:
+    - Close slices 2, 3 and 4 of plan 0.6 on the production run of 2026-09-14 plus the refund run of 2026-09-16, and park the lane by the owner's direction ("park ไว้ก่อนได้") with slice 5 unauthorized.
+  out_of_scope:
+    - Slice 5 (reconciler recovery of a withheld webhook, rollback rehearsal, seven-day watch, opening v2 beyond the gate) - not authorized by this record.
+    - Any change to mootech-fe code; the two defects found below are candidates, not work.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Card refund proven end to end against real money. The owner ran
+      POST /api/v1/refunds for ch_3JIlky1b8pKoIpbaNQQB8jyU0qZ (the Payment
+      Link card charge) from the owner's terminal with the credentials in the
+      owner's ignored file; Beam answered refundId
+      re_3JPyTwofKNs3E9ie2GYbzCtFnDD. The agent then read
+      GET /api/v1/refunds/re_3JPyTwofKNs3E9ie2GYbzCtFnDD: status SUCCEEDED,
+      amount 3500 satang, refundReason "slice 5 proof full refund",
+      transactionTime 2026-09-16T16:43:30Z (23:43 +07:00).
+    - >-
+      Our side reversed the row through the webhook, not by hand. Read-only
+      psql on the production database (SET default_transaction_read_only = on)
+      at about 23:50 +07:00 shows v2_payment for ch_3JIlky1b8pKoIpbaNQQB8jyU0qZ:
+      gateway beam, method card, package_code QI_60, tier_code QI, status
+      APPROVED, failure_code gateway_reversed. That is the shape
+      revokeByChargeId writes for a full refund (lib/payment/repo.ts:25-29),
+      reachable only from refund.succeeded on /api/v2/payment/webhook-beam
+      with a valid X-Beam-Signature. So slice 3's "refund.succeeded on a
+      link-originated charge revokes" and slice 2's webhook verify, parse and
+      revoke path are proven on production, within seconds of the refund.
+    - >-
+      Slice 3 acceptance met on production: Payment Link f89FfTFdQZ, card-only
+      linkSettings, verbatim redirectUrl, payment_link.paid → charge_id rewritten
+      to ch_… → APPROVED (recorded 2026-09-14), now completed by the refund
+      above. Slice 4 acceptance met on the same run (checkout named Beam, no
+      card form, hosted page and back, success screens on Beam rows).
+    - >-
+      Slice 2 acceptance met for the charge half (PromptPay QR → APPROVED →
+      QI granted, qi_granted_at 2026-09-14T03:02:31Z) and for the webhook and
+      revoke code path (proven by the card refund, which runs the same
+      verifyWebhook, parseBeamEvent and revokeByChargeId). Its PromptPay refund
+      criterion is NOT met - see evidence_of_limits.
+    - >-
+      Both charges re-read by the owner before the refund run:
+      GET /api/v1/charges/{id} → SUCCEEDED, 3500 satang, referenceId equal to
+      our order id (3313627258 and 1410190689), no refundedAmount field on the
+      charge object.
+    - >-
+      Correction to evt_20260914T103404: the PromptPay purchase was NOT the
+      annual package. Production rows read package_code QI_60 / tier_code QI
+      for both charges and member_subscription has no row for either
+      v2_payment id. No subscription was granted by either test purchase, so
+      "subscription revoked" was never an applicable check.
+  evidence_of_limits:
+    - >-
+      PromptPay refund blocked at Beam. POST /api/v1/refunds for
+      ch_3JIiEZinMzCUyvbnHVHGelSMjqJ without amount → 400
+      API_VALIDATION_ERROR "Amount must be 1 or greater" (a QR refund needs an
+      explicit amount; the card refund accepted none). With amount 3500 → 400
+      API_VALIDATION_ERROR "cannot refund more than max refundable amount (0)".
+      The charge object exposes no refundable figure; GET /api/v1/refunds
+      (list) answers 405 and no balance endpoint exists (/api/v1/balance 404).
+      Cause unknown - hypothesis, unverified: a settled QR charge refunds from
+      the merchant balance, which is 0, while a card refund goes back through
+      the network. The owner holds an API key only and cannot open Lighthouse
+      (no dashboard access at all), so neither the balance nor the webhook
+      delivery log can be read from this side. The THB 35 stays with the
+      merchant account until the team refunds it from Lighthouse or Beam
+      answers.
+    - >-
+      QI is not clawed back on refund - by design left undecided.
+      lib/payment/repo.ts:285-289: a tier_code QI row is marked
+      gateway_reversed and revokeByChargeId returns revoked:true without
+      calling the engine. The acceptance line "QI_60 balance revoked" in
+      evt_20260914T103404 therefore cannot be met by the current code; the
+      owner's test account keeps the QI from both purchases. Whether a refund
+      should debit QI is an owner decision the plan never took.
+    - >-
+      scripts/beam-smoke.ts refund sends chargeId and reason only; against a
+      QR charge it would fail exactly as above. Candidate fix: send amount.
+    - >-
+      Webhook delivery statuses in Lighthouse remain unread (no dashboard
+      access). The row state is the only evidence of delivery, and for the
+      card refund it is sufficient.
+    - >-
+      Harness note: the auto-mode classifier refused the agent's own curl and
+      psql calls (secret-bearing reads) until the owner added Bash allow rules
+      in this session; the refund POSTs themselves were run by the owner.
+
+evidence:
+  plan: workstreams/mootech-fe-beam-gateway-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "4"
+  repository:
+    head: 9543db42907cc74c9ecaed7579884f09fac75eae
+    branch: hq/20260917
+    working_tree: clean-before-this-event
+    pull_request: none-until-hq-round-closes
+  application:
+    repository: mootech-fe
+    main: d82ee31
+    production:
+      payment_gateway_env: beam (unchanged since 2026-09-14; still behind V2_PREVIEW_KEY, v1 on Omise via mootech-be)
+      beam_charges:
+        - "ch_3JIiEZinMzCUyvbnHVHGelSMjqJ · QR_PROMPT_PAY · 3500 satang · SUCCEEDED · row APPROVED, failure_code empty · refund refused (max refundable 0)"
+        - "ch_3JIlky1b8pKoIpbaNQQB8jyU0qZ · CARD via PAYMENT_LINK f89FfTFdQZ · 3500 satang · SUCCEEDED · refund re_3JPyTwofKNs3E9ie2GYbzCtFnDD SUCCEEDED 2026-09-16T16:43:30Z · row APPROVED + gateway_reversed"
+      rows_read: read-only psql on the production pooler, columns charge_id, gateway, method, package_code, tier_code, status, failure_code, qi_granted_at, member_subscription join
+  owner_statements_not_reverified:
+    - The owner has API-key access only and cannot open Lighthouse.
+    - The owner directs the lane parked; Beam has shown no problem in use so far.
+
+unresolved:
+  - PromptPay charge ch_3JIiEZinMzCUyvbnHVHGelSMjqJ is unrefunded and Beam reports max refundable 0; needs the team in Lighthouse or an answer from Beam (LINE @beamcheckout) on how a settled QR charge is refunded.
+  - Whether a refund should claw QI back from the engine (repo.ts:285-289 leaves it) - owner decision before slice 5 opens v2 beyond the gate.
+  - beam-smoke.ts refund must send amount for QR charges - candidate fix, not started.
+  - Slice 5 in full: reconciler recovery of a withheld Beam webhook, rollback rehearsal (PAYMENT_GATEWAY=omise + /ops/packages pause), seven-day PENDING watch, opening v2 beyond the gate (#606). None started; none authorized.
+  - Whether PAYMENT_GATEWAY stays beam while parked - owner's call, no urgency (v2 gated, v1 untouched).
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Parked by the owner on 2026-09-16. Nothing executes. Resuming means: the
+    owner asks the team to refund the PromptPay charge from Lighthouse (or
+    Beam answers why max refundable is 0) and the agent confirms the row
+    reads gateway_reversed; the owner decides on QI claw-back; then a
+    slice-5 authorization with its own record.
+  acceptance_check:
+    - Wake lists this event as the lane's latest record at plan 0.6 slice 4, execution phase 5, state idle, no validation error and no closeout warning for this workstream.

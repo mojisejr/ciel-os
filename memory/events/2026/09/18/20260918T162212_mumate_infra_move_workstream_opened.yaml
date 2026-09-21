@@ -1,0 +1,87 @@
+schema_version: ciel.event.v0.1
+id: evt_20260918T162212_mumate_infra_move_workstream_opened
+type: decision
+recorded_at: 2026-09-18T16:22:12+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Build a DigitalOcean replacement that matches the FE + BE + Bazi system
+    launched by the product team, keeps Supabase as the single source of truth,
+    and moves the real domains under an owner-controlled maintenance window.
+  scope:
+    - Open plan revision 0.1 and authorize slice 1, container parity with no production change.
+    - Keep launch and migration as independent lanes joined only by the final production Git revisions.
+    - Record the two-hour maintenance budget, owner-controlled flip, and default seven-day warm rollback window.
+  out_of_scope:
+    - Product launch ownership or launch decisions.
+    - Supabase migration, backend retirement, product feature work, or provider cancellation.
+    - Any DigitalOcean resource, DNS, environment, database, or production change in this decision.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On 2026-09-18 the owner reported that the product team will launch v2 on
+    the existing hosting independently. After two alignment rounds, the owner
+    confirmed that this lane moves the launched topology exactly first; keeps
+    the current Supabase project as the unchanged single source of truth;
+    builds and proves DigitalOcean before cutover; places users behind the
+    existing passkey-enabled maintenance gate; allows up to two hours for the
+    flip and proof; and retains the old stack for seven days by default or an
+    explicitly accepted shorter period. The owner controls maintenance, DNS,
+    environment, cron, and both hosting sides. The company DigitalOcean Team
+    exists and billing is ready. Slice 1 is authorized because it changes only
+    container/readiness support and cannot affect production before review and merge.
+  authorizes:
+    - Slice 1 of plan revision 0.1: container and readiness parity for FE, BE, and Bazi on draft application pull requests.
+  does_not_authorize:
+    - Creating or deleting a DigitalOcean resource.
+    - Creating a private GitHub repository or storing any secret.
+    - Deploying, changing DNS or provider settings, enabling a scheduler, flipping traffic, or cancelling a service.
+    - Slices 2-5; each needs a new owner decision after the preceding closeout.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 4234fde46a28e3cb9d95d6d4ee1bf2e14f82b806
+    branch: hq/20260917
+    working_tree: shared-standing-branch-own-paths-only
+  external_record:
+    - https://github.com/mojisejr/mootech-fe/issues/637
+  prior_records:
+    - memory/events/2026/09/17/20260917T122744_mumate_infra_move_decisions_baseline.yaml
+    - memory/events/2026/09/17/20260917T203053_mumate_infra_move_afternoon_checkpoint.yaml
+  observed_application_revisions:
+    mootech-fe_bound_checkout: 131229236de1cc699ed45a3fcb2098b811b6285a
+    mootech-fe_fetched_origin_main: 17d5c67
+    mootech-be: 57da35941c805e490cf99570eaccdbe5c395e018
+    bazi-sft-dataset: 04bc2bd9e24d1aa29a43a4c7568e274a23b08984
+  maintenance_proof:
+    implementation: middleware.ts lines 335-410 at mootech-fe 17d5c67
+    focused_test: bunx vitest run scripts/maintenance-allowlist.test.ts
+    result: 20 passed, 0 failed
+    gap: /api/health is allow-listed but no route exists
+
+unresolved:
+  - The launch team can move mootech-fe main while slice 1 runs; every PR must fetch and rebase from its current production branch before proof.
+  - The private infra repository name, final hostnames, Droplet size, GHCR visibility, and BE pool mode remain slice-2 decisions and are not needed for slice 1.
+  - The DigitalOcean Team Owner must perform billing, deletion, or membership actions that a Modifier cannot perform.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Start slice 1 with three isolated application branches from freshly fetched
+    production branches. Re-verify the expected paths, implement container and
+    readiness parity only, run image-level smoke and repository checks, and
+    open three draft pull requests. Do not deploy or create DigitalOcean resources.
+  acceptance_check:
+    - Wake lists mumate-infra-move-001 active at revision 0.1 with slice 1 authorized and no validation error.
+    - Wake lists mumate-be-retirement-001 paused at revision 0.2.
+    - No production setting, provider resource, database, DNS record, or application main branch changes in this opening decision.

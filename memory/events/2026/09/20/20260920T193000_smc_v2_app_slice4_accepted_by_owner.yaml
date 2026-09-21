@@ -1,0 +1,87 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T193000_smc_v2_app_slice4_accepted_by_owner
+type: closeout
+recorded_at: 2026-09-20T19:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only; this
+    record holds the owner's acceptance run of slice 4 and offers pull
+    request 5 for merge.
+  scope:
+    - The owner's observation on smc-v2 feat/desktop e40cad0, run on the owner's Mac against the simulator in stdin mode with door physics.
+  out_of_scope:
+    - The merge itself; slice 6.
+
+outcome:
+  status: accepted-by-owner
+  completed:
+    - >-
+      Owner observation, 2026-09-20 evening, in the owner's words: (1) ใส่
+      key = ผ่าน - a one-year license issued by smc-license with the
+      development key for machine code X71V-ZXS8-8XXD (the code the app
+      showed equals `smc-license machine` on this Mac) was pasted and
+      accepted; (2) สร้าง default admin = ผ่าน; (3) สร้าง 1 user = ผ่าน;
+      (4) flow ใส่ยา and wait-for-closing poll = good; (5) flow dispense =
+      good, and "ไม่มีแล้ว (เคลียร์ช่อง)" returned the slot to ว่าง; (6) a
+      door left open past 60 s turned the warning red = good; (7) the log
+      page matched what was done (ตรงกัน); (8) an expired license (issued
+      with --days -10) was installed from Admin → ข้อมูลและใบอนุญาต - the
+      dialog judged it "ใบอนุญาตหมดอายุแล้ว จ่ายยาที่มีอยู่ได้ ลงทะเบียนใหม่ไม่ได้"
+      and the red banner "ใบอนุญาตหมดอายุ 2026-09-10 · จ่ายยาที่มีอยู่ได้ ·
+      ลงทะเบียนใหม่ไม่ได้ · รหัสเครื่อง X71V-ZXS8-8XXD" sat across every screen,
+      screenshot shown to the agent. The owner noted the banner does not
+      go away on its own; that is DESIGN.md's rule (the banner does not
+      dismiss until a usable license is installed) and the owner may
+      change it.
+    - >-
+      Slice 4 acceptance of plan revision 0.3 is met on the owner's word:
+      load → dispense → clear for one HN and a door-left-open case with
+      the screen and the log agreeing; the expired state proven in the UI
+      with a license from smc-license; fmt, test, clippy and the macOS
+      bundle recorded in the preceding closeout. Pull request 5 was marked
+      ready for review at e40cad0.
+  not_completed:
+    - The merge; slice 6 (Windows).
+  boundaries:
+    - Observed on macOS against the simulator only; the .dmg is not built on this machine.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "4"
+  repository:
+    head: "3da3f61"
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "e40cad0"
+    branch: feat/desktop
+    base: "4e55e1e"
+    pull_request: https://github.com/mojisejr/smc-v2/pull/5
+    working_tree: clean-equal-to-origin
+  licenses_issued_for_the_run:
+    - "one year, expires 2027-09-20, note 'dev acceptance run 2026-09-20', development key"
+    - "expired, expires 2026-09-10, development key - for the banner check"
+  preceding_records:
+    - memory/events/2026/09/20/20260920T182000_smc_v2_app_slice4_ready_for_owner_review.yaml
+
+unresolved:
+  - Whether the expired banner should be dismissable for a shift; today it is not, by DESIGN.md.
+  - DESIGN.md open questions stand; the acceptance run did not exercise ยกเลิก on a door that did not pop (the simulator's physics always pops) nor the board-lost path.
+  - The development key still signs every license; the production keygen is a pre-sale step.
+
+next_action:
+  action: >-
+    The owner merges pull request 5; the agent syncs main, records the
+    merge, and asks for the slice-6 decision - the Windows build and
+    proof on the owner's Windows machine against the simulator over TCP.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 active at revision 0.3 with this closeout as the latest event.

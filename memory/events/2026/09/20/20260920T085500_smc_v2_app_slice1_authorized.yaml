@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T085500_smc_v2_app_slice1_authorized
+type: decision
+recorded_at: 2026-09-20T08:55:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only; this
+    decision starts slice 1, the CU12 gateway.
+  scope:
+    - Authorize slice 1 of plan revision 0.1 and the creation of the private remote mojisejr/smc-v2.
+  out_of_scope:
+    - Slices 2 to 6 need their own decisions; the owner's direction to continue without pause is recorded below and each later decision will cite it.
+
+outcome:
+  status: decided
+  decision: >-
+    On the morning of 2026-09-20 the agent summarised where the work stood
+    - both workstreams opened at c265c20, no slice authorized, no code -
+    and asked for two things: the word on slice 1 of smc-v2-app-001 and of
+    cu12-simulator-sprint-004, and the private GitHub repository. The owner
+    answered "1, 2 คุนทำได้เลยครับ ลุย" and added that if nothing blocks,
+    the agent should keep going at length while the owner is away. This
+    decision authorizes slice 1 and the external write of creating
+    mojisejr/smc-v2 as a private repository with the agent's gh
+    credentials, pushing the seed 36d6e61 to it, and binding the registry.
+    The owner's "keep going" is recorded as the standing direction for the
+    following slices; each still gets a decision event of its own before it
+    starts, citing this one, and the agent stops at any blocker.
+  authorizes:
+    - Slice 1 of plan revision 0.1 - crates/cu12 with transports, gateway and poller, proven against the spawned simulator, on a draft pull request in smc-v2.
+    - Creating the private remote github.com/mojisejr/smc-v2, pushing the seed, and flipping projects/smc-v2/project.yaml to that canonical remote.
+  does_not_authorize:
+    - Slices 2 to 6 on this event alone; each is recorded separately citing the owner's standing direction.
+    - Any real-hardware work.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: b069f73
+    branch: hq/20260917
+    working_tree: this-event-and-the-sprint004-decision-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: 36d6e61
+    branch: main
+    working_tree: seeded-local-only-remote-to-be-created
+  simulator:
+    repository: cu12-simulator
+    head: 6f0594b3d0099c6df5e20dcd5ce2ad55bf1fec10
+  preceding_records:
+    - memory/events/2026/09/18/20260918T060000_smc_v2_app_workstream_opened.yaml
+
+unresolved:
+  - The owner is away during execution; anything that needs the owner's eyes (the legacy application for slice 3, owner observation for slice 4) waits for the owner's return.
+  - Slice 1 is proven over TCP everywhere and over the PTY on macOS only; no Windows check runs in this slice.
+
+next_action:
+  action: >-
+    Create mojisejr/smc-v2 private, push the seed, bind the registry;
+    branch feat/cu12-gateway; build crates/cu12 and its tests; run fmt,
+    test and clippy; open a draft pull request; record the slice-1
+    closeout on its head; mark the pull request ready for the owner.
+  acceptance_check:
+    - Wake lists smc-v2-app-001 as active at revision 0.1 slice 1 authorized, smc-v2 bound to its remote and available.

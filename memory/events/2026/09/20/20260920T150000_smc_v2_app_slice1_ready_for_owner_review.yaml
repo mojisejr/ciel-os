@@ -1,0 +1,114 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T150000_smc_v2_app_slice1_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-20T15:00:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only; this
+    closes slice 1, the CU12 gateway.
+  scope:
+    - Close slice 1 of plan revision 0.1 on the pull request that carries it.
+  out_of_scope:
+    - Slices 2 to 6; real hardware; a Windows run.
+
+outcome:
+  status: slice-closed
+  completed:
+    - >-
+      Private remote github.com/mojisejr/smc-v2 created by the agent under
+      the owner's go; the seed 36d6e61 pushed to main by the owner (the
+      harness refuses any push to main from the agent, even the one-time
+      seed); the registry flips to that canonical remote in this commit.
+    - >-
+      Application commit 283798c on feat/cu12-gateway from main 36d6e61,
+      pushed, draft pull request 1 opened with the CIEL template. Cargo
+      workspace (edition 2024, unsafe forbidden, pinned dependencies) with
+      crates/cu12 - protocol with every ASK code named, LockSelector in
+      human numbers, HookStatus in the owner-confirmed mapping; Endpoint::
+      Serial and ::Tcp, serialport on Windows and Linux, termios directly
+      on macOS; Gateway on one thread with a queue, one request in flight,
+      500 ms timeout, two retries, hex trace at DEBUG; Poller at 500 ms /
+      2 s with poke; examples/probe.rs.
+    - >-
+      Tests, 21: the manual's vectors as literal bytes; a scripted TCP peer
+      for silence and the retry budget (three attempts in the budget),
+      refusal by ASK code with no retry, stray and corrupt bytes before the
+      answer, a late answer, a vanished peer, an unreachable endpoint, and
+      the trace text; the real simulator spawned over TCP and the macOS
+      PTY - fixture, unlock ACK moving nothing, version; a tester typing
+      "hook 3 locked" seen by the next snapshot within a second; door
+      physics seen by the poller; idle rate and poke; eight threads on one
+      gateway. No fixed sleep as synchronisation.
+    - >-
+      Checks at 283798c: cargo fmt --check; cargo test (21 passed); cargo
+      clippy --all-targets -- -D warnings on macOS and on
+      x86_64-pc-windows-msvc; git diff --check. A probe against the
+      simulator traced "tx=02 00 00 8F 00 00 03 94 / rx=02 00 00 8F 10 02
+      03 C8 10 12" and "tx=02 00 00 80 00 00 03 85 / rx=02 00 00 80 10 02
+      03 99 02 00" as the closeout evidence the plan asked for.
+  departures:
+    - >-
+      The plan named serialport for the macOS PTY too; the crate sets the
+      baud rate with IOSSIOSPEED, which a PTY answers with ENOTTY, so the
+      macOS build configures the port with termios as the e2e lab did. The
+      serialport path compiles and lints for the Windows target but has
+      not run there.
+    - >-
+      The plan's "timeout test against a socket that never answers" is
+      covered by the scripted peer, which also measures that three
+      attempts fit the budget.
+  boundaries:
+    - The crate never imports the simulator; the simulator binary for the tests comes from CU12_SIM_BIN or the sibling checkout.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  authorized_by: memory/events/2026/09/20/20260920T085500_smc_v2_app_slice1_authorized.yaml
+  repository:
+    head: d8d2fdb
+    branch: hq/20260917
+    working_tree: three-closeouts-and-the-registry-flip-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    base: 36d6e61379d19e490afe4ed8eccb64f1059a94e1
+    head: 283798c
+    branch: feat/cu12-gateway
+    pull_request:
+      number: 1
+      url: https://github.com/mojisejr/smc-v2/pull/1
+      base: main
+      state: draft-until-this-closeout-is-committed
+    checks:
+      - cargo fmt --check
+      - cargo test -p cu12 (21 passed)
+      - cargo clippy --all-targets -- -D warnings
+      - cargo clippy --all-targets --target x86_64-pc-windows-msvc -- -D warnings
+  simulator:
+    repository: cu12-simulator
+    head: 1c2232bd
+    branch: main
+    note: physics mode merged from PR 2 (82a9749) by the owner on 2026-09-20; the checkout is synced and the topic branch removed.
+  owner_observation: none yet; the owner has not run the probe.
+
+unresolved:
+  - The serial transport on Windows compiles but has not opened a COM port; slice 6.
+  - A PTY on macOS is a byte stream, not RS485; the timings measured here say nothing about a real bus.
+
+next_action:
+  action: >-
+    Mark pull request 1 ready; the owner reviews and merges it first, then
+    pull requests 2 and 3 in order (each is based on the previous branch;
+    GitHub retargets them to main as the earlier one merges). After each
+    merge the checkout returns to a clean main equal to origin/main and the
+    topic branch is removed.
+  acceptance_check:
+    - Pull request 1's head is 283798c when the owner reads it.
+    - After the merge, origin/main of smc-v2 contains 283798c.

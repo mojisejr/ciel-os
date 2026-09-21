@@ -1,0 +1,111 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T214501_mumate_infra_move_plan_0_2_observability_before_flip
+type: decision
+recorded_at: 2026-09-20T21:45:01+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Build a DigitalOcean replacement that matches the FE + BE + Bazi system
+    launched by the product team, keeps Supabase as the single source of
+    truth, and moves the real domains under an owner-controlled maintenance
+    window. This decision revises the plan to 0.2: slice 3 gains an
+    observability step that must be live before the move continues, and a
+    churn gate before the rebuilt-shadow smoke and the flip.
+  scope:
+    - Revise plan 0.1 to 0.2 - slice 3 becomes 3a shadow stack (done), 3b observability base in mumate-infra, 3c parity smoke on a rebuilt shadow gated on the launch team's merge rate; slices 4 and 5 gain preconditions; the slice-2 runbook cap admits a fourth runbook.
+    - Authorize slice 3 of revision 0.2 (3b now, 3c when the gate opens).
+    - Record the owner's answers and the research that led to them.
+  out_of_scope:
+    - Application-side observability (error tracking, structured logs, personal data out of application logs) - deferred by the owner to a later decision.
+    - Slices 4 and 5 - each still needs its own decision.
+    - Any change to production, Vercel, Render, Supabase, or the launch team's repositories.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On 2026-09-20 evening, after the owner's smoke on the shadow passed and
+    the latency comparison was on record, the owner asked whether the
+    control room can see the whole system and find causes quickly when the
+    server has a problem, and asked for a consultation before continuing.
+    The agent surveyed mumate-infra and the host: ops-status and Discord
+    alerting exist, the health timer is not enabled, Caddy has no access
+    log, application logs are per-container json files that die with the
+    host, there is no outside uptime check and no error tracking, and the
+    BE prints whole user objects (personal data) to its log. Four layers
+    were laid out - A on-host completeness, B off-host central logs and
+    alerts, B' self-hosted variant, C application-side. The owner
+    answered: (ก) A and B agreed, C decided again later; (ข) Grafana Cloud
+    free tier rather than self-hosting; (ค) Better Stack free tier for
+    the outside check, "if free now" - and stressed free tiers that work
+    today, because this lane's real job on this project is operations:
+    keeping the system stable and fixing what breaks it, while the launch
+    team owns features. The owner then asked whether now is the time,
+    given the team's many post-launch fixes. The agent measured: since the
+    shadow's FE revision 921f449 the team merged 20 pull requests in four
+    hours (26 today, eight in the 19:00 hour, all fixes around LINE login,
+    the auth gate, the member-id cookie and identity limbo - the very
+    paths the smoke exercises); Bazi pdf-dev received nine direct pushes
+    without pull requests, the last minutes before the check; mootech-be
+    did not move; none of the FE changes touch container or environment
+    files. Recommendation accepted by the owner: build the observability
+    layers now, entirely inside mumate-infra, and hold the shadow rebuild,
+    the remaining smoke, and the flip until the merges calm; a release
+    freeze is not possible this week. The owner asked that the plan and
+    workstream be put in order and the decision recorded before any work
+    continues - this event and the plan revision are that.
+  authorizes:
+    - Slice 3 of plan revision 0.2, step 3b - two mumate-infra pull requests (layer A on-host, layer B Grafana Alloy to Grafana Cloud free tier), free tiers only, host changes after each merge with the owner's go at that moment.
+    - Step 3c once the churn gate in the plan opens - rebuild FE from main and Bazi from pdf-dev at a quiet point and finish the parity smoke.
+  does_not_authorize:
+    - Enabling any application cron or timer on DigitalOcean; mumate-health.timer and mumate-backup.timer are operations timers and are not application schedulers.
+    - Any pull request to mootech-fe, mootech-be, or bazi-sft-dataset.
+    - A paid tier of any service.
+    - Slice 4 or 5.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: "3da3f61c26da0a89407180d06d219e2865dbd6fc"
+    branch: hq/20260917
+    working_tree: plan-revision-and-this-event-in-one-commit
+    pull_request: none-until-hq-round-close
+  application:
+    mootech-fe: "origin/main 26e237a, 39 commits / 20 merges ahead of the shadow's 921f449; no Dockerfile, env, next.config, or package.json change among them"
+    mootech-be: "origin/main 0705378 = shadow"
+    bazi-sft-dataset: "origin/pdf-dev 8ca0f9a, 9 direct commits ahead of the shadow's 911c87a (ops screens, profile API, chat fixes)"
+    mumate-infra: "main c864827 = host /opt/mumate; no open pull request in any of the four repositories"
+  host_observations:
+    - "docker log driver json-file 20m x 5 per container (daemon.json and compose agree); journald 8 MB; do-agent active; ufw active; fail2ban not installed"
+    - "systemctl list-timers: no mumate-* timer enabled"
+    - "Caddyfile: admin off, no log directive; runtime log shows reverse_proxy warnings only"
+    - "BE stdout contains full user objects (profile fields, image URLs, onboarding) - personal data in logs, present on Render too"
+    - "No Sentry, pino, or winston dependency in the three application repositories; no logging or telemetry key in any env file except NEXT_PUBLIC_GTM_ID"
+  free_tier_assumptions_to_verify_at_signup:
+    - "Grafana Cloud free: 50 GB logs/month, 14-day retention, 10k metric series, 3 users"
+    - "Better Stack free: 10 monitors, 3-minute checks, Discord notification available"
+  previous_record: memory/events/2026/09/20/20260920T171153_mumate_infra_move_slice3_owner_smoke_passed_latency_compared.yaml
+  previous_decision: memory/events/2026/09/20/20260920T081119_mumate_infra_move_slice3_authorized.yaml
+
+unresolved:
+  - Whether to tell the launch team now that the Vercel Bazi function runs in iad1 while Supabase is in Singapore (dbLatencyMs 213, ~400 ms per call); the owner decides whether to send the note.
+  - The Vercel Security Checkpoint on the owner's IP for bazichart.mumate.co from the latency probe.
+  - Everything carried in the previous records: Facebook/Twitter callbacks, mumate-1 destroy, port-22 policy, GITHUB_TOKEN rotation, Vercel bazi missing SUPABASE_* values.
+
+next_action:
+  action: >-
+    Open mumate-infra pull request 9 (layer A: Caddy access log with request
+    id, bin/logs.sh, health timer in cloud-init, runbook 04, DO alert
+    policy and uptime-check instructions), owner review, merge, then host
+    steps with the owner's go; then pull request 10 (layer B) once the
+    owner has created the Grafana Cloud account. One CIEL record per merged
+    pull request.
+  acceptance_check:
+    - The DoD 3b checks in PLAN.md revision 0.2 pass and are quoted in the 3b record.

@@ -1,0 +1,107 @@
+schema_version: ciel.event.v0.1
+id: evt_20260918T060000_smc_v2_app_workstream_opened
+type: decision
+recorded_at: 2026-09-18T06:00:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart - a 12-slot patient-medication cabinet
+    for a hospital ward on one KERONG CU12 board - lean, easy to sell and
+    repair, liked by the people who use it, robust, true to the hardware,
+    and built to completion against the CU12 simulator only.
+  scope:
+    - Open the workstream at plan revision 0.1 and record the owner's agreement; slice 1 waits for the owner's own word.
+  out_of_scope:
+    - Real hardware, USB-to-RS485, Windows COM against a cabinet, a second cabinet, scanning from the home screen, any medical-device or compliance claim.
+
+outcome:
+  status: decided
+  decision: >-
+    On 2026-09-18 the owner set the goal: build SMC v2 anew from the
+    mistakes of the legacy application, lean, practical in a hospital,
+    easy to sell and repair, liked by its users, robust, not fighting the
+    hardware - and finish it as a usable application against the simulator
+    alone, with no real hardware yet. The owner first asked whether the
+    simulator was ready for that. The agent read the simulator, the CU12
+    manual and the legacy controller and answered that it covers the happy
+    path already and lacks only provoked faults, which are better shaped
+    once the application's gateway exists; the owner accepted. The owner
+    then recalled the cabinet's behaviour from use - after Unlock the door
+    pops open and the hook bit reads 0 until a person closes it - and
+    confirmed that the simulator's twelve-hook mapping matches the cabinet
+    in use. The agent then ran a syncup of seventeen questions in three
+    rounds, each with its lean; thirteen leans held and four were
+    corrected by the owner: the ward PC has a mouse, keyboard and a
+    barcode scanner rather than a touch screen; a secure offline license
+    with expiry is wanted, not cut; the UI is to be the legacy UI
+    identically, captured into DESIGN.md first; and "audit" means a
+    user-facing who-did-what log plus a separate technician-facing system
+    log for debugging, not a tamper-evident chain. The full agreement is
+    in the plan's owner-agreement section. The owner asked for a checkpoint
+    commit before going on; this decision opens the workstream and records
+    the agreement. It authorizes no slice: slice 1 starts on a separate
+    decision once the owner says so.
+  authorizes:
+    - Nothing. The plan and the registry are recorded; no slice may execute on this event.
+  does_not_authorize:
+    - Slice 1 - the CU12 gateway - and slices 2 to 6; each needs its own decision.
+    - Creating the GitHub remote; the owner creates it or gives the agent an explicit go at the time.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 1236bdf
+    branch: hq/20260917
+    working_tree: plan-project-registry-and-this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: 36d6e61
+    branch: main
+    working_tree: seeded-local-only
+    registry: projects/smc-v2/project.yaml
+  simulator:
+    repository: cu12-simulator
+    head: 6f0594b3d0099c6df5e20dcd5ce2ad55bf1fec10
+    branch: main
+    working_tree: clean
+  owner_observation:
+    recorded_as: owner-recalled from use, 2026-09-18; not measured; to be confirmed on real hardware
+    hook_mapping: The simulator's least-significant-bit-first mapping of twelve hooks across two bytes matches the cabinet the owner used; this closes the first unresolved item of the sprint-003 final closeout for the owner's cabinet, not for every board.
+    door_after_unlock: After Unlock the door pops open and the hook bit reads 0; it stays 0 until the door is closed by hand, then reads 1.
+  source_read:
+    - checkouts/cu12-simulator/src/ (device, hook_state, control, protocol, transport, main)
+    - checkouts/cu12-simulator/docs/protocol-evidence.md
+    - .assets/cu12-simulator/reference/CU12 Protocol and Introduction-12.08.2022.pdf (pages 5-16, via pdftotext)
+    - .assets/smc-legacy/SMC_LEGACY_UNDERSTANDING.md
+    - /Users/non/dev/smc/smc-app at 7116171 - db/model/*.ts, main/ku-controllers/ds12/DS12Controller.ts, main/license/validator.ts, README.md, renderer/components/Dialogs/inputSlot.tsx, renderer/tailwind.config.js
+    - src/portfolio/read.ts and src/events/validate.ts (to establish that the lifecycle and checkpoint defects recorded on 2026-09-05 are fixed on origin/main since 4e9b809)
+  preceding_records:
+    - memory/events/2026/09/04/20260904T230000_smc_legacy_understanding.yaml
+    - memory/events/2026/09/05/20260905T071700_cu12_hook_scenarios_final_closeout.yaml
+    - memory/events/2026/09/05/20260905T112800_cross_client_session_closeout.yaml
+
+unresolved:
+  - The door behaviour and the hook mapping above are owner-recalled; slice 6 of this plan does not reach real hardware, so both stay unconfirmed until a later hardware proof.
+  - The private remote mojisejr/smc-v2 does not exist yet; the project is registered local-only and the registry changes when the owner creates it.
+  - The legacy application has not been run in this session; slice 3 depends on it starting on the owner's Mac with a test-mode license.
+  - Leptos client-side rendering inside Tauri 2 is new to this portfolio (DAC2 uses Leptos server-side); slice 4 carries that learning cost.
+  - cu12-simulator-sprint-003 and cu12-e2e-lab-001 read as merged-needs-sync on the standing branch only because the checkout is not on main; both child checkouts are clean and equal to origin/main.
+
+next_action:
+  action: >-
+    Obtain the owner's decision authorizing slice 1 and record it; then ask
+    the owner to create the private repository mojisejr/smc-v2, push the
+    seed 36d6e61 to it, bind the registry, branch feat/cu12-gateway
+    and build crates/cu12 with the transports, gateway and poller and the
+    tests the plan names; run the three cargo checks; open a draft pull
+    request; record the slice-1 closeout on its head.
+  acceptance_check:
+    - Wake lists smc-v2-app-001 as active at revision 0.1 awaiting an owner decision, with no validation error or warning and smc-v2 bound and available.
+    - cu12-simulator-sprint-004 sits beside it with no project overlap.

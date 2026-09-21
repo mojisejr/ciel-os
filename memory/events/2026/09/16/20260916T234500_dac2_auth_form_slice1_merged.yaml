@@ -1,0 +1,127 @@
+schema_version: ciel.event.v0.1
+id: evt_20260916T234500_dac2_auth_form_slice1_merged
+type: closeout
+recorded_at: 2026-09-16T23:45:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-auth-form-001
+  lane: single
+  objective: >-
+    Let a grower register, sign in, and reset a password on a phone without
+    typing blind: every password field gets a show/hide control, the two
+    screens that set a password ask for it twice, and the minimum length
+    drops from fifteen characters to six.
+  scope:
+    - Slice 1 of plan revision 0.1 - the DESIGN.md revision and the change across store, web, style, tests and the two proof scripts, on one pull request, proved locally and tried by the owner.
+  out_of_scope:
+    - Slice 2, the deploy; the push run builds the image, the owner sets the tag on Render.
+
+outcome:
+  status: slice-closed
+  completed:
+    - >-
+      Application commit a780892 on feat/auth-form from main 5d37f0e (9
+      files, +296 -25), pushed, draft pull request 25 opened, the body
+      rewritten to the CIEL template at the owner's request, and merged by
+      the owner as 0970c6c at 2026-09-16 23:46 +07:00 after trying it on a
+      local server the agent started for that purpose. The agent pushed
+      and opened the draft under the owner's standing procedure for this
+      project (README, "The image from Git").
+    - >-
+      store: MIN_PASSWORD_CHARS 15 to 6, counted by Unicode character, no
+      composition rule, ceiling 1024; the policy test pins five as too
+      short and six as enough in Thai and in digits.
+    - >-
+      web: register and reset_password take a confirm field and refuse a
+      mismatch with "รหัสผ่านทั้งสองช่องไม่ตรงกัน" before touching the
+      store; the length sentence says six. A PasswordField component -
+      label, a row of the input and a 56x56 show/hide button, the hint -
+      on register (two fields), sign-in (one) and reset (two). The button
+      is type=button with aria-pressed and a Thai label, toggles the input
+      between password and text through a signal, and draws its own eye in
+      inline SVG; before hydration it is inert and the form still submits.
+      FormField is unchanged.
+    - >-
+      DESIGN.md 0.10 to 0.11: the entry-screen row gains the eye, the
+      "icons in fields" rule names this button as its exception, and a new
+      "Password fields" subsection carries every string verbatim and
+      records six as the owner's choice for a narrow pilot.
+    - >-
+      Proof: check.sh end to end; auth_http.rs refuses a mismatched pair
+      and a five-character password with no account written; a new
+      shell_ssr test reads the fields and buttons on all three screens;
+      check-responsive.sh 39 routes at 320, 360, 393 and 412 (first run
+      flaked in the seeding phase at the fixed-costs step, second run
+      clean); a hand-driven Chrome at 320 toggled the eye on each screen,
+      measured the button at 56x56, and saw the mismatch sentence through
+      the real form.
+  departures:
+    - >-
+      The plan said the owner reads the diff and says OK before the
+      closeout; the owner merged instead, which is the OK and more. The
+      closeout cites the merge.
+  boundaries:
+    - No strength meter, breached-password list, rate-limit change, lockout, session, token, mail, or entry-screen layout change beyond the field row.
+    - No schema change; existing hashes untouched; accounts made under the fifteen-character rule keep working.
+
+evidence:
+  plan: workstreams/dac2-auth-form-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  authorized_by: memory/events/2026/09/16/20260916T230500_dac2_auth_form_workstream_opened.yaml
+  repository:
+    head: 939488f
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: dac2-durian-smart-account
+    base: 5d37f0e22b0d20b9aa15791c58f02f4e227987bf
+    head: a78089293488ab94ab8e6ab238ff9b92d611dc26
+    merge: 0970c6c2cedd4ccbb43d9218268fa0465aa6299d
+    branch: main
+    working_tree: clean
+    pull_request:
+      number: 25
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/25
+      state: merged
+    paths:
+      - DESIGN.md
+      - crates/store/src/users.rs
+      - crates/web/src/{app.rs,auth.rs}, crates/web/tests/{auth_http.rs,shell_ssr.rs}
+      - scripts/{responsive.mjs,stall-probe.mjs}, style/main.css
+  checks:
+    - scripts/check.sh - exit 0
+    - scripts/check-responsive.sh - passed at 320, 360, 393, 412px on the second run
+    - cargo test -p store --lib 7, web --lib 64, shell_ssr 4, auth_http 1 passed
+    - Chrome at 320px, hand-driven - eye toggles on three screens, button 56x56, mismatch sentence shown
+    - ci run 35123988347 on main 0970c6c in progress at the time of this record
+
+unresolved:
+  - >-
+    Six characters with no composition rule is the owner's choice for the
+    pilot; revisited as its own decision if the pilot ever holds real
+    records.
+  - >-
+    The layout proof's seeding-phase flake recurred once at the
+    fixed-costs step; still unexplained, clean on rerun.
+  - >-
+    The eye depends on hydration; the 2026-09-14 keep-alive stall is not
+    addressed. The tester's missing reset mail of 2026-09-15 stays
+    unexplained. dac2-guided-inputs-001 stays paused with the deferred
+    pilot proof.
+
+next_action:
+  action: >-
+    The ci run on main publishes the image tagged 0970c6c...; the owner
+    sets that tag on the Render service (no migration, no environment
+    change). The agent reads the run, the deploy and the start-up log,
+    checks the three screens on the public address with the owner, and
+    records the slice-2 closeout as ready-for-owner-merge, which finishes
+    the workstream. Slice 2 needs the owner's word to this session first.
+  acceptance_check:
+    - The ci image job on main 0970c6c green.
+    - The eye, the confirm field and a six-character registration work on the public address from the owner's phone; the start-up log shows no error.

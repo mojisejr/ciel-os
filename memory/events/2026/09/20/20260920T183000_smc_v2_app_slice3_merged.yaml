@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T183000_smc_v2_app_slice3_merged
+type: closeout
+recorded_at: 2026-09-20T18:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only; this
+    record closes slice 3 of plan revision 0.2 on the owner's merge of
+    DESIGN.md.
+  scope:
+    - Record the merged state of smc-v2 after pull request 4 and the owner's acceptance of every deviation.
+  out_of_scope:
+    - Slice 4; it needs its own decision.
+
+outcome:
+  status: merged
+  completed:
+    - >-
+      The owner read DESIGN.md, asked for the twelve agent-proposed
+      deviations to be listed, and accepted them - "yes for all 24" -
+      recorded in the document itself at e171c75; the pull request was
+      marked ready and the owner merged it as 4e55e1e. smc-v2 main 4e55e1e
+      equals origin/main, tree clean, DESIGN.md at the root; the topic
+      branch is gone locally and remotely and the stale revert ref was
+      pruned.
+    - >-
+      Slice 3 acceptance met: the owner confirmed the shape ("ทรงเดิม" by
+      the brief of 2026-09-20 afternoon) and every deviation carries the
+      owner's yes; merged before slice 4.
+  not_completed:
+    - Slice 4 (the desktop), slice 5's screens, slice 6 (Windows).
+  boundaries:
+    - No screenshot of the legacy exists; the design is judged from the document until slice 4 runs against the simulator.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: "e1c61ea"
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "4e55e1e"
+    branch: main
+    working_tree: clean-equal-to-origin
+    merged_pull_requests:
+      - { number: 4, merge: "4e55e1e", slice: "3", head: "e171c75" }
+  preceding_records:
+    - memory/events/2026/09/20/20260920T174500_smc_v2_app_slice3_ready_for_owner_review.yaml
+
+unresolved:
+  - DESIGN.md open questions stand - expiry in UTC or local, operator name on the open-door card, the SMC fallback mark, the physical door-label order, HN scan on the home screen.
+  - Slice 4 prerequisites - trunk is not installed; Prompt must be bundled (OFL); the production signing key still does not exist.
+
+next_action:
+  action: >-
+    With the owner's word, record the decision authorizing slice 4 of
+    revision 0.2 - Tauri 2 shell and Leptos screens built to DESIGN.md
+    against the simulator - install trunk, branch from smc-v2 main
+    4e55e1e, and deliver as draft pull request 5.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 active at revision 0.2 with this closeout as the latest event and smc-v2 bound at 4e55e1e clean.

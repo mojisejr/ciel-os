@@ -1,0 +1,124 @@
+schema_version: ciel.event.v0.1
+id: evt_20260919T060828_mumate_infra_move_slice1_merged_to_production
+type: closeout
+recorded_at: 2026-09-19T06:08:28+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Record that the three slice-1 container-parity pull requests were merged by
+    the owner on 2026-09-19 (before the 2026-09-20 launch), what reached
+    production, what was observed there, the one defect found and fixed on the
+    way, and that every local checkout and the arena were returned to their
+    resting state. This is a record about the workstream, not a slice
+    delivery; slice 1 closed in the 053427 event.
+  scope:
+    - Merge outcome per repository with merge commit and production observation.
+    - The Vercel function-size defect on bazi and its fix.
+    - Local clean-up: checkouts, branches, arena, images.
+  out_of_scope:
+    - Any DigitalOcean resource, DNS, provider or environment change (none happened).
+    - Slice 2 (needs its own owner decision).
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Owner decision 2026-09-19 (in chat): merge all three PRs before the launch,
+      one repository at a time, be first; container-build workflows switched to
+      workflow_dispatch only so the launch lane never sees them on its PRs.
+    - >-
+      mootech-be#27 merged as 7e609c6 (2026-09-18T22:36:56Z). Render autoDeploy
+      built the new Dockerfile in ~2 min, deploy dep-damrq2e8bjmc73a5j540 live;
+      observed read-only on https://mootech-be.onrender.com — GET / =
+      "Hello World!", GET /health = {"status":"ok","db":"ok","dbLatencyMs":30}
+      against production Supabase. /health reports sha "unknown" because Render
+      passes no APP_GIT_SHA build argument (deferred: read RENDER_GIT_COMMIT).
+    - >-
+      bazi-sft-dataset#36: the first preview deploy FAILED — "The Vercel
+      Function api/health is 307.13mb uncompressed which exceeds the maximum
+      uncompressed size limit of 250mb". Reproduced locally (route.js.nft.json
+      322 MB) and bisected: the tracer expands path.join(<non-constant>, …)
+      and a literal existsSync(<non-constant>) into a cwd/** glob (the whole
+      repository). Fixed in e30128f: manifest root from APP_RUNTIME_ROOT (no
+      process.cwd()), string concatenation, computed-name existsSync; the
+      function traces to 98 files / 2.1 MB. Preview passed; merged as 5a501b2
+      into pdf-dev; production deployment bazi-sft-dataset-4y9kyaq05 Ready;
+      observed https://bazi-sft-dataset.vercel.app/api/health = 200 {"db":"ok",
+      "runtimeFiles":"not-checked"} — exactly the designed Vercel behaviour.
+    - >-
+      mootech-fe#711 merged as b4c34fd. Vercel production observed at
+      https://bazichart.mumate.co/api/health = 200 {"status":"ok","db":"ok",
+      "dbLatencyMs":228,"sha":null}. Nothing else on the site changes.
+    - >-
+      Clean-up: stack.sh restore (every real env back, shadows and markers
+      removed, guard clean); mootech-fe main = origin/main b4c34fd clean;
+      mootech-be main = origin/main 7e609c6 clean; bazi-sft-dataset detached at
+      origin/pdf-dev 5a501b2 (as before) with only the pre-existing untracked
+      .claude/INCUBATED_BY; bazi-testenv worktree fast-forwarded to 5a501b2;
+      the three infra/container-parity branches deleted locally; line-stub
+      stopped; local smoke images removed; the arena Postgres container left
+      running with the anonymised 2026-09-18 dump (owner may `docker compose
+      -f testenv/docker-compose.yml down`).
+  not_completed:
+    - No image pushed to a registry; no DigitalOcean resource; no DNS, env, scheduler or provider change.
+  evidence_of_limits:
+    - >-
+      Production probes are single read-only GETs from this machine, not a
+      monitoring window; the launch lane's own checks on 2026-09-20 are the
+      real observation.
+    - >-
+      Measured while bisecting, not caused by this lane: the bazi Vercel
+      function api/bazi/public-calc traces to ~242 MB, close to the 250 MB cap;
+      any growth in what it imports will fail its deploy the same way. Reported
+      to the owner for the launch team.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 40769e1aecbc0a0d82ede165de604ebfa5e7cf31
+    branch: hq/20260917
+    working_tree: this-event-added-before-this-record
+    pull_request: none-until-owner-merge-decision
+  application:
+    mootech-be:
+      pull_request: https://github.com/mojisejr/mootech-be/pull/27
+      merge_commit: 7e609c60290329531e74b5843ef0d937d36c691b
+      production: https://mootech-be.onrender.com/health → 200 db ok (Render deploy dep-damrq2e8bjmc73a5j540 live)
+    mootech-fe:
+      pull_request: https://github.com/mojisejr/mootech-fe/pull/711
+      merge_commit: b4c34fd
+      production: https://bazichart.mumate.co/api/health → 200 db ok
+    bazi-sft-dataset:
+      pull_request: https://github.com/mojisejr/bazi-sft-dataset/pull/36
+      fix_commit: e30128f (function trace 307 MB → 2.1 MB)
+      merge_commit: 5a501b2 (base pdf-dev)
+      production: https://bazi-sft-dataset.vercel.app/api/health → 200 db ok, runtimeFiles not-checked
+  slice_closeout: memory/events/2026/09/19/20260919T053427_mumate_infra_move_slice1_container_parity_closeout.yaml
+
+unresolved:
+  - Slice 2 needs an owner decision: private mumate-infra repository name, exact Droplet size and operation, GHCR visibility, hostnames, BE pool mode, Bazi source-of-truth branch (#637 §10).
+  - BE /health sha "unknown" on Render (no build arg); a later small PR can read RENDER_GIT_COMMIT.
+  - bazi public-calc function ~242 MB on Vercel, near the cap (launch-team file, not this lane's).
+  - verify-architecture stays red on mootech-fe main (AppHeader.tsx:185); every push from that repo's hook needs the team's fix.
+  - Node majors: BE on EOL 19 by parity; fe/bazi images on 22 — decide before slice 3.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Nothing runs before the 2026-09-20 launch; the lane stays off the
+    application repositories. When the owner opens slice 2 with a decision
+    (repository name, Droplet size, GHCR visibility), create the private
+    mumate-infra repository, register it in CIEL once it has a Git identity,
+    build the smallest control room (Compose, Caddy, firewall, deploy/rollback,
+    backup/restore, timers disabled, ops status, at most three Thai runbooks),
+    and dogfood with BE first from an image built at the merged SHA 7e609c6.
+    No production, DNS or scheduler change in slice 2.
+  acceptance_check:
+    - Wake lists this event with no validation error; mumate-infra-move-001 stays active, phase 1 idle.
+    - The three application checkouts are clean at their fetched bases and no infra/container-parity branch remains locally.

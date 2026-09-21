@@ -1,0 +1,100 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T200000_smc_v2_app_slice4_merged_handoff
+type: closeout
+recorded_at: 2026-09-20T20:00:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    record closes slice 4 on the owner's merge and hands the workstream to
+    the next session: slices 1-5 are on smc-v2 main; slice 6, Windows,
+    is the last and needs the owner's Windows machine and its own decision.
+  scope:
+    - Record the merged state of every child repository and the exact next step, so a fresh session resumes from Wake alone.
+  out_of_scope:
+    - Any code; slice 6.
+
+outcome:
+  status: handoff
+  completed:
+    - >-
+      The owner merged smc-v2 pull request 5 as 78dfbf3. main 78dfbf3
+      equals origin/main, tree clean; feat/desktop is gone locally and
+      remotely. smc-v2 main now holds crates cu12, workflow, store,
+      cabinet, license, ops, api, app (the Tauri 2 shell) and ui (the
+      Leptos screens), DESIGN.md at the root; 55 tests.
+    - >-
+      Slice 4 of plan revision 0.3 is closed on the owner's acceptance run
+      of 2026-09-20 evening (evt_20260920T193000): license, first admin,
+      user, load, dispense with clear, door left open, log page and the
+      expired banner all observed good on the Mac against the simulator.
+      Slices 1, 2, 3, 4 and 5 (the backend on PR 3, the screens inside
+      slice 4) are delivered; slice 6 remains.
+    - >-
+      cu12-simulator main 1c2232b = origin/main, clean; sprint-004 slice 2
+      (faults and trace) still unauthorized - the application's screens
+      now exist, so it may be shaped when the owner wants it.
+    - >-
+      Tidy before the owner clears the session: the simulator, the app
+      and trunk serve are stopped; the acceptance licenses (one year and
+      expired, development key, machine X71V-ZXS8-8XXD) live only in the
+      session scratchpad; nothing was written into the legacy checkout.
+      CIEL HQ commits this lane made this round: c265c20 b249a44 aee93a6
+      4c1f822 7ec9313 7c62e55 2e28128 e1c61ea 2a708dc d1abdf1 3da3f61
+      0f373bb and this one, all on hq/20260917, unpushed by HQ's rule.
+  not_completed:
+    - Slice 6 - the .msi from the Tauri bundler, the simulator built on Windows in TCP mode, the COM transport configurable but unproven; the owner installs, activates with a CLI-issued key, and completes one load → dispense cycle over TCP on Windows.
+  boundaries:
+    - Nothing has run on Windows; nothing has touched real hardware; the production signing key does not exist.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.3"
+  repository:
+    head: "0f373bb"
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "78dfbf3"
+    branch: main
+    working_tree: clean-equal-to-origin
+    merged_pull_requests:
+      - { number: 1, merge: "361514a", slice: "1" }
+      - { number: 2, merge: "d7d425f", slice: "2" }
+      - { number: 3, merge: "ce03acd", slice: "5 backend" }
+      - { number: 4, merge: "4e55e1e", slice: "3" }
+      - { number: 5, merge: "78dfbf3", slice: "4 incl. the slice-5 screens" }
+  simulator:
+    repository: cu12-simulator
+    head: "1c2232b"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/20/20260920T193000_smc_v2_app_slice4_accepted_by_owner.yaml
+
+unresolved:
+  - Slice 6 needs the owner's Windows machine; cargo-tauri, trunk, node and the wasm target must exist there, and the simulator built in TCP mode (its PTY is macOS-only). The .msi target is set in tauri.conf.json (bundle targets "all").
+  - Before the first sale - smc-license keygen, replace crates/license/src/pubkey.rs, rebuild; licenses issued with the development key then stop verifying.
+  - Whether the expired banner should be dismissable for a shift; today it is not, by DESIGN.md.
+  - DESIGN.md open questions - expiry in UTC, operator name on the open-door card, the SMC fallback mark (the logo is a drawn placeholder), door-label order, HN scan on the home screen.
+  - The ยกเลิก path (door did not pop) and the board-lost path were not exercised by the owner; the simulator always pops. cu12-simulator-sprint-004 slice 2 would add tester-provoked faults for exactly this.
+  - The .dmg step of cargo tauri build fails on this Mac on Finder scripting rights; --bundles app is the macOS way until it is granted.
+
+next_action:
+  action: >-
+    With the owner present at a Windows machine, record the decision
+    authorizing slice 6 of revision 0.3; prepare the toolchain there;
+    build the simulator (TCP) and the .msi; the owner installs, activates
+    with a key issued by smc-license, completes one load → dispense
+    cycle; record the closeout as owner observation - the workstream's
+    final delivery. Optionally first: authorize cu12-simulator-sprint-004
+    slice 2 so the no-pop and board-lost paths can be shown on the Mac.
+  acceptance_check:
+    - A fresh session's Wake shows smc-v2-app-001 active at revision 0.3 with slice 4 the latest closed slice, smc-v2 bound at 78dfbf3 clean, cu12-simulator at 1c2232b clean, and this record as the latest event of the workstream.

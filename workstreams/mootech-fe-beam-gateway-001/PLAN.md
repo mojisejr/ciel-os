@@ -1,10 +1,10 @@
 # MuMate v2 — Beam Checkout as the second payment gateway, Omise as rollback
 
 **Workstream:** `mootech-fe-beam-gateway-001`
-**State:** active
+**State:** paused
 **Execution lane:** single
 **Plan revision:** 0.6
-**Execution phase:** 2
+**Execution phase:** 5
 **Execution state:** idle
 **Parallelism:** none
 
@@ -376,6 +376,23 @@ by us. `PAYMENT_GATEWAY=beam` stays on Production behind the v2 gate. Record:
 `memory/events/2026/09/14/20260914T103404_beam_gateway_production_charges_proven_refund_pending.yaml`.
 Execution state returns to idle; resuming means the two refunds first, then
 the slice-2/3/4 closeouts, then a slice-5 authorization.
+
+**Slices 2–4 closed, lane parked (2026-09-16 late evening):** the card charge
+was refunded in full by the owner through the API
+(`re_3JPyTwofKNs3E9ie2GYbzCtFnDD`, SUCCEEDED 16:43Z) and within seconds the
+production row read `APPROVED + gateway_reversed` — `refund.succeeded` →
+`webhook-beam` → `revokeByChargeId` proven on real money. The PromptPay charge
+could **not** be refunded: Beam requires an explicit `amount` for a QR refund
+and then answers `max refundable amount (0)`; cause unverified, and the owner
+holds an API key only, no Lighthouse access, so the THB 35 waits on the team
+or on Beam. Two facts corrected against the 2026-09-14 record: both purchases
+were `QI_60`, no subscription was involved; and a refund does **not** claw QI
+back (`lib/payment/repo.ts:285-289` leaves that undecided) — an owner
+decision before v2 opens beyond the gate. Execution phase is 5, state idle,
+parked by the owner; plan State set to **paused** on 2026-09-17 so the
+portfolio reads the park as a fact and the lane no longer counts as an
+active overlap on mootech-fe. Record:
+`memory/events/2026/09/16/20260916T235500_beam_gateway_slices_2_to_4_closed_parked.yaml`.
 
 ## Sequence with the server move
 

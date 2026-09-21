@@ -1,0 +1,109 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T163421_mumate_infra_move_slice3_shadow_stack_live_on_staging_hostnames
+type: closeout
+recorded_at: 2026-09-20T16:34:21+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Slice 3, steps (f) and (g): BE re-pointed at production Supabase with
+    every scheduler off (owner's go), and the shadow stack is reachable
+    over HTTPS on the three staging hostnames with Let's Encrypt
+    certificates. The stack now mirrors production exactly (owner's
+    decision: parity first, no extra variables).
+  scope:
+    - be.env rewritten from the Render export (Supabase session pooler 5432) with MORNING_CRON_ENABLED=false, MIGRATION_ENABLED=false, DB_SYNCHRONIZE=false; BE recreated.
+    - mumate-infra#8 merged; host pulled; Caddy restarted; certificates issued; external checks.
+    - Comparison of the teammate's dev env files against the shadow env.
+  out_of_scope:
+    - The owner's smoke (needs OAuth callback URLs registered first).
+    - Any change to production, DNS outside staging, providers.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Step (f): be.env = the 43 Render variables (PORT/APP_PORT dropped;
+      compose sets PORT) with the three scheduler/schema flags forced off;
+      Render itself has MORNING_CRON_ENABLED unset, i.e. off by the code's
+      default, so production never ran the morning cron either. BE
+      recreated with --force-recreate; /health db ok 5 ms after 18 s,
+      ops-status ✅; the log shows CronjobModule initialized and no cron
+      execution line.
+    - >-
+      Step (g): mumate-infra#8 merged (main c864827); host pulled; compose
+      did not recreate Caddy because the Caddyfile is a bind mount, and
+      admin is off so reload is unavailable → docker compose restart caddy
+      (runbook 01 already says so). Certificates obtained for
+      bazi/api/app.staging.mumate.co within ~40 s. From outside:
+      https://api.staging.mumate.co/health 200, https://app…/api/health 200
+      (FE db ok 6 ms, sha 921f449…), https://bazi…/api/health 200; TLS
+      verify 0 (valid chain); http://app… → 308 https; http://<ip>/healthz
+      still 200. app / serves the production landing (MAINTENANCE_MODE=off
+      as on Vercel), bazi / 200, api / "Hello World!". The OCSP-stapling
+      warnings in the Caddy log are benign (Let's Encrypt no longer serves
+      OCSP).
+    - >-
+      Teammate's files (.assets/mumate/infra-mumate/from-jareonsak/):
+      fe-env.env is a DEV env (localhost URLs, ENVIRONMENT=development,
+      short dev secrets); 16 values identical to Vercel production confirm
+      the shadow; nothing adopted. engine-env.env is Bazi's env: 25/31
+      identical; it carries SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY /
+      SUPABASE_DIVINE_BUCKET, which Vercel production does NOT have while
+      pdf-dev code (src/lib/supabase/storage.ts, divine-cards image upload,
+      sacred-map upload) reads them — those routes throw in production
+      today. Owner decided: shadow = production exactly, so they are NOT
+      set; recorded as a finding for the launch team. ANTHROPIC_PROXY_URL
+      (localhost) and the dev secrets not adopted.
+  not_completed:
+    - OAuth callback URLs for the shadow not yet registered (Google, LINE, Facebook, Twitter via NextAuth): https://app.staging.mumate.co/api/auth/callback/{google,line,facebook,twitter} — owner/team console work; until then only credentials/dev login paths work on the shadow.
+    - The owner's parity smoke (login, FE→BE, FE→Bazi, storage, payment callback, maintenance bypass, v1/v2 paths).
+    - GITHUB_TOKEN (rotate later), QSTASH signing keys (unused) still empty on the shadow.
+  evidence_of_limits:
+    - Only /health endpoints and the landing page were exercised by the agent; no authenticated path yet.
+    - The shadow BE adds its own connection pool to the same Supabase pooler production uses; no limit issue observed.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 2e28128f2447c5db9dcc7c8293b6bb7fe02f10a8
+    branch: hq/20260917
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: main c864827 (#1-#8 merged); host /opt/mumate c864827
+    mootech-be: image 0705378 on Supabase 5432, cron off
+    mootech-fe: image 921f449…-staging (main 921f449)
+    bazi-sft-dataset: image 911c87a…-staging (pdf-dev 911c87a)
+  hostnames:
+    app: https://app.staging.mumate.co (fe)
+    api: https://api.staging.mumate.co (be)
+    bazi: https://bazi.staging.mumate.co (bazi)
+    tls: Let's Encrypt via Caddy, ACME email the owner's
+  host: mumate-2 602035792 / reserved 167.99.29.220; RAM ~1 GB idle; timers none
+  authorizing_decision: memory/events/2026/09/20/20260920T081119_mumate_infra_move_slice3_authorized.yaml
+  previous_record: memory/events/2026/09/20/20260920T153343_mumate_infra_move_slice3_full_stack_up_on_host.yaml
+
+unresolved:
+  - Finding for the launch team: Vercel production of bazi lacks SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY / SUPABASE_DIVINE_BUCKET that pdf-dev reads (divine-card image routes throw). Not the migration's to fix.
+  - OAuth callback registration for app.staging.mumate.co (additive at each provider).
+  - Team Owner destroy of Droplet 601959538; port-22 policy; GITHUB_TOKEN rotation.
+  - Everything carried in the slice-3 decision record.
+
+next_action:
+  action: >-
+    Owner/team: add the four NextAuth callback URLs at Google, LINE,
+    Facebook, Twitter; then the owner runs the parity smoke on
+    https://app.staging.mumate.co with their own account (real charges
+    accepted) while the agent watches ops-status, container logs, and
+    Supabase connections, records the result, and rebuilds after any
+    launch-team merge. Slice-3 closeout when the DoD list is exercised.
+  acceptance_check:
+    - curl -sI https://app.staging.mumate.co/ → 200 with a valid certificate; same for api (/health) and bazi (/api/health).
+    - ssh mumate 'cd /opt/mumate && bin/ops-status.sh' → three ✅, caddy ok, timers none.

@@ -1,0 +1,91 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T170000_smc_v2_app_slice3_revised_and_authorized
+type: decision
+recorded_at: 2026-09-20T17:00:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only; this
+    decision revises slice 3 from a screenshot capture to a source capture
+    and authorizes it.
+  scope:
+    - Revise plan 0.1 to 0.2 - slice 3 reads the legacy source instead of running the legacy application; the UI target becomes "the legacy's shape" rather than "identical".
+    - Authorize slice 3 of revision 0.2.
+  out_of_scope:
+    - Slices 4 and 6, the UI half of slice 5; each gets its own decision.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner, present and speaking directly on 2026-09-20 afternoon, said
+    the legacy application cannot be run on this Mac: the setup is hard
+    without the hardware and the pieces are not all there. The owner asked
+    for a workaround that still yields the structure of every screen, said
+    a source reading is enough - "ไม่ต้องเหมือนเป๊ะ ก็ได้ แต่ให้แบบทรงเดิม" -
+    and asked the agent to propose a design that is robust and simple, that
+    improves where it can, that stays inside the legacy theme, mood and
+    tone, and that asks when it does not understand. Three read-only
+    surveys of the legacy renderer (shell and theme, dialogs and journeys,
+    settings and logs) were run and returned the shape, the classes, the
+    colours and every Thai string with file and line references. One
+    sync-up round of ten questions followed; the agent's lean held on all
+    ten. The answers, now part of the plan: source capture replaces
+    screenshots; Prompt stays and is self-hosted; the wait dialogs lose
+    their ตกลง button and close on the hook observation, with ยกเลิก only
+    when the door did not pop; the emergency "!" moves to the admin slot
+    tab; the reset button on an occupied card stays but asks for an admin
+    PIN and a reason; the lock colours stay with a state word beside them;
+    the logs page stays open to everyone, gains a date range, and its CSV
+    export asks for an admin PIN, xlsx cut; admin has four re-cut tabs with
+    the broken all-slots buttons removed, a confirmation before deleting a
+    user, and self-service PIN change for the admin; deviations are
+    numbered with a default of yes; the deliverable is DESIGN.md alone as
+    smc-v2 pull request 4.
+  authorizes:
+    - Slice 3 of plan revision 0.2 - DESIGN.md at the root of smc-v2, written from the legacy source, on a topic branch, as a draft pull request for the owner's review.
+  does_not_authorize:
+    - Any UI code; slice 4 waits for the merged DESIGN.md and its own decision.
+    - Running the legacy application or writing into its checkout.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: 7c62e55
+    branch: hq/20260917
+    working_tree: plan-revision-and-this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: ce03acd
+    branch: main
+    working_tree: clean-equal-to-origin
+  legacy_source:
+    path: /Users/non/dev/smc/smc-app
+    revision: "7116171"
+    read_only: true
+    files_read: renderer/tailwind.config.js, renderer/styles/globals.css, renderer/pages/*, renderer/components/**, renderer/hooks/*, renderer/contexts/*, db/model/*, main/background.ts and the registered IPC handlers under main/device-controllers, main/setting, main/user, main/auth, main/logger
+  preceding_records:
+    - memory/events/2026/09/20/20260920T151500_smc_v2_app_slices_merged_handoff.yaml
+
+unresolved:
+  - The legacy Prompt font comes from Google Fonts; the rebuild must ship it inside the bundle (OFL) - a slice-4 task, noted so it is not lost.
+  - The legacy has no visual for a door in transition; the four card states are new and are judged by the owner in DESIGN.md, not by a screenshot.
+  - Expiry in UTC versus local time, and the other review choices from the handoff record, remain open and are carried into DESIGN.md's open questions.
+
+next_action:
+  action: >-
+    Branch feat/design-capture from smc-v2 main ce03acd; write DESIGN.md in
+    the DAC2 shape with the shell, tokens, type, grid, card states, every
+    dialog, the admin tabs, the logs page, the activation screen and the
+    expired banner, the numbered deviations defaulting to yes, and open
+    questions; push and open draft pull request 4; record the slice-3
+    closeout on its head.
+  acceptance_check:
+    - Wake lists smc-v2-app-001 as active at revision 0.2 with slice 3 authorized once this event is committed.

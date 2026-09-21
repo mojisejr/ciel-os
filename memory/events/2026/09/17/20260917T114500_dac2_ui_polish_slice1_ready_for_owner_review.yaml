@@ -1,0 +1,138 @@
+schema_version: ciel.event.v0.1
+id: evt_20260917T114500_dac2_ui_polish_slice1_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-17T11:45:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: dac2-ui-polish-001
+  lane: single
+  objective: >-
+    Fix the things a person notices in the first minute with ตาไก๊ that
+    have nothing to do with understanding it - browser-blue controls, a
+    once-a-year form at the top of the hub, the same six-row list on three
+    screens, satang on million-baht figures, a mascot the app does not use
+    as its own icon - so the owner's friends' first feedback is about the
+    application and not its finish.
+  scope:
+    - Slice 1 of plan revision 0.1 - the DESIGN.md revision and the change across web, style, public icons, tests and the layout proof, on one pull request, proved locally and tried by the owner.
+  out_of_scope:
+    - Slice 2, the deploy; the owner merges, the push run builds, the owner sets the tag on Render, then sends the address to friends.
+
+outcome:
+  status: slice-closed
+  completed:
+    - >-
+      Application commit 615f571 on feat/ui-polish from main 0970c6c (17
+      files, +361 -144 plus four PNG icons and the removed SVG), pushed,
+      draft pull request 26 opened in the CIEL template. The owner tried
+      it on a local server the agent started on the branch with the
+      owner's .env and said it was all fine ("ทั้งหมดโอเคแล้วครับ"). The
+      ci check job on the head is green; the image job is skipped on a
+      pull request as designed.
+    - >-
+      style: accent-color on native controls in both themes; rules for the
+      season row and the one-line decision summary; the header mark as a
+      24px round image; the opened season form in a card.
+    - >-
+      DecisionList's compact prop renders one line - "ตอบได้ N จาก 6
+      คำถาม", the missing facts named once, "ดูทั้งหมด" - linking to the
+      hub. The dashboard passes it only when the hero has a figure; the
+      analysis page always; the hub keeps all six rows.
+    - >-
+      PlanHub: year, name and note are one row under the heading with a
+      details element opening the same form; a closed season shows the
+      row as text.
+    - >-
+      Formatting: baht_amount() rounds to whole baht with separators and
+      every amount site uses it, including the tax state lines and the
+      scenario matrix; amount_with_unit() applies the rule where the unit
+      is a parameter; rates, percentages, scores and kilograms keep two
+      places; a closed season's read-only numbers separate thousands.
+    - >-
+      Mark: takai-icon-32/64/180.png on the cream disc and takai-mark-48.png
+      without it, cut from takai-bust.png; the SVG hat removed; head links
+      and the header component changed. Checked at 180/64/32/16 on light
+      and dark tab bars - at 16 the hat and shirt remain, the face reads
+      from 32.
+    - >-
+      DESIGN.md 0.11 to 0.12: the mark section, the split decimal rule
+      with example amounts updated, the hub's season row, the dashboard's
+      one-line list, the control-colour rule, the hero-width question
+      closed, the Q5 verdict-row and Q6 no-icons decisions recorded.
+    - >-
+      Proof: check.sh end to end; new SSR tests for the summary line in
+      both dashboard states and on the analysis page, the hub row open and
+      closed, the closed-season separator, and the formatting helpers at
+      their boundaries; check-responsive.sh 39 routes at 320, 360, 393 and
+      412 - two earlier runs stopped on the proof's own pinned ".00 บาท"
+      strings, not on the page, and passed once those were updated; the
+      polished screens looked at in Chrome at 412.
+  departures:
+    - >-
+      The plan listed a wrapping fix for long status chips and a shorter
+      rendering for unanswerable figure tiles; on reading the stylesheet
+      both were already in place (.status wraps at max-width 100%,
+      .figure-missing is caption size), so nothing was changed for them.
+    - >-
+      The season form opens as a details disclosure in a card, not the
+      bottom sheet the agent first suggested; it needs no hydration and
+      keeps the page's own form. The owner tried it and accepted it.
+  boundaries:
+    - No schema change; no calculation change - rounding is presentation only.
+    - The dashboard's card layout, icons on cards, the KPI row format, a seasons chart, the × button and input formatting on blur are untouched.
+
+evidence:
+  plan: workstreams/dac2-ui-polish-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  authorized_by: memory/events/2026/09/17/20260917T055000_dac2_ui_polish_workstream_opened.yaml
+  repository:
+    head: 9aebeec
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: dac2-durian-smart-account
+    base: 0970c6c2cedd4ccbb43d9218268fa0465aa6299d
+    head: 615f571
+    branch: feat/ui-polish
+    working_tree: clean
+    pull_request:
+      number: 26
+      url: https://github.com/mojisejr/dac2-durian-smart-account/pull/26
+      state: draft-owner-tried-locally-and-approved
+    paths:
+      - DESIGN.md
+      - crates/web/src/{app.rs,plan_ui.rs,analysis_ui.rs,assets.rs,plan_form.rs}
+      - crates/web/tests/{plan_ssr.rs,analysis_ssr.rs,assets_ssr.rs,shell_ssr.rs}
+      - public/{takai-icon-32.png,takai-icon-64.png,takai-icon-180.png,takai-mark-48.png}, public/takai-mark.svg removed
+      - scripts/responsive.mjs, style/main.css
+  checks:
+    - scripts/check.sh - exit 0
+    - scripts/check-responsive.sh - passed at 320, 360, 393, 412px on the third run; the first two stopped on the proof's pinned strings
+    - cargo test web --lib 64, plan_ssr 35, analysis_ssr 17, assets_ssr 4, shell_ssr 4 passed
+    - ci run 35161208766 on 615f571 - check pass, image skipped on a pull request
+    - owner's local try on the branch - "ทั้งหมดโอเคแล้วครับ"
+
+unresolved:
+  - A face at 16px is a blur; the owner chose it and saw it locally. The hat silhouette stays in Git history.
+  - Whole-baht display can differ from the sum of displayed lines by a baht; the calculation is untouched.
+  - The layout proof's seeding-phase flake did not recur today; the stops were the proof's own strings.
+  - dac2-guided-inputs-001 stays paused with the deferred pilot proof; the 4b study with three friends is the next DAC2 decision after this deploys.
+
+next_action:
+  action: >-
+    The owner marks pull request 26 ready and merges it. The push run on
+    main publishes the image tagged with the merge commit; the owner sets
+    that tag on the Render service (no migration, no environment change).
+    The agent reads the run, the deploy and the start-up log, the owner
+    tries it on a phone at the public address, and the slice-2 closeout,
+    recorded ready-for-owner-merge, finishes the workstream. The owner
+    then sends the address to friends. Slice 2 needs the owner's word to
+    this session first.
+  acceptance_check:
+    - Pull request 26 merged and the ci image job green on main.
+    - The public address shows the polish on the owner's phone with no error in the start-up log.

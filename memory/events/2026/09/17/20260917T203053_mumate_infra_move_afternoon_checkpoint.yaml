@@ -1,0 +1,101 @@
+schema_version: ciel.event.v0.1
+id: evt_20260917T203053_mumate_infra_move_afternoon_checkpoint
+type: closeout
+recorded_at: 2026-09-17T20:30:53+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Proposed, not yet opened. Move mootech-fe and bazi-sft-dataset (with
+    mootech-be riding along) from Vercel and Render to one DigitalOcean sgp1
+    Droplet run from a project control room (mumate-infra), Supabase kept as
+    the database. This checkpoint records the afternoon's corrections to the
+    plan and the state of the DO account request, so the next session does
+    not re-derive them. No PLAN.md exists yet.
+  scope:
+    - Three plan corrections decided with the owner on 2026-09-17 afternoon and posted to mootech-fe#637 as the third sync comment.
+    - The DO account request sent to the MuMate owner, and what can proceed before the account exists.
+  out_of_scope:
+    - Any change to any repository, server, DNS, or DO account. None was made.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Neon removed from P0 and moved to P4. Verified read-only on bazi pdf-dev
+      04bc2bd: the only DB client resolves APP_DATABASE_URL before
+      DATABASE_URL (src/lib/env.ts:49), APP_DATABASE_URL is set on Vercel
+      production, nothing in src/ imports @neondatabase/serverless or reads
+      NEON_*, the three crons use the same client; only hand-run scripts/*.ts
+      can still reach Neon. The old Neon endpoint still answers on 5432, so
+      the project exists but is idle. Owner fact: bazi's Neon is bound through
+      the Vercel integration (the NEON_* and DATABASE_URL* env on Vercel come
+      from it), while DAC2's Neon is a separate personal account and is not
+      part of this move. Deletion therefore happens with the bazi Vercel
+      project in P4, after a pg_dump to Spaces and a check of
+      bazi_divine_card_image in Supabase. Guard: APP_DATABASE_URL must never
+      be absent from any env, or the code silently falls back to Neon;
+      smoke.sh will assert the connected database is Supabase.
+    - >-
+      QStash left to its feature owner (a teammate of the owner). The earlier
+      "add /api/v2/push/fire exemptions before P3" item is withdrawn as a
+      requirement. During the maintenance window the push-reminders cron
+      timer on DO runs as the fallback the feature designed, so a QStash
+      delivery answered by the maintenance page is recovered within a minute;
+      after the flip behaviour equals Vercel's (guardV2 stays until launch).
+    - >-
+      Execution order confirmed with a dogfood step: slice 1 = P0 indexes +
+      P1 containerize; slice 2 = control room skeleton + Droplet + dogfood
+      with be first (deliberate failed deploy -> auto-rollback, backup ->
+      restore, alert -> Discord, agent ssh as deploy); slice 3 = parallel run
+      for the team; slice 4 = flips; slice 5 = seven quiet days -> P4 ->
+      launch. Not built ahead: more than three runbooks, Sentry/uptime/ops
+      report before slice 3, an fe staging hostname before slice 3.
+    - >-
+      DO account request sent by the owner to the MuMate owner: a plan table,
+      five decisions (approve DO; company creates Team mumate with company
+      card and tax id and invites the owner as Owner; accept one ~1 h
+      night maintenance window; pre-approve cancelling Vercel/Render/Neon
+      after seven quiet days; the team member who tests), and six click-level
+      signup steps. Team, not Organization. No resource is to be created
+      before the Team exists, and none in a personal account.
+    - doctl 1.168.0 installed on the owner's machine; no token yet.
+  evidence_of_limits:
+    - Whether the old Neon project costs anything is unknown; the owner reads Neon billing when convenient. Technically it can be ignored until P4.
+    - The MuMate owner has not replied; nothing on DO exists.
+
+evidence:
+  plan: none-yet
+  plan_revision: none
+  slice: none
+  repository:
+    head: 093bf42d5417ec7ea8f0fdb951f181720beb3aae
+    branch: hq/20260917
+    working_tree: clean-before-this-event
+    pull_request: none-until-hq-round-closes
+  external_record:
+    - mootech-fe#637 - third comment of 2026-09-17 ("Sync บ่าย") carries these corrections and the account-request status.
+  application:
+    bazi-sft-dataset: pdf-dev 04bc2bd, read only
+    mootech-fe: main 1312292, untouched
+
+unresolved:
+  - DO Team creation by the company (blocks every DO resource).
+  - Open items of #637 section 10 (bazi source of truth, GHCR visibility, hostnames, Droplet size, infra repo name).
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Two independent threads. (a) When the owner says go: open
+    mumate-infra-move-001 with a PLAN.md (five slices as above, parallelism
+    approved because GA4 is active on mootech-fe) and start slice 1 - P0
+    indexes and P1 containerize - which needs no DO account. (b) When the
+    Team exists: owner creates a read-only API token in the Team context and
+    runs doctl auth init --context mumate; the agent confirms with doctl
+    account get before any resource is created.
+  acceptance_check:
+    - Wake lists this event with no validation error and still does not list mumate-infra-move-001 (no PLAN.md).

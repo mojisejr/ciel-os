@@ -1,0 +1,171 @@
+schema_version: ciel.event.v0.1
+id: evt_20260919T053427_mumate_infra_move_slice1_container_parity_closeout
+type: closeout
+recorded_at: 2026-09-19T05:34:27+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Build a DigitalOcean sgp1 replacement for the exact MuMate system the
+    product team launches (mootech-fe, mootech-be, Bazi engine), keep Supabase
+    as the single source of truth, prove it in parallel, then flip inside an
+    owner-controlled maintenance window. Slice 1: each launched service runs as
+    the same service in a container, with truthful readiness, no product
+    behaviour change, and no production or DigitalOcean change.
+  scope:
+    - Containerise mootech-fe, mootech-be and bazi-sft-dataset from freshly fetched production branches.
+    - Add truthful liveness/readiness surfaces; keep every build-time secret out of images and logs.
+    - Exercise the built images against the local arena, not development servers.
+    - Open one draft pull request per application; record their heads here.
+  out_of_scope:
+    - Any production deployment, DNS, Vercel/Render/Supabase setting, DigitalOcean resource, or provider change.
+    - The private mumate-infra control room and its registration (slice 2).
+    - Deciding the Bazi source-of-truth branch, hostnames, Droplet size, GHCR visibility, BE pool mode (#637 §10, slice 2).
+
+outcome:
+  status: slice-complete-draft-prs-open
+  completed:
+    - >-
+      Start gate passed independently in the three applications after a fresh
+      fetch. mootech-fe local main was behind by 8 and was moved to origin/main
+      17d5c67 (the launch team's current production revision); mootech-be main
+      57da359 = origin/main; bazi-sft-dataset origin/pdf-dev had moved to
+      593318d and is the observed production branch (main 1d41a91 has diverged
+      29/383 — left as the open #637 §10 question, not decided here).
+    - >-
+      Arena: a fresh production dump was taken read-only (owner authorised;
+      pg_dump through the vault, 61 bazi tables confirm the single shared DB),
+      restored and anonymised into the testenv Postgres on :5433; app envs
+      swapped to local by stack.sh. The anonymiser refused the first run because
+      two 2026-09 tables (bazi_user_profile, bazi_data_export_request) still
+      held real emails; anonymize.sql was extended and the second run passed.
+    - >-
+      mootech-be — draft PR mojisejr/mootech-be#27, head ae8a895 on
+      infra/container-parity from 57da359. Pinned multi-stage Dockerfile (base =
+      the digest node:19-alpine resolves to today, 19.9.0-alpine3.18, exact
+      parity with Render), Thai font from the repo instead of a build-time
+      download, runner = dist + prod node_modules + src/assets + public as
+      `node`. GET /health runs SELECT 1 through the DataSource (200/503; GET /
+      unchanged). src/runtime-guard.ts exits 1 before Nest boots on any spelling
+      of DB_SYNCHRONIZE=true and reads an explicit pool bound (DB_POOL_MAX /
+      CONNECT_TIMEOUT / IDLE_TIMEOUT, defaults = pg's). Proof: lint 0 errors,
+      tsc clean, jest 149/149, container-smoke green (hygiene, canvas + Thai
+      font render inside the image, refusal rc=1, /health db ok with the built
+      SHA against the arena). A container-build workflow runs the same smoke --no-db on manual dispatch only.
+    - >-
+      bazi-sft-dataset — draft PR mojisejr/bazi-sft-dataset#36, head 52126b7 on
+      infra/container-parity from origin/pdf-dev 593318d, base branch pdf-dev.
+      Standalone image (node:22 Debian-slim by digest; output "standalone" only
+      under NEXT_OUTPUT_STANDALONE=1 so the Vercel build is untouched).
+      src/lib/runtime-files.ts is the manifest of every file the server reads
+      via process.cwd() (compiled knowledge, question network, shinse index,
+      louise-hay index, knownlage txt/extracted/distilled); the Dockerfile copies
+      exactly that tree, /api/health reports it, a test keeps it honest against
+      the repo and sweeps src/lib for unlisted readers. /api/health went from
+      four constants to select 1 (+ the manifest check only when APP_RUNTIME=container,
+      set by the Dockerfile; on Vercel it reports "not-checked" so production keeps
+      answering 200) → 200/503 with the built SHA. Proof:
+      eslint clean, test:default-gate 102/102, smoke green (8/8 manifest entries
+      inside the image, db ok, POST /api/bazi/public-calc computes a chart, LINE
+      webhook with a bad signature → 401 under standalone). Image 632 MB.
+    - >-
+      mootech-fe — draft PR mojisejr/mootech-fe#711, head 2b50862 on
+      infra/container-parity from 17d5c67. Dockerfile replaces the 2025 file that copied .env.${NODE_ENV}
+      into the image: node:22 Debian-slim by digest, standalone behind the same
+      env toggle, build args limited to the public values Next inlines
+      (NEXT_PUBLIC_*, NEXTAUTH_URL/ENVIRONMENT/HOST for publicRuntimeConfig) +
+      APP_GIT_SHA; the repo's two postbuild secret gates run inside the build.
+      pages/api/health.ts (allow-listed by middleware since #605, unanswered
+      until now) runs select 1 through lib/db → 200/503. Proof: tsc clean,
+      vitest 2686 pass, smoke green — hygiene, /api/health db ok, GET / 200, and
+      the same image under MAINTENANCE_MODE=on: / → maintenance page,
+      /api/health + /api/auth/csrf allow-listed, /api/cron/* → the route's 401,
+      ?bypass → redirect + mnt_bypass cookie with the secret stripped. Image
+      651 MB. .env.example declares APP_GIT_SHA (drift gate).
+  not_completed:
+    - No image was pushed to any registry; no DigitalOcean resource exists; nothing on Vercel, Render or Supabase changed.
+    - The database legs of the three smokes run only on this machine against the arena; CI runs build + hygiene (--no-db) and says so.
+  evidence_of_limits:
+    - >-
+      The mootech-fe pre-push hook blocks on verify-architecture, which is red on
+      untouched origin/main 17d5c67 (features/v2-shell/components/AppHeader.tsx:185,
+      a launch-team file) — reproduced in a clean worktree. Every other hook gate
+      was run by hand and is green (lint, vitest, guard-workflow-integrity,
+      gitleaks over both commits). The branch was pushed with --no-verify on the
+      owner's explicit instruction, and the PR body says so.
+    - >-
+      bazi `npm run typecheck` carries one pre-existing error from a stale,
+      gitignored .next/dev/types/validator.ts (2026-08-30); identical without
+      the change. One mootech-fe spec (v1-header-upgrade-closed.test.tsx) flaked
+      once under full-suite load and passes alone; not a file this slice touches.
+    - >-
+      Node majors: BE pinned to 19.9.0 for exact Render parity (EOL — a later
+      slice decides the upgrade); fe and bazi use 22 (bazi engines = 22.x; the
+      fe Vercel project's Node setting was not read from here and should be
+      confirmed before slice 3).
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: f985de55a6b79ea0c4882750bad42c3c56f367c8
+    branch: hq/20260917
+    working_tree: plan-and-this-event-modified-before-this-closeout
+    pull_request: none-until-owner-merge-decision
+  application:
+    mootech-be:
+      base: 57da35941c805e490cf99570eaccdbe5c395e018
+      branch: infra/container-parity @ ae8a89528ea82a1752f6ec3a4959fe7934e8f612
+      pull_request: https://github.com/mojisejr/mootech-be/pull/27
+      working_tree: clean
+    bazi-sft-dataset:
+      base: 593318d (origin/pdf-dev)
+      branch: infra/container-parity @ 52126b7efe2e310487d992bf0d87f2e4fce69705
+      pull_request: https://github.com/mojisejr/bazi-sft-dataset/pull/36
+      working_tree: clean except the pre-existing untracked .claude/INCUBATED_BY
+    mootech-fe:
+      base: 17d5c67288084df5c28aa0f7043fe053676c897b (origin/main)
+      branch: infra/container-parity @ 2b50862
+      pull_request: https://github.com/mojisejr/mootech-fe/pull/711
+      working_tree: clean
+  arena:
+    dump: testenv/dumps/full.sql taken 2026-09-18 (gitignored, anonymised in the DB, never in Git)
+    database: docker mumate_testenv_pg localhost:5433/mumate_test, 184 public tables
+    scrubber_change: mootech-fe testenv/scripts/anonymize.sql (in the fe PR)
+  proof_contract: workstreams/mumate-infra-move-001/PLAN.md#1-each-launched-service-can-run-as-the-same-service-in-a-container
+
+unresolved:
+  - >-
+    Owner decision 2026-09-19: all three PRs are to be merged before the
+    2026-09-20 launch, in a quiet moment, one repository at a time (be first —
+    Render rebuilds the image and restarts the process; then fe, then bazi —
+    Vercel builds unchanged plus /api/health). Each merge is a production
+    deploy of inert code; the launch lane is told. The container-build
+    workflows are manual dispatch only so they never appear on the team's PRs.
+  - Bazi source-of-truth branch (pdf-dev vs main), hostnames, Droplet size, GHCR visibility, BE pool mode and the infra repo name remain slice-2 decisions (#637 §10).
+  - verify-architecture is red on mootech-fe origin/main and blocks every push from that repo's hook until the launch team fixes AppHeader.tsx:185 or the rule; not this lane's file.
+  - fe Vercel Node major not confirmed from here; BE stays on EOL Node 19 by design until a recorded decision.
+  - The launch team keeps merging; every image built for slice 3 must be rebuilt from the then-current production SHA and re-smoked.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner reviews and merges mootech-be#27, then mootech-fe#711, then
+    bazi-sft-dataset#36 (heavy review of Dockerfile/.dockerignore as much as
+    the code; after the be merge, confirm the Render deploy went live and
+    GET / and GET /health answer). Slice 2
+    needs a new owner decision: create the private mumate-infra repository,
+    register it in CIEL once it has a Git identity, approve the exact Droplet
+    size and operation, then build the smallest control room and dogfood with
+    BE first. Nothing in slice 2 starts without that decision; no PR here needs
+    to be merged for slice 2 to begin, but each must be merged (or rebuilt from
+    the final SHA) before slice 3's parallel stack.
+  acceptance_check:
+    - Wake lists this event with no validation error and reads mumate-infra-move-001 with slice 1 closed and phase 1 idle.
+    - Each named PR head is reachable on its remote and its body names the smoke output recorded here.
+    - Unrelated shared-checkout paths remain untouched.

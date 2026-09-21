@@ -1,0 +1,97 @@
+schema_version: ciel.event.v0.1
+id: evt_20260920T223000_cu12_sprint004_slice2_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-20T22:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-004
+  lane: single
+  objective: >-
+    Tester-provoked faults and a stderr trace so SMC v2's no-pop and
+    board-lost paths can be shown on the Mac.
+  scope:
+    - Close slice 2 of plan revision 0.1 on the draft pull request that carries it; the sprint's last slice.
+  out_of_scope:
+    - Any hardware-fidelity claim; a modelled disconnect; smc-v2 changes.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Simulator commit f100e13 on feat/faults-trace from main 1c2232b,
+      pushed, draft pull request 3 opened. Control gains drop <n> (the
+      next n requests get no response) and ask <hex> (the next request is
+      answered with ASK 11, 12, 13 or 14 and no data); show ends with
+      FAULTS none or the queue in order. Faults queue on the board, are
+      consumed one per request the board would otherwise answer, and a
+      faulted request moves no hook - with door physics on, no door pops.
+      A dropped response is silence, observed by the client as its own
+      timeout. CU12_SIM_TRACE=1 prints every frame and fault on stderr as
+      hex with a Unix timestamp; nothing reaches the wire.
+    - >-
+      Nine tests added, 29 in all: the queue's order and rejections; the
+      CLI with eight bad inputs; the device consuming one fault per
+      answered request with physics on and the hook unchanged; over TCP an
+      independent client sees two dropped responses as 300 ms timeouts then
+      normal service, the four ASK codes as literal frames, faults surviving
+      a reconnect, the trace lines with timestamps, and stderr silent when
+      trace is off; on macOS the same drop, ask and trace through the PTY.
+      A hand run with a Python client showed timeout, then 02 00 00 80 12
+      00 03 97, then the normal status, with the trace on stderr.
+    - >-
+      README (faults, trace) and docs/protocol-evidence.md (why the
+      simulator never chooses a fault itself; a faulted request as one
+      the board did not act on; disconnect not modelled) updated. No
+      dependency, opcode or framing change; the default process behaves
+      as before.
+  not_completed:
+    - Nothing of slice 2. The workstream has no further slice.
+  boundaries:
+    - The manual does not say when a real board sends which ASK code or whether it can be silent; faults are tester input only.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-004/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  authorized_by: memory/events/2026/09/20/20260920T213000_cu12_sprint004_slice2_authorized.yaml
+  repository:
+    head: "3988602"
+    branch: hq/20260917
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    base: "1c2232b"
+    head: "f100e13"
+    branch: feat/faults-trace
+    pull_request:
+      number: 3
+      url: https://github.com/mojisejr/cu12-simulator/pull/3
+      base: main
+      state: draft-until-this-closeout-is-committed
+    checks:
+      - cargo fmt --check
+      - cargo test (29 passed, 9 new)
+      - cargo clippy --all-targets -- -D warnings
+  owner_observation: none yet; the owner has not run the faults.
+  preceding_records:
+    - memory/events/2026/09/20/20260920T213000_cu12_sprint004_slice2_authorized.yaml
+    - memory/events/2026/09/20/20260920T093000_cu12_sprint004_slice1_ready_for_owner_review.yaml
+
+unresolved:
+  - Whether a real board that loses its response still unlocks is unknown; the model says it did not act.
+  - smc-v2-app-001's ยกเลิก and board-lost screens have not yet been shown against these faults; that run is the natural next use of this slice, on the Mac, with the owner watching.
+
+next_action:
+  action: >-
+    Mark pull request 3 ready for review; the owner reviews and merges it,
+    then the checkout returns to a clean main equal to origin/main and the
+    topic branch is removed; the sprint-004 workstream then closes. Next,
+    with the owner: run smc-v2 against the merged simulator with drop and
+    ask faults and observe the ยกเลิก and board-lost paths on screen.
+  acceptance_check:
+    - Pull request 3's head is f100e13 when the owner reads it.
+    - After the merge, origin/main contains f100e13 and the local checkout is clean on it.
