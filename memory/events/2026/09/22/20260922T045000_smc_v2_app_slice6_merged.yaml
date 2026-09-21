@@ -1,7 +1,7 @@
 schema_version: ciel.event.v0.1
-id: evt_20260922T083000_smc_v2_app_slice6_merged
+id: evt_20260922T045000_smc_v2_app_slice6_merged
 type: closeout
-recorded_at: 2026-09-22T08:30:00+07:00
+recorded_at: 2026-09-22T04:50:00+07:00
 recorded_by:
   human: owner
   agent: claude

@@ -1,7 +1,7 @@
 schema_version: ciel.event.v0.1
-id: evt_20260922T083100_smc_v2_app_slice7_authorized
+id: evt_20260922T045100_smc_v2_app_slice7_authorized
 type: decision
-recorded_at: 2026-09-22T08:31:00+07:00
+recorded_at: 2026-09-22T04:51:00+07:00
 recorded_by:
   human: owner
   agent: claude
@@ -56,7 +56,7 @@ evidence:
     branch: main
     working_tree: clean-equal-to-origin
   preceding_records:
-    - memory/events/2026/09/22/20260922T083000_smc_v2_app_slice6_merged.yaml
+    - memory/events/2026/09/22/20260922T045000_smc_v2_app_slice6_merged.yaml
     - memory/events/2026/09/21/20260921T112000_smc_v2_app_plan_0_4_decided_slice6a_authorized.yaml
 
 unresolved:
