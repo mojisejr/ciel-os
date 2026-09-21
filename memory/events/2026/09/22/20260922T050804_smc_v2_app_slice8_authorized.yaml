@@ -1,0 +1,76 @@
+schema_version: ciel.event.v0.1
+id: evt_20260922T050804_smc_v2_app_slice8_authorized
+type: decision
+recorded_at: 2026-09-22T05:08:04+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    decision starts slice 8 (the proposal's 6c): the five DESIGN.md answers
+    of 2026-09-21 applied to DESIGN.md, the backend and the screens.
+  scope:
+    - Authorize slice 8 of plan revision 0.4.
+  out_of_scope:
+    - Slices 9 and 10; each gets its own decision.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner accepted plan revision 0.4 in full on 2026-09-21, answered the
+    five design questions in the same message (recorded in the
+    20260921T112000 decision and in PLAN.md under slice 8), merged slices 6
+    and 7 this morning, and was told before the merge of pull request 7
+    that slice 8 would start right after it unless the owner objected; the
+    owner replied "merged pr 7" and nothing else. The standing direction of
+    2026-09-20 covers starting the next slice when nothing blocks. Slice 8
+    needs nobody at the machine except for the owner's look at the legacy
+    mark on the home screen, which is a review matter.
+  authorizes:
+    - Slice 8 (6c) of plan revision 0.4 - on a topic branch from smc-v2 main af0b93d as a draft pull request - (1) expiry judged in local time with one day of grace, the banner keeping the license's date; (2) the home-screen HN scan question closed as no; (3) the operator's name on the ประตูเปิด card; (4) the legacy logo deprecision.png copied from the legacy renderer into smc-v2 as the default mark, a data-directory file still overriding it; (5) the expired banner dismissable for one 8-hour shift, back after that and on every start, load refused throughout; DESIGN.md's open questions closed; tests for the grace day and the dismissal window.
+  does_not_authorize:
+    - Slices 9 and 10.
+    - Writing into the legacy checkout; the logo file is read and copied out.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "8"
+  repository:
+    head: "f8f3e31"
+    branch: hq/20260921
+    working_tree: this-event-and-the-slice-7-merged-closeout-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "af0b93d"
+    branch: main
+    working_tree: clean-equal-to-origin
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  legacy_source:
+    path: /Users/non/dev/smc/smc-app
+    revision: "7116171"
+    read_only: true
+    files_read: renderer/public/images/deprecision.png (to be copied)
+  preceding_records:
+    - memory/events/2026/09/22/20260922T050803_smc_v2_app_slice7_merged.yaml
+    - memory/events/2026/09/21/20260921T112000_smc_v2_app_plan_0_4_decided_slice6a_authorized.yaml
+
+unresolved:
+  - Whether the owner wants the mark shown at the legacy's 86 x 85 or larger; judged at review.
+
+next_action:
+  action: >-
+    Branch feat/design-decisions from smc-v2 main af0b93d; apply the five
+    answers with tests; update DESIGN.md; open the draft pull request;
+    record the slice-8 closeout on its head.
+  acceptance_check:
+    - Wake lists smc-v2-app-001 at revision 0.4, phase 8, with slice 8 authorized once this event is committed.
