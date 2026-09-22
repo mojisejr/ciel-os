@@ -1,0 +1,100 @@
+schema_version: ciel.event.v0.1
+id: evt_20260922T110405_mumate_control_room_ops_pr14_pr15_merged_grafana_applied_pr_standard_carried
+type: closeout
+recorded_at: 2026-09-22T11:04:05+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-control-room-ops-001
+  lane: single
+  objective: >-
+    Checkpoint between slice 1 and slice 2: the slice-1 follow-ups are merged
+    and applied (PR 14 - Grafana definitions, host-log-silence rule, red by
+    default), the PR description standard now lives in GitHub for mumate-infra
+    (PR 15 - template + red check), and the owner's correction about PR
+    descriptions is recorded with the carried item for the other repositories.
+  scope:
+    - PR 14 and PR 15 merged; the two Grafana UI changes verified through the API.
+    - The owner's correction (2026-09-22) that the agent's PRs ignored .github/PULL_REQUEST_TEMPLATE.md, and how it is enforced from now on without touching CIEL.
+  out_of_scope:
+    - Slice 2 (Tailscale) - next decision.
+    - The PR standard in mootech-fe, mootech-be, bazi-sft-dataset, ciel-os - carried, done repo by repo when touched, or as a small portfolio workstream later; not this lane's work.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      mumate-infra PR 14 merged (main 6ff2b16): contact-points.yaml = one
+      contact point discord-infra with Discord + Grafana IRM, no child routes;
+      alert-rules.yaml log-silence re-scoped to host silence; Discord title red
+      unless severity=warning. Applied by the owner in the UI and verified by
+      the agent through the Viewer token: title template NEW, rule query
+      sum(count_over_time({env="staging"}[15m])) < 1 with the new summary,
+      state Normal (50 lines in the last 15 min at check time).
+    - >-
+      mumate-infra PR 15 merged (main e1e69f6): .github/PULL_REQUEST_TEMPLATE.md
+      copied verbatim from ciel-os, and .github/workflows/pr-template.yml - on
+      opened/edited/ready_for_review/reopened, reads the PR body through an env
+      var and fails naming any of the six sections that is missing or empty;
+      read-only permissions, no secrets, ~5 s (one billed minute per run,
+      roughly 3-5 % of the 2,000 free minutes a month; synchronize deliberately
+      excluded because a push does not change the body). First run on PR 15
+      itself: pass. Local test against a bad body: missing=[Boundaries]
+      empty=[Review in one minute, Evidence].
+    - >-
+      The descriptions of the already-merged PRs 13 and 14 rewritten in the
+      six-section template so the record reads the way the owner reviews.
+    - >-
+      Owner's decision on scope: the standard for the other four repositories
+      is not opened as a workstream now; it is added repo by repo when one is
+      touched ("ไม่รีบด่วน"), and nothing about it goes into AGENTS.md or the
+      CIEL README, which already carry the rule and the template.
+  not_completed:
+    - The rule's display name in the stack is still "mumate log silence" (the owner changed query, summary, and threshold, not the name); the repository file says "mumate host log silence". Harmless; the next mumate-infra PR aligns the file to the stack or the owner renames it.
+    - Expiry dates in env/README.md still blank.
+  evidence_of_limits:
+    - >-
+      Lesson (owner's correction, 2026-09-22): the agent wrote mumate-infra
+      PRs 13 and 14 with ad-hoc headings although ciel-os README requires the
+      final-review template on every PR it marks ready; the owner said it had
+      happened several times. Enforcement now sits in the repository that
+      receives the PR (template + check), not in the agent's memory and not
+      in CIEL; a red check on GitHub Free private repositories does not block
+      the merge button (no branch protection) - it is the visible net.
+
+evidence:
+  plan: workstreams/mumate-control-room-ops-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: "cf465a69b62312806b93b1c15dd108ee85b8b988"
+    branch: hq/20260921
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main e1e69f6 (PR 13 df5e0ca, PR 14 6ff2b16, PR 15 e1e69f6) = host /opt/mumate at df5e0ca (PR 14/15 change no host file; pull at the next apply)"
+  grafana_stack:
+    contact_point_title: "warning → 🟠, otherwise 🔴, resolved 🟢 (verified via /api/v1/provisioning/contact-points)"
+    log_silence_rule: "name 'mumate log silence'; query sum(count_over_time({env=\"staging\"}[15m])); threshold < 1; NoData Alerting; summary 'no log line from any container on the host for 15 minutes …'; state Normal"
+  github_actions:
+    pr_template_check: "https://github.com/mojisejr/mumate-infra/actions/runs/35669677657 (pass, 5 s)"
+  previous_record: memory/events/2026/09/22/20260922T055602_mumate_control_room_ops_slice1_closeout_readable_alerts_rehearsed.yaml
+
+unresolved:
+  - Slice 2 decision (Tailscale): owner creates the ACL and a tagged auth key, sets a root password for the DO console; then install while public 22 stays open, prove SSH over the tailnet from the Mac and the phone, prove both break-glass routes, remove the three port-22 entries.
+  - Carried (portfolio, not this lane): PR template + pr-template check in mootech-fe, mootech-be, bazi-sft-dataset, ciel-os - repo by repo when touched.
+  - Carried from slice 1: rule display name; env/README.md expiry dates; Better Stack push is paid (email only).
+  - Carried from the migration lane: 3c go under the quiet gate; payment test webhook; Facebook/Twitter callbacks; GITHUB_TOKEN rotation; Vercel bazi SUPABASE_* values; Vercel Security Checkpoint.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decides slice 2. The agent hands the owner a ready-to-paste
+    Tailscale ACL (tag:server, members → tag:server:22, Tailscale SSH as
+    deploy, root in check mode) and the auth-key settings; the owner also
+    sets the DO console root password. Then the slice-2 PR and the on-host
+    steps, each with its own go.
+  acceptance_check:
+    - Wake lists the lane idle at plan 0.1 with slice 1 closed and no validation error.
