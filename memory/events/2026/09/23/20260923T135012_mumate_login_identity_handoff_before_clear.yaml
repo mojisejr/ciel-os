@@ -1,0 +1,132 @@
+schema_version: ciel.event.v0.1
+id: evt_20260923T135012_mumate_login_identity_handoff_before_clear
+type: closeout
+recorded_at: 2026-09-23T13:50:12+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Hand this lane to a fresh session before the owner clears the conversation.
+    Plan revision 0.2 is authorized at slice 1, the slice-1 code exists but is
+    not accepted, and the seven defects that block acceptance are recorded. This
+    record carries the evidence a cold session would otherwise have to rediscover.
+  scope:
+    - State of the lane at the moment of the handoff.
+    - The start-gate check made against freshly fetched remotes.
+    - Evidence that exists only in the cleared conversation and is needed to continue.
+  out_of_scope:
+    - Any code change. Nothing in the application was edited in this session.
+    - Slices 2-5, production SQL, LINE console, deployment, endpoint flip, account merge.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Plan raised to revision 0.2 and the owner's five decisions recorded, in HQ
+      commit b490fc7 (parent 790377c). Wake reads the lane as plan 0.2, lifecycle
+      authorized, phase 1, execution idle.
+    - >-
+      Three read-only investigations and one read-only production measurement
+      were completed, and their conclusions are written into PLAN.md revision
+      0.2. The detailed evidence is summarised in this record.
+    - >-
+      Start gate re-run against freshly fetched remotes at 2026-09-23 13:45+07.
+      mootech-fe origin/main moved from 4837b47 to 9b33cad, 21 commits in about
+      four hours, and NOT ONE of them touches an auth or identity file. The
+      branch base is therefore functionally current for everything this lane
+      edits, and no rebase is needed before the defect work.
+    - >-
+      The duplicate-identity cleanup was measured and is close to mechanical - of
+      20 duplicate identities over 40 members, 15 have a chart on exactly one
+      side, 4 have a chart on neither, and 1 has a chart on both.
+
+  not_completed:
+    - No slice-1 defect is fixed. The branch still carries only the original commit.
+    - The concurrency proof is still skipped by the default lane with no captured output.
+    - The parity table is not yet corrected.
+    - Slice 1 is not accepted and no traffic moved.
+
+  evidence_of_limits:
+    - Production counts are a planning checkpoint from 2026-09-23 and must be re-measured before any migration is written.
+    - The engine-side merge inventory was read at bazi checkout 60c05f0, which is now 32 commits behind origin/pdf-dev; two QI files changed since. It informs slice 4 only, and slice 4 must re-measure.
+    - Whether the LINE email scope can be granted at all is outside this repository and unverified.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: "b490fc76800d9f0ea5d90b648444c13242f0122d"
+    branch: hq/20260921
+    working_tree: clean-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mootech-fe: >-
+      branch feat/mumate-login-identity-s1 at 0b4e78107b9e5dd704d3fe141edb84bc63cc3f0a,
+      base 4837b4763748a211b7dabf9673815cd6fd44f54e, clean, one commit ahead of that
+      base, no remote ref exists, nothing pushed. origin/main is 9b33cad.
+    mootech-be: main 0705378d884114a4fd0e73aed59656638f335fdc, unchanged today, reference only
+    bazi-sft-dataset: detached 60c05f0, 32 behind origin/pdf-dev c1a2b70, reference only
+  preceding_record: memory/events/2026/09/23/20260923T133612_mumate_login_identity_plan_0_2_owner_decisions.yaml
+
+handoff_notes:
+  what_a_cold_session_must_know:
+    - >-
+      The two defects that matter most are login-breaking and only appear at the
+      traffic flip. First - the new route answers ok:false on every failure
+      including a server fault, and both existing callers (pages/index.tsx in the
+      callApiRegister result handler, and lib/auth/use-self-heal-identity.ts in
+      its result handler) clear the member cookies and call signOut on that flag.
+      The legacy backend sets it only for a genuine LINE identity rejection.
+    - >-
+      Second - the route answers 422 to any non-empty refer_code, and
+      pages/login/index.tsx writes the REFCODE_FGF cookie from its callback query
+      parameter which DEFAULTS TO "/" - a truthy value. So ordinary members who
+      never touched a referral link carry a non-empty referral code, home passes
+      it into the register call, and on the flip every member would be refused
+      and signed out. This was verified by reading the login page, not inferred.
+    - >-
+      The provider spelling rule is settled and the reasoning is not obvious -
+      normalise Google to lower case and leave LINE upper case, because four
+      backend queries match a stored LINE exactly and would silently return zero
+      rows if lower-cased, while no query anywhere reads a stored GOOGLE. Picking
+      the live spelling also means no production file has to change.
+    - >-
+      Do not rebase the topic branch yet. Rebase once, immediately before the
+      pull request, then re-run the full suite and tell HQ the new hash because
+      HQ tracks this lane by hash.
+    - >-
+      One unmerged upstream branch touches auth - fix/maintenance-gate-and-line-share
+      changes middleware.ts guardV2 to return null instead of next(). This lane
+      does not touch middleware.ts, so there is no collision, but a rebase after
+      it merges should be re-checked.
+    - >-
+      QI, wallet and ledger are in the same Supabase database as user and
+      user_provider. No engine runtime path reaches Neon. Revision 0.1 said
+      otherwise and was wrong.
+  order_of_work:
+    - Fix defects 1 and 2 first - they are the two that break login for everyone.
+    - Then defects 3 to 5 - provider spelling, null versus empty string, and the unconditional profile overwrite.
+    - Then bring the local arena up and run the env-gated Postgres proof, capturing its output for the acceptance record.
+    - Then correct the parity table, including the cost of the no-join-by-email rule.
+    - Then offer slice 1 for owner acceptance. Commit in pieces, report each to HQ, never push.
+
+unresolved:
+  - The duplicate identity whose two members both hold a chart needs the owner to choose which survives.
+  - Whether and when the team grants the LINE email scope.
+  - The wallet and ledger write is not transactional and no slice owns fixing it.
+  - Members whose only credential rows are deleted in slice 2 have no automatic recovery path, by decision.
+
+next_action:
+  action: >-
+    A fresh session runs bun run wake, reads PLAN.md revision 0.2 and this
+    record, then fixes the seven slice-1 defects on the existing topic branch in
+    the order above. No push, no pull request, no production write, and no
+    advance past slice 1 until the owner accepts it.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - The topic branch still has no remote ref and no production endpoint constant is flipped.
