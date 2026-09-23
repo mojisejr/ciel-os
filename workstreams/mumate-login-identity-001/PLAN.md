@@ -3,8 +3,8 @@
 **Workstream:** `mumate-login-identity-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
-**Execution phase:** 1
+**Plan revision:** 0.3
+**Execution phase:** 3
 **Execution state:** idle
 **Parallelism:** proposed
 
@@ -69,6 +69,96 @@ Facts corrected since 0.1:
 - **Provider spelling is asymmetric, and only for Google.** Both writers spell
   LINE `LINE`. The live path writes Google as `google`; the new route writes
   `GOOGLE`; the legacy backend compares provider case-sensitively.
+
+## Revision 0.3 — the measurement that changes the flip, and the owner's rule
+
+Revision 0.3 changes no objective and no slice boundary. It records one owner
+decision, one measurement that contradicts a number 0.2 stated, and the design
+constraints a reconnaissance of the linking surface turned up. Slice 3 remains
+the next slice.
+
+### Owner decision 6 (2026-09-24): paid members are the thing being protected
+
+Stated by the owner in his own turn:
+
+- **A member who has PAID is the priority.** If a paid member is harmed by any
+  change here, it is fixed case by case.
+- **A member who has not paid and breaks is an acceptable cost**, handled case
+  by case if it ever surfaces.
+- **Cleanup that is not urgent is not done.** Leftover rows that harm nobody stay.
+- The goal is that a NEW member can link their own account, and that an EXISTING
+  ACTIVE member can come in, use the product, and link.
+- Prefer whatever is not risky and not dangerous to the system. The system must
+  be able to move forward and the user flow must work as intended.
+
+This decision REPLACES the implicit assumption in 0.2 that every affected member
+must be reachable before the flip. It does not weaken owner decision 2: email
+still never binds an identity. It changes who we owe a rescue to, not what
+counts as proof of identity.
+
+### The number 0.2 got wrong
+
+0.2 stated the cost of no-join-by-email as **98 members**. That was measured over
+one class only - rows with a BLANK provider holding a `ya29...` access token -
+and those rows were deleted in slice 2. Measured read-only on production
+2026-09-24, the real group is larger and was never counted:
+
+| Measure | Value |
+|---|---:|
+| `user_provider` rows spelling Google `google` after the slice-2 respelling | 2,253 |
+| of those, rows whose `id_token` can still identify a member (length <= 32) | 466 |
+| of those, rows whose `id_token` can never match again (length > 32) | 1,787 |
+| members holding at least one unusable Google row | 1,460 |
+| **members holding NO usable Google row at all** | **1,443** |
+
+**The 1,787 is the same 1,787 the slice-2 migration respelled from `GOOGLE` to
+`google`.** The migration was correct and changed no behaviour, but it
+normalised the spelling of rows that remain unusable, so they now look healthy
+to any query that checks spelling. Say so plainly rather than let a later reader
+conclude the cleanup covered them.
+
+### Why those rows exist, and why they cannot be repaired by SQL
+
+Read in `mootech-be` `src/user/user.service.ts` `registerOrLogin`:
+
+1. The path first looks a member up by `id_token`.
+2. When that misses and the provider is not LINE, it falls to email discovery.
+3. On a hit it calls `createUserProvider({ user_id, id_token })` - it **adds a
+   new row carrying the current login's token** and never repairs the old row.
+
+Before `token.providerId = account.providerAccountId` landed (last old-style row
+written 2026-06-19), the value sent as the identity was a short-lived Google
+access token. Every login therefore minted one more dead row for the same human.
+That is exactly the shape of the owner's own account: four unusable rows and one
+usable one.
+
+**No SQL can repair these.** A member's stable Google subject is not derivable
+from a dead access token; it is only learned when that member authenticates
+again. The corollary is the load-bearing one:
+
+> **One login through the legacy path heals a member completely**, because the
+> same email-discovery branch now writes the stable subject. So the 1,443 are not
+> members the system has broken - they are members who have not logged in with
+> Google since roughly 2026-06-19.
+
+This maps onto owner decision 6 exactly: the exposed group is, by construction,
+the INACTIVE group, while the active members the owner wants served heal
+themselves on their next login for as long as the legacy path is still serving
+traffic. `user_provider` carries `create_at` and `update_at`, so this is
+checkable rather than assumed, and slice 5 checks it.
+
+### What this does and does not change
+
+- **Slice 2 is closed and no further cleanup is authorized.** The unusable rows
+  stay. They harm nobody while the legacy path serves traffic, and owner
+  decision 6 says leave what is not urgent.
+- **Slice 3 is unchanged in intent and is the next slice.**
+- **Slice 5 gains a precondition** (below): measure how many of the exposed
+  members have PAID, and protect that set case by case. The unpaid remainder does
+  not block the flip.
+- **Email discovery is NOT added to the FE route.** It would reinstate what owner
+  decision 2 removed, and decision 6 asks for the low-risk option, not the
+  clever one.
 
 ## Relationship to existing work
 
@@ -215,10 +305,23 @@ and lists every cross-user collision for owner review. Only after all collisions
 are resolved may the migration create the unique normalized provider-identity
 index.
 
-DoD 2: on an anonymized local restore, duplicate mappings are zero, the unique
-index builds successfully, concurrent registration leaves one mapping, and
-rollback SQL is demonstrated. Applying SQL to production is a separate owner
-action and is not authorized by this plan opening.
+DoD 2 (corrected in 0.3): on a SYNTHETIC seed that reproduces the production
+shape at production scale, duplicate mappings are zero, the unique index builds
+successfully, concurrent registration leaves one mapping, and rollback SQL is
+demonstrated. Applying SQL to production is a separate owner action and is not
+authorized by this plan opening.
+
+**Why the original wording was unachievable, and why this is not a weakening.**
+0.2 said "on an anonymized local restore". `testenv/scripts/anonymize.sql` sets
+`user_provider.id_token = ''` on every row by design, so an anonymized restore
+cannot host any identity-uniqueness work at all: the very column the unique
+index is built on is blanked. The slice was therefore proven on a synthetic seed
+that reproduces the production shape at production scale - 5,937 rows including
+the duplicate pair sitting inside the dead-credential class - and the proof runs
+the migration's own `DO` block verbatim, so the file and the seed cannot drift
+apart without the file's own guards failing. The owner corrected this wording on
+2026-09-24; the slice-2 closeout already recorded what the slice actually rests
+on rather than advancing the plan quietly.
 
 **Normalisation target (settled in 0.2): normalise per provider, to whatever the
 live writer already sends — Google to `google`, LINE to `LINE`.** Do not pick one
@@ -270,6 +373,26 @@ changing canonical `user_id`; ordinary NextAuth sign-in does not overwrite the
 current session during linking; unlink is designed before production use; and
 collision fixtures cause no data or ownership change.
 
+DoD 3 additions (0.3), each stated so it fails when the mechanism is absent:
+
+- The link route REFUSES a request authenticated only by `cookie-mumate-id`.
+  Proven by a test that sends a forged cookie with no signed session and asserts
+  no row is written.
+- A replayed or tampered `state` is refused, and a missing `nonce` is refused.
+  Proven by tests that alter one byte.
+- An `id_token` with a wrong `aud`, a wrong `iss`, or an expired `exp` is
+  refused. Proven by fixtures, not by trusting the provider.
+- Unlinking the only remaining login method is refused, and the refusal is
+  covered by a test that counts rows before and after.
+- A collision returns a neutral state and writes NOTHING; proven by counting
+  `user_provider` rows before and after, not by reading the response body.
+- The state cookie is asserted to be `SameSite=Lax`, `HttpOnly`, and `Secure`
+  outside development, by reading the `Set-Cookie` header in a test.
+- `ConnectedScreen` shows a second linked provider as linked. This fails today
+  regardless of the backend, because connectivity is decided by string-equality
+  against the session provider.
+- Every new spec is present in `vitest.config.mts`; `scripts/vitest-include-drift.test.ts` already enforces this.
+
 Added in 0.2:
 
 - **The linking round trip cannot go through NextAuth `signIn`.** The session
@@ -286,6 +409,69 @@ Added in 0.2:
   matching email as proof would reinstate exactly what owner decision 2 removed.
 - LINE login stays on the main surface throughout. Nothing in this slice hides,
   demotes, or removes it.
+
+Added in 0.3, from a read-only reconnaissance of the linking surface. These are
+the reasons this slice is larger than "add a button", and each one is a trap this
+codebase has already paid for once:
+
+1. **The redirect URI is no longer blocked - the owner holds the right.** He
+   confirmed on 2026-09-24 that he can add redirect URIs himself and did so. The
+   0.2 statement that it is a team dependency is superseded for the redirect URI.
+   The LINE **email-scope** request is a separate permission and remains a team
+   dependency - and slice 3 does not need it, because email may never bind.
+2. **The callback must NOT live under `/api/v2/`.** `guardV2` is open post-launch
+   (`V2_PREVIEW_KEY` unset means the gate is removed), but the MAINTENANCE gate
+   allowlists `/api/auth` and NOT `/api/v2/account/*`. With `MAINTENANCE_MODE=on`
+   a provider callback would be rewritten to `/maintenance` and answer **HTTP
+   200** - the provider reads success while the link silently never happens. This
+   is the identical failure the Omise webhook exemption exists to prevent. Put
+   the routes at `/api/auth/link/*`.
+3. **`resolveSessionUserId` must not be used as-is for these writes.** Its
+   MEMBER_ID fallback accepts `cookie-mumate-id`, which is client-settable and
+   not httpOnly. Acceptable for reads and quotas; for a route that attaches a new
+   login credential to an account it is an account-takeover primitive. This slice
+   requires the signed session specifically, and needs a session-only variant.
+4. **Google OAuth is hard-blocked inside the LINE in-app browser** and must be
+   escorted to an external browser, which carries neither the `v2_access` cookie
+   nor the NextAuth session cookie. A Google link started from inside LINE
+   therefore arrives at the callback with **no signed-in session**. There is no
+   existing answer to this in the codebase. Either the state token carries the
+   member binding server-side, or the flow refuses to start from the webview and
+   says why. This must be decided before implementation, not discovered in test.
+5. **State, PKCE and nonce are net-new code, and are the largest item.** Nothing
+   in the repository mints or verifies an OAuth `state`, a PKCE verifier, or an
+   OIDC `nonce`, and nothing verifies an `id_token` signature, `iss`, `aud` or
+   `exp`. `lib/calculator/nonce.ts` is the right SHAPE to copy (HMAC, TTL,
+   constant-time compare, throws when its secret is unset) but binds only a
+   timestamp; the link state must bind member, provider, return URL and verifier.
+   `pages/api/instagram/callback.ts` checks no state at all and is a cautionary
+   example, not a model.
+6. **The state cookie must be `SameSite=Lax`, `Secure` in production, HttpOnly.**
+   `SameSite=None` is proven to be dropped by the LINE webview - that defect took
+   every provider's login down on 2026-09-22. The LINE authorize URL must also
+   carry `disable_ios_auto_login=true`, or iOS app-switches mid-authorize and
+   destroys the state cookie. Do not use the broader `disable_auto_login`; it was
+   tried and rejected.
+7. **A read endpoint for linked providers does not exist and must be written.**
+   `ConnectedScreen.tsx:120` decides "connected" by string-equality against the
+   current session's provider, so a second linked provider would still render
+   "ยังไม่ได้เชื่อม". `/api/profile` does not return provider rows and nothing else
+   does. Session provider is lower-case while LINE is stored upper-case, so every
+   comparison is `lower()` on both sides.
+8. **`ok: false` is the sign-out flag.** Both callers of the register-login
+   response clear member cookies and call `signOut()` on `ok === false`, while
+   the House B convention under `pages/api/v2/**` returns `{ ok: false }` for
+   every failure. A link route that follows House B blindly logs the member out
+   mid-link. This slice states its error contract explicitly.
+9. **Unlink refuses to remove the last login method.** Owner decision, 2026-09-24.
+   Without it a member locks themselves out permanently, because no-join-by-email
+   means there is no recovery path. Unlink of a non-last method is safe and
+   reversible: `user_id` never changes, so QI, charts and payments are untouched,
+   and the member can link again. Unlink also exists because the unique index
+   makes a wrong link permanent otherwise - the identity stays occupied and
+   nobody, including its real owner, can attach it elsewhere.
+10. **Every new `.test.ts(x)` must be registered in `vitest.config.mts` by hand.**
+    An unregistered spec is run by nothing at all.
 
 ### 4. Decide collision recovery with the owners of affected data
 
@@ -344,6 +530,66 @@ before push. Observe login success, ambiguous identities, duplicate creation,
 and rollback readiness for an owner-decided window. Removing the legacy call
 from FE is a later decision; changing or deleting the BE endpoint remains with
 `mumate-be-retirement-001`.
+
+**Precondition added in 0.3 — the paid-member check.** The flip is the moment the
+email-discovery rescue disappears. Measured 2026-09-24, 1,443 members hold no
+usable Google row and would receive a new empty account on their first login
+after the flip. Owner decision 6 says this is acceptable for members who have not
+paid and must be handled case by case for members who have. So, immediately
+before the flip and not earlier (the set shrinks on its own as members log in):
+
+1. Re-measure the exposed set. It is not a fixed number; every legacy Google
+   login removes one member from it.
+2. Of that set, count how many have PAID, and how many of those are recently
+   active. Counts first; identifiers only for the paid-and-exposed subset.
+3. Hand the owner that subset as `user_id` values only — no name, email, or
+   token, per this plan's no-personal-rows rule. That list is the case-by-case
+   work, and it is expected to be small.
+4. The unpaid remainder does **not** block the flip. Recording the number is the
+   obligation; rescuing it is not.
+
+This precondition replaces nothing in DoD 5; it is a gate on running the flip at
+all, and its output is a list the owner acts on rather than a blocker the agent
+resolves.
+
+**How "paid" and "active" are actually measured (established 2026-09-24, read-only
+over both repositories).** Neither is a single column, and the obvious column for
+one of them is a trap:
+
+- **`"user".login_at` is NOT a last-login clock.** The legacy path sets it only in
+  the first-time create branch (`mootech-be` `src/user/user.service.ts:515`); the
+  three refresh-on-login sites at `:586`, `:641` and `:700` are commented out, and
+  the FE store that would refresh it is not wired to anything. It is effectively
+  the account-creation timestamp. Anyone reading it as recency will be wrong.
+- **The closest true login clock is `user_provider.update_at`**, restamped on each
+  successful non-LINE login carrying an email
+  (`src/user-provider/user-provider.service.ts:111-126`). Migration 0034
+  deliberately did not restamp it, so it is uncontaminated and usable. Corroborate
+  with `log_calculate."createAt"`, `log_activity."createAt"` and
+  `user_matching.create_at` — all camelCase where quoted, all
+  `'YYYY-MM-DD HH:mm:ss'` Asia/Bangkok strings that sort lexically.
+- **"Paid" spans six tables, and omitting one silently drops a whole customer
+  class.** `v2_payment` (`status='APPROVED'` and `failure_code` not
+  `'gateway_reversed'`), `payment` (`status='APPROVED'`), `member_pay_as_use`
+  (`total > 0`, never `balance` — that starts at 3 free credits), `book_order`
+  (`status IN ('PAID','DONE')`), `member_payment` (`plan_code='MEMBER'`) and
+  `member_subscription` (`tier_code IN ('PLUS','PRO')`). **QI, SINSAE and BOOK
+  purchases write no `member_*` row at all**, so a membership-only test drops every
+  one of those buyers.
+- **`member_payment` cannot distinguish a real payment from a comped code**; the
+  promo path writes the same row with an empty `payment_id`. So the measurement
+  reports two numbers — money provably moved, and the broader set including comps.
+  Protect the broad set; use the narrow one to size real revenue exposure.
+- **A member who still holds a working LINE row is not locked out**, so the count
+  that matters most is the paid subset with no other usable credential.
+
+**Rollback stays cheap and must be kept that way.** The flip is one line —
+`constants/api/endpoint.ts:55`, `register_or_login`, `backendURLGenerator` back to
+`localApi` and forward again. Verified 2026-09-24: that constant has exactly one
+application caller (`constants/api/api-user-register-or-login.ts:22`) and no flag
+or environment variable switches between the two paths, so the new route is
+DARK until that line changes. Nothing else may acquire the power to route this
+call, or the rollback stops being one line.
 
 ## Authority and ownership boundary
 
