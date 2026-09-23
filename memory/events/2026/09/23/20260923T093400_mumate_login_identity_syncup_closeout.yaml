@@ -1,0 +1,86 @@
+schema_version: ciel.event.v0.1
+id: evt_20260923T093400_mumate_login_identity_syncup_closeout
+type: closeout
+recorded_at: 2026-09-23T09:34:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close the research and syncup checkpoint for MuMate login identity before
+    implementation: retain Google and LINE, use internal user_id as the
+    provider-independent member identity, move register-login to a new FE path,
+    and stop before changing another owner's identity or entry-flow work.
+  scope:
+    - Current login, provider mapping, MEMBER_SUB history, and account-linking research.
+    - Owner decisions made on 2026-09-23.
+    - Boundary between this narrow lane and the paused full BE-retirement lane.
+  out_of_scope:
+    - Implementation, checkout synchronization, production writes, provider settings, and application deployment.
+    - Automatic collision merge policy, which remains an owner decision after affected-data ownership is verified.
+
+outcome:
+  status: recorded
+  completed:
+    - Google and LINE remain available on the main login surface.
+    - >-
+      user.user_id is the canonical MuMate member id. Provider subjects attach
+      to it through user_provider; email is not the canonical key and is not
+      sufficient proof for automatic linking.
+    - >-
+      The login service moves by a strangler path: build a new FE-native route,
+      prove it locally without traffic, flip only after owner acceptance, keep
+      the BE path for rollback, and let the paused retirement workstream own
+      final BE shutdown.
+    - >-
+      LINE removal, MEMBER_SUB restoration, rich-menu/LIFF changes, and edits
+      to another person's existing work were rejected for this workstream.
+    - >-
+      The provider-identity unique index must be created only after every
+      duplicate mapping is resolved; the earlier proposed reverse ordering was
+      corrected.
+  not_completed:
+    - No application checkout was synchronized and no source file was edited.
+    - No production row, schema, secret, provider setting, or route was changed.
+    - Cross-user collision recovery is not decided or authorized.
+  evidence_of_limits:
+    - Production aggregate counts came from a read-only research observation and must be re-measured before migration.
+    - A canonical user_id identifies an account record; existing duplicate accounts still require an explicit recovery decision rather than an automatic guess.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: "6c277647c2ddcaa0f3c4a5c6a8774068de8f0b04"
+    branch: hq/20260921
+    working_tree: plan-and-two-events-only-before-commit
+    pull_request: none-until-hq-round-close
+  application:
+    mootech-fe: "origin/main 4837b4763748a211b7dabf9673815cd6fd44f54e observed read-only; local checkout not synchronized"
+    mootech-be: "origin/main 0705378d884114a4fd0e73aed59656638f335fdc observed read-only; no change"
+  source_refs:
+    - mootech-fe/lib/db/schema.ts user and userProvider declarations
+    - mootech-fe/lib/v2/resolve-user.ts provider-to-user resolver
+    - mootech-be/src/user/entity/user-entity.model.ts generated UUID primary key
+    - mootech-be/src/user/user.service.ts legacy register-login behavior
+
+unresolved:
+  - Cross-user provider collision handling: manual support first or an auditable merge after affected owners agree.
+  - Exact treatment of blank provider rows and all current duplicates; re-measure in slice 2.
+  - LINE email permission may help recovery but remains optional user data and cannot authorize account linking by itself.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Open the workstream at plan revision 0.1 and authorize slice 1 only. Pass
+    the mootech-fe start gate, create one topic branch from current origin/main,
+    implement the new FE-native route without flipping traffic, and prove it on
+    the local arena with the BE host unreachable.
+  acceptance_check:
+    - Wake lists mumate-login-identity-001 with slice 1 authorized and no validation error.
+    - No application traffic or production state changes before the slice-1 closeout and next owner decision.
+
