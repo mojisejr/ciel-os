@@ -1,0 +1,107 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T062242_mumate_login_identity_paid_exposure_measured
+type: closeout
+recorded_at: 2026-09-24T06:22:42+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record the paid-member measurement that PLAN 0.3 slice 5 makes a precondition
+    of the flip. The owner ran it read-only; the agent cannot reach production.
+  scope:
+    - The measured exposure and what it means under owner decision 6.
+  out_of_scope:
+    - The flip itself, still undecided. Slice 3, still unopened.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "2"
+  completed:
+    - >-
+      MEASURED BY THE OWNER, read-only, 2026-09-24. Of the members holding no
+      usable Google row - affected_members 1,443 - the paid exposure is
+      paid_money_moved 1 and membership_ever 5. The broad figure of 5 includes
+      comped rows, because member_payment cannot distinguish a real payment from
+      a promo redemption; the narrow figure of 1 is money provably moved across
+      v2_payment, payment, member_pay_as_use and book_order.
+    - >-
+      google_only is 1,443 - ALL of them. Not one of the affected members holds
+      a working LINE row, so for every one of them the Google credential is the
+      only way in and there is no fallback. The harm per person is total; the
+      paying population it lands on is one.
+    - >-
+      UNDER OWNER DECISION 6 THE FLIP IS NOT BLOCKED BY THIS. One paid member,
+      at most five in the broad set, is exactly the case-by-case volume the
+      decision anticipated rather than a population needing a rescue mechanism.
+      PLAN 0.3's slice-5 precondition is satisfied in shape; it must be re-run
+      immediately before the flip because the set shrinks on its own.
+    - >-
+      THE PROPERTY THAT MAKES THE ACCEPTANCE SAFE, and it was not obvious before
+      the measurement: a member caught by the flip is NOT deleted. They receive a
+      NEW empty account while their original `user` row and every row keyed to it
+      - charts, history, wallet - stay exactly where they are. Recovery is
+      therefore a one-row operation at any later date: attach the member's now
+      known stable Google subject to their original user_id. Nothing about the
+      flip destroys the ability to fix an individual case, which is what makes
+      "fix it case by case" a real plan rather than a hope.
+
+  not_completed:
+    - The flip is still undecided and this record does not decide it.
+    - Nothing is pushed. Slice 3 is not opened and still requires its own owner decision event.
+    - >-
+      How many of the 1,438 unpaid affected members hold a computed chart is NOT
+      measured. It is knowable with one more read-only query. Owner decision 6
+      says unpaid breakage is acceptable, so this was not pursued; recorded here
+      so a later session knows it was a choice and not an oversight.
+
+  evidence_of_limits:
+    - >-
+      The agent did not run this query. A read-only production connection is
+      refused by the harness classifier, so the statement was written here and
+      the owner ran it and pasted the result. The numbers are his, not a
+      measurement this session can independently re-derive.
+    - >-
+      The unusable class is defined by length(id_token) <= 32, which is this
+      lane's criterion and not the codebase's. Well supported - a Google subject
+      is a ~21-digit string and the owner's own rows split 21 against 253, 336,
+      338, 338 - but the count inherits that inference.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: "cb29a3f"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 27
+  application:
+    repository: mootech-fe
+    head: "91a2f1b8b0484f7582012e40c63be8537c72b6e2"
+    branch: feat/mumate-login-identity-s1
+    working_tree: clean-no-remote-ref-nothing-pushed
+  measurement:
+    affected_members: 1443
+    google_only: 1443
+    paid_money_moved: 1
+    membership_ever: 5
+    method: read-only SELECT over user_provider joined against v2_payment, payment, member_pay_as_use, book_order, member_payment, member_subscription
+
+unresolved:
+  - The single paid member is not identified. The protect-list statement returning user_id only has not been run; it is one statement away when the owner wants it.
+  - Re-measure immediately before the flip; every legacy Google login removes one member from the set.
+  - Carried unchanged - the flip decision, slice 3's own decision event, the corrected LINE callback path at /api/auth/link/*, the three .assets dumps, the AWS bucket, and Vercel Preview resolving to the production database.
+
+next_action:
+  action: >-
+    Nothing in this record requires action. When the owner opens slice 3 or
+    decides the flip, run the protect-list statement first so the one paid member
+    is known by user_id before anything changes.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - The topic branch still has no remote ref and no production endpoint constant is flipped.
