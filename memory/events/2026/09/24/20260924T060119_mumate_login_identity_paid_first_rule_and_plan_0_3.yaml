@@ -22,8 +22,9 @@ workstream:
     - Slice 3 implementation. Not started.
 
 outcome:
-  status: recorded
-  slice: none
+  status: decided
+  parallelism: approved
+  slice: "2"
   completed:
     - >-
       OWNER DECISION 6 (2026-09-24, his own turn). Paid members are the thing
@@ -97,6 +98,34 @@ outcome:
       this lane's, not the codebase's. It is well supported - a Google subject is
       a ~21-digit string, and the owner's own five rows split 21 against 253, 336,
       338, 338 - but it is an inference, and the counting statement inherits it.
+
+what_this_decision_does_and_does_not_authorize:
+  why_slice_2: >-
+    This record is bound to slice 2 because slice 2 is the slice it actually
+    acts on: it CLOSES that slice's scope, stating that no further cleanup of the
+    unusable Google rows is authorized, and it corrects that slice's DoD 2. It is
+    not bound to slice 3 because slice 3 is NOT opened by it.
+  parallelism: >-
+    outcome.parallelism approved is repeated because the grant is real and
+    standing, not because repeating it makes wake read green. The owner approved
+    this lane's overlap with the MuMate infrastructure and CU12 sessions when
+    slice 1 opened, it is written into PLAN.md's authority section, and he
+    exercised it again on 2026-09-24 by deciding that the infrastructure lane is
+    told before this lane pushes. Without this line wake reports
+    owner-confirmation-required, which would tell a fresh session the owner has
+    not blessed the overlap - the opposite of what happened.
+  slice_3_is_not_authorized: >-
+    Slice 3 remains unopened and requires its own owner decision event, as
+    PLAN.md's sequencing section demands of every slice after slice 1. The owner
+    asked for the plan to be revised and laid out with its DoD; he did not say
+    start it. Execution phase 3 with state idle means slice 3 is the next slice
+    and is NOT running. Do not read this record's "authorized" lifecycle as
+    permission to write slice-3 code.
+  what_he_did_authorize: >-
+    Decision 6 itself, the plan revision and the DoD 2 correction, the branch
+    push (which he runs himself after the harness refused --no-verify), telling
+    the infrastructure lane first, and letting the infrastructure lane's 3c take
+    the staging slot before this lane's image.
 
 the_pre_push_finding:
   what: >-
@@ -196,6 +225,7 @@ how_paid_and_active_are_measured:
 evidence:
   plan: workstreams/mumate-login-identity-001/PLAN.md
   plan_revision: "0.3"
+  slice: "2"
   repository:
     head: "172f541"
     branch: hq/20260921
