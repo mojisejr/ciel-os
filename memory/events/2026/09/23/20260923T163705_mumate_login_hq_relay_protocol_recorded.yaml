@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20260923T163705_mumate_login_hq_relay_protocol_recorded
+type: decision
+recorded_at: 2026-09-23T16:37:05+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-login-identity-001
+  objective: >-
+    Move MuMate login identity ownership to the FE route while preserving
+    explicit owner gates for account data, traffic, providers, and delivery.
+  scope:
+    - Route owner questions and instructions through Codex to HQ, then from HQ to the responsible child lane.
+    - Return the child lane's questions, evidence, blockers, and results through HQ and Codex to the owner.
+    - Preserve a durable CIEL authorization record before a child opens a new slice.
+  excluded:
+    - Opening slice 2 or any later slice through this routing decision alone.
+    - Push, pull request, production SQL, provider settings, traffic flip, or another outward or irreversible action.
+    - Use of global skills by Codex for this communication workflow.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      The owner selected HQ as the coordinator and communication bridge for
+      MuMate login work: owner to Codex, Codex to HQ, HQ to the responsible
+      child lane, and responses back through the same path.
+    - The owner does not need to repeat the same message manually in the child session.
+    - >-
+      Relayed information may be used when independently verifiable. Before a
+      child opens a new local reversible slice, the owner's instruction must be
+      captured in a committed decision event that names that slice and plan revision.
+    - >-
+      Push, pull request, production SQL, provider settings, and traffic flips
+      remain individual owner gates and are not covered by this standing route.
+    - Codex will not use global skills for this communication workflow.
+  not_completed:
+    - Slice 2 is not opened by this record.
+    - No child repository, provider, production data, traffic, or remote state was changed.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: 1ac40e9431aa671a641e5188ab9dd8505e68b0c9
+    branch: hq/20260921
+  owner_instruction:
+    - Communicate through HQ; Codex sends the owner's information to HQ and HQ sends instructions to the child session.
+    - Remember this routing rule and do not use global skills.
+  child_lane_response:
+    - HQ-relayed owner instructions are accepted as information, not authorization by themselves.
+    - A committed slice-specific decision event is sufficient for local reversible work.
+    - Outward or irreversible actions still require a fresh owner gate.
+
+unresolved:
+  - The owner has not yet selected slice 2, traffic flip, or park as the next action.
+  - >-
+    The read-only production URL check and the owner's AWS-console check for
+    any surviving retired S3 or CloudFront resources remain separate and unapproved.
+
+next_action:
+  action: >-
+    Ask the owner to choose slice 2, flip, or park. If the owner chooses a new
+    local slice through Codex, relay the exact instruction to HQ and commit a
+    slice-specific decided event before the child lane starts it.
