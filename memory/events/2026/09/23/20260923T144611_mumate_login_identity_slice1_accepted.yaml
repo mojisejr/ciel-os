@@ -1,0 +1,146 @@
+schema_version: ciel.event.v0.1
+id: evt_20260923T144611_mumate_login_identity_slice1_accepted
+type: closeout
+recorded_at: 2026-09-23T14:46:11+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close slice 1. The owner answered the three questions that blocked
+    acceptance and accepted the slice in the same turn. Slice 1 is code
+    complete and locally proven; nothing is pushed, no traffic has moved, and
+    the legacy route is still the live path.
+  scope:
+    - The owner's three acceptance decisions and the one code change that followed.
+    - The state slice 2 inherits.
+  out_of_scope:
+    - Push, pull request, production write, SQL, provider setting, traffic flip.
+    - Slices 2-5. Slice 2 is not authorized by this record.
+
+outcome:
+  # Not a delivery status, for the same reason as the preceding record: nothing
+  # is pushed and no pull request exists, so neither
+  # draft-pr-closeout-prepared-for-final-pr-review nor ready-for-owner-merge is
+  # true. src/portfolio/read.ts:40 defines those two and documents that every
+  # other value is recorded and ignored deliberately.
+  status: recorded
+  completed:
+    - >-
+      Owner accepted slice 1 on 2026-09-23 after answering the three recorded
+      differences. Six commits on feat/mumate-login-identity-s1, head
+      "03c5dc15d8f4e95bdef7781625f3b6c2d547c740".
+    - >-
+      A factual error of mine was corrected before the owner could decide on it.
+      I had reported that the legacy path copies the LINE avatar "to S3", which
+      is the METHOD NAME, not the system. mootech-be migrated object storage to
+      Supabase Storage in "2641c73" on 2026-06-17, copying the objects and
+      rewriting stored URLs off both the S3 base and the cdn.phoenix-stark.com
+      CloudFront base (scripts/phase3-backfill-urls.sql). The owner was weighing
+      a storage migration that had already happened three months earlier.
+    - >-
+      The avatar gap is closed in commit "03c5dc1". user.picture_url is now
+      refreshed from the provider's own CDN URL on every login, for every
+      provider, with no copy into our storage. Verified renderable -
+      profile.line-scdn.net and lh3.googleusercontent.com are already in
+      next.config.mjs images.domains and images.unoptimized is true.
+
+  not_completed:
+    - Nothing is pushed. No pull request. No endpoint constant flipped. No traffic moved.
+    - The traffic flip is not scheduled and is not authorized by this record.
+    - Slice 2 is not opened.
+
+  evidence_of_limits:
+    - >-
+      The concurrency proof runs over a DIRECT connection to a local Postgres
+      17.10, not the Supabase transaction pooler production uses. Slice 2's
+      unique index is what makes the guarantee structural rather than
+      cooperative.
+    - >-
+      Whether the retired AWS bucket s3-ps-cdn and its CloudFront distribution
+      still exist and still bill is UNVERIFIED. Code proves the migration
+      happened; it cannot prove the old bucket was deleted. This needs the AWS
+      console, which is the owner's, plus a read-only production SELECT for any
+      surviving amazonaws or phoenix-stark URL. Neither was run.
+    - The 657/98 production measurement is carried forward unchanged as a planning checkpoint of 2026-09-23 that slice 2 must re-measure.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: "38552426a733579c33ae2eb3fbc16c6d216d5d11"
+    branch: hq/20260921
+    working_tree: clean-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mootech-fe: >-
+      branch feat/mumate-login-identity-s1 at
+      "03c5dc15d8f4e95bdef7781625f3b6c2d547c740", base
+      "4837b4763748a211b7dabf9673815cd6fd44f54e", clean, 6 commits ahead, no
+      remote ref exists, nothing pushed. origin/main "9ee4f39" at 23 ahead of
+      base; the only watched auth path it touches is lib/v2/resolve-user.ts,
+      purely additive, no rebase conflict.
+    mootech-be: main "0705378d884114a4fd0e73aed59656638f335fdc", read-only reference
+  slice_1_commits:
+    - '"2e617b5" defects 1-2, the two that break login for everyone'
+    - '"4913ba2" defects 3-5, provider spelling and stored-profile blanking'
+    - '"d973716" defect 7, the concurrency proof rebuilt with a negative control'
+    - '"3f9e0c1" defect 6, parity table corrected against the legacy source'
+    - '"55bdfc4" storage claim corrected, owner decisions on is_info and is_email'
+    - '"03c5dc1" avatar refreshed from the provider CDN, gap closed'
+  local_proof:
+    default_lane: vitest 2725 passed / 163 skipped across 264 files; tsc --noEmit exit 0; eslint clean
+    postgres_proof: 4 passed against Postgres 17.10 on localhost:5433, including the negative control and the avatar refresh
+
+owner_decisions_2026_09_23:
+  - >-
+    is_info - keep the honest Boolean(name) rather than legacy's hardcoded
+    false. Nothing in mootech-fe reads it today; a future reader must be told.
+  - >-
+    is_email - keep the honest Boolean(email) rather than legacy's hardcoded
+    true. A rollback flips it back, which is accepted: rollback is for genuine
+    necessity, not routine.
+  - >-
+    Avatar - store the provider's CDN URL directly. Do not consume our storage
+    for a copy. Accepted consequences are recorded in the parity table.
+  - Slice 1 is accepted and closed.
+
+unresolved:
+  - >-
+    The retired AWS bucket and CloudFront distribution may still exist and still
+    bill. Two checks answer it: the AWS console, and a read-only production
+    SELECT for surviving amazonaws or phoenix-stark URLs. Neither is this lane's
+    to run without the owner.
+  - >-
+    The unused aws-sdk dependency remains in mootech-be package.json. Another
+    repository, not this lane's to remove.
+  - >-
+    user.picture_url will hold mixed hosts after the flip, and a provider that
+    rotates an avatar URL now breaks the stored one. Accepted, recorded in the
+    parity table.
+  - >-
+    The payment-lane CSP allows no avatar host at all, including the Supabase
+    one existing rows already use, so avatars on payment screens are blocked
+    today. Pre-existing, not caused by this slice, not investigated.
+  - >-
+    pages/login/index.tsx line 42 `router.query.callback as string || '/'` makes
+    the empty-REFCODE_FGF branch unreachable. Live, unowned, deliberately not
+    fixed here.
+  - Carried unchanged - the duplicate identity holding a chart on both sides, the LINE email scope, the non-transactional wallet and ledger write.
+
+next_action:
+  action: >-
+    Owner decides what follows: whether to open slice 2, and separately when the
+    traffic flip happens. The flip is what turns every recorded parity
+    difference from theory into behaviour, so it deserves its own decision
+    rather than riding on slice-1 acceptance. Before any pull request, rebase
+    the topic branch once, re-check guardV2 in middleware.ts against
+    fix/maintenance-gate-and-line-share, re-run the full suite, and report the
+    new hash to HQ.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - The topic branch still has no remote ref and no production endpoint constant is flipped.
