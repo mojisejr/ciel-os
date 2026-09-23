@@ -1,0 +1,140 @@
+schema_version: ciel.event.v0.1
+id: evt_20260923T174600_mumate_login_identity_slice2_authorized
+type: decision
+recorded_at: 2026-09-23T17:46:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Open slice 2 of plan revision 0.2 - provider-identity cleanup and the
+    uniqueness migration proven locally - with the scope the owner set after
+    reading the slice-2 plan review, and with the review's blocker resolved by
+    using a synthetic seed instead of a production copy. Written by HQ from a
+    relayed instruction; see evidence.provenance, which states plainly what HQ
+    did and did not witness, because the lane must be able to judge this record
+    rather than trust it.
+  scope:
+    - Authorize slice 2 at plan revision 0.2 under the nine constraints the owner set.
+    - Authorize one read-only production identity inventory query, scoped as stated below.
+    - Record the provenance of the instruction so a later reader can weigh it.
+  out_of_scope:
+    - Production SQL, push, pull request, provider settings, traffic flip, and automatic merge. Each remains a separate owner gate and none is authorized here.
+    - A fresh production dump or restore, and any change to testenv/scripts/anonymize.sql.
+    - The surviving amazonaws / phoenix-stark URL query, which stays unapproved and outside this slice.
+    - Final disposition of the both-chart collision, the dev row, and any newly measured anomaly.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner read the slice-2 plan review, including the blocker that the
+    anonymized local restore blanks every user_provider.id_token and therefore
+    cannot host the uniqueness proof, and agreed with it - relayed to HQ as the
+    owner's words "เห็นด้วยตามนี้" - then set the scope below. Slice 2 proceeds
+    local and reversible, with one explicitly scoped read-only production query,
+    and every outward or irreversible step still gated.
+  authorizes:
+    - Slice 2 of plan revision 0.2.
+    - >-
+      One read-only production identity inventory query, run inside a forced
+      read-only transaction (default_transaction_read_only=on), emitting only
+      aggregates or non-identifying references - never raw tokens or personal
+      data.
+    - >-
+      A deterministic synthetic seed for the local proof, built to the shape the
+      inventory reports. No fresh production dump or restore is taken.
+    - >-
+      Cleanup that deletes only dead user_provider credential rows. Member rows
+      and member data are never deleted.
+    - >-
+      A unique index on (lower(provider), id_token), with stored spellings left
+      asymmetric as revision 0.2 settled them - Google google, LINE LINE.
+    - Adding or verifying a CHECK that prevents blank provider values, so the dead-credential class cannot regrow.
+    - >-
+      Retaining the advisory transaction lock, and adding unique-violation
+      recovery so a racing caller is routed into the existing-member path
+      instead of surfacing a retryable server fault.
+  does_not_authorize:
+    - Applying any statement to production. Production SQL remains the owner's own action, run by the owner, each deletion preceded by a dump of the affected rows.
+    - Push, pull request, provider settings, traffic flip, automatic merge.
+    - A fresh production dump, a restore, or amending the anonymizer.
+    - The amazonaws / phoenix-stark URL query.
+    - Deciding the both-chart collision, the dev row, or any newly measured anomaly. Each returns to the owner before its final disposition.
+  completed:
+    - >-
+      The nine constraints are recorded above as authorizations and exclusions
+      rather than as prose, so the lane can check its own work against them.
+  not_completed:
+    - Every step of slice 2. Nothing is executed by this record.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "723f25f"
+    branch: hq/20260921
+    working_tree: this-event-only
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: mootech-fe
+    head: "03c5dc1"
+    branch: feat/mumate-login-identity-s1
+    working_tree: clean-no-remote-ref
+  provenance:
+    written_by: >-
+      HQ (session ciel-os-a3). HQ did not witness the owner give this
+      instruction. It arrived as a message from a Codex session relaying the
+      owner's decision from a chat HQ cannot see, on the same channel whose
+      sender HQ has been unable to resolve all day.
+    owner_words_as_relayed: "เห็นด้วยตามนี้"
+    attributable_owner_turn_on_record: >-
+      Earlier on 2026-09-23 the owner did say directly in the HQ chat, in his
+      own turn, that he had instructed the lane to proceed with slice 2 if
+      nothing blocked it. A blocker was then found and reviewed, and this
+      instruction is consistent with that intent. That earlier turn is
+      attributable; this instruction's specific nine constraints are not.
+    why_written_anyway: >-
+      What it authorizes is local, reversible work plus one read-only aggregate
+      query, with every outward and irreversible step still gated. The
+      constraints match the lane's own review recommendations point for point.
+      Refusing every step of the route the owner built while away would make the
+      arrangement unusable, and the proportionate answer is an artifact that
+      carries its own provenance so the lane can judge it.
+    what_would_close_the_gap: >-
+      The owner reading this record in his own ledger, or confirming in a chat
+      one of the two sessions can see. Cleaner still: the session that actually
+      receives the owner's words commits the authorizing event itself, as it did
+      for evt_20260923T163705, so recorded_by reflects who heard him.
+    hq_did_not_instruct_the_lane_to_start: >-
+      HQ hands this record to the lane and asks it to apply its own stated rule
+      to it. HQ does not tell it to start.
+  preceding_records:
+    - memory/events/2026/09/23/20260923T165459_mumate_login_identity_slice2_plan_defect.yaml
+    - memory/events/2026/09/23/20260923T163705_mumate_login_hq_relay_protocol_recorded.yaml
+    - memory/events/2026/09/23/20260923T144611_mumate_login_identity_slice1_accepted.yaml
+
+unresolved:
+  - This record's provenance, as stated above. It is durable and checkable, not witnessed by HQ.
+  - PLAN.md still carries DoD 2 as "on an anonymized local restore", which the plan-defect record shows is unachievable. Whoever writes the slice-2 closeout should say which DoD was actually met and how.
+  - The anonymizer blanking every id_token remains unfixed and affects every future lane that needs real identity distinctness.
+  - The 98 members routed to support are an operational task with nobody scheduled.
+  - The negative control committed in mootech-fe d973716 inverts once the unique index exists and must be rewritten for the post-index world.
+  - The testenv arena has been up eight days on a 2026-09-18 dump with no deletion point scheduled.
+
+next_action:
+  action: >-
+    The lane (ciel-os-d9) reads this record and decides for itself whether it
+    meets the bar it stated: a committed decision event naming slice 2 at
+    revision 0.2, with parallelism approved repeated, and wake reading the lane
+    authorized. If it does, slice 2 starts with the inventory query first. If
+    the lane judges the provenance insufficient, it holds and says so, and HQ
+    records that instead.
+  acceptance_check:
+    - bun run check and bun run wake pass with this event committed.
+    - Wake reads mumate-login-identity-001 at revision 0.2 with slice 2 authorized.
+    - No production statement, push, pull request, provider change or traffic change occurs under this record.
