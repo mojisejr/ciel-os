@@ -1,0 +1,166 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T191411_mumate_login_identity_slice3_handoff_before_clear
+type: closeout
+recorded_at: 2026-09-24T19:14:11+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Hand this lane to a cold session before the owner clears. Slice 3 is built
+    and deployed to the shadow; its phone acceptance FAILED for one configuration
+    reason, which is mine and is stated plainly below. Read this record for the
+    current hashes; the earlier slice-3 closeout's application head is stale.
+  scope:
+    - The true state of both repositories at hand-off.
+    - Why the phone acceptance failed, whose omission it was, and the exact repair.
+    - One defect found and fixed after that attempt.
+  out_of_scope:
+    - Slice 4, slice 5, production, traffic. All untouched and unauthorized.
+    - Creating or placing any secret. Owner-only.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      SUPERSEDES the application head in
+      20260924T130505_mumate_login_identity_slice3_built_awaiting_round_trip.yaml.
+      That record says b1de1bf; the branch has since been rebased onto origin/main
+      "9f764e6" and pushed. Do not work from b1de1bf.
+    - >-
+      The owner pushed and rebased. The five slice-3 commits survived with new
+      hashes - 2ddb0c6, 2d1e09a, 5b48029, f792748, 3615dcf - and the only
+      difference between the pre-rebase head and the post-rebase head is pull
+      request 813's two files, so nothing of this lane's work changed. Verified by
+      diffing the two heads rather than trusting the commit count.
+    - >-
+      An image was built and deployed to the shadow as
+      ghcr.io/mojisejr/mootech-fe:3615dcf...-staging, and the owner attempted a
+      real LINE link on a phone at about 16:59 ICT. IT FAILED. Recorded by codex
+      in 20260924T170354_..._phone_acceptance_failed_missing_link_state_secret.yaml.
+    - >-
+      ONE COMMIT SINCE, NOT PUSHED - f916986, fixing a defect of mine described
+      below. The remote ref is still at 3615dcf, so local is one ahead of what the
+      shadow is running.
+
+  not_completed:
+    - >-
+      SLICE 3 IS NOT ACCEPTED. No LINE consent screen, no callback, no live JWKS
+      verification, no linked-provider display, no collision behaviour - none of
+      it has been exercised against a real provider.
+    - No pull request exists. The body is written and waiting (see below).
+    - f916986 is unpushed, so the shadow is not running it.
+
+the_acceptance_failure_and_whose_it_is:
+  what_happened: >-
+    Two requests to /api/auth/link/start/line returned 302 to
+    /v2/settings/connected?link_error=link_unavailable. The FE log classified both
+    as "LINK_STATE_SECRET is not configured". No request reached the callback, no
+    token exchange occurred, and user_provider saw zero creates and zero updates.
+  the_code_behaved_correctly: >-
+    This is the fail-closed path working exactly as designed. lib/auth/link-state.ts
+    throws rather than signing with a fallback secret, and the start route turns
+    that into a redirect with a reason instead of beginning a flow it cannot
+    finish safely. There is no half-linked state to clean up.
+  the_omission_is_mine: >-
+    I introduced LINK_STATE_SECRET, declared it in mootech-fe/.env.example with
+    the fail-closed rule written out, and put it in the pull-request body under
+    Secrets. But when I handed the owner the five remaining steps - push, rebase,
+    build, deploy, phone - I DID NOT LIST PLACING THE SECRET ON THE SHADOW. He
+    followed the list I gave him and it was incomplete. The test asserting the
+    throw passed all along; what was missing was the deployment prerequisite in
+    the one place he would act on.
+  the_repair_needs_no_rebuild: >-
+    LINK_STATE_SECRET is read at runtime through process.env, inside the request.
+    It is NOT a NEXT_PUBLIC value and is not among container-build.yml's build
+    args, so Next does not inline it and THE SAME IMAGE IS FINE. The repair is:
+    the owner places the key in /opt/mumate/env/fe.env, then recreates the fe
+    service so it picks the new env file up. No new tag, no new build.
+  it_will_happen_again_unless_the_template_changes: >-
+    mumate-infra env/fe.env.example does not list LINK_STATE_SECRET - verified,
+    zero matches. That file is mumate-infra-move-001's, not this lane's, so this
+    lane does not edit it; its holder should be told. Until it is listed, any
+    future shadow rebuild omits the key the same way.
+
+the_defect_found_after_the_attempt:
+  what: >-
+    lib/auth/link-state.ts and scripts/link-account.test.ts were written with
+    LITERAL control bytes - a NUL and unit separators - where the source should
+    have carried the six-character escape text. Fixed in f916986.
+  why_it_mattered: >-
+    The code was correct and every gate passed: a character class holding the
+    literal characters matches exactly what the escapes would, so 2,945 specs, 12
+    real-Postgres specs, tsc, eslint and the build were all green through the
+    whole slice. What broke was VISIBILITY. `file` classified both sources as
+    binary, so grep skipped them SILENTLY - searching the repository for
+    LINK_STATE_SECRET returned the .env.example line, the tests and a comment, but
+    not the one file that reads it.
+  how_it_surfaced: >-
+    While writing this hand-off I grepped for LINK_STATE_SECRET to confirm where
+    it is read, and the read was missing while the tests asserting it passed. The
+    contradiction is what exposed it, not a tool warning.
+  the_rule: >-
+    A source file the tooling cannot see is a file the next reader will miss, and
+    a NUL byte in source is its own hazard - some tools truncate there. Behaviour
+    was proven unchanged before and after; the scan covered every file on the
+    branch and only these two were affected.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "cc1336e"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 40
+  application:
+    repository: mootech-fe
+    local_head: "f916986"
+    pushed_head: "3615dcfceac8e775ef98e55a941502c83941014a"
+    branch: feat/mumate-login-identity-s1
+    ahead_of_origin_main: 18
+    behind_origin_main: 0
+    origin_main: "9f764e6"
+    working_tree: clean
+    pull_request: none
+  deployed_to_shadow:
+    image: ghcr.io/mojisejr/mootech-fe:3615dcfceac8e775ef98e55a941502c83941014a-staging
+    restore_point_if_the_slot_is_handed_back: FE 7e22f54...-staging / BE 0705378 / BAZI 722cdf1...-staging
+  verification_at_handoff:
+    default_lane: 2945 passed / 183 skipped across 275 files
+    real_postgres: 12 passed against localhost:5433 mumate_test
+    static: tsc --noEmit exit 0, eslint 0 errors
+    build: npm run build exit 0 with the VAPID gate line present
+  pull_request_body: .assets/mumate/slice3-pr-body.md (gitignored; both the CIEL six sections and mootech-fe's checklist, with build output pasted)
+
+unresolved:
+  - >-
+    The staging LINK_STATE_SECRET is not placed. Owner-only: generate it, put it
+    in /opt/mumate/env/fe.env, recreate the fe service, retry exactly one phone
+    attempt. The value must never enter Git, an event, a log or chat.
+  - mumate-infra env/fe.env.example does not list LINK_STATE_SECRET. That lane's file; tell its holder.
+  - f916986 is unpushed; pushing still needs --no-verify because origin/main fails its own verify-architecture gate on four violations this branch does not own.
+  - No pull request. Body ready, not created.
+  - Whether the engine should gain a connect_google mission. The badge is correct either way.
+  - >-
+    Carried unchanged - the traffic flip, slice 4, the three .assets dumps with
+    real member identifiers, the AWS bucket s3-ps-cdn, and Vercel Preview
+    resolving to the production database.
+
+next_action:
+  action: >-
+    A fresh session runs `bun run wake`, reads THIS record for the hashes, then
+    the phone-acceptance failure record, then PLAN.md 0.3. The next executable
+    step is the owner's: place the staging LINK_STATE_SECRET, recreate the fe
+    service on the SAME image, and make exactly one LINE attempt on a phone. Stop
+    on any callback, consent or provider error and record what was seen. Do not
+    rebuild, do not retag, and do not touch production or endpoint.ts:55.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - constants/api/endpoint.ts is still absent from `git diff origin/main..HEAD --name-only`.
