@@ -1,0 +1,139 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T102001_mumate_control_room_ops_slice2_closeout_tailscale_port22_closed
+type: closeout
+recorded_at: 2026-09-24T10:20:01+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-control-room-ops-001
+  lane: single
+  objective: >-
+    Slice 2 closeout: management access to the control room no longer depends
+    on an address allowlist. mumate-2 is on the MuMate tailnet and serves
+    Tailscale SSH; the three tcp/22 rules are gone from the cloud firewall and
+    the public addresses now answer only 80/443; three emergency doors were
+    each exercised for real before the port was closed.
+  scope:
+    - Every DoD 2 item of plan revision 0.1, with the evidence for each.
+    - The three emergency doors and what each one costs to use.
+  out_of_scope:
+    - Slice 3 (watcher) and slice 4 (Beszel, backup proof) - each needs its own decision.
+    - The migration lane's 3c, which still waits for the owner's own go.
+
+outcome:
+  status: slice-complete-pr-merged
+  completed:
+    - >-
+      mumate-infra PR 16 merged (main 768c71a) and applied: bin/tailscale-join.sh,
+      bin/ssh-allow.sh, tailscale in cloud-init and the renderer, tailscale state
+      in ops-status and in the Discord embed, three emergency doors written into
+      runbook 03, a "cannot ssh in" row in runbook 04, env/tailscale.env.example
+      and the expiry register row.
+    - >-
+      Owner-side setup: tailnet ACL saved (tagOwners tag:server = autogroup:admin;
+      acls autogroup:member -> tag:server:22; ssh accept deploy, check root);
+      auth key mumate-auth-key created reusable, pre-authorized, tag:server,
+      created 2026-09-22, expires 2026-12-21; the phone brought onto the tailnet.
+    - >-
+      The agent placed /opt/mumate/env/tailscale.env as deploy (600) from the
+      owner's assets file; the owner ran `cd /opt/mumate && bash bin/tailscale-join.sh`
+      as root in the DigitalOcean console. Result: tailscale 1.102.4 installed,
+      `tailscale up --ssh --accept-dns=false --hostname=mumate-2` succeeded, the
+      sudoers rule for deploy installed, ufw allows 22 on tailscale0, host is
+      100.120.15.24 / mumate-2.taildd0e91.ts.net.
+    - >-
+      DoD 2 item 1 - SSH over the tailnet from the Mac: `ssh deploy@mumate-2`
+      connected with no key and no public address, direct path
+      223.204.241.131:41641 (no relay).
+    - >-
+      DoD 2 item 1 - SSH over the tailnet from the phone: the owner installed
+      Termux (GitHub release v0.118.3, arm64) plus openssh and connected as
+      deploy@mumate-2; Termius was rejected because its free tier is a trial.
+      The tailnet shows z-flip7--nonthasak with real traffic (tx 127200 rx 76488).
+      Confirmed again by the owner AFTER the port-22 rules were removed
+      ("เข้าจากมือถือได้ปกติครับ ยืนยัน"), which is the proof that matters:
+      the phone reaches the host with no public SSH port in existence.
+    - >-
+      DoD 2 item 3 - emergency door 1 (DigitalOcean console + root password):
+      proven by the owner this morning and used again for the install itself.
+    - >-
+      DoD 2 item 3 - emergency door 2 (bin/ssh-allow.sh) exercised end to end
+      with the owner's go: public SSH ok -> `--remove` deleted 223.204.241.131/32
+      -> `ssh 167.99.29.220` timed out while `ssh deploy@mumate-2` over the
+      tailnet still worked -> `ssh-allow.sh` put the rule back -> public SSH ok
+      again.
+    - >-
+      Emergency door 3 (Tailscale SSH as root, ACL check mode): `ssh root@mumate-2`
+      printed "Tailscale SSH requires an additional check", then "Authentication
+      checked with Tailscale SSH" and returned root.
+    - >-
+      DoD 2 item 2 - with a second, separate go the three tcp/22 rules were
+      removed from firewall mumate-web (dc94f372-bc32-4a18-a55f-fdbb2d13df2d):
+      101.109.13.197/32, 101.109.54.71/32, 223.204.241.131/32. The firewall now
+      holds only tcp/80, tcp/443 and udp/443. Scan afterwards: 167.99.29.220
+      port 22 closed, 80 and 443 open; 165.22.50.201 port 22 closed. The three
+      staging hostnames answered 200 in 0.20-0.30 s and ops-status reported
+      caddy ok, alloy ready, tailscale 100.120.15.24, disk 11 %, mem 1082/3915.
+    - >-
+      DoD 2 item 4 - a rendered cloud-init contains the Tailscale step: the
+      renderer substitutes __TS_AUTHKEY__ from env/tailscale.env and refuses to
+      render without it, so a new host joins the tailnet at first boot and never
+      needs port 22.
+  not_completed:
+    - ufw on the host still allows 22 from anywhere; the cloud firewall is the gate in front of it. Tightening ufw needs root (deploy may run systemctl, journalctl and tailscale only) and is left for the next console session.
+    - The two other allowlisted addresses (101.109.13.197, 101.109.54.71) were retired without being identified, as the plan allowed.
+  evidence_of_limits:
+    - >-
+      Tailscale's coordination service is a third party: sessions already
+      established survive an outage but new ones cannot be made. Doors 1 and 2
+      exist for that case and both were proven today; door 2 needs only doctl
+      and the owner's token.
+    - >-
+      The auth key expires 2026-12-21. An expired key does not disconnect hosts
+      that already joined, but no new host can join and a rendered cloud-init
+      would carry a dead key - the register in env/README.md carries the date.
+    - >-
+      The agent's own access now depends on this Mac staying on the tailnet.
+      If it is signed out, the agent has no path to the host until the owner
+      runs bin/ssh-allow.sh or uses the console.
+
+evidence:
+  plan: workstreams/mumate-control-room-ops-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "fff928591554c51d4b90eb9db6d721b1c5161691"
+    branch: hq/20260921
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main 768c71a (PR 16) = host /opt/mumate"
+  digitalocean:
+    firewall: "mumate-web dc94f372-bc32-4a18-a55f-fdbb2d13df2d - inbound now tcp/80, tcp/443, udp/443 only; the three tcp/22 rules removed 2026-09-24 ~10:15 +07"
+    droplet: "mumate-2 602035792, reserved 167.99.29.220, direct 165.22.50.201"
+  tailnet:
+    host: "mumate-2 = 100.120.15.24, MagicDNS mumate-2.taildd0e91.ts.net, tailscale 1.102.4"
+    devices: "macbook-air--nonthasak 100.68.202.90 (agent's machine); z-flip7--nonthasak 100.89.116.12 (owner's phone, Termux + openssh)"
+    auth_key: "mumate-auth-key, reusable, pre-authorized, tag:server, created 2026-09-22, expires 2026-12-21"
+  authorizing_decision: memory/events/2026/09/24/20260924T095443_mumate_control_room_ops_slice2_authorized_tailscale.yaml
+  previous_record: memory/events/2026/09/22/20260922T110405_mumate_control_room_ops_pr14_pr15_merged_grafana_applied_pr_standard_carried.yaml
+  answers_lesson: memory/events/2026/09/21/20260921T085647_mumate_infra_move_ssh_locked_out_by_own_allowlist_lesson.yaml
+
+unresolved:
+  - ufw's public 22 rule on the host (next console session).
+  - env/README.md expiry dates for the other tokens (owner).
+  - Slice 3 (passive watcher) and slice 4 (Beszel, backup proof on mumate-2, DigitalOcean Droplet Backups) - undecided.
+  - Carried from the migration lane - mumate-infra-move-001: step 3c waits for the owner's own go under the two-hour quiet gate (open at 09:46 +07 today); payment test webhook from the team; Vercel Preview resolving to the production database, to be gated before the flip; mootech-fe origin/main failing its own verify-architecture pre-push gate, so a push there needs --no-verify and silently skips gitleaks with it.
+  - Carried from the login lane - mumate-login-identity-001 shares project mootech-fe and its FE image waits for the shadow's FE slot after 3c; the slice-3 closeout must name it in the flip preconditions.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Ask the owner whether to continue into the migration lane's 3c today while
+    the quiet gate is open, or to decide slice 3 (the passive watcher) first.
+    Neither is started without his own go.
+  acceptance_check:
+    - Wake lists mumate-control-room-ops-001 with slice 2 closed and no validation error; the migration lane unchanged at revision 0.2.
+    - Port 22 stays closed; any use of an emergency door is recorded as its own closeout.
