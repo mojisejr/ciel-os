@@ -1,0 +1,249 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T114838_mumate_infra_move_slice3c_partial_owner_paused
+type: closeout
+recorded_at: 2026-09-24T11:48:38+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Step 3c ran on the owner's go and stopped where he chose to stop it. The
+    shadow was rebuilt from the launch team's current production revisions and
+    seven of the ten DoD-3c items are proven, including the payment callback
+    that every earlier record expected to end unproven. The owner then paused
+    the lane and handed the shadow's FE slot to mumate-login-identity-001. This
+    record carries the proof, the two corrections a later reader needs, and the
+    exact remaining work so the lane resumes without re-deriving anything.
+  scope:
+    - What was built, deployed, and proven on the shadow on 2026-09-24 between 10:48 and 11:48 +07.
+    - The owner's three rulings taken during the run, and what each one changes.
+    - The deploy-tool defect found and worked around, and the durable fix it still needs.
+    - The state the shadow is left in for the lane that inherits it.
+  out_of_scope:
+    - Slice 4. It needs its own owner decision and the flip preconditions below.
+    - mumate-login-identity-001's own work. This record hands it the FE slot and states the before-state; it does not plan that lane.
+    - The carried candidates of the completed mumate-control-room-ops-001, which stay in that workstream's plan.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      The churn gate was re-read from GitHub at the moment of the go rather than
+      trusted from the cold-entry record, and was open: mootech-fe main 7e22f54
+      last committed 2026-09-23 18:06 +07, bazi-sft-dataset pdf-dev 722cdf1 last
+      2026-09-23 19:00 +07, mootech-be main 0705378 unchanged since 2026-09-19.
+      About fifteen hours quiet against a two-hour rule.
+    - >-
+      The Vercel production environment was diffed by NAME only, in a scratch
+      directory holding nothing but a copied .vercel/project.json, which was
+      deleted afterwards; no checkout another lane holds was touched and no
+      value ever reached disk (the CLI prints every value as "Encrypted").
+      Present on Vercel production and absent from the shadow -
+      LAUNCH_DEPLOY_HOOK_URL, LAUNCH_KEY, VERCEL_TOKEN, RENDER_API_KEY (all
+      provider tooling, correctly absent on DigitalOcean) and QSTASH_TOKEN.
+      Present on the shadow and absent from Vercel - PORT, which the container
+      needs. The QSTASH_TOKEN gap is the one that matters - the shadow holds
+      QSTASH_URL and both signing keys, so it can VERIFY an inbound QStash
+      callback but cannot PUBLISH a job. That is a duplicate-work safety
+      property today and a flip-checklist item for the real cutover. The diff
+      compares names, not values; a variable whose value changed under an
+      unchanged name would not appear.
+    - >-
+      The owner dispatched container-build in both repositories (target
+      staging, push true) and both images reached GHCR:
+      ghcr.io/mojisejr/mootech-fe:7e22f54c618855e969122f1e1853cac0117db4de-staging
+      and
+      ghcr.io/mojisejr/bazi-sft-dataset:722cdf1b5f35f2124c9f59042caf8a9c5d6106b7-staging,
+      each verified with docker manifest inspect from the host itself because
+      the Mac's gh token has no read:packages scope.
+    - >-
+      The shadow was redeployed and is healthy on the rebuilt images - be
+      0705378 (never rebuilt, never touched), fe
+      7e22f54c618855e969122f1e1853cac0117db4de-staging, bazi
+      722cdf1b5f35f2124c9f59042caf8a9c5d6106b7-staging, with
+      configured = running = /health.sha on all three. That is DoD 3c's last
+      item.
+    - >-
+      PAYMENT CALLBACK IS PROVEN ON THE SHADOW - the item every prior record
+      expected to end unproven. The owner created a SECOND Beam webhook
+      endpoint at https://app.staging.mumate.co/api/v2/payment/webhook-beam
+      beside the existing production one
+      (https://bazichart.mumate.co/api/v2/payment/webhook-beam), put that
+      endpoint's own HMAC key into the shadow's env/fe.env, paid a real
+      PromptPay charge on the shadow, and the Caddy access log on the shadow
+      records the discrimination cleanly: 401 to a forged signature from
+      curl/8.7.1 at 11:30:39 and again at 11:37:34, then 200 to Beam's own
+      delivery (User-Agent Go-http-client/2.0, request id 00de797b) at
+      11:38:26. The whole purchase ran on app.staging.mumate.co with no hop to
+      production - /v2/shop, checkout QI_60, POST /api/v2/payment/promptpay,
+      charge ch_3Jl9FHoDA2x6TnfRffn1VVz8uWC for 3500 satang, fourteen
+      /api/v2/payment/status polls, and a result page at state=APPROVED. The
+      owner received his credits. Whether the shadow or production won the
+      settle race is not visible from the shadow's side and does not change the
+      item: the shadow received, verified the signature, dispatched, and
+      answered 200.
+    - >-
+      The staging webhook endpoint was disabled by the owner as soon as the
+      proof was in hand, and the shadow's env/fe.env was restored from the
+      backup the swap had made (env/fe.env.bak-3c on the host), so the shadow
+      now holds the same BEAM_WEBHOOK_HMAC_KEY it held before 3c. Re-enabling
+      that endpoint later requires swapping the key again, or every delivery
+      will be a 401.
+  not_completed:
+    - >-
+      Storage (DoD 3c item 4) - not exercised. The owner deferred it with the
+      maintenance-bypass item when he paused the lane.
+    - >-
+      Maintenance bypass (item 6) - not exercised, deferred by the owner on
+      2026-09-24 so the FE slot could go to the login lane sooner.
+    - >-
+      No duplicate reminder, reconciliation, or daily Bazi job (item 9) - needs
+      one overnight of be and bazi logs. Nothing has to be done to make this
+      accumulate: the shadow keeps running and the logs keep being written, so
+      the proof can simply be read later.
+  owner_rulings_2026_09_24:
+    - >-
+      The v1 leg of DoD 3c item 7 is DROPPED, not deferred. The owner's words:
+      v1 is not used, so there is nothing to prove there. The v2 leg is proven
+      in full by the purchase walk above (shop, checkout, qrcode, status,
+      result). PLAN.md revision 0.2 still reads "representative v1/v2 paths";
+      it was not edited, because a revision bump with no execution behind it
+      would be process without proof. Whoever resumes this lane honours this
+      ruling and, if a revision is opened for another reason, amends the DoD
+      sentence then.
+    - >-
+      The lane is PAUSED at the owner's word, not blocked and not finished.
+      PLAN.md's State is set to paused in the same commit as this record.
+    - >-
+      The shadow's FE slot passes to mumate-login-identity-001 now rather than
+      after the remaining smoke items, so that lane is not held behind work the
+      owner has deferred.
+  evidence_of_limits:
+    - >-
+      A DEPLOY-TOOL DEFECT WAS FOUND AND ONLY WORKED AROUND. wait_healthy() in
+      bin/_lib.sh:38 reads the whole compose project's container list and
+      treats any line containing "Exit" as not healthy. The throwaway pgtmp
+      container from a restore-verify run had been sitting at "Exited (0)"
+      since 2026-09-22, so the FIRST deploy after that - this one - waited its
+      120 s, declared failure, rolled back, waited another 120 s, and declared
+      "deploy FAILED and rollback is NOT healthy - human needed", sending a red
+      Discord alert at 11:33. Every part of that verdict was false: the new
+      images were healthy within a minute, and the rollback restored the old
+      images correctly. The workaround was to remove the stale pgtmp CONTAINER
+      only (docker compose --profile restore-verify rm -f pgtmp), keeping the
+      mumate_pgtmp_data volume; the redeploy then passed in nineteen seconds
+      with exit 0. The defect itself is untouched and will recur the next time
+      any container is left exited. It belongs to mumate-infra and needs its
+      own pull request.
+    - >-
+      The agent reported "step 4 succeeded" from an ops-status read taken
+      INSIDE the deploy script's health-wait window, before the script had
+      decided anything, and had to correct it minutes later. The rule this
+      lane should carry: a deploy's verdict is deploy.sh's exit code, not a
+      status command run while it is still waiting. Related: piping deploy.sh
+      through tail masks that exit code, which is how the first run reported
+      exit 0 for a failed deploy.
+    - >-
+      The shadow talks to LIVE Beam and holds LIVE Omise keys - env/fe.env has
+      no BEAM_API_BASE, so lib/payment/beam-gateway.ts falls back to
+      https://api.beamcheckout.com, and the Omise keys are pkey_/skey_ with no
+      _test segment. Any payment taken on the shadow is real money. The card
+      path additionally returns to production, because OMISE_RETURN_ORIGIN_V2
+      and OMISE_WEBHOOK_URL_V2 on the shadow point at https://bazichart.mumate.co;
+      PromptPay was used precisely because it has no redirect. A future tester
+      who wants this without real money should use the Beam Playground, whose
+      recipe is already written at mootech-fe docs/runbooks/beam-playground-session.md
+      and whose only differences from production are BEAM_API_BASE and four
+      secrets.
+    - >-
+      An earlier warning in this session that dual webhook delivery could
+      double-provision was WRONG for the path actually under test and is
+      corrected here so it is not repeated: that race exists in the v1 Omise
+      path on mootech-be (resolveSettleablePayment reads status, then
+      approves), but the v2 Beam path settles in one transaction predicated on
+      "charge_id = ? AND status <> 'APPROVED'" and lib/payment/provision.ts is
+      pure, so the database arbitrates and exactly one update can match. The
+      real reason not to leave a second live endpoint standing is different and
+      still holds: while it is active the shadow is a live payment processor
+      for every real customer, which is why it was disabled immediately.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: "68a6ef2c14633500855eb34ecdd30f09a57a71ee"
+    branch: hq/20260921
+    working_tree: this-record-and-the-plan-state-line-only
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main 768c71a = host /opt/mumate, unchanged by this slice"
+    mootech-fe: "shadow now runs 7e22f54c618855e969122f1e1853cac0117db4de-staging = origin/main"
+    mootech-be: "0705378d884114a4fd0e73aed59656638f335fdc, never rebuilt, never touched"
+    bazi-sft-dataset: "shadow now runs 722cdf1b5f35f2124c9f59042caf8a9c5d6106b7-staging = origin/pdf-dev"
+  dod_3c_status:
+    login: "proven - owner signed in with Google on app.staging.mumate.co"
+    fe_to_be: "proven - api.staging.mumate.co served 27 requests; 14 /api/v2/payment/status polls answered"
+    fe_to_bazi: "proven - bazi.staging.mumate.co served 30 requests; the daily reading rendered"
+    storage: "NOT PROVEN - deferred by the owner"
+    payment_callback: "PROVEN - see the 401/401/200 sequence above"
+    maintenance_bypass: "NOT PROVEN - deferred by the owner"
+    v1_v2_paths: "v2 proven end to end; v1 DROPPED by owner ruling"
+    database_is_supabase: "proven - fe DATABASE_URL host aws-1-ap-southeast-1.pooler.supabase.com; be SUPABASE_PROJECT_URL https://soxsccdlsycaevusndro.supabase.co"
+    no_duplicate_jobs: "NOT PROVEN - needs one overnight of be and bazi logs, which accumulate on their own"
+    containers_report_tested_sha: "proven - configured = running = /health.sha on be, fe and bazi"
+  host_state_at_handover:
+    ops_status: "be/fe/bazi all healthy; caddy ok; alloy ready; tailscale 100.120.15.24; disk 12%; mem ~994/3915MB; mumate-health.timer active"
+    access: "ssh deploy@mumate-2 over the tailnet; no public port 22"
+    stale_container_removed: "mumate-pgtmp-1 removed; volume mumate_pgtmp_data kept"
+  fe_slot_handover:
+    to: mumate-login-identity-001
+    before_state_they_replace: "FE 921f449cfa4ade8da66e1fe845ce3466dc99746f-staging, BE 0705378, BAZI 911c87a68a3890314e0f96b6a01c6ac53bb4cd4f-staging"
+    state_they_inherit: "FE 7e22f54c618855e969122f1e1853cac0117db4de-staging, BE 0705378d884114a4fd0e73aed59656638f335fdc, BAZI 722cdf1b5f35f2124c9f59042caf8a9c5d6106b7-staging"
+    why_safe: >-
+      FE carries no scheduler on the shadow (Vercel crons are absent in the
+      container and the BE has MORNING_CRON_ENABLED=false), so replacing the FE
+      image does not disturb the overnight be/bazi observation that DoD item 9
+      still needs.
+    how: "bin/deploy.sh FE_TAG=<sha>-staging --profile full on mumate-2; it touches env/*.env never, and auto-rolls back to .env.last-good"
+  flip_preconditions_for_slice_4:
+    - "The launch team's merge rate over the previous two days, whether a 24-hour release freeze is agreed, and how the final Bazi commit will be named given that pdf-dev receives direct pushes without pull requests."
+    - "QSTASH_TOKEN is absent from the shadow. Harmless now, mandatory at the flip."
+    - "Vercel Preview resolves to the production Supabase database - any branch push creates a preview wired to production data; gate before the flip, not after."
+    - "mootech-fe origin/main fails its own verify-architecture pre-push gate, so a push needs --no-verify, which silently skips gitleaks; run gitleaks by hand."
+    - "mumate-login-identity-001's FE-native registration is dark today (constants/api/endpoint.ts:55 still points register_or_login at the BE), so this smoke's meaning holds until that lane's flip slice."
+    - "Payment on the shadow is real money against live Beam until BEAM_API_BASE and the four Beam secrets are switched to Playground."
+    - "wait_healthy() in mumate-infra bin/_lib.sh will fail every deploy again if any container is left in an exited state."
+    - "Observability and tailnet access from the completed mumate-control-room-ops-001 are live; that side is satisfied."
+  previous_record: memory/events/2026/09/24/20260924T103730_mumate_infra_move_cold_entry_for_3c_before_clear.yaml
+  related_workstreams:
+    - "mumate-control-room-ops-001 - complete at 0.2; its tailnet and alerting are this lane's working conditions"
+    - "mumate-login-identity-001 - active; receives the shadow's FE slot at this record"
+
+unresolved:
+  - Storage and maintenance bypass on the shadow are deferred, not failed; both are cheap to walk when the lane resumes.
+  - DoD item 9 needs one overnight of be and bazi logs; nothing must be set up for it, only read.
+  - PLAN.md 0.2 still reads "representative v1/v2 paths" although the owner dropped v1; amend at the next revision rather than editing 0.2 in place.
+  - wait_healthy() in mumate-infra bin/_lib.sh treats any exited container in the project as unhealthy and will break the next deploy the same way; needs its own pull request.
+  - The Beam Playground credentials were never requested from the launch team; the ask is drafted and would remove real money from future payment tests.
+  - Whether the removed .claude/INCUBATED_BY should be committed to bazi-sft-dataset pdf-dev as a one-file pull request - still the owner's call.
+  - Carried from the completed ops lane - the passive watcher, Beszel plus Dozzle behind the tailnet, proven backup and restore on mumate-2, DigitalOcean Droplet Backups, reboot-required and fail2ban in ops-status, expiry-date warnings, ufw's public 22 on the host, and env/README.md expiry dates.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The lane is paused and waits for the owner. To resume it: run `bun run
+    wake`, read this record, then walk the three remaining DoD-3c items in any
+    order - storage and maintenance bypass on the shadow (both need only the
+    owner at a browser and the agent reading bin/logs.sh), and DoD item 9 by
+    reading one overnight of be and bazi logs that will already have
+    accumulated. Nothing needs to be rebuilt or redeployed first, except that
+    the FE slot may by then carry mumate-login-identity-001's image rather than
+    7e22f54; if the remaining items must be proven on the launch team's
+    revision, redeploy FE to the tag recorded above before walking them.
+  acceptance_check:
+    - The three remaining DoD-3c items are proven on the shadow, or the owner narrows them as he narrowed v1.
+    - Slice 3 then closes with the flip preconditions listed above, and slice 4 begins only on a fresh owner decision.
