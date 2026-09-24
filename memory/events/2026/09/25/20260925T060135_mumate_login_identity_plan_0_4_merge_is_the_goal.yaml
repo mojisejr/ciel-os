@@ -26,7 +26,12 @@ workstream:
     - Production, traffic, the flip, and the wide data merge. All untouched.
 
 outcome:
-  status: recorded
+  # `decided`, not `recorded`. src/portfolio/read.ts:404-419 only lets a decision
+  # authorize a plan when type is `decision` AND outcome.status is exactly
+  # `decided`; with `recorded` the machinery reads past it and the lane keeps
+  # reporting owner-confirmation-required while an approving decision sits beside
+  # the plan. This record was first written with `recorded` and did exactly that.
+  status: decided
   # Repeated because the grant is real and standing: the owner approved this
   # lane's overlap with the MuMate infrastructure and CU12 sessions when slice 1
   # opened, it is written into PLAN.md's authority section, and he exercised it
