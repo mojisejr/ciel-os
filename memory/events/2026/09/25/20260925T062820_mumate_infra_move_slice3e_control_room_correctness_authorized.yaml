@@ -1,0 +1,102 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T062820_mumate_infra_move_slice3e_control_room_correctness_authorized
+type: decision
+recorded_at: 2026-09-25T06:28:20+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Authorize slice 3e, a narrow control-room correctness step that closes four
+    items already sitting in this lane's unresolved list. Three are repository
+    or host corrections that no other lane can make because they live in
+    mumate-infra; the fourth is a proof that has been accumulating on its own
+    since 2026-09-24 and only needs reading. None of them touches the shadow's
+    FE slot, which the login lane holds.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On 2026-09-25 morning the owner granted this session full authority over
+    the server and the infrastructure repository for four named items and no
+    others, with the explicit instruction that they need no further agreement
+    with any lane because none of them collides. He named them A, B, C and D
+    after the parallelism table this session put to him, and he excluded the
+    two that do collide: the Caddy/Node keep-alive fix, which recreates the
+    login lane's FE container and therefore needs a minute of that lane's
+    agreement, and the remaining 3c smoke, which needs the FE slot back on the
+    launch team's revision. Those two stay out of this slice.
+
+    A. mumate-infra env/fe.env.example does not list LINK_STATE_SECRET. The
+    login lane introduced that variable and the FE link routes fail closed
+    without it; the owner placed the value on the host on 2026-09-24 and the
+    flow now works, but because the example file omits it, any future host
+    rebuild omits the key again while the example file still looks correct.
+    Verified by this session on both sides: zero matches in the example file,
+    one match in the host's env/fe.env.
+
+    B. wait_healthy() in mumate-infra bin/_lib.sh queries
+    `compose ps --status running --status restarting --status exited` and then
+    treats any line matching "Exit"/"exited" as ill health, so it cannot return
+    success while anything in the project is exited. On 2026-09-24 a throwaway
+    pgtmp container left exited since 09-22 made a correct deploy declare
+    failure, roll back, and then declare the rollback unhealthy, with a red
+    Discord alert - three false verdicts in a row. The workaround was to delete
+    the stale container. The defect is the real target here, because a habit of
+    tidying up is not a guarantee and the same function will run the slice-4
+    flip under a two-hour clock with real users waiting.
+
+    C. The host's /opt/mumate is at 768c71a while mumate-infra origin/main is at
+    0025d5a, so runbooks/03 on the host - the file that carries the three
+    emergency doors - is behind what the repository says. Anyone reading the
+    doors on the host today reads the older text.
+
+    D. DoD 3c item 9, no duplicate reminder, reconciliation or daily Bazi job,
+    needs one overnight of shadow logs. That overnight has passed with be and
+    bazi untouched since 2026-09-24, so the evidence exists and this slice reads
+    and records it rather than arranging anything.
+  authority: >-
+    Owner, in session, 2026-09-25 morning. The grant is scoped to these four
+    items and to commands this session is confident in; it is not a standing
+    grant over the infrastructure or the server.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: "f7b79c3fbbde21f32d48e3922f942f4d74ebb852"
+    branch: hq/20260921
+    working_tree: this-record-and-the-plan-only
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "origin/main 0025d5a; host /opt/mumate 768c71a - the gap item C closes"
+    mootech-fe: "shadow FE slot held by mumate-login-identity-001 at 49097ffc6dc29296b1115ff531660324d8a2c7eb-staging; untouched by this slice"
+    mootech-be: "0705378d884114a4fd0e73aed59656638f335fdc, untouched since 2026-09-22"
+    bazi-sft-dataset: "722cdf1b5f35f2124c9f59042caf8a9c5d6106b7-staging, untouched since 2026-09-24"
+  excluded_by_the_owner:
+    - "Caddy/Node keep-alive (the 502 the login lane diagnosed) - recreates their FE container, so it waits for a minute of their agreement."
+    - "3c's storage and maintenance-bypass proofs - they need the FE slot back on 7e22f54-staging, which the login lane holds."
+    - "Slice 4. Still paused and still needs its own owner decision."
+  previous_record: memory/events/2026/09/24/20260924T142517_mumate_infra_move_slice3d_docs_pr_merged_checkpoint.yaml
+
+unresolved:
+  - Whether wait_healthy's fix should also make Caddy retry rather than 502 is a separate question owned by the excluded keep-alive item.
+  - The keep-alive fix remains unscheduled and the login lane will keep meeting the 502 until it is taken.
+  - 3c's storage and maintenance-bypass proofs stay deferred.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Execute 3e in the order C-after-B, since the host pull carries the _lib.sh
+    fix with it: open one mumate-infra pull request for A and B, prove the fix
+    against a deliberately exited container, merge it, pull /opt/mumate to
+    origin/main, and record DoD 3c item 9 from the logs already on disk. Then
+    close 3e and return the lane to paused.
+  acceptance_check:
+    - DoD 3e as stated in PLAN.md revision 0.4.
+    - The shadow's FE slot is in exactly the state the login lane left it, and no container of theirs was recreated.
