@@ -1,9 +1,9 @@
 # MuMate — control room operations: readable alerts, private access, a watcher
 
 **Workstream:** `mumate-control-room-ops-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -90,6 +90,19 @@ Records this plan starts from:
 - Nothing is built at the CIEL level: no daemon, API, or dashboard in this
   repository (AGENTS.md).
 
+## Revision 0.2 — why this plan closes at two slices
+
+On 2026-09-24, with slices 1 and 2 delivered and proven, the owner closed this
+workstream rather than carrying it open across the migration's remaining work:
+the control room can now be read by a human in three seconds and reached from
+anywhere without a public SSH port, which is what the migration lane needed
+from it. The two remaining ideas — a passive watcher that wakes the agent only
+when something needs a decision, and a per-container view with a proven backup
+— are not abandoned; they are written below as candidates for a new workstream
+opened when the owner wants them, after the flip. Closing here keeps the
+record honest: a plan that stays open around work nobody is doing stops being
+a plan.
+
 ## Execution slices and acceptance criteria
 
 ### 1. Alerts a human reads in three seconds, one ops page, and a rehearsal
@@ -151,40 +164,28 @@ a scan of the reserved address shows only 80/443; both break-glass routes were
 exercised and recorded; a rendered cloud-init for a new host contains the
 Tailscale step; the pull request is merged after owner review.
 
-### 3. A passive watcher on the Mac
+## Carried out of this plan (candidates for a new workstream)
 
-In `mumate-infra`: `bin/watch.sh` (plain shell, every five minutes under
-`launchd`, checks the three health routes and Grafana's alert API with the
-Viewer token, keeps a state file, costs no tokens while nothing changes);
-`watch/diagnose.md` (the prompt: read-only scope, JSON schema with symptom,
-likely cause, evidence, options with risk, and the question for the owner);
-one `claude -p` call per incident with `--permission-mode dontAsk`, an
-allowed-tools list limited to read-only commands, a turn cap, the session id
-kept for `--resume`, and at most one further call per 30 minutes while the
-incident lasts; the result posted to Discord; a pause file and `launchctl
-unload` as kill switches; `runbooks/05-watcher.md`.
+**A passive watcher on the Mac.** `bin/watch.sh` in `mumate-infra` (plain
+shell, every five minutes under `launchd`, checks the three health routes and
+Grafana's alert API with the Viewer token, keeps a state file, costs no tokens
+while nothing changes); `watch/diagnose.md` as the prompt with a read-only
+scope and a JSON schema; one `claude -p` call per incident with
+`--permission-mode dontAsk`, a read-only allowed-tools list, a turn cap, the
+session id kept for `--resume`, and at most one further call per 30 minutes
+while the incident lasts; the result posted to Discord; a pause file and
+`launchctl unload` as kill switches. Acceptance would be: one Discord post per
+incident naming symptom, likely cause with evidence and options within ten
+minutes; no second call inside 30 minutes; zero LLM calls on a quiet day.
 
-DoD 3: an induced incident on the shadow produces one Discord post from the
-watcher naming the symptom, a likely cause with evidence, and options, within
-ten minutes; a second identical check inside 30 minutes produces no second
-call; recovery closes the incident; a whole quiet day shows zero LLM calls in
-the watcher log; the owner can stop it with one command.
-
-### 4. Per-container view, backup proof, and the small gaps
-
-- Beszel hub and agent (compose profile `obs`), reachable only over the tailnet
-  through `tailscale serve`, with its Discord alerts on the same channel;
-  Dozzle the same way if the owner wants a log page.
-- `bin/backup.sh` and `bin/restore-verify.sh` proven on `mumate-2` (needs the
-  Spaces key that slice 2 of the migration could not create), and the owner's
-  decision on DigitalOcean Droplet Backups as the second layer.
-- `bin/deploy.sh` and `bin/rollback.sh` post a success line to Discord;
-  `bin/ops-status.sh` reports `reboot-required` and fail2ban; the expiry
-  register warns seven days ahead through the health timer.
-
-DoD 4: a container's memory is readable per service from the phone without
-SSH; a restore from the latest backup is proven and recorded; a deploy shows
-up in Discord; the expiry check fires on a test date.
+**Per-container view, backup proof, and the small gaps.** Beszel hub and agent
+(compose profile `obs`) reachable only over the tailnet through `tailscale
+serve`; `bin/backup.sh` and `bin/restore-verify.sh` proven on `mumate-2` (needs
+the Spaces key the owner's DigitalOcean role could not create) and the decision
+on DigitalOcean Droplet Backups as a second layer; `bin/ops-status.sh`
+reporting `reboot-required` and fail2ban; the expiry register warning seven
+days ahead through the health timer; ufw's public port 22 closed on the host
+itself (needs root, which now means the DigitalOcean console).
 
 Out of the plan, recorded as unresolved: the watcher on a server with replies
 from the phone (needs an API key and token controls); application-side
@@ -193,14 +194,13 @@ logs, error tracking) — both after the migration's flip.
 
 ## Review and estimated effort
 
-| Slice | Active effort | Review | Waits on |
-|---|---:|---|---|
-| 1 · readable alerts, ops page, rehearsal | 4-6 h | owner review of PR, rehearsal with the owner | owner's UI steps and Viewer token |
-| 2 · Tailscale, port 22 closed | 2-4 h | owner-attended (firewall) | owner's ACL, auth key, root password; slice 1 merged |
-| 3 · passive watcher | 3-5 h | owner review; one induced incident | slice 1 (Viewer token, readable posts) |
-| 4 · Beszel, backup proof, gaps | 3-5 h | owner review; Spaces key from the Team Owner | slice 2 (tailnet-only pages) |
+| Slice | Planned | Actual | Delivered |
+|---|---:|---:|---|
+| 1 · readable alerts, ops page, rehearsal | 4-6 h | ~5 h over two sessions | mumate-infra PR 13, 14 (+15 for the PR template); closeout 2026-09-22 |
+| 2 · Tailscale, port 22 closed | 2-4 h | ~2 h | mumate-infra PR 16; closeout 2026-09-24 |
 
-Only slice 1 is authorized by the opening decision. Each later slice receives
-a new owner decision after the preceding closeout. The migration's flip may be
-authorized once slices 1 and 2 are closed; slices 3 and 4 may continue beside
-the migration lane or after it, as the owner decides at that time.
+Both slices are closed and the workstream is complete at revision 0.2. The two
+items under "Carried out of this plan" need a new workstream and a fresh owner
+decision; nothing in this plan waits on them. The migration lane's flip
+precondition from this side is satisfied: the control room is observed and
+reachable.
