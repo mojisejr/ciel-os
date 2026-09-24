@@ -1,0 +1,134 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T121230_mumate_login_identity_slice3_authorized
+type: decision
+recorded_at: 2026-09-24T12:12:30+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Open slice 3 - explicit provider linking and unlinking - on the owner's own
+    word, and record the four decisions he gave with it. PLAN.md requires a new
+    owner decision event for every slice after slice 1; this is slice 3's.
+  scope:
+    - Authorization to start slice 3 and the four decisions attached to it.
+    - The pre-flight state verified at the moment of the go.
+  out_of_scope:
+    - Slice 4, merging two existing members. Unchanged, manual support first.
+    - Slice 5, the traffic flip. Still undecided.
+    - Any production statement. Any push beyond the one before the image build.
+
+outcome:
+  status: decided
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      SLICE 3 IS AUTHORIZED. The owner said "เปิด slice 3 ได้" in his own turn on
+      2026-09-24 after reading a flow walkthrough and the pre-flight check. The
+      0.2 statement that slice 3 is blocked on the team's LINE console access is
+      superseded - he holds the right, and he added the redirect URIs himself.
+    - >-
+      DECISION 7 - the Google-inside-the-LINE-webview case takes the SAFE option.
+      Google hard-blocks OAuth in LINE's in-app browser, and escorting the user
+      to an external browser loses the session cookie, so the linking flow will
+      REFUSE to start from inside the LINE webview and tell the member to open
+      the page in a browser first. The alternative - binding the member into a
+      server-side state token so the external browser can be trusted - is not
+      built. It is one step more for the member in exchange for not writing a
+      mechanism that becomes an account-takeover primitive if it is wrong. The
+      owner chose this on 2026-09-24. It can be upgraded later without unpicking
+      anything, because the safe path is a subset of the clever one.
+    - >-
+      DECISION 8 - the Apple and phone rows in the Connected Accounts list are
+      HIDDEN. Nothing implements either provider. They are harmless today because
+      every button reads "เร็ว ๆ นี้", but once LINE and Google become real
+      buttons the two inert ones read as broken rather than unbuilt. Hidden
+      rather than deleted, because the design frame still lists them and hiding
+      is reversible.
+    - >-
+      DECISION 9 - the "+10 QI" badge is CONDITIONAL on the truth. The owner's
+      rule, in his words: research whether the award really happens; if it does,
+      keep the badge; if it does not, hide it until it does. The mission engine
+      that would award it is outside this repository, so this is a research item
+      inside the slice, not an assumption.
+    - >-
+      DECISION 10 - the settings row currently titled "เข้าสู่ระบบด้วย LINE"
+      becomes "บัญชีที่เชื่อมต่อ". The existing title is true only while LINE is
+      the sole channel; it becomes false the moment a member links Google. The
+      owner deferred to the agent's recommendation and will review it running.
+
+  not_completed:
+    - No code is written yet. This record is the gate, not the work.
+    - Slice 4 and slice 5 are untouched and unauthorized.
+
+pre_flight_verified_at_the_go:
+  application:
+    repository: mootech-fe
+    branch: feat/mumate-login-identity-s1
+    head: "91a2f1b8b0484f7582012e40c63be8537c72b6e2"
+    remote_ref: exists - pushed by the owner with --no-verify
+    origin_main: "9f764e6"
+    position: 12 ahead, 1 behind
+  the_one_behind: >-
+    origin/main moved from 7e22f54 to 9f764e6 during the morning - pull request
+    813, Thai line breaking in Mumate Chat, touching features/v2-chat/components/ChatScreen.tsx
+    and adding lib/th/thai-breakable.ts. Compared file lists: ZERO overlap with
+    this branch. No rebase now; rebase once immediately before the image build so
+    the shadow tests the freshest code.
+  push_friction: >-
+    The four verify-architecture violations on origin/main are unchanged, so every
+    push still needs --no-verify from the owner. This costs almost nothing in
+    practice: development commits stay local and only ONE push is needed, right
+    before the container-build dispatch.
+  staging_slot: >-
+    Released by mumate-infra-move-001 (ciel-os-69). Shadow before-state to restore
+    and to name in the closeout: FE 7e22f54c618855e969122f1e1853cac0117db4de-staging,
+    BE 0705378d884114a4fd0e73aed59656638f335fdc, BAZI 722cdf1b5f35f2124c9f59042caf8a9c5d6106b7-staging.
+  infra_slice_3c_is_partial_not_complete: >-
+    Recorded because the owner referred to 3c as finished. Its own closeout
+    (20260924T114838) says partial and owner-paused, seven of ten DoD items
+    proven; storage and maintenance bypass were deferred by the owner and one
+    overnight log read remains. It does not block this lane.
+  live_money_on_the_shadow: >-
+    The shadow talks to LIVE Beam and holds live Omise keys, and the card return
+    origin points at production, so any payment taken there is real money. Slice 3
+    writes only user_provider and reads only the session and the member row, so it
+    cannot reach a charge, package, webhook or return URL. Keep it that way by
+    construction rather than by care in the moment.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "1c1ffdc"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 33
+  build_order:
+    - State, PKCE and nonce minting and verification - the largest and riskiest new code, built first so its problems surface early.
+    - Link-start route at /api/auth/link/start/<provider>, refusing the LINE webview per decision 7.
+    - Link-callback route at /api/auth/link/callback/<provider>, verifying state, nonce and the id_token's signature, issuer, audience and expiry.
+    - Unlink route, refusing removal of the last remaining login method.
+    - A read endpoint returning the caller's linked providers; nothing serves this today.
+    - ConnectedScreen rework plus decisions 8, 9 and 10.
+    - Rebase, one push, container-build dispatch, deploy to the shadow, real LINE round trip.
+
+unresolved:
+  - Whether the mission engine actually awards QI for connect_line - decision 9's research item.
+  - The traffic flip, still undecided and deliberately separate from this slice.
+  - Slice 4, merging the two members the owner himself is split across.
+  - Carried unchanged - the three .assets dumps, the AWS bucket, and Vercel Preview resolving to the production database.
+
+next_action:
+  action: >-
+    Build in the order recorded above, starting with the state/PKCE/nonce module.
+    Commits stay local; the single push happens immediately before the
+    container-build dispatch, which the owner runs.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - No production endpoint constant is flipped; constants/api/endpoint.ts:55 still points register_or_login at the backend.
