@@ -1,9 +1,9 @@
 # MuMate — parallel DigitalOcean migration with a controlled domain flip
 
 **Workstream:** `mumate-infra-move-001`
-**State:** paused
+**State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** 3
 **Execution state:** executing
 **Parallelism:** proposed
@@ -239,6 +239,38 @@ handling, maintenance bypass, and representative v1/v2 paths work on the shadow
 stack; the observed database host is Supabase; no duplicate reminder,
 reconciliation, or daily Bazi job is emitted (proven from one overnight of
 shadow logs); every running container reports the exact tested Git SHA.
+
+**3d. Canonical Tailnet operator access (owner-authorized 2026-09-24).** This
+is a narrow documentation and workstation-access correction, not a shadow
+rebuild or a resumption of 3c. Tailscale SSH and MagicDNS `mumate-2` are the
+normal operator path. The public reserved IP remains only an explicit emergency
+door after `bin/ssh-allow.sh` has temporarily opened port 22, or through the DO
+Recovery Console.
+
+Scope is exactly: update the owner workstation's `Host mumate` SSH alias to
+MagicDNS with strict host-key checking; retain a separately named public
+emergency alias; and correct the README/runbooks so the next operator starts
+with `ssh deploy@mumate-2`. No deploy, deploy dry-run, FE tag, server state,
+Tailscale state, firewall, provider, production, traffic, or application code
+changes in this step. `bin/deploy.sh`, cloud-init and `bin/ssh-allow.sh` already
+have their intended responsibilities and are not changed.
+
+DoD 3d:
+
+- `ssh -G mumate` reports `hostname mumate-2`, `user deploy`,
+  `hostkeyalias mumate-2`, and `stricthostkeychecking yes`.
+- A non-interactive SSH connection through that alias reaches `mumate-2` and
+  reads compose status under strict host-key checking; unknown or changed host
+  keys stop rather than being accepted or deleted.
+- A distinct public emergency alias resolves to the reserved IP with its IP
+  host-key identity and strict checking, but public port 22 is not opened merely
+  to test this correction.
+- The normal deploy and observability runbooks name `ssh deploy@mumate-2`; any
+  remaining reserved-IP command is explicitly in an emergency-only context.
+
+**3c remains paused.** Its deferred storage, maintenance-bypass and overnight
+log proofs are not resumed by 3d. Slice 4 remains paused and still needs its own
+owner decision.
 
 The slice-3 closeout also reports the flip preconditions for slice 4: the
 launch team's merge rate over the previous two days, whether a 24-hour release
