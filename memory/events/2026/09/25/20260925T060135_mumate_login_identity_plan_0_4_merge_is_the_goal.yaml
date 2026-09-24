@@ -1,0 +1,221 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T060135_mumate_login_identity_plan_0_4_merge_is_the_goal
+type: decision
+recorded_at: 2026-09-25T06:01:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record the owner's decisions of 2026-09-25 and the revision they authorize.
+    A syncup established that this plan had the shape of the problem backwards:
+    joining two accounts a member already holds is the case people need, and 0.3
+    routed it to a dead end. PLAN.md moves to revision 0.4, slice 4 is redefined
+    from a decision into the merge itself, slice 4b is added, and the flip is
+    put behind both.
+  scope:
+    - Owner decisions 7 to 10, taken in this session.
+    - The revision they authorize, and what changed in the slices.
+    - The narrowed standard of evidence, and why it is narrowed.
+  out_of_scope:
+    - Any implementation. Nothing in slice 4 or 4b is built by this record.
+    - Slice 3's remaining work. It keeps its scope and is unfinished.
+    - Production, traffic, the flip, and the wide data merge. All untouched.
+
+outcome:
+  status: recorded
+  # Repeated because the grant is real and standing: the owner approved this
+  # lane's overlap with the MuMate infrastructure and CU12 sessions when slice 1
+  # opened, it is written into PLAN.md's authority section, and he exercised it
+  # again in this session by directing this lane's push, build and deploy while
+  # the infrastructure lane holds the same host.
+  parallelism: approved
+  slice: "4"
+  completed:
+    - >-
+      THE SYNCUP THAT PRODUCED THIS. Two rounds of questions, eleven in total,
+      each carrying the agent's own leaning before the owner answered. All eleven
+      leanings matched. That is recorded as the measure of alignment rather than
+      a feeling that the conversation went well; had they diverged, the branches
+      under the wrong ones would have been re-walked instead of built on.
+    - >-
+      OWNER DECISION 7. Joining two accounts a member already holds is a PRIMARY
+      goal of this workstream, not a later slice. His own framing: a new member
+      may sign up with either provider and attach the other; a member who signed
+      up twice must be able to join the two. Every other case reduces to one of
+      those.
+    - >-
+      OWNER DECISION 8, and it sharpened the rule rather than restating it. A
+      paying account may NEVER be the side that loses. Decision 5's tiebreak -
+      payment wins, else more holdings, ties broken deterministically - is
+      promoted from choosing a winner to constraining DIRECTION: which account
+      survives is decided by payment, not by which side the member is signed into.
+      If the LINE account paid and the Google one did not, the Google credential
+      moves to LINE, not the reverse. The owner stated this himself as the only
+      case that worries him.
+    - >-
+      OWNER DECISION 9. The member performs the merge themselves. This REPLACES
+      owner decision 5's "the first release routes collisions to manual support".
+      The facts changed under that decision: it was made when a collision meant
+      bad data, which a third party can adjudicate. A member who holds both
+      credentials and completes both authorizations has proven ownership more
+      strongly than a support ticket can. Manual support stays as the fallback
+      for whatever the flow refuses.
+    - >-
+      OWNER DECISION 10. The flip waits, for a reason 0.3 did not have. The flip
+      hands 1,443 members a new empty account on their next login, which does not
+      merely cost those members - it MANUFACTURES more two-account members, which
+      is the condition slice 4 exists to repair. Flipping first creates cases
+      faster than they can be cleared.
+    - >-
+      THE STANDARD OF EVIDENCE, NARROWED ON PURPOSE. "Not known until proven"
+      applies to login, link, merge and flip, and to nothing else. Proving 1,822
+      commits of history finishes nothing. The narrowing is the owner's and the
+      reason is measured: three defects in two days, none caught by any gate, all
+      three found by a person - and two of the gates had themselves been reported
+      as evidence they were not.
+    - >-
+      PLAN.md IS AT REVISION 0.4. Slice 3 keeps its scope and gains an explicit
+      requirement that one successful link be observed, plus seven corrections
+      from the DoD audit. Slice 4 is redefined from "decide collision recovery"
+      into the merge itself, with its own DoD. Slice 4b is added for prevention at
+      sign-up. Slice 5 is unchanged in content and moves behind both. The former
+      slice 4 is retained as "4-legacy", explicitly as reference and not as work.
+      The `Parallelism: proposed` header is unchanged, as the contract requires.
+
+  not_completed:
+    - >-
+      NOTHING IS BUILT. Slice 4 has a DoD and no code. Slice 4b has no DoD at all,
+      deliberately - it touches the login surface every member crosses and should
+      be written after the merge has shown what its conversation needs to say.
+    - >-
+      SLICE 3 IS STILL OPEN. A successful link has never been observed in any
+      environment, and that is now a written condition of closing it.
+    - >-
+      Slice 4 is NOT authorized to start by this record. Every slice after slice 1
+      needs its own owner decision event; this one records the plan, not the go.
+
+  evidence_of_limits:
+    - >-
+      Decision 8 is recorded from the owner's words in this session. Which of his
+      two accounts actually paid has not been measured: the read-only query was
+      handed to him and its result is not in yet. If the LINE side turns out to
+      hold the payment, the direction of his own merge reverses - which is the
+      decision working, not a problem with it.
+    - >-
+      The claim that the two-account population cannot be sized is a claim about
+      the data model, not a measurement. It follows from LINE carrying no email
+      here and from owner decision 2 forbidding an email join. The upper bound -
+      members holding exactly one provider - remains measurable and unmeasured.
+
+the_reframing_in_one_paragraph: >-
+  Slice 3 is titled "Link an unused provider", and the identity contract sends
+  case 3 - the identity belongs to another member - to a stop. Both are correct
+  as mechanism. As priority they are backwards, because a member who wants to
+  link is usually a member who has already signed in both ways, so their provider
+  is exactly the one that is not unused. The people who need this feature were
+  routed to a dead end, and the people it served were the ones least likely to
+  ask. Nothing about the mechanism is defective; every refusal behaved as designed
+  and wrote nothing. What was wrong was the order of construction.
+
+what_slice_4_may_and_may_not_do:
+  may:
+    - Move ONE user_provider row's user_id, after both authorizations succeed in one session.
+    - Choose the survivor by owner decision 8, never by which side the member is signed into.
+    - Refuse and change nothing on any failure.
+  may_not:
+    - >-
+      Move charts, QI, payments, referrals, birth data or anything else between
+      accounts. The wide merge that 0.3 inventoried stays unbuilt and
+      unauthorized; that inventory is retained as 4-legacy and is the checklist
+      any future attempt must satisfy.
+    - >-
+      Proceed without telling the member, in their own language and before
+      anything is written, that the losing account will be left with no way to
+      sign in and what stays behind in it.
+  the_exception_it_must_declare: >-
+    Leaving an account with no login method is the one thing this workstream
+    otherwise forbids - unlink refuses it precisely because a member would lock
+    themselves out. Slice 4 does it deliberately, to an account the same member
+    has just proven they control, with the survivor chosen so the member keeps the
+    side that paid. That is a stated exception, not a side effect, and the plan
+    says so.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "4"
+  repository:
+    head: "63a2e73"
+    branch: hq/20260921
+    working_tree: plan-and-this-event-only
+    ahead_of_origin_main: 44
+    origin_main: "f58cc9c"
+  application:
+    repository: mootech-fe
+    local_head: "49097ffc6dc29296b1115ff531660324d8a2c7eb"
+    pushed_head: "49097ffc6dc29296b1115ff531660324d8a2c7eb"
+    branch: feat/mumate-login-identity-s1
+    ahead_of_origin_main: 20
+    behind_origin_main: 0
+    origin_main: "9f764e6"
+    working_tree: clean
+    pull_request: none
+    note: No application code is changed by this record.
+  deployed_to_shadow:
+    image: ghcr.io/mojisejr/mootech-fe:49097ffc6dc29296b1115ff531660324d8a2c7eb-staging
+    node_env: production
+  supersedes:
+    - >-
+      Owner decision 5's "the first release routes collisions to manual support",
+      recorded 2026-09-23 in
+      memory/events/2026/09/23/20260923T174600_mumate_login_identity_slice2_authorized.yaml
+      and written into PLAN.md slice 4. Replaced by owner decision 9. The
+      inventory that justified decision 5 is NOT superseded and is retained.
+
+unresolved:
+  - >-
+    Slice 4 needs its own owner decision event before any code is written. This
+    record is the plan, not the go.
+  - >-
+    Which of the owner's two accounts holds the payment is unmeasured; the
+    read-only query is with him. It decides the direction of his own merge.
+  - >-
+    The upper bound of the two-account population - members holding exactly one
+    provider - is measurable and unmeasured. It is not a precondition for
+    anything in 0.4.
+  - >-
+    Slice 3 remains open on one condition: observe a successful link. The owner's
+    own accounts cannot produce one, because each of his identities is held by the
+    other account.
+  - >-
+    DoD 4b is unwritten on purpose and must be written before 4b starts.
+  - >-
+    Carried unchanged - the mission-timing defect at ConnectedScreen.tsx:167-175,
+    connect_google in the engine, the keep-alive 502 belonging to mumate-infra,
+    LINK_STATE_SECRET missing from mumate-infra's env/fe.env.example, the three
+    .assets/mumate/slice2-* dumps kept by owner decision, the AWS bucket s3-ps-cdn
+    parked by owner decision, resolveSignedSessionUserId having no test, the
+    real-Postgres gate nobody runs, Google's RS256 branch never executing, and
+    Vercel Preview resolving to the production database.
+  - >-
+    Standing hazard: the shadow FE and production share one Supabase database, so
+    every staging login is a real account event.
+
+next_action:
+  action: >-
+    The owner decides what opens next. The plan now says slice 3 closes on an
+    observed successful link, and that slice 4 is the merge. Two routes reach a
+    successful link: a LINE account that has never signed in to MuMate, or moving
+    the owner's own LINE credential by hand under owner decision 5's surviving
+    manual-support clause and then exercising unlink and re-link through the real
+    screen. Either way slice 4 needs its own decision event before code. Do not
+    touch production, do not flip constants/api/endpoint.ts, and do not edit
+    mumate-infra from this lane.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - PLAN.md reads revision 0.4 and its `Parallelism:` header still reads `proposed`.
+    - constants/api/endpoint.ts is still absent from `git diff origin/main..HEAD --name-only`.

@@ -3,7 +3,7 @@
 **Workstream:** `mumate-login-identity-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution phase:** 3
 **Execution state:** idle
 **Parallelism:** proposed
@@ -159,6 +159,104 @@ checkable rather than assumed, and slice 5 checks it.
 - **Email discovery is NOT added to the FE route.** It would reinstate what owner
   decision 2 removed, and decision 6 asks for the low-risk option, not the
   clever one.
+
+## Revision 0.4 — the case this plan called an exception is the case
+
+Revision 0.3 was written before anyone had tried to link a real account. On
+2026-09-25 the owner did, and was refused with `owned_by_another`: the LINE
+identity he was attaching already belonged to a second member account — his own,
+created the day he first signed in with LINE. The refusal was correct and wrote
+nothing. What it exposed is that this plan had the shape of the problem
+backwards.
+
+### What 0.3 got backwards
+
+Slice 3 is titled "Link an **unused** provider", and the identity contract's
+case 3 — the identity points at another `user_id` — is written as a stop,
+deferred to "an owner-gated later slice". Both are right as mechanism and wrong
+as priority. **A member who wants to link is usually a member who has already
+signed in both ways**, so their provider is precisely the one that is not
+unused. The population that needs this feature is the population 0.3 routes to a
+dead end, and the population 0.3 serves — a member with one account who wants a
+second way in — is the one least likely to ask for it.
+
+Nothing about the mechanism is defective. This is a defect in what the plan
+decided to build first.
+
+### The two cases, stated by the owner 2026-09-25
+
+1. A member signs up with LINE or Google and later attaches the other. The
+   provider is unused. **Slice 3 already does this**, and has never been seen to
+   succeed.
+2. A member already holds two accounts, one per provider, knows both are theirs,
+   and wants them joined. **Nothing does this.** Today they are refused.
+
+Every other case the owner could think of reduces to one of these two.
+
+### The volume cannot be measured in advance, and that is structural
+
+There is no way to know which LINE account and which Google account belong to
+one human. LINE carries no email here, and owner decision 2 forbids joining by
+email even where one exists. So the manual-support volume that owner decision 5
+said it would revisit **is not a number anyone can produce**; it can only be
+observed as members try to link and are refused. What IS measurable is the upper
+bound — how many members hold exactly one provider — and that measurement is not
+a precondition for anything in this revision.
+
+This also means slice 2's numbers do not cover it. Slice 2 measured and cleaned
+**collisions**: one identity claimed by two members, which is a data defect, 20
+cases, now zero. Two valid accounts belonging to one person is a different thing
+entirely, is not a defect, and was never counted.
+
+### Owner decisions 7-10 (2026-09-25)
+
+7. **Joining two existing accounts is a primary goal of this workstream, not a
+   later slice.** Without it, account linking delivers to everyone except the
+   people who need it.
+8. **A paying account may never be the side that loses.** Owner decision 5's
+   tiebreak — whoever paid wins, otherwise whoever holds more, ties broken
+   deterministically — is promoted from a rule for choosing to a rule that
+   constrains direction: **which side survives is decided by payment, not by
+   which side the member happens to be signed into.** If the LINE account paid
+   and the Google account did not, the Google credential moves to the LINE
+   account, not the reverse.
+9. **The member performs the merge themselves.** This **REPLACES owner decision
+   5's** "first release routes collisions to manual support". The reasoning
+   changed with the facts: decision 5 was made when a collision meant bad data,
+   which a third party can adjudicate. A member holding both credentials and
+   completing both authorizations has proven ownership more strongly than any
+   support ticket can. Manual support remains the fallback for anything the flow
+   refuses.
+10. **The flip waits, and for a new reason.** The flip hands 1,443 members a new
+    empty account on their next login. That is not merely a harm to absorb — it
+    **manufactures more two-account members**, which is the exact condition this
+    revision exists to repair. Building the repair before the flip stops us
+    adding to a pile we cannot yet clear.
+
+### The standard of evidence, narrowed on purpose (owner, 2026-09-25)
+
+"Not known until proven" applies to the path a real member walks — `login →
+link → merge → flip` — and to nothing else. The repository is 1,822 commits
+since June; proving all of it finishes nothing. Everything on that path must be
+exercised for real; anything found elsewhere is recorded where it is found and
+left alone.
+
+The reason is measured rather than felt. Three defects were found in two days —
+a screen deciding link state by session guesswork, a row printing a provider
+name it never read, and an id_token checked against the wrong kind of key —
+**and no gate caught any of them. A person found all three.** Two of those
+gates had also been reported as evidence they were not: 2,945 specs were green
+over a verifier no test executed, and twelve real-Postgres proofs sit behind a
+variable nobody exports.
+
+### What this changes in the slices
+
+- **Slice 3 keeps its scope** and gains an explicit requirement that a
+  successful link be observed, plus the corrections the DoD audit produced.
+- **Slice 4 is redefined.** It was "decide collision recovery"; the decision is
+  now made, so it becomes the merge itself.
+- **Slice 4b is added** for prevention at sign-up, after the merge exists.
+- **Slice 5 is unchanged in content** and moves behind 4 and 4b.
 
 ## Relationship to existing work
 
@@ -473,7 +571,101 @@ codebase has already paid for once:
 10. **Every new `.test.ts(x)` must be registered in `vitest.config.mts` by hand.**
     An unregistered spec is run by nothing at all.
 
-### 4. Decide collision recovery with the owners of affected data
+Corrections in 0.4, from an independent audit of what the specs actually execute
+(2026-09-25). Four of the items above cannot be satisfied as they are written,
+and saying so is cheaper than a session discovering it again:
+
+- **A successful link must be observed before slice 3 closes.** This was implied
+  and is now required. Every attempt so far ended in a refusal — correct
+  refusals, but the write path has never run against a real provider, and it is
+  the path the flip sends real members down.
+- **A.1 names the wrong route.** The start route writes no rows under any
+  outcome; the write is in the callback, which takes identity from the signed
+  state and calls no resolver at all. The thing the item is really about —
+  `resolveSignedSessionUserId` refusing `cookie-mumate-id` — has no test of its
+  own, and the existing spec mocks both resolvers and never sends a forged
+  cookie. **This is the security-critical item of the slice and its evidence is
+  the weakest.** It needs a test of that function directly.
+- **A.6's `Secure` clause cannot be proven by reading `Set-Cookie` in a test.**
+  Under vitest `NODE_ENV` is `test`, so the route correctly omits the attribute.
+  Restate it as: assert the `secure: !isDev` argument, and confirm the deployed
+  response separately. Confirmed on the shadow 2026-09-25 by reading
+  `NODE_ENV=production` from the running container.
+- **A.7's premise is obsolete** and should be struck: connectivity is no longer
+  decided by string-equality against the session provider.
+- **A.8's stated mechanism is wrong.** The drift guard enforces registration
+  directly only for `.test.tsx`; `.test.ts` specs are caught by a different rule
+  in the same file. The outcome holds; the sentence does not.
+- **Replay is weaker than the wording implies.** No single-use record exists for
+  a state value; replay is prevented by clearing the cookie and by the
+  ten-minute TTL, and within that window a re-presented pair would verify. The
+  real backstop is the provider's one-shot `code`, which no test covers. Recorded
+  as a limit of the design, not a defect to fix inside this slice.
+- **The real-Postgres lane is not evidence the project produces.** Its twelve
+  specs run only when a human exports `TEST_DATABASE_URL`; the push hook warns
+  about skips rather than failing. Either the gate runs them or the claims made
+  from them must be labelled as hand-run.
+
+### 4. Merge two accounts the member proves they own
+
+**Redefined in 0.4.** This slice was "decide collision recovery with the owners
+of affected data". That decision is made — owner decisions 5, 8 and 9 — so the
+slice becomes the thing itself: a member who holds two accounts joins them, and
+does it without support.
+
+The flow a member walks: signed in to one account, they authorize the other
+provider exactly as slice 3's linking does. Slice 3 refuses at that point. This
+slice instead recognises that **both credentials have now been proven by the same
+person in the same session**, applies the rule in owner decision 8 to decide
+which account survives, tells the member plainly what is about to happen and what
+they lose, and moves the credential only on their confirmation.
+
+DoD 4:
+
+- The surviving account is chosen by owner decision 8 and **never** by which side
+  the member is signed into. A test fixes this by driving the same pair from both
+  directions and asserting the same survivor.
+- **A paying account is never the loser.** Proven by a test in which the side the
+  member is signed into has paid and the other has not, and by its mirror.
+- The merge moves the credential and **nothing else**. Row counts before and after
+  show exactly one `user_provider` row changing `user_id`, and no row in any other
+  table changing at all.
+- The losing account is left with no login method, which is the one thing this
+  workstream otherwise forbids. **The member is told this in their own language,
+  naming what stays behind, before anything is written**, and the flow refuses to
+  proceed without an explicit confirmation that is separate from pressing "link".
+- The move is reversible by one statement, and the previous `user_id` is recorded
+  where support can read it.
+- A member who is not signed in, or who fails either authorization, changes
+  nothing. Proven by row count.
+- Every refusal in slice 3 that is not this case still refuses.
+
+Out of scope for slice 4, explicitly: moving charts, QI, payments, referrals or
+birth data between accounts. The wide merge that revision 0.3 inventoried
+remains unbuilt and unauthorized. If the losing side holds something the member
+needs, that is support's work and the dump is the recovery.
+
+### 4b. Stop handing out the second account in the first place
+
+**Added in 0.4**, and sequenced after slice 4 because a member who already holds
+two accounts gains nothing from prevention.
+
+Today a member who signs in with a second provider is silently given a new empty
+account. Slice 4b interrupts that: before creating a second account, **ask**.
+Never infer. Owner decision 2 forbids treating a matching email as proof, and
+LINE carries no email here in any case, so the question is put to the person
+rather than answered by a join.
+
+DoD 4b is deliberately not written yet. It touches the login surface every member
+crosses, and it should be written after slice 4 has shown what the merge
+conversation actually needs to say.
+
+### 4-legacy. The inventory that produced owner decision 5
+
+**Retained as reference, not as work.** This was slice 4 through revision 0.3.
+Its inventory is why slice 4 above moves a credential and nothing else, and it
+is the checklist any future wide merge must satisfy. Nothing in this section is
+authorized or scheduled.
 
 Before implementation, inventory which systems own QI, subscriptions, chart
 data, referrals/friends, payments, push subscriptions, and audit history. The
@@ -523,7 +715,15 @@ deleting a member currently leaves the engine rows orphaned by design.
 
 ### 5. Flip through the seam, observe, then stop using the old path
 
-After slices 1-4 close and the owner authorizes the flip, repoint the FE client
+**Precondition added in 0.4, and it outranks the one below.** Owner decision 10:
+the flip may not run before slice 4 ships. The flip gives 1,443 members a new
+empty account on their next login, which is not only a harm to absorb — it
+creates more members holding two accounts, which is the condition slice 4 exists
+to repair. Flipping first means manufacturing cases faster than we can clear
+them. Slice 4b should also ship first, so the flip does not immediately reopen
+the same tap.
+
+After slices 1-4b close and the owner authorizes the flip, repoint the FE client
 to the new route with the legacy route retained as a bounded rollback. Test on
 local first, then a reviewed PR and owner merge. Notify the infrastructure lane
 before push. Observe login success, ambiguous identities, duplicate creation,
@@ -618,8 +818,9 @@ call, or the rollback stops being one line.
 | 1 | FE route works locally with BE unreachable; traffic unchanged | 4-8 h, plus 2-4 h for the 0.2 defect fixes | heavy: auth + new DB write path | opening decision |
 | 2 | cleanup and unique index succeed on anonymized restore | 4-8 h | heavy: schema + identity data | slice 1 closeout; owner decision |
 | 3 | explicit linking works without identity mutation on collision | 6-10 h | heavy: OAuth + auth + DB | slice 2 closeout; **team** LINE console steps |
-| 4 | collision policy and ownership are settled | unknown | owner + affected path owners | slices 2-3 evidence |
-| 5 | reviewed flip, observation, old FE path retired later | 4-6 h + observation | owner-attended production gate | slices 1-4 closed |
+| 4 | a member joins their own two accounts; payment side never loses; nothing but the credential moves | unknown | heavy: identity write + irreversible-feeling UX | slice 3 closed, including one observed successful link |
+| 4b | a second account is no longer created without asking | unknown | heavy: touches the login surface everyone crosses | slice 4 closed |
+| 5 | reviewed flip, observation, old FE path retired later | 4-6 h + observation | owner-attended production gate | slices 1-4b closed |
 
 Every slice after slice 1 requires a new owner decision event. Slices are
 sequential because they touch the same identity seam and schema.
