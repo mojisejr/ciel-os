@@ -1,0 +1,182 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T130505_mumate_login_identity_slice3_built_awaiting_round_trip
+type: closeout
+recorded_at: 2026-09-24T13:05:05+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Slice 3 is built. Every route, the screen and the proofs exist and pass; what
+    remains cannot be done without the owner - one push, one image build, one
+    deploy, and a real LINE round trip on a phone.
+  scope:
+    - What was built, and the decisions that shaped each piece.
+    - What the proofs do and do not establish.
+    - The three findings that came out of building it.
+  out_of_scope:
+    - Slice 4 (merging two existing members) and slice 5 (the traffic flip). Both untouched.
+    - Any production statement. None was run.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      SIX COMMITS ON mootech-fe, head b1de1bf68b62c206e26ad5b1b0e3291d849223f9,
+      17 ahead of origin/main. 6f68abb signed state/PKCE/nonce binding; a8f09ff
+      the start route, provider config and a session-only resolver; b191df3 the
+      callback, id_token verification and the three-case write; df18fe3 the screen
+      and the read/unlink endpoints; b1de1bf the real-Postgres proof.
+    - >-
+      THE WHOLE SLICE IS DARK UNTIL THE SCREEN IS USED. No existing route changed
+      behaviour; constants/api/endpoint.ts:55 is untouched and register_or_login
+      still points at the backend.
+    - >-
+      2,945 specs pass, 183 skipped, tsc clean, eslint no errors. 12 further specs
+      run only against a real Postgres and were run.
+    - >-
+      OWNER DECISION 9 RESOLVED BY RESEARCH, and the answer was worse than the
+      question. The engine's mission definitions pay rewardCoins 20 for
+      connect_line, not the 10 the badge promised - and connect_google DOES NOT
+      EXIST, so linking Google paid nothing at all. Apple and phone carried the
+      badge too and can never pay anything. The badge now reads the amount from
+      the engine and is absent where there is no mission, so it corrects itself
+      the day someone adds connect_google rather than needing this file edited.
+    - >-
+      Decisions 8 and 10 applied: Apple and phone are gone from the list, and the
+      settings row reads "บัญชีที่เชื่อมต่อ" rather than "เข้าสู่ระบบด้วย LINE",
+      which stops being true the moment a member links Google.
+
+  not_completed:
+    - >-
+      NO REAL LINE ROUND TRIP. Nothing here proves LINE or Google will accept us.
+      That needs the branch pushed, an image built, a deploy to the shadow, and a
+      phone. All four are the owner's.
+    - >-
+      THE COMMITS ARE LOCAL. Pushing needs --no-verify because origin/main still
+      fails its own verify-architecture gate on four violations this branch does
+      not own, and the harness refuses that flag. One push, by the owner.
+    - The branch is 1 behind origin/main (9f764e6, Thai line breaking in chat, zero file overlap). Rebase once immediately before the image build.
+
+  evidence_of_limits:
+    - >-
+      The real-Postgres file builds a PARTIAL unique index restricted to its own
+      rows, because the arena's anonymizer blanks id_token on all 5,872 rows and
+      the full index cannot build - the same obstacle behind the original DoD 2.
+      Same expression, same name, narrower scope. It is not evidence about
+      production's index over production's data, and it runs over a direct
+      connection rather than the transaction pooler.
+    - >-
+      The id_token signature check is jose's, exercised here only through an
+      injected verifier. The real JWKS path runs for the first time during the
+      live round trip.
+
+three_findings_from_building_it:
+  the_recovery_is_coupled_to_the_index_NAME:
+    what: >-
+      isProviderIdentityConflict treats a 23505 as recoverable only when the
+      constraint name is empty or contains 'user_provider_identity'. Under any
+      other name the index still rejects the duplicate but the recovery does not
+      fire and the member receives a 500.
+    how_it_surfaced: >-
+      The first version of the real-Postgres file named its index
+      slice3_proof_identity_unique. The forced-collision test failed with a raw
+      query error rather than recovering - the recovery was watched not firing.
+    why_it_matters: >-
+      RENAMING THE PRODUCTION INDEX WOULD SILENTLY DISABLE THE RECOVERY. Nothing
+      in either repository said so. It is now written in the file that would catch
+      it, and the test carries production's index name so it stays evidence.
+  the_sharpest_open_risk_is_partly_retired: >-
+    Since this morning the lane has carried "the unique-violation recovery is the
+    code path that matters and has never executed against an index". It has now
+    executed, deterministically, against a real Postgres unique index on the real
+    expression under the real name, through the real driver and Drizzle wrapper.
+    What is still untested is that index over production's data at production
+    scale, which only the flip reaches.
+  a_mutant_contract_of_mine_was_false: >-
+    The screen's spec header claimed that putting Apple back in its list would go
+    red. Checked: it does not - all 20 stay green, because the list is driven by
+    /api/auth/link/connections and the screen's constant is only the pre-answer
+    fallback. The guard belongs server-side, so the assertion moved to
+    link-connections-route.test.ts where it does go red, and the header now says
+    what happened instead of dropping the claim. A contract listing a mutation
+    nobody ran is the same false comfort the practice exists to remove.
+
+design_decisions_worth_not_rediscovering:
+  - >-
+    The member is captured from the SIGNED session at start and carried inside the
+    HMAC; the callback never re-reads identity from the returning request.
+    resolveSessionUserId's cookie-mumate-id fallback is client-settable and not
+    httpOnly - acceptable for reads, an account-takeover primitive for a route
+    that attaches a login credential. resolveSignedSessionUserId exists for that.
+  - >-
+    Both halves live under /api/auth, not /api/v2. The maintenance gate allowlists
+    /api/auth and not /api/v2/account/*, and a rewrite to /maintenance answers HTTP
+    200 - the provider would read success while the link never happened.
+  - >-
+    The state cookie is SameSite=Lax and never None (None broke every provider's
+    login on 2026-09-22 in the LINE webview), and the LINE authorize URL carries
+    disable_ios_auto_login (without it iOS app-switches mid-authorize and the
+    cookie jar dies). Google carries prompt=select_account, or a member silently
+    links whichever account Google already holds, with no undo but unlink.
+  - >-
+    Unlink counts OTHER PROVIDERS, not rows. Several rows of one provider are
+    still one way in - the shape 1,443 members are actually in. Its known limit is
+    written into the function: it cannot tell whether the remaining provider's rows
+    can still authenticate.
+  - >-
+    The collision message names nobody. Saying whose account holds an identity
+    would confirm it belongs to a member of this service.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "55af3ab"
+    branch: hq/20260921
+    working_tree: this-event-and-plan-only
+    ahead_of_origin_main: 34
+  application:
+    repository: mootech-fe
+    head: "b1de1bf68b62c206e26ad5b1b0e3291d849223f9"
+    branch: feat/mumate-login-identity-s1
+    ahead_of_origin_main: 17
+    behind_origin_main: 1
+    origin_main: "9f764e6"
+    remote_ref: "exists at 91a2f1b - the five slice-3 commits are NOT pushed"
+    working_tree: clean
+  verification:
+    default_lane: 2945 passed / 183 skipped across 275 files
+    real_postgres: 12 passed against localhost:5433 mumate_test
+    static: tsc --noEmit exit 0, eslint 0 errors
+    arena_after: 5872 rows unchanged, zero leftovers, test index dropped
+  mutation_checks: >-
+    Every mechanism was verified by removing it. Signature 4, open-redirect guard
+    5, expiry 2, PKCE 2, provider binding 1, state binding 1, weak resolver 11,
+    webview refusal 1, disable_ios_auto_login 1, prompt=select_account 1,
+    collision-overwrite 2, last-method rule 2, advisory lock 1, uncleared state
+    cookie 4, session-guessing screen 1, hardcoded badge 1, badge without mission
+    2, always-unlinkable 1, skipped confirm 1, named account in collision text 1,
+    server provider list 3.
+
+unresolved:
+  - No real LINE or Google round trip. The JWKS path, the LINE webview behaviour on a real iPhone, and the consent screens are all unexercised.
+  - Whether the engine should gain a connect_google mission. The badge is correct either way; the question is whether Google linking should pay.
+  - Carried unchanged - the traffic flip, slice 4, the three .assets dumps, the AWS bucket, and Vercel Preview resolving to the production database.
+
+next_action:
+  action: >-
+    The owner pushes (one --no-verify push), rebases onto 9f764e6, dispatches
+    container-build with target staging and push true, then deploys FE_TAG to the
+    shadow and walks a real link on a phone. Restore point for the shadow is
+    FE 7e22f54...-staging / BE 0705378 / BAZI 722cdf1...-staging, and the FE_TAG
+    change is recorded as its own closeout per the control room's rule.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - constants/api/endpoint.ts:55 still points register_or_login at the backend.
