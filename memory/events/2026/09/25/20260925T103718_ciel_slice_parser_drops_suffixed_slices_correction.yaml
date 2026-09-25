@@ -1,0 +1,122 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T103718_ciel_slice_parser_drops_suffixed_slices_correction
+type: closeout
+recorded_at: 2026-09-25T10:37:18+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Correct one finding in aa54c29. That closeout reported the slice parser
+    dropping a single plan heading and called the fix a one-character change. A
+    teammate checking the same code found a SECOND dropped slice heading in the
+    same plan, and the second instance changes what the finding is: not a typo in
+    one heading, but a naming convention the plan uses and the parser does not
+    accept. Recorded beside aa54c29 rather than as a new defect, because the
+    defect is the same one, described better.
+  scope:
+    - The second dropped heading, and how it was verified.
+    - Why two instances change the finding rather than adding to it.
+  out_of_scope:
+    - Any repair. This is ciel-os source and plan text, with no authorized workstream.
+    - Everything slice 3. It remains accepted and closed at aa54c29.
+    - The other defect in aa54c29, which is unchanged and still unrepaired.
+
+outcome:
+  # Not terminal scope - names slice 3 of a plan whose last declared slice is 5 -
+  # so `recorded` raises no warning, on the same reading of read.ts:510-512 and
+  # 561-587 that aa54c29 states.
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      THE PARSER DROPS TWO SLICE HEADINGS IN THIS PLAN, NOT ONE. aa54c29 reported
+      "### 4b. Stop handing out the second account in the first place". The second
+      is "### 4-legacy. The inventory that produced owner decision 5" at PLAN.md
+      line 663, by the identical mechanism: /^### (\d+)\.\s/gm at
+      src/portfolio/read.ts:156 matches the digit, then requires a period and meets
+      a hyphen. Raised by the teammate session, and verified here by running the
+      reader's own regex over the file rather than by reading it: the parser yields
+      exactly 1, 2, 3, 4, 5, and of the seventeen `###` headings in the plan the
+      only two dropped that are SLICES are 4b and 4-legacy.
+    - >-
+      THE VERIFICATION ALSO SHOWS THE PARSER IS CORRECT ABOUT EVERYTHING ELSE,
+      which is what makes this worth restating. Ten prose headings - "What 0.3 got
+      backwards", "Owner decisions 7-10", and the rest - are dropped too, and
+      should be. So the parser is not indiscriminate; it is silently selective
+      AMONG SLICE HEADINGS, which is the reason nothing has ever complained.
+    - >-
+      TWO INSTANCES MAKE IT A NAMING PATTERN, AND THAT IS THE CORRECTION.
+      aa54c29 called the fix "a one-character plan heading change or a parser
+      change", which is true of 4b alone and understates the finding. This plan
+      names slices by suffixing a number when a slice is inserted beside an
+      existing one (4b) or retired in place (4-legacy). The parser accepts bare
+      integers only. Any plan that keeps that habit will keep producing headings
+      the machinery drops without a word, so the choice in front of the owner is
+      about the convention, not about one heading.
+    - >-
+      4-legacy IS NOT ITSELF A HAZARD, and the teammate said so when raising it. It
+      reads as historical and nobody will authorize it. It matters only as the
+      second instance. The hazard remains 4b, which owner decision 8 adds as real
+      future work and which cannot be authorized while the parser cannot see it.
+
+  not_completed:
+    - >-
+      NOT REPAIRED, and deliberately. Both the regex at read.ts:156 and the plan
+      headings are in ciel-os with no owner-approved workstream covering them, and
+      the fix is a choice between changing the plan's naming convention and
+      changing the parser to accept suffixed slices. Repairing the instrument
+      mid-round on my own judgement is the move this round has twice recorded as
+      the one that needs his word first.
+    - >-
+      The other defect from aa54c29 is untouched by this correction: wake still
+      reports this lane as authorized for slice 4 against a record that says three
+      times it is not.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  corrects: memory/events/2026/09/25/20260925T103213_mumate_login_identity_slice3_accepted_by_owner_and_closed.yaml
+  corrects_commit: aa54c29
+  raised_by: teammate session, verified locally before recording
+  parser: src/portfolio/read.ts:156, /^### (\d+)\.\s/gm
+  validation_that_depends_on_it: src/portfolio/read.ts:474-475
+  method: >-
+    the reader's own regex run over PLAN.md, and every `###` heading listed and
+    marked parsed or dropped
+  parser_yields: "1, 2, 3, 4, 5"
+  slice_headings_dropped:
+    - "### 4b. Stop handing out the second account in the first place"
+    - "### 4-legacy. The inventory that produced owner decision 5 (PLAN.md:663)"
+  prose_headings_dropped: 10, correctly
+  repository:
+    head: "aa54c29"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 53
+    origin_main: "f58cc9c"
+    pushed: nothing
+
+unresolved:
+  - >-
+    Whether the convention changes or the parser does. The owner's call, and it is
+    the same decision item aa54c29 already put in front of him, now stated as a
+    convention rather than a heading.
+  - >-
+    Everything else carried by aa54c29 stands unchanged, the database pool first
+    and before slice 4.
+
+next_action:
+  action: >-
+    None of its own. This corrects a record; it opens no work. The next executable
+    step is still the database-pool conversation, then the slice-4 decision event.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - >-
+      The reader's regex over PLAN.md still yields 1, 2, 3, 4, 5, and 4b is still
+      invisible to it - if that changes, this record is stale and the owner acted.
