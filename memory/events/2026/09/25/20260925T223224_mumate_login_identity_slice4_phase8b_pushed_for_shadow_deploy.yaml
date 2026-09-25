@@ -1,0 +1,84 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T223224_mumate_login_identity_slice4_phase8b_pushed_for_shadow_deploy
+type: closeout
+recorded_at: 2026-09-25T22:32:24+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Make the staging LINE account-link callback diagnosable and bounded before
+    one owner-controlled collision-preview retry.
+  scope:
+    - Record the reviewed phase 8b callback change and its exact pushed source revision.
+    - Deploy that revision only to the MuMate staging shadow host.
+  out_of_scope:
+    - Production, main, pull-request creation, provider-console changes, a LINE retry,
+      identity movement, account merge, or database mutations.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "4"
+  completed:
+    - >-
+      mootech-fe commit 626c9c5087b77c5328c84b923cc7d278892504ee was pushed to
+      feat/mumate-login-identity-s1 and contains only the phase 8b bounded and
+      redacted callback-observability change.
+    - >-
+      TypeScript, lint, focused link tests, and the full test suite passed:
+      46 focused tests passed; the full suite reported 3,054 passed and 191
+      skipped tests across 264 passed and 18 skipped files.
+    - >-
+      The ordinary pre-push architecture guard stopped on four pre-existing,
+      out-of-scope v2 paths after all tests passed. The owner explicitly
+      approved one --no-verify push of this already-verified commit; remote
+      branch evidence matches the exact commit.
+  not_completed:
+    - The staging image availability, deploy result, and post-deploy health are not yet recorded.
+    - No owner-controlled LINE collision-preview retry has occurred.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "4"
+  execution_phase: "8b"
+  repository:
+    head: "598c09087435efe7da0a29838f6711a760da528a"
+    branch: hq/20260921
+    working_tree: this-event-only
+  source_revision:
+    repository: mojisejr/mootech-fe
+    branch: feat/mumate-login-identity-s1
+    commit: 626c9c5087b77c5328c84b923cc7d278892504ee
+    remote: origin/feat/mumate-login-identity-s1
+  checks:
+    - bunx tsc --noEmit: passed
+    - bunx vitest run scripts/link-verify.test.ts scripts/link-callback-route.test.ts: 46 passed
+    - bun run lint: passed with 135 existing warnings and zero errors
+    - npm test: 3054 passed, 191 skipped; 264 passed files, 18 skipped files
+    - residual tsx lane: passed (6 files)
+  deploy_intent:
+    target: staging-shadow
+    image_tag: ghcr.io/mojisejr/mootech-fe:626c9c5087b77c5328c84b923cc7d278892504ee-staging
+    authorization: owner explicit approval on 2026-09-25
+
+unresolved:
+  - >-
+    The first slow or failing real LINE callback stage is still unknown until a
+    controlled retry runs against the deployed staged instrumentation.
+  - >-
+    No deployment or runtime-health claim is made by this event; a separate
+    post-deploy event must carry host evidence.
+
+next_action:
+  action: >-
+    Verify the exact staging image is available, dry-run then execute the
+    staging-only deployment, and record exact tag plus health evidence before
+    asking the owner for the phase 8c phone retry.
+  acceptance_check:
+    - The running staging FE reports healthy with the exact phase 8b revision.
+    - No production, identity, merge, or provider state changes occur.
