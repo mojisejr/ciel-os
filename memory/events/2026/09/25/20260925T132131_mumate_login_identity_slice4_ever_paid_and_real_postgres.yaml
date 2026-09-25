@@ -1,0 +1,172 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T132131_mumate_login_identity_slice4_ever_paid_and_real_postgres
+type: closeout
+recorded_at: 2026-09-25T13:21:31+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close the assumption slice 4 was authorized with, and close the gap its own
+    closeout named. The owner answered the lapsed-payer question and it is now built.
+    Phase 7b - the merge against real Postgres - was inserted at his instruction and
+    passes. Slice 4 is ready for phase 8 and stops there, waiting on him.
+  scope:
+    - The owner's decision about a member who paid once and lapsed, and how it is built.
+    - Phase 7b, and the measurement that shows why it was worth inserting.
+    - One trap the new test file fell into, recorded so the next fixture avoids it.
+  out_of_scope:
+    - The shadow. Still nothing has run against it.
+    - Production, the flip, pushing, and opening a pull request.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "4"
+  completed:
+    - >-
+      OWNER DECISION 11 (2026-09-25): A MEMBER WHO HAS EVER PAID IS PROTECTED, EVEN
+      WITH A LAPSED SUBSCRIPTION. His words, in this session: "ผมคิดว่ามันก็เค้า เคสที่
+      เทียบได้ว่า เค้าเคย sub แสดงว่าเคยจ่าย account นี้ก็ควรจะเป็น account หลัก" - he
+      opened with "ไม่ต้องก็ได้" and then reasoned his way to the opposite, and asked me
+      to confirm. I agreed and said why: the harm a merge does is not the loss of a
+      subscription, it is losing access to the account that HOLDS the purchases, and a
+      lapsed member's charts, QI and order history are still in there. This replaces the
+      narrow assumption recorded in d5af896, which that record deliberately stated
+      rather than buried so it could be replaced exactly like this.
+    - >-
+      IT IS BUILT AS ONE PREDICATE AND ONE NEW READ. defaultMayLose is now
+      `isPaid === false && !everPaid`, and lib/v2/subscription.ts gains `hasEverPaid`:
+      a member_subscription row whose tier_code would decide "paid" on its own - reusing
+      that file's already-exported decidesWithoutLegacy rather than inventing a third
+      rule, and deliberately NOT filtered by expire_at, since a lapsed PRO row is the
+      exact case being protected - or a member_payment row of any date. It lives in the
+      module that owns the subject of who has paid, because a private notion of "paid"
+      inside the merge is the divergence #525 closed and #514 still tracks.
+    - >-
+      THE WIDER RULE COSTS THE COMMON CASE NOTHING, which is why agreeing with him was
+      easy. An account that appeared by accident on a second provider has never paid, so
+      it may still lose. What widens is the set of pairs handed to support: pairs where
+      BOTH sides bought something, which deserve a person. The predicate stays injected
+      and a test proves narrowing it again reverses the outcome with no other change.
+    - >-
+      PHASE 7B IS DONE AND PASSES: 8 specs against the real testenv Postgres on port
+      5433, mirroring slice 3's scripts/link-account-db.test.ts deliberately. The
+      advisory lock, the row-scoped UPDATE and the ops_audit_log insert execute in ONE
+      transaction against a real unique index built under production's name. It proves
+      what no fake could: that length(id_token) is selectable, that ops_audit_log
+      accepts a ::jsonb cast of a stringified payload, that user.create_at exists under
+      that name, that the reversal statement the audit row records actually reverses the
+      move, and that the MIRROR direction works - the signed-in side's own credential
+      moving when the other account is the one that paid.
+    - >-
+      WHY 7B WAS WORTH INSERTING, MEASURED RATHER THAN ARGUED. Mutant: rename a column
+      in the audit insert to one that does not exist. The 49 fake-based assertions stay
+      GREEN; only the database-backed file reddens, 3 of 8. That single measurement is
+      the whole case for the file, and it is the reason I proposed inserting it before
+      the shadow rather than after.
+    - >-
+      THE NEW FILE'S OWN FIXTURES FIRST TRIPPED THE RULE IT TESTS, and it is recorded in
+      the file rather than quietly fixed. Five specs failed with `loser-holds-no-identity`
+      because the fixtures were `slice4-proof-<uuid>` - 49 characters - and the liveness
+      rule calls a Google row longer than 32 dead, which is the `ya29` class revision 0.3
+      measured. The rule was right and the fixtures were wrong, which is the good
+      direction for that mistake to point. The helpers now produce a 21-character Google
+      identity and a 33-character LINE one, with the trap written down.
+    - >-
+      THE ARENA IS LEFT AS IT WAS FOUND. Zero leftover provider rows, zero leftover
+      members, zero leftover audit rows, and the partial test index dropped - all four
+      verified by query after the run.
+
+  not_completed:
+    - >-
+      NOTHING HAS RUN AGAINST THE SHADOW, and that is phase 8. The connection here is
+      direct; production reaches Supabase through the transaction pooler, so the pool
+      behaviour this round has spent the day on is still unexercised by slice 4.
+    - >-
+      hasEverPaid's OWN SQL IS NOT EXERCISED against a database. It reads through the
+      application's client, so the database-backed file fakes the standing resolver. The
+      rule is proven in the pure suite and the query is an ordinary Drizzle select plus
+      the already-covered resolveMembership, so this is named as the smallest remaining
+      gap rather than left silent.
+    - >-
+      iOS, and the whole Connected Accounts surface on a real device, remain unexercised.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  execution_phase: "4"
+  owner_decision:
+    number: 11
+    what: A member who has ever paid may not be the losing side, even if the subscription has lapsed.
+    quoted_verbatim: "ผมคิดว่ามันก็เค้า เคสที่เทียบได้ว่า เค้าเคย sub แสดงว่าเคยจ่าย account นี้ก็ควรจะเป็น account หลัก"
+    language: Thai
+    observed_directly_by_this_session: true
+    replaces: the narrow assumption stated in d5af896
+    also_instructed: do 7b first, do not start 8a, report when ready for it
+  repository:
+    head: "77b2472"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 59
+    origin_main: "f58cc9c"
+    pushed: nothing
+  application:
+    repository: mootech-fe
+    commit: "3110a03"
+    branch: feat/mumate-login-identity-s1
+    ahead_of_origin_main: 23
+    working_tree: clean
+    pushed: nothing
+    pull_request: none
+    endpoint_ts_in_diff: absent
+  gates:
+    suite: "3,051 tests pass with the database file skipped, 191 skipped"
+    database_backed: "8 specs pass against testenv postgres on 5433"
+    tsc: clean
+    eslint: clean
+    arena_after_run: "0 leftover provider rows, 0 leftover members, 0 leftover audit rows, test index dropped"
+  mutant_that_justifies_7b:
+    mutation: "rename target_user_id to a column that does not exist in the audit insert"
+    fake_based_specs: "49 pass - unchanged"
+    database_backed_spec: "3 of 8 fail"
+  new_files:
+    - scripts/merge-identity-db.test.ts
+  changed_files:
+    - "lib/v2/subscription.ts - hasEverPaid"
+    - "lib/auth/merge-survivor.ts - everPaid on MergeSide, defaultMayLose widened"
+    - "lib/auth/link-account.ts - MergeDeps.resolveStanding replaces resolvePaid"
+    - "pages/api/auth/link/merge/preview.ts, confirm.ts and the link callback - wired to hasEverPaid"
+    - "scripts/merge-survivor.test.ts, scripts/merge-identity.test.ts - the widened rule"
+    - "vitest.config.mts - the database file registered"
+
+unresolved:
+  - >-
+    Phase 8 waits on the owner: he proves the database-pool repair on the shadow and
+    merges mootech-fe pull request 814, then the login lane follows. He asked to be told
+    when 7b was done and slice 4 was ready for that, which this record is.
+  - >-
+    hasEverPaid's SQL is not exercised against a database.
+  - >-
+    Carried unchanged - the unlink route's last-method rule (a slice-5 precondition), the
+    1,783 dead rows (revision 0.3 closed further cleanup), iOS, collision at production
+    scale, member_missing, nothing stops a member unlinking the provider they are signed
+    in with, the mission-timing defect at ConnectedScreen.tsx, connect_google in the
+    engine, the three .assets/mumate/slice2-* dumps, the AWS bucket s3-ps-cdn, and Vercel
+    Preview resolving to the production database.
+
+next_action:
+  action: >-
+    Tell the owner slice 4 is ready for phase 8 and wait. Phase 8 begins with HIS two
+    steps - prove the pool repair on the shadow, merge pull request 814 - and only then
+    does this lane build an image and deploy. Do not run anything against the shadow, do
+    not touch production, do not flip constants/api/endpoint.ts, do not push, and do not
+    open a pull request without his word.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - mootech-fe is clean at 3110a03 with 3,051 tests passing and 8 more behind TEST_DATABASE_URL.
+    - constants/api/endpoint.ts is still absent from mootech-fe's diff against origin/main.
