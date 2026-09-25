@@ -1,0 +1,103 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T201030_mumate_infra_move_slice3f_recovery_pr_ready_shadow_proof_pending
+type: closeout
+recorded_at: 2026-09-25T20:10:30+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Recover the shadow FE once from its observed running-but-unhealthy database
+    client state, and prepare a bounded no-restart-loop recovery mechanism for
+    planned slice 3f.
+  scope:
+    - A same-image FE-only shadow recovery.
+    - The isolated mumate-infra recovery implementation, its tests, and draft PR.
+  out_of_scope:
+    - Deploying the new recovery code, traffic, DNS, production, provider settings,
+      secrets, database migration, login callback changes, and a LINE retry.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      The shadow FE was running but unhealthy and its loopback health endpoint
+      returned 503. It was recreated once with the already configured current FE
+      image only; afterwards Docker reported healthy and health returned 200 with
+      database OK. No image tag, environment value, database row, or other service
+      was changed.
+    - >-
+      mumate-infra branch fix/fe-unhealthy-recovery at 29daead adds a recovery
+      latch to the existing health-timer path. It acts only after two consecutive
+      FE-only failures, independently confirms running/unhealthy plus failed app
+      health, recreates only FE with its existing image, and permits one attempt
+      until a later healthy observation clears the latch.
+    - >-
+      Deterministic shell proofs pass for the one-attempt latch and for the
+      health-timer integration refusing a multi-service incident. Shell syntax,
+      Compose configuration with the shadow tags, the repository pre-push checks,
+      and gitleaks passed.
+    - >-
+      Draft pull request 19 was opened from the isolated infrastructure branch.
+      Its branch is pushed; no merge or host deployment of the new mechanism has
+      occurred.
+  not_completed:
+    - >-
+      Slice 3f is not accepted: the durable mechanism has not run on the shadow,
+      so it has not yet proved recovery from a controlled unhealthy incident.
+    - >-
+      The login callback's first stalled stage remains unknown and login phase 8b
+      has not begun.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "3"
+  repository:
+    head: "fa52e2e0ff1705df4bf79056e24a34ae03d0e4ea"
+    branch: hq/20260921
+    working_tree: this-event-only
+  application:
+    repository: mumate-infra
+    branch: fix/fe-unhealthy-recovery
+    commit: "29daead"
+    pull_request: "https://github.com/mojisejr/mumate-infra/pull/19"
+    state: draft
+  shadow_recovery:
+    environment: shadow-staging-only
+    fe_image: ghcr.io/mojisejr/mootech-fe:08285cca7f69ffa28d32eb8c8b6388811d161dda-staging
+    observed_before: running-unhealthy-and-health-503
+    observed_after: healthy-and-health-200-db-ok
+    action: compose-force-recreate-no-deps-fe-current-image
+  checks:
+    - scripts/fe-recover.test.sh passed
+    - scripts/health-notify-recovery.test.sh passed
+    - bash syntax checks passed
+    - docker compose profile-full config passed with shadow tags
+    - pre-push compose Caddy shell syntax and gitleaks checks passed
+
+unresolved:
+  - >-
+    Owner merge and a separately recorded shadow deployment are required before a
+    controlled runtime proof can establish that the new mechanism recovers FE.
+  - >-
+    A durable recovery mechanism does not identify the original callback await;
+    that remains login phase 8b's redacted timing work.
+  - >-
+    The same-image recreate restored staging but is mitigation, not the 3f proof.
+
+next_action:
+  action: >-
+    The owner reviews and merges draft pull request 19. After the merge, deploy the
+    resulting mumate-infra main revision to the shadow, perform a bounded FE-only
+    unhealthy-condition proof, and require health 200 plus a successful read before
+    closing slice 3f or resuming login phase 8b.
+  acceptance_check:
+    - The merge commits the reviewed PR and the shadow host runs that revision.
+    - A controlled unhealthy FE recovers once without an image-tag change or restart loop.
+    - A later healthy observation clears the recovery latch, and health plus a safe read succeed.
