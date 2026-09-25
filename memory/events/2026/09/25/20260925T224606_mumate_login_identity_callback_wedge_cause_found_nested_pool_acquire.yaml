@@ -1,0 +1,232 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T224606_mumate_login_identity_callback_wedge_cause_found_nested_pool_acquire
+type: closeout
+recorded_at: 2026-09-25T22:46:06+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Name the operation that wedged the shadow callback, which the incident record at
+    20260925T193259 states it could not identify. It is slice 4's own code: a nested
+    acquisition of the application's single database connection from inside a
+    transaction that already holds it. Written before this session's context is
+    cleared, because the evidence that pins it was read live from a wedged container
+    and cannot be recovered afterwards.
+  scope:
+    - The stalled operation, named, with the evidence that pins it.
+    - The mechanism, and why max 1 is the amplifier and not the cause.
+    - Two corrections I owe: one to my own message to HQ, one to a sentence in the incident record.
+    - Two further defects found in the same session, neither recorded anywhere yet.
+    - What the shadow is carrying right now.
+  out_of_scope:
+    - The fix. Not written, and the owner has not authorized it.
+    - Anything the parallel Codex session did beyond what I read in git; I do not claim it.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "4"
+  completed:
+    - >-
+      THE STALLED OPERATION IS `memberCreatedAt`, AND THE EVIDENCE PINS IT TO ONE LINE.
+      While the container was wedged I read pg_stat_activity through a SEPARATE
+      connection opened inside that same container. One backend stood out:
+      `state = idle in transaction`, `wait_event = Client/ClientRead`, 69 seconds,
+      running `SELECT create_at FROM "user" WHERE user_id = $1 LIMIT 1`. That statement
+      exists in exactly one place in this repository - `memberCreatedAt` in
+      lib/auth/link-account-store.ts, which I added in phase 3 - and it is called from
+      exactly one place, `planWithin` in lib/auth/link-account.ts. `idle in transaction`
+      with Client/ClientRead means the database finished the statement and is waiting
+      for the client to send the next command or COMMIT, and the client never sent one.
+      The database was not slow. We stopped talking to it mid-transaction.
+    - >-
+      THE MECHANISM IS A DEADLOCK I WROTE, AND IT IS STRUCTURAL RATHER THAN A RACE.
+      `planWithin` runs inside `store.transaction(...)`, which holds the application's
+      ONLY connection because lib/db/index.ts sets max 1. Inside that transaction it
+      awaits `deps.resolveStanding(...)`, which the three call sites wire to
+      `resolveSubscription()` and `hasEverPaid()` - and both of those read through the
+      SAME `db` client. So the inner query asks the pool for a connection while the
+      enclosing transaction is holding the only one. The transaction waits for the
+      query; the query waits for the connection the transaction holds. Neither can
+      move, the transaction stays open forever, and because it has consumed the single
+      connection every other request in the application queues behind it. One member
+      pressing one button takes the whole container down.
+    - >-
+      IT REPRODUCED TWICE, BOTH TIMES WITH NO LOAD FROM ME. Docker's health log shows
+      the first failure at 07:40:47Z and, after a recreate, again at 07:44:25Z - each
+      time within seconds of the owner completing a provider authorization. Between
+      them I generated no traffic at all: the watcher I ran reads Docker state and
+      /proc only, deliberately, so it could not compete for the connection.
+    - >-
+      max 1 IS THE AMPLIFIER, NOT THE CAUSE, AND THAT DISTINCTION MATTERS BOTH WAYS.
+      With the postgres.js default of 10 this same code would have found a second
+      connection and completed, so the bug would have shipped and surfaced later as
+      intermittent hangs under concurrency, with no clean reproduction and no obvious
+      author. `max: 1` converted a latent defect of mine into an immediate, total,
+      reproducible failure on a staging container. That is the good outcome, and it is
+      the opposite of what I told HQ.
+    - >-
+      FOUND: THE 503 NEVER REACHES THE HEALTHCHECK, WHICH SHARPENS A SENTENCE IN THE
+      INCIDENT RECORD. pages/api/health.ts bounds its probe at
+      `HEALTH_DB_TIMEOUT_MS ?? 5000`, and the Dockerfile's HEALTHCHECK uses
+      `--timeout=5s`. They are equal, and the route needs a few milliseconds past its
+      own deadline to build and send the response - measured at 5.004 to 5.010 s. So
+      Docker kills the probe at 5.000 s, every time, before the 503 arrives. The proof
+      is in the health log: the failures read `exit=-1`, the probe being KILLED. Had
+      the 503 arrived, `r.ok` would be false and the probe would exit 1. I saw -1 three
+      times consecutively. The 503 is real and is visible to a caller willing to wait
+      past five seconds - my curl saw it - but Docker's view is unchanged from before
+      the repair. It is one environment variable from working as intended.
+    - >-
+      FOUND: THE MERGE OFFER IS UNREACHABLE FOR A MEMBER WHO ALREADY HOLDS THAT
+      PROVIDER. The offer can only be started by pressing "connect <provider>", and the
+      Connected Accounts screen renders that button only for a provider that is NOT
+      linked. The owner hit this directly: his account holds both Google and LINE after
+      slice 3, so the screen offered him only "unlink" and there was no way to begin.
+      The 259 (member, provider) pairs measured today that hold more than one identity
+      are exactly this shape. DoD 4 does not cover it and the remedy is a screen
+      affordance, which is outside slice 4's scope.
+
+  not_completed:
+    - >-
+      NOT FIXED. lib/auth/link-account.ts, its store and the three call sites are
+      untouched by this record. The owner has not authorized the change and I did not
+      make it.
+    - >-
+      THE SHADOW IS STILL CARRYING THE TRAP. It runs
+      08285cca7f69ffa28d32eb8c8b6388811d161dda-staging, healthy as of this record after
+      a recreate, and it will wedge again on the first provider authorization that
+      reaches a collision. Anyone walking slice 4 on it will take the container down.
+    - >-
+      MY OWN TESTS CANNOT CATCH THIS, AND THE REASON IS TWO STUBS OF MINE THAT MEET
+      EXACTLY WHERE THE BUG LIVES. The fake-store specs inject a `resolveStanding` that
+      resolves instantly and touches no pool. The database-backed spec uses
+      `postgres(TEST_URL, { max: 8 })` AND the same fake resolver, so even a real
+      resolver would have found a spare connection. 3,052 assertions and not one of
+      them models a single-connection pool.
+
+corrections_i_owe:
+  to_hq: >-
+    I sent HQ a message saying the infrastructure lane's recorded conclusion - "max 1
+    causes slowness under load, which is a different complaint and can wait" - was
+    wrong in the direction that matters, and asked that the round PR not record the
+    fault as closed. The second half stands: 814 makes the fault visible, not
+    recoverable, and the healthcheck finding above narrows even the visible half. The
+    first half does not. The wedges I attributed to concurrency against max 1 were my
+    own deadlock, and max 1 is what exposed it. HQ is holding a wrong attribution and
+    it should be corrected before the round PR is written.
+  to_the_incident_record: >-
+    20260925T193259 says "The health route detects this and reports 503, but detection
+    does not repair the client". The second clause is right. The first is true only for
+    a caller that waits past five seconds; the container healthcheck never receives the
+    503 because its own timeout is identical to the route's budget. That record's stated
+    unknown - which await held the client - is answered above.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  execution_phase: "4"
+  the_stalled_backend:
+    read_from: pg_stat_activity, via a separate connection opened inside the wedged container
+    state: idle in transaction
+    wait_event: Client/ClientRead
+    held_for: 69 seconds
+    statement: 'SELECT create_at FROM "user" WHERE user_id = $1 LIMIT 1'
+    unique_to: lib/auth/link-account-store.ts memberCreatedAt
+    called_only_from: lib/auth/link-account.ts planWithin
+    blocked_by_locks: "0 - pg_blocking_pids returned no pairs, so this was not lock contention"
+  the_nested_acquire:
+    outer: store.transaction in lib/auth/link-account.ts planWithin
+    inner: deps.resolveStanding -> lib/v2/subscription.ts resolveSubscription and hasEverPaid
+    shared_client: lib/db/index.ts, max 1
+    call_sites_wired_that_way:
+      - "pages/api/auth/link/callback/[provider].ts"
+      - pages/api/auth/link/merge/preview.ts
+      - pages/api/auth/link/merge/confirm.ts
+  reproduction:
+    first_failure_utc: "07:40:47 - docker health log exit=-1"
+    second_failure_utc: "07:44:25 - after a recreate, on the next authorization"
+    load_generated_by_me: none on either occasion
+    database_during_wedge: "a fresh client in the same container ran select 1 in 120 ms and again in 138 ms"
+    recovery: "docker compose --profile full up -d --force-recreate --no-deps fe, twice"
+  healthcheck_arithmetic:
+    route_budget: "pages/api/health.ts, HEALTH_DB_TIMEOUT_MS ?? 5000"
+    docker_probe: "Dockerfile HEALTHCHECK --timeout=5s"
+    measured_response: "503 at 5.004 to 5.010 s"
+    health_log_exit_codes: "-1, the probe killed, three consecutive"
+  repository:
+    head: "c0b5b87"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 68
+    pushed: nothing
+  application:
+    repository: mootech-fe
+    head: "626c9c5"
+    branch: feat/mumate-login-identity-s1
+    remote_equals_local: true
+    note: >-
+      626c9c5 is the parallel session's work - stage timing and a bounded LINE token
+      exchange. It is instrumentation and a different safety bound; it does not address
+      the nested acquire described here. I read it in git and make no claim about it
+      beyond that.
+  shadow:
+    image: 08285cca7f69ffa28d32eb8c8b6388811d161dda-staging
+    state_at_this_record: healthy after recreate
+    hazard: will wedge again on the first authorization that reaches a collision
+
+the_fix_i_would_write:
+  shape: >-
+    Move the READ of the paid signals inside the transaction and keep the RULE where it
+    is. lib/v2/subscription.ts already exports pure resolvers - toSubRows,
+    resolveMembershipFromRows, decidesWithoutLegacy - so the transaction can read
+    member_subscription and member_payment through tx.execute and feed those functions.
+    MergeDeps.resolveStanding then disappears entirely, and this class of bug is gone by
+    construction rather than by remembering not to write it.
+  why_not_simply_raise_max: >-
+    Raising max would hide this defect rather than remove it, and it would hide it in
+    the direction that ships: the deadlock would become an intermittent hang whenever
+    enough merges ran at once.
+  the_test_that_should_have_existed: >-
+    A fake store whose transaction models a pool of exactly ONE slot, with the standing
+    resolver required to take the same slot. Against the current code that test hangs;
+    against the fix it passes. Without it, no number of assertions means anything about
+    this class.
+
+unresolved:
+  - >-
+    The nested acquire is unfixed and the shadow carries it.
+  - >-
+    HEALTH_DB_TIMEOUT_MS equals the Docker probe timeout, so the 503 never reaches the
+    healthcheck. One environment variable, and it belongs to the infrastructure lane.
+  - >-
+    The merge offer is unreachable for a member whose account already holds that
+    provider. Screen affordance, outside slice 4.
+  - >-
+    HQ holds my wrong attribution of the wedges to max 1.
+  - >-
+    Carried unchanged - the recovery gap for a wedged client, the unlink route's
+    last-method rule, the 1,783 dead rows, iOS, collision at production scale,
+    member_missing, nothing stops a member unlinking the provider they are signed in
+    with, the mission-timing defect at ConnectedScreen.tsx, connect_google in the
+    engine, the three .assets/mumate/slice2-* dumps, the AWS bucket s3-ps-cdn, and
+    Vercel Preview resolving to the production database.
+
+next_action:
+  action: >-
+    The owner decides whether slice 4's merge planning is restructured to read the paid
+    signals inside the transaction. Until it is, nobody should walk the collision flow
+    on the shadow, because reaching it takes the container down. Do not touch
+    production, do not flip constants/api/endpoint.ts, do not push, and do not open a
+    pull request without his word.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - >-
+      A grep for deps.resolveStanding inside a store.transaction body returns nothing
+      once the fix lands.
+    - constants/api/endpoint.ts is still absent from mootech-fe's diff against origin/main.
