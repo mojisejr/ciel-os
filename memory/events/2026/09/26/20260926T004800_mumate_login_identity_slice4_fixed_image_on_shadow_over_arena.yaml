@@ -1,0 +1,146 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T004800_mumate_login_identity_slice4_fixed_image_on_shadow_over_arena
+type: closeout
+recorded_at: 2026-09-26T00:48:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Put the build that removes the nested-acquire deadlock on the shadow, serving from the
+    rehearsal database rather than production, so phase 8c can be walked without a member's
+    data at stake.
+  scope:
+    - The owner's push, and the image built from that exact revision.
+    - The deploy on the shadow, and proof of which image and which database it serves.
+  out_of_scope:
+    - Phases 8c and 8d. Not walked.
+    - Production, traffic, constants/api/endpoint.ts, and any pull request for this lane.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "4"
+  execution_phase: "8b-fix-deployed"
+  completed:
+    - >-
+      THE OWNER PUSHED IT, and the reason is recorded rather than implied: mootech-fe's
+      pre-push hook runs verify-architecture as a hard gate, and that gate is RED on four
+      violations in pages/v2/fortune/sage.tsx, pages/v2/shop/checkout.tsx,
+      pages/v2/shop/qrcode.tsx and features/v2-shell/components/AppHeader.tsx - none of
+      them files this lane has ever touched. So the push needed --no-verify, which skips
+      gitleaks with it. gitleaks was therefore run against that single commit by hand
+      first: 1 commit scanned, no leaks found. origin/feat/mumate-login-identity-s1 and
+      local HEAD are both 868632e0832231d76d0dbcb69cc378e5bb3d24bc.
+    - >-
+      THE IMAGE WAS BUILT FROM THAT REVISION AND NOTHING ELSE. container-build is
+      workflow_dispatch only by owner decision of 2026-09-19 because CI minutes are paid;
+      run 36168587424 on ref feat/mumate-login-identity-s1 with push=true and
+      target=staging completed successfully and published
+      ghcr.io/mojisejr/mootech-fe:868632e0832231d76d0dbcb69cc378e5bb3d24bc-staging.
+    - >-
+      THE SHADOW RUNS IT AND SERVES FROM THE ARENA. bin/deploy.sh recreated only fe;
+      ops-status reports fe configured and running at the same tag, healthy, /health.sha
+      868632e08322, with be and bazi untouched at their existing revisions. /api/health
+      through app.staging.mumate.co returns 200, db ok, dbLatencyMs 1, sha 868632e - a
+      direct connection to the arena, not the pooler, and arena.sh status still reports
+      "FE ชี้: สนามซ้อม".
+    - >-
+      THE ARENA'S SHAPE IS WORTH RECORDING, measured as aggregates with no row read: 5,880
+      provider rows across 4,981 accounts; 488 accounts hold two or more providers; LINE
+      3,007 rows; Google 2,215 rows of which 1,787 are spelled GOOGLE and 428 google -
+      the asymmetry revision 0.2 recorded, still present; 2,444 rows are ya29-shaped, and
+      428 identities are shorter than 32 characters, the same count as the lowercase
+      google rows, which is a coincidence worth nobody's time tonight but is written down
+      rather than left half-noticed.
+  not_completed:
+    - >-
+      PHASE 8c HAS NOT RUN. No collision has been walked, no merge offer has been seen, and
+      no identity has moved anywhere.
+    - >-
+      THE COLLISION PAIR IS NOT STAGED YET, and the reason is a fact about the snapshot:
+      it is from 2026-09-19, before slice 3 linked the owner's second provider on 09-25. If
+      his two identities were separate accounts then, the collision exists in the arena
+      already; if the provider slice 3 linked was unowned - which is what slice 3's own DoD
+      describes - then his LINE identity is absent from the arena entirely and pressing
+      connect would plainly link it rather than collide. Which of those is true cannot be
+      determined without identifying his account, and I have not asked for that identifier
+      or read a row to guess it.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  execution_phase: "8b-fix-deployed"
+  application:
+    repository: mootech-fe
+    branch: feat/mumate-login-identity-s1
+    commit: "868632e0832231d76d0dbcb69cc378e5bb3d24bc"
+    pushed_by: owner, with --no-verify
+    secret_scan: gitleaks run by the agent against that commit, no leaks found
+    gate_state: verify-architecture red on four pre-existing violations outside this lane's files
+  image_build:
+    workflow: container-build
+    run_id: "36168587424"
+    inputs: push=true, target=staging
+    conclusion: success
+    image: ghcr.io/mojisejr/mootech-fe:868632e0832231d76d0dbcb69cc378e5bb3d24bc-staging
+  deployment:
+    command: bin/deploy.sh FE_TAG=868632e0832231d76d0dbcb69cc378e5bb3d24bc-staging --profile full
+    fe_recreated: true
+    others_untouched: be 0705378, bazi 722cdf1, caddy, alloy
+    health_public: "200 · db ok · dbLatencyMs 1 · sha 868632e"
+    serving_from: the arena (pgtmp), confirmed by arena.sh status
+    host_after: "disk used 16% · mem 1298/3915MB"
+  arena_shape:
+    provider_rows: 5880
+    accounts_with_any_provider: 4981
+    accounts_with_two_or_more_providers: 488
+    line_rows: 3007
+    google_rows: "2215 total - 1787 GOOGLE, 428 google"
+    ya29_shaped: 2444
+    identities_shorter_than_32: 428
+    method: aggregate counts only; no id_token, email or name was selected
+  repository:
+    head: "2be59e4"
+    branch: hq/20260921
+    working_tree: this-event-only
+
+unresolved:
+  - >-
+    Whether the owner's two identities collide in this snapshot is unknown, and settling it
+    needs either his own account identifier or one deliberate link inside the arena first.
+  - >-
+    The arena is a direct connection, so this deployment proves nothing about the
+    transaction pooler - and the pooler is where production's own pool behaviour lives.
+  - >-
+    The four verify-architecture violations remain, so every push from this repository
+    still needs --no-verify and still skips gitleaks with it. They belong to other lanes'
+    files and are not this lane's to fix.
+  - >-
+    Carried unchanged - the off-platform backup layer is one six-day-old file with no timer
+    running, a real restore has never been performed, the merge offer is unreachable for a
+    member who already holds both providers, HQ holds this session's earlier wrong
+    attribution of the wedges to max 1 under load, the 1,783 dead rows, iOS, collision at
+    production scale, member_missing, nothing stops a member unlinking the provider they
+    are signed in with, the mission-timing defect at ConnectedScreen.tsx, connect_google in
+    the engine, the three .assets/mumate/slice2-* dumps, the AWS bucket s3-ps-cdn, and
+    Vercel Preview resolving to the production database.
+
+next_action:
+  action: >-
+    Stage the collision pair inside the arena, then walk phase 8c. The staging path that
+    needs nothing from the owner but one ordinary member action: he signs in on the staging
+    site with one provider and presses connect for the other. If that collides, 8c has
+    already happened. If it links plainly instead, the row it just created is identifiable
+    with no personal data at all - it is the only user_provider row whose create_at is
+    today, since the snapshot is from 09-19 and nothing else writes here - so it can be
+    moved to a fresh empty account by one statement, which makes the collision
+    deterministic and leaves the reversal one statement as well.
+  acceptance_check:
+    - Nothing outside the arena is written at any point.
+    - The collision, once staged, is reversible by a single statement that is recorded before it is needed.
+    - The owner sees a merge offer that states which account survives and what the other loses.
