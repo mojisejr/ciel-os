@@ -1,0 +1,208 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T110012_mumate_login_identity_db_pool_driver_defaults_correction
+type: closeout
+recorded_at: 2026-09-25T11:00:12+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Correct the mechanism recorded in the 10:07 database-pool fault record before
+    another lane acts on it. That record says the client has no idle_timeout, no
+    connect_timeout and no max_lifetime. Two of those three are postgres.js
+    defaults that were in force the whole time, which rules out the story the
+    record tells about why the connection was never replaced. Written now because
+    the owner has approved handing the repair to the infrastructure lane, and the
+    repair would otherwise be justified by a false premise.
+  scope:
+    - What the driver's defaults actually are, read from the installed source.
+    - The grep trap that produced the wrong reading.
+    - What the correction rules out, and the mechanism that survives it.
+    - Two further defects found while researching the repair.
+  out_of_scope:
+    - The repair itself. Owner-approved as the infrastructure lane's work, not this lane's.
+    - Editing lib/db/index.ts, pages/api/health.ts or any test. Untouched by this record.
+    - Slice 4, production, and the flip.
+
+outcome:
+  # Not terminal scope - names slice 3 of a plan whose last declared slice is 5 -
+  # so `recorded` raises no warning, on the reading of read.ts:510-512 and 561-587
+  # that aa54c29 states.
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      TWO OF THE THREE MISSING BOUNDS WERE NEVER MISSING. Read from the installed
+      driver's own defaults at node_modules/postgres/src/index.js:447-463, version
+      3.4.9: connect_timeout defaults to 30 seconds, max_lifetime defaults to
+      60 * (30 + random * 30) seconds - a randomised 30 to 60 minutes - and
+      keep_alive defaults to 60 seconds. All three were in force. Only idle_timeout
+      is genuinely absent, defaulting to null. And max defaults to 10, so `max: 1`
+      is not merely a low setting but an explicit tenfold reduction.
+    - >-
+      THE GREP TRAP, worth recording because it is repeatable. index.js:152-154
+      really does read `max: 1, idle_timeout: null, max_lifetime: null`, and it is
+      the first hit for any of those words in the file. It is the driver's internal
+      LISTEN connection, not its defaults. A reader who greps and stops has
+      evidence for exactly the wrong conclusion.
+    - >-
+      WHAT THE CORRECTION RULES OUT. The container had been up about five hours
+      when it wedged - started 2026-09-24T21:53:20Z, first failed health check
+      2026-09-25T03:00:07Z. With max_lifetime defaulting to 30-60 minutes, that one
+      connection should already have been recycled five to ten times. "Nothing
+      detects a dead socket and nothing replaces it" is therefore not what
+      happened, and must not be repeated.
+    - >-
+      THE MECHANISM THAT SURVIVES, and it still ends at `max: 1`. Every one of the
+      36 API routes serialises through a single connection. The measurement stands:
+      TCP to the pooler connected in 25 ms while established sockets to that port
+      were ZERO, so the connection was gone rather than hung. What the driver then
+      failed to do was dispatch or reject the queued queries. connect_timeout
+      bounds one attempt to open a socket; it does not bound a query already
+      waiting in the queue. That is why the symptom was an unbounded silent wait
+      with an empty log rather than an error.
+    - >-
+      A SECOND DEFECT, in a route built to catch exactly this. pages/api/health.ts
+      awaits db.execute(select 1) inside try/catch with NO timeout, so a rejection
+      answers 503 and a HANG answers nothing at all. Its 503 branch is unreachable
+      under the only database failure this stack has actually produced. Docker's
+      HEALTHCHECK --timeout=5s killed the probe, which is why `unhealthy` was the
+      single signal anywhere.
+    - >-
+      A THIRD DEFECT, and it is this round's theme once more. The test cited for
+      that 503 branch, scripts/health-route.test.ts:46-50, simulates an unreachable
+      database as Promise.reject(new Error('ECONNREFUSED')). Its own header claims
+      the bug-class "a health endpoint that is green while the app cannot serve a
+      single request". The real fault was never green, it was silent, and a
+      never-settling promise is not exercised anywhere in that file. The test proves
+      the rejection path and was read as covering the hang.
+    - >-
+      THE PRODUCTION CLIENT COUNT IS UNKNOWN, WHICH MAKES `max` UNMEANINGFUL AS
+      WRITTEN. lib/db/index.ts caches the client on globalThis only when NODE_ENV is
+      not production, so in a container nothing shares it, and the built module
+      appears in TWO server chunks - .next/server/chunks/1752.js and 7864.js - each
+      constructing its own client with `max: 1`. Nobody knows whether a container
+      holds one client or several, so no value of max can be defended until that is
+      measured. This is why making the client a singleton must precede raising max.
+    - >-
+      AN OPERATIONAL FACT THAT EXPLAINS WHY IT PERSISTED. mumate-infra's compose
+      gives fe `restart: unless-stopped` and no autoheal, and Docker does not
+      restart a merely unhealthy container. The wedge survived until the owner
+      recreated fe by hand, by design rather than by accident.
+
+  not_completed:
+    - >-
+      NOTHING REPAIRED. lib/db/index.ts, pages/api/health.ts and
+      scripts/health-route.test.ts are untouched by this record and absent from its
+      diff. The owner approved the repair as work for mumate-infra-move-001, so
+      doing it here would put one lane's change in another lane's history on a
+      shared branch - the way a lane's own commit count was corrupted earlier in
+      this round.
+    - >-
+      TWO NUMBERS ARE STILL UNMEASURED and neither can be settled from this
+      repository: the Supabase transaction pooler's configured pool size, which is
+      in the dashboard and needs the owner, and the real client count inside a
+      running container, which needs established sockets to :6543 counted on the
+      shadow after traffic across several API routes. The shadow shares production's
+      database, so the pool budget being spent is production's.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  corrects: memory/events/2026/09/25/20260925T100736_mumate_login_identity_fe_wedged_on_one_db_connection.yaml
+  driver:
+    package: postgres
+    version: 3.4.9
+    defaults_read_from: node_modules/postgres/src/index.js:447-463
+    defaults:
+      max: 10
+      idle_timeout: null
+      connect_timeout: 30
+      max_lifetime: 60 * (30 + random * 30) seconds, 30-60 minutes
+      keep_alive: 60
+      prepare: true
+    grep_trap: node_modules/postgres/src/index.js:152-154, the internal LISTEN connection
+    connection_option: >-
+      index.js:486 spreads o.connection into startup parameters, so
+      connection: { statement_timeout } is supported BY THE DRIVER; whether
+      Supavisor transaction mode accepts it is unverified
+  application:
+    repository: mootech-fe
+    local_head: "d43d582"
+    working_tree: clean
+    files_named_and_not_touched:
+      - lib/db/index.ts
+      - pages/api/health.ts
+      - scripts/health-route.test.ts
+    client_construction: "postgres(DATABASE_URL, { prepare: false, ssl: 'require', max: 1 })"
+    globalthis_cache_guard: "process.env.NODE_ENV !== 'production'"
+    built_chunks_constructing_a_client:
+      - .next/server/chunks/1752.js
+      - .next/server/chunks/7864.js
+    importers_of_lib_db: 65 files, 36 of them under pages/api
+    other_client_constructions: >-
+      test scripts only, against TEST_URL with their own max values; no second
+      application client exists
+  container:
+    healthcheck: "HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 against /api/health"
+    compose_restart_policy: unless-stopped, no autoheal
+  repository:
+    head: "052e245"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 54
+    origin_main: "f58cc9c"
+    pushed: nothing
+
+owner_decision_carried:
+  what: >-
+    The owner approved the repair as the infrastructure lane's work and asked for
+    it to be handed over so that lane can begin, rather than done here.
+  quoted_verbatim: "มันเป็น lane ของ infra ถูกป่ะ งั้นผม go"
+  language: Thai
+  observed_directly_by_this_session: true
+  where_it_belongs: >-
+    mumate-infra-move-001, as a further item of slice 3 in the manner of 3c, 3d and
+    3e. Verified route: the 3e authorization records evidence.slice "3" at
+    plan_revision 0.4, and the plan declares only `### 3.`, so this needs no new
+    declared slice and no plan revision. A heading spelled `### 3f.` would be
+    dropped by the parser exactly as `### 4b.` is; the sub-letter belongs in the
+    event name and the slice body, never in a heading the parser must read.
+  what_this_session_did_with_it: >-
+    Recorded the correction the brief depends on, then handed the work over. This
+    lane wrote no application code.
+
+unresolved:
+  - >-
+    The Supabase transaction pooler's pool size, and the real client count in a
+    running container. Both must be known before any value of max is chosen,
+    because the shadow spends production's pool budget.
+  - >-
+    Whether the shadow may be deliberately wedged to prove a 503 appears once the
+    health route is bounded. It shares production's database, so this is the
+    owner's call.
+  - >-
+    Whether other tests in this repository simulate an unreachable dependency by
+    rejecting where the real failure hangs. The health route test is one instance;
+    nobody has looked for the rest.
+  - >-
+    Everything carried by aa54c29 stands, and slice 4 remains unauthorized.
+
+next_action:
+  action: >-
+    The infrastructure lane records its own decision event for this work at
+    evidence.slice "3", then repairs in the order established here: make the client
+    a singleton first so that max means something, then measure, then set the pool
+    bounds, then bound the health route, then write the test that exercises a hang
+    rather than a rejection, then prove it on the shadow. This lane's next step is
+    the slice-4 decision event, which is unaffected by any of it.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - >-
+      lib/db/index.ts, pages/api/health.ts and scripts/health-route.test.ts are
+      absent from this lane's diff and from git status.
