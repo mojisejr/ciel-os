@@ -1,9 +1,9 @@
 # MuMate — parallel DigitalOcean migration with a controlled domain flip
 
 **Workstream:** `mumate-infra-move-001`
-**State:** paused
+**State:** active
 **Execution lane:** single
-**Plan revision:** 0.5
+**Plan revision:** 0.6
 **Execution phase:** 3
 **Execution state:** idle
 **Parallelism:** proposed
@@ -348,6 +348,59 @@ The slice-3 closeout also reports the flip preconditions for slice 4: the
 launch team's merge rate over the previous two days, whether a 24-hour release
 freeze is agreed, and how the final Bazi commit will be named given that
 `pdf-dev` receives direct pushes without pull requests.
+
+## Revision 0.6 — a rehearsal database, because every risky step so far has been rehearsed on production
+
+The shadow is a separate FE, a separate BE and a separate Bazi engine, but its
+`DATABASE_URL` comes from the launched stack's own environment: there is no
+staging database anywhere in this repository, and none of the four values this
+lane records as needing to differ on the shadow is that one. So every rehearsal
+this lane and the login lane have run has read, and nearly written, production's
+own member rows. The login lane's slice 4 is the first step that moves member
+data, and the two steps after it are wider.
+
+This revision adds one sub-slice. It does not resume the migration, 3c, or the
+live flip.
+
+**3g. A rehearsal database the shadow can serve from (planned, not started).**
+The tooling for this already exists and is nearly all of the work: `bin/backup.sh`
+writes a nightly production dump to Spaces, and `bin/restore-verify.sh --keep`
+restores the latest one into the `pgtmp` service and deliberately leaves it
+running so another service can point at it — the same mechanism slice 2's BE
+dogfood used. What 3g adds is making that a named, repeatable arena rather than a
+side effect of a backup test, and pointing the shadow FE at it.
+
+Why not a Supabase branch: a branch is a genuinely isolated instance and a
+persistent branch is intended for exactly this, but it carries no production data
+without the Point-in-Time Recovery add-on, priced per retention week for
+something the nightly dump already produces. A branch's one real advantage is
+that it keeps the transaction pooler in the test path, which `pgtmp` cannot; that
+is deferred until a rehearsal needs the pooler, and slice 4's flip rehearsal may.
+
+DoD 3g:
+
+- One command stands the arena up from the latest backup and reports the same
+  evidence the restore proof already requires: more than 100 tables and `user`
+  rows greater than zero. A manual `psql` session does not satisfy this — what is
+  delivered is the command, because the arena's value is that it can be rebuilt
+  whenever a risky step needs one.
+- The shadow FE serves from the arena: `/api/health` answers `200` with database
+  OK and the expected image sha, on the loopback and through the public staging
+  hostname.
+- Returning the shadow FE to production's database is one value and one service
+  recreate, written into the closeout so it can be reversed without reading this
+  plan.
+- The arena holds real member data and therefore carries a deletion date:
+  removed when the login lane's slice 4 closes or within seven days, whichever
+  comes first, and rebuilt on demand afterwards. The date is recorded.
+- Disk headroom is confirmed before the restore, and the existing disk alert is
+  not left firing afterwards.
+- Nothing else moves: no DNS, no traffic, no production deployment, no provider
+  setting, no secret value in any repository file, and no container belonging to
+  another lane.
+
+The arena is this lane's to build and other lanes' to consume. A lane that needs
+one asks; it does not restore its own.
 
 ### 4. A rehearsed two-hour maintenance flip moves the real domains
 

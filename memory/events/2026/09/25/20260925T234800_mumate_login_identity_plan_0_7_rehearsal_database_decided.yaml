@@ -1,0 +1,120 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T234800_mumate_login_identity_plan_0_7_rehearsal_database_decided
+type: decision
+recorded_at: 2026-09-25T23:48:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Authorize plan revision 0.7 slice 4: insert a rehearsal-database phase between 8b
+    and 8c so the collision is walked against an isolated copy of production before it
+    is walked against production itself, and record the owner's three decisions that
+    settle where that copy comes from, how long it may live, and which lane owns it.
+
+outcome:
+  status: decided
+  parallelism: approved
+  slice: "4"
+  decision: >-
+    The owner asked, unprompted, whether Supabase branching would let staging be
+    exercised safely, and named the alternative himself: a spare container with a
+    database on DigitalOcean holding data identical to production. He asked for
+    research before a recommendation, and said that if it worked he considered a
+    staging database worth the investment in its own right - "เวลาเราจะทดสอบ อะไรที่
+    เสี่ยงๆ มากๆ" - especially once main flips to DigitalOcean. That framing is why this
+    is a plan revision and not a one-off setup step.
+
+    WHAT THE RESEARCH FOUND, and what changed the recommendation. Supabase branching
+    creates a separate project per branch - its own database, URL and credentials - and
+    a persistent branch is intended for a long-lived staging environment. It fits. But
+    a branch carries NO production data: Supabase states plainly that it is not cloning
+    production data, and the dashboard's "Include data" option requires the
+    Point-in-Time Recovery add-on, priced per retention week. That is a recurring cost
+    for something bin/backup.sh already produces nightly. Meanwhile the alternative the
+    owner named turned out to be four fifths built already: bin/restore-verify.sh
+    --keep restores the latest production dump into the pgtmp service and deliberately
+    leaves it running so another service can point at it, which is what slice 2's BE
+    dogfood did. The recommendation followed the evidence rather than the newer
+    technology.
+
+    THE OWNER'S DECISIONS. He took pgtmp for slice 4; declined the Supabase branch for
+    now on cost ("ประหยัดเอาไว้ก่อน"); refused the PITR add-on outright; accepted that
+    DoD 4 may be satisfied by a rehearsal on the copy; agreed the arena belongs to the
+    infrastructure lane; and on retention he did not simply accept the expiry rule as
+    offered - he required that the copy be re-creatable at will, because the arena's
+    point is to be there on every future risky step and not to be one kept snapshot.
+    Decision 13 is written from that correction.
+
+    WHAT THIS DOES NOT AUTHORIZE. No production walk, no traffic flip, no push, no pull
+    request, no change to constants/api/endpoint.ts, and no Supabase branch. Phase 8c
+    remains forbidden until the arena stands and the fixed image is deployed on it.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  execution_phase: "4"
+  owner_decisions_added:
+    "12": >-
+      Acceptance may be proved on an isolated copy of production, and the copy comes
+      from our own backup rather than from a paid data-cloning option.
+    "13": >-
+      The arena is a tool that is rebuilt, not a copy that is kept: deleted when slice 4
+      closes or within seven days, whichever comes first, and stood up again on demand.
+    "14": >-
+      The arena belongs to mumate-infra-move-001; this lane consumes it and owns only
+      the account staging and the member-flow proof.
+  phase_inserted: "8b2 - the shadow serves from a database that is not production"
+  supabase_branching_facts:
+    isolation: a branch is a separate instance with its own database, URL and credentials
+    data: >-
+      no production data by default, by Supabase's own statement; the dashboard's
+      Include data option requires the Point-in-Time Recovery add-on
+    schema: >-
+      cloned from the base project - from migrations where they exist, otherwise a full
+      schema dump, so the absence of supabase/migrations in mootech-fe is not the
+      obstacle this session first assumed
+    verified_how: >-
+      Supabase documentation read this session; labelled as external evidence. Nothing
+      in this decision rests on it beyond the cost comparison the owner made.
+  local_facts_that_decided_it:
+    - >-
+      mumate-infra/bin/restore-verify.sh already restores the newest production dump
+      into pgtmp and its --keep flag exists so a service can point at it.
+    - >-
+      mumate-infra/env/README.md sources fe.env from the launched stack's environment,
+      and env/fe.env.example lists only NEXTAUTH_URL, HOST, NEXT_PUBLIC_BACKEND_URL and
+      BAZI_BASE_URL as values that must differ on the shadow - DATABASE_URL is not among
+      them, and no staging database exists anywhere in that repository.
+    - >-
+      mootech-fe/testenv already restores and anonymizes a dump into a local Postgres
+      and stubs LINE, which is why the equivalent local proof was available today.
+  repository:
+    head: "3e80899"
+    branch: hq/20260921
+    working_tree: this-event-and-two-plans
+
+unresolved:
+  - >-
+    pgtmp is a direct connection, so no test path in this workstream has the transaction
+    pooler in it. A pooler-specific fault would not reproduce on the arena.
+  - >-
+    The arena is a snapshot. Data drift between it and production is expected and is not
+    an error.
+  - >-
+    Whether the merge offer needs a screen affordance for a member who already holds
+    both providers is still open; inside the arena it is arranged directly instead.
+
+next_action:
+  action: >-
+    mumate-infra-move-001 stands up sub-slice 3g, then this lane deploys the fixed image
+    on the shadow and stages the collision pair inside the arena. Phase 8c does not run
+    before both.
+  acceptance_check:
+    - The shadow FE reports database OK against the arena, not production.
+    - The arena's deletion date is recorded.
+    - bun run wake reports no validation error.

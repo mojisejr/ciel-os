@@ -1,0 +1,112 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T234802_mumate_infra_move_slice3g_rehearsal_database_authorized
+type: decision
+recorded_at: 2026-09-25T23:48:02+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Authorize plan revision 0.6 slice 3: add sub-slice 3g, a rehearsal database the
+    shadow FE can serve from, built from the existing backup and restore tooling rather
+    than from a paid data-cloning option, and return this lane to active because a paused
+    workstream cannot be handed work.
+
+outcome:
+  status: decided
+  parallelism: approved
+  slice: "3"
+  decision: >-
+    The owner asked whether Supabase branching could give staging a safe database, named
+    the alternative himself - a spare container with a DigitalOcean database holding data
+    identical to production - and asked for research before a recommendation. He then
+    chose pgtmp, declined the Supabase branch for now on cost, refused the
+    Point-in-Time Recovery add-on, and agreed this arena belongs to this lane rather
+    than to the login lane that needs it first. He confirmed disk headroom and dump
+    freshness himself before this was recorded.
+
+    WHY THIS LANE AND NOT THE LOGIN LANE. Revision 0.5 already drew the boundary: the
+    FE's database client affects every route, so its runtime behaviour is this lane's.
+    Where the shadow FE's DATABASE_URL points is the same kind of fact. The login lane
+    asks for an arena; it does not restore one.
+
+    WHY THE COST COMPARISON WENT THIS WAY. A Supabase branch is genuinely isolated and a
+    persistent branch is intended for a staging environment, but it carries no production
+    data without the PITR add-on, which is priced per retention week for what
+    bin/backup.sh already writes nightly. bin/restore-verify.sh --keep already restores
+    that dump into pgtmp and leaves it running for a service to point at - the mechanism
+    slice 2's BE dogfood used. The branch's one real advantage, keeping the transaction
+    pooler in the test path, is deferred until a rehearsal needs it.
+
+    THE OWNER'S OWN CORRECTION, and the reason 3g delivers a command rather than a
+    database. Offered a retention rule, he did not simply accept it: he required the copy
+    be re-creatable at will, because the arena's value is being available for every
+    future risky step - he named the flip to DigitalOcean specifically. So the deletion
+    date stands AND what is delivered is the command that rebuilds it.
+
+    WHAT THIS DOES NOT AUTHORIZE. No resumption of 3c, no flip, no DNS, no traffic, no
+    production deployment, no provider setting, no secret value in any repository file,
+    and no container belonging to another lane.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "3"
+  execution_phase: "3"
+  sub_slice: "3g - a rehearsal database the shadow can serve from"
+  state_change: paused -> active, because a paused workstream cannot be given work
+  tooling_that_already_exists:
+    - bin/backup.sh writes the nightly production dump to Spaces
+    - >-
+      bin/restore-verify.sh --keep restores the newest dump into pgtmp and leaves it
+      running so another service can point at it; its own comment records that --keep
+      exists for the slice 2 BE dogfood
+    - >-
+      pgtmp is already in docker-compose.yml under the restore-verify profile with a
+      self-signed certificate and no host port, and ran on the shadow during slice 3 at
+      30 MB
+  why_the_shadow_writes_production_today:
+    - >-
+      env/README.md sources fe.env from the launched stack's environment
+    - >-
+      env/fe.env.example names only NEXTAUTH_URL, HOST, NEXT_PUBLIC_BACKEND_URL and
+      BAZI_BASE_URL as values that must differ on the shadow; DATABASE_URL is not among
+      them and no staging database exists in this repository
+    - >-
+      This session did not read any environment value. The owner confirmed the conclusion
+      himself.
+  owner_confirmed_preconditions:
+    disk_headroom: confirmed by the owner, 2026-09-25
+    dump_freshness: confirmed by the owner, 2026-09-25
+  repository:
+    head: "3e80899"
+    branch: hq/20260921
+    working_tree: this-event-and-two-plans
+
+unresolved:
+  - >-
+    pgtmp is a direct connection, so the transaction pooler is in no test path. A
+    pooler-specific fault will not reproduce on the arena.
+  - >-
+    The arena holds real member data on the droplet for as long as it lives. The
+    retention rule is the mitigation and nothing enforces it automatically.
+  - >-
+    Carried by this lane - 3c under the quiet gate, the payment test webhook from the
+    team, Vercel Preview resolving to the production database, HEALTH_DB_TIMEOUT_MS equal
+    to the Docker probe timeout so the 503 never reaches the healthcheck, and
+    mootech-fe origin/main failing its own verify-architecture pre-push gate.
+
+next_action:
+  action: >-
+    With the owner running the commands on the shadow host: confirm disk, stand the arena
+    up from the latest backup, verify the table and user-row counts, point the shadow FE
+    at it, prove /api/health reports database OK on loopback and through the public
+    staging hostname, and record the deletion date and the one-value path back to
+    production.
+  acceptance_check:
+    - The arena reports more than 100 tables and user rows greater than zero.
+    - The shadow FE answers database OK against the arena rather than production.
+    - The command that rebuilds the arena is in the repository, not only in a session.

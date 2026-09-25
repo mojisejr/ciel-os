@@ -3,7 +3,7 @@
 **Workstream:** `mumate-login-identity-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.6
+**Plan revision:** 0.7
 **Execution phase:** 4
 **Execution state:** idle
 **Parallelism:** proposed
@@ -380,6 +380,97 @@ DoD 4 is unchanged in its safety rules and now additionally requires 8a through
 8d. A phone retry is forbidden until 8a proves healthy recovery and the
 Connected Accounts read endpoints answer again. This revision authorizes neither
 an FE recreate, a deployment, a provider-console change, nor a retry by itself.
+
+## Revision 0.7 — slice 4 is the first slice that writes member data, so it rehearses somewhere else first
+
+Revision 0.6 gated the collision attempt on runtime readiness, and 8a and 8b
+both passed. What 0.6 did not question is where the rehearsal happens: the
+shadow FE serves production's own database, so every attempt so far has written
+— or nearly written — real member rows. Slice 4 moves a login credential, which
+is the first thing this workstream does that a member would feel, and slices 4b
+and 5 are both wider than that. This revision inserts a rehearsal database
+before the collision is walked, and records what the fix of phase 8b-fix
+replaced.
+
+### What phase 8b-fix removed, and why it is not a tidy-up
+
+The shadow's wedge was slice 4's own code. `planWithin` awaited
+`deps.resolveStanding` from inside `store.transaction`, and all three call sites
+wired that to `resolveSubscription`/`hasEverPaid`, which read through the
+application's shared client. With `max 1` the inner read queued for the
+connection the enclosing transaction was holding: the transaction waited for the
+query, the query waited for the connection, and every other request in the
+container queued behind a transaction that could never end. `MergeDeps.resolveStanding`
+is therefore deleted rather than repaired — standing is read on the
+transaction's own executor through `LinkTransaction.memberStanding`, so the
+shape is unrepresentable instead of forbidden. The rule stays in
+`lib/v2/subscription.ts`: the adapter fetches rows and a new pure
+`resolveStandingFromRows` decides, reusing the selection, the tier verdict, the
+legacy fall-through and the ever-paid predicate already exported there.
+
+`max 1` is the amplifier and not the cause, and the distinction runs both ways.
+With the driver's default of 10 the same code would have found a second
+connection and completed, shipping a latent defect that would have surfaced
+later as intermittent hangs under concurrency with no clean reproduction. That
+it failed totally on a staging container is the good outcome.
+
+### Owner decisions 12-14 (2026-09-25)
+
+12. **Acceptance may be proved on an isolated copy of production, and the copy
+    comes from our own backup.** Supabase branching was researched and does fit:
+    a branch is a separate instance with its own database and credentials, and a
+    persistent branch is meant for exactly this. But a branch carries no
+    production data unless the project holds the Point-in-Time Recovery add-on,
+    which is priced per retention week and buys only what `bin/backup.sh`
+    already produces nightly. So the rehearsal database is our own dump restored
+    into an isolated Postgres. A Supabase persistent branch stays the better
+    long-term answer for one reason — it keeps the transaction pooler in the
+    test path, and no test path has one today — and it is deferred until a
+    rehearsal needs the pooler, which slice 5's flip may.
+13. **The arena is a tool that is rebuilt, not a copy that is kept.** It holds
+    real member data, so it carries an expiry: deleted when slice 4 closes or
+    within seven days, whichever comes first. Its permanence is the command that
+    stands it up again, not the data it currently holds. A rehearsal that cannot
+    be repeated is a one-off, and the reason to build this at all is every
+    risky step after slice 4 — 4b crosses the login surface every member uses,
+    and slice 5 moves traffic.
+14. **The arena belongs to `mumate-infra-move-001`.** It affects every route and
+    every lane, which is the boundary revision 0.6 already drew for the database
+    client. This lane consumes it and owns only the account staging and the
+    member-flow proof. If that lane cannot supply it, this lane waits rather
+    than reaching into infrastructure.
+
+### Phase 8b2 — inserted between 8b and 8c
+
+Before a collision is walked against production rows, the shadow serves from a
+database that is not production.
+
+DoD 8b2, supplied by `mumate-infra-move-001`:
+
+- The shadow host holds a restored copy, verified the way the existing
+  restore proof verifies one: more than 100 tables present and `user` rows
+  greater than zero, from the latest backup rather than a hand-built schema.
+- The shadow FE points at that copy and `/api/health` answers `200` with
+  database OK and the expected image sha.
+- Pointing back at production is one value and one service recreate, stated in
+  the closeout so anyone can reverse it without reading this plan.
+- The copy's deletion date is recorded, per owner decision 13.
+- A manual `psql` session is not the arena. What is delivered is the command
+  that rebuilds it.
+
+### What 8c and 8d now mean
+
+8c and 8d run against the arena first, and DoD 4 accepts that proof (owner
+decision, 2026-09-25). The collision pair is staged inside the copy, which
+removes the obstacle 0.6 left unsolved: the offer can only be started from a
+provider that is not yet linked, and the owner's own account holds both after
+slice 3. Inside a copy that pair is arranged directly and the rehearsal repeats
+as often as it needs to.
+
+Walking the same flow once on production data afterwards is a separate step with
+one remaining unknown — the provider round trip — and it is not a condition of
+slice 4. Nothing about the safety rules in DoD 4 is relaxed: the same row
+counts, the same refusals, the same explicit confirmation.
 
 ## Relationship to existing work
 
