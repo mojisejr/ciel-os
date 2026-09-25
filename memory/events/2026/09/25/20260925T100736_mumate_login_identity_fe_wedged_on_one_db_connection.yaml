@@ -1,0 +1,197 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T100736_mumate_login_identity_fe_wedged_on_one_db_connection
+type: closeout
+recorded_at: 2026-09-25T10:07:36+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record, before it is lost, a fault found while testing slice 3: the whole FE
+    stopped answering any request that touches the database, while still serving
+    pages in 17 milliseconds, with no error in any log. The cause is one line in a
+    shared file this lane does not own. Service was restored; nothing was fixed.
+  scope:
+    - What was observed and measured, with times, so a later reader need not re-derive it.
+    - The mechanism, and why it is worse on a long-running container than on Vercel.
+    - What was done to restore service, and what was deliberately not done.
+  out_of_scope:
+    - Fixing lib/db/index.ts. It is shared by every route in the application and
+      belongs to no slice of this plan.
+    - Slice 3's own test sequence, which resumes after this record.
+    - Production. The fault was observed on the shadow only.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      WHAT THE OWNER SAW. He unlinked Google as step 3 of the agreed sequence, the
+      unlink succeeded, he navigated to another page, and from then on nothing
+      loaded - including the Connected Accounts screen he came back to. He stopped
+      and asked rather than pressing on, which is why the state survived to be
+      measured.
+    - >-
+      IT WAS NOT HIS ACCOUNT AND NOT HIS ACTION'S RESULT. The unlink returned 200
+      and did exactly what it was asked. Every user of the shadow would have seen
+      the same thing at that moment.
+    - >-
+      THE SHAPE OF THE FAULT, which is the part worth remembering: pages answered
+      NORMALLY while every database-backed route hung until the client gave up.
+      /v2/settings/connected returned 200 in 0.0169s and /api/auth/session - which
+      reads no database - returned 200 in 0.0068s, while /api/health, which runs one
+      trivial query, did not answer inside 8 seconds. A reader looking only at the
+      site would have called it up.
+    - >-
+      THE CONTAINER LOOKED FINE BY EVERY ORDINARY MEASURE. RestartCount 0,
+      OOMKilled false, memory 133.6 MiB of 1 GiB, CPU 0.11 percent, and the
+      application log completely empty - no exception, no warning, nothing. Docker
+      reported it `unhealthy`, and that was the only signal anywhere.
+    - >-
+      THE DECISIVE MEASUREMENT. From inside the container, TCP to the database
+      pooler connected in 25 ms - so the network was fine - and yet the count of
+      established sockets to that port was ZERO. The process held 27 file
+      descriptors in total. It was not holding connections and not opening any: it
+      was waiting for one that would never arrive.
+    - >-
+      THE CAUSE, in lib/db/index.ts - `postgres(DATABASE_URL, { prepare: false,
+      ssl: 'require', max: 1 })`. ONE connection for the entire process, and no
+      `idle_timeout`, `connect_timeout` or `max_lifetime`, so nothing detects a dead
+      socket and nothing replaces it. When that single connection stops working,
+      every database request in the application queues behind it forever. There is
+      no failure to log, because nothing fails - it waits.
+    - >-
+      SERVICE WAS RESTORED by recreating fe on the SAME image, which resets the
+      client. /api/health returned 200 in 0.0296s afterwards and
+      /api/auth/link/connections returned its correct 401 in 0.2233s. No image was
+      built, no tag changed, no configuration edited.
+
+  not_completed:
+    - >-
+      NOTHING WAS FIXED. lib/db/index.ts is untouched. It is one commit from
+      2026-06-13 and is imported by every route in the application; changing its
+      pool settings is a whole-application decision that belongs to no slice of
+      this plan and was not authorized.
+    - >-
+      The trigger was not established. See the limits below - the timing is
+      suggestive and the mechanism is not.
+
+  evidence_of_limits:
+    - >-
+      CORRELATION, NOT CAUSE. The first failed health check is 68 seconds after the
+      unlink returned 200, and two checks in between passed. That is suggestive and
+      it is not proof. The mechanism recorded here - a single un-recycled connection
+      - can wedge after any interruption of that one socket, including an idle
+      timeout on the pooler's side, and nothing in the evidence says which happened.
+      It should not be written down later as "the unlink caused it".
+    - >-
+      This is a DIFFERENT fault from the 502 recorded on 2026-09-24 against
+      /api/missions. That one was Caddy reusing a socket node had already closed and
+      never reached the route; this one reaches the route and stops inside it. They
+      share a smell and not a mechanism, and conflating them would send the next
+      reader to the wrong file.
+    - >-
+      Everything here was read from the shadow. Whether production has ever
+      experienced this is unknown and was not investigated.
+
+why_it_matters_beyond_today:
+  the_deployment_shape_decides_the_severity: >-
+    lib/db/index.ts caches the client on globalThis only when NODE_ENV is not
+    production, so in production each module evaluation makes its own client. On
+    Vercel that lands inside a short-lived serverless instance: a wedged connection
+    dies with the instance and the next request gets a fresh one, which is why this
+    has not been a visible problem there. In a long-running container the module is
+    evaluated once and that single connection serves the process for its entire
+    life. Same code, and the failure mode only appears in one of them.
+  which_is_exactly_where_mumate_is_going: >-
+    mumate-infra-move-001 exists to move this application off Vercel and onto a
+    host. The shadow is that host. So this fault is not an oddity of a test
+    environment - it is a preview of the production the infrastructure lane is
+    building, and it will arrive with the move unless the pool settings change
+    first.
+  what_makes_it_dangerous_rather_than_merely_broken: >-
+    It is silent. No exception, no log line, no memory or CPU signature, and pages
+    keep answering in milliseconds. Any check that fetches a page calls the site
+    healthy. Only the container healthcheck noticed, and only because it happens to
+    call a route that touches the database.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: "9a26004"
+    branch: hq/20260921
+    working_tree: this-event-only
+  application:
+    repository: mootech-fe
+    local_head: "d43d582"
+    pushed_head: "49097ffc6dc29296b1115ff531660324d8a2c7eb"
+    working_tree: clean
+    file: lib/db/index.ts
+    introduced_by: "8959e24"
+    introduced_on: "2026-06-13"
+    note: >-
+      One commit in that file's whole history. Shared by every route; not this
+      lane's work and not edited by it.
+  observed_on_the_shadow:
+    image: ghcr.io/mojisejr/mootech-fe:49097ffc6dc29296b1115ff531660324d8a2c7eb-staging
+    container_started: "2026-09-24T21:53:20Z"
+    unlink_google_returned_200_at: "2026-09-25T02:58:59Z"
+    healthcheck_ok_at: ["2026-09-25T02:59:06Z", "2026-09-25T02:59:37Z"]
+    healthcheck_first_timeout_at: "2026-09-25T03:00:07Z"
+    healthcheck_message: "Health check exceeded timeout (5s)"
+    restart_count: 0
+    oom_killed: false
+    memory: 133.6MiB of 1GiB
+    cpu: 0.11%
+    application_log: empty - no exception, no warning
+    page_response: /v2/settings/connected 200 in 0.0169s
+    non_db_api: /api/auth/session 200 in 0.0068s
+    db_api: /api/health no answer within 8s
+    edge_log_status_for: ["/api/profile", "/api/user", "/api/auth/link/connections", "/api/health"]
+    edge_log_status_value: 0
+    tcp_to_pooler: connect OK in 25ms on port 6543
+    established_sockets_to_pooler: 0
+    open_file_descriptors: 27
+  after_recreate:
+    command: docker compose --profile full up -d --force-recreate --no-deps fe
+    image_unchanged: true
+    health: healthy within 12 seconds
+    db_api: /api/health 200 in 0.0296s
+    link_api: /api/auth/link/connections 401 in 0.2233s
+
+unresolved:
+  - >-
+    lib/db/index.ts runs the whole application on one database connection with no
+    idle, connect or lifetime bound. Candidate repair is to give the pool more than
+    one connection and bounds that recycle a dead one. It touches every route, it
+    is not this lane's file, and it needs an owner decision about where it belongs -
+    most plausibly with mumate-infra-move-001, whose move is what makes it bite.
+  - >-
+    Whether production has ever wedged this way. Not investigated.
+  - >-
+    Whether a health signal exists that would have caught this from outside. The
+    container healthcheck did; nothing else did, and a page-fetching monitor would
+    have reported the site healthy throughout.
+  - >-
+    Carried unchanged - slice 3's remaining sequence resumes from step 4, slice 4
+    needs its own decision event, DoD 4's "exactly one row" needs the correction
+    already recorded, iOS is untested, and the shadow shares production's database.
+
+next_action:
+  action: >-
+    The owner resumes the slice-3 sequence at step 4 - look at the screen and
+    confirm LINE now shows as the last method and cannot be unlinked, then link
+    Google in an ordinary browser, not inside the LINE app. This record is
+    deliberately written BEFORE that, at his instruction, so the finding is not
+    lost in the next thing. The database-pool repair is a separate conversation he
+    asked to have afterwards. Do not edit lib/db/index.ts from this lane, do not
+    touch production, and do not flip constants/api/endpoint.ts.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - lib/db/index.ts is absent from `git status` and from this lane's diff.
