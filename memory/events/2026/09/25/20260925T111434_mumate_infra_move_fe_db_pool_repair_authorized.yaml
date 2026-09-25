@@ -1,0 +1,137 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T111434_mumate_infra_move_fe_db_pool_repair_authorized
+type: decision
+recorded_at: 2026-09-25T11:14:34+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Authorize a further item of slice 3: repair the mootech-fe database
+    connection so that a database fault cannot present as an unbounded silent
+    wait, and so that the health route this lane built in slice 1 can report
+    the only failure this stack has actually produced. Scoped to the connection
+    and the health surface; no product behaviour change.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner gave his go in this session on 2026-09-25 after declining to let
+    a relayed go stand. PROVENANCE MATTERS HERE AND IS RECORDED DELIBERATELY:
+    his first "go" was spoken in ciel-os-d9's session, observed by d9, reported
+    to ciel-os-a3, and relayed to this session - three hops. This session
+    refused to start on it, because the instruction it had heard directly from
+    the owner was to stand by, and a peer relay is not the owner's approval
+    however plausible its content. He then gave the go here, in his own turn,
+    along with the two answers that were blocking: the repair takes its own
+    branch provided the merge is safe, and the work proceeds without waiting on
+    the other session, which is told when it is done.
+
+    WHAT IS BEING REPAIRED, verified by this session against origin/main
+    through the GitHub API so that no checkout another lane holds was touched,
+    and confirmed independently of ciel-os-a3's own reading of the working
+    tree. lib/db/index.ts line 11 constructs
+    postgres(DATABASE_URL, { prepare: false, ssl: 'require', max: 1 }) and
+    line 12 caches it on globalThis only when NODE_ENV !== 'production', so
+    production gets no singleton at all. pages/api/health.ts lines 28-31 await
+    db.execute(select 1) inside try/catch with no timeout, so a REJECTION
+    reaches the 503 at line 34 but a HANG never does. scripts/health-route.test.ts
+    line 17 fakes failure as Promise.reject(ECONNREFUSED) - it proves the one
+    path the real fault did not take, while its line 4 header claims the bug
+    class "a health endpoint that is green while the app cannot serve a single
+    request". That is why the defect survived its own test.
+
+    A FALSE EXPLANATION IS EXCLUDED ON PURPOSE. An earlier fault record said
+    lib/db sets no idle_timeout, connect_timeout or max_lifetime. Only
+    idle_timeout is genuinely absent: postgres.js 3.4.9 defaults connect_timeout
+    to 30 s and max_lifetime to a randomised 30-60 minutes, and the code that
+    appears to set all three to null is the driver's internal LISTEN connection,
+    not its defaults. The container had been up five hours, so max_lifetime
+    would have recycled a connection five to ten times; "nothing replaces a dead
+    socket" is therefore not what happened and does not appear in this lane's
+    reasoning. What survives is that max 1 serialises every database route
+    through a single connection, and that connect_timeout bounds opening a
+    socket and never a query already queued - so the failure mode is an
+    unbounded silent wait with an empty log.
+  order_of_repair: >-
+    Singleton first, and this is not stylistic. The built module appears in TWO
+    server chunks on the running shadow image - /app/.next/server/chunks/7864.js
+    and 1752.js both construct a client, verified by this session inside the
+    container - so a container may hold two clients, and raising max before the
+    singleton is fixed spends an unknown multiple of the intended budget against
+    a pooler shared with PRODUCTION. Then idle_timeout, which is the direct
+    repair for the observed symptom: our side never closes idle connections, so
+    the pooler can drop one silently while queries keep queueing against a
+    handle that will never dispatch. Then bound the health route so a hang
+    becomes a 503. Then write the test that was missing - db.execute mocked as
+    a promise that NEVER SETTLES, asserting 503 inside a time budget; without it
+    the repair has exactly the standing of the test it replaces.
+
+    max IS DELIBERATELY NOT CHANGED IN THIS STEP. Choosing it needs two numbers
+    that are not in the repository: the Supabase transaction pooler's configured
+    pool size, which only the owner can read from the dashboard, and the real
+    client count in a running container, which needs the FE slot. Raising it on
+    a guess risks production's pool. prepare: false and ssl: 'require' MUST NOT
+    CHANGE - prepare: false is required by the transaction pooler and removing
+    it breaks every route at once.
+  branch: >-
+    A new branch cut from mootech-fe origin/main 9f764e6, not the login lane's
+    feat/mumate-login-identity-s1. The owner's condition was that merging be
+    safe, and it is, verified rather than assumed: the login branch's 21
+    commits touch none of the three files
+    (`git log origin/main..feat/mumate-login-identity-s1 -- <paths>` is empty)
+    and the files are byte-identical on both branches, so there is no conflict
+    surface in either direction and no newer starting material to give up. The
+    branch choice therefore decides one thing only - whether this repair can
+    ship or be reverted without the login lane's work - and that argument runs
+    one way.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: "0f03a0daa0426f139af09e8dd421ebc76383b378"
+    branch: hq/20260921
+    working_tree: this-record-only
+    pull_request: none-until-hq-round-close
+  application:
+    mootech-fe: "branching from origin/main 9f764e6; login lane holds feat/mumate-login-identity-s1, untouched by this work"
+    mumate-infra: "4664974, unchanged by this item"
+    mootech-be: "0705378d884114a4fd0e73aed59656638f335fdc, unchanged"
+    bazi-sft-dataset: "722cdf1b5f35f2124c9f59042caf8a9c5d6106b7-staging, unchanged"
+  defects:
+    pool: "lib/db/index.ts:11-12 — max 1 serialises 36 routes under pages/api (62 importers); idle_timeout unset; singleton cached only when NODE_ENV !== 'production'"
+    health_route: "pages/api/health.ts:28-31 — no timeout, so the 503 branch at line 34 is unreachable under a hang, which is the only database failure this stack has produced"
+    test: "scripts/health-route.test.ts:17 — failure faked as Promise.reject(ECONNREFUSED), proving the rejection path while the header claims the silent-green bug class"
+    duplicate_client: "the db module is present in two server chunks of the running image, 7864.js and 1752.js, each constructing its own client"
+  observed_symptom: "on the shadow: pages answered in 17 ms while every database route hung; TCP to the pooler completed in 25 ms; established sockets zero; queued queries neither dispatched nor rejected; log empty"
+  needs_the_owner:
+    - "The Supabase transaction pooler's configured pool size, before max can be chosen."
+    - "Whether the shadow may be deliberately wedged to prove the 503, given that shadow and production share one database."
+  needs_the_fe_slot:
+    - "Counting real established sockets to the pooler in a running container."
+    - "Proving the repair on the shadow, which needs an image built from this branch or the fix landed and rebuilt; the slot is mumate-login-identity-001's."
+  previous_record: memory/events/2026/09/25/20260925T071037_mumate_infra_move_slice3e_control_room_correctness_closed.yaml
+
+unresolved:
+  - max is unchosen and stays at 1 until the pooler size and the real client count are known.
+  - Whether a statement_timeout can be passed through Supavisor transaction mode is unverified; the health-route bound therefore uses a local race rather than relying on it.
+  - Proving the repair on the shadow needs the FE slot and the owner's sequencing.
+  - The four items carried from slice 3e are unchanged - the 502 keep-alive, profile-blind rollback.sh, 3c's deferred storage and maintenance-bypass proofs, and slice 4 owing its own decision.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Cut the branch from mootech-fe origin/main 9f764e6, apply the singleton
+    fix, then idle_timeout, then the health-route bound, then the
+    never-settling test, run the repository's own checks, and open a pull
+    request. Stop before choosing max and before anything that needs the FE
+    slot, and put those to the owner rather than guessing them.
+  acceptance_check:
+    - A hang in the database, not only a rejection, produces a 503 from the health route inside a stated budget, proven by a test that fails against the current code.
+    - prepare false and ssl require are unchanged, and the diff touches no file the login lane's branch touches.
