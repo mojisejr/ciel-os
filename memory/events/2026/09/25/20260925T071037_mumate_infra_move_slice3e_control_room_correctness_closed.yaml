@@ -1,0 +1,158 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T071037_mumate_infra_move_slice3e_control_room_correctness_closed
+type: closeout
+recorded_at: 2026-09-25T07:10:37+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Slice 3e is complete. All four authorized items are done and proven: the
+    deploy tool no longer lies about health, the example environment file can
+    no longer omit the key that account linking fails closed without, the host
+    reads the same emergency doors the repository does, and DoD 3c item 9 is
+    proven from logs that had already accumulated. The lane returns to paused
+    with 3c's two deferred proofs and slice 4 exactly where they were.
+  scope:
+    - The four items the owner named on 2026-09-25, and nothing else.
+    - mumate-infra pull request 18 and the host pull that carries it.
+    - Reading and recording DoD 3c item 9 from the shadow's own logs.
+  out_of_scope:
+    - The Caddy/Node keep-alive fix for the 502, excluded by the owner because it recreates the login lane's FE container.
+    - 3c's storage and maintenance-bypass proofs, which need the FE slot back on the launch team's revision.
+    - Slice 4, still paused and still owed its own owner decision.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      THE DEPLOY TOOL NO LONGER FAILS ON CONTAINERS IT WAS NEVER DEPLOYING.
+      wait_healthy in bin/_lib.sh used to run
+      `ps --status running --status restarting --status exited` and set bad=1
+      on any line matching "Exit"/"exited" - it asked compose for exited
+      containers and then treated their presence as proof of ill health, so it
+      could not succeed while anything in the project was exited. It now fixes
+      its responsibility once on entry (the services the active --profile
+      enables, plus any service already running) and judges each service on its
+      own State and Health fields, with an empty Health meaning "declares no
+      healthcheck" rather than "failed". Fixing the set on entry is what keeps a
+      service that exits DURING the wait counted instead of dropping out of the
+      expectations.
+    - >-
+      PROVEN AGAINST REAL CONTAINERS ON mumate-2, old and new side by side, four
+      tests. (1) Clean state - old passes, new passes. (2) A real container
+      created in the project and allowed to exit, reproducing the 2026-09-24
+      incident - OLD FAILS, NEW PASSES. (3) --profile restore-verify, whose
+      pgtmp service is not running - NEW FAILS, so a genuinely missing service
+      is still caught and the fix is not merely more permissive. (4) No profile
+      arguments, the path bin/rollback.sh uses - new passes. The test container
+      was removed and `docker compose ps --status exited` is empty again. Test
+      3 is the one that matters: without it this would be a fix that works by
+      lowering the bar.
+    - >-
+      env/fe.env.example now lists LINK_STATE_SECRET with the two facts a reader
+      needs - it is read at runtime through process.env, not NEXT_PUBLIC and not
+      a build arg, so it can be placed or rotated without rebuilding an image;
+      and an empty value stops account linking (302 link_unavailable) rather
+      than degrading it. Verified on origin/main and on the host.
+    - >-
+      The host's /opt/mumate is at 4664974 and identical to mumate-infra
+      origin/main, so runbooks/03 and its three emergency doors on the machine
+      an operator actually reads them from are no longer behind the repository.
+      The 768c71a → 0025d5a step was diffed before pulling and touched only four
+      documentation files - no compose, script, Caddyfile or env change - and no
+      container was restarted by either pull.
+    - >-
+      DOD 3C ITEM 9 IS PROVEN. One overnight of shadow logs with be and bazi
+      untouched since 2026-09-24 shows no duplicate reminder, reconciliation or
+      daily Bazi job. be carries exactly two CronjobService lines in 24 hours
+      and both are refusals - "Free morning notification disabled
+      (MORNING_CRON_ENABLED != true) — skipping" at 02:00 and "Morning
+      notification disabled ... skipping" at 23:00. fe has zero lines matching
+      cron, reconcile, qstash or scheduled, consistent with QSTASH_TOKEN being
+      absent from the shadow. bazi has zero scheduled-work lines at all. The
+      be evidence is stronger than silence would have been: a silent log cannot
+      distinguish "the scheduler is disabled" from "the scheduler was never
+      there", while a scheduler that wakes, announces that it is disabled, and
+      declines proves both that the job exists and that the shadow does not run
+      it.
+  not_completed:
+    - The keep-alive/502 fix. Excluded by the owner; the login lane will keep meeting the 502 until it is scheduled.
+    - 3c's storage and maintenance-bypass proofs. Still deferred, still needing the FE slot on 7e22f54-staging.
+  evidence_of_limits:
+    - >-
+      THE AGENT COULD NOT MERGE ITS OWN PULL REQUEST. The owner granted
+      authority over the server and this repository for these four items, and
+      the harness classifier refused `gh pr merge` anyway with "Merge Without
+      Review". That is a harness rule, not a CIEL one, and it is not something
+      an owner grant inside the session can lift. The agent stopped, handed the
+      owner one pasteable line, and he merged. Worth recording because the same
+      wall will appear in every future slice that needs a merge, and the
+      efficient response is to hand over the line rather than to retry.
+    - >-
+      bin/rollback.sh passes no profile arguments, so after this change it waits
+      on the core services plus whatever is running rather than on a named
+      profile set. That is the same scope it effectively had before and no worse,
+      but the underlying profile-blindness of rollback.sh is pre-existing,
+      unchanged here, and worth its own look before slice 4 leans on it.
+    - >-
+      Test 3 proves the function still fails when an expected service is absent.
+      It does not prove behaviour for a service that is running but reports
+      unhealthy, which was not reproduced on a live stack because doing so would
+      have meant breaking a service another lane is using. The code path is the
+      same Health comparison, but it is inference, not a run.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: "edadb42901a955d3511d3c569841b0afa73b5532"
+    branch: hq/20260921
+    working_tree: this-record-and-the-plan-state-lines-only
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "origin/main 4664974 (pull request 18 merged by the owner); host /opt/mumate 4664974 - identical"
+    mootech-fe: "shadow FE slot untouched all slice, held by mumate-login-identity-001 at 49097ffc6dc29296b1115ff531660324d8a2c7eb-staging"
+    mootech-be: "0705378d884114a4fd0e73aed59656638f335fdc, untouched since 2026-09-22"
+    bazi-sft-dataset: "722cdf1b5f35f2124c9f59042caf8a9c5d6106b7-staging, untouched since 2026-09-24"
+  dod_3e_status:
+    link_state_secret_documented: "met - grep -c returns 2 on origin/main and on the host"
+    wait_healthy_scoped: "met - four tests on real containers; old fails and new passes on a stray exited container, new still fails on a missing expected service"
+    host_matches_origin: "met - /opt/mumate 4664974 = origin/main; ops-status reports be, fe and bazi healthy afterwards"
+    overnight_no_duplicate_jobs: "met - two refusal lines from be, zero from fe and bazi; DoD 3c item 9 is proven by this"
+    login_lane_untouched: "met - fe container age unchanged across the whole slice; no container of theirs recreated"
+  host_state_at_close:
+    ops_status: "be 0705378 healthy; fe 49097ff-staging healthy; bazi 722cdf1-staging healthy; caddy ok; alloy ready; tailscale 100.120.15.24; disk 13%; mem ~1092/3915MB; mumate-health.timer active"
+    access: "ssh deploy@mumate-2 over the tailnet"
+  dod_3c_remaining:
+    - "Storage - not exercised, deferred."
+    - "Maintenance bypass - not exercised, deferred."
+    - "Both need the FE slot on 7e22f54c618855e969122f1e1853cac0117db4de-staging to carry the launch team's revision rather than a lane branch."
+  previous_record: memory/events/2026/09/25/20260925T062820_mumate_infra_move_slice3e_control_room_correctness_authorized.yaml
+  related_workstreams:
+    - "mumate-login-identity-001 - holds the shadow's FE slot; reported both the LINK_STATE_SECRET gap and the 502, and verified the wait_healthy defect independently"
+    - "mumate-control-room-ops-001 - complete; mumate-infra belongs to this lane's project list, so no closed workstream had to be reopened for these fixes"
+
+unresolved:
+  - The Caddy/Node keep-alive fix for the 502 is unscheduled and needs a minute of the login lane's agreement because it recreates their FE container; lb_try_duration, which would make Caddy retry rather than 502, belongs with it.
+  - bin/rollback.sh is profile-blind and should be looked at before slice 4 depends on it.
+  - wait_healthy's unhealthy-but-running branch is reasoned, not run; a live proof would require breaking a service another lane is using.
+  - 3c's storage and maintenance-bypass proofs stay deferred until the FE slot returns to the launch team's revision.
+  - Slice 4 flip preconditions as listed in the 2026-09-24 closeout, unchanged by this slice.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The lane returns to paused. The next executable action is unchanged from
+    the 2026-09-24 closeout: when the owner wants 3c finished, ask the login
+    lane for the FE slot, redeploy FE to
+    7e22f54c618855e969122f1e1853cac0117db4de-staging, and walk storage and
+    maintenance bypass. The keep-alive fix can be taken at any time the login
+    lane can spare a container restart, and does not need the slot.
+  acceptance_check:
+    - 3c's two remaining proofs pass on the launch team's revision, or the owner narrows them as he narrowed v1.
+    - Slice 3 then closes with the flip preconditions, and slice 4 begins only on a fresh owner decision.
