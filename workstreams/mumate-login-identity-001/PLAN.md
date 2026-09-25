@@ -3,7 +3,7 @@
 **Workstream:** `mumate-login-identity-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.5
+**Plan revision:** 0.6
 **Execution phase:** 4
 **Execution state:** idle
 **Parallelism:** proposed
@@ -339,6 +339,47 @@ threatens serious or irreversible harm, so neither is work here:
   serves traffic. The owner said in conversation on 2026-09-25 that they could be
   deleted if they do not touch paying members; that would REVERSE a recorded
   decision, so it needs its own decision event and is not assumed here.
+
+## Revision 0.6 — Slice 4 cannot call a visible database outage a merge test
+
+The owner-directed shadow collision attempt on 2026-09-25 reached LINE consent
+and the callback, but it never reached the merge offer.  The FE's database
+client became unable to serve reads: `/api/health` returned a bounded 503 and
+the Connected Accounts reads later timed out at Caddy.  Aggregate evidence
+showed no LINE identity move and no merge audit record.  This is a failed
+acceptance attempt with a safe data outcome, not evidence that DoD 4 passed.
+
+The database client's recovery is an infrastructure responsibility because it
+affects every FE route; the login lane owns only the callback-specific evidence
+and the member-flow proof.  This revision does not make the login lane owner of
+Compose, host restart policy, traffic, or the shared database pooler.
+
+### Phase 8 is an ordered acceptance gate
+
+1. **8a — runtime readiness, supplied by infra.** Before another owner phone
+   attempt, `mumate-infra-move-001` must prove that an unhealthy FE database
+   client recovers to serving reads in a bounded way. A 503 is detection, not
+   recovery. A bare request `Promise.race`, an unmeasured higher pool maximum,
+   or a manual recreate used as the claimed repair is insufficient.
+2. **8b — bounded, redacted callback evidence.** The login lane adds a
+   deterministic test and callback stage timing sufficient to distinguish token
+   exchange, verification, identity lookup, and merge planning. Logs and tests
+   may name a stage, duration, and outcome only; they must not retain OAuth
+   code, state, token, cookie, email, provider subject, or user id. LINE token
+   exchange must finish or fail before Caddy's deadline.
+3. **8c — shadow collision preview.** After 8a and 8b pass and during a
+   deployment-free window, the owner repeats the collision only through the
+   preview. The expected result is a clear merge offer; no identity or account
+   data moves at this step.
+4. **8d — separate owner confirmation and data proof.** Only after the owner
+   reads the preview and explicitly confirms may the credential move. The
+   postcondition is exactly one identity-scoped `user_provider` move, the
+   protected account survives, and no other account data changes.
+
+DoD 4 is unchanged in its safety rules and now additionally requires 8a through
+8d. A phone retry is forbidden until 8a proves healthy recovery and the
+Connected Accounts read endpoints answer again. This revision authorizes neither
+an FE recreate, a deployment, a provider-console change, nor a retry by itself.
 
 ## Relationship to existing work
 

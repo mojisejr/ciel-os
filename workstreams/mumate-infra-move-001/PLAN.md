@@ -3,7 +3,7 @@
 **Workstream:** `mumate-infra-move-001`
 **State:** paused
 **Execution lane:** single
-**Plan revision:** 0.4
+**Plan revision:** 0.5
 **Execution phase:** 3
 **Execution state:** idle
 **Parallelism:** proposed
@@ -271,6 +271,39 @@ DoD 3d:
 **3c remains paused.** Its deferred storage, maintenance-bypass and overnight
 log proofs are not resumed by 3d. Slice 4 remains paused and still needs its own
 owner decision.
+
+## Revision 0.5 — unhealthy must become recoverable before it is reused as a login gate
+
+The 2026-09-25 shadow observations established that the existing FE health
+route can report a wedged database client as 503, while Compose leaves the
+process running and unhealthy. That is useful detection but not a recovery
+mechanism. The same condition blocked the login lane's owner-directed LINE
+collision attempt after consent. This revision adds a bounded slice-3 proof; it
+does not resume the migration, 3c, or the live flip.
+
+**3f. FE database-client recovery on the shadow (planned, not started).** This
+sub-slice owns service recovery for a healthy-process/unhealthy-FE condition,
+including the narrow application or Compose change required to make recovery
+safe. The login workstream supplies its callback symptom but does not own this
+runtime behaviour.
+
+DoD 3f:
+
+- A deterministic, bounded fault proof establishes the unhealthy condition
+  without a broad concurrent load test against the shared production database.
+- The chosen mechanism returns the FE to `/api/health` `200` with database OK
+  and serves a subsequent authenticated-safe read within a stated bound. It
+  neither loops restarts nor masks a persistent database outage as healthy.
+- The proof demonstrates recovery, not merely detection: a 503 response,
+  `idle_timeout`, or a person manually recreating FE cannot alone satisfy it.
+- No DNS, traffic, production deployment, database migration, provider setting,
+  secret value, or unrelated FE image changes are included. Any shadow recreate
+  remains an explicit owner-authorized operational action, separately from the
+  durable repair.
+
+The workstream remains paused. This plan amendment records the ownership and
+acceptance boundary only; an execution decision is required before modifying a
+host, Compose, or application code for 3f.
 
 **3e. Control-room correctness (owner-authorized 2026-09-25).** Four items the
 owner named explicitly, chosen because none of them collides with the login

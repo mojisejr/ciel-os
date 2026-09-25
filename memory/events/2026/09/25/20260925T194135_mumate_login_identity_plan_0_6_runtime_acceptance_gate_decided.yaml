@@ -1,0 +1,69 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T194135_mumate_login_identity_plan_0_6_runtime_acceptance_gate_decided
+type: decision
+recorded_at: 2026-09-25T19:41:35+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Amend the slice-4 acceptance sequence after the owner-directed shadow LINE
+    collision attempt proved a safe no-write failure but not the merge flow.
+  scope:
+    - Plan revision 0.6 and its runtime-readiness gate.
+    - The boundary between infrastructure recovery and login callback evidence.
+    - The ordered preview and separately confirmed merge proof.
+  out_of_scope:
+    - Code, host, Compose, provider, secret, database, traffic, deployment, or phone retry.
+    - Production, the endpoint flip, slice 4b, and slice 5.
+
+outcome:
+  status: decided
+  parallelism: approved
+  slice: "4"
+  completed:
+    - >-
+      The owner approved revision 0.6 after reviewing the proposed separation:
+      infrastructure owns recoverable FE runtime behaviour; the login lane owns
+      callback observability and the member-facing merge acceptance sequence.
+    - >-
+      Slice 4 remains the same member-proved, payment-protecting, credential-only
+      merge. It now has four ordered phase-8 gates: runtime recovery, redacted
+      callback evidence, shadow preview without a write, then a separately
+      owner-confirmed move with row-level proof.
+    - >-
+      The observed incident is not treated as a successful merge test. It reached
+      provider consent but produced no LINE identity move and no merge audit record.
+  not_completed:
+    - >-
+      The exact first stalled callback operation remains unknown, and no recovery
+      implementation, instrumentation, recreate, deployment, or retry is authorized
+      by this planning decision.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "4"
+  repository:
+    head: "48c414f59d8a62d731196e23a7962086e2dfa01e"
+    branch: hq/20260921
+    working_tree: plan-amendment-and-this-record
+  prior_observation: memory/events/2026/09/25/20260925T193259_mumate_login_identity_shadow_callback_db_wedge_observed.yaml
+  paired_infrastructure_plan: workstreams/mumate-infra-move-001/PLAN.md revision 0.5 section 3f
+
+unresolved:
+  - The recovery mechanism is not selected or proven.
+  - Whether the first stalled callback await is LINE token exchange, a database read, or merge planning.
+  - The lapsed-payer rule and other existing slice-4 limits remain unchanged.
+
+next_action:
+  action: >-
+    Obtain a separate owner execution decision for infra slice 3f before modifying
+    runtime recovery, then authorize the login lane's bounded callback evidence work.
+    Do not retry LINE until the 8a recovery proof and the pre-retry read checks pass.
+  acceptance_check:
+    - Wake identifies this decision as authorizing plan revision 0.6 for slice 4.
+    - The plan keeps all existing merge safety conditions and names no secret or identifier.
