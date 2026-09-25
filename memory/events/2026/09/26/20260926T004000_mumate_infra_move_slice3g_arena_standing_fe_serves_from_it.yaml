@@ -1,0 +1,182 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T004000_mumate_infra_move_slice3g_arena_standing_fe_serves_from_it
+type: closeout
+recorded_at: 2026-09-26T00:40:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Satisfy DoD 3g: stand the rehearsal database up on the shadow host and make the shadow
+    FE serve from it instead of production, so the login lane can walk a member-data write
+    without staking real members' data.
+  scope:
+    - The arena, stood up from the newest backup object that exists.
+    - The shadow FE pointed at it, with HEALTH_DB_TIMEOUT_MS set in the same edit.
+    - Two findings about the backup layer that contradict what I wrote into the runbook hours earlier.
+  out_of_scope:
+    - The login lane's image, phases 8c and 8d.
+    - Enabling the backup timer, or taking a fresh dump. Neither was authorized and neither was done.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  execution_phase: "3g"
+  completed:
+    - >-
+      THE OWNER AUTHORIZED ME TO RUN S2 THROUGH S6 ON HIS BEHALF, and access was verified
+      rather than assumed: the tailnet lists mumate-2 and `ssh deploy@mumate-2` answers.
+      Everything below went through bin/ scripts, as rule 2 of that repository requires.
+    - >-
+      THE ARENA IS STANDING. bin/arena.sh up loaded
+      pg/mumate-1-20260919T220406Z.sql.gz into pgtmp: 185 public tables, user 5,018 rows,
+      user_provider 5,880, member_subscription 30, member_payment 26, and ops_audit_log
+      readable with 0 rows. Deletion date written into the arena itself as 2026-10-02.
+      Disk was checked first - 66,999 MB free against 2,029 MB required.
+    - >-
+      THE TWO RESTORE ERRORS ARE THE DOCUMENTED NOISE. Classified without printing their
+      bodies: they match extension and vault patterns, not data rows. The bodies stay in
+      /opt/mumate/.arena-restore.err at mode 600.
+    - >-
+      THE SHADOW FE NOW SERVES FROM THE ARENA. /api/health returns 200 with db ok on the
+      loopback and through app.staging.mumate.co, dbLatencyMs 2 - a direct connection
+      rather than the pooler, which is itself evidence it is not reading production.
+      Image unchanged at 626c9c5, which is the pre-fix build; that is deliberate, S4 and
+      S5 replace it.
+    - >-
+      THE PRODUCTION CONNECTION VALUE NEVER ENTERED THIS SESSION. env/fe.env was copied to
+      env/fe.env.pre-arena at mode 600 first, and the edit was a pattern substitution on
+      two lines. Verification was by key-name checksum and count (53 -> 54, the added
+      HEALTH_DB_TIMEOUT_MS) and by a regex asserting DATABASE_URL now ends at
+      pgtmp:5432/mumate_verify - no value was read or printed, and either failure branch
+      restored the file from the backup before exiting.
+    - >-
+      HEALTH_DB_TIMEOUT_MS=3000 IS SET, closing the arithmetic recorded at 20260925T224606:
+      the route's budget equalled the Docker probe's 5 s timeout, so the probe was killed
+      at 5.000 s and the 503 never arrived. It is now 2 s inside the probe's window.
+      Unproven: no fault has been induced since, so the 503 has not been observed reaching
+      the healthcheck.
+    - >-
+      arena.sh status reports itself correctly, including "FE ชี้: สนามซ้อม" read as a
+      yes/no from the env file without printing a connection string, and 7 days remaining.
+  not_completed:
+    - >-
+      The login lane's phases 8c and 8d have not run and the shadow still carries the
+      pre-fix image.
+    - >-
+      Nothing was done about either finding below. Both are reported.
+
+findings_that_contradict_what_i_wrote_hours_earlier:
+  there_is_no_nightly_backup:
+    observed: >-
+      mumate-backup.timer is disabled and inactive; systemctl lists only mumate-health.timer.
+      s3://mumate-backups/pg/ holds exactly ONE object: mumate-1-20260919T220406Z.sql.gz,
+      125.7 MiB, from 2026-09-19 22:05 UTC - six days old.
+    what_i_had_written: >-
+      The runbook table I added in pull request 22, and the records at 20260926T000200 and
+      20260926T002800, describe bin/backup.sh as producing a nightly dump with 14-day
+      retention. That describes the timer's design, not its state. The off-platform layer is
+      in fact one manual dump, and BACKUP_KEEP_DAYS prunes only when a run happens, so
+      nothing is rotating either.
+    is_it_a_defect: >-
+      No. runbooks/02 says the timer is enabled only when a slice permits it, so disabled is
+      the deliberate state. The error was mine: I described a designed layer as a live one,
+      in the same file where I had just corrected someone else's assumption about PITR. Two
+      assumed backup facts in one evening, from different authors, in the same paragraph -
+      which is the argument for checking a recovery claim against the host rather than
+      against the repository that describes it.
+    what_it_means_together_with_PITR_off: >-
+      Production's recovery today is Supabase Pro's own daily backups, seven days, to each
+      day's backup point. The off-platform copy is a single six-day-old file. Not
+      unprotected - the managed layer runs - but thinner than any document here said.
+    action: >-
+      A runbook correction is next, and enabling the timer is an owner decision I am not
+      asking for tonight.
+  the_arena_is_six_days_stale:
+    consequence_for_slice_4: >-
+      None that matters. The rehearsal needs production's SHAPE and volume, which it has,
+      and phase 8c's collision pair is staged deliberately in S6 rather than found, so the
+      snapshot's age does not change what the merge proves. Members created after 09-19 are
+      absent, and the owner's own slice-3 linking from 09-25 is absent, which if anything
+      makes the pair easier to arrange.
+    what_i_did_not_do: >-
+      I did not run bin/backup.sh to take a fresh dump. That reads production and writes to
+      Spaces, and the owner authorized standing the arena up, not a new backup.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "3"
+  execution_phase: "3g"
+  arena:
+    source_object: pg/mumate-1-20260919T220406Z.sql.gz
+    source_age_utc: "2026-09-19T22:05:35Z"
+    size_gz: 125.7 MiB
+    tables_public: 185
+    rows: "user 5018 · user_provider 5880 · member_subscription 30 · member_payment 26 · ops_audit_log 0"
+    psql_error_lines: 2
+    error_classes: extension, vault - matched by pattern; bodies not read
+    expires_on: "2026-10-02"
+    disk_free_mb_at_start: 66999
+    disk_required_mb: 2029
+  shadow_fe:
+    image: ghcr.io/mojisejr/mootech-fe:626c9c5087b77c5328c84b923cc7d278892504ee-staging
+    recreated_with: docker compose --profile full up -d --force-recreate --no-deps fe
+    state: running healthy
+    health_loopback: "200 · db ok · dbLatencyMs 2 · sha 626c9c5"
+    health_public: "200 · db ok · dbLatencyMs 2 · sha 626c9c5 · app.staging.mumate.co"
+  the_way_back:
+    file: /opt/mumate/env/fe.env.pre-arena (mode 600, created by cp -p before the edit)
+    steps: restore that file over env/fe.env, then the same force-recreate of fe
+    and_then: bin/arena.sh down, which refuses while fe still points at the arena
+  env_edit_method:
+    read_nothing: >-
+      pattern substitution only; verification by key-name checksum, key count and a regex on
+      the new value's tail
+    keys: 53 -> 54, the added HEALTH_DB_TIMEOUT_MS
+    rollback_on_failure: either check failing restores from the backup before exit
+  backup_layer_observed:
+    timer: mumate-backup.timer disabled, inactive
+    objects_in_spaces: 1
+  repository:
+    head: "a1d22bb"
+    branch: hq/20260921
+    working_tree: this-event-only
+
+unresolved:
+  - >-
+    The off-platform backup layer is one six-day-old file and no timer is running. Deliberate
+    per the runbook, thinner than any document here claimed, and an owner decision to change.
+  - >-
+    A real restore over production has still never been performed.
+  - >-
+    HEALTH_DB_TIMEOUT_MS is now inside the probe window but no fault has been induced since,
+    so the 503 has not been seen reaching the healthcheck.
+  - >-
+    The arena is a direct connection: the transaction pooler is in no test path, and
+    production's own pool behaviour is not exercised by anything that happens on it.
+  - >-
+    While FE serves from the arena, be and bazi still read production. Coherent for the
+    FE-native login flow; any FE route reading engine tables reads a six-day-old snapshot.
+  - >-
+    Carried by this lane - 3c under the quiet gate, the payment test webhook from the team,
+    Vercel Preview resolving to the production database, and mootech-fe origin/main failing
+    its own verify-architecture pre-push gate.
+
+next_action:
+  action: >-
+    S4, which needs the owner's own hand: push mootech-fe 868632e to
+    feat/mumate-login-identity-s1 with --no-verify, because that repository's
+    verify-architecture gate is red on four pre-existing violations in files this lane never
+    touched, and --no-verify skips gitleaks with it - gitleaks was therefore run against that
+    commit by hand and found nothing. Then the container-build workflow is dispatched for
+    that revision, S5 deploys it on the shadow, and S6 stages the collision pair inside the
+    arena.
+  acceptance_check:
+    - The shadow reports db ok with sha 868632e.
+    - The collision pair exists only inside the arena, with its reversal statement recorded.
+    - No production row is touched at any point.
