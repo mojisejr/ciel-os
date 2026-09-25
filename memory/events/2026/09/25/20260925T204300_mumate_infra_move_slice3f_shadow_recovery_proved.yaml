@@ -1,0 +1,81 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T204300_mumate_infra_move_slice3f_shadow_recovery_proved
+type: closeout
+recorded_at: 2026-09-25T20:43:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Activate and prove the bounded, one-attempt FE recovery guard on the MuMate
+    shadow host before returning to LINE callback diagnosis.
+  scope:
+    - Merge and pull the reviewed recovery-proof script to the shadow host.
+    - Induce one temporary FE-only network fault and verify recovery.
+  out_of_scope:
+    - Production, DNS, traffic, image tags, environment values, database data,
+      OAuth providers, or login-identity mutations.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      mumate-infra pull request 20 merged at 489c18e9322d9e45cb4b5921686ca802ab4d2e43
+      and the shadow host fast-forwarded to that exact revision.
+    - >-
+      A controlled proof disconnected only the shadow FE from its sole Compose
+      network. The existing notifier observed the persistent FE-only unhealthy
+      incident, recreated FE once, retained the exact same image, and recovered
+      health to HTTP 200 with database OK.
+    - >-
+      Docker evidence records one new FE container at 2026-09-25T13:42:42Z;
+      the replacement was healthy and the proof process had exited before the
+      final observation.
+  not_completed:
+    - >-
+      This proves recovery behavior, not the root cause of the LINE callback
+      stall. Login plan phase 8b remains the next product-facing investigation.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "3"
+  repository:
+    head: "55a646b1e443118f9b9ba9a9bc88d4c990decac1"
+    branch: hq/20260921
+    working_tree: this-event-only
+  pull_request:
+    url: https://github.com/mojisejr/mumate-infra/pull/20
+    merge_commit: 489c18e9322d9e45cb4b5921686ca802ab4d2e43
+  shadow_proof:
+    infrastructure_revision: 489c18e9322d9e45cb4b5921686ca802ab4d2e43
+    initial_fe_image: ghcr.io/mojisejr/mootech-fe:08285cca7f69ffa28d32eb8c8b6388811d161dda-staging
+    final_fe_image: ghcr.io/mojisejr/mootech-fe:08285cca7f69ffa28d32eb8c8b6388811d161dda-staging
+    fault: temporary-fe-only-compose-network-disconnect
+    recreate_events: 1
+    replacement_created_at: 2026-09-25T13:42:42Z
+    final_health: 200-db-ok
+
+unresolved:
+  - >-
+    The controlled fault needed most of its 90-second bounded window before FE
+    health turned unhealthy; that is acceptable for this proof but timing is not
+    yet a user-facing callback latency guarantee.
+  - >-
+    The exact first stalled LINE callback stage remains unknown. Do not treat
+    recovery proof as a callback fix or repeat the member journey blindly.
+
+next_action:
+  action: >-
+    Return to mumate-login-identity-001 phase 8b: add redacted, stage-level
+    callback timing and bounded LINE token-exchange behavior in mootech-fe, then
+    deploy and retry one controlled member journey only after its own review gate.
+  acceptance_check:
+    - Callback logs identify the first failing or slow stage without recording secrets.
+    - A stalled upstream call fails within a declared bound and leaves provider ownership unchanged.
+    - The recovery guard remains a host safety net, not evidence that linking succeeded.
