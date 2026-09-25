@@ -3,8 +3,8 @@
 **Workstream:** `mumate-login-identity-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.4
-**Execution phase:** 3
+**Plan revision:** 0.5
+**Execution phase:** 4
 **Execution state:** idle
 **Parallelism:** proposed
 
@@ -257,6 +257,88 @@ variable nobody exports.
   now made, so it becomes the merge itself.
 - **Slice 4b is added** for prevention at sign-up, after the merge exists.
 - **Slice 5 is unchanged in content** and moves behind 4 and 4b.
+
+## Revision 0.5 — the merge's rules were written against a signal that has three values
+
+**Nothing strategic changed.** Revision 0.4's decisions 7-10 stand unaltered and
+slice 4 is still the merge. Two acceptance criteria are corrected because reading
+the code to plan slice 4 showed they were written against assumptions the code
+does not hold, and one proposed correction is withdrawn because a measurement
+showed it was wrong.
+
+### `isPaid` has three values, and DoD 4 was written for two
+
+`lib/v2/subscription.ts` is the single authority on who has paid, and its verdict
+is `true`, `false`, **or `null`** — `null` meaning a v2 row carried a tier_code the
+resolver refuses to understand, which fails closed and does not unlock. DoD 4 was
+written as a pair, paid against not-paid, so it says nothing about the third case.
+
+Under owner decision 8 a paying account may never be the loser, and `null` may be
+a paying account. So `null` must never lose either, and a pair where neither side
+can be determined is REFUSED rather than guessed. Manual support is the fallback
+for anything the flow refuses (decision 9), and this is such a case.
+
+The rule must consume that verdict rather than re-deriving it. Re-reading the
+subscription tables to answer "who paid" is the second copy of a selection rule
+that #369 B2 already closed once.
+
+### What the losing account keeps cannot be counted by provider name
+
+DoD 4 promises the member is told, before anything is written, what the losing
+account is left with. The last-method rule in `lib/auth/link-account.ts` answers
+that question by counting distinct provider NAMES, and a name is not a way in.
+Revision 0.3 already measured why: of the Google rows, 1,787 held an `id_token`
+that can never match again and 466 could. Re-measured 2026-09-25 by length, the
+same split reads 1,783 rows of 253-342 characters — `ya29` access tokens — against
+475 holding a 21-character Google `sub`. The numbers moved by three because slice 3
+wrote three real identities since.
+
+So slice 4 computes what remains from identities that can actually authenticate,
+never from row or name counts. It does NOT change the unlink route, which answers
+the same question the same wrong way and is deferred below.
+
+### The "exactly one row" correction is withdrawn
+
+An earlier correction, recorded in the slice-3 acceptance closeout, said DoD 4
+should read "every provider row of the losing account" instead of "exactly one
+`user_provider` row". It was proposed when the owner's own account was seen holding
+five Google rows. The measurement above explains those five: `ya29` rows plus one
+real identity, and unlink removes rows by provider, which is why all five went
+together.
+
+DoD 4's original wording is correct, for a reason nobody had written down: the
+member proves ONE identity in the session, the merge moves exactly that row, and
+moving anything else would transfer a credential that was never proven. The
+correction is withdrawn rather than silently dropped.
+
+### The merge is not undone by the next legacy login
+
+Worth stating because the legacy path is still serving traffic and still performs
+email discovery. Revision 0.3's reading of `mootech-be` `registerOrLogin` is that
+it looks a member up by `id_token` FIRST and only falls to email discovery on a
+miss. After a merge the surviving account holds that identity, so the first lookup
+hits and discovery never runs. The merge therefore survives the member's next
+legacy Google login rather than being re-split by it. This is reasoned from 0.3's
+reading, not observed; slice 5's observation is where it gets confirmed.
+
+### Deferred, under OWNER.md's side-issue rule
+
+Neither of the following blocks slice 4, both have a safe workaround, and neither
+threatens serious or irreversible harm, so neither is work here:
+
+- **The unlink route's last-method rule counts provider names**, so a member holding
+  a dead `ya29` row plus one live method can unlink the live one. **The trigger is
+  the FLIP, not this branch.** While the legacy path serves traffic, that member
+  logs in with Google, email discovery finds them, and revision 0.3's rule applies:
+  one legacy login heals them completely. After slice 5 the FE route serves that
+  login and email discovery is deliberately absent from it, so the dead row stops
+  being a way back in. This belongs with slice 5's existing precondition about
+  protecting exposed PAID members, and it is recorded there rather than fixed here.
+- **The 1,783 dead rows stay.** Revision 0.3 already closed this: slice 2 is closed,
+  no further cleanup is authorized, and the rows harm nobody while the legacy path
+  serves traffic. The owner said in conversation on 2026-09-25 that they could be
+  deleted if they do not touch paying members; that would REVERSE a recorded
+  decision, so it needs its own decision event and is not assumed here.
 
 ## Relationship to existing work
 
@@ -625,12 +707,22 @@ DoD 4:
 - The surviving account is chosen by owner decision 8 and **never** by which side
   the member is signed into. A test fixes this by driving the same pair from both
   directions and asserting the same survivor.
+- **The survivor rule consumes `lib/v2/subscription.ts`'s verdict and never
+  re-derives it** (revision 0.5). A side whose verdict is `null` — undeterminable —
+  **must not be the loser**, because it may be a paying account. A pair where
+  NEITHER side can be determined is **refused** and routed to support, never
+  guessed. Both cases are proven by tests.
 - **A paying account is never the loser.** Proven by a test in which the side the
   member is signed into has paid and the other has not, and by its mirror.
 - The merge moves the credential and **nothing else**. Row counts before and after
   show exactly one `user_provider` row changing `user_id`, and no row in any other
-  table changing at all.
-- The losing account is left with no login method, which is the one thing this
+  table changing at all. **The row moved is the one whose stored identity equals the
+  subject just proven** — identity-scoped, never provider-scoped. Any other row the
+  losing account holds for that provider stays where it is, because the member
+  proved one identity and not those (revision 0.5).
+- The losing account is left with no login method, **judged by identities that can
+  actually authenticate and never by counting provider names** (revision 0.5),
+  which is the one thing this
   workstream otherwise forbids. **The member is told this in their own language,
   naming what stays behind, before anything is written**, and the flow refuses to
   proceed without an explicit confirmation that is separate from pressing "link".
@@ -751,6 +843,21 @@ before the flip and not earlier (the set shrinks on its own as members log in):
 This precondition replaces nothing in DoD 5; it is a gate on running the flip at
 all, and its output is a list the owner acts on rather than a blocker the agent
 resolves.
+
+**Precondition added in 0.5 — the last-method rule must judge identities, not
+provider names.** Same trigger as the check above, for the same reason: the flip is
+when the email-discovery rescue disappears. `lib/auth/link-account.ts` decides "this
+is your last login method" by counting distinct provider NAMES, and 1,783 Google
+rows hold a dead `ya29` token, which proves a name and not a way in. So a member
+holding one of those plus a live LINE row can ask to unlink LINE and the rule
+permits it. Today that is survivable — the legacy path heals them on their next
+Google login. After the flip nothing does, and recovery is a hand-written
+production DELETE.
+
+Before the flip, that rule must judge by identities that can actually
+authenticate. Slice 4 applies this standard inside its own flow (revision 0.5) and
+deliberately does not touch the unlink route, so the route still needs this fix
+and it is recorded here rather than absorbed into slice 4.
 
 **How "paid" and "active" are actually measured (established 2026-09-24, read-only
 over both repositories).** Neither is a single column, and the obvious column for
