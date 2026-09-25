@@ -1,0 +1,132 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T193259_mumate_login_identity_shadow_callback_db_wedge_observed
+type: closeout
+recorded_at: 2026-09-25T19:32:59+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Preserve the owner-observed shadow LINE collision attempt and the bounded
+    read-only evidence that the FE database client again wedged, making the
+    Connected Accounts page unavailable without moving any provider identity.
+  scope:
+    - The owner-directed LINE consent/callback attempt on shadow staging.
+    - Caddy, FE-health, compose, source, and aggregate database evidence.
+    - The recovery and implementation decisions this evidence now requires.
+  out_of_scope:
+    - Restarting or recreating FE, retrying LINE, provider-console changes,
+      production, traffic changes, a pull request, and any code or infra repair.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "4"
+  completed:
+    - >-
+      The LINE start route answered 302 promptly. The subsequent callback reached
+      Caddy, but the upstream gave no response for 44.979 seconds and Caddy returned
+      HTTP 504. A later browser delivery of the same callback returned promptly to
+      Connected Accounts with token-exchange-failed; OAuth values were not recorded.
+    - >-
+      During and after the callback failure, the shadow FE health route answered HTTP
+      503 after its own five-second database deadline. The Connected Accounts page's
+      read-only /api/profile and /api/auth/link/connections requests each then timed
+      out at Caddy after about 79 seconds. This explains the owner's visible
+      "โหลดข้อมูลไม่สำเร็จ" state.
+    - >-
+      Aggregate read-only database evidence over the attempt window found no LINE
+      provider creation and no provider identity move, and zero member_identity_merge
+      audit records. The one provider update in that window was Google and preceded
+      the LINE start; no account merge or LINE relink occurred.
+    - >-
+      The active shadow FE was image 08285cca7f69ffa28d32eb8c8b6388811d161dda-staging.
+      It remained a running container, but its health checks repeatedly exceeded five
+      seconds. Compose uses restart unless-stopped, which does not recreate a running
+      but unhealthy container.
+    - >-
+      Source and runtime evidence align with the previously recorded recovery gap:
+      the application singleton uses one postgres client with max 1. idle_timeout 30
+      can recycle an idle connection but cannot free a query already stuck in its
+      queue. The health route detects this and reports 503, but detection does not
+      repair the client.
+  not_completed:
+    - >-
+      The exact first stalled operation is unknown. The callback lacks safe stage
+      timing around token exchange, provider verification, identity lookup, and merge
+      planning, so this record does not claim which await held the client.
+    - >-
+      The database-client recovery gap remains unfixed. The owner did not authorize
+      an FE recreate, a retry, code change, infrastructure change, or deployment in
+      this investigation.
+    - >-
+      Slice 4 shadow acceptance remains unproven. This incident is evidence against
+      a blind retry, not evidence that the collision flow has passed.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  execution_phase: "4"
+  repository:
+    head: "16dcb75ff6670079bee7d41ff4be11ecddf4cab1"
+    branch: hq/20260921
+    working_tree: this-event-only-before-this-record
+  runtime:
+    environment: shadow-staging-only
+    host: mumate-2 via tailnet
+    fe_image: ghcr.io/mojisejr/mootech-fe:08285cca7f69ffa28d32eb8c8b6388811d161dda-staging
+    observed_at: 2026-09-25T19:10:00+07:00
+  bounded_observations:
+    - >-
+      Caddy recorded the LINE callback as 504 after 44.979 seconds with no recent
+      upstream network activity; the duplicate browser delivery was redirected with
+      link_error=token-exchange-failed.
+    - >-
+      /api/profile and /api/auth/link/connections each recorded Caddy 504 after about
+      79 seconds after the callback, while /api/health independently reported 503 at
+      its five-second database bound.
+    - >-
+      Aggregate user_provider counts for the attempt window: LINE creates 0 and
+      identity-move updates 0. Aggregate ops_audit_log member_identity_merge count 0.
+    - >-
+      Docker reported the FE process running while every recent application health
+      check exceeded its five-second timeout; no automatic compose recovery occurred.
+
+unresolved:
+  - >-
+    The first stalled await needs safe stage telemetry. It may be the unbounded LINE
+    token fetch, a database request, or merge-plan reads; existing evidence cannot
+    distinguish them.
+  - >-
+    A request deadline alone is insufficient: racing an HTTP response against a
+    database promise leaves the losing database promise queued and cannot recover the
+    max-1 client.
+  - >-
+    Do not raise the database max without measuring the shared transaction pooler, and
+    do not apply postgres.js query cancel as a blanket cure: its own documentation
+    warns that its cancellation connection can race and cancel another query.
+  - >-
+    The prior callback attempt was also interrupted by an FE recreate. This record
+    does not establish who initiated that separate recreate because retained runtime
+    evidence did not identify an initiator.
+
+next_action:
+  action: >-
+    Owner decides later whether to authorize two bounded actions: first, an FE-only
+    recreate of the current shadow image to restore the degraded staging surface;
+    second, a repair slice that proves a recoverable database-client lifecycle and
+    adds redacted callback stage timing plus a bounded LINE token exchange. No LINE
+    retry occurs until both the recovery proof and a deployment-free acceptance window
+    are established.
+  acceptance_check:
+    - >-
+      A recovery action must prove /api/health 200 with db ok and a successful
+      /api/auth/link/connections response before any owner phone step.
+    - >-
+      A durable repair must prove a simulated stuck database request cannot leave
+      future reads blocked, and all callback outcomes must return before Caddy's
+      deadline without logging OAuth code, state, token, or personal identity data.
