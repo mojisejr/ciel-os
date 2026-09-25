@@ -1,0 +1,153 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T002800_mumate_infra_move_recovery_layers_established_pitr_off
+type: closeout
+recorded_at: 2026-09-26T00:28:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Settle what MuMate's database recovery actually consists of, because a runbook
+    sentence asserting one of its layers turned out to be an assumption written in the
+    repository's seed commit and was about to be reused as evidence in a cost decision.
+  scope:
+    - The owner's answer, recorded as the fact it is.
+    - The correction to the runbook, and why the old sentence was wrong in the dangerous direction.
+    - What this closes in owner decision 12, and what it opens that belongs to nobody yet.
+  out_of_scope:
+    - Buying PITR, or arguing for it. Not proposed.
+    - Any change to bin/backup.sh, the timer, retention, or the restore path.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      THE FACT, FROM THE OWNER, 2026-09-26: the Supabase project is on the Pro plan and
+      PITR IS NOT ENABLED. Recoverable points are therefore daily - each day's backup
+      point, seven days back - and not an arbitrary second.
+    - >-
+      WHAT THE OLD SENTENCE WAS. runbooks/02-backup-restore.md headed its real-recovery
+      section "กู้จริง (ยังไม่เคยใช้ — Supabase มี PITR/daily ของตัวเองเป็นชั้นแรก)".
+      git log -S on that phrase returns exactly one commit: b47b67a, 2026-09-19, the seed
+      commit that laid out the whole repository in one go. No later commit revisited it and
+      no CIEL event mentioned PITR until the two plan lines written on 2026-09-25 - which
+      were mine, and which is how the question arose at all. It was an agent's assumption
+      that had been sitting in a runbook as though it were a checked fact for seven days.
+    - >-
+      WHY IT WAS WRONG IN THE DANGEROUS DIRECTION. The slash in "PITR/daily" collapsed two
+      different capabilities. Daily backups restore to a day's backup point; PITR restores
+      to a chosen second and is bought separately. Someone planning a recovery from that
+      sentence would have assumed the stronger of the two - during a recovery, which is
+      the worst moment to discover the difference.
+    - >-
+      THE RUNBOOK NOW STATES THE LAYERS THAT EXIST, as a table: Supabase daily backups
+      (Pro, seven days, to each day's backup point), bin/backup.sh to Spaces
+      (BACKUP_KEEP_DAYS 14), and PITR marked NOT ENABLED with its price so nobody
+      re-derives it. Pull request 22.
+    - >-
+      AND ONE THING THAT WAS IMPLIED NOWHERE: bin/backup.sh is not redundant with
+      Supabase's own daily backups. It is off-platform, so it survives a failure of the
+      Supabase account or project itself. That is a different failure domain and it is the
+      reason to keep the timer running, which no file said before.
+  not_completed:
+    - >-
+      The runbook correction is pull request 22 and is not merged. Pull request 21 (the
+      arena) merged at 1187a59 nine minutes before this correction existed, so main
+      carries the arena with the old sentence until 22 merges. It blocks nothing.
+    - >-
+      Nothing was done about the gap this establishes. It is reported, not fixed.
+
+the_gap_this_establishes:
+  statement: >-
+    With no PITR, a data-damaging event at midday loses everything since the last backup -
+    up to 24 hours of members' work - and recovery is whole-database, not one table or one
+    row. restore-verify.sh proves our dump restores; it has never been used to recover
+    anything.
+  why_it_is_recorded_and_not_acted_on: >-
+    It does not block slice 4 and it has a safe workaround for the thing that prompted it,
+    which is the arena: the rehearsal moves off production entirely. Under OWNER.md's
+    side-issue rule that makes it deferred prose in this record rather than a workstream,
+    a state, or a recommendation. Whether to close it, and whether before or after launch,
+    is the owner's call and he has not been asked for one.
+  what_it_does_NOT_mean: >-
+    Not that production is unprotected. Two independent copies exist and one of them is
+    off-platform. The gap is granularity and rehearsal, not absence.
+
+what_this_closes_in_decision_12:
+  the_unresolved_item: >-
+    The closeout at 20260926T000200 asked whether PITR was already paid for, because if it
+    were, the cost half of owner decision 12's reasoning would be weaker - a branch could
+    have included production data at no new charge.
+  the_answer: >-
+    It is not enabled. So Supabase branching's "Include data" was never available to this
+    project without a new $100/month purchase, and decision 12's reasoning holds as
+    written rather than by luck. The arena's other reasons - the dump already exists, a
+    data-included branch would hold real member data and need production-grade care
+    anyway, and the branch's real advantage of keeping the transaction pooler in the test
+    path is still deferred - are unchanged.
+  and_it_strengthens_the_arena: >-
+    On a database recoverable only to the day, rehearsing a member-data write against
+    production stakes a day of real members' work. That sentence is now in the runbook.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "3"
+  owner_statement:
+    asked: which plan, and whether PITR is enabled
+    answered: "Pro plan; PITR not enabled, daily only"
+    on: "2026-09-26"
+  provenance_of_the_wrong_sentence:
+    command: git log -S on the phrase, against runbooks/02-backup-restore.md
+    result: "b47b67a, 2026-09-19, seed commit; no later commit touched it"
+  external_evidence:
+    read: Supabase backup and PITR usage documentation, 2026-09-26
+    facts: >-
+      Pro/Team/Enterprise projects are backed up daily - Pro keeps seven days; Free has no
+      automated backups. PITR is an add-on on Pro and above, priced per retention week,
+      default seven days and extendable.
+    boundary: >-
+      External. Nothing in this record's local claims rests on it beyond the plan-tier
+      figures, which the owner's own answer independently supplies for our project.
+  pull_requests:
+    merged: "https://github.com/mojisejr/mumate-infra/pull/21 at 1187a59 - bin/arena.sh"
+    open: "https://github.com/mojisejr/mumate-infra/pull/22 - the runbook correction"
+  branch_cleanup: >-
+    feat/arena-rehearsal-database was deleted locally; GitHub had already removed the
+    remote ref on merge, and the stale tracking ref was pruned. Its one unmerged commit was
+    moved onto the new branch before deletion and is superseded by 1b5d0ad, not lost.
+  repository:
+    head: "d839a64"
+    branch: hq/20260921
+    working_tree: this-event-only
+
+unresolved:
+  - >-
+    A real restore over production has never been performed. Proven-restorable is not
+    proven-recovered.
+  - >-
+    No PITR means up to a day of member data between the last backup and a damaging event,
+    and whole-database recovery granularity. Deferred deliberately; the owner has not been
+    asked for a decision.
+  - >-
+    Pull request 22 is open, so main still carries the wrong sentence next to the arena.
+  - >-
+    Carried by this lane - 3c under the quiet gate, the payment test webhook from the team,
+    Vercel Preview resolving to the production database, HEALTH_DB_TIMEOUT_MS equal to the
+    Docker probe timeout, and mootech-fe origin/main failing its own verify-architecture
+    pre-push gate.
+
+next_action:
+  action: >-
+    Unchanged by this record: on the shadow host, pull main and run bin/arena.sh up
+    --dry-run then bin/arena.sh up, then point the shadow FE at the arena and set
+    HEALTH_DB_TIMEOUT_MS in the same file. Pull request 22 merges whenever the owner
+    reviews it and gates nothing.
+  acceptance_check:
+    - The arena reports more than 100 tables, user rows above zero, and all five login tables readable.
+    - The shadow FE answers /api/health 200 with database OK against the arena.
