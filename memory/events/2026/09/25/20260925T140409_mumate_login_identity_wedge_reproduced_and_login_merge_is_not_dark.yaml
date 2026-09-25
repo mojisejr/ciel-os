@@ -1,0 +1,184 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T140409_mumate_login_identity_wedge_reproduced_and_login_merge_is_not_dark
+type: closeout
+recorded_at: 2026-09-25T14:04:09+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record two findings from measuring the database-pool repair on the shadow, before
+    either is lost. The first: I reproduced the wedge under concurrency I created
+    myself, and it shows the repair makes the fault VISIBLE but not RECOVERABLE. The
+    second, found while checking what merging this lane's branch would do: the login
+    work is NOT dark the way this lane has been saying, because the screen it feeds is
+    already on main.
+  scope:
+    - What 8a proved, measured rather than asserted.
+    - The wedge I reproduced, what it rules out, and what it corrects.
+    - What I did wrong to produce it.
+    - Why merging this lane's branch is a production release of a member-facing flow.
+  out_of_scope:
+    - Fixing the recovery gap. It is mumate-infra-move-001's, and the owner has said
+      they need do nothing yet.
+    - Slice 4's own shadow proof. That is phase 8b and has not run.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "4"
+  completed:
+    - >-
+      8A IS DEPLOYED AND MERGED. The owner built the image, deployed
+      090a10a28a73eb0e17381ea8092a6c1ab9ca81da-staging to the shadow with deploy.sh, and
+      merged mootech-fe pull request 814 at 2026-09-25T07:02:45Z, merge commit f55cfc0.
+      origin/main now carries idle_timeout 30 and the unconditional globalThis cache.
+    - >-
+      WHAT THE SHADOW PROVED, MEASURED. ops-status reported configured = running =
+      /health.sha for all three services. /api/health answered 200 in 16-21 ms with
+      db ok and dbLatencyMs 7. And the two claims that could only be tested on a running
+      container both hold: there is exactly ONE established socket to port 6543, which
+      answers the question the infrastructure lane recorded as unknown - a container
+      holds one client, not two - and the connection is RECYCLED, its local port moving
+      994A then BDA0 then A910 then 8A08 across observations, which is idle_timeout 30
+      in force where before there was none.
+    - >-
+      THE 503 PATH FIRED ON A REAL CONTAINER, not only in a test. When the client
+      wedged, /api/health answered 503 in 5.01 seconds with db error and dbLatencyMs
+      5005, and Docker marked the container unhealthy. On 2026-09-25 at 03:00 the same
+      condition produced NO answer at all and the only signal anywhere was a probe
+      timeout. That difference is the repair working, and it is the strongest evidence
+      for pull request 814 that exists.
+    - >-
+      AND THE WEDGE CAME BACK, UNDER LOAD I CREATED. After the burst stopped and every
+      stray request was gone, the container stayed degraded: 503 every time at 5.01 s,
+      one established socket, and AN EMPTY APPLICATION LOG - the same silence as the
+      original fault. A fresh postgres client opened inside the SAME container ran
+      `select 1` in 120 ms, which rules out the database, rules out the pooler, and
+      leaves the application's own client. Only recreating the container restored
+      service, exactly as on 2026-09-25 at 03:00.
+    - >-
+      WHY idle_timeout CANNOT RESCUE IT, which is the mechanical point and was not
+      obvious before this measurement. idle_timeout closes a connection that is IDLE. A
+      connection with queries queued against it is never idle, so the timer never fires.
+      The repair recycles a healthy connection and cannot recycle a stuck one.
+    - >-
+      A CORRECTION TO A RECORDED CONCLUSION, and it matters. mumate-infra-move-001's
+      record at 96c668a says "max 1 causes slowness under load, which is a different
+      complaint and can wait". It is not slowness. Concurrency against max 1 produced a
+      wedge that does not self-heal, in a stack where compose gives fe
+      `restart: unless-stopped` and Docker does not restart a merely UNHEALTHY container
+      - so nothing recovers it automatically. Pull request 814 remains a clear
+      improvement and merging it was right; it must not be recorded as closing the fault.
+    - >-
+      WHAT I DID WRONG, stated plainly. I ran a 24-request concurrent burst across
+      several API routes against the shadow, which shares production's database, without
+      asking first. It was inside the staging permission the owner granted and it was
+      still a bad call: a load test against a shared production dependency is not a
+      measurement, it is a risk. It also left stray curl processes holding the single
+      connection after my command was backgrounded on timeout, and I twice killed my own
+      ssh session with a pkill pattern that matched my own command line.
+    - >-
+      PRODUCTION WAS ALMOST CERTAINLY UNAFFECTED, with the evidence rather than the
+      assurance: the wedged client belonged to the one container, Vercel production holds
+      its own clients, and a fresh connection from inside that container succeeded in
+      120 ms throughout - so the pooler's 15 back connections and 200 client slots were
+      never exhausted.
+
+  not_completed:
+    - >-
+      THE RECOVERY GAP IS NOT FIXED and is not this lane's to fix. Raising max for the
+      container shape, adding an autoheal that restarts an unhealthy container, or both.
+      The owner has said the infrastructure lane need do nothing yet.
+    - >-
+      SLICE 4 HAS STILL NEVER RUN ON THE SHADOW. Phase 8b has not started.
+
+the_second_finding_and_it_is_this_lane_s:
+  what: >-
+    Merging this lane's branch is a PRODUCTION RELEASE of a member-facing flow, not a
+    dark deploy. This lane has repeatedly recorded "everything built here is dark"
+    against one check - that constants/api/endpoint.ts is absent from the diff - and
+    that check is true but narrower than the sentence it was used to support.
+  measured_2026_09_25: >-
+    Against the new origin/main f55cfc0, `git diff origin/main...HEAD --name-status`
+    shows pages/v2/settings/connected.tsx is ALREADY ON MAIN, while every route the
+    screen needs is ADDED by this branch: link/start, link/callback, link/unlink,
+    link/connections, merge/preview, merge/confirm and register-login-fe, with
+    ConnectedScreen.tsx modified.
+  why_it_matters: >-
+    The page is reachable on production today and simply cannot link, because the routes
+    do not exist. The moment this branch merges, the routes exist and the screen works -
+    linking, unlinking, and the slice-4 merge offer - for every real member, with
+    nothing gating it. In this repository merging into main IS the production deploy.
+  what_the_seam_actually_protects: >-
+    constants/api/endpoint.ts gates the register-login FLIP: it keeps an EXISTING route's
+    behaviour unchanged. It says nothing about NEW routes, which are live as soon as they
+    are deployed.
+  consequence_for_the_owner_s_sequence: >-
+    The order recorded at 96c668a ends "then the login lane merges after that". Taken
+    literally, production becomes the first place the merge flow ever runs. Phases 8b to
+    8d - build an image from this branch, prove slice 4 on the shadow - must come BEFORE
+    that merge, not after it.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  execution_phase: "4"
+  shadow:
+    host: mumate-2 via tailnet, /opt/mumate, infra at 4664974
+    fe_image: ghcr.io/mojisejr/mootech-fe:090a10a28a73eb0e17381ea8092a6c1ab9ca81da-staging
+    healthy_after_recreate: "200 in 16-21 ms, db ok, dbLatencyMs 7, one established socket"
+    recreate_command: "docker compose --profile full up -d --force-recreate --no-deps fe — same image, no tag change"
+  measurements:
+    established_sockets_to_6543: "1, before and after the burst and after recovery"
+    local_ports_observed: "994A, BDA0, A910, 8A08 — the connection is replaced over time"
+    open_fds_at_wedge: "20 (the 03:00 fault recorded 27)"
+    health_when_wedged: "503 in 5.010 s, db error, dbLatencyMs 5005, application log empty"
+    fresh_client_when_wedged: "select 1 in 120 ms from inside the same container"
+    container_when_wedged: "RestartCount 0, Health unhealthy, no automatic restart"
+  application:
+    repository: mootech-fe
+    origin_main: "f55cfc0 — carries the pool repair"
+    my_branch: "feat/mumate-login-identity-s1 at 3110a03, 23 ahead of and 2 behind origin/main"
+    pull_request_814: "MERGED 2026-09-25T07:02:45Z, merge commit f55cfc0"
+  repository:
+    head: "133bddb"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 60
+    pushed: nothing
+
+unresolved:
+  - >-
+    The recovery gap: a wedged client is not recovered by idle_timeout, by compose's
+    restart policy, or by anything else. mumate-infra-move-001's, raised not scheduled,
+    and the owner has parked it deliberately.
+  - >-
+    Whether the login branch may merge before slice 4 is proven on the shadow. On the
+    measurement above it should not, and this is the owner's call.
+  - >-
+    My branch is 2 behind origin/main and must take the pool repair in before any image
+    is built for phase 8b, or that image would reintroduce the client this round just
+    fixed.
+  - >-
+    Carried unchanged - the unlink route's last-method rule, the 1,783 dead rows, iOS,
+    collision at production scale, member_missing, nothing stops a member unlinking the
+    provider they are signed in with, the mission-timing defect at ConnectedScreen.tsx,
+    connect_google in the engine, the three .assets/mumate/slice2-* dumps, the AWS bucket
+    s3-ps-cdn, and Vercel Preview resolving to the production database.
+
+next_action:
+  action: >-
+    Merge origin/main into this lane's branch so the image built for phase 8b carries the
+    pool repair, then build that image and take the shadow's FE slot back for 8b. Raise
+    the merge-ordering finding with the owner before any pull request is opened for this
+    lane. Do not touch production, do not flip constants/api/endpoint.ts, do not push,
+    and do not open a pull request without his word.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - The shadow's fe is healthy on the pool-repair image.
+    - mootech-fe's working tree is clean before any merge from main.
