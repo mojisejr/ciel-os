@@ -1,0 +1,156 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T122450_mumate_infra_move_fe_db_pool_pr_open_awaiting_shadow_proof
+type: closeout
+recorded_at: 2026-09-25T12:24:50+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Checkpoint at the owner's pause. The database-pool repair is written,
+    tested, pushed and open as a pull request; it is NOT merged and NOT proven
+    on the shadow. This record exists because three facts established this
+    morning live nowhere in the repository yet - the pooler's real numbers, the
+    reason they say not to raise max, and the sequence the owner chose - and
+    they would be lost if this session ended.
+  scope:
+    - What mootech-fe pull request 814 contains and what it deliberately does not.
+    - The Supabase pooler numbers the owner read from the dashboard, and what they decide.
+    - The order the owner chose for merging this against the login lane's work.
+  out_of_scope:
+    - Merging. The owner holds it until the shadow proof.
+    - Raising max. Blocked on the deployment shape, not on a missing number any more.
+    - The login lane's own work and its merge, which are its own to sequence.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      mootech-fe pull request 814 is open from branch
+      fix/db-pool-and-health-timeout at commit 090a10a, cut from origin/main
+      9f764e6, MERGEABLE and CLEAN, +92/-7 across four files. The work was done
+      in a SEPARATE WORKTREE at ~/ghq/github.com/mojisejr/mootech-fe-dbpool so
+      the main checkout, which mumate-login-identity-001 holds on
+      feat/mumate-login-identity-s1, was never switched or touched.
+    - >-
+      What it changes - lib/db/index.ts caches the client on globalThis
+      unconditionally (it was cached only when NODE_ENV !== 'production', so
+      production had none) and sets idle_timeout 30; pages/api/health.ts races
+      its probe against a deadline so a HANG becomes 503 as a rejection already
+      did, with the budget read per request rather than at module scope;
+      scripts/health-route.test.ts gains a case that mocks db.execute as a
+      promise that never settles; .env.example declares HEALTH_DB_TIMEOUT_MS as
+      the repository's own drift guard demanded.
+    - >-
+      Proven by the pair that matters - the new test TIMES OUT after 15 s
+      against the previous handler and PASSES in 126 ms against this one.
+      Full suite 249 files / 2718 tests / 0 failures, run twice, exit 0;
+      tsc --noEmit clean; eslint clean on all four files; npm run build exit 0
+      with the VAPID secret gate green; gitleaks run by hand with no leaks,
+      because the push needed --no-verify and that silently skips gitleaks too.
+    - >-
+      THE POOLER'S REAL NUMBERS, read by the owner from the Supabase dashboard
+      on 2026-09-25 and recorded here because they exist nowhere else: pool size
+      15, max client connections 200. The connection uses port 6543, which is
+      the transaction pooler, confirmed from the host's own DATABASE_URL - so
+      prepare:false is a hard requirement and must never be removed.
+  not_completed:
+    - >-
+      The repair is NOT proven on the shadow. It has never run outside a test
+      runner. Proving it needs an image built from this branch and the shadow's
+      FE slot, which mumate-login-identity-001 holds.
+    - >-
+      The pull request is NOT merged. In this repository merging into main IS
+      the production deploy - there is no separate deploy step - so merging
+      before the shadow proof would make production the first place the change
+      meets real load.
+  owner_sequence_2026_09_25: >-
+    The owner chose the order at the pause: the login lane finishes its current
+    work first; then this lane builds an image from its branch, proves the
+    repair on the shadow, and merges pull request 814; then the login lane
+    merges after that. This session stands by until he says so. He was offered
+    an immediate merge on the argument that the risk is low and a revert is one
+    isolated pull request, and he chose the shadow proof instead.
+  evidence_of_limits:
+    - >-
+      WHY max IS STILL 1, now with the numbers rather than for want of them.
+      max spends the CLIENT-side ceiling, which is the 200, not the 15; in
+      transaction mode the front connections multiplex onto the pooler's 15 back
+      connections. The same code runs in two deployment shapes: a fixed set of
+      containers on DigitalOcean, where max 5 would be trivially safe, and
+      Vercel serverless with an UNBOUNDED instance count, where 50 concurrent
+      instances at max 5 would want 250 client connections and be refused at
+      peak. So max is not a number to choose but a decision that depends on the
+      deployment shape - and that shape is exactly what slice 4 changes.
+      Raising it belongs after the flip, not before.
+    - >-
+      The observed fault was never max's doing anyway. Zero established sockets
+      with an empty log is the signature of a missing idle_timeout - we never
+      closed an idle connection, so the pooler could drop one on its own
+      schedule while the driver queued against a handle that would never
+      dispatch. max 1 causes slowness under load, which is a different complaint
+      and can wait.
+    - >-
+      The push required --no-verify because verify-architecture fails on four
+      violations that already exist on origin/main and that this branch does not
+      touch - three ban-inline-identity-import under pages/v2 and one
+      no-arbitrary-tailwind-default-props in AppHeader. The harness refuses
+      --no-verify, so the owner ran the push. Same wall as the pull-request
+      merge in slice 3e; the efficient response is to hand him the line.
+    - >-
+      One defect in this session's OWN fix was caught by the new test rather
+      than by review: the probe budget was read at module scope, so setting the
+      variable later did nothing and did so silently. The test measured 5005 ms
+      against its own 120 ms budget while the source looked correct. That is the
+      same shape of quiet trap the repair exists to remove, and it is the second
+      time today a test designed to fail earned its place.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: "17c8c062bfde837d0d2a46cdf374c819ba682b56"
+    branch: hq/20260921
+    working_tree: this-record-only-mine
+    pull_request: none-until-hq-round-close
+  application:
+    mootech-fe: "pull request 814, branch fix/db-pool-and-health-timeout at 090a10a, base origin/main 9f764e6, open and unmerged"
+    mootech-fe_worktree: "~/ghq/github.com/mojisejr/mootech-fe-dbpool — this lane's own worktree; the main checkout stays on the login lane's branch"
+    mumate-infra: "4664974, unchanged"
+    mootech-be: "0705378d884114a4fd0e73aed59656638f335fdc, unchanged"
+    bazi-sft-dataset: "722cdf1b5f35f2124c9f59042caf8a9c5d6106b7-staging, unchanged"
+  pooler_facts:
+    pool_size: "15 — the pooler's connections to Postgres, shared across everything"
+    max_client_connections: "200 — what max actually spends"
+    mode: "transaction, confirmed by port 6543 in the host's DATABASE_URL; prepare:false is therefore mandatory"
+    guidance_noted: "Supabase advises keeping pool size under about 40% of the database's max connections when PostgREST is used heavily, which MuMate does"
+  cross_lane:
+    login_lane_branch: "feat/mumate-login-identity-s1 at remote 49097ff — touches none of the three code files; both branches add a block to .env.example about 150 lines apart, which git resolves without help"
+    fe_slot: "held by mumate-login-identity-001; needed for the shadow proof and not taken"
+  previous_record: memory/events/2026/09/25/20260925T111434_mumate_infra_move_fe_db_pool_repair_authorized.yaml
+
+unresolved:
+  - The repair is unproven outside tests; the shadow proof is the next thing that changes that.
+  - Whether a container holds one client or two is still unknown and is measurable only on a running container - count established sockets to the pooler after traffic across several routes.
+  - max stays at 1 until after the flip changes the deployment shape.
+  - The four violations that make origin/main fail its own pre-push gate are untouched and will force --no-verify on every future push from this repository.
+  - Carried unchanged - the 502 keep-alive fix needing the login lane's minute, profile-blind rollback.sh, 3c's deferred storage and maintenance-bypass proofs, and slice 4 owing its own decision.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Stand by until the owner says the login lane is done. Then ask him to run
+    the container-build workflow in mootech-fe on branch
+    fix/db-pool-and-health-timeout with target staging and push true, tell
+    ciel-os-d9 the FE slot is borrowed, deploy that image to the shadow, count
+    the established sockets to the pooler and confirm /api/health still answers
+    200, then ask him to merge pull request 814 and hand the slot back with the
+    tag named.
+  acceptance_check:
+    - The repair runs on the shadow with all three services healthy and the health route answering 200.
+    - The client count per container is measured and recorded, because slice 4 needs it to choose max.
+    - Pull request 814 is merged only after that, and the login lane merges after it.
