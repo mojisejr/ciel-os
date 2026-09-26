@@ -1,0 +1,271 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T131500_mumate_login_identity_slice4_live_on_production_and_lessons
+type: closeout
+recorded_at: 2026-09-26T13:15:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close the set: slices 1-4 are merged and account linking plus the account merge are LIVE
+    for every MuMate member on production, in two deliberate steps. Record what is proven,
+    what is deployed but never once exercised, and the lessons of the round - including four
+    where I was wrong and the plan or a test was right.
+  scope:
+    - The two-step delivery, with the exact timing that decided whether the feature was on.
+    - What was verified on production and by what probe, negative controls included.
+    - What is live and has NEVER been exercised, stated as plainly as what works.
+    - The owner's decision to open it to members and handle edge cases as they surface.
+    - Seven lessons, four of them corrections to my own judgement inside this session.
+  out_of_scope:
+    - Slice 4b and slice 5. Neither authorized, neither started, DoD 4b still unwritten.
+    - Pushing HQ. The owner explicitly held it.
+    - The new requirement the owner is about to describe. Not planned here.
+
+outcome:
+  status: slice-complete-pr-merged
+  parallelism: approved
+  slice: "4"
+  execution_phase: "8d"
+  completed:
+    - >-
+      SLICES 1-4 ARE ON PRODUCTION. Pull request 815 merged to mootech-fe main at
+      2026-09-26T05:39:57Z as 1ab900c, 28 commits, 51 files, +10,195/-43. Vercel deployed it
+      from main within seconds. Verified from outside rather than taken on trust.
+    - >-
+      THE DEPLOY WAS PROVEN BY A PROBE THAT COULD ONLY PASS IF THE NEW CODE WAS LIVE. Before
+      the merge, /api/auth/link/connections and /api/auth/register-login-fe were both swallowed
+      by NextAuth's catch-all at pages/api/auth/[...nextauth].ts and answered "This action with
+      HTTP GET is not supported by NextAuth.js". After it they answer 401 and 405 respectively,
+      and /api/auth/link/start/google answers 302 to ?link_error=not_signed_in. The more
+      specific file routes now win over the catch-all, which is the thing that had to be true
+      and had only ever been observed on staging.
+    - >-
+      THE ORDINARY LOGIN FLOW IS UNCHANGED, confirmed by the owner from his phone. That was the
+      one check that could have stopped the release, because this merge carries a parallel
+      register-login route that must stay dark: constants/api/endpoint.ts:55 still resolves to
+      the backend and nothing in the application calls the FE route.
+    - >-
+      THE FEATURE WAS THEN TURNED ON AS A SEPARATE STEP, and the separation earned itself
+      within four minutes. The owner added LINK_STATE_SECRET to the production environment AFTER
+      the deploy had already been built, so the running functions did not have it and the
+      feature was still off while `vercel env ls` showed the variable present. A redeploy is
+      what puts it in effect. This is exactly the trap the runbook named one message earlier,
+      and it cost nothing because the two steps were separate and the state was checked between
+      them rather than assumed.
+    - >-
+      BOTH PROVIDER CONSOLES ARE VERIFIED, WITH NEGATIVE CONTROLS, AND WITHOUT TOUCHING AN
+      ACCOUNT. Google accepts .../api/auth/link/callback/google - it reaches the real sign-in
+      page carrying app_domain=https://bazichart.mumate.co - and rejects a deliberately bogus
+      sibling path with Error 400 redirect_uri_mismatch. LINE answers 200 with its login page
+      for .../api/auth/link/callback/line and 400 for the bogus one. No token was issued, no
+      row was written, and nothing was read from a secret store: the client ids came from
+      production's own NextAuth sign-in payload, where they are public parameters.
+    - >-
+      THAT PROBE CLOSED THE LARGEST UNVERIFIED RISK OF THE WHOLE RELEASE. A wrong redirect URI
+      fails as redirect_uri_mismatch, which looks like an application bug, is invisible to us,
+      and would have been discovered by members. It was also the one thing no amount of work on
+      the arena could have tested, because the URI is per-domain.
+    - >-
+      THE OWNER DECIDED TO OPEN IT TO MEMBERS AND HANDLE EDGE CASES AT THE COALFACE. Recorded as
+      his decision with the residue named to him first, not as an assumption. The residual
+      failure mode is the designed fail-closed path - a Thai sentence saying the feature is not
+      ready - and reversing the switch is one command plus a redeploy.
+  not_completed:
+    - >-
+      NOBODY HAS PRESSED THE BUTTON. Not once, on production. The link round trip has never
+      completed against production's own configuration, and it cannot be probed from outside
+      because every route on this surface resolves identity BEFORE it reads the secret. The
+      owner was offered a one-tap test that writes nothing - visiting link/start/line, which for
+      a provider he already holds returns already-linked and changes no row - and chose to skip
+      it. So whether LINK_STATE_SECRET reached the running functions is inferred from Vercel's
+      redeploy semantics and not observed.
+    - >-
+      THE MERGE HAS NEVER RUN ON PRODUCTION and cannot be staged there. The owner's account
+      holds both providers after slice 3, so no collision can be arranged on it. The first
+      production merge will be a real member's. Its safety net is unchanged: two explicit
+      confirmations, a single moved credential, no data movement at all, and a reversal
+      statement recorded inside each audit row.
+    - >-
+      iOS IS STILL UNEXERCISED, accepted by the owner on the ground that nobody on the team uses
+      it and he will absorb it as support.
+    - >-
+      HQ IS NOT PUSHED. 79 commits ahead of origin/main, held by the owner deliberately.
+
+the_two_steps_and_why_they_were_two:
+  timing:
+    - "12:39:57 +07 - pull request 815 merged"
+    - "12:40:00 - Vercel production deployment created from main. Feature OFF: no secret existed."
+    - "~12:44 - LINK_STATE_SECRET added to the production environment. Feature still OFF: the running deployment predates it."
+    - "~12:53 - redeploy. The secret reaches the functions. Feature ON."
+    - "~13:05 - both provider consoles verified by probe with negative controls."
+  what_the_separation_bought: >-
+    A failure after the merge would have been attributable to the code; a failure after the
+    switch, to the switch. Because they were separate, the four-minute window where the variable
+    existed but was not in effect was a recognisable state rather than a mystery - and the fix
+    was a redeploy rather than a hunt through the callback.
+  how_to_reverse_each: >-
+    The switch: `vercel env rm LINK_STATE_SECRET production` then redeploy; the code stays. The
+    code: Vercel instant rollback, with nothing to undo in the database - migration 0034 has been
+    on production since 2026-09-23 and this release carried no migration, so the schema is ahead
+    of the code, which is the direction that lets code roll back alone.
+
+lessons:
+  a_gate_is_a_property_of_each_route_not_of_a_feature: >-
+    I described the whole linking surface as "gated behind LINK_STATE_SECRET" and it was almost
+    true. The unlink route - the one write that DELETES a login credential - never reads that
+    variable: it needs only a signed session, so it went live with the code and not with the
+    switch. I only found it because I read each route's gate separately instead of reasoning
+    about the feature. "Behind a flag" is a claim to verify per entry point, and the entry point
+    most likely to be missed is the destructive one, because it is not the feature's headline.
+  a_plans_deferral_reasoning_is_evidence_not_a_leftover: >-
+    Twice I recommended fixing the unlink route's last-method rule before enabling linking.
+    PLAN.md revision 0.5 had already judged it, better than I did, in a section I had read the
+    same session: "the trigger is the FLIP, not this branch", because one legacy Google login
+    heals a member whose only other row is a dead token, and the legacy path still serves every
+    login. I had read the unresolved LIST and re-derived a worse answer. When an unresolved item
+    looks like a blocker, find where the plan decided to defer it and read that reasoning first.
+    Correcting this removed roughly half a day from the path the owner chose.
+  a_probe_that_cannot_fail_proves_nothing: >-
+    My first redirect-URI test asked Google's authorize endpoint about the link callback, got
+    302, and I reported it as accepted. The negative control with a deliberately bogus path also
+    returned 302 - Google defers redirect_uri validation until after the redirect chain. Only
+    following the chain to the end made the test discriminate, at which point the bogus URI
+    produced Error 400 redirect_uri_mismatch and the real one produced a sign-in page. A
+    configuration probe is worth nothing until a known-bad input has been shown to fail it.
+  when_two_places_mirror_one_rule_test_the_PRECEDENCE: >-
+    I added the current-method refusal to unlinkProvider BEFORE the last-method check while
+    summariseConnections had the opposite order. For a member with exactly one method, signed in
+    through it, both refusals fire - and the two would have disagreed, telling one member to
+    sign in a way that does not exist while the button said the opposite. That is precisely the
+    thing both are written to make impossible. My own test caught it before it left the machine,
+    because it asserted the order as the rule rather than asserting each outcome separately.
+  set_and_in_effect_are_two_different_facts: >-
+    On Vercel an environment variable that exists in the project is not an environment variable
+    the running functions can read; a deployment carries the values as they were when it was
+    built. `vercel env ls` showing the name is therefore not evidence the feature is on. The
+    general form: for any configuration, distinguish "recorded in the control plane" from
+    "loaded by the process", and name which one the evidence supports.
+  configuration_truth_lives_in_the_running_system_and_this_is_the_second_time: >-
+    The production environment the team supplied at .assets/mumate/infra-mumate/from-jareonsak/
+    fe-env.env is a development environment - NEXTAUTH_URL is http://localhost:3000, NODE_ENV is
+    development - and using it would have produced a redirect URI that could never match. The
+    real value came from production's own /api/auth/providers, which states every callback URL
+    it actually builds. The 2026-09-25 record already warned that both .assets copies of that
+    variable disagree with reality. A lesson that recurs is a pattern, not an incident: for any
+    value that must match character for character, ask the running process, never a file.
+  an_account_that_holds_everything_cannot_test_anything: >-
+    The owner's account holds both providers after slice 3, so on production he could neither
+    press a link button (there is none to press) nor stage a collision. The verification had to
+    be redesigned around that: probe the consoles directly, and read the already-linked path as
+    the safe round trip. This is the same affordance gap the records already carry as a member
+    problem, surfacing as a TESTING problem. It belongs in DoD 4b, because 4b is where the
+    screen learns to talk to a member who already has both.
+  a_precise_claim_beats_a_true_one: >-
+    The 2026-09-26T00:40 record says gitleaks "found nothing" for that commit. It reports two
+    findings, both synthetic fixtures in scripts/link-verify-default.test.ts that were present
+    then too. The conclusion it supported - no real secret on the branch - still holds, and the
+    claim was still wrong. Say "two findings, both read, both fixtures" rather than "nothing".
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  execution_phase: "8d"
+  application:
+    repository: mootech-fe
+    pull_request: "https://github.com/mojisejr/mootech-fe/pull/815"
+    state: MERGED
+    merged_at: "2026-09-26T05:39:57Z"
+    merge_commit: "1ab900c"
+    branch_head_merged: "6247a71"
+    size: "28 commits · 51 files · +10,195/-43"
+  production:
+    domain: "https://bazichart.mumate.co"
+    nextauth_url: "https://bazichart.mumate.co"
+    nextauth_url_source: "production's own /api/auth/providers - no secret read or written to disk"
+    deployment_after_switch: "mootech-o5nobikte (Ready)"
+    link_state_secret: "present in the production environment, in effect only after the redeploy"
+  probes_run_from_outside:
+    before_merge:
+      link_connections: "NextAuth catch-all - 'This action with HTTP GET is not supported'"
+      register_login_fe: "same"
+    after_merge:
+      link_connections: 401
+      register_login_fe: 405
+      link_start_google: "302 -> /v2/settings/connected?link_error=not_signed_in"
+    google_console:
+      registered_uri: "reaches accounts.google.com sign-in with app_domain=https://bazichart.mumate.co"
+      negative_control: "bogus sibling path -> Error 400 redirect_uri_mismatch"
+    line_console:
+      registered_uri: "HTTP 200, LINE Login page"
+      negative_control: "bogus sibling path -> HTTP 400"
+    not_probeable: >-
+      Whether LINK_STATE_SECRET reached the functions. Every route on this surface resolves
+      identity before reading the secret, so an unauthenticated probe cannot distinguish the two
+      states. Only a signed-in press settles it and none has happened.
+  checks_on_the_merged_code:
+    tests: "3,090 passed · 191 skipped (env-gated real-Postgres) · 22 added this session"
+    build: "next build compiled"
+    lint: "eslint 0 errors, 135 pre-existing warnings, count unchanged"
+    typecheck: clean
+    gitleaks: "2 findings, both read and confirmed synthetic fixtures in scripts/link-verify-default.test.ts"
+    ci: "none - .github/workflows/ci.yml is archived, so owner review was the only gate"
+  repository:
+    head: "fcc35fc"
+    branch: hq/20260921
+    working_tree: this-event-only
+
+unresolved:
+  - >-
+    The link round trip has never completed on production and the merge has never run there. The
+    first exercise of each will be a member's. Watch ops_audit_log for rows whose action matches
+    merge and verify each moved exactly one user_provider row with the paying side surviving.
+  - >-
+    Whether LINK_STATE_SECRET is loaded by the running functions is inferred, not observed. A
+    one-tap zero-write check exists - visit /api/auth/link/start/line while signed in holding
+    LINE - and the owner chose to skip it.
+  - >-
+    DoD 4b is unwritten, and the affordance for a member who already holds both providers is
+    missing - which this session proved is also a testing obstacle, not only a member one.
+  - >-
+    The unlink route's last-method rule still counts provider names rather than identities that
+    can authenticate. Slice-5 precondition per revision 0.5; the legacy path's email discovery
+    is the net until the flip.
+  - >-
+    iOS unexercised, accepted by the owner as a support matter.
+  - >-
+    A rehearsal is not hermetic while be and bazi point at production, and the arena is down. It
+    must be rebuilt and be/bazi pointed at it before slice 5 rehearses the flip.
+  - >-
+    OAuth authorization codes and the signed link state reach Grafana Cloud unredacted - one
+    narrow rule, the infrastructure lane's.
+  - >-
+    env/fe.env.pre-arena remains on the shadow host as a second copy of the production environment.
+  - >-
+    HQ is 79 commits ahead of origin/main and deliberately unpushed. Its pull request owes three
+    corrections: the wedges attributed to max 1 under load, "nothing outside the arena is
+    written", and the gitleaks claim.
+  - >-
+    The off-platform backup layer is one file dated 2026-09-19 with its timer disabled, PITR is
+    off, and a real restore has never been performed. This is the thinnest thing under all of it.
+  - >-
+    Carried unchanged - the 1,783 dead rows, collision at production scale proven against one
+    pair, member_missing unreachable, connect_google absent from the engine, the three
+    .assets/mumate/slice2-* dumps, the AWS bucket s3-ps-cdn, a destructive route answering a
+    cacheable GET, and Vercel Preview resolving to the production database.
+
+next_action:
+  action: >-
+    The owner will describe a new requirement and we plan from there. Until then this set is
+    closed: account linking and the account merge are live for members, edge cases are handled as
+    they surface, and nothing further is authorized. Slice 4b needs its DoD written with the
+    owner before it can be authorized; slice 5 needs its three preconditions and his
+    authorization. HQ stays unpushed until he says otherwise.
+  acceptance_check:
+    - A fresh Wake reports zero validation errors and this event as the newest.
+    - No claim here says the production merge path has been observed.
+    - HQ remains unpushed.
