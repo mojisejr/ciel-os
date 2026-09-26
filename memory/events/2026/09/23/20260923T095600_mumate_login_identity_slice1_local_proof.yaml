@@ -1,0 +1,100 @@
+schema_version: ciel.event.v0.1
+id: evt_20260923T095600_mumate_login_identity_slice1_local_proof
+type: closeout
+recorded_at: 2026-09-23T09:56:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record the slice-1 local implementation proof for a FE-native register-login
+    route beside the live BE route, without wiring traffic, pushing a branch, or
+    changing production state.
+  scope:
+    - Plan revision 0.1 slice 1 local implementation and proof.
+    - mootech-fe topic branch feat/mumate-login-identity-s1 only.
+    - Google and LINE provider identity derived from the signed NextAuth session.
+  out_of_scope:
+    - Production deploy, route flip, provider settings, schema migration, account linking, and collision merge.
+    - mootech-be, Bazi/QI, referral ownership, subscription, rich-menu, LIFF, and MEMBER_SUB changes.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Added POST /api/auth/register-login-fe as an unwired parallel route. It
+      derives provider and stable provider subject from the signed NextAuth
+      session and ignores client-supplied identity fields.
+    - >-
+      Added a transaction-scoped provider-identity advisory lock. A real local
+      Postgres test sent two concurrent first-login requests and observed one
+      canonical user_id and one user_provider mapping.
+    - >-
+      Google and LINE are the only accepted providers. Existing same-user
+      duplicate rows are tolerated, cross-user ambiguity and orphan providers
+      stop with 409, and email is not used to join accounts.
+    - >-
+      First login creates the canonical UUID user, provider row, referral code,
+      and legacy signup activity atomically. Referral-code side effects are
+      rejected with 422 until their owner agrees to the behavior.
+    - A written legacy-versus-FE parity table records preserved, refused, and deferred branches.
+  not_completed:
+    - The owner has not reviewed the parity table and local proof, so slice 1 is not accepted or ready to advance.
+    - The topic branch is local only; no push, pull request, merge, deploy, SQL, or traffic flip occurred.
+    - No production OAuth round-trip or provider dashboard was exercised.
+  evidence_of_limits:
+    - >-
+      The advisory lock coordinates only FE-native writers. The DB unique index
+      remains a slice-2 gate because the legacy BE writer does not take this lock.
+    - >-
+      The local build had no Omise test public key, so its existing Omise bundle
+      gate reported skipped; this route does not touch payment code.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "92f23cb75bc275349ae929d2bf7eedb5a3c72510"
+    branch: hq/20260921
+    working_tree: closeout-event-only-before-commit
+    pull_request: none-until-hq-round-close
+  application:
+    repository: github.com/mojisejr/mootech-fe
+    branch: feat/mumate-login-identity-s1
+    base: "4837b4763748a211b7dabf9673815cd6fd44f54e"
+    head: "0b4e78107b9e5dd704d3fe141edb84bc63cc3f0a"
+    pushed: false
+    pull_request: none
+  checks:
+    - npm run lint - passed with 0 errors and 135 pre-existing repository warnings
+    - npm test - 249 files passed, 15 skipped; 2719 tests passed, 160 skipped
+    - targeted unit proof - 8 passed
+    - local Postgres concurrency proof - 1 passed
+    - npm run build - passed; route appears in the production route table
+    - local route smoke - GET 405 and unsigned POST 401 with BE configured unreachable
+  source_refs:
+    - mootech-fe/pages/api/auth/register-login-fe.ts
+    - mootech-fe/lib/auth/register-login-fe.ts
+    - mootech-fe/lib/auth/register-login-fe-store.ts
+    - mootech-fe/docs/auth/register-login-fe-parity.md
+    - mootech-fe/scripts/register-login-fe.test.ts
+    - mootech-fe/scripts/register-login-fe-db.test.ts
+
+unresolved:
+  - Owner review of the parity table and the intentional referral, email-discovery, orphan, LINE verification, and image-storage differences.
+  - Cross-user collision recovery remains manual/undecided; no merge, relink, delete, or ownership transfer is authorized.
+  - Slice 2 must re-measure provider drift and collisions before any unique index or production SQL is proposed.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner reads the parity table and this proof, then either requests slice-1
+    corrections or accepts the local checkpoint. Do not push or open the app PR,
+    authorize slice 2, change provider settings, or flip traffic before that review.
+  acceptance_check:
+    - The owner confirms or corrects each intentional parity difference.
+    - A later decision event names the next authorized slice or the permitted delivery action explicitly.

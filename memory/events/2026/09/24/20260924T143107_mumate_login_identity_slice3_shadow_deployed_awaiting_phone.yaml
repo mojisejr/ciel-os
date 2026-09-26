@@ -1,0 +1,109 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T143107_mumate_login_identity_slice3_shadow_deployed_awaiting_phone
+type: closeout
+recorded_at: 2026-09-24T14:31:07+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record the owner-authorized staging deployment of the already-built Slice 3
+    FE image, its deterministic shadow health proof, and the one remaining
+    owner-only acceptance action: a real LINE linking round trip on a phone.
+  scope:
+    - Rebase/push/build facts already completed for the branch.
+    - Shadow-only FE_TAG deployment and post-deploy health evidence.
+  out_of_scope:
+    - Production, traffic/DNS, provider console, firewall/Tailscale ACL, login
+      code, Slice 4/5, and any claim that a real LINE round trip has passed.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      Branch feat/mumate-login-identity-s1 was cleanly rebased from local
+      b1de1bf onto origin/main 9f764e6 and pushed as
+      3615dcfceac8e775ef98e55a941502c83941014a. Remote branch now equals that
+      SHA and is 17 commits ahead / 0 behind origin/main.
+    - >-
+      GitHub Actions workflow run 35964919468 (container-build, staging,
+      push=true) passed build+hygiene, GHCR login, release build and image push.
+      Exact image: ghcr.io/mojisejr/mootech-fe:3615dcfceac8e775ef98e55a941502c83941014a-staging.
+    - >-
+      Fresh preflight through canonical `ssh mumate` reached mumate-2. Before
+      deployment FE was 7e22f54-staging healthy; BE 0705378 and Bazi
+      722cdf1-staging were healthy.
+    - >-
+      deploy.sh dry-run for exactly FE_TAG=3615dcf...-staging passed compose,
+      Caddyfile and env validation and described only the FE_TAG change.
+    - >-
+      The exact FE image is now deployed to SHADOW ONLY. Post-deploy
+      bin/ops-status reports configured=running=/health.sha=3615dcf... and
+      healthy for FE, with BE and Bazi still on their prior healthy tags. Local
+      and public https://app.staging.mumate.co/api/health both returned HTTP 200
+      with service mootech-fe, db ok, dbLatencyMs 3 and SHA 3615dcf.
+  not_completed:
+    - >-
+      No real LINE link round trip, Google consent/JWKS path, LINE webview
+      behaviour or device interaction has been exercised. This event does not
+      claim any of them.
+    - Slice 4, Slice 5, traffic flip and production remain untouched.
+  evidence_of_limits:
+    - >-
+      The initial live deploy SSH transport exceeded the agent polling yield
+      during image pull, so its terminal stdout/exit code was not captured.
+      The deploy process later exited; this record relies on the stronger
+      deterministic postcondition: configured tag, running image, /health.sha,
+      container health, local health and public staging health all agree. No
+      rollback occurred; FE would otherwise have returned to 7e22f54-staging.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "634a614452931c08bf6f39f31f2a902b19b65091"
+    branch: hq/20260921
+    working_tree: this-event-only-before-this-record
+  application:
+    repository: mootech-fe
+    branch: feat/mumate-login-identity-s1
+    original_local_head: "b1de1bf68b62c206e26ad5b1b0e3291d849223f9"
+    rebase_base: "9f764e6201e3dd96a5efd41dca4fd8f6f1efe3f2"
+    deployed_head: "3615dcfceac8e775ef98e55a941502c83941014a"
+    remote_ref: equals-deployed-head
+    working_tree: clean
+  build:
+    workflow_run: https://github.com/mojisejr/mootech-fe/actions/runs/35964919468
+    image: ghcr.io/mojisejr/mootech-fe:3615dcfceac8e775ef98e55a941502c83941014a-staging
+    result: success
+  shadow:
+    host: mumate-2
+    before_fe_tag: 7e22f54c618855e969122f1e1853cac0117db4de-staging
+    deployed_fe_tag: 3615dcfceac8e775ef98e55a941502c83941014a-staging
+    be_tag: 0705378d884114a4fd0e73aed59656638f335fdc
+    bazi_tag: 722cdf1b5f35f2124c9f59042caf8a9c5d6106b7-staging
+    ops_status: configured-running-health-sha-all-agree
+    local_health: HTTP-200-db-ok-sha-3615dcf
+    public_health: https://app.staging.mumate.co/api/health HTTP-200-db-ok-sha-3615dcf
+
+unresolved:
+  - Owner phone round trip for LINE linking, including consent and return screen.
+  - Whether Google linking should gain a connect_google mission.
+  - Carried unchanged: traffic flip, Slice 4, Slice 5, AWS bucket, Vercel Preview production DB.
+
+next_action:
+  action: >-
+    Owner opens the staging Connected Accounts screen on a phone, starts a LINE
+    link and completes LINE consent. Agent observes the result and logs, then
+    records only the resulting evidence; stop immediately on any provider or
+    callback error.
+  acceptance_check:
+    - LINE returns to the staging app, the second provider is displayed linked,
+      the original user_id/session remains intact, and no collision path writes
+      data. Until this is observed, Slice 3 remains unaccepted.

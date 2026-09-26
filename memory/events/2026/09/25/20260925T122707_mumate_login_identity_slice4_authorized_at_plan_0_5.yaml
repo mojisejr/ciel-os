@@ -1,0 +1,217 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T122707_mumate_login_identity_slice4_authorized_at_plan_0_5
+type: decision
+recorded_at: 2026-09-25T12:27:07+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Authorize slice 4 - the member merges two accounts they prove they own - at
+    plan revision 0.5, and record the two acceptance criteria that changed on the
+    way here. The owner authorized it in this session after reading the plan, the
+    step order and an audit of whether DoD 4 completed actually reaches his goal.
+  scope:
+    - The authorization, and the revision it authorizes.
+    - Two DoD amendments, both forced by reading the code rather than by opinion.
+    - One correction withdrawn, and why it was wrong.
+    - One assumption the owner has not confirmed, stated rather than buried.
+    - Two side issues deferred under OWNER.md, with where each is recorded.
+  out_of_scope:
+    - Any implementation. Nothing is built by this record.
+    - Slice 4b and slice 5. Unchanged, unauthorized, and each needs its own decision.
+    - Deleting the dead `ya29` rows, and changing the unlink route. Both deferred below.
+    - Production, the flip, pushing, and opening a pull request.
+
+outcome:
+  # `decided`, not `recorded`. src/portfolio/read.ts:404-419 only lets a decision
+  # authorize a plan when type is `decision` AND outcome.status is exactly
+  # `decided`; with `recorded` the machinery reads past it and the lane stays
+  # unauthorized while reporting no error. That is the 676c90a defect, which this
+  # lane has already made once today.
+  status: decided
+  parallelism: approved
+  slice: "4"
+  completed:
+    - >-
+      SLICE 4 IS AUTHORIZED AT PLAN REVISION 0.5. The owner's instruction in this
+      session, after being shown the step order, the file-level plan and the DoD
+      audit: "เขียน decision แล้ว ปรับแผนใน workstream ได้เลยถ้าต้องทำ". Observed
+      directly in this session rather than relayed.
+    - >-
+      THE PLAN IS AT 0.5, AND THE BUMP IS THE POINT. Acceptance criteria changed, so
+      the revision changed; 0.4's strategy - decisions 7 to 10 - is untouched. The
+      bump also repairs an instrument defect recorded earlier today at aa54c29: wake
+      was reporting "Owner decision authorizes plan revision 0.4 slice 4" against
+      the 0.4 record whose own body refuses slice 4 three times. Because
+      decisionAuthorizesPlan compares evidence.plan_revision to the plan's CURRENT
+      revision, that stale event no longer authorizes anything, and this record
+      becomes the single authorization for slice 4. The instrument and the record
+      now agree, and they agree because a real decision was made rather than because
+      the reader was patched.
+    - >-
+      DoD 4 AMENDMENT ONE - `isPaid` HAS THREE VALUES AND THE DoD WAS WRITTEN FOR
+      TWO. lib/v2/subscription.ts is the single authority on who has paid and
+      answers `true`, `false`, or `null`, where `null` means a v2 row carried a
+      tier_code the resolver refuses to understand and therefore fails closed. Owner
+      decision 8 says a paying account may never be the loser, and a `null` may be a
+      paying account. So `null` must never lose, and a pair where NEITHER side can
+      be determined is refused and routed to support rather than guessed - decision
+      9 already names support as the fallback for whatever the flow refuses. The
+      survivor rule consumes that verdict and must never re-derive it; re-reading the
+      subscription tables to answer "who paid" is the second copy of a selection
+      rule that #369 B2 closed once already.
+    - >-
+      DoD 4 AMENDMENT TWO - WHAT THE LOSING ACCOUNT KEEPS CANNOT BE COUNTED BY
+      PROVIDER NAME. DoD 4 promises the member is told what is left behind before
+      anything is written. The existing rule in lib/auth/link-account.ts answers that
+      by counting distinct provider NAMES, and a name is not a way in: measured today
+      by length, 1,783 of 2,258 Google rows hold a 253-to-342-character `ya29` access
+      token against 475 holding a 21-character Google `sub`. Revision 0.3 had already
+      measured the same split as 1,787 against 466; the three-row difference is slice
+      3 writing three real identities since. Slice 4 therefore computes what remains
+      from identities that can actually authenticate.
+    - >-
+      A CORRECTION IS WITHDRAWN, NOT QUIETLY DROPPED. The slice-3 acceptance closeout
+      at aa54c29 carried a correction saying DoD 4 should read "every provider row of
+      the losing account" rather than "exactly one user_provider row". It was proposed
+      because the owner's account was seen holding five Google rows. The measurement
+      explains those five - `ya29` rows plus one real identity - and unlink deletes by
+      provider, which is why all five vanished together. DoD 4's original wording is
+      right for a reason nobody had written down: the member proves ONE identity in
+      the session, so exactly that row moves, and moving any other row would transfer
+      a credential that was never proven.
+    - >-
+      THE GOAL WAS AUDITED BEFORE AUTHORIZING, NOT ASSUMED. Against the owner's own
+      statement of the goal - members can link, focus on new and paying members, older
+      members need only be able to come back and link - DoD 4 completed serves new
+      members (slice 3 already covers them), paying members (decision 8 plus amendment
+      one), and existing members who can still sign in and hold two accounts, which is
+      the case slice 4 exists for. A member who cannot sign in at all never reaches the
+      merge by construction, and revision 0.3 already establishes that this group is
+      the inactive one and that a single legacy login heals them while the legacy path
+      serves traffic.
+
+  not_completed:
+    - >-
+      AN ASSUMPTION THE OWNER HAS NOT CONFIRMED, AND IT CONCERNS MONEY. I asked
+      whether a member whose subscription has LAPSED counts as someone we protect;
+      the answer did not come before the instruction to proceed. This record assumes
+      the narrower reading: protected means `isPaid` is `true` or `null`, so a side
+      whose verdict is `false` because its subscription expired CAN be the loser. The
+      rule is written as a pure function with the protective predicate injected, so
+      reversing this is a one-line change and no rewrite. It must be confirmed before
+      the flow is walked by a real member on the shadow, which is the last point where
+      it is still free.
+    - >-
+      DEFERRED - THE UNLINK ROUTE'S LAST-METHOD RULE. It counts provider names, so a
+      member holding a dead `ya29` row plus one live method can unlink the live one.
+      Under OWNER.md's side-issue test it does not block slice 4, slice 4 has a safe
+      workaround (it applies the correct standard inside its own flow), and the harm
+      is not imminent: while the legacy path serves traffic, that member's next Google
+      login heals them through email discovery, per revision 0.3. THE TRIGGER IS THE
+      FLIP, not this branch - after slice 5 the FE route serves that login and email
+      discovery is deliberately absent from it. Recorded as a precondition on slice 5
+      in PLAN.md, beside the paid-member check that shares the same trigger.
+    - >-
+      DEFERRED - THE 1,783 DEAD ROWS STAY. Revision 0.3 already closed this: slice 2
+      is closed, no further cleanup is authorized, and the rows harm nobody while the
+      legacy path serves traffic. The owner said in conversation today that they could
+      be deleted if they do not touch paying members. That would REVERSE a recorded
+      decision, so it is not assumed here and needs its own decision event if he wants
+      it. The merge is identity-scoped and never matches those rows, so slice 4 does
+      not care either way.
+    - >-
+      NOT VERIFIED - whether the merge survives the member's next legacy login. The
+      reasoning is that registerOrLogin looks up by `id_token` first and only falls to
+      email discovery on a miss, so the surviving account's new row is found and
+      discovery never runs. That is reasoned from revision 0.3's reading of
+      mootech-be, not observed. Recorded in PLAN.md 0.5 and confirmed by slice 5's
+      observation.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  execution_phase: "4"
+  authorization:
+    quoted_verbatim: "เขียน decision แล้ว ปรับแผนใน workstream ได้เลยถ้าต้องทำ"
+    language: Thai
+    observed_directly_by_this_session: true
+    preceded_by: >-
+      a step-by-step plan, a file-level walk of what changes, and an audit of
+      whether DoD 4 completed reaches the owner's stated goal
+  plan_changes_in_this_revision:
+    - "Plan revision 0.4 to 0.5, execution phase 3 to 4."
+    - "New section: Revision 0.5, recording both amendments, the withdrawal, and the two deferrals."
+    - "DoD 4: the survivor rule must consume lib/v2/subscription.ts's verdict; null must not lose; both-undeterminable is refused."
+    - "DoD 4: the row moved is identity-scoped, never provider-scoped."
+    - "DoD 4: what the losing account keeps is judged by identities that can authenticate."
+    - "Slice 5: new precondition, the last-method rule must judge identities before the flip."
+  code_read_to_establish_this:
+    collision_branch: "pages/api/auth/link/callback/[provider].ts:111, case 'owned-by-another'"
+    store_read_already_sufficient: >-
+      lib/auth/link-account-store.ts findIdentityOwner returns { id, userId, provider }
+      under FOR UPDATE, so the row id needed for a one-statement reversal is already
+      in hand and no change to the read path is required
+    last_method_rule: "lib/auth/link-account.ts:190-194, counts distinct provider names"
+    paid_authority: "lib/v2/subscription.ts, isPaid is boolean | null and null fails closed"
+    ticket_pattern_to_copy: "lib/auth/link-state.ts - HMAC over LINK_STATE_SECRET, signature verified before parse, timingSafeEqual, short TTL, httpOnly SameSite=Lax, cleared on both paths so it is spent once"
+    audit_sink: "lib/db/0022_ops_audit_log.sql - action, target_user_id, payload jsonb, indexed on (target_user_id, created_at); no migration needed"
+  measurement_2026_09_25:
+    method: "SELECT lower(provider), length(id_token), count(*) - aggregate only, no identifiers, no token values"
+    google_subject_rows: "475 at length 21"
+    google_dead_token_rows: "1,783 at length 253 and 333-342"
+    line_rows: "3,034 at length 33"
+    pairs_holding_more_than_one_row: "259 of 4,952"
+  repository:
+    head: "0f03a0d"
+    branch: hq/20260921
+    working_tree: this-event-and-plan-only
+    ahead_of_origin_main: 55
+    origin_main: "f58cc9c"
+    pushed: nothing
+  application:
+    repository: mootech-fe
+    local_head: "d43d582"
+    working_tree: clean
+    touched_by_this_record: none
+
+unresolved:
+  - >-
+    Whether a lapsed payer is protected. Assumption stated above; must be confirmed
+    before the shadow walk.
+  - >-
+    The unlink route's last-method rule, recorded as a slice-5 precondition.
+  - >-
+    The 1,783 dead rows, and whether the owner reverses revision 0.3 to delete them.
+  - >-
+    Whether the merge survives the next legacy login. Reasoned, not observed.
+  - >-
+    Carried unchanged - iOS has never been exercised, collision at production scale
+    is proven against one pair only, member_missing is unreachable without deleting
+    a member row, nothing stops a member unlinking the provider they are signed in
+    with, the mission-timing defect at ConnectedScreen.tsx:167-175, connect_google in
+    the engine, the three .assets/mumate/slice2-* dumps kept by owner decision, the
+    AWS bucket s3-ps-cdn parked by owner decision, and Vercel Preview resolving to
+    the production database.
+
+next_action:
+  action: >-
+    Build slice 4 in this order: the survivor rule as a pure function over the
+    three-valued verdict; mergeIdentity in the store, reusing the existing advisory
+    lock and FOR UPDATE read, moving one row by id and writing ops_audit_log; the
+    merge ticket modelled on lib/auth/link-state.ts; the callback's owned-by-another
+    branch turned into an offer plus preview and confirm routes, where confirm
+    recomputes the survivor rather than trusting the ticket; the screen with a
+    confirmation separate from pressing link; then the tests, including a null
+    verdict that must not lose and a both-undeterminable pair that must be refused.
+    Do not touch production, do not flip constants/api/endpoint.ts, do not edit the
+    unlink route, do not delete any row, do not push, and do not open a pull request.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - Wake reports this lane authorized at plan revision 0.5 for slice 4, citing THIS event.
+    - constants/api/endpoint.ts is still absent from mootech-fe's diff against origin/main.

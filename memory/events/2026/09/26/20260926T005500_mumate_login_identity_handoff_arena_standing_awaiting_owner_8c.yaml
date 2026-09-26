@@ -1,0 +1,171 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T005500_mumate_login_identity_handoff_arena_standing_awaiting_owner_8c
+type: closeout
+recorded_at: 2026-09-26T00:55:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close the night with the shadow in a known state and leave a cold session everything it
+    needs to run phase 8c with the owner tomorrow, including the one fact tonight could not
+    establish and how tomorrow establishes it without guessing.
+  scope:
+    - The state the shadow, the arena and both repositories are left in.
+    - Who did which step tonight and what each one proved.
+    - What phase 8c requires, and the staging step that now sits inside it.
+  out_of_scope:
+    - Phases 8c and 8d. The owner runs 8c tomorrow; nothing was walked tonight.
+    - Pushing HQ, opening this lane's pull request, or touching production.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "4"
+  execution_phase: "8b-fix-deployed"
+  completed:
+    - >-
+      THE STATE THE SHADOW IS LEFT IN. fe runs
+      ghcr.io/mojisejr/mootech-fe:868632e0832231d76d0dbcb69cc378e5bb3d24bc-staging, healthy,
+      serving from the arena; /api/health through app.staging.mumate.co answers 200, db ok,
+      dbLatencyMs 1, sha 868632e. be 0705378, bazi 722cdf1, caddy and alloy untouched and
+      healthy. Host disk 16% used, memory 1298 of 3915 MB.
+    - >-
+      THE ARENA. pgtmp holds pg/mumate-1-20260919T220406Z.sql.gz - 185 tables, user 5,018,
+      user_provider 5,880, member_subscription 30, member_payment 26, ops_audit_log 0 - and
+      arena_meta records its deletion date as 2026-10-02. bin/arena.sh status reports all of
+      that plus "FE ชี้: สนามซ้อม" in one command.
+    - >-
+      THE WAY BACK, in the order it must happen. Restore /opt/mumate/env/fe.env.pre-arena
+      (mode 600, created by cp -p before the edit) over env/fe.env; recreate fe; then
+      bin/arena.sh down, which refuses while fe still points at the arena. That refusal is
+      deliberate - it is the failure that pulled the database out from under be on
+      2026-09-20.
+    - >-
+      WHAT TONIGHT PROVED, IN ORDER. The deadlock is removed by construction and not by
+      discipline: MergeDeps.resolveStanding no longer exists, so no call site can inject a
+      client-backed resolver into a transaction. A pool of exactly one slot is now modelled
+      in both directions. The database-backed spec stopped faking the paid verdict, so the
+      adapter's own SELECTs are exercised. DoD 3g is met: the shadow serves member data from
+      a copy. And the fixed build is the one deployed.
+    - >-
+      WHO DID WHAT. The owner: answered the plan and cost questions, merged pull requests 21
+      and 22, and pushed 868632e with --no-verify. The agent: the fix and its tests, the
+      plans and records, bin/arena.sh, standing the arena up on the host, pointing fe at it
+      with HEALTH_DB_TIMEOUT_MS in the same edit, dispatching the build, and deploying it.
+      The production DATABASE_URL value never entered the session.
+  not_completed:
+    - >-
+      PHASE 8c HAS NOT RUN. No collision walked, no merge offer seen, no identity moved.
+      DoD 4 still has three of its seven items open - the row-count proof, the member being
+      told what they lose with a separate confirmation, and the audited reversal - and all
+      three need a person on a phone.
+    - >-
+      THE COLLISION PAIR IS NOT STAGED, and cannot be staged before the owner's first
+      action tomorrow. The snapshot is from 2026-09-19 and slice 3 linked his second
+      provider on 09-25, so whether his two identities sit on different accounts in this
+      copy is unknown. Establishing it by reading rows would mean identifying his account
+      from personal data, which I did not do.
+
+the_staging_step_that_now_sits_inside_8c:
+  why_it_moved: >-
+    S6 was planned as "stage the pair, then walk 8c". In a 09-19 snapshot the pair may
+    already exist or may not exist at all, and only the owner's own provider authorization
+    can tell us which - so the first press of the walk is also the measurement.
+  case_a_it_collides_immediately: >-
+    His second provider's identity is owned by another account in this copy. The merge offer
+    appears on that first press and 8c is complete with no SQL written at all.
+  case_b_it_links_plainly: >-
+    The identity is unowned in this copy, so slice 3's path attaches it to his account and
+    no offer appears. That is not a failure; it is the answer. The row it just created is
+    then identifiable with NO personal data: it is the only user_provider row whose create_at
+    is today, because the snapshot is six days old and nothing else writes to this database.
+    Move that one row to a freshly created empty account and the collision is deterministic;
+    the reversal is the same statement with the two ids swapped, and it is recorded before it
+    is needed.
+  what_must_not_happen: >-
+    Neither case may be reached by pressing confirm. 8c ends at the preview. 8d is a separate
+    owner action after he has read what the offer says.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  execution_phase: "8b-fix-deployed"
+  shadow:
+    fe_image: ghcr.io/mojisejr/mootech-fe:868632e0832231d76d0dbcb69cc378e5bb3d24bc-staging
+    health_public: "200 · db ok · dbLatencyMs 1 · sha 868632e"
+    serving_from: arena (pgtmp)
+    others: be 0705378 · bazi 722cdf1 · caddy ok · alloy ready
+  arena:
+    source: pg/mumate-1-20260919T220406Z.sql.gz dated 2026-09-19T22:05:35Z
+    expires_on: "2026-10-02"
+    status_command: bin/arena.sh status
+  way_back:
+    file: /opt/mumate/env/fe.env.pre-arena
+    order: restore file -> recreate fe -> bin/arena.sh down
+  repositories_left_at:
+    ciel_os: "hq/20260921, unpushed, this event is its head"
+    mootech_fe: "feat/mumate-login-identity-s1 at 868632e, pushed, no pull request open"
+    mumate_infra: "clean main at 978c2de, equal to origin, both pull requests merged"
+  dod_4_state:
+    proven_by_test: >-
+      survivor chosen by the rule and not by which side is signed in; the verdict consumed
+      rather than re-derived, with undeterminable never losing and both-undeterminable
+      refused; a paying account never loses; an unauthenticated or failed attempt changes
+      nothing
+    awaiting_8c_and_8d: >-
+      exactly one row changes hands and nothing else moves; the member is told what stays
+      behind and confirms separately; the move is reversible by one statement and the
+      previous user_id is readable by support
+  repository:
+    head: "1c301a3"
+    branch: hq/20260921
+    working_tree: this-event-only
+
+unresolved:
+  - >-
+    Whether the owner's identities collide in this snapshot. Tomorrow's first press answers
+    it; nothing else can, short of identifying his account from personal data.
+  - >-
+    The arena is a direct connection, so no test path anywhere now exercises the transaction
+    pooler. Production's pool behaviour is proven by nothing that has happened tonight.
+  - >-
+    HEALTH_DB_TIMEOUT_MS is inside the probe window but no fault has been induced since, so
+    the 503 has not been observed reaching the healthcheck.
+  - >-
+    The off-platform backup layer is one six-day-old file and mumate-backup.timer is
+    disabled. Deliberate per the runbook, thinner than every document here said until
+    tonight, and an owner decision that has not been asked for.
+  - >-
+    A real restore over production has never been performed.
+  - >-
+    The merge offer is unreachable for a member who already holds both providers - a screen
+    affordance, outside slice 4, and the reason the pair is staged inside a copy instead.
+  - >-
+    HQ holds this session's earlier wrong attribution of the shadow wedges to max 1 under
+    load. It must be corrected before the round pull request is written.
+  - >-
+    mootech-fe's verify-architecture gate is red on four violations in other lanes' files,
+    so every push from that repository needs --no-verify and skips gitleaks with it.
+  - >-
+    Carried unchanged - the 1,783 dead rows, iOS, collision at production scale,
+    member_missing, nothing stops a member unlinking the provider they are signed in with,
+    the mission-timing defect at ConnectedScreen.tsx, connect_google in the engine, the
+    three .assets/mumate/slice2-* dumps, the AWS bucket s3-ps-cdn, and Vercel Preview
+    resolving to the production database.
+
+next_action:
+  action: >-
+    With the owner at his phone: he signs in to app.staging.mumate.co with one provider,
+    opens Connected Accounts, and presses connect for the other provider ONCE, stopping at
+    whatever screen appears. The agent reads the arena before and after by row count, states
+    which case it is, stages the pair if it was case B, and only then does the owner walk the
+    preview. 8d is a separate decision after he has read the offer.
+  acceptance_check:
+    - Nothing outside the arena is written at any point, and production is not touched.
+    - 8c ends at a preview with row counts identical before and after.
+    - Any staging statement is recorded together with its exact reversal before it is run.

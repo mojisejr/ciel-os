@@ -1,0 +1,184 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T044601_mumate_login_identity_slice3_settings_row_asserted_line_without_reading
+type: closeout
+recorded_at: 2026-09-25T04:46:01+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    The owner deployed the HS256 fix to the shadow, opened /v2/settings, and found
+    the "บัญชีที่เชื่อมต่อ" row reading LINE while signed in with Google and having
+    never linked LINE. Record the defect, that it is half of a change this lane
+    itself made, and the repair. Also record the verification he asked for: the
+    shadow really is running the new image.
+  scope:
+    - The settings-list row, its cause, and the fix.
+    - Confirmation of what the shadow is running, which the owner questioned.
+  out_of_scope:
+    - The traffic flip, connect_google, the mission-timing defect. Unchanged.
+    - Any PLAN.md revision. This closeout changes no plan text and no phase.
+    - Production, traffic, slices 4 and 5.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      THE DEPLOY IS CURRENT, and this was checked rather than assumed because the
+      owner asked whether the running code was stale. The shadow runs
+      ghcr.io/mojisejr/mootech-fe:3984e09f8c41d7c317b38623a9f83fe2d726aa82-staging,
+      "Up 6 minutes (healthy)", read from the host. The push landed - the remote
+      branch moved 3615dcf to "3984e09" with zero unpushed commits. So the HS256
+      repair IS live on the shadow and the LINE link can be retried on it now.
+    - >-
+      THE DEFECT HE FOUND IS REAL AND WAS NEVER FIXED. pages/v2/settings/index.tsx
+      computed its value as
+      `profile?.displayName ? '@' + profile.displayName : 'LINE'` - a display name
+      or the literal word LINE. It read no link state of any kind, so a member
+      signed in with Google who has never linked LINE is told LINE.
+    - >-
+      IT IS HALF OF A CHANGE THIS LANE MADE. "f792748" renamed the row from
+      "เข้าสู่ระบบด้วย LINE" to "บัญชีที่เชื่อมต่อ" and left the value expression
+      untouched - verified by diffing that commit for this file, which shows only
+      the title changing on both sides of the hunk. Under the old title the word
+      described a button and was defensible; under the new title it is a claim
+      about data, and it was false. The rename created the bug without touching
+      the buggy line.
+    - >-
+      THE SAME FILE ALREADY CARRIED THE LESSON, six lines above the defect.
+      "แพ็กเกจของฉัน" once hardcoded "Free Tier" so PRO members saw the wrong tier;
+      the fix wrote the rule into a comment - ยังไม่รู้ = ไม่เดา (ไม่โชว์ค่า) - and
+      the membership row obeys it to this day. The connected row did not. The
+      repository had already paid for this lesson once.
+    - >-
+      FIXED IN mootech-fe "49097ff", parent "3984e09", NOT PUSHED. The row now
+      reads /api/auth/link/connections - the same endpoint the Connected Accounts
+      screen reads, so the two cannot disagree about what is linked - and shows the
+      linked providers by name. Unknown stays undefined and the row renders its
+      chevron rather than a guess. Paths - pages/v2/settings/index.tsx,
+      scripts/settings-page.test.tsx.
+    - >-
+      PROVEN BY MUTATION, NOT BY PASSING. The old expression was put back and the
+      suite re-run: S4, S5 and S6 all turned red while the pre-existing S1-S3
+      stayed green; the fix was then restored and all six pass. This lane has been
+      burned once by a test that passed whether or not the mechanism existed
+      (slice 1 defect 7), so a new test is not counted as evidence until it has
+      been seen to fail.
+    - >-
+      GATES - 2,961 specs pass (2,958 before, plus 3 new), 183 skipped across 276
+      files; tsc --noEmit exit 0 checked without a pipe; npm run lint exit 0 with 0
+      errors and the same 135 pre-existing warnings; npm run build exit 0 with the
+      VAPID gate line present.
+
+  not_completed:
+    - >-
+      "49097ff" is UNPUSHED and the shadow does not run it. The settings row still
+      says LINE on staging until a new image is built. It does NOT block retrying
+      the LINE link, which only needs 3984e09 and is already deployed.
+    - >-
+      SLICE 3 IS STILL NOT ACCEPTED. No LINE round trip has ever completed. The
+      HS256 repair has still never met a real LINE token.
+    - No pull request. The body at .assets/mumate/slice3-pr-body.md now predates three commits.
+
+  evidence_of_limits:
+    - >-
+      The fix is proven against a stubbed connections response, not against a real
+      one. What the row shows after a genuine link is unexercised for the same
+      reason everything else in this slice is: no round trip has happened.
+    - >-
+      Only the two linkable providers carry labels. A provider row stored under any
+      other spelling would render its raw value; that cannot occur today because
+      the endpoint summarises over LINKABLE, and it is noted rather than guarded.
+
+a_pattern_worth_naming:
+  what: >-
+    Two defects in two days, both of the same shape: a surface asserting something
+    it never read. ConnectedScreen decided "connected" by string-equality against
+    the session provider; this row printed a constant. Both were found by a person
+    looking at a screen, not by a gate.
+  why_it_matters: >-
+    Every automated check in this repository looks at code and data. Nothing checks
+    whether what a screen SAYS is something it actually KNOWS. The membership row
+    was the first instance, fixed in its own pass; the two found by this slice are
+    the second and third. A fourth is likely wherever a value is rendered beside a
+    label.
+  not_acted_on: >-
+    No sweep of the remaining rows was done. It is not in any slice's DoD and was
+    not authorized; recorded so a later session knows the question was asked.
+
+unresolved:
+  - >-
+    "49097ff" and the image that carries it are unpushed and unbuilt. Pushing still
+    needs --no-verify for the reason already recorded.
+  - >-
+    The LINE round trip on a REAL PHONE inside the LINE app is still the one thing
+    that decides slice 3. The shadow is ready for it now.
+  - >-
+    Carried unchanged - the traffic flip, teammate testing as a pre-merge gate,
+    connect_google in the engine, the mission-timing defect at
+    ConnectedScreen.tsx:167-175, the keep-alive 502 belonging to mumate-infra,
+    LINK_STATE_SECRET missing from mumate-infra's env/fe.env.example, the three
+    .assets/mumate/slice2-* dumps kept by owner decision, the AWS bucket s3-ps-cdn
+    parked by owner decision, and Vercel Preview resolving to the production
+    database.
+  - >-
+    Standing hazard, restated because it governs every staging test: the shadow FE
+    and production share one Supabase database, so a staging login is a real
+    account event.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "1b3ed66"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 42
+    origin_main: "f58cc9c"
+  application:
+    repository: mootech-fe
+    local_head: "49097ffc6dc29296b1115ff531660324d8a2c7eb"
+    parent: "3984e09"
+    pushed_head: "3984e09f8c41d7c317b38623a9f83fe2d726aa82"
+    branch: feat/mumate-login-identity-s1
+    ahead_of_origin_main: 20
+    behind_origin_main: 0
+    origin_main: "9f764e6"
+    working_tree: clean-after-this-commit
+    pull_request: none
+  deployed_to_shadow:
+    image: ghcr.io/mojisejr/mootech-fe:3984e09f8c41d7c317b38623a9f83fe2d726aa82-staging
+    status: "Up 6 minutes (healthy) at the time of this record"
+    carries: the HS256 repair
+    does_not_carry: the settings-row repair "49097ff"
+    restore_point_if_the_slot_is_handed_back: FE 7e22f54-staging / BE 0705378 / BAZI 722cdf1-staging
+  the_defect:
+    file: pages/v2/settings/index.tsx
+    row: บัญชีที่เชื่อมต่อ
+    introduced_by_rename: "f792748"
+    observed_by: owner, on the shadow, signed in with Google and never having linked LINE
+  verification:
+    default_lane: 2961 passed / 183 skipped across 276 files
+    mutation_check: old expression restored, S4/S5/S6 red and S1-S3 green; fix restored, all six green
+    static: tsc --noEmit exit 0 (checked without a pipe), npm run lint exit 0, 0 errors
+    build: npm run build exit 0 with the VAPID gate line present
+    real_postgres: not re-run; this change touches no store and no database
+
+next_action:
+  action: >-
+    The LINE link can be retried on the shadow AS IT STANDS - 3984e09 carries the
+    HS256 repair and is running. Make exactly ONE attempt from a real phone inside
+    the LINE app; stop on any error and report what was seen. The settings-row
+    repair "49097ff" rides the NEXT image and blocks nothing in the meantime. Do
+    not touch production, do not flip constants/api/endpoint.ts, and do not edit
+    mumate-infra from this lane.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - constants/api/endpoint.ts is still absent from `git diff origin/main..HEAD --name-only`.
+    - PLAN.md is unchanged by this record - same revision 0.3, same phase, same Parallelism header.

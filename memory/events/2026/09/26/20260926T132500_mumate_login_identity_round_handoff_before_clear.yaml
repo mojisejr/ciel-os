@@ -1,0 +1,154 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T132500_mumate_login_identity_round_handoff_before_clear
+type: closeout
+recorded_by:
+  human: owner
+  agent: claude
+recorded_at: 2026-09-26T13:25:00+07:00
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Hand this lane over before the owner clears the session: the owner authorized pushing
+    hq/20260921, HQ was notified with the three corrections the round pull request owes, and a
+    cold session needs to know where the lane stands without reading the whole round.
+  scope:
+    - The push of the standing branch, with the count recomputed rather than carried.
+    - What was sent to HQ.
+    - Cold-session entry for whoever picks this lane up.
+  out_of_scope:
+    - The round pull request. HQ's work, and it needs HQ's per-commit verification.
+    - Another lane's files. smc-v2-app-001 was mid-write on its own paths and they were left alone.
+    - Slice 4b and slice 5, and the owner's new requirement. None planned here.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  execution_phase: "8d"
+  completed:
+    - >-
+      THE OWNER AUTHORIZED THE PUSH IN HIS OWN TURN, which is the only gate that counts for an
+      outward action - no record and no relay substitutes for it. He had held it deliberately one
+      message earlier, so the authorization is specific and recent rather than inherited.
+    - >-
+      THE COUNT WAS RECOMPUTED, NOT CARRIED. git rev-list --count origin/main..HEAD reads 79
+      against origin/main f58cc9c, with zero merge commits, so history is linear. The round's own
+      rule exists because three sessions each got this wrong on this branch in one day, and my own
+      predecessor record said 78.
+    - >-
+      HQ (ciel-os-a3) WAS NOTIFIED with what shipped, the lane's position, and the three
+      corrections the round pull request owes from this lane - the wedge cause attributed wrongly
+      to max 1 under load, the false claim that nothing outside the arena was written, and the
+      gitleaks "found nothing" imprecision. It was told explicitly to recompute the count itself
+      and that this lane is not opening the round pull request.
+    - >-
+      ANOTHER LANE WAS FOUND MID-WRITE and left alone. smc-v2-app-001 was writing its own round
+      handoff and PLAN.md at 13:17 while this push was being prepared. Those paths were not
+      staged, not committed and not reverted; only this lane's own file was committed. A push
+      publishes commits and cannot disturb another session's uncommitted work, so the push is safe
+      - but the round branch on origin will not carry that lane's handoff until it commits and
+      pushes its own.
+
+for_a_cold_session:
+  what_this_lane_is: >-
+    MuMate members had one account per login provider. This lane gives each member one internal
+    identity that can carry both Google and LINE, and moves register-login from the backend into
+    mootech-fe behind a seam that has NOT been flipped.
+  where_it_stands: >-
+    Slices 1-4 are merged and LIVE on production (mootech-fe PR 815, merge commit 1ab900c).
+    Account linking and the member-driven account merge are on for members; the ordinary login
+    flow is untouched and the FE register-login route is dark. Plan revision 0.7, phase 8d,
+    lifecycle authorized.
+  the_two_slices_left: >-
+    4b - stop handing out a second account in the first place - has NO DoD written, by design: the
+    plan deferred it until the merge conversation existed, and it now does. Add to it what this
+    session learned, that a member holding both providers has no affordance at all, which is both
+    a member problem and the reason the owner could not test on production. 5 - flip traffic
+    through the seam - has three preconditions: re-measure the exposed set immediately before the
+    flip and hand the owner the paid subset as user_ids only, fix the unlink route's last-method
+    rule to judge identities that can authenticate rather than provider names, and make a
+    rehearsal hermetic by pointing be and bazi at a rebuilt arena.
+  what_is_live_but_never_exercised: >-
+    Nobody has pressed the link button on production, not once. The merge has never run there and
+    cannot be staged from the owner's account because it holds both providers, so the first
+    production merge will be a real member's. iOS has never been exercised in any form. Whether
+    LINK_STATE_SECRET is loaded by the running functions is inferred from Vercel's redeploy
+    semantics, not observed - a one-tap zero-write check exists and the owner chose to skip it.
+  the_only_standing_watch: >-
+    ops_audit_log, for rows whose action matches merge. Verify each moved exactly one
+    user_provider row with the paying side surviving. Every row carries its own reversal
+    statement and no member data is ever moved by a merge, only the credential.
+  do_not_assume: >-
+    A next_action in any record is a plan, never an authorization. Slice 4b and slice 5 each need
+    the owner's own turn. The owner is about to describe a NEW requirement, which may reorder all
+    of this.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.7"
+  slice: none
+  execution_phase: "8d"
+  standing_branch:
+    name: hq/20260921
+    head: "15337bc"
+    ahead_of_origin_main: 79
+    origin_main: "f58cc9c"
+    merge_commits: 0
+    method: "git rev-list --count origin/main..HEAD, recomputed at handoff"
+  application:
+    repository: mootech-fe
+    pull_request: "https://github.com/mojisejr/mootech-fe/pull/815"
+    state: MERGED
+    merge_commit: "1ab900c"
+  hq_notification:
+    to: "ciel-os-a3"
+    delivered: true
+    contents: "what shipped, the lane's position, three corrections owed to the round PR, and recompute-the-count instruction"
+  other_lane_observed:
+    workstream: smc-v2-app-001
+    observed: "uncommitted PLAN.md and a round-handoff event at 13:17, left untouched"
+  repository:
+    head: "15337bc"
+    branch: hq/20260921
+    working_tree: this-event-only-plus-another-lanes-uncommitted-files
+
+unresolved:
+  - >-
+    The round pull request is not open. HQ's work, and it owes three corrections from this lane.
+  - >-
+    smc-v2-app-001 has uncommitted work on this branch; the pushed branch will not carry it until
+    that lane commits and pushes.
+  - >-
+    DoD 4b unwritten; slice 5's three preconditions unmet; both need the owner's authorization.
+  - >-
+    The link round trip and the merge have never been exercised on production.
+  - >-
+    The off-platform backup layer is one file dated 2026-09-19 with its timer disabled, PITR off,
+    and a real restore never performed. The thinnest thing under everything this round shipped,
+    and the one item I would put first if the owner asks what to do next.
+  - >-
+    A rehearsal is not hermetic while be and bazi point at production, and the arena is down.
+  - >-
+    OAuth authorization codes and the signed link state reach Grafana Cloud unredacted.
+  - >-
+    env/fe.env.pre-arena remains on the shadow host as a second copy of the production environment.
+  - >-
+    iOS unexercised, accepted by the owner as a support matter.
+  - >-
+    Carried unchanged - the 1,783 dead rows, collision at production scale proven against one
+    pair, member_missing unreachable, connect_google absent from the engine, the three
+    .assets/mumate/slice2-* dumps, the AWS bucket s3-ps-cdn, a destructive route answering a
+    cacheable GET, and Vercel Preview resolving to the production database.
+
+next_action:
+  action: >-
+    The owner clears this session and opens a new one to describe a new requirement. Nothing in
+    this lane is authorized to proceed meanwhile. If the new requirement touches mootech-fe login,
+    read PLAN.md revision 0.7 slices 4b and 5 before proposing anything, because both are written
+    and waiting rather than open questions.
+  acceptance_check:
+    - A fresh Wake reports zero validation errors and this event as the newest for this lane.
+    - origin/hq/20260921 exists and contains 15337bc.
+    - No claim anywhere says the production link or merge path has been observed.

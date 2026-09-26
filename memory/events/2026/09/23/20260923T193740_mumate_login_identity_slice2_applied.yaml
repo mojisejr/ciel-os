@@ -1,0 +1,172 @@
+schema_version: ciel.event.v0.1
+id: evt_20260923T193740_mumate_login_identity_slice2_applied
+type: closeout
+recorded_at: 2026-09-23T19:37:40+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close slice 2. The owner ran the inventory, the collision resolution and the
+    migration against production himself, each statement pasted by hand, and
+    every count asserted by the statement rather than by eye. One provider
+    identity now maps to one member, structurally.
+  scope:
+    - What was applied to production, by whom, with the numbers before and after.
+    - The two mistakes this lane made while preparing it, and what caught them.
+    - What slice 2's definition of done actually rests on, since the plan's version was unachievable.
+  out_of_scope:
+    - Push, pull request, traffic flip, slice 3, provider settings.
+    - The 98 members routed to support - an operational task nobody has scheduled.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  completed:
+    - >-
+      Read-only production inventory run by the owner. It replaced the plan's
+      2026-09-23 morning checkpoint, which was internally inconsistent - its
+      stated total of 5,951 rows disagreed with its own breakdown by 5.
+      Measured - 5,957 rows over 5,052 members, 20 identities claimed by more
+      than one member covering 40 members, 657 dead credential rows, 98 members
+      holding nothing else, 1,787 rows spelling Google GOOGLE against 469
+      spelling it google, zero rows with an empty id_token.
+    - >-
+      Collision decisions made under the owner's rule, recorded as the rule
+      rather than as a list - whoever PAID wins; otherwise whoever holds more;
+      a genuine tie broken deterministically. 20 cases - 7 decided by payment,
+      12 by holdings, 1 by user_id order. Zero conflicts - the paying side never
+      held less than the other, so the two criteria never disagreed.
+    - >-
+      PAYMENT WAS THE RULE THAT MATTERED. Two cases had nothing on either side
+      and were created in the same second, so no other signal could separate
+      them. The earlier chart-only rule would have picked at random and had a
+      one-in-two chance of discarding the side that had paid.
+    - >-
+      Applied to production by the owner on 2026-09-23 - 20 collision rows
+      deleted (5,957 to 5,937, zero collisions remaining, verified), then 657
+      dead credential rows deleted, 1,787 rows respelled to google, the unique
+      index on (lower(provider), id_token) built, and a CHECK added against
+      blank providers (5,937 to 5,280).
+    - >-
+      Both deletions were dumped first and the dumps are kept outside the
+      repository, with a ready-to-run restore for the collision rows.
+
+  not_completed:
+    - Nothing is pushed. No pull request. No traffic moved. The legacy route is still live.
+    - PLAN.md is untouched, including its unachievable DoD 2 and its phase.
+    - The 98 members have no scheduled support path.
+
+  evidence_of_limits:
+    - >-
+      The application code has not run against the new index in production.
+      The unique-violation recovery is proven locally against a real Postgres
+      with the same index, not in production traffic.
+    - >-
+      QI was zero across all 40 colliding members, so nothing exercised the
+      wallet path. A future collision holding QI would still need a decision.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "3b74ed4"
+    branch: hq/20260921
+    working_tree: this-event-only
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: mootech-fe
+    head: "8b5c17d"
+    branch: feat/mumate-login-identity-s1
+    working_tree: clean-no-remote-ref-nothing-pushed
+  production_result:
+    before: 5957 rows, 5052 members, 20 collisions, 657 dead credentials
+    after: 5280 rows, 0 collisions, 0 blank providers, unique index present, CHECK present
+  dumps_outside_the_repository:
+    - .assets/mumate/slice2-collision-dump-20260923.json - the 20 deleted rows
+    - .assets/mumate/slice2-collision-restore-20260923.sql - ready-to-run restore
+    - .assets/mumate/slice2-dead-credentials-20260923.json - the 657 deleted rows, saved by the owner
+    - >-
+      .assets is gitignored and holds no tracked file, verified. The restore
+      file carries one substitution - the storage project reference in
+      picture_url is a placeholder, because this machine's guard refuses to
+      write the production project reference to disk. Every other value is
+      verbatim, and the file says so in its own header.
+
+what_this_lane_got_wrong_and_what_caught_it:
+  - >-
+    THE DECISION LIST RODE IN A TEMP TABLE. The Supabase SQL editor opens a new
+    session per run, so it was gone by the next statement. Caught by the owner
+    hitting "relation does not exist" - a design mistake that cost a round trip
+    and no data.
+  - >-
+    THE EXPECTED COUNTS WERE ORDER-DEPENDENT AND ONE WAS WRONG. The inventory
+    found exactly one same-user duplicate pair, so the migration expected to
+    collapse one row. That pair was itself inside the dead-credential class, so
+    the preceding step had already deleted both rows and the duplicate step
+    found nothing. The guard raised, the transaction rolled back, and NOTHING
+    was written to production. A comment stating the expectation would have been
+    equally wrong and the run would have half-applied.
+  - >-
+    I also tested the migration only against a seed I wrote myself, and my seed
+    did not contain the one shape production had - a duplicate that is itself
+    inside the class an earlier step deletes. The test passed because the test
+    did not know what to look for.
+  - >-
+    This is the FOURTH time in this workstream that something was caught by
+    asking "how would I know if this were wrong?" rather than by reading the
+    code and judging it correct. The first three are in the preceding closeout -
+    a concurrency proof that passed with the lock removed, a step parser that
+    returned header comments instead of statements, and a conflict detector that
+    read the error code at the wrong depth. The through-line is that every one
+    of them LOOKED right on review and was only exposed by a mechanism that
+    would fail loudly.
+  - >-
+    The transferable rule, which is why the production run cost nothing - a
+    migration asserts its expected counts and aborts, rather than stating them
+    in a comment and proceeding.
+
+slice_2_definition_of_done:
+  - >-
+    PLAN.md's DoD 2 says "on an anonymized local restore, duplicate mappings are
+    zero, the unique index builds successfully, concurrent registration leaves
+    one mapping, and rollback SQL is demonstrated". The restore cannot host it -
+    anonymize.sql blanks every id_token by design. What was met instead, stated
+    plainly so nobody reads the plan's wording as satisfied -
+  - Duplicate mappings are zero IN PRODUCTION, measured after the run.
+  - The unique index BUILT IN PRODUCTION, behind a guard that refused while any collision survived.
+  - >-
+    Concurrent registration leaving one mapping is proven on a SYNTHETIC seed
+    against a real Postgres with the same index, including a negative control
+    that requires the duplicate to appear without the lock - not in production.
+  - >-
+    Rollback SQL is demonstrated for the STRUCTURE (index and CHECK) and is
+    explicitly NOT available for the deleted rows; the dumps are the only
+    recovery, which the rollback file states rather than implies.
+
+unresolved:
+  - >-
+    The application has not been exercised against the production index. The
+    unique-violation recovery committed in mootech-fe "5149b0c" is the code path
+    that now matters, and it has never run in production.
+  - The traffic flip is undecided, and it is what turns every recorded parity difference into behaviour.
+  - PLAN.md still carries the unachievable DoD 2 and reads phase 1. A revision bump must repeat outcome.parallelism approved.
+  - The anonymizer blanking every id_token, which affects every future lane needing identity distinctness.
+  - The 98 members routed to support, unscheduled.
+  - The dumps in .assets hold real member identifiers and should be deleted once the change is settled.
+  - Carried unchanged - the LINE email scope, the non-transactional wallet and ledger write, and the live `|| '/'` bug in pages/login/index.tsx.
+
+next_action:
+  action: >-
+    The owner decides the traffic flip on its own merits, and whether the round
+    closes or continues. Before any pull request, rebase the topic branch once,
+    re-check guardV2 in middleware.ts against fix/maintenance-gate-and-line-share,
+    re-run the full suite and report the new hash to HQ. Nothing in slice 2
+    remains to build or to apply.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - The topic branch still has no remote ref and no production endpoint constant is flipped.

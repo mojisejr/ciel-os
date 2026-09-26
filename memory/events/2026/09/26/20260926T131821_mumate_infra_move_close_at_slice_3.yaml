@@ -1,0 +1,124 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T131821_mumate_infra_move_close_at_slice_3
+type: decision
+recorded_at: 2026-09-26T13:18:21+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Record the owner's decision to close this workstream at slice 3 rather than
+    carry it open through the flip. Slices 4 and 5 - the two-hour maintenance
+    cutover and the observation-and-retirement window - are not delivered and
+    become carried candidates with their acceptance criteria intact, so
+    reopening the move costs a decision rather than a rediscovery.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On 2026-09-26 the owner said to close this lane and asked for the closeout
+    that ends it. Nothing in the lane is mid-flight: the login lane, which was
+    the last consumer of this lane's work, finished slice 4 and is live on
+    production, and it has already torn the rehearsal database down and pointed
+    the shadow FE back at production. The host was checked directly rather than
+    assumed - no pgtmp container exists, arena.sh reports the arena not running,
+    fe's DATABASE_URL resolves to aws-1-ap-southeast-1.pooler.supabase.com again,
+    and be, fe and bazi are all healthy.
+
+    WHAT CLOSING MEANS, stated plainly because it is the point of the decision
+    rather than a caveat on it. This workstream's objective was to move MuMate
+    from Vercel and Render to DigitalOcean. That move has NOT happened. What was
+    built and proven is the whole capability up to the cutover: containers for
+    all three services, a control room with deploy, rollback, backup and
+    runbooks, a shadow stack running the launch team's own revisions behind
+    staging hostnames, an observability base, and a parity smoke that proved
+    seven of ten items including the payment callback. The public domains still
+    point at Vercel and Render. Closing therefore parks a proven replacement,
+    not a finished migration, and the DigitalOcean droplet continues to cost
+    money while serving no users.
+
+    The owner has been told this in his own session. He is closing deliberately;
+    a paused lane that nobody returns to is worse than a closed one whose
+    candidates are written down, which is the same judgement he applied to
+    mumate-control-room-ops-001 on 2026-09-24.
+  carried_candidates:
+    slice_4_the_flip: >-
+      A rehearsed two-hour maintenance cutover moving app, api and bazi to
+      DigitalOcean. Its acceptance criteria are intact in PLAN.md section 4 and
+      its preconditions are recorded across this lane's closeouts: the launch
+      team's merge rate below about three a day for two consecutive days, an
+      agreed 24-hour release freeze with the final SHA of each repository named,
+      DNS TTL reduced at least 24 hours ahead with the old values recorded,
+      QSTASH_TOKEN placed on the host (absent today, which is a safety property
+      now and a blocker then), Vercel Preview stopped from resolving to the
+      production database, and the shadow's Beam and Omise credentials moved off
+      live before anyone tests a payment there.
+    slice_5_observation_and_retirement: >-
+      Seven days of observation with Vercel and Render kept warm and their
+      schedulers disabled, then provider cancellation only on explicit owner
+      approval with an exact target list. PLAN.md section 5 holds the criteria.
+      The deferred application-side observability decision - error tracking,
+      structured logs, personal data out of application logs - is put to the
+      owner at that slice and is still unasked.
+    recovery_gap_in_the_fe_container: >-
+      mootech-fe 814 made a wedged database client VISIBLE (a 503 instead of an
+      unanswered probe) but not RECOVERABLE. idle_timeout cannot rescue a
+      connection that is never idle, and compose does not restart a merely
+      unhealthy container. Raising max for the container shape, or an autoheal
+      that restarts on unhealthy, or both. Parked by the owner, not solved.
+    backup_layer_is_thinner_than_the_documents_said: >-
+      mumate-backup.timer is disabled by design and s3://mumate-backups/pg/ held
+      exactly one object, six days old, when last observed. Production's real
+      recovery today is Supabase Pro's own daily backups. Enabling the timer is
+      an owner decision that was never asked for.
+    rollback_sh_is_profile_blind: >-
+      bin/rollback.sh calls wait_healthy with no profile arguments, so it waits
+      only on the core services plus whatever happens to be running. Harmless
+      today, worth closing before any future flip leans on it.
+    three_c_leftovers: >-
+      Storage and maintenance-bypass were never exercised on the shadow, and the
+      payment test webhook from the launch team never arrived - though the
+      payment callback itself was proven another way on 2026-09-24. The v1 leg of
+      DoD 3c was dropped by the owner because v1 is not used.
+    host_leftover_to_tidy_or_keep: >-
+      /opt/mumate/env/fe.env.pre-arena, mode 600, is a stale copy of the FE
+      environment from before the rehearsal-database edit. Its purpose is served;
+      it carries a production connection value and belongs either deleted or
+      deliberately kept. Left in place because another lane created it and
+      deleting a secret-bearing file is the owner's call.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "3"
+  repository:
+    head: "6e3e6a9f110000a490b209ce8bc911bbc87aa750"
+    branch: hq/20260921
+    working_tree: this-record-and-the-final-closeout-and-the-plan
+    pull_request: none-until-hq-round-close
+  host_state_verified_today:
+    arena: "not running; no pgtmp container; arena.sh status confirms"
+    fe_database: "aws-1-ap-southeast-1.pooler.supabase.com - production, restored by the login lane"
+    services: "be 0705378 healthy; fe c23440f8-staging healthy; bazi 722cdf1-staging healthy; caddy ok; alloy ready"
+    health_timeout: "HEALTH_DB_TIMEOUT_MS present in env/fe.env, so the 503 now fits inside the Docker probe's window"
+  related_workstreams:
+    - "mumate-login-identity-001 - slice 4 live on production 2026-09-26; last consumer of this lane's shadow, and it left the host clean"
+    - "mumate-control-room-ops-001 - closed the same way on 2026-09-24, at two slices with candidates written down"
+  previous_record: memory/events/2026/09/26/20260926T004000_mumate_infra_move_slice3g_arena_standing_fe_serves_from_it.yaml
+
+unresolved:
+  - Every carried candidate above. They are recorded, not solved, and none of them is in progress.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Record the final closeout for this workstream, set PLAN.md to completed, and
+    stop. Any future migration work opens a new workstream that cites this one's
+    candidates rather than reopening this plan.
+  acceptance_check:
+    - The final closeout names what was delivered, what was not, and every carried candidate.
+    - PLAN.md reads State completed with execution phase none.

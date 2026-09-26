@@ -1,0 +1,105 @@
+schema_version: ciel.event.v0.1
+id: evt_20260921T111554_mumate_control_room_ops_workstream_opened_slice1_authorized
+type: decision
+recorded_at: 2026-09-21T11:15:54+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-control-room-ops-001
+  lane: single
+  objective: >-
+    Make the MuMate control room (mumate-infra, host mumate-2) something the
+    owner and the agent run fast and in time: alerts a human reads in three
+    seconds, one ops page, management access that does not depend on the
+    owner's residential address, and a passive watcher that wakes the agent
+    only when a decision is needed. The owner decides; the agent watches and
+    acts through the repository's scripts.
+  scope:
+    - Open plan revision 0.1 and authorize slice 1 (readable alerts, Grafana dashboard, owner runbook, token register, rehearsal on the shadow).
+    - Declare the relationship to mumate-infra-move-001 - this workstream is a precondition of that lane's slice 4 (flip) and outlives it; that lane keeps plan 0.2 unchanged. Both lanes share the project mumate-infra; the owner approves that overlap (one session, one lane at a time).
+    - Record the owner's four directions of 2026-09-21 morning (ops first, Tailscale for port 22, no self-built monitor on Vercel, watcher local and passive on the existing Claude Code login).
+  out_of_scope:
+    - The migration lane's step 3c, the payment-gateway trial, the slice-3 closeout, and the flip.
+    - Any DNS, public-hostname, application-repository, Vercel, Render, Supabase, or scheduler change.
+    - The firewall change of slice 2 (needs its own decision after the slice-1 closeout).
+    - A watcher on a server or any API-key-based agent; application-side observability (both after the flip).
+
+outcome:
+  status: decided
+  parallelism: approved   # same project (mumate-infra) as mumate-infra-move-001; one session works the two lanes one at a time, own paths only
+  decision: >-
+    On 2026-09-21 morning the owner read the lane's timeline and next steps,
+    then the research on Tailscale's free plan, on open-source ops pages
+    versus a self-built monitor, and on a passive watcher with claude -p, and
+    said the operations side must be tight before the migration continues
+    ("ส่วนที่เป็น ops ควรจะแน่น และทำให้เราสองคนทำงานได้อย่างรวดเร็วและทัน
+    สถานการณ์ก่อน"). The owner confirmed Tailscale is installed on the Mac and
+    the phone but unused; accepted the readable-Discord proposal; accepted the
+    local passive watcher; asked that it live inside mumate-infra and not at
+    the CIEL level; and agreed that a server-side watcher is parked until an
+    API key and token controls exist. Asked whether this should be a new
+    workstream linked to the migration lane rather than a plan revision, the
+    owner said yes and to start ("โอเคเริ่มได้"). The name
+    mumate-control-room-ops-001 and the authorization of slice 1 together
+    with the opening are taken as included in that go; the owner may narrow
+    either in this chat before slice 1 changes anything on the host.
+  authorizes:
+    - Slice 1 of plan revision 0.1: one mumate-infra pull request (alert.sh and health service with embeds, state file and recovery; Grafana contact-point template and runbook_url on every rule; dashboard export; runbooks/00-owner-3-minutes.md; token and expiry register), applied on the shadow host with the owner's go, and one rehearsal (stop and start bazi) watched by the owner.
+  does_not_authorize:
+    - Any DigitalOcean firewall, DNS, or Droplet change; slice 2 needs its own decision.
+    - Running the watcher or any claude -p automation (slice 3).
+    - Installing Beszel or Dozzle, creating a Spaces key, or enabling Droplet Backups (slice 4).
+    - Any change in mootech-fe, mootech-be, bazi-sft-dataset, Vercel, Render, or Supabase.
+
+evidence:
+  plan: workstreams/mumate-control-room-ops-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "f58cc9c9545314972cc1191cade7433a262f4f32"
+    branch: hq/20260921
+    working_tree: shared-standing-branch-own-paths-only
+  related_workstream:
+    id: mumate-infra-move-001
+    plan_revision: "0.2"
+    relationship: >-
+      This workstream's slice-2 closeout becomes a flip precondition that the
+      migration's slice-3 closeout names and its slice-4 decision cites. The
+      migration lane is not revised; step 3c still waits for the owner's go
+      under the two-hour quiet gate.
+    cold_entry: memory/events/2026/09/21/20260921T085647_mumate_infra_move_ssh_locked_out_by_own_allowlist_lesson.yaml
+  application:
+    mumate-infra: "main ebc71c5 = host /opt/mumate (runbook 04, bin/alert.sh, bin/ops-status.sh, systemd/mumate-health.*, observability/grafana/*)"
+  research_read_by_owner:
+    tailscale_free_plan: "Personal: 6 users, unlimited user devices, 50 tagged resources, 3 ACL groups, Tailscale SSH included (tailscale.com/pricing, docs on SSH, tags, auth keys; read 2026-09-21)"
+    claude_headless: "claude -p without --bare uses the existing Claude Code login; --bare needs ANTHROPIC_API_KEY; dontAsk, allowedTools, max-turns, output-format json, resume (code.claude.com/docs/en/headless; read 2026-09-21)"
+    agent_sdk: "third-party products may not offer claude.ai login; SDK needs an API key - not used here (code.claude.com/docs/en/agent-sdk/overview)"
+    ops_page_options: "Grafana dashboard + IRM mobile push (free) chosen as the main page; Beszel (Go, agent ~15-25 MB) behind the tailnet for per-container view in slice 4; self-built Vercel monitor rejected"
+  host_reads_this_session: >-
+    The harness classifier refused two read-only ssh commands to mumate-2
+    ("Production Reads"); every host fact above comes from the repository and
+    the morning record, not from a fresh read. Slice 1 includes the Viewer
+    token so the agent reads through Grafana instead.
+
+unresolved:
+  - Slice 1 needs from the owner: per-check and SSL-expiry alerting on the three Synthetic Monitoring checks (UI only), the Grafana IRM and Better Stack apps with push, a Grafana Viewer service-account token.
+  - Whether the dashboard "mumate ops" named in runbook 04 already exists in the stack is unverified; slice 1 creates or completes it.
+  - The two unidentified port-22 addresses (101.109.13.197, 101.109.54.71) are retired in slice 2, not identified.
+  - Backup and restore on mumate-2 have no recorded proof (Spaces key blocked by the owner's DigitalOcean role) - slice 4.
+  - Server-side watcher and application-side observability - after the migration's flip.
+  - Carried from the migration lane and untouched here: Facebook/Twitter callbacks, GITHUB_TOKEN rotation, Vercel bazi missing SUPABASE_* values, payment test webhook from the team, Vercel Security Checkpoint on the owner's IP.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Start slice 1 on a topic branch of mumate-infra: rewrite bin/alert.sh and
+    the health service for embeds, state and recovery; template the Grafana
+    contact point and add runbook_url to the four rules; write
+    runbooks/00-owner-3-minutes.md and the expiry register; open the draft
+    pull request; ask the owner for the three UI steps and the Viewer token;
+    then rehearse on the shadow with the owner's go and record the closeout.
+  acceptance_check:
+    - Wake lists mumate-control-room-ops-001 active at revision 0.1 with slice 1 authorized and no validation error, and mumate-infra-move-001 unchanged at revision 0.2.
+    - No host, firewall, DNS, or application change in this opening decision.

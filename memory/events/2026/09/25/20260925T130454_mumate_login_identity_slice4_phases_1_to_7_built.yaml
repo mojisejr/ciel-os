@@ -1,0 +1,233 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T130454_mumate_login_identity_slice4_phases_1_to_7_built
+type: closeout
+recorded_at: 2026-09-25T13:04:54+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Slice 4 is built through phase 7 and stops there, which is where the owner asked
+    it to stop. The merge exists, refuses in more cases than it acts in, and has never
+    been run against the shadow or against production data. Written as the hand-off
+    into the phase-8 conversation he asked for.
+  scope:
+    - What was built, and the design decisions that were not in the plan.
+    - The proof: what the tests assert, and the mutants fired to show they assert it.
+    - One test that first passed for the wrong reason.
+    - What phase 8 needs, and what it waits behind.
+  out_of_scope:
+    - The shadow. Nothing here has run against it.
+    - Production, the flip, pushing, and opening a pull request.
+    - The unlink route and the 1,783 dead rows, both deferred at plan revision 0.5.
+
+outcome:
+  # Not terminal scope - names slice 4 of a plan whose last declared slice is 5 - so
+  # `recorded` raises no warning, on the reading of read.ts:510-512 and 561-587 that
+  # aa54c29 states.
+  status: recorded
+  parallelism: approved
+  slice: "4"
+  completed:
+    - >-
+      PHASES 1 TO 7 ARE BUILT AND COMMITTED at mootech-fe 39862db, 16 files,
+      +2,648/-22: the survivor rule, the merge, the signed offer, two routes, the
+      screen, and 73 new assertions. The owner granted a long run with permission to
+      read production, write where safe, push with --no-verify and manage staging.
+      NONE were used, because no phase needed them. Recorded rather than left as an
+      absence.
+    - >-
+      THE RULE IS STATED AS A RULE ABOUT THE LOSER, which is the only form that can be
+      code. Owner decision 8 says a paying account may never lose; inverted, the losing
+      side must be one we KNOW has not paid. lib/v2/subscription.ts answers true, false
+      or null and null fails closed, so only `false` is knowledge - and a pair where
+      neither side is `false` is refused to support rather than guessed. The verdict is
+      injected and never re-derived, because a second copy of that rule is the defect
+      #369 B2 closed.
+    - >-
+      A DESIGN DECISION THE PLAN DID NOT ANTICIPATE, FOUND BY WALKING THE MIRROR
+      DIRECTION. When the SIGNED-IN account is the side that may lose, the credential
+      that moves is its own, not the one just proven. And the rule refuses unless the
+      losing side holds exactly one working identity, because DoD 4 promises both
+      "exactly one row moves" and "the losing account is left with no login method",
+      and those contradict each other otherwise. Refusing is the only outcome that
+      keeps both, so it is a consequence of the DoD rather than an amendment to it.
+    - >-
+      A PROPERTY OF THE EXISTING CODE THAT MAKES THAT DIRECTION SAFE, checked rather
+      than hoped for. lib/v2/resolve-user.ts resolves a member by (id_token, provider)
+      against user_provider, so once the row moves the SAME session resolves to the
+      surviving account on its very next request. A member whose own account loses its
+      credential is not logged out and needs no new sign-in. The screen says so,
+      because a member who believes they have been logged out abandons the flow
+      half-done.
+    - >-
+      THE DISCLOSURE SLICE 3 REFUSES IS MADE HERE, with the reason written at the line
+      that makes it. Slice 3 answers a collision neutrally so it cannot reveal that an
+      identity belongs to a member of this service. An offer necessarily reveals it,
+      and is safe only because reaching that line means one person, in one session,
+      holds both a signed session for one account and a fresh provider attestation for
+      the other. An offer made before the exchange would be an enumeration oracle.
+    - >-
+      THE OFFER TRAVELS AS A SIGNED HttpOnly COOKIE AND NEVER IN A URL - a subject in a
+      query string lands in browser history, in any access log in front of the app and
+      in a Referer header. merge-ticket.ts is link-state.ts's pattern almost line for
+      line, PLUS a domain prefix in the signed string: both sign with LINK_STATE_SECRET
+      and without it a value minted by one could be presented to the other. A test
+      proves a real link-state cookie cannot satisfy the merge verifier.
+    - >-
+      THE TICKET IS NOT AUTHORITY FOR THE DIRECTION. It proves which subject and which
+      session; confirm recomputes the survivor inside the transaction that writes, so a
+      payment landing while the member reads cannot leave a payer as the loser.
+      planIdentityMerge and mergeIdentity share ONE decision function, so the
+      description and the action cannot disagree.
+    - >-
+      THE LIVENESS INFERENCE READS LENGTHS, NEVER TOKENS, and is polarised so it can
+      only refuse more. The adapter selects length(id_token), so a `ya29` access token
+      stored as an identity never reaches application memory or an error trace. The
+      predicate answers "known dead" - Google, longer than 32, revision 0.3's own
+      threshold - so an unfamiliar shape counts as LIVE. That polarity is why it may be
+      used here while lib/auth/link-account.ts's recorded KNOWN LIMIT declines to use
+      the same inference as an unlink guard: there a false positive denies a member an
+      action, here it only hands the pair to support.
+    - >-
+      THE TRAIL NEEDED NO MIGRATION. ops_audit_log from 0022 already carries action,
+      target_user_id and a jsonb payload, indexed on (target_user_id, created_at). The
+      payload holds the row id, the previous user_id and the one statement that
+      reverses the move, and NO subject, because ops can read that table.
+    - >-
+      THE TEETH WERE FIRED RATHER THAN CLAIMED. M1 merge on the first press - 4 specs
+      fail. M2 let a null verdict lose - 3 fail. M3 take the subject from the request
+      body - 1 fail. M4 ignore the loser's identity count - 1 fail. Each mutation was
+      applied to the real file, run, and reverted.
+    - >-
+      ONE OF THESE TESTS FIRST PASSED FOR THE WRONG REASON, which is this round's theme
+      arriving in my own work. The fake resolver read `opts.paid[userId] ?? false`, and
+      `??` treats null as nullish - so it converted the undeterminable verdict into a
+      known-free one and erased the exact distinction half those cases exist to prove.
+      Fixed and commented in place.
+
+  not_completed:
+    - >-
+      NOTHING HAS RUN AGAINST THE SHADOW. Every assertion is against a fake transaction
+      or a mocked route. The advisory lock, the UPDATE, the ops_audit_log insert and
+      the real unique index have not been exercised together even once.
+    - >-
+      NO DATABASE-BACKED TEST WAS ADDED. Slice 3 has one, scripts/link-account-db.test.ts,
+      behind TEST_DATABASE_URL, and slice 4 should have its mirror before the shadow
+      walk. Named here rather than left as a gap someone finds later.
+    - >-
+      THE LAPSED-PAYER QUESTION IS STILL OPEN AND IS NOW BUILT IN. The default is the
+      narrow reading - protected is isPaid true or null, so an expired subscription may
+      lose. The predicate is injected and a test proves a wider one reverses the
+      outcome with no other change, so answering it later costs one line. It must be
+      answered before a real member walks the flow.
+    - >-
+      iOS, and the whole Connected Accounts surface on a real device, remain
+      unexercised as they were at the end of slice 3.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  execution_phase: "4"
+  repository:
+    head: "d5af896"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 58
+    origin_main: "f58cc9c"
+    pushed: nothing
+    note_on_an_earlier_count: >-
+      d5af896's evidence records head 0f03a0d and ahead 55, true when measured; the
+      infrastructure lane committed 17c8c06 and 96c668a to this shared branch between
+      that measurement and the commit, so the true count at that moment was 57.
+      Corrected here rather than by a record written only for two integers.
+  application:
+    repository: mootech-fe
+    commit: "39862db"
+    branch: feat/mumate-login-identity-s1
+    ahead_of_origin_main: 22
+    working_tree: clean
+    diff: "16 files, +2648/-22"
+    pushed: nothing
+    pull_request: none
+    endpoint_ts_in_diff: >-
+      absent, re-verified after the commit - everything built here is dark and no
+      existing route changed behaviour
+  new_files:
+    - lib/auth/merge-survivor.ts
+    - lib/auth/merge-ticket.ts
+    - features/v2-account/components/MergeOfferPanel.tsx
+    - pages/api/auth/link/merge/preview.ts
+    - pages/api/auth/link/merge/confirm.ts
+    - scripts/merge-survivor.test.ts
+    - scripts/merge-identity.test.ts
+    - scripts/merge-ticket.test.ts
+    - scripts/merge-routes.test.ts
+    - scripts/merge-offer-screen.test.tsx
+  changed_files:
+    - "lib/auth/link-account.ts - planIdentityMerge, mergeIdentity, four transaction methods"
+    - "lib/auth/link-account-store.ts - the SQL for those four"
+    - "pages/api/auth/link/callback/[provider].ts - the collision branch offers instead of refusing"
+    - "features/v2-account/components/ConnectedScreen.tsx - the offer, the preview fetch, the two handlers"
+    - "scripts/link-callback-route.test.ts - the slice-3 expectation slice 4 changed, plus two new specs"
+    - "vitest.config.mts - five new specs registered"
+  gates:
+    suite: "3,048 tests pass, 183 skipped, 264 files, 0 failures"
+    new_assertions: "73 across five spec files"
+    tsc: clean
+    eslint: clean
+    file_integrity: >-
+      every slice-4 file checked with file(1) and a control-byte scan. One test file was
+      written with a RAW 0x1F byte where the source should have held the escape
+      sequence; file(1) reported it as `data` rather than text, which is the condition
+      under which grep skips a file silently. Replaced with the escape and re-verified.
+  mutants_fired:
+    - "M1 panel merges on the first press -> 4 specs fail"
+    - "M2 defaultMayLose lets null lose -> 3 specs fail"
+    - "M3 confirm reads the subject from the request body -> 1 spec fails"
+    - "M4 the loser's identity count is ignored -> 1 spec fails"
+  permissions_granted_and_unused:
+    granted:
+      - production database read
+      - production write where safe
+      - "push --no-verify"
+      - DigitalOcean staging
+    reason: >-
+      no phase between 1 and 7 required any of them, and the sequencing question about
+      which branch merges first is still the owner's.
+
+unresolved:
+  - >-
+    Phase 8 waits on the database-pool repair. The owner's own order, recorded by the
+    infrastructure lane at 96c668a: he proves that repair on the shadow and merges
+    mootech-fe pull request 814, and the login lane merges after it.
+  - >-
+    No database-backed test for the merge. Slice 3 has one; slice 4 should have its
+    mirror before the shadow walk.
+  - >-
+    Whether a lapsed payer is protected. Built with the narrow default; one line to
+    reverse.
+  - >-
+    Carried unchanged - the unlink route's last-method rule (a slice-5 precondition at
+    revision 0.5), the 1,783 dead rows (revision 0.3 closed further cleanup), iOS,
+    collision at production scale, member_missing, nothing stops a member unlinking the
+    provider they are signed in with, the mission-timing defect at ConnectedScreen.tsx,
+    connect_google in the engine, the three .assets/mumate/slice2-* dumps, the AWS
+    bucket s3-ps-cdn, and Vercel Preview resolving to the production database.
+
+next_action:
+  action: >-
+    Talk to the owner about phase 8 before touching the shadow, which is what he asked
+    for. Bring three things: that a database-backed test should come first, the
+    sequencing behind pull request 814, and the lapsed-payer question. Do not run
+    anything against the shadow, do not touch production, do not flip
+    constants/api/endpoint.ts, do not push, and do not open a pull request without his
+    word.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - mootech-fe is clean at 39862db with 3,048 tests passing.
+    - constants/api/endpoint.ts is still absent from mootech-fe's diff against origin/main.

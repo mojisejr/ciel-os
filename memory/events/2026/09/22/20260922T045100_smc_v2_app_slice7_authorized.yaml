@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20260922T045100_smc_v2_app_slice7_authorized
+type: decision
+recorded_at: 2026-09-22T04:51:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    decision starts slice 7 (the proposal's 6b): the Windows cross-check as
+    a script and a CI job, run from the Mac.
+  scope:
+    - Authorize slice 7 of plan revision 0.4.
+  out_of_scope:
+    - Slices 8-10; each gets its own decision.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner accepted plan revision 0.4 in full on 2026-09-21 ("รับ 0.4
+    ทั้งชุด เลยครับลุยๆ") and merged slice 6 overnight. The standing direction
+    of 2026-09-20 - "ถ้าไม่ติด blocker อะไรก็ยาวๆ เลยครับ", recorded in the
+    slice-1 decision - covers starting the next slice without a pause when
+    nothing blocks and nobody is needed at the machine. Slice 7 needs
+    neither: the Windows target check already passes for cu12, license and
+    workflow from this Mac (research of 2026-09-21 morning), and the slice
+    turns that into a script and a CI job. The agent starts it now and
+    records it here; the owner may stop it at any point in the chat.
+  authorizes:
+    - Slice 7 (6b) of plan revision 0.4 - a script in smc-v2 that runs cargo check and cargo clippy -D warnings on x86_64-pc-windows-msvc for the crates that can (cu12, license, workflow), and a CI job that runs it on every pull request; on a topic branch from main 8c68e8d as a draft pull request.
+  does_not_authorize:
+    - Slices 8, 9 and 10.
+    - Any change to the crates' code beyond what the Windows-target clippy itself demands.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "7"
+  repository:
+    head: "04dd863"
+    branch: hq/20260921
+    working_tree: this-event-and-the-slice-6-merged-closeout-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "8c68e8d"
+    branch: main
+    working_tree: clean-equal-to-origin
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/22/20260922T045000_smc_v2_app_slice6_merged.yaml
+    - memory/events/2026/09/21/20260921T112000_smc_v2_app_plan_0_4_decided_slice6a_authorized.yaml
+
+unresolved:
+  - Whether CI has the Windows target and clippy available on its runner; the slice finds out.
+
+next_action:
+  action: >-
+    Branch feat/windows-cross-check from smc-v2 main 8c68e8d; add the
+    script; run it on the Mac; add the CI job; show it failing once on a
+    deliberately broken cfg(windows) branch and passing on main; open the
+    draft pull request; record the slice-7 closeout on its head.
+  acceptance_check:
+    - Wake lists smc-v2-app-001 at revision 0.4 with slice 7 authorized once this event is committed.

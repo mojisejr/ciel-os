@@ -1,0 +1,141 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T234801_mumate_login_identity_slice4_phase8b_fix_nested_acquire_removed
+type: closeout
+recorded_at: 2026-09-25T23:48:01+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Remove the deadlock the record at 20260925T224606 named: a nested acquisition of the
+    application's single database connection from inside a transaction that already
+    holds it. Delete the seam that allowed it rather than repair the call, and build the
+    test that no existing assertion could have caught it with.
+  scope:
+    - The fix, in mootech-fe, on the login branch and committed locally only.
+    - The test that models a pool of exactly one connection, in both directions.
+    - The database-backed spec, which stops faking the paid verdict.
+  out_of_scope:
+    - Any deployment, push, or pull request.
+    - The arena itself, which is mumate-infra-move-001 sub-slice 3g.
+    - The screen affordance for a member who already holds both providers.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "4"
+  execution_phase: "8b-fix"
+  completed:
+    - >-
+      MergeDeps.resolveStanding IS GONE, NOT FIXED. Standing is now read through
+      LinkTransaction.memberStanding, on the transaction's own executor. The adapter in
+      lib/auth/link-account-store.ts issues two narrow SELECTs - member_subscription
+      rows and the single member_payment row - through tx.execute and hands them to a
+      new pure resolveStandingFromRows in lib/v2/subscription.ts. There is no longer a
+      parameter through which a caller could inject a client-backed resolver, so the
+      defect class is unrepresentable rather than forbidden. All three call sites pass
+      nothing.
+    - >-
+      THE RULE IS NOT DUPLICATED. resolveStandingFromRows decides with the functions
+      that file already exported - pickActiveSubscriptionRow, decidesWithoutLegacy,
+      resolveMembershipFromRows - plus usage-core's classifyMembership, which the legacy
+      arm has always used. What it adds is the ORDER, because resolveSubscription reads
+      member_payment lazily on purpose and cannot lend that branch out; #525's skip is
+      load-bearing on hot v1 pages and was left alone. The shared branch is held to
+      resolveSubscription's by test, not by comment.
+    - >-
+      THE TEST THAT SHOULD HAVE EXISTED, IN BOTH DIRECTIONS.
+      scripts/merge-standing-in-transaction.test.ts models a pool of exactly ONE slot.
+      First direction: the plan completes and the pool is acquired exactly once - a
+      second acquire would mean a read went around the transaction whether or not it
+      happened to finish. Second direction, which is what makes the first mean anything:
+      given a memberStanding that asks the same pool for a slot of its own, the plan
+      never settles inside its bound. A harness that cannot deadlock cannot witness the
+      absence of one.
+    - >-
+      THE DATABASE-BACKED SPEC STOPS FAKING THE PAID VERDICT. merge-identity-db.test.ts
+      used to inject standing, and its own header admitted the adapter's read was
+      therefore unproven. Paid is now a real member_subscription row, so the adapter's
+      SQL is exercised. Two of its cases can only pass when that read is correct: both
+      sides paid must refuse, and the signed-in side must lose to the payer even though
+      both accounts carry the same create_at, which removes the tiebreak as an
+      alternative explanation.
+    - >-
+      MEASURED, NOT ASSERTED. 8 database cases pass against real Postgres on the local
+      arena - the testenv container, 184 tables. Full vitest suite 3,063 passed and 191
+      skipped, up from 3,052 passed. tsc --noEmit clean. Committed as 868632e on
+      feat/mumate-login-identity-s1; nothing pushed.
+  not_completed:
+    - >-
+      NOTHING HAS RUN ON THE SHADOW. The shadow still carries the image built before this
+      fix, so the trap described at 20260925T224606 is still deployed there. Nobody
+      should walk the collision on it until the fixed image is deployed and the arena is
+      serving.
+    - >-
+      THE TRANSACTION POOLER IS STILL ABSENT FROM EVERY TEST PATH. The arena is a direct
+      connection and merge-identity-db opens its own client. This fix is about our own
+      pool, and a pooler-specific fault remains unmodelled anywhere.
+    - >-
+      THE MERGE OFFER IS STILL UNREACHABLE for a member whose account already holds that
+      provider. Inside the arena the pair is arranged directly, so slice 4 proceeds
+      without it; the affordance stays outside this slice.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  execution_phase: "8b-fix"
+  application:
+    repository: mootech-fe
+    branch: feat/mumate-login-identity-s1
+    commit: "868632e"
+    pushed: false
+    files:
+      - lib/auth/link-account.ts - memberStanding added to LinkTransaction, MergeDeps loses resolveStanding, planWithin reads through tx
+      - lib/auth/link-account-store.ts - the two SELECTs, both on tx.execute
+      - lib/v2/subscription.ts - resolveStandingFromRows, pure
+      - pages/api/auth/link/callback/[provider].ts, merge/preview.ts, merge/confirm.ts - no resolver passed
+      - scripts/merge-standing-in-transaction.test.ts - new, the one-slot pool
+      - scripts/merge-identity.test.ts, scripts/merge-identity-db.test.ts - standing no longer faked
+      - vitest.config.mts - the new spec registered
+  verification:
+    typecheck: tsc --noEmit clean
+    suite: 3063 passed, 191 skipped
+    database_cases: 8 passed against the testenv arena at 127.0.0.1:5433
+    grep: no resolveStanding remains in lib/ or pages/
+  repository:
+    head: "3e80899"
+    branch: hq/20260921
+    working_tree: this-event-and-two-plans
+
+unresolved:
+  - >-
+    The shadow carries the pre-fix image until it is redeployed.
+  - >-
+    HEALTH_DB_TIMEOUT_MS still equals the Docker probe timeout, so the 503 never reaches
+    the healthcheck. One environment variable, and it belongs to the infrastructure lane.
+  - >-
+    HQ still holds this session's earlier wrong attribution of the wedges to max 1 under
+    load; it should be corrected before the round pull request is written.
+  - >-
+    Carried unchanged - the recovery gap for a wedged client, the unlink route's
+    last-method rule, the 1,783 dead rows, iOS, collision at production scale,
+    member_missing, nothing stops a member unlinking the provider they are signed in
+    with, the mission-timing defect at ConnectedScreen.tsx, connect_google in the engine,
+    the three .assets/mumate/slice2-* dumps, the AWS bucket s3-ps-cdn, and Vercel Preview
+    resolving to the production database.
+
+next_action:
+  action: >-
+    mumate-infra-move-001 sub-slice 3g stands the arena up and points the shadow FE at
+    it; then this lane builds and deploys the image at 868632e on the shadow, stages the
+    collision pair inside the arena, and only then runs phase 8c. Do not touch
+    production, do not flip constants/api/endpoint.ts, do not push, and do not open a
+    pull request without the owner's word.
+  acceptance_check:
+    - The shadow reports database OK against the arena and the sha of the fixed image.
+    - A grep for deps.resolveStanding returns nothing, which it already does.
+    - constants/api/endpoint.ts is still absent from mootech-fe's diff against origin/main.

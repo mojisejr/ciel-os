@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T102639_mumate_control_room_ops_plan_0_2_close_at_two_slices
+type: decision
+recorded_at: 2026-09-24T10:26:39+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-control-room-ops-001
+  lane: single
+  objective: >-
+    Close the control-room operations workstream at two slices. The control
+    room is readable by a human in three seconds and reachable from anywhere
+    without a public SSH port, which is what the migration lane needed from
+    it; the watcher and the per-container view become candidates for a new
+    workstream the owner opens when he wants them.
+  scope:
+    - Revise the plan to 0.2 - two declared slices, both delivered; slices 3 and 4 rewritten as "Carried out of this plan" candidates, not as declared slices.
+    - Re-authorize slice 2 at revision 0.2 so the delivered work is bound to the revision that closes the plan.
+    - State completed on the plan; the final closeout follows this decision.
+  out_of_scope:
+    - Any new implementation. Nothing is built, changed, or deployed by this decision.
+    - The migration lane (mumate-infra-move-001) and the login lane (mumate-login-identity-001).
+
+outcome:
+  status: decided
+  parallelism: approved   # project mumate-infra is shared with mumate-infra-move-001; mootech-fe is shared between that lane and mumate-login-identity-001; one session, one lane at a time, own paths only
+  decision: >-
+    On 2026-09-24, after the slice-2 closeout, the owner said to close this
+    workstream now that nothing is outstanding in it, to keep the lessons in
+    the closeout, and to open a new workstream later if new work is wanted
+    ("เราสามารถปิด control room ของเราในตอนนี้ก่อนได้แล้ว ... ถ้าไม่มีอะไรค้าง
+    ในนั้นแล้ว แล้วเดี๋ยวถ้าเราจะทำอะไรใหม่ เราค่อยเปิด workstream ใหม่").
+    The plan therefore moves to revision 0.2 with two declared slices instead
+    of four: the passive watcher and the Beszel/backup work are written into
+    the plan as candidates with their acceptance ideas intact, so reopening
+    them costs a decision rather than a rediscovery.
+  authorizes:
+    - Plan revision 0.2 of mumate-control-room-ops-001 - two declared slices, both already delivered; slice 2 re-authorized at this revision so the delivered work is bound to it.
+    - Recording the final closeout that completes the workstream.
+  does_not_authorize:
+    - The watcher, Beszel, the backup proof, Droplet Backups, or the ufw tightening - each needs a new workstream and a new decision.
+    - Starting the migration lane's 3c, which needs the owner's own go under the quiet gate.
+
+evidence:
+  plan: workstreams/mumate-control-room-ops-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "722c00cbcea2a3cb2242e66317ed387db78f1fef"
+    branch: hq/20260921
+    working_tree: shared-standing-branch-own-paths-only
+  application:
+    mumate-infra: "main 768c71a = host /opt/mumate; PRs 13, 14, 15, 16 merged"
+  slice_closeouts:
+    slice_1: memory/events/2026/09/22/20260922T055602_mumate_control_room_ops_slice1_closeout_readable_alerts_rehearsed.yaml
+    slice_2: memory/events/2026/09/24/20260924T102001_mumate_control_room_ops_slice2_closeout_tailscale_port22_closed.yaml
+  previous_record: memory/events/2026/09/24/20260924T102001_mumate_control_room_ops_slice2_closeout_tailscale_port22_closed.yaml
+
+unresolved:
+  - Carried to a future workstream: the passive watcher; Beszel plus Dozzle behind the tailnet; backup and restore proven on mumate-2 (needs a Spaces key the owner's role cannot create); DigitalOcean Droplet Backups decision; reboot-required and fail2ban in ops-status; the expiry register warning seven days ahead; ufw's public 22 on the host.
+  - env/README.md expiry dates for the other tokens (owner).
+  - Carried by the migration lane - mumate-infra-move-001: 3c under the quiet gate; payment test webhook; Vercel Preview resolving to the production database; mootech-fe origin/main failing its own verify-architecture pre-push gate.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Record the final closeout for this workstream, then ask the owner for his
+    go on the migration lane's 3c while the quiet gate is open.
+  acceptance_check:
+    - Wake reads mumate-control-room-ops-001 at revision 0.2 with two declared slices and no validation error.

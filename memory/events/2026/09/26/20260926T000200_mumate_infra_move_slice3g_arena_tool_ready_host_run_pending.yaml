@@ -1,0 +1,138 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T000200_mumate_infra_move_slice3g_arena_tool_ready_host_run_pending
+type: closeout
+recorded_at: 2026-09-26T00:02:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Deliver the command sub-slice 3g is defined by - one that stands a rehearsal copy of
+    production up on the shadow host, reports what it loaded, carries its own deletion
+    date, and takes itself down - and open it for owner review. The arena itself is not
+    stood up by this record.
+  scope:
+    - bin/arena.sh with up, status and down, plus the runbook section and the README line.
+    - The review surface: pull request 21, description written to the CIEL template.
+  out_of_scope:
+    - Running anything on the shadow host, including --dry-run.
+    - Pointing the shadow FE at anything.
+    - The login lane's phases 8c and 8d.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  execution_phase: "3g"
+  completed:
+    - >-
+      bin/arena.sh exists with three verbs. `up` checks the disk against eight times the
+      compressed object BEFORE touching pgtmp, brings pgtmp up, terminates connections,
+      drops and creates the database, streams the newest Spaces object through psql,
+      writes source, creation date and deletion date into an arena_meta table INSIDE the
+      arena, then verifies. `status` reports what was loaded, days remaining, the restore
+      error count, and whether FE points at the arena. `down` refuses while FE still
+      points at it, then removes the container and the volume.
+    - >-
+      THE VERIFICATION GATE IS NOT A TABLE COUNT ALONE. More than 100 tables and user
+      rows greater than zero are kept from the existing restore proof, and each of the
+      five tables slice 4 actually touches must be readable: user, user_provider,
+      member_subscription, member_payment, ops_audit_log. A table count passes while the
+      one table the login flow needs is absent, which is the failure this gate exists to
+      refuse. On failure it alerts and stops, so FE is never pointed at a half-loaded copy.
+    - >-
+      RUNNING IT TWICE IS THE FEATURE, AND IS WHY THIS IS NOT restore-verify.sh --keep.
+      That script proves a backup restores and --keep exists so the slice-2 BE dogfood
+      could borrow the result; borrowed as an arena it does not drop before loading, so a
+      second run layers two dumps, and it carries no expiry, no notion of who is using it
+      and no stated way back. Owner decision 13 asks for a command that can be run again
+      whenever a risky step needs a rehearsal, so drop-then-load is the first thing up does.
+    - >-
+      PSQL STDERR IS NEVER PRINTED. It goes to .arena-restore.err at mode 600 and only
+      the number of ERROR lines is reported, because a psql error line can carry the row
+      that failed and those rows are real member data.
+    - >-
+      ONE DEFECT OF MY OWN, FOUND AND FIXED BEFORE THE COMMIT. report_contents logged to
+      stdout while also returning the table count, so TABLES=$(report_contents) captured
+      the log text with the number and the -gt 100 gate would have compared a
+      non-numeric string - it would have failed silently in the direction of refusing a
+      good arena. Logging now goes to stderr, the count alone to stdout, with the reason
+      written beside it.
+    - >-
+      Checked with what can be checked off the host: shellcheck -S warning clean, bash -n
+      clean, docker compose config valid with tags supplied. Pull request 21 is open with
+      its description written to the CIEL template.
+  not_completed:
+    - >-
+      NOTHING HAS RUN ON THE HOST. Not --dry-run, not up. The repository's first rule is
+      that the server is the result of git, so the host runs this only after the owner
+      merges, exactly as pull request 20 was merged before the shadow fast-forwarded to it.
+    - >-
+      DoD 3g IS THEREFORE UNMET. The arena is not standing, the shadow FE still serves
+      production, and no deletion date has been recorded for a copy that does not exist yet.
+    - >-
+      HEALTH_DB_TIMEOUT_MS is still equal to the Docker probe timeout. It is one value in
+      the same file the owner opens to point FE at the arena, and it is carried rather
+      than fixed here.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "3"
+  execution_phase: "3g"
+  pull_request:
+    url: https://github.com/mojisejr/mumate-infra/pull/21
+    head: "ec6566b"
+    base: main
+    state: open for review, not merged
+  application:
+    repository: mumate-infra
+    branch: feat/arena-rehearsal-database
+    started_from: "489c18e (origin/main, pull request 20's merge)"
+    files:
+      - bin/arena.sh - new
+      - runbooks/02-backup-restore.md - the arena section, including the mixed-state and PII notes
+      - README.md - bin/ inventory line
+  checks_off_host:
+    shellcheck: clean at -S warning
+    bash_syntax: clean
+    compose_config: valid with BE_TAG/FE_TAG/BAZI_TAG supplied, since .env lives on the host
+  repository:
+    head: "12c435c"
+    branch: hq/20260921
+    working_tree: this-event-only
+
+unresolved:
+  - >-
+    The arena is a direct connection, so the transaction pooler is in no test path. A
+    pooler-specific fault will not reproduce on it.
+  - >-
+    While FE points at the arena, be and bazi still read production. The login flow is
+    FE-native so it is coherent, but any FE route reading engine tables reads a snapshot.
+  - >-
+    The arena holds real member data on the droplet for as long as it lives. The recorded
+    deletion date and status's warning are the mitigation; nothing enforces it.
+  - >-
+    A runbook line in this repository says Supabase's own PITR and daily backups are the
+    first recovery layer. If the PITR add-on is in fact already paid for, then the cost
+    half of owner decision 12's reasoning is weaker than written - the branch would then
+    include data without a new charge. It does not change the decision, which also rests
+    on our dump already existing, but it should be answered rather than left implied.
+  - >-
+    Carried by this lane - 3c under the quiet gate, the payment test webhook from the
+    team, Vercel Preview resolving to the production database, and mootech-fe origin/main
+    failing its own verify-architecture pre-push gate.
+
+next_action:
+  action: >-
+    The owner reviews and merges pull request 21. Then, on the shadow host: pull main,
+    run bin/arena.sh up --dry-run, run bin/arena.sh up, and point the shadow FE at the
+    arena while setting HEALTH_DB_TIMEOUT_MS in the same file. The slice-3g closeout that
+    proves DoD 3g is written from that run.
+  acceptance_check:
+    - The arena reports more than 100 tables, user rows greater than zero, and all five login tables readable.
+    - The shadow FE answers /api/health 200 with database OK against the arena on the loopback and through the public staging hostname.
+    - status prints the deletion date, and the way back to production is one value and one recreate.

@@ -1,0 +1,257 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T051653_mumate_login_identity_slice3_first_real_token_verified_and_dod_audit
+type: closeout
+recorded_at: 2026-09-25T05:16:53+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record the first LINE round trip whose token was actually verified, the
+    collision it then hit against real production data, and an independent audit
+    of every DoD 3 item. The audit is the substance: it says which acceptance
+    items are proven, which are proven only around the mechanism, and which
+    cannot close without a live round trip. Slice 3 is NOT complete and this
+    record says why in specific terms.
+  scope:
+    - The 04:55 ICT attempt and what it proved.
+    - A per-item audit of DoD 3 and the 0.3 additions.
+    - A population the plan never considered, found while answering the owner.
+  out_of_scope:
+    - The traffic flip, connect_google, the mission-timing defect. Unchanged.
+    - Any PLAN.md revision. The corrections below are recorded, not applied.
+    - Slice 4 work. The owner's own case is now a slice-4 case; nothing was done to it.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      FIRST REAL LINE TOKEN EVER VERIFIED. At 2026-09-24T21:55:25Z (2026-09-25
+      04:55 ICT) the callback returned
+      "Location: /v2/settings/connected?link_error=owned_by_another". That reason
+      is reachable only after state, PKCE, the code exchange, the HS256 signature,
+      issuer, audience, expiry, nonce and subject extraction have ALL succeeded.
+      The HS256 repair in "3984e09" is therefore proven against a real provider,
+      which no test in the tree could do.
+    - >-
+      THE COLLISION PATH RAN AGAINST REAL PRODUCTION DATA, also a first. The
+      earlier slice-3 record listed exactly this as unexercised: the recovery and
+      refusal paths had met a real index but never production's own rows. The
+      identity was found to belong to another member and NOTHING was written.
+    - >-
+      THE OWNER CONFIRMED THE CAUSE HIMSELF. He holds two separate member
+      accounts - the Google one he was signed into (user_id b54b765a-..., 2
+      charts, 1 payment, providers "google" only) and a second account created by
+      logging in with LINE under a Thai display name. He verified by signing in
+      with LINE and landing in a different account. The refusal was correct.
+    - >-
+      A HYPOTHESIS TESTED AND REJECTED. The owner asked whether a partial write
+      from the two earlier failed attempts had created the row. It had not, and
+      the reason is structural: a row written for HIM would sit under HIS user_id
+      and produce "already-linked", not "owned-by-another"
+      (lib/auth/link-account.ts:111-113). Both earlier attempts also stopped before
+      the write - the first never reached the callback, the second failed
+      verification, which precedes linkProvider.
+    - >-
+      THE COLLISION LOGIC WAS AUDITED RATHER THAN TRUSTED, because a false
+      collision would look identical from outside. findIdentityOwner scopes by
+      provider - "WHERE id_token = $1 AND lower(provider) = lower($2)"
+      (lib/auth/link-account-store.ts:37) - and sameId compares trimmed and
+      lower-cased on both sides (lib/auth/link-account.ts:86-88). A false positive
+      is not reachable.
+    - >-
+      A.6's Secure attribute is satisfied in the DEPLOYED environment, established
+      by reading the host rather than a test: the fe container reports
+      NODE_ENV=production, and start/[provider].ts:34,86 sets secure: !isDev from
+      exactly that value. It remains unprovable in the test lane, where NODE_ENV
+      is "test" and the route correctly omits Secure.
+
+  not_completed:
+    - >-
+      SLICE 3 IS NOT COMPLETE. The happy path has never happened. No successful
+      link exists in any environment, so DoD 3's own sentence - "Google-to-LINE and
+      LINE-to-Google linking work" - is unmet.
+    - >-
+      NEITHER ATTEMPT WAS ON A PHONE. The User-Agent for both 19:49 and 04:55 is
+      Chrome on macOS. The LINE in-app webview on a real device - the case
+      SameSite and disable_ios_auto_login exist for, and the one that took every
+      provider's login down on 2026-09-22 - has still never been exercised.
+    - Google linking has never been attempted in any environment.
+
+the_dod_audit:
+  method: >-
+    Audited by a separate agent against the working tree at "49097ff", reading
+    each spec rather than trusting this session's account of them, and running the
+    link specs both with and without the real-database gate.
+  proven_by_test:
+    - Tampered state, altered by one byte, refused - real HMAC re-derived independently.
+    - Missing or mismatched nonce refused; the nonce check is the module's own code, so injecting a verifier does not hollow it out.
+    - LINE's wrong aud, wrong iss and expired exp refused, against locally minted real tokens.
+    - Unlink of a non-last method succeeds and of the last method is refused, counted by rows.
+    - A collision writes nothing, proven by snapshotting rows and counting inserts and deletes rather than reading a response body.
+    - The state cookie is HttpOnly and SameSite=Lax, read from the route's own Set-Cookie header.
+    - ConnectedScreen renders a SECOND linked provider as linked - two linked rows, asserted on both.
+    - All ten link specs are registered in vitest.config.mts.
+  proven_only_around_the_mechanism:
+    - >-
+      The refusal of a request carrying only cookie-mumate-id. The start-route
+      spec mocks BOTH resolvers and never sends a forged cookie; it asserts which
+      mock was called. resolveSignedSessionUserId (lib/v2/resolve-user.ts:123) -
+      the function that actually decides this, and the one plan item 3 was written
+      about - HAS NO TEST OF ITS OWN. This is the security-critical item of the
+      slice and its evidence is the weakest.
+    - >-
+      Every route-level collision and unlink assertion mocks linkProvider or
+      unlinkProvider wholesale, so those are fixtures about wiring, not about the
+      rule.
+    - >-
+      readMemberProviders (lib/auth/link-account-store.ts:123), the SQL behind the
+      connections read, is mocked in every test and has never run against Postgres
+      - not even inside the database gate.
+  a_gate_nobody_runs:
+    what: >-
+      The twelve real-Postgres specs in scripts/link-account-db.test.ts sit behind
+      describe.skipIf(!TEST_DATABASE_URL) at :50. That variable is unset by
+      default, is in no CI or hook configuration, and .githooks/pre-push:126-133
+      only WARNS about skips rather than failing.
+    why_it_matters: >-
+      Every "12 real-Postgres proofs" claim in this lane's earlier records is true
+      only of a lane that runs when a human remembers to export a variable. The
+      default suite - the one that gates a push - skipped all twelve. They were
+      re-run under the gate during this audit and all twelve passed, so the claim
+      is sound; the GATE is not.
+  replay_is_weaker_than_the_dod_implies:
+    what: >-
+      There is no single-use record for a state value. Replay is prevented by
+      clearing the cookie on every exit and by the ten-minute TTL; within that TTL
+      a re-presented cookie and state would still verify, because link-state.ts is
+      stateless-signed. The real backstop is the provider's one-shot code, which no
+      test covers.
+    not_acted_on: Recorded as a limit of the current design, not a defect to fix inside this slice.
+  items_the_plan_states_in_a_way_that_cannot_be_satisfied:
+    - >-
+      A.1 names the start route for its "no row is written" clause, but the start
+      route writes no rows under any outcome - the write is in the callback, which
+      takes identity from the signed state and calls no resolver at all.
+    - >-
+      A.6 asks for Secure to be asserted by reading Set-Cookie, which the test lane
+      can never show, because NODE_ENV is "test" there and the route correctly
+      omits it. Provable only in a deployed response or by restating the item.
+    - >-
+      A.7's premise - "this fails today because connectivity is decided by
+      string-equality against the session provider" - is now obsolete; the screen
+      reads /api/auth/link/connections.
+    - >-
+      A.8 says the drift test enforces registration. It enforces it directly only
+      for .test.tsx; the nine .test.ts link specs are caught by a different rule in
+      the same guard. The outcome holds, the stated mechanism does not.
+
+a_population_the_plan_never_considered:
+  what: >-
+    Members who hold LINE and Google as two SEPARATE, legitimate accounts. Every
+    one of them who tries to link will be refused with owned_by_another, exactly
+    as the owner was.
+  it_is_not_in_the_plan: >-
+    Searching PLAN.md for this case returns nothing. Slice 2 measured and cleaned
+    COLLISIONS - one identity claimed by two members, a data defect, 20 cases. This
+    is a different thing: two valid accounts belonging to one human, which is not a
+    defect and which slice 2 neither counted nor touched.
+  and_its_volume_cannot_be_predicted: >-
+    There is no way to know which LINE account and which Google account belong to
+    the same person. LINE carries no email here, and owner decision 2 forbids
+    joining by email even where one exists. So the manual-support volume owner
+    decision 5 said it would revisit is not measurable in advance - it can only be
+    observed as members try to link. What IS measurable is the upper bound: how
+    many members hold only one provider.
+  why_it_matters_now: >-
+    It changes what slice 4 is for. Slice 4 was written around recovering from bad
+    data. Its real first customer is a member with two good accounts who wants them
+    joined - and the owner is that member.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "c073b46"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 43
+    origin_main: "f58cc9c"
+  application:
+    repository: mootech-fe
+    local_head: "49097ffc6dc29296b1115ff531660324d8a2c7eb"
+    pushed_head: "49097ffc6dc29296b1115ff531660324d8a2c7eb"
+    branch: feat/mumate-login-identity-s1
+    ahead_of_origin_main: 20
+    behind_origin_main: 0
+    origin_main: "9f764e6"
+    working_tree: clean
+    pull_request: none
+    note: >-
+      The owner directed this session to push, build, deploy and verify on
+      2026-09-25. The push was made on his explicit instruction, against the
+      standing HQ rule that this lane does not push; it is recorded as his
+      decision, not the agent's.
+  deployed_to_shadow:
+    image: ghcr.io/mojisejr/mootech-fe:49097ffc6dc29296b1115ff531660324d8a2c7eb-staging
+    build_run: github actions container-build 36063828575, success
+    deploy: bin/deploy.sh, fe recreated, healthy in 12 seconds, /health.sha 49097ffc6dc2
+    runtime_keys_present: LINK_STATE_SECRET, LINE_CLIENT_SECRET, LINE_CLIENT_ID, NEXTAUTH_URL
+    node_env: production
+    restore_point_if_the_slot_is_handed_back: FE 7e22f54-staging / BE 0705378 / BAZI 722cdf1-staging
+  observed_attempt:
+    utc: "2026-09-24T21:55:25Z"
+    local_time: "2026-09-25 04:55 ICT"
+    result: 302 to /v2/settings/connected?link_error=owned_by_another
+    user_agent: chrome-on-macos-not-a-phone
+    user_provider_written: 0
+  verification:
+    default_lane: 2961 passed / 183 skipped across 276 files
+    gated_lane: scripts/link-account-db.test.ts 12 passed under TEST_DATABASE_URL, which the default lane skips
+    static: tsc --noEmit exit 0, npm run lint exit 0 with 0 errors
+    build: npm run build exit 0 with the VAPID gate line present
+
+unresolved:
+  - >-
+    THE HAPPY PATH IS UNPROVEN AND THE OWNER CANNOT PROVE IT WITH HIS OWN
+    ACCOUNTS. Both of his identities are already taken - by each other. Closing
+    slice 3 needs a LINE account that has never signed in to MuMate, or the
+    owner's own collision resolved first, which is slice 4.
+  - The LINE in-app webview on a real phone has never been exercised, in any attempt.
+  - Google linking has never been attempted, and Google's RS256/JWKS branch has never executed.
+  - >-
+    resolveSignedSessionUserId has no test. It is what stops a forged
+    cookie-mumate-id from attaching a login credential to an account.
+  - >-
+    The real-Postgres gate runs only when a human exports TEST_DATABASE_URL; the
+    pre-push hook warns about skips instead of failing.
+  - >-
+    Carried unchanged - the traffic flip, teammate testing as a pre-merge gate,
+    connect_google in the engine, the mission-timing defect at
+    ConnectedScreen.tsx:167-175, the keep-alive 502 belonging to mumate-infra,
+    LINK_STATE_SECRET missing from mumate-infra's env/fe.env.example, the three
+    .assets/mumate/slice2-* dumps kept by owner decision, the AWS bucket s3-ps-cdn
+    parked by owner decision, and Vercel Preview resolving to the production
+    database.
+  - >-
+    Standing hazard: the shadow FE and production share one Supabase database, so
+    every staging login is a real account event.
+
+next_action:
+  action: >-
+    The owner decides how slice 3 is closed, because the path is no longer purely
+    technical: either supply a LINE account that has never used MuMate and run one
+    link on a REAL PHONE inside the LINE app, or open slice 4 and resolve his own
+    two accounts first. Nothing else in slice 3 is waiting on anyone. Do not touch
+    production, do not flip constants/api/endpoint.ts, and do not edit mumate-infra
+    from this lane.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - constants/api/endpoint.ts is still absent from `git diff origin/main..HEAD --name-only`.
+    - PLAN.md is unchanged by this record - same revision 0.3, same phase, same Parallelism header.

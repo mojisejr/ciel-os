@@ -1,0 +1,206 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T072450_mumate_login_identity_slice3_first_successful_link
+type: closeout
+recorded_at: 2026-09-25T07:24:50+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    A provider was linked successfully, for the first time in this workstream and
+    in this codebase. It happened inside the LINE in-app browser on a real
+    device, after the owner merged his own two accounts by hand. This record is
+    the evidence for the one condition revision 0.4 added to slice 3, and it
+    states plainly what is still unexercised.
+  scope:
+    - The manual merge the owner performed, and what it moved.
+    - The unlink and the re-link that followed, read from the edge access log.
+    - What slice 3 has now proven and what it has not.
+  out_of_scope:
+    - Accepting slice 3. That is the owner's word and this record does not claim it.
+    - Slice 4 and 4b. Slice 4 still needs its own decision event before code.
+    - The flip, production traffic, mumate-infra. Untouched by this lane.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      THE FIRST SUCCESSFUL LINK. The callback answered
+      "Location: /v2/settings/connected?linked=line". Every earlier attempt in
+      this workstream ended in a refusal - correct refusals, but the write path
+      had never run. It has now.
+    - >-
+      IT HAPPENED IN THE LINE IN-APP BROWSER, ON A REAL DEVICE. The callback
+      query string carries liffClientId, liffRedirectUri and
+      lineAppVersion=26.14.0 - parameters the LINE app itself appends, which no
+      desktop browser produces - and the User-Agent is Android. This is the
+      environment `disable_ios_auto_login` and the SameSite=Lax cookie exist for,
+      and the one whose SameSite=None variant took every provider's login down on
+      2026-09-22. It had never been exercised: both earlier attempts were Chrome
+      on macOS.
+    - >-
+      THE OWNER CONFIRMED ALL THREE ACCEPTANCE CONDITIONS ON THE SCREEN - LINE
+      reads linked, the existing Google row is still shown, and he was not signed
+      out. The DoD clause about NextAuth not overwriting the session during
+      linking is therefore observed rather than merely argued from the code.
+    - >-
+      UNLINK WORKED IN REAL LIFE TOO, and it is in the same log immediately
+      before - DELETE /api/auth/link/unlink/line, then the start route, then the
+      callback. So the sequence proven is unlink a non-last method, then re-link
+      it, both against production data.
+    - >-
+      THE MERGE THAT MADE IT POSSIBLE WAS PERFORMED BY THE OWNER, BY HAND, and it
+      is the first operation of slice 4's shape ever run. Measured first, read-only -
+      the LINE account "f948bb56-f930-4fb3-be3f-5b328ea1beca" held 1 chart and 0
+      payments; the Google account "b54b765a-c01b-471f-bf7c-0c2a1a448bdd" held 2
+      charts and 1 payment. Under owner decision 8 the paying side survives, so
+      the Google account won and the direction did not reverse. Both rows carry
+      the same date of birth, which corroborates one person holding two accounts.
+    - >-
+      THE MOVE TOUCHED user_id AND NOTHING ELSE, deliberately. `update_at` was
+      left alone because PLAN 0.4 records it as the closest true login clock this
+      system has - restamping it would have quietly destroyed the measurement
+      slice 5 depends on. The statement was pinned to the row's own `id`, never to
+      `provider`, so it could not reach another member. Verified afterwards: the
+      Google account reads `google,google,google,google,google,line` and the LINE
+      account reads null.
+    - >-
+      A DUMP WAS TAKEN BEFORE ANYTHING WAS WRITTEN, kept outside the repository by
+      the owner. It was needed by design, because the test's second step deletes
+      the row; had the re-link failed, that dump was the only way back.
+
+  not_completed:
+    - >-
+      GOOGLE LINKING HAS STILL NEVER BEEN ATTEMPTED, in any environment. Its
+      RS256/JWKS branch is now exercised by a test against a key set this repo
+      serves, but no real Google round trip has happened.
+    - >-
+      iOS IS STILL UNTOUCHED. The webview proven here is Android. The iOS
+      app-switch that `disable_ios_auto_login=true` exists to prevent is the
+      specific hazard, and an Android pass is not evidence about it.
+    - >-
+      SLICE 3 IS NOT ACCEPTED BY THIS RECORD. The condition revision 0.4 added is
+      met and the evidence is here; accepting the slice is the owner's word, as it
+      was for slice 1.
+    - >-
+      The merge that produced this state exists as one hand-run SQL statement, not
+      as a feature. No member can do this for themselves. That is slice 4, and it
+      is still unauthorized.
+
+  evidence_of_limits:
+    - >-
+      One member, one direction, one provider, one device. The linking path is
+      proven to work; nothing here says how it behaves for a member whose losing
+      account holds payments, whose provider rows number more than one, or who is
+      on iOS.
+    - >-
+      The screen-level confirmations are the owner's own observation. The log
+      proves the route answered `linked=line` and that the callback came from the
+      LINE app; it does not prove what the screen rendered afterwards.
+
+a_finding_that_narrows_dod_4:
+  what: >-
+    The owner's Google account holds FIVE `user_provider` rows spelling google,
+    not one. The first query hid this because it used string_agg(DISTINCT ...);
+    the verification query without DISTINCT showed
+    `google,google,google,google,google,line`.
+  why_it_matters_now: >-
+    DoD 4, written hours earlier, says the merge shows "exactly one
+    `user_provider` row changing `user_id`". That is true of this member's LINE
+    side and false in general: a member whose losing account holds several rows of
+    one provider needs all of them moved, or the account keeps a live credential
+    after the merge claims to have taken it. The clause should read "every provider
+    row of the losing account, and nothing else". Not yet edited into PLAN.md.
+  and_it_changes_what_unlink_means: >-
+    `deleteProviderRows` is scoped by `(user_id, provider)` rather than by row id -
+    correct, because a row id arriving near a request must not delete another
+    member's credential. But it means one press of "ถอดบัญชี" on Google would
+    delete all five rows at once. Unlinking LINE was safe for exactly the reason
+    the code checks: `others` held `google`, so the last-method guard passed, and
+    only the single line row was deleted.
+  the_likely_cause_and_why_it_is_worth_chasing: >-
+    Not established. The shape is consistent with the legacy path writing a new
+    row whenever the Google subject changed, which is the same root as the 1,443
+    members holding no usable Google row. If that is what these five are, the owner
+    is himself a member of the set the flip would hand a new empty account. A
+    read-only query over `length(id_token)` on those rows would settle it and was
+    handed to him; its result is not in.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: "d4ebce5"
+    branch: hq/20260921
+    working_tree: this-event-only
+    note: >-
+      d4ebce5 is mumate-infra-move-001's slice-3e closeout, not this lane's. It
+      landed while this lane was working and closes both findings this lane routed
+      to it - the deploy tool's health check and LINK_STATE_SECRET missing from
+      env/fe.env.example.
+  application:
+    repository: mootech-fe
+    local_head: "d43d582"
+    pushed_head: "49097ffc6dc29296b1115ff531660324d8a2c7eb"
+    branch: feat/mumate-login-identity-s1
+    working_tree: clean
+    pull_request: none
+    note: d43d582 is unpushed and adds tests only; the shadow does not run it and does not need to.
+  deployed_to_shadow:
+    image: ghcr.io/mojisejr/mootech-fe:49097ffc6dc29296b1115ff531660324d8a2c7eb-staging
+  observed_sequence:
+    unlink: DELETE /api/auth/link/unlink/line
+    start: 302 to access.line.me with state, nonce, PKCE S256 and disable_ios_auto_login=true
+    callback_query_carried: liffClientId, liffRedirectUri, lineAppVersion=26.14.0
+    callback_response: 302 to /v2/settings/connected?linked=line
+    user_agent: Android, LINE in-app browser
+    owner_observed: LINE linked, Google still present, session not signed out
+  the_manual_merge:
+    losing_account: "f948bb56-f930-4fb3-be3f-5b328ea1beca"
+    surviving_account: "b54b765a-c01b-471f-bf7c-0c2a1a448bdd"
+    rule_applied: owner decision 8 - the paying side survives
+    moved: one user_provider row, user_id only
+    left_untouched: update_at, and every other table
+    left_behind: 1 chart in the losing account, which now has no login method
+
+unresolved:
+  - >-
+    Whether the owner accepts slice 3. The evidence is complete; the word is his.
+  - >-
+    DoD 4's "exactly one row" clause needs the correction above before slice 4
+    starts.
+  - >-
+    Google linking, and iOS. Neither has ever been exercised.
+  - >-
+    Why the owner's account holds five google provider rows, and whether their
+    id_token values are the unusable short kind. One read-only query settles it.
+  - >-
+    mootech-fe "d43d582" is unpushed; tests only, blocks nothing.
+  - >-
+    Carried unchanged - slice 4 needs its own decision event, DoD 4b is
+    deliberately unwritten, the mission-timing defect at ConnectedScreen.tsx:167-175,
+    connect_google in the engine, the three .assets/mumate/slice2-* dumps kept by
+    owner decision, the AWS bucket s3-ps-cdn parked by owner decision, and Vercel
+    Preview resolving to the production database.
+  - >-
+    Standing hazard: the shadow FE and production share one Supabase database.
+    This record's evidence was produced against production rows, by the owner, on
+    his own account.
+
+next_action:
+  action: >-
+    The owner says whether slice 3 is accepted. If it is, the next thing is the
+    slice-4 decision event - the merge as a feature rather than a hand-run
+    statement - carrying the DoD correction above. Nothing else in slice 3 is
+    waiting on anyone. Do not touch production, do not flip
+    constants/api/endpoint.ts, and do not edit mumate-infra from this lane.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - Wake reports this lane authorized at plan revision 0.4.
+    - constants/api/endpoint.ts is still absent from `git diff origin/main..HEAD --name-only`.

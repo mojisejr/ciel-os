@@ -1,0 +1,173 @@
+schema_version: ciel.event.v0.1
+id: evt_20260923T142406_mumate_login_identity_slice1_defects_fixed
+type: closeout
+recorded_at: 2026-09-23T14:24:06+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Fix the seven defects that block slice-1 acceptance, on the existing topic
+    branch, and offer slice 1 to the owner. The owner gave the go in this
+    session after a cold entry from the handoff record; the record's next_action
+    was treated as a plan, not as the authorisation.
+  scope:
+    - The seven slice-1 defects recorded in PLAN.md revision 0.2.
+    - The concurrency proof and its reproducibility.
+    - The parity table, corrected against the legacy source rather than the plan.
+  out_of_scope:
+    - Any push, pull request, production write, SQL, provider setting or traffic change.
+    - pages/login/index.tsx - other lanes cross it, so its live `|| '/'` bug is recorded, not fixed.
+    - Slices 2-5, account merge, object-storage migration.
+
+outcome:
+  # Deliberately NOT a delivery status. HQ ciel-os-a3 asked for one the delivery
+  # machinery acts on; src/portfolio/read.ts:40 defines those as exactly
+  # draft-pr-closeout-prepared-for-final-pr-review and ready-for-owner-merge,
+  # and both would assert a delivery that does not exist - nothing is pushed,
+  # there is no pull request, and the owner gate forbids both. Wake reports no
+  # validation warning against this record, because this closeout is not scoped
+  # to finish the workstream. A peer's instruction does not override the
+  # repository's own contract.
+  status: recorded
+  completed:
+    - >-
+      All seven defects are fixed across four commits on
+      feat/mumate-login-identity-s1, each reported to HQ with hash, parent and
+      paths: "2e617b5" (defects 1-2), "4913ba2" (defects 3-5), "d973716"
+      (defect 7), "3f9e0c1" (defect 6).
+    - >-
+      Defect 7 was not what the plan described. The existing proof was not weak
+      evidence, it was not evidence. Verified directly by replacing
+      pg_advisory_xact_lock with a no-op - the old two-caller test still passed.
+      Rebuilt at eight callers with a negative control that runs the identical
+      race through a store whose lockProviderIdentity is a no-op and requires
+      the duplicate to appear. Two callers without the lock produce two provider
+      rows, eight produce four. Five consecutive runs green, no residue.
+    - >-
+      Defect 6 was not only wording. Read against mootech-be
+      src/user/user.service.ts registerOrLogin at "0705378", three parity claims
+      were wrong - see unresolved, all three are recorded as differences rather
+      than silently reconciled.
+    - >-
+      The `user`-table email write, which no test reached, is now covered
+      directly and its provider gate made case-insensitive so a future spelling
+      change cannot kill it silently.
+
+  not_completed:
+    - Slice 1 is offered but not accepted. The owner has not reviewed the parity table or the collision behaviour.
+    - No traffic moved, no endpoint constant flipped, nothing pushed, no pull request.
+    - The is_info and is_email drift and the LINE avatar gap are recorded, not reconciled - each needs an owner decision.
+
+  evidence_of_limits:
+    - >-
+      The concurrency proof runs over a DIRECT connection to a local Postgres
+      17.10. Production reaches Supabase through the transaction pooler.
+      pg_advisory_xact_lock is transaction-scoped and so is safe there in
+      principle, but this proof is not evidence about the pooler. Slice 2's
+      unique index is what makes the guarantee structural.
+    - >-
+      The 657/98 production measurement is carried forward unchanged from the
+      handoff record as a planning checkpoint of 2026-09-23. It was not
+      re-measured in this session and must not be treated as migration input.
+    - The legacy behaviour in the parity table was read at bazi-unrelated checkout mootech-be main "0705378"; a later BE change would invalidate those rows.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: "4af1ff198107b1a35c615876e1ac66cd253fc38c"
+    branch: hq/20260921
+    working_tree: clean-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mootech-fe: >-
+      branch feat/mumate-login-identity-s1 at "3f9e0c1196000b50121316ab75390d0a7ab8a168",
+      base "4837b4763748a211b7dabf9673815cd6fd44f54e", clean, 5 commits ahead, no
+      remote ref exists, nothing pushed. origin/main is "9ee4f39" at 23 commits
+      ahead of the base.
+    mootech-be: main "0705378d884114a4fd0e73aed59656638f335fdc", read-only reference for the parity table
+  local_proof:
+    default_lane: vitest 2725 passed / 162 skipped across 264 files; tsc --noEmit exit 0; eslint clean on the touched files
+    negative_control: >-
+      The same race with the lock removed produces 2 provider rows at 2 callers
+      and 4 at 8 callers, so the positive assertion is discriminating. This is
+      the measurement that retires the earlier "claimed once, unreproducible"
+      wording - the old proof passed with the lock removed, so it distinguished
+      nothing.
+    postgres_proof_captured: |
+      slice-1 concurrency proof - captured 2026-09-23T14:20:39+0700
+      repo mootech-fe branch feat/mumate-login-identity-s1
+      postgres 17.10 via localhost:5433/mumate_test - DIRECT connection, not the Supabase transaction pooler
+      command: TEST_DATABASE_URL=... npx vitest run scripts/register-login-fe-db.test.ts
+
+       RUN  v4.1.10 /Users/non/ghq/github.com/mojisejr/mootech-fe
+
+       / scripts/register-login-fe-db.test.ts > FE-native register/login against real Postgres > serializes concurrent first logins into one member and one provider mapping 251ms
+       / scripts/register-login-fe-db.test.ts > FE-native register/login against real Postgres > updates the member email on a returning Google login, and never on LINE 23ms
+       / scripts/register-login-fe-db.test.ts > FE-native register/login against real Postgres > negative control: the same race duplicates the identity without the lock 24ms
+
+       Test Files  1 passed (1)
+            Tests  3 passed (3)
+         Start at  14:20:40
+         Duration  1.56s (transform 83ms, setup 131ms, import 342ms, tests 200ms, environment 679ms)
+
+      default lane (no TEST_DATABASE_URL) still skips this file:
+       Test Files  1 skipped (1)
+            Tests  3 skipped (3)
+
+      Residue check after the run: SELECT count(*) FROM user_provider WHERE id_token LIKE 'slice1-proof-%' = 0
+      Repeated five consecutive times, 2 passed / 2 passed / 2 passed / 2 passed / 2 passed before the third test was added, then 3 passed on the captured run.
+      (The tick glyph is transcribed as "/" so the record stays plain ASCII.)
+  preceding_record: memory/events/2026/09/23/20260923T135012_mumate_login_identity_handoff_before_clear.yaml
+
+decisions_taken_by_owner:
+  - D1 go, for local defect work only; the push gate stands.
+  - D2 option (a) - normalise the referral code at the route; do not touch pages/login/index.tsx.
+  - D3 keep plan 0.2's strict no-join-by-email line; the LINE email scope proceeds as a parallel team task slice 1 does not wait on.
+  - D4 stand on decision 3 - delete the 657 dead rows, route the 98 members to support.
+  - D5 the duplicate identity with a chart on both sides - deferred.
+  - D6 the non-transactional wallet and ledger write - deferred, unowned.
+  - D7 no push this round; the remote-sync question is settled with the owner after the work.
+
+unresolved:
+  - >-
+    is_info drift. Legacy hardcodes false on first login even when the profile
+    carries a name - the GO TO FORM signal - where this route answers
+    Boolean(name). Nothing in mootech-fe reads it today, so it is inert in the
+    app and matters for rollback. Owner chooses the honest value or bug
+    compatibility.
+  - >-
+    is_email drift. Legacy hardcodes true on every returning branch regardless
+    of the stored email; this route answers Boolean(email). The FE value is the
+    accurate one, but a rollback flips it back.
+  - >-
+    LINE avatar gap, user-visible. Legacy copies the image to S3 and saves it to
+    user.picture_url on returning logins; this route writes user_provider only
+    and never refreshes user.picture_url after creation, so a returning LINE
+    member's avatar will not update. Object-storage migration is not claimed by
+    this slice.
+  - >-
+    An ordinary expired NextAuth session reaches the 401 and so takes the
+    sign-out path through the same ok:false flag. Coherent, but it should be the
+    owner's deliberate choice rather than inherited. Raised by HQ ciel-os-a3.
+  - >-
+    pages/login/index.tsx line 42 `router.query.callback as string || '/'` makes
+    the branch that would write an empty REFCODE_FGF unreachable. Live, unowned,
+    deliberately not fixed by this lane.
+  - Carried unchanged - the duplicate identity holding a chart on both sides, the LINE email scope, and the non-transactional wallet and ledger write.
+
+next_action:
+  action: >-
+    The owner reviews docs/auth/register-login-fe-parity.md and the collision
+    behaviour, then accepts or rejects slice 1. Three recorded differences need
+    his decision before acceptance means anything - the is_info value, the
+    is_email value, and the LINE avatar gap. No push, no pull request, no
+    production write and no advance past slice 1 until he accepts.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - The topic branch still has no remote ref and no production endpoint constant is flipped.

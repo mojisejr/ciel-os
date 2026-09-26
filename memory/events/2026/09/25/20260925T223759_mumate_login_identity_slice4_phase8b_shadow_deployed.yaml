@@ -1,0 +1,89 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T223759_mumate_login_identity_slice4_phase8b_shadow_deployed
+type: closeout
+recorded_at: 2026-09-25T22:37:59+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Make the staging LINE account-link callback diagnosable and bounded before
+    one owner-controlled collision-preview retry.
+  scope:
+    - Build the exact phase 8b staging image from the pushed feature revision.
+    - Deploy and verify that image only on the MuMate staging shadow host.
+  out_of_scope:
+    - Production, main, pull-request creation, LINE consent or retry, provider-console
+      changes, identity movement, account merge, or database mutations.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "4"
+  completed:
+    - >-
+      GitHub Actions container-build run 36154995511 successfully built and pushed
+      ghcr.io/mojisejr/mootech-fe:626c9c5087b77c5328c84b923cc7d278892504ee-staging.
+    - >-
+      The staging host deploy script validated Compose and Caddy configuration,
+      saved its rollback checkpoint, pulled the exact FE image, recreated only FE,
+      and reported healthy at 2026-09-25T15:37:42Z.
+    - >-
+      Host loopback and public staging /api/health both returned HTTP success with
+      db ok and sha 626c9c5087b77c5328c84b923cc7d278892504ee.
+  not_completed:
+    - >-
+      The owner-controlled phase 8c collision-preview phone journey has not run;
+      therefore no callback-stage diagnosis or linking result exists yet.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "4"
+  execution_phase: "8b"
+  repository:
+    head: "db52834157a180d127c877976002597d8e399818"
+    branch: hq/20260921
+    working_tree: this-event-only
+  source_revision:
+    repository: mojisejr/mootech-fe
+    branch: feat/mumate-login-identity-s1
+    commit: 626c9c5087b77c5328c84b923cc7d278892504ee
+    image: ghcr.io/mojisejr/mootech-fe:626c9c5087b77c5328c84b923cc7d278892504ee-staging
+  image_build:
+    provider: github-actions
+    workflow: container-build
+    run_id: "36154995511"
+    conclusion: success
+    target: staging
+  deployment:
+    target: staging-shadow
+    host: mumate-2
+    command: bin/deploy.sh FE_TAG=<exact-sha>-staging --profile full
+    fe_recreated: true
+    rollback_checkpoint_saved: true
+    deploy_health: healthy
+  post_deploy_health:
+    loopback: status-ok-db-ok-sha-626c9c5087b77c5328c84b923cc7d278892504ee
+    public_staging: status-ok-db-ok-sha-626c9c5087b77c5328c84b923cc7d278892504ee
+
+unresolved:
+  - >-
+    Health proves the staging FE and its database client are responsive after
+    activation; it does not prove the authenticated connected-accounts screen or
+    an OAuth callback round trip.
+  - >-
+    The deployed timeout bounds only external token exchange. A callback that
+    enters a different slow stage must be diagnosed from its redacted stage event.
+
+next_action:
+  action: >-
+    When the owner is ready, run exactly one phase 8c collision-preview journey
+    using the agreed shadow account and collect only redacted callback-stage and
+    outcome evidence before any discussion of identity movement.
+  acceptance_check:
+    - The journey returns promptly with either a safe preview outcome or a bounded error.
+    - No identity move, account merge, or provider ownership change occurs in phase 8c.

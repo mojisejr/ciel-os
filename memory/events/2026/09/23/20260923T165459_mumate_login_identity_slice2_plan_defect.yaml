@@ -1,0 +1,142 @@
+schema_version: ciel.event.v0.1
+id: evt_20260923T165459_mumate_login_identity_slice2_plan_defect
+type: closeout
+recorded_at: 2026-09-23T16:54:59+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record a defect in PLAN.md revision 0.2's slice-2 definition of done, found
+    while reviewing a step-by-step slice-2 sequence on the owner's request. DoD
+    2 cannot be satisfied as written. This record opens nothing and authorizes
+    nothing; slice 2 remains unopened.
+  scope:
+    - The blocker, with the measurement that establishes it.
+    - Corrections to the reviewed sequence, and three steps missing from it.
+    - The state of the local arena, which nothing else records.
+  out_of_scope:
+    - Opening slice 2, or any change to PLAN.md. The plan is NOT amended here, deliberately.
+    - Any production access, push, pull request, SQL, provider setting or traffic change.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Blocker established by measurement, not by reading. mootech-fe
+      testenv/scripts/anonymize.sql sets user_provider.id_token = '' on every
+      row, by design - the comment above it records that a real id_token is a
+      JWT carrying user claims. Measured on the running arena at 2026-09-23
+      16:5x - 5872 rows, 5872 blank, exactly 1 distinct value in the column.
+    - >-
+      Therefore DoD 2 of plan revision 0.2, "on an anonymized local restore,
+      duplicate mappings are zero, the unique index builds successfully", CANNOT
+      BE MET. A unique index on (provider, id_token) would collide on the 3004
+      LINE rows that are all ('LINE',''). Duplicate resolution has nothing real
+      to resolve. This is a defect in the plan, not in any extraction of it.
+    - >-
+      Independently confirmed by HQ ciel-os-a3, which also found that
+      testenv/scripts/reset-user.sh documents the same consequence in its own
+      header, and that testenv/scripts/stack.sh applies restore+anonymize on
+      bring-up.
+    - >-
+      What DOES survive anonymisation - provider spelling. The restore reports
+      LINE 3004, GOOGLE 1787, blank 657, google 423, dev 1, tracking the plan's
+      inventory. The normalisation half of the cleanup can be built and tested
+      locally today.
+
+  not_completed:
+    - Slice 2 is not opened. No decision event names it.
+    - PLAN.md is not amended. A revision bump would also require repeating outcome.parallelism approved, and belongs to whoever opens the slice.
+    - No production query has been run.
+
+  evidence_of_limits:
+    - The arena's dump is dated 2026-09-18, five days stale, so it is not a current inventory even where it is faithful.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: "34e1eeb"
+    branch: hq/20260921
+  measurement:
+    command: SELECT count(*), count(*) FILTER (WHERE id_token=''), count(DISTINCT id_token) FROM user_provider
+    against: local arena mumate_testenv_pg, Postgres 17.10, localhost:5433/mumate_test
+    result: "5872 | 5872 | 1"
+  anonymizer_rule: mootech-fe testenv/scripts/anonymize.sql, the UPDATE user_provider block
+
+options:
+  - >-
+    (a) Change the anonymizer to PSEUDONYMISE id_token rather than blank it - a
+    salted digest preserves distinctness and the duplicate structure while
+    revealing nothing. Requires a fresh production dump and restore, which is a
+    materially larger access than a read-only query: more rows, more columns,
+    and a copy that persists on this machine.
+  - >-
+    (b) RECOMMENDED. Do not copy production. Run the inventory as an
+    owner-authorized read-only SELECT, and prove the migration and the index on
+    a synthetic seed built to the shape the inventory reports. The index proof
+    needs the right shape - duplicates present, then resolved - not real
+    identities. Taking another production copy to prove what synthetic data
+    proves is the larger access for no extra evidence. Fixing the anonymizer
+    remains worth doing as a separate small change that every future lane
+    benefits from.
+
+corrections_to_the_reviewed_sequence:
+  - >-
+    The slice-2 decision event must repeat outcome.parallelism approved.
+    mumate-infra-move-001 also holds mootech-fe and the approval recorded for
+    slice 1 does not carry to a new slice-authorizing decision.
+  - >-
+    The read-only re-measure reads PRODUCTION. It is not local work. The
+    precedent in this workstream is an explicit owner grant, so it is a gate.
+  - >-
+    "Unique normalised provider-identity index" hides a design choice - on
+    (provider, id_token) or on (lower(provider), id_token). Revision 0.2 keeps
+    spelling asymmetric on purpose, so a plain unique index would let google and
+    GOOGLE coexist again if any writer ever sent the other spelling.
+    lower(provider) is strictly safer and costs nothing.
+  - >-
+    The negative control committed today in "d973716" INVERTS once the index
+    exists. It asserts the unlocked race leaves more than one provider row; with
+    the index the second insert raises a unique violation, one row survives, and
+    the assertion fails. It must be rewritten for the post-index world to assert
+    that one caller fails with a unique violation and exactly one row exists.
+    Flagged against my own work so it is not met later as a regression.
+
+missing_from_the_sequence:
+  - >-
+    LED ITEM. Decide what the FE route does with a unique violation once the
+    index exists. Today it surfaces as a 500 with no ok:false, which both
+    callers treat as retryable, so a racing caller retries straight into the
+    same violation. It should be caught and turned into the existing-member
+    path, which is what the advisory lock currently achieves cooperatively. Code
+    in this lane, not SQL, and nothing scopes it.
+  - Decide whether the advisory lock stays after the index exists. Removing it deletes the negative control's subject.
+  - >-
+    Add NOT NULL or a CHECK on provider, or the 657 blank-provider class can
+    simply regrow after being cleaned.
+
+unresolved:
+  - >-
+    The local arena has been up eight days on a 2026-09-18 dump and NOTHING
+    schedules its removal. If a fresh anonymised copy is taken for slice 2,
+    slice-2 close should be its written deletion point rather than an assumption.
+  - The owner has not chosen slice 2, the traffic flip, or parking the round.
+  - The read-only production inventory SELECT is unapproved. So is the separate amazonaws / phoenix-stark URL check.
+  - Carried unchanged - the duplicate identity holding a chart on both sides, the LINE email scope, the non-transactional wallet and ledger write.
+
+next_action:
+  action: >-
+    Whoever opens slice 2 resolves the DoD-2 defect first, by choosing option
+    (a) or (b), and writes that choice into the slice-2 decision event. Opening
+    it still requires a committed decision event naming slice 2 at revision 0.2
+    with outcome.parallelism approved repeated, plus an explicit owner grant for
+    the read-only production inventory query.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - No slice is opened by this record and no production access is performed.

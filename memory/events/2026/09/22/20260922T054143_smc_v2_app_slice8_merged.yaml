@@ -1,0 +1,76 @@
+schema_version: ciel.event.v0.1
+id: evt_20260922T054143_smc_v2_app_slice8_merged
+type: closeout
+recorded_at: 2026-09-22T05:41:43+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. Slice
+    8 (6c) is merged; this record closes it and syncs the checkout. Slice 9
+    (6d) waits for the owner's time at the Mac and is not started by this
+    record.
+  scope:
+    - Record the merge of smc-v2 pull request 8 and the checkout back on main.
+  out_of_scope:
+    - Slices 9 and 10; slice 9 needs its own decision when the owner sits down.
+
+outcome:
+  status: merged
+  completed:
+    - >-
+      The owner merged smc-v2 pull request 8 (feat/design-decisions
+      d8041a8) into main as eeffc7f at 2026-09-21T22:40:43Z and said
+      "merged PR 8 ครับ". The checkout was fetched, switched to main,
+      fast-forwarded to eeffc7f, the topic branch deleted locally; working
+      tree clean, equal to origin. The windows-cross-check job started on
+      main at the merge.
+    - >-
+      Slices 6, 7 and 8 of revision 0.4 are now on main. What remains
+      before Windows is slice 9, the owner's walkthrough of every function
+      not yet exercised; the fifteen-item checklist is drafted and will be
+      posted when the owner has about 45 minutes at the Mac.
+  not_completed:
+    - Slices 9 and 10.
+  boundaries:
+    - Nothing changed in smc-v2 by this record. The plan's execution phase stays 8 until slice 9 is decided.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "8"
+  repository:
+    head: "7c136fe"
+    branch: hq/20260921
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "eeffc7f"
+    branch: main
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/smc-v2/pull/8
+    merged_at: "2026-09-21T22:40:43Z"
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/22/20260922T053703_smc_v2_app_slice8_ready_for_owner_review.yaml
+
+unresolved:
+  - The no-pop and left-open warn flags are not persisted by the tick (noted in pull request 6); the owner has not asked for a change.
+  - Door-label order on the physical cabinet; production keygen before the first sale; real hardware may change the state machine.
+
+next_action:
+  action: >-
+    When the owner has about 45 minutes at the Mac, record the slice-9
+    decision, post the checklist, and walk it; fixes ride the same slice.
+    Until then the lane idles with slices 6-8 merged.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 with slice 8 merged and this record as its latest event.

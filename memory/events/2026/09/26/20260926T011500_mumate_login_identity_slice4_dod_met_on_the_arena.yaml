@@ -1,0 +1,266 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T011500_mumate_login_identity_slice4_dod_met_on_the_arena
+type: closeout
+recorded_at: 2026-09-26T01:15:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record that DoD 4 is met - a member joined two accounts he proved he owned, on
+    production-shaped data, and every safety rule held - and correct one claim I made while
+    doing it: production was written to during the rehearsal, which I had said would not
+    happen.
+  scope:
+    - Each of DoD 4's seven items, with where it is proven.
+    - The copy defect the owner found, and the proof the rewrite closed it.
+    - The correction about production, precisely what reached it, and why it happened.
+    - Two observations about other lanes' code, reported and not chased.
+  out_of_scope:
+    - Slice 4b and slice 5. Untouched.
+    - Fixing anything in mootech-be. Reference-only for this lane.
+    - Returning the shadow to production's database and removing the arena. Still to do.
+
+outcome:
+  # `recorded`, deliberately: slice 4 is not the last declared slice - 4b and 5 remain - so
+  # this closes a slice without offering the workstream as delivered.
+  status: recorded
+  parallelism: approved
+  slice: "4"
+  execution_phase: "8d"
+  completed:
+    - >-
+      DoD 4 ITEM BY ITEM, AND WHAT PROVES EACH. ① The survivor was chosen by the rule and
+      not by which side was signed in - the owner was signed into the account that LOST,
+      twice, and the rule kept the other one. ② The paid verdict came from
+      lib/v2/subscription.ts and was not re-derived: the surviving account holds a PRO row
+      ACTIVE to 2026-10-09, a PLUS row ACTIVE to 2027-09-01 and a member_payment MEMBER
+      row, while the losing account holds no subscription and no payment at all, and the
+      recorded reason is only-one-may-lose. ③ A paying account was never the loser, which is
+      the same fact read from the other side. ④ The merge moved the credential and NOTHING
+      else: all 185 public tables were counted before and after, twice, and the only table
+      whose count changed either time was ops_audit_log, by one - user_provider stayed at
+      5,880, so the row changed hands rather than being copied, and `user` stayed at 5,018,
+      so no account was created or deleted. ⑤ The losing account was left with no identity
+      that can authenticate - it holds zero provider rows now - and the member was told what
+      that costs, in Thai, before anything was written, behind two separate presses. ⑥ The
+      move was reversed by the single statement the audit payload carries, run verbatim: one
+      row updated, and the arena returned to its pre-merge state. The previous user_id is in
+      the payload where support can read it. ⑦ An unauthenticated or failed attempt changes
+      nothing, which remains proven by test rather than by a live attempt.
+    - >-
+      THE FIX WORKS, AND THIS IS THE MEASUREMENT THAT SAYS SO. merge-planning - the stage
+      that used to hold the application's only database connection forever and take the
+      container down with it - completed in 35 ms on the first walk and 68 ms on the second,
+      outcome ok both times, with token-exchange, verification and identity-lookup all
+      bounded alongside it. The container never went unhealthy.
+    - >-
+      THE DECISION IS DETERMINISTIC, WHICH NOBODY ASKED FOR AND IS WORTH HAVING. Two
+      independent walks, separated by a reversal and a redeployment, produced the same
+      survivor, the same moved row and the same reason. Nothing in the outcome depended on
+      the order of events or on which side initiated.
+    - >-
+      THE SESSION FOLLOWED THE CREDENTIAL WITHOUT A NEW SIGN-IN, which the copy promises.
+      After the merge, Caddy's access log shows the SAME session requesting
+      /api/user?user_id=<survivor> and /chinese-horoscope?userId=<survivor> - identity
+      resolved from the provider row that had just moved, exactly as lib/v2/resolve-user
+      does it. No sign-in or provider callback appears after the merge, so this is the
+      session resolving forward rather than the member logging in again.
+  not_completed:
+    - >-
+      SIGNING IN AGAIN WITH THE MOVED PROVIDER WAS NOT TESTED. The copy now says "หลังรวม
+      คุณยังเข้าได้ทั้ง LINE และ Google" and the data supports it - the survivor holds both a
+      google row and the LINE row - but nobody signed out and back in with LINE to see it.
+      Two minutes of owner time would close it.
+    - >-
+      THE SHADOW STILL SERVES FROM THE ARENA and still runs a branch build. Returning it and
+      removing the arena is the next infrastructure step, and the arena's own deletion date
+      is 2026-10-02.
+    - >-
+      SLICE 4 IS PROVEN ON A COPY AND NOT ON PRODUCTION. That was the owner's decision and
+      it is the right one, but it means the traffic flip and its observation - slice 5 - are
+      still the only thing that will prove this against real members.
+
+the_copy_defect_the_owner_found_and_what_closed_it:
+  what_happened: >-
+    On the first walk he read the offer panel, found the Thai readable, pressed through both
+    gates deliberately - and afterwards could not say that the LINE credential he was signed
+    in with was the one about to move. He had guessed the direction correctly from knowing
+    which of his accounts holds his purchases, not from anything on the screen. That is a
+    DoD 4 failure: the rule says the member is told what stays behind BEFORE anything is
+    written.
+  the_three_causes: >-
+    ① The only provider named on the panel was the one he had just verified, which is the
+    side that STAYS - so the single concrete noun pointed at the wrong half. ② Both accounts
+    were abstractions, "this account" and "the other one", while a member thinks in "my
+    LINE" and "my Google". ③ "will have no way to sign in" is true of the losing row set and
+    false of the member's experience, because the surviving account ends up holding BOTH
+    credentials - so the sentence frightened him about the one thing that does not happen
+    and buried the thing that does, which is that the data left behind becomes unreachable.
+  the_fix: >-
+    preview now returns movingProvider and reason, both already decided by
+    planIdentityMerge, so nothing extra is read and neither carries a user id or the proven
+    subject. The panel names the credential that moves, names the side kept, says WHY it was
+    kept - the owner's decision, because he had reasoned it out himself and wanted the
+    screen to say it - states that both providers still work afterwards, and puts the cost on
+    the data.
+  the_proof_it_closed: >-
+    On the second walk, with the rewritten copy, the owner reported it read completely and
+    clearly, answered every question the screen is supposed to answer without asking me, and
+    then confirmed. Guards were added so it cannot regress: the route spec now covers the
+    MIRROR case - when the signed-in side loses, movingProvider must be its own provider and
+    not the verified one, which is precisely his case - and the screen spec asserts the
+    mover is named, the kept side is named, each reason renders its own sentence, both
+    providers appear in the after-merge line, an older server sending neither field renders
+    without substituting the verified provider as if it were the mover, and - inverted from
+    what it used to assert - that the cost line does NOT claim a login method is lost.
+
+the_correction_i_owe_about_production:
+  what_i_said: >-
+    Repeatedly, including in this event's predecessors and in the acceptance checks I wrote
+    for them: "nothing outside the arena is written at any point".
+  what_actually_happened: >-
+    Caddy's access log for the walk window shows 15 requests reaching the BE container,
+    among them TWO successful POST /user/register-login and one OPTIONS preflight. The BE is
+    a different container and it reads and writes PRODUCTION - pointing the FE at the arena
+    never moved it. Reading mootech-be's registerOrLogin for the LINE branch with an existing
+    provider row: it calls LINE to check the user id, downloads the member's LINE profile
+    image and uploads it to the S3 bucket, sets picture_url and calls
+    userRepository.save(user), then ensures a refer_code. So production's `user` row was
+    written, and an object was written to the bucket, twice.
+  how_bad_it_is: >-
+    Not damaging. That is the ordinary production login path, identical to what runs every
+    time any member opens the real application, and it wrote the member's own row with his
+    own picture. No merge, no provider row and no account touched production - our merge
+    happened entirely in the arena, and production's user_provider is as it was.
+  why_it_happened_and_what_it_teaches: >-
+    The arena isolates the FE's OWN database. It does not isolate the FE's callers. Traffic
+    for register-login has not been flipped yet, so the FE still posts to the BE, and the BE
+    is pointed at production. A hermetic rehearsal would have to point be - and bazi - at
+    the arena too, which slice 2's dogfood already proved is possible by setting DB_HOST to
+    pgtmp. That is a concrete improvement for slice 5's rehearsal, where the thing being
+    rehearsed is the flip itself and a stray production write would be far less innocent.
+  what_i_should_have_done: >-
+    Checked where every container pointed before claiming isolation, rather than checking the
+    one I had just changed. I recorded "be and bazi still read production" as an unresolved
+    item and then wrote "nothing outside the arena is written" in the same records - the
+    contradiction was already on the page.
+
+observations_in_other_lanes_code_reported_not_chased:
+  be_logs_the_whole_login_input: >-
+    registerOrLogin begins with console.log('registerOrLogin _input', _input), which prints
+    email, name, image URL and the idToken the FE sent. The infrastructure lane already knew
+    the BE prints whole user records and built redaction in alloy/config.alloy: it DROPS the
+    indented key/value lines the BE emits and replaces e-mail, Thai mobile and JWT-shaped
+    strings on every service before anything reaches Grafana Cloud. A JWT idToken is
+    therefore redacted. A LINE userId is not JWT-shaped, so a one-line inspect of that input
+    could carry it out - a stable personal identifier rather than a password, since
+    authentication still goes through LINE. The alloy comment already says fixing the source
+    belongs to the application repository. Reported here because I read it while verifying
+    something else; it is not this lane's code and I changed nothing.
+  a_delete_endpoint_answers_GET: >-
+    GET /api/v2/account/delete returned 304 with a zero-length body during the walk, which
+    is a prefetch being served from cache rather than a deletion - and the row counts prove
+    nothing was deleted. Still, a destructive route that answers a cacheable GET at all is
+    worth someone's attention eventually. Deferred.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  execution_phase: "8d"
+  application:
+    repository: mootech-fe
+    branch: feat/mumate-login-identity-s1
+    commits: "868632e (the deadlock removed) then c23440f (the offer copy)"
+    pushed: true
+    pull_request: none open
+  images_and_deploys:
+    first_walk: "868632e...-staging, build run 36168587424"
+    second_walk: "c23440f...-staging, build run 36202760601"
+    deploy: bin/deploy.sh, fe recreated only, be and bazi untouched
+  walks:
+    first:
+      at: "2026-09-26 06:27 +07"
+      stages_ms: "token-exchange 61 · verification 39 · identity-lookup 20 · merge-planning 35"
+      outcome: merged, reason only-one-may-lose
+      note: the owner pressed both gates deliberately; the copy did not tell him the direction
+    second:
+      at: "2026-09-26 07:03 +07"
+      stages_ms: "token-exchange 106 · verification 62 · identity-lookup 23 · merge-planning 68"
+      outcome: merged, reason only-one-may-lose, identical row and direction
+      note: the owner reported the rewritten copy read completely and clearly
+  row_counts:
+    method: all 185 public tables counted via query_to_xml, before and after each walk
+    first_walk: "159315 -> 159316 · only ops_audit_log changed, 0 -> 1"
+    second_walk: "159316 -> 159317 · only ops_audit_log changed, 1 -> 2"
+    user_provider: 5880 throughout
+    user: 5018 throughout
+  the_two_accounts:
+    loser: "created 2026-03-17 · no subscription · no payment · holds zero provider rows after the merge"
+    survivor: "created 2026-06-13 · PRO ACTIVE to 2026-10-09 · PLUS ACTIVE to 2027-09-01 · member_payment MEMBER · holds google and LINE plus seven dead ya29-shaped rows"
+  reversal:
+    statement: the audit payload's reverse_with, run verbatim with its own values
+    result: "UPDATE 1 · the LINE row returned to the losing account · counts unchanged"
+  session_after_merge:
+    source: Caddy access log
+    observed: "the same session requested /api/user and /chinese-horoscope with the SURVIVOR's user_id; no sign-in or provider callback appears"
+  production_writes_during_the_walk:
+    source: Caddy access log for api.staging.mumate.co
+    observed: "9x GET /health 200 · 3x GET /chinese-horoscope 200 · 2x POST /user/register-login 200 · 1x OPTIONS 204"
+    consequence: "production's user row written twice by the ordinary login path, plus an S3 object per call"
+  repository:
+    head: "ff314b2"
+    branch: hq/20260921
+    working_tree: this-event-only
+
+unresolved:
+  - >-
+    Signing in again with the moved provider has not been observed. The data supports the
+    claim the copy makes; nobody has walked it.
+  - >-
+    A rehearsal on the arena is not hermetic while be and bazi point at production. Making
+    it hermetic is possible - slice 2's dogfood pointed be at pgtmp - and matters most for
+    slice 5.
+  - >-
+    The shadow still serves from the arena on a branch build, and the arena's deletion date
+    is 2026-10-02.
+  - >-
+    The merge offer is still unreachable for a member who already holds both providers; that
+    is why the pair could only be reached here because the snapshot predates slice 3's link.
+    Screen affordance, outside slice 4.
+  - >-
+    mootech-be logs the whole login input, and a LINE userId is not redacted by the shapes
+    alloy replaces. Another lane's code; reported, not changed.
+  - >-
+    A destructive route answers a cacheable GET. Deferred.
+  - >-
+    HQ still holds this session's earlier wrong attribution of the shadow wedges to max 1
+    under load, and now also the "nothing outside the arena is written" claim corrected
+    above. Both belong in the round pull request.
+  - >-
+    The off-platform backup layer is one file dated 2026-09-19 and mumate-backup.timer is
+    disabled; PITR is not enabled; a real restore has never been performed.
+  - >-
+    mootech-fe's verify-architecture gate is red on four violations in other lanes' files,
+    so every push needs --no-verify and skips gitleaks with it.
+  - >-
+    Carried unchanged - the 1,783 dead rows, iOS, collision at production scale,
+    member_missing, nothing stops a member unlinking the provider they are signed in with,
+    the mission-timing defect at ConnectedScreen.tsx, connect_google in the engine, the
+    three .assets/mumate/slice2-* dumps, the AWS bucket s3-ps-cdn, and Vercel Preview
+    resolving to the production database.
+
+next_action:
+  action: >-
+    The owner decides what closes the morning: optionally two minutes to sign out and back
+    in with LINE, then return the shadow to production's database and take the arena down
+    (restore env/fe.env.pre-arena, recreate fe, bin/arena.sh down, in that order). Slice 4b
+    and slice 5 both need his authorization and neither is started. Nothing is pushed for
+    this lane and no pull request is open.
+  acceptance_check:
+    - The shadow answers db ok against production again and the arena's volume is gone.
+    - Slice 4's proof stands on the arena; no claim is made about production behaviour.

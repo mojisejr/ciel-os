@@ -3,7 +3,7 @@
 **Workstream:** `smc-v2-app-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -83,7 +83,7 @@ owner decided:
 - **Cut from legacy:** ESP32 and Wi-Fi activation, the indicator device,
   DS16, `service_code`, the about and document pages, `max_log_counts`.
 - **Deliberately left open:** scanning an HN on the home screen without
-  opening a dialog (after the UI is stable); a second cabinet on the bus
+  opening a dialog (decided no in revision 0.4); a second cabinet on the bus
   (the data carries a `cabinet_id` from the start, the UI does not show
   it); the Windows COM transport against real hardware.
 
@@ -152,8 +152,14 @@ reference material for slice 3.
 
 ## Execution slices and acceptance criteria
 
-Six slices, sequential. Each ends with a CIEL closeout and, once the remote
-exists, an owner-reviewed pull request in `smc-v2`.
+Ten slices, sequential. Each ends with a CIEL closeout and, once the remote
+exists, an owner-reviewed pull request in `smc-v2`. Revision 0.4 (owner,
+2026-09-21: "รับ 0.4 ทั้งชุด เลยครับลุยๆ") inserts four slices before Windows
+so that every platform-independent problem is met and fixed on the Mac and
+the Windows slice meets only Windows problems. They were proposed and
+decided as 6a–6d with Windows as 7; CIEL numbers slices as integers, so
+they are slices 6–9 here and Windows is slice 10, the proposal names kept
+in each heading.
 
 ### 1. The wire — a CU12 gateway proven against the simulator
 
@@ -308,7 +314,110 @@ exists, an owner-reviewed pull request in `smc-v2`.
   shown — met in slice 4 from revision 0.3; slice 5's own closeout records
   the backend checks (delivered on smc-v2 pull request 3) and points at it.
 
-### 6. Windows — build and prove on the owner's Windows machine
+### 6. Robustness (6a) — the gateway reopens a dead transport; restart with a door open
+
+Found by the owner on 2026-09-20 at 23:00–23:25 on the Mac: when the
+simulator process ended, the application stayed on the dead socket until it
+was restarted. On Windows an unplugged and replugged USB-RS485 adapter looks
+the same. The application already retries a board that never opened
+(`crates/app`, every 5 s); the gateway thread (`crates/cu12/src/gateway.rs`)
+never reopens a transport that died after opening.
+
+**Deliverable**
+
+- The gateway thread keeps the endpoint and, after an I/O error that is not
+  a timeout, drops the transport and reopens it on the next request, with a
+  short back-off; a request that cannot reopen fails at once, so the cabinet
+  service shows ตู้: ไม่ตอบสนอง as before and recovers on its own when the
+  endpoint answers again. Invariant 2 stands: still one thread, one
+  transport, one request in flight.
+- Restart with a door open, walked from the UI: unlock, the door opens, the
+  application is closed and started again, the card shows ประตูเปิด
+  reconciled from the hooks, not ว่าง and not a stale wait.
+
+**Acceptance**
+
+- A gateway test that spawns the simulator, exchanges, kills it, fails,
+  starts it again on the same endpoint and exchanges again through the same
+  `Gateway` handle.
+- The same sequence on the built desktop, by the agent against the
+  simulator, recorded with the screen and the `actions` rows; the owner may
+  repeat it in 6d.
+- `cargo fmt --check`, `cargo test`, `cargo clippy --all-targets -- -D
+  warnings` pass.
+
+### 7. Windows cross-check from the Mac (6b)
+
+`cargo check --target x86_64-pc-windows-msvc` from the Mac passes for
+`cu12` (COM via `serialport`), `license` (MachineGuid from the registry)
+and `workflow`; `store`, `ops`, `cabinet`, `api` and `app` stop only at
+`libsqlite3-sys`, which needs the Windows C toolchain and is a slice-10
+problem.
+
+**Deliverable**
+
+- A script in `smc-v2` that runs `cargo check` and `cargo clippy -D
+  warnings` on the Windows target for the crates that can, and a CI job
+  that runs it on every pull request.
+
+**Acceptance**
+
+- The script passes on the Mac on `main`; CI runs it; a deliberately broken
+  `cfg(windows)` branch fails it (shown once, not merged).
+
+### 8. Design decisions applied (6c)
+
+The open questions of `DESIGN.md`, decided by the owner on 2026-09-21
+("123 ตามคุณว่า, 4 logo ผมอยากได้ logo เดิมเลยครับ, 5 เอาตามคุณ"):
+
+1. License expiry is judged in local time with one day of grace; the
+   banner keeps showing the date the license carries.
+2. No HN scan on the home screen; the dialogs stay the scan target.
+3. The operator's name appears on the ประตูเปิด card.
+4. The default mark is the legacy's own logo — `deprecision.png` from the
+   legacy renderer (`renderer/public/images/deprecision.png`, 1280 × 1280,
+   shown at 86 × 85 on every legacy page) — copied into `smc-v2`; a file in
+   the data directory still overrides it (deviation 23).
+5. The expired banner may be dismissed for one shift (8 h); it returns
+   after that and on every start; load stays refused throughout.
+
+**Deliverable**
+
+- `DESIGN.md` updated with the five answers (open questions closed), the
+  UI and backend changed to match, tests for the grace day and the
+  dismissal window.
+
+**Acceptance**
+
+- Tests: expiry at local midnight plus grace; dismissal expires after 8 h
+  and on restart; the operator name on the card in the UI; the mark
+  renders without a data-directory file. `fmt`, `test`, `clippy` pass.
+
+### 9. Owner walkthrough on the Mac of every function not yet exercised (6d)
+
+**Deliverable**
+
+- A checklist with expected results, and the owner at the Mac with the
+  simulator (and a USB barcode scanner if one is at hand): CSV export, the
+  ส่งข้อมูลให้ช่าง zip, backup now and the folder picker, user delete
+  confirmation, an admin changing their own PIN, the emergency ! unlock,
+  reset of an occupied card with admin PIN and reason, disabling a slot,
+  the clock-suspect banner, a wrong-machine license, a tampered license,
+  restart with a door open, the บันทึก page while the board is down, and a
+  scanner into the dialogs (Enter in the HN field focuses the PIN field).
+- Fixes for what fails, in the same slice.
+
+**Acceptance**
+
+- Every item observed by the owner as pass, or fixed and observed again;
+  recorded as owner observation in the closeout.
+
+### 10. Windows — build and prove on the owner's Windows machine
+
+What this slice meets, and nothing else: MSVC and the SQLite C build, COM
+with a real adapter (configurable, unproven against hardware), MachineGuid,
+`%ProgramData%` permissions, WebView2 and fonts, the `.msi`, window state,
+the simulator built on Windows, DPI.
 
 **Deliverable**
 

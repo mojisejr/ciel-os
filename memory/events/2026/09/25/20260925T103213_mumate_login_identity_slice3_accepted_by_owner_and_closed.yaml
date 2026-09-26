@@ -1,0 +1,250 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T103213_mumate_login_identity_slice3_accepted_by_owner_and_closed
+type: closeout
+recorded_at: 2026-09-25T10:32:13+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record the owner's acceptance of slice 3 and close the slice. The evidence was
+    already complete at b3429be; that record deliberately did not claim the
+    acceptance, and this one carries it. It also records two defects found while
+    checking how the machinery would read this lane after the acceptance - both in
+    the machinery, not in the application - because each one would mislead the next
+    cold session about what is authorized.
+  scope:
+    - The acceptance itself, and the provenance it arrived by.
+    - What the acceptance does and does not cover.
+    - Two authorization-reporting defects found today in the portfolio reader.
+    - The state and the open decisions the owner now holds.
+  out_of_scope:
+    - Slice 4, 4b and 5. Accepting slice 3 authorizes none of them.
+    - Any code. Nothing was built or changed by this record.
+    - Pushing, opening a pull request, and closing the round. Those are the owner's.
+    - The database-pool fault as a repair. It is raised here and owned elsewhere.
+
+outcome:
+  # `recorded`, not a delivery status, and the choice was checked rather than
+  # assumed. src/portfolio/read.ts:561-587 warns about a non-delivery status only
+  # when the closeout ALSO matches terminal scope, and read.ts:510-512 defines
+  # that as evidence.slice equalling the plan's last declared slice. This lane
+  # declares 1, 2, 3, 4, 5; this closeout names 3, so it is not terminal and
+  # `recorded` raises nothing. The standing 2026-09-16 ga4 warning is the case
+  # where a non-delivery status DID sit on a terminal-scope closeout; this is not
+  # a second instance of it. A closeout is also not a decision, so the 676c90a
+  # defect - `recorded` where `decided` was required to authorize - cannot apply:
+  # read.ts:404-419 only reads type `decision` for authorization.
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      THE OWNER ACCEPTS SLICE 3, and the acceptance is recorded as a relay rather
+      than as something this session heard. It reached this lane through HQ, from
+      the owner's own turn in another session, in Thai, quoted to this lane
+      verbatim: "รับ slice 3 และปิดจบได้เลย closeout". That is his wording for the
+      acceptance and the instruction to close. This session did not observe him
+      say it.
+    - >-
+      THE PROVENANCE IS THE SAME PATH SLICE 2's AUTHORIZATION TOOK, and that
+      precedent is what makes it recordable. Commit 0a93fdc carries slice 2's
+      authorization and its own message states the pattern: written by HQ from a
+      relayed instruction, provenance stated in the record, the lane judges it
+      rather than trusting it. Judged here on the same terms, and nothing in the
+      instruction contradicts what this lane observed on the shadow, so it is
+      recorded. Had it contradicted the shadow, the agreed response was to stop.
+    - >-
+      THE ACCEPTANCE WAS CHECKED AGAINST THE ACCEPTANCE TEST b3429be WROTE FOR IT,
+      not merely received. All three items pass, verified in this session after the
+      context was cleared: `bun run check` exits 0 with 44 tests and 198
+      assertions; `bun run wake` exits 0 with validationErrors empty and the only
+      warning the unrelated 2026-09-16 ga4 one; and `git diff origin/main..HEAD
+      --name-only` in mootech-fe still does not contain constants/api/endpoint.ts.
+      That last one is the fact the handoff named as the one to check before
+      believing anything else: everything slice 3 built is still dark.
+    - >-
+      WHAT THE ACCEPTANCE COVERS IS ONE SLICE. DoD 3's own sentence -
+      Google-to-LINE and LINE-to-Google linking work - is satisfied against real
+      providers in both directions, with the refusals that can be reached by hand
+      reached. Slices 4, 4b and 5, production, the traffic flip, the hand-run SQL
+      and mootech-fe's unpushed commit are all untouched and unauthorized by it.
+    - >-
+      THE FOUR THINGS SLICE 3 NEVER EXERCISED TRAVEL WITH THE ACCEPTANCE RATHER
+      THAN BEING CLOSED BY IT: iOS has never been run at all and is the teammate's
+      pass before merge; collision is proven against one real pair and only the
+      flip reaches the population; member_missing is unreachable without deleting
+      a member row and was deliberately not attempted; and the merge that made the
+      pass possible is a hand-run SQL statement no member can perform.
+
+  not_completed:
+    - >-
+      WAKE REPORTS THIS LANE AS AUTHORIZED FOR SLICE 4, AND THE RECORD IT READS
+      SAYS THREE TIMES THAT IT IS NOT. Found in this session while re-establishing
+      state. `bun run wake` prints lifecycle detail "Owner decision authorizes plan
+      revision 0.4 slice 4" against decision event 20260925T060135. That event's
+      own body says "Slice 4 is NOT authorized to start by this record", "Slice 4
+      needs its own owner decision event before any code is written", and lists
+      "Any implementation. Nothing in slice 4 or 4b is built by this record" as out
+      of scope. The cause is src/portfolio/read.ts:398-401: decisionAuthorizedSlice
+      reads `evidence.slice` and treats naming a declared slice AS authorizing it.
+      The event names slice 4 because slice 4 is what it redefines. There is no way
+      in the current schema to record a decision ABOUT a slice without the
+      machinery reading it as authorization OF that slice. The hazard is concrete:
+      a cold session that trusts wake's one-line lifecycle - which this
+      repository's contract tells it to run first - would begin writing the merge,
+      which is the one thing the record forbids. NOT REPAIRED: this is the
+      portfolio reader, not this lane's file, and it needs the owner's decision.
+    - >-
+      SLICE 4b CANNOT BE AUTHORIZED AS THE PLAN IS WRITTEN. PLAN.md declares it as
+      heading "### 4b. Stop handing out the second account in the first place", but
+      the reader's slice parser at src/portfolio/read.ts:156 is
+      /^### (\d+)\.\s/gm, which requires a period straight after the digits and so
+      does not match "4b.". declaredSlices is therefore 1, 2, 3, 4, 5 with no 4b,
+      and read.ts:474-475 requires a decision's evidence.slice to be one of those.
+      A slice-4b decision event would be a validation error rather than an
+      authorization. Nobody has tried yet, so this has cost nothing so far; it
+      would be found at the moment the owner tries to authorize 4b. NOT REPAIRED:
+      the fix is a one-character plan heading change or a parser change, and which
+      one is right is the owner's call, not this lane's.
+    - >-
+      THE DATABASE-POOL FAULT IS RAISED, NOT FIXED, and it is raised before slice 4
+      deliberately. lib/db/index.ts runs the whole application on `max: 1` with no
+      idle_timeout, connect_timeout or max_lifetime, imported by 62 files of which
+      36 are under pages/api, and its own header comment says it is for serverless
+      API routes - the premise the container move removes. On Vercel a wedged
+      connection dies with its short-lived instance; in a long-running container
+      one connection serves the process for its whole life. Same code, failure mode
+      only in the container, arriving WITH the move. The fault is silent: any
+      health probe that fetches a page certifies the outage as healthy, so any
+      probe for this stack must touch the database. It belongs to no lane's plan
+      and the owner asked for it as its own conversation.
+    - >-
+      Slice 3's acceptance changes nothing about the keep-alive/502, which is still
+      unscheduled because its fix recreates the FE container, or about
+      bin/rollback.sh calling wait_healthy with no profile while slice 4 may lean
+      on it.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  acceptance:
+    what: The owner accepts slice 3 and instructs it to be closed out.
+    arrived_by: HQ relay from the owner's turn in another session
+    quoted_verbatim: "รับ slice 3 และปิดจบได้เลย closeout"
+    language: Thai
+    observed_directly_by_this_session: false
+    precedent: >-
+      commit 0a93fdc, slice 2's authorization, carried by the same relay path with
+      its provenance stated in the record
+    judged_against_the_shadow: >-
+      No contradiction with anything this lane observed. Recorded on that basis.
+  repository:
+    head: "b3429be"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 52
+    origin_main: "f58cc9c"
+    pushed: nothing
+    ls_remote_hq: empty
+  gates_rerun_after_the_context_was_cleared:
+    check: exit 0, 44 pass, 0 fail, 198 expect() calls, 8 files
+    wake: exit 0, validationErrors [], reconciliation expected-evolution
+    only_warning: >-
+      memory/events/2026/09/16/20260916T112931_mootech_ga4_slice3_parked_until_day7.yaml,
+      pre-existing and unrelated to this lane
+  application:
+    repository: mootech-fe
+    local_head: "d43d582"
+    pushed_head: "49097ff"
+    branch: feat/mumate-login-identity-s1
+    working_tree: clean
+    ahead_of_origin_main: 21
+    pull_request: none
+    endpoint_ts_in_diff: >-
+      absent, re-verified in this session by `git diff origin/main..HEAD
+      --name-only | grep -c constants/api/endpoint.ts` returning 0
+  machinery_defects_found_today:
+    authorization_over_read:
+      reported_by: bun run wake lifecycle detail
+      reads: memory/events/2026/09/25/20260925T060135_mumate_login_identity_plan_0_4_merge_is_the_goal.yaml
+      code: src/portfolio/read.ts:398-401
+    slice_4b_undeclarable:
+      plan_heading: "### 4b. Stop handing out the second account in the first place"
+      parser: src/portfolio/read.ts:156, /^### (\d+)\.\s/gm
+      declared_slices: "1, 2, 3, 4, 5"
+      validation: src/portfolio/read.ts:474-475
+  interleaved_lane_this_morning:
+    workstream: mumate-infra-move-001
+    commits_between_this_lane_s: "e88a415 decision, d4ebce5 closeout"
+    slice: 3e
+    closed: >-
+      LINK_STATE_SECRET into env/fe.env.example, the wait_healthy profile fix in
+      bin/_lib.sh, the host resynced to 4664974, and DoD 3c item 9 proven from logs
+      already on disk
+
+what_the_owner_now_holds:
+  - >-
+    THE DATABASE POOL, as its own conversation, before slice 4. He said he wants it
+    that way and slice 4 is the step that leads to the flip.
+  - >-
+    WHETHER A DECISION MAY NAME A SLICE WITHOUT AUTHORIZING IT, which is the
+    authorization-over-read defect above. Until it is settled, wake's lifecycle
+    line for this lane is wrong in the most dangerous direction.
+  - >-
+    HOW SLICE 4b BECOMES DECLARABLE - plan heading or parser.
+  - >-
+    THE DoD 4 WORDING CORRECTION, agreed and still not written into PLAN.md: the
+    merge moves "every provider row of the losing account", not "exactly one
+    user_provider row". His own account held five Google rows.
+  - >-
+    THE AVATAR QUESTION, recorded at his instruction and deliberately not fixed:
+    with two providers normal, which one supplies the member's face, name and
+    email. Per-field, and a design conversation.
+  - >-
+    WHETHER mootech-fe d43d582 IS PUSHED. It is tests only and the shadow does not
+    run it; pushing needs --no-verify, which also silently skips gitleaks.
+  - >-
+    THE iOS PASS before merge, already agreed as the teammate's.
+
+unresolved:
+  - >-
+    Slice 4 is not authorized. Accepting slice 3 did not authorize it and the
+    record that redefined it says so three times; it needs its own decision event
+    carrying the DoD correction about multiple provider rows.
+  - >-
+    Nothing stops a member unlinking the provider they are signed in with, which
+    strands their own session until they sign in by the other method. No guard
+    exists and none was added.
+  - >-
+    lib/db/index.ts, the keep-alive/502, and bin/rollback.sh being profile-blind.
+  - >-
+    iOS, collision at production scale, member_missing, and Google's behaviour for
+    a member who is not its owner.
+  - >-
+    Carried unchanged - the mission-timing defect at ConnectedScreen.tsx:167-175,
+    connect_google in the engine, the three .assets/mumate/slice2-* dumps kept by
+    owner decision, the AWS bucket s3-ps-cdn parked by owner decision, and Vercel
+    Preview resolving to the production database.
+
+next_action:
+  action: >-
+    Slice 3 is closed. The next executable step is the database-pool conversation
+    the owner asked for, and it comes before slice 4 because slice 4 leads to the
+    flip. After it, the slice-4 decision event, which must carry the DoD
+    correction about multiple provider rows and must be written knowing that wake
+    already misreports this lane as authorized for slice 4. Nothing in this lane
+    waits on another session. Do not touch production, do not flip
+    constants/api/endpoint.ts, do not edit lib/db/index.ts or mumate-infra from
+    this lane, do not push, do not open a pull request, and do not close the round
+    without his word.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - >-
+      Wake still reports this lane at plan revision 0.4 and slice 3 idle; its
+      lifecycle line still overstates slice 4 until the owner settles that.
+    - constants/api/endpoint.ts is still absent from mootech-fe's diff against origin/main.

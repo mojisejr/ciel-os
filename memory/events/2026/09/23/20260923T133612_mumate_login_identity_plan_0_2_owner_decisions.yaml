@@ -1,0 +1,118 @@
+schema_version: ciel.event.v0.1
+id: evt_20260923T133612_mumate_login_identity_plan_0_2_owner_decisions
+type: decision
+recorded_at: 2026-09-23T13:36:12+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record the owner's five decisions of 2026-09-23 and raise the plan to
+    revision 0.2, correcting three facts that revision 0.1 stated wrongly and
+    adding the acceptance conditions that an adversarial review of the delivered
+    slice-1 code produced. No slice advances on this decision.
+  scope:
+    - Plan revision 0.2.
+    - Owner decisions on slice-1 acceptance, the parity table, dead credential rows, the LINE email scope, and collision recovery.
+    - Findings from three read-only investigations and one read-only production measurement.
+  out_of_scope:
+    - Advancing past slice 1. This decision re-authorizes slice 1 at revision 0.2 so its defects can be fixed; it does not move the phase.
+    - Slices 2-5, production SQL, provider settings, deployment, endpoint flip, and automatic account merge.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner reviewed the research and decided: fix slice 1 before accepting
+    it; keep the no-join-by-email rule and state its cost; delete the dead
+    credential rows and route the affected members to support; pursue the LINE
+    email scope through the team because the owner does not hold those rights;
+    and ship collision recovery as manual support first.
+  authorizes:
+    - Plan revision 0.2 of mumate-login-identity-001.
+    - Fixing the seven slice-1 defects listed in the plan, under the existing slice-1 authorization.
+  does_not_authorize:
+    - Slices 2-5, production SQL, a deploy, a route flip, an automatic merge, or any LINE console change.
+  completed:
+    - >-
+      Owner decision 1 - slice 1 is accepted only after its defects are fixed.
+      Seven are recorded in the plan, the two most severe being that every
+      failure path returns the flag both callers read as "sign the member out",
+      and that the referral refusal fires for ordinary members because the
+      legacy login page writes a non-empty default into the referral cookie.
+    - >-
+      Owner decision 2 - the parity table keeps the no-join-by-email rule and
+      must state its cost - 98 members whose only credential rows are dead, of
+      whom 90 hold a chart, none hold a subscription and none have signed in
+      since 1 August.
+    - >-
+      Owner decision 3 - the 657 blank-provider rows holding expired Google
+      access tokens are deleted; recovery for those members goes to support
+      rather than to an email-adoption path.
+    - >-
+      Owner decision 4 - the LINE email scope is wanted but is a team
+      dependency. The owner checked the console and does not hold the rights to
+      request the scope or add a redirect URI. If granted, an email may suggest
+      an account but may never by itself bind one.
+    - >-
+      Owner decision 5 - collision recovery ships as manual support first. An
+      audited automatic merge is revisited only if manual volume justifies it.
+    - >-
+      Fact corrected - QI, wallet and ledger are in the same Supabase database
+      as user and user_provider, not in a separate one. No engine runtime path
+      reaches Neon. The remaining Neon references are stale comments, an unused
+      dependency, and a README line.
+    - >-
+      Fact corrected - the QI balance is a stored column, not a sum of the
+      ledger, so a merge must rewrite it rather than only append a transfer row.
+    - >-
+      Fact corrected - roughly thirty engine tables are keyed per member, not
+      the six revision 0.1 implied, and several grant value automatically on
+      read.
+    - >-
+      Normalisation target settled - normalise per provider to the spelling the
+      live writer already sends. Lower-casing LINE would silently empty four
+      backend queries that match the stored value; no query reads a stored
+      Google spelling.
+  not_completed:
+    - No slice-1 defect is fixed yet at the time of this decision.
+    - No application file changed and no checkout moved for this decision.
+    - The one duplicate identity whose two members both hold a chart is not resolved.
+  evidence_of_limits:
+    - Production counts are a read-only planning checkpoint taken 2026-09-23 and must be re-measured before any migration is written.
+    - Whether the LINE email scope is grantable at all is outside this repository and unverified.
+    - The concurrency proof for slice 1 was run once and recorded as passing, but is skipped by the default test lane and has no captured output.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: "790377ca2e283056243f7367731ea6a8fa2fd07d"
+    branch: hq/20260921
+    working_tree: plan-and-one-event-only-before-commit
+    pull_request: none-until-hq-round-close
+  application:
+    mootech-fe: feat/mumate-login-identity-s1 0b4e78107b9e5dd704d3fe141edb84bc63cc3f0a, unchanged by this decision
+    mootech-be: main 0705378d884114a4fd0e73aed59656638f335fdc, reference only
+    bazi-sft-dataset: read-only reference, checkout not moved
+  preceding_record: memory/events/2026/09/23/20260923T095600_mumate_login_identity_slice1_local_proof.yaml
+
+unresolved:
+  - The duplicate identity whose two members both hold a chart needs the owner to choose which survives.
+  - Whether the LINE email scope will be granted, and when, is a team and provider question.
+  - The wallet and ledger write is not transactional; that must be fixed before any automatic merge, and no slice owns it yet.
+  - Members whose only credential rows are deleted have no automatic recovery path by design.
+
+next_action:
+  action: >-
+    Fix the seven slice-1 defects on the existing topic branch, run the
+    concurrency proof with the local arena up and capture its output, correct
+    the parity table, then offer slice 1 for owner acceptance. Report each
+    commit to HQ with hash, parent and paths. Do not push.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - The HQ commit contains only this workstream path and this event file.

@@ -1,0 +1,175 @@
+schema_version: ciel.event.v0.1
+id: evt_20260923T180105_mumate_login_identity_slice2_halted_at_inventory
+type: closeout
+recorded_at: 2026-09-23T18:01:05+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close out the local half of slice 2. Everything that can be built and proven
+    without touching production is built and proven; the slice stops at the one
+    number it cannot produce for itself. This is not the slice-2 closeout - the
+    slice cannot be closed until the inventory exists.
+  scope:
+    - The migration, its rollback, and the proof that runs them.
+    - The unique-violation recovery in the FE route and the split negative control.
+    - Why the production inventory query was not run, and what closing it needs.
+  out_of_scope:
+    - The inventory query itself. Authorized and deliberately not run - see below.
+    - Production SQL, push, pull request, provider settings, traffic flip, member deletion.
+    - Final disposition of the both-chart collision, the dev row, and any anomaly the inventory reveals.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  completed:
+    - >-
+      Migration 0034 and its rollback, hand-authored for the owner to run one
+      statement at a time, in mootech-fe "9b1608c". Six steps - dump, inventory,
+      delete the dead credential class, collapse same-user duplicates, normalise
+      spelling, then build the index behind a guard that RAISES while any
+      identity is still claimed by more than one member - plus a CHECK so the
+      dead class cannot regrow. The rollback restores the structure and says
+      plainly that it does not restore the deleted rows, which is why step 0 is
+      not optional.
+    - >-
+      The index is on (lower(provider), id_token), not on (provider, id_token).
+      Revision 0.2 keeps spelling asymmetric on purpose, so a plain unique index
+      would let google and GOOGLE coexist again the moment any writer sent the
+      other case. The proof asserts a duplicate is refused in EITHER spelling.
+    - >-
+      The proof runs the REAL migration file, split on its own step banners,
+      inside a schema it creates and drops - never the arena's restored tables,
+      verified unchanged at 5872 rows afterwards. Eight cases.
+    - >-
+      Unique-violation recovery in the route, mootech-fe "5149b0c". Once the
+      index exists a racing caller gets a violation; left alone it surfaced as a
+      500 with no ok:false, which both callers read as retryable, so a member's
+      browser would retry back into the same race. The route now retries exactly
+      once into the existing-member path.
+    - >-
+      The negative control is SPLIT rather than rewritten, because both worlds
+      are real and the plan described only one. The pre-index control stays and
+      now states that it describes today. A new post-index block creates the
+      0034 index in its own schema and asserts the opposite outcome for the same
+      race - one identity survives and every caller is answered - and also runs
+      the locked version, which is how it will ship.
+    - >-
+      lib/db/0034_provider_identity_inventory.sql, mootech-fe "1f20e5d" - the
+      authorized inventory query, written so its safeguards are structural
+      rather than promised: fourteen counts, no id_token, no email, no name, no
+      user_id, inside a transaction that sets default_transaction_read_only.
+
+  not_completed:
+    - >-
+      THE INVENTORY QUERY WAS NOT RUN, so slice 2 cannot be closed. Its DoD rests
+      on real numbers and there are none. Everything above is proven against a
+      synthetic seed of the right SHAPE, never against production reality.
+    - No production statement, push, pull request, provider change or traffic change occurred.
+    - PLAN.md is untouched, including its phase and its DoD 2.
+
+  evidence_of_limits:
+    - >-
+      The proof establishes that the migration does what it says on data of the
+      right shape. It establishes NOTHING about production volumes, drift, or
+      how long any statement takes on a real table.
+    - >-
+      The plan's 2026-09-23 row counts were taken before slice 1 landed and are
+      not re-measured here. They must not be treated as migration input.
+
+why_the_query_was_not_run:
+  provenance_objection_withdrawn: >-
+    The lane held the query pending directly attributable approval.
+    evt_20260923T175100, written by the session that received the owner's words
+    rather than by the relay, closes exactly that gap, and the objection is
+    withdrawn rather than replaced. A rule that only ever says no is as useless
+    as one that only ever says yes.
+  the_remaining_blocker_is_not_authority: >-
+    This checkout's active .env points at the local arena by design -
+    testenv/scripts/stack.sh deliberately swapped the real env aside and
+    shadowed every other .env file, and the production credentials now live only
+    in testenv/.backups as *.prod.bak. Running the query would mean reaching
+    past that safety structure to pull a production credential out of a backup,
+    in a checkout three lanes share, where a mistake leaves the shared
+    repository pointed at production instead of the arena.
+  and_a_guard_the_lane_will_not_work_around: >-
+    This session's harness carries a production guard that fired earlier today
+    on a mere MENTION of the production project ref inside a SQL comment. Its
+    own instruction is to ask the owner first. A committed event written by an
+    agent is not what that guard is asking for. The lane did not attempt to
+    bypass it - not because the attempt would fail, but because attempting it is
+    the wrong act regardless of whether it succeeds. Only the owner can lift it.
+  the_honest_sentence: Authorized, and still not runnable from this seat.
+  what_closes_it: >-
+    The owner pastes lib/db/0034_provider_identity_inventory.sql into a
+    production SQL session and returns the fourteen counts. No credential leaves
+    its backup, no guard is bypassed, and slice 2 gets its real numbers.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "b1907ae"
+    branch: hq/20260921
+    working_tree: this-event-only
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: mootech-fe
+    head: "5149b0cad5fc735cb00b0102c6e29ee41ed081a5"
+    branch: feat/mumate-login-identity-s1
+    base: "4837b4763748a211b7dabf9673815cd6fd44f54e"
+    working_tree: clean-no-remote-ref-nothing-pushed
+  slice_2_commits:
+    - '"9b1608c" migration 0034, its rollback, and the synthetic-seed proof'
+    - '"1f20e5d" the aggregates-only inventory query, written and not run'
+    - '"5149b0c" unique-violation recovery and the split negative control'
+  local_proof:
+    env_gated: 14 passed across the two real-Postgres files, against Postgres 17.10 on localhost:5433
+    default_lane: 2728 passed / 173 skipped across 265 files, include-drift guard green
+    static: tsc --noEmit exit 0, eslint clean on the touched files
+    residue: arena user_provider unchanged at 5872 rows, no leftover schema
+
+a_pattern_this_lane_has_now_produced_twice:
+  - >-
+    Twice in this workstream a test passed for a reason unrelated to what it
+    claimed to prove, and both times the catch came from asking "would this fail
+    if the mechanism were absent?" rather than from review. First - slice 1's
+    concurrency proof passed with the advisory lock replaced by a no-op. Second
+    - the migration proof's step parser returned each step's HEADER COMMENT
+    instead of its statements, so eight assertions passed against a completely
+    unchanged table.
+  - >-
+    A third, caught the same way and worth the same attention - the
+    unique-violation recovery's detection read `code` at the top level, but
+    drizzle wraps the driver error in a "Failed query:" error whose own code is
+    undefined. The unit test passed; five of eight callers failed in the real
+    Postgres proof. Had only the unit test existed, the recovery would have
+    shipped dead.
+
+unresolved:
+  - The inventory query, authorized and unrun. Slice 2 cannot close without it.
+  - >-
+    PLAN.md still carries DoD 2 as "on an anonymized local restore", which is
+    unachievable. Whoever writes the true slice-2 closeout must say which DoD
+    was met and how. PLAN.md's phase also still reads 1, deliberately.
+  - The anonymizer blanking every id_token, which affects every future lane needing identity distinctness.
+  - The 98 members routed to support - an operational task with nobody scheduled.
+  - The testenv arena, eight days up on a 2026-09-18 dump with no deletion point.
+  - Carried unchanged - the duplicate identity holding a chart on both sides, the LINE email scope, the non-transactional wallet and ledger write, and the live `|| '/'` bug in pages/login/index.tsx.
+
+next_action:
+  action: >-
+    The owner runs lib/db/0034_provider_identity_inventory.sql against
+    production and returns the fourteen counts, or tells the lane how else to
+    obtain them. With real numbers the lane re-checks the migration's
+    assumptions against them, writes the true slice-2 closeout naming the DoD
+    actually met, and returns every anomaly to the owner. Nothing else in slice
+    2 remains to build.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - The topic branch still has no remote ref, and no production statement has been run.

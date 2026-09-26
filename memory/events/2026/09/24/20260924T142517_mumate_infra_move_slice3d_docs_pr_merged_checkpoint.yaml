@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T142517_mumate_infra_move_slice3d_docs_pr_merged_checkpoint
+type: closeout
+recorded_at: 2026-09-24T14:25:17+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Record the factual completion of Slice 3d's outstanding review checkpoint:
+    draft PR #17 merged into mumate-infra main. Do not amend the earlier 3d
+    closeout or resume 3c/Slice 4.
+  scope:
+    - Remote merge verification and local clean-main reconciliation.
+  out_of_scope:
+    - Any server/deployment operation and every remaining migration slice.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Fetch verified mumate-infra origin/main at
+      0025d5a4acc568fae0a80b05cc5563c3cbbff520, `Merge pull request #17 from
+      mojisejr/infra/tailscale-ssh-access-docs`. Docs commit
+      8c8ab787d44f3fb55d6c220e478666bc45b37548 is an ancestor.
+    - >-
+      The clean local checkout left deleted remote branch
+      infra/tailscale-ssh-access-docs, switched to main, and fast-forwarded
+      768c71a -> 0025d5a with `git pull --ff-only`. It is clean and matches
+      origin/main.
+  not_completed:
+    - 3c storage, maintenance-bypass and overnight-log evidence remain paused.
+    - The independent wait_healthy exited-container defect remains unresolved.
+  evidence_of_limits:
+    - This is a merge checkpoint only. It authorizes no server operation.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.3"
+  repository:
+    head: "71fab1452dfd1aa220f5c3c0fe82ffd570500669"
+    branch: hq/20260921
+    working_tree: this-event-only-before-this-record
+  infra:
+    repository: mojisejr/mumate-infra
+    pull_request: https://github.com/mojisejr/mumate-infra/pull/17
+    docs_commit: "8c8ab787d44f3fb55d6c220e478666bc45b37548"
+    main_merge: "0025d5a4acc568fae0a80b05cc5563c3cbbff520"
+    local_state: clean-main-equals-origin-main
+
+unresolved:
+  - 3c storage, maintenance bypass and overnight logs remain paused.
+  - The independent wait_healthy defect remains separate.
+
+next_action:
+  action: >-
+    Return to the separately authorized login lane and run its read-only
+    staging preflight through `ssh mumate` before any FE image operation.
+  acceptance_check:
+    - Infra main remains clean at the merged PR commit; no infrastructure
+      operation was performed to record this fact.

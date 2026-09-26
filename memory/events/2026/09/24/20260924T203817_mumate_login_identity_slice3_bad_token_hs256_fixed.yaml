@@ -1,0 +1,275 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T203817_mumate_login_identity_slice3_bad_token_hs256_fixed
+type: closeout
+recorded_at: 2026-09-24T20:38:17+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    The owner placed LINK_STATE_SECRET and the linking flow reached LINE's
+    consent screen for the first time. It then failed at the callback with
+    link_error=bad-token. Record what the flow actually did, the cause - which
+    is a defect of this slice's own code and not a configuration gap - and the
+    repair, which is committed but has NOT been through a live round trip.
+  scope:
+    - The staging attempt at 19:49 ICT, read from the edge access log.
+    - The HS256 defect, its repair, and the test hole that let it ship green.
+    - One unrelated 502 found in the same minute, which belongs to another lane.
+  out_of_scope:
+    - The traffic flip. Still undecided; slice 3's own authorization says so.
+    - The mission-timing defect and connect_google. Neither is in any slice's DoD.
+    - Any PLAN.md revision. This closeout changes no plan text and no phase.
+    - Slice 4, slice 5, production, traffic. Untouched.
+
+outcome:
+  status: recorded
+  # Repeated because the grant is real and standing, not to make wake read green:
+  # the owner approved this lane's overlap when slice 1 opened and it is written
+  # into PLAN.md's authority section. This record does not bump the revision.
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      THE SECRET REPAIR WORKED. The owner placed LINK_STATE_SECRET in
+      /opt/mumate/env/fe.env and recreated the fe service on the SAME image.
+      Verified from the host afterwards - fe reports "Up 3 minutes (healthy)" on
+      image "3615dcfceac8e775ef98e55a941502c83941014a-staging", the identical tag
+      it ran before, so no rebuild and no retag occurred. A presence-only check
+      was used; no secret value was read, printed, or transmitted.
+    - >-
+      EVERYTHING BEFORE THE SIGNATURE CHECK NOW WORKS, and this is new. The edge
+      access log records the whole chain - GET /api/auth/link/start/line returned
+      302 to access.line.me carrying state, nonce, code_challenge S256 and
+      disable_ios_auto_login=true; LINE accepted the redirect_uri and rendered
+      consent; the member consented; GET /api/auth/link/callback/line arrived with
+      code and the matching state, and the state cookie came back intact.
+    - >-
+      IT THEN FAILED AT THE LAST STEP. The callback answered 302 with
+      "Location: /v2/settings/connected?link_error=bad-token" at 12:49:38Z
+      (19:49:38 ICT), request id "98fa48d8-9f3b-4c21-a555-2f5c77c2ad83". The
+      screen showed its FALLBACK banner because `bad-token` is deliberately not
+      in its message map. No provider identity was written.
+    - >-
+      THE CAUSE IS THIS SLICE'S OWN CODE, not a missing setting. LINE's WEB login
+      signs the id_token with HS256 using the channel secret. lib/auth/link-verify.ts
+      allowed only RS256 and ES256 and fetched a key from
+      https://api.line.me/oauth2/v2.1/certs, whose ES256 keys belong to the
+      native/LIFF/SDK flow. jose checks the `alg` allowlist BEFORE it resolves a
+      key - verified in the installed copy at
+      node_modules/jose/dist/node/cjs/jws/flattened/verify.js:62-65, which runs
+      before the resolver call at :75 - so the token was rejected on its header
+      and the key set was never even fetched.
+    - >-
+      THEREFORE IT WAS NEVER INTERMITTENT. It would have failed 100% of the time,
+      on every device and for every member. No amount of retrying, no other phone
+      and no network condition could have produced a different result.
+    - >-
+      THE ANSWER WAS ALREADY IN THE REPOSITORY. next-auth's own LINE provider -
+      which drives the sign-in working in production today, same channel, same web
+      flow - pins `id_token_signed_response_alg: "HS256"`. The new code was written
+      against an assumption the repository already contradicted.
+    - >-
+      FIXED IN mootech-fe "3984e09", parent "f916986", NOT PUSHED. The algorithm
+      allowlist is now per provider rather than shared, because the algorithm and
+      the key material must agree and that pairing belongs to the provider - google
+      keeps RS256 against the public JWKS, line uses HS256 against
+      LINE_CLIENT_SECRET. Widening the old shared allowlist to include HS256 would
+      have fixed LINE and opened algorithm confusion on Google in the same edit;
+      it was not done that way. Paths - lib/auth/link-providers.ts,
+      lib/auth/link-verify.ts, scripts/link-verify-default.test.ts,
+      vitest.config.mts.
+    - >-
+      THE TEST HOLE IS NAMED AND CLOSED. scripts/link-verify.test.ts injects
+      verifyToken in all thirteen of its cases, so defaultVerify - the only
+      function that chooses an algorithm and a key - was executed by NO test in
+      the tree. 2,945 specs, tsc and eslint passed over code that could never have
+      worked. The new spec runs the real verifier - LINE's own HS256 token is
+      accepted; a forged secret, an asymmetric substitute, a wrong audience, a
+      wrong issuer and an expired token are each refused; Google refuses HS256;
+      and the key/algorithm pairing is pinned for every provider so a later one
+      cannot repeat it. It reaches no network.
+    - >-
+      GATES AFTER THE FIX - 2,958 specs pass (2,945 before, plus the 13 new), 183
+      skipped across 276 files; tsc --noEmit exit 0 checked without a pipe; npm run
+      lint exit 0 with 0 errors and the same 135 pre-existing warnings; npm run
+      build exit 0 with the VAPID gate line present.
+    - >-
+      A FACT CORRECTED WITHIN THIS SESSION. The attempt was made from Chrome on
+      macOS, not from a phone - the User-Agent in the access log says so. It was
+      reported to the owner as a phone test first and corrected on reading the log.
+      The LINE in-app webview on a real iPhone therefore remains completely
+      unexercised, which is the case the state cookie is most at risk in.
+
+  not_completed:
+    - >-
+      SLICE 3 IS STILL NOT ACCEPTED. No LINE round trip has ever completed. The
+      fix makes the mechanism correct; it does not prove LINE accepts us.
+    - >-
+      "3984e09" is UNPUSHED and the shadow does not run it. The shadow still runs
+      3615dcf, which contains the defect. A new image IS required this time - this
+      is a code change, unlike the secret repair.
+    - No pull request. The body at .assets/mumate/slice3-pr-body.md predates both f916986 and 3984e09.
+    - >-
+      Google's RS256 path is still not exercised end to end. jose 4.15.9 fetches a
+      key set through node's http module rather than global fetch, so a JWKS cannot
+      be stubbed without intercepting the transport; the new spec proves Google
+      REFUSES HS256 but does not mint a token it accepts.
+    - The 12 real-Postgres specs were not re-run. Nothing in this change touches the store or the database.
+
+  evidence_of_limits:
+    - >-
+      Every claim about the attempt comes from the edge access log, which records
+      request lines and response headers. The application itself logged nothing for
+      this request - the failure path is silent by design - so the Location header
+      is the whole of the runtime evidence, and it is sufficient only because the
+      code emits the reason into it.
+    - >-
+      That LINE web login uses HS256 is established here by LINE's documentation
+      and by next-auth's pinned setting for the same channel, plus the observed
+      bad-token. An actual LINE id_token header was never captured and decoded.
+      The next live attempt is what turns this from strong inference into proof.
+
+a_separate_502_found_in_the_same_minute:
+  what: >-
+    GET /api/missions returned 502 at 12:49:39Z, request id
+    "946c460c-5824-4b1f-9034-edc4560ac52c", 0.0436 s, zero bytes and no
+    Content-Type. The owner saw it in Grafana and asked whether it was related.
+  it_is_not_related: >-
+    It happened AFTER the link had already failed, while the settings page was
+    loading. It is the badge-amount fetch at ConnectedScreen.tsx:148, wrapped in
+    `.catch(() => {})`, so it fails silently and only costs the badge its number.
+  the_cause_is_transport_not_the_route: >-
+    Caddy's error log records "read tcp ...:3000: read: connection reset by peer"
+    with err_trace reverseproxy.statusError - Caddy synthesised the 502 itself and
+    the Next route never ran. fe's KEEP_ALIVE_TIMEOUT is unset, so node closes idle
+    sockets at 5 s while Caddy holds its upstream pool for 2 minutes and does not
+    retry; a connection idled ~7.5 s across the member's trip to LINE and was
+    reused after node had closed it.
+  what_was_ruled_out: >-
+    Not the engine - mumate-bazi-1 was up 9 hours, healthy, RestartCount 0, and
+    /api/missions answers correctly when probed directly. Not BAZI_BASE_URL, not
+    the compose profile gate, not an OOM or crash - fe RestartCount 0,
+    OOMKilled false, no errors in its log. The route's own 502 branch at
+    pages/api/missions.ts:47-49 did not fire; it would have returned a JSON body.
+  a_correction_this_record_owes: >-
+    This session first told the owner the 502 meant the engine was unreachable and
+    that mission definitions could not be read on staging. That was wrong. The
+    mission path is healthy; nothing about connect_google is blocked by it.
+  whose_it_is: >-
+    mumate-infra's. The repair is one line in that repository - either
+    KEEP_ALIVE_TIMEOUT on the fe service above Caddy's idle window, or a
+    `keepalive` shorter than 5 s on Caddy's transport, optionally with
+    lb_try_duration so a dead socket retries instead of 502-ing. This lane does
+    not edit that repository and made no change there. Its holder should be told.
+
+owner_decisions_recorded_here:
+  - >-
+    DECISION (2026-09-24): the three .assets/mumate/slice2-* dumps are KEPT for
+    now. They are gitignored and local, and they remain the only recovery for
+    slice 2's deleted rows. Revisit once production has been stable for a while.
+    They hold real member identifiers and must never be attached to a pull
+    request or copied off the machine.
+  - >-
+    DECISION (2026-09-24): the AWS bucket s3-ps-cdn question is PARKED
+    deliberately, not forgotten. Images render from Supabase Storage today and
+    nothing is blocked. Whether the old bucket still exists and still bills
+    remains unverified and needs the owner's console.
+
+unresolved:
+  - >-
+    "3984e09" is unpushed. Pushing still needs --no-verify because origin/main
+    fails its own verify-architecture gate on four violations this branch does not
+    own, and the harness refuses that flag. One push, by the owner.
+  - >-
+    A new image IS needed this time, then a deploy to the shadow, then exactly one
+    LINE attempt - and it should be made on a REAL PHONE inside the LINE app, since
+    the desktop path is now the only one that has been walked.
+  - >-
+    mumate-infra env/fe.env.example still does not list LINK_STATE_SECRET, so a
+    future rebuild can omit it exactly as this one did. That lane's file; tell its
+    holder. Now joined by the keep-alive 502 above.
+  - >-
+    Google linking has never been attempted at all, in any environment. The
+    in-LINE-webview escort to an external browser is untested and carries no
+    session cookie by construction.
+  - >-
+    Four items await the owner and are recorded as decisions to be taken together
+    in a later revision - the flip as its own commit, teammate testing as a
+    pre-merge gate rather than a slice-3 gate, connect_google in the engine, and
+    the mission-timing defect below.
+  - >-
+    MISSION TIMING IS WRONG TODAY, found while answering the connect_google
+    question and NOT fixed because it is in no slice's DoD.
+    ConnectedScreen.tsx:167-175 fires the connect_line mission when the SESSION's
+    provider is line, not when a link succeeds. So a member who signed in with
+    LINE and merely opens the screen is credited, while a member who signs in with
+    Google and genuinely links LINE is not. Adding connect_google without
+    repairing this would mirror the same error onto Google.
+  - >-
+    Carried unchanged - the traffic flip, slice 4, the AWS bucket, and Vercel
+    Preview resolving to the production database.
+  - >-
+    Recorded as a standing hazard, not a defect of this slice: the shadow FE and
+    production share one Supabase database - same host and same database user,
+    compared by hash without reading either value; only the pooler port differs.
+    Staging traffic therefore writes real production rows. It is the right shape
+    for a shadow, and it means a staging login is a real account event.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "1b9d711"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 41
+    origin_main: "f58cc9c"
+  application:
+    repository: mootech-fe
+    local_head: "3984e09"
+    parent: "f916986"
+    pushed_head: "3615dcfceac8e775ef98e55a941502c83941014a"
+    branch: feat/mumate-login-identity-s1
+    ahead_of_origin_main: 19
+    behind_origin_main: 0
+    origin_main: "9f764e6"
+    working_tree: clean-after-this-commit
+    pull_request: none
+  deployed_to_shadow:
+    image: ghcr.io/mojisejr/mootech-fe:3615dcfceac8e775ef98e55a941502c83941014a-staging
+    note: still the defective build; 3984e09 is not on the shadow
+    restore_point_if_the_slot_is_handed_back: FE 7e22f54-staging / BE 0705378 / BAZI 722cdf1-staging
+  observed_attempt:
+    local_time: "2026-09-24 19:49:34 to 19:49:39 ICT"
+    start_route: 302-to-access.line.me-with-state-nonce-pkce-and-disable_ios_auto_login
+    consent: reached-and-granted
+    callback_route: /api/auth/link/callback/line
+    callback_request_id: "98fa48d8-9f3b-4c21-a555-2f5c77c2ad83"
+    callback_response: 302-to-/v2/settings/connected?link_error=bad-token
+    user_agent: chrome-on-macos-not-a-phone
+    user_provider_written: 0
+  verification_after_fix:
+    default_lane: 2958 passed / 183 skipped across 276 files
+    new_spec: scripts/link-verify-default.test.ts, 13 passed
+    static: tsc --noEmit exit 0 (checked without a pipe), npm run lint exit 0, 0 errors
+    build: npm run build exit 0 with the VAPID gate line present
+    real_postgres: not re-run; this change does not touch the store
+
+next_action:
+  action: >-
+    The next executable step is the owner's. Push "3984e09" with --no-verify,
+    build the image, deploy it to the shadow, and make exactly ONE LINE attempt
+    from a real phone inside the LINE app. Stop on any error and report what was
+    seen. If it succeeds, check three things on the screen - LINE reads linked,
+    the existing Google row is still shown, and the session did not sign out.
+    Do not touch production, do not flip constants/api/endpoint.ts, and do not
+    edit mumate-infra from this lane.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - constants/api/endpoint.ts is still absent from `git diff origin/main..HEAD --name-only`.
+    - PLAN.md is unchanged by this record - same revision 0.3, same phase, same Parallelism header.

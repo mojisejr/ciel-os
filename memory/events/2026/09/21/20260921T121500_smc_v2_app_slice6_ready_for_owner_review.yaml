@@ -1,0 +1,134 @@
+schema_version: ciel.event.v0.1
+id: evt_20260921T121500_smc_v2_app_slice6_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-21T12:15:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. Slice
+    6 (the proposal's 6a): the gateway reopens a transport that died after
+    opening, and a restart with a door open reconciles on the screen, not
+    only in the store.
+  scope:
+    - Slice 6 of plan revision 0.4, delivered as smc-v2 draft pull request 6 on feat/gateway-reopen from main 78dfbf3.
+  out_of_scope:
+    - Slices 7-10; the merge, which is the owner's.
+
+outcome:
+  status: ready-for-owner-review
+  completed:
+    - >-
+      cu12 (smc-v2 6d97944): the gateway thread keeps its endpoint. An I/O
+      error - not a timeout, not a refusal - drops the transport; a later
+      request after reopen_after (default 1 s) opens a fresh one on the same
+      endpoint through the same Gateway handle, so the poller and the
+      cabinet service resume on their own. Requests inside the back-off
+      fail at once. A zero-length read on TCP is end of stream and is
+      reported at once instead of after the timeout and the retries; a
+      serial port keeps its VTIME meaning. Tests: a scripted peer that
+      hangs up and a second peer on the same port (fail fast, no attempt
+      inside the back-off, one reopen then reuse); the spawned simulator
+      killed and started again on the same port, found again through one
+      gateway and, through the poller, one Failed then Snapshots; five
+      repeats without a flake.
+    - >-
+      cabinet (f202ba6): scenario - the service stops with slot 4 open for
+      a load and starts again with the door untouched; slot 4 is found Open
+      with its HN and a reconciled row; the close records load-completed.
+    - >-
+      ui (043ac99): the owner walked a restart with a door open on the
+      built desktop and found the card saying ประตูเปิด and nothing else,
+      every other card refusing (the cabinet's one-door-at-a-time rule
+      stayed; the dialog that explained it went with the old process) -
+      "user เข้ามาน่าจะงง เพราะเดิมมันมี dialog เด้งขึ้นมากั้น" - and said go
+      without a plan change. When a snapshot shows a slot in AwaitOpen or
+      Open and no dialog is up, the app reopens รอใส่ยา or รอเอายาออก for
+      it, time counting from the stored since; Dialog::Wait and Dialog::More
+      carry Option<String> for the PIN and show a PIN field where the
+      reopened dialog needs one (ยกเลิก on a door that did not pop, ไม่มีแล้ว
+      after a dispense); a reopened dialog over a door that has not popped
+      offers ยกเลิก at once. DESIGN.md: deviation 25 and the Restart section.
+    - >-
+      Walked on the built .app (SMC_DATA_DIR=/tmp/smc-dev, simulator on
+      tcp 127.0.0.1:5077, CU12_SIM_TRACE=1, physics off, the agent typing
+      hook commands through a pipe). Walk A, nobody at the app: simulator
+      killed 04:29:24Z - "cu12 transport lost: peer closed the connection"
+      at once, "reopen failed: Connection refused" on each 2 s poll, then
+      "cu12 gateway reopened" 04:29:30Z, 1.5 s after the simulator came
+      back; repeated 04:30:19Z-04:30:21Z; same pid 85103. Last night's log
+      ended with "poll failed: Broken pipe" every 2 s forever. Walk B, first
+      build without the dialog: slot 4 loaded by the owner, hook 4 unlocked,
+      Cmd+Q, relaunch - action 88 reconciled "Load door was open when the
+      application stopped; still open", card ประตูเปิด HN 4444 ใส่ยา 0:35
+      (screenshot shown by the owner), close - 89 door-left-open, 90
+      load-completed. Walk C, rebuilt with the dialog: slot 5, HN 5555,
+      unlocked, Cmd+Q, relaunch - 94 reconciled, the owner: "เห็นละ
+      ว่าเปิดอยู่ มี dialog ครับ"; close - 95 load-completed. Walk D: slot 6,
+      HN 6666, ประตูไม่เด้ง seen, Cmd+Q before any pop, relaunch - 98
+      reconciled "door closed now", 99 door-did-not-open, the dialog back
+      with the PIN field and ยกเลิก; the owner typed the PIN and cancelled -
+      100 cancelled by nonthasak, slot 6 empty; "D2 ทำแล้วเป็นตามที่คุณบอกครับ".
+    - >-
+      Checks on 043ac99: cargo fmt --check; cargo clippy --all-targets -D
+      warnings native and for ui on wasm32-unknown-unknown; cargo test 59
+      passed 0 failed. Pushed; draft pull request 6 opened.
+  not_completed:
+    - The merge (owner). Slices 7-10.
+  boundaries:
+    - No plan change; the dialog reopening is a DESIGN.md deviation (25) inside slice 6's "restart with a door open reconciles", accepted by the owner in the chat.
+    - The legacy checkout was not touched; nothing on the simulator changed.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "f62fabc"
+    branch: hq/20260921
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "043ac99"
+    branch: feat/gateway-reopen
+    base: "78dfbf3"
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/smc-v2/pull/6
+    checkpoints:
+      - "6d97944 cu12: the gateway reopens a transport that died after opening"
+      - "f202ba6 cabinet: a restart with a door still open finds the slot open and completes on the close"
+      - "043ac99 ui: a wait dialog is reopened after a restart over a door still in transition"
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  desktop_walk:
+    data_dir: /tmp/smc-dev
+    log: /tmp/smc-dev/logs/smc.log.2026-09-21
+    actions_rows: 85-100
+  preceding_records:
+    - memory/events/2026/09/21/20260921T112000_smc_v2_app_plan_0_4_decided_slice6a_authorized.yaml
+
+unresolved:
+  - >-
+    warned_no_pop and warned_left_open are set by the workflow's tick
+    without a Persist, so a restart re-records door-did-not-open or
+    door-left-open once more (action 99 after 97; 89 after a restart). The
+    rows are truthful ("hook still engaged 18770 ms after unlock"); left
+    for the owner's call, noted in the pull request.
+  - Door-label order on the physical cabinet; production keygen before the first sale; real hardware may change the state machine.
+
+next_action:
+  action: >-
+    The owner reviews and merges smc-v2 pull request 6; the agent records
+    the merge, syncs the checkout, and starts slice 7 (6b, the Windows
+    cross-check script) under the owner's standing direction, or slice 8
+    (6c) if the owner prefers the design decisions first.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 at revision 0.4, phase 6, with this record as its latest event and pull request 6 named in it.

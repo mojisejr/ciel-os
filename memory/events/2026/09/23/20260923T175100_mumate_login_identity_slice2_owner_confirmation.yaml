@@ -1,0 +1,90 @@
+schema_version: ciel.event.v0.1
+id: evt_20260923T175100_mumate_login_identity_slice2_owner_confirmation
+type: decision
+recorded_at: 2026-09-23T17:51:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Confirm directly, from the session that received the owner's words, the
+    authorization recorded in the preceding HQ slice-2 decision and close its
+    provenance gap without widening its scope.
+  scope:
+    - Slice 2 of plan revision 0.2 under the constraints recorded by HQ in evt_20260923T174600_mumate_login_identity_slice2_authorized.
+    - One read-only production identity inventory query under the exact safeguards below.
+  out_of_scope:
+    - Production SQL, push, pull request, provider settings, traffic flip, automatic merge, or member deletion.
+    - A fresh production dump or restore, changes to the anonymizer, and the separate amazonaws / phoenix-stark URL query.
+    - Final disposition of the both-chart collision, the dev row, or any newly measured anomaly.
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    In the active Codex chat, after receiving the full proposed slice-2
+    authorization bundle, the owner replied directly "เห็นด้วยตามนี้". This
+    confirms the nine constraints in evt_20260923T174600 and specifically
+    authorizes the read-only production inventory query that the child lane
+    held pending directly attributable owner approval.
+  authorizes:
+    - Slice 2 of plan revision 0.2 using a deterministic synthetic seed for local proof and no fresh production dump.
+    - >-
+      One production identity inventory SELECT inside a forced read-only
+      transaction with default_transaction_read_only=on. Its output is limited
+      to aggregates or non-identifying references and must never include raw
+      tokens or personal data.
+    - Cleanup limited to dead user_provider credential rows, never member rows or member data.
+    - A unique index on (lower(provider), id_token), with stored spellings Google google and LINE LINE.
+    - A CHECK preventing blank provider values.
+    - Retaining the advisory transaction lock and adding unique-violation recovery into the existing-member path.
+  does_not_authorize:
+    - Any production write or statement other than the scoped SELECT.
+    - Push, pull request, provider settings, traffic flip, automatic merge, or deletion of member rows or member data.
+    - A fresh production dump or restore, an anonymizer change, or the amazonaws / phoenix-stark URL query.
+    - Deciding the both-chart collision, the dev row, or any newly measured anomaly without returning to the owner.
+  completed:
+    - The owner authorization is now recorded by the session that received it directly.
+    - The provenance gap identified in evt_20260923T174600 is closed for the scoped inventory query and local slice-2 work.
+  not_completed:
+    - No query, migration, application change, push, or external action is performed by this record.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: 0a93fdc482200cd1e05668672a9b67b84e85abcd
+    branch: hq/20260921
+    working_tree: this-event-only
+    pull_request: none-standing-multi-session-branch
+  owner_instruction:
+    received_by: codex
+    exact_reply: "เห็นด้วยตามนี้"
+    context: >-
+      The reply followed a detailed authorization proposal enumerating the
+      read-only inventory query, synthetic seed, parallelism, credential-only
+      cleanup, index expression, provider CHECK, lock and recovery behavior,
+      retained owner gates, and anomalies that must return to the owner.
+  confirms:
+    - memory/events/2026/09/23/20260923T174600_mumate_login_identity_slice2_authorized.yaml
+    - memory/events/2026/09/23/20260923T163705_mumate_login_hq_relay_protocol_recorded.yaml
+
+unresolved:
+  - PLAN.md still describes DoD 2 using an anonymized local restore; the slice closeout must state that synthetic proof replaced the unusable restore and identify the evidence used.
+  - The both-chart collision, the dev row, and any newly measured anomaly remain owner decisions.
+  - Production SQL, push, pull request, provider settings, traffic flip, and automatic merge remain separate owner gates.
+
+next_action:
+  action: >-
+    HQ verifies this directly attributable decision event, then instructs
+    ciel-os-d9 to continue slice 2, including the scoped inventory query, and
+    to report the aggregate result and any anomaly back through HQ before any
+    final disposition.
+  acceptance_check:
+    - bun run check and bun run wake pass with this event committed.
+    - HQ confirms the event closes the provenance hold without widening scope.
+    - The child lane acknowledges the instruction before running the query.

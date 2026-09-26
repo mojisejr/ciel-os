@@ -1,0 +1,200 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T063505_mumate_login_identity_slice3_audit_gaps_closed
+type: closeout
+recorded_at: 2026-09-25T06:35:05+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close the two slice-3 acceptance items the DoD audit found unproven, and
+    record the gate that cannot honestly be closed. No source file changed: the
+    behaviour was already correct, nothing had ever executed it. Also records a
+    defect in this lane's own 0.4 decision event, found because HQ challenged a
+    different thing and the check went past the challenge.
+  scope:
+    - resolveSignedSessionUserId gaining a test, and Google's JWKS branch gaining one.
+    - The real-Postgres lane, run by hand and reported as hand-run.
+    - The decision-status defect that left plan 0.4 authorizing nothing.
+  out_of_scope:
+    - Slice 4 and 4b. Planned, not started, and slice 4 still needs its own go.
+    - The flip, production, traffic, mumate-infra. Untouched.
+    - The observed successful link that closes slice 3. Still owed.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      OWNER AUTHORIZED THIS STEP on 2026-09-25 after a two-round syncup, saying
+      "เริ่มได้เลย". The work is FE-only, needs no host access and no deploy.
+    - >-
+      resolveSignedSessionUserId HAD NO TEST AT ALL, and it is the one function
+      between a client-settable cookie and "attach my login to that member's
+      account". The DoD item written about it was covered by a start-route spec
+      that mocks BOTH resolvers and never sends a forged cookie, so it asserted
+      which mock was called and nothing more.
+    - >-
+      THE PROOF IS A CONTRAST RATHER THAN AN ASSERTION IN ISOLATION. One request
+      object, carrying a forged UUID in cookie-mumate-id and no session, goes
+      through both resolvers: the lenient one accepts it - deliberately, #391 -
+      and the strict one must refuse it AND must not query at all. A test that
+      only checked the strict resolver could pass because the request was
+      malformed in some unrelated way; this one cannot.
+    - >-
+      GOOGLE'S RS256/JWKS BRANCH HAD NEVER EXECUTED. Its only case was an HS256
+      token, which jose rejects on the alg header before resolving a key, so
+      createRemoteJWKSet, the fetch and the signature check - the code that runs
+      in production for every Google link - had never run once. The new cases
+      stand up a real HTTP server on loopback serving a real JWKS and point the
+      provider's jwksUrl at it; jose is not mocked.
+    - >-
+      TWO TRAPS FOUND WHILE WRITING IT, both worth carrying. First, defaultVerify
+      passes keySetFor(provider, jwksUrl) as an ARGUMENT, so the RemoteJWKSet is
+      built and cached under the provider before jwtVerify runs - even for a token
+      about to be rejected on its alg. Overriding the URL inside the Google
+      describe left the cache holding one built from the real Google URL, and the
+      first accept failed with "no applicable key found" ONLY when the whole file
+      ran. Second, and this one was mine: the config assertions read the live
+      ENDPOINTS, which this file overwrites, so setting Google's real jwksUrl to
+      null left the whole file green. Configuration is now judged from values
+      snapshotted at import; behaviour from the live object.
+    - >-
+      EVERY CASE WAS MUTATION-CHECKED, not trusted. Restoring the cookie fallback
+      reddens the takeover test alone; dropping the provider check reddens the
+      half-session test alone; jwksUrl to null reddens the two config tests;
+      forcing the symmetric branch reddens the two Google accept tests. Each
+      source file was restored and verified byte-identical afterwards.
+    - >-
+      COMMITTED as mootech-fe "d43d582", parent "49097ff", UNPUSHED. Two files,
+      both tests - scripts/resolve-user.test.tsx, scripts/link-verify-default.test.ts.
+      No source file changed.
+    - >-
+      GATES - 2,973 specs pass (2,961 before, plus 12), 183 skipped across 276
+      files; tsc --noEmit exit 0 checked without a pipe; npm run lint exit 0 with
+      0 errors and the same 135 pre-existing warnings; npm run build exit 0 with
+      the VAPID gate line present.
+    - >-
+      THE REAL-POSTGRES LANE WAS RUN BY HAND and is reported as hand-run: 18 pass
+      against localhost:5433 mumate_test with TEST_DATABASE_URL exported - 12 in
+      link-account-db, 6 in register-login-fe-db. The default lane skips them.
+    - >-
+      A DEFECT IN THIS LANE'S OWN 0.4 DECISION EVENT, found and fixed in "676c90a".
+      src/portfolio/read.ts:404-419 lets a decision authorize a plan only when its
+      type is `decision` AND outcome.status is exactly `decided`. It was written
+      with `recorded` - correct for the closeouts this lane produces, wrong here -
+      so the machinery read past it and the lane sat at owner-confirmation-required
+      with an approving decision beside the plan. Wake now reads lifecycle
+      `authorized`, "Owner decision authorizes plan revision 0.4 slice 4".
+    - >-
+      AND IT WAS NOT A ONE-OFF. HQ scanned every `type: decision` event in the
+      repository for `status: recorded` and found exactly one other, in THIS
+      workstream: 20260923T163705_mumate_login_hq_relay_protocol_recorded.yaml,
+      recorded by codex, carrying evidence.plan and plan_revision "0.2". It is
+      shaped like a plan authorization and is inert for the same reason. It is
+      harmless now - the plan is at 0.4, so decisionAuthorizesPlan rejects it on
+      the revision test regardless of its status - and it is deliberately NOT
+      edited. It is recorded because two instances in one lane make the pattern a
+      habit rather than a slip, and because anyone rolling this lane back to 0.2
+      expecting that decision to authorize would find it does not.
+
+  not_completed:
+    - >-
+      THE REAL-POSTGRES GATE WAS NOT FIXED, on purpose. .githooks/pre-push warns
+      about skips rather than failing, and the comment above it says why: most
+      runs skip nothing and a hard failure would block every lane that has no
+      local database. Changing it is a shared-file decision this lane does not
+      own. What changed instead is the claim: those proofs are labelled hand-run,
+      and the lane stops citing them as something its gates produce.
+    - >-
+      SLICE 3 IS STILL OPEN. The successful link has still never been observed.
+      Nothing in this record moves that.
+    - >-
+      Two more items the audit listed remain unaddressed and are not defects of
+      behaviour: A.6's Secure clause cannot be asserted from a test lane where
+      NODE_ENV is `test` (it is satisfied on the shadow, confirmed by reading
+      NODE_ENV=production from the container), and replay is prevented by cookie
+      clearing plus a ten-minute TTL rather than by a single-use record.
+
+  evidence_of_limits:
+    - >-
+      The Google cases prove the JWKS mechanism against a key set this file
+      serves. They are not evidence about Google's real endpoint, its key
+      rotation, or its issuer behaviour - only that our side fetches, matches and
+      verifies correctly when a well-formed set is served.
+    - >-
+      resolveSignedSessionUserId is tested with getServerSession and the database
+      mocked at the transport. Its branching and the real drizzle sql run; whether
+      next-auth returns the session shape assumed here is not proven by this file.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: "676c90a"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 47
+    origin_main: "f58cc9c"
+  application:
+    repository: mootech-fe
+    local_head: "d43d582"
+    parent: "49097ff"
+    pushed_head: "49097ffc6dc29296b1115ff531660324d8a2c7eb"
+    branch: feat/mumate-login-identity-s1
+    ahead_of_origin_main: 21
+    behind_origin_main: 0
+    origin_main: "9f764e6"
+    working_tree: clean
+    pull_request: none
+  deployed_to_shadow:
+    image: ghcr.io/mojisejr/mootech-fe:49097ffc6dc29296b1115ff531660324d8a2c7eb-staging
+    note: the shadow does NOT carry d43d582, and does not need to - it adds tests only
+  verification:
+    default_lane: 2973 passed / 183 skipped across 276 files
+    gated_lane_hand_run: 18 passed against localhost:5433 mumate_test
+    mutation_checks: four, each reddening only its own cases; sources restored and verified identical
+    static: tsc --noEmit exit 0 (checked without a pipe), npm run lint exit 0, 0 errors
+    build: npm run build exit 0 with the VAPID gate line present
+
+unresolved:
+  - >-
+    The observed successful link. Owner chose route B on 2026-09-25: move his own
+    LINE credential by hand, then exercise unlink and re-link through the real
+    screen. It is blocked on one read-only query that is his to run - which of his
+    two accounts holds the payment, because owner decision 8 makes that decide the
+    DIRECTION of the move.
+  - >-
+    mootech-fe "d43d582" is unpushed. It carries tests only and blocks nothing.
+  - >-
+    No session holds mumate-infra-move-001; it is paused. Both findings for that
+    repo - LINK_STATE_SECRET absent from env/fe.env.example, and the keep-alive
+    502 - were confirmed independently by HQ against the mumate-infra checkout at
+    "0025d5a" and are being carried to the owner there.
+  - >-
+    Carried unchanged - slice 4 needs its own decision event, DoD 4b is
+    deliberately unwritten, the mission-timing defect at ConnectedScreen.tsx:167-175,
+    connect_google in the engine, the three .assets/mumate/slice2-* dumps kept by
+    owner decision, the AWS bucket s3-ps-cdn parked by owner decision, and Vercel
+    Preview resolving to the production database.
+  - >-
+    Standing hazard: the shadow FE and production share one Supabase database, so
+    every staging login is a real account event.
+
+next_action:
+  action: >-
+    The owner runs the read-only query that names his LINE account's user_id and
+    says which of his two accounts holds the payment. Under owner decision 8 that
+    result decides which way the credential moves, and it can reverse the
+    direction he assumed. Nothing is written until he has seen it. Do not touch
+    production, do not flip constants/api/endpoint.ts, and do not edit
+    mumate-infra from this lane.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - Wake reports this lane's lifecycle as authorized at plan revision 0.4.
+    - constants/api/endpoint.ts is still absent from `git diff origin/main..HEAD --name-only`.

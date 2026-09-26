@@ -1,0 +1,114 @@
+schema_version: ciel.event.v0.1
+id: evt_20260922T053703_smc_v2_app_slice8_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-22T05:37:03+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. Slice
+    8 (the proposal's 6c): the owner's five design answers of 2026-09-21
+    applied to DESIGN.md, the license judge, the shell and the screens.
+  scope:
+    - Slice 8 of plan revision 0.4, delivered as smc-v2 draft pull request 8 on feat/design-decisions from main af0b93d.
+  out_of_scope:
+    - Slices 9 and 10; the merge, which is the owner's.
+
+outcome:
+  status: ready-for-owner-review
+  completed:
+    - >-
+      smc-v2 d8041a8, one commit. (1) license::check allows GRACE_DAYS = 1
+      past the date the license carries, Expired::since stays that date;
+      the app judges on today_local() from chrono Local instead of UTC;
+      the issuer keeps stamping issued in UTC; tests: the day after expiry
+      valid, two days after expired. (2) No HN scan on the home screen,
+      closed in DESIGN.md. (3) โดย {ชื่อ} on the ประตูเปิด card and, because
+      the wait dialog covers that card, under the dialog's status box too
+      (owner saw the card hidden behind the modal and the line was added
+      there in the same slice). (4) The legacy's Deprecision logo copied
+      read-only from the legacy renderer, downscaled to 512 px with sips,
+      bundled at crates/ui/public/images, shown 86 x 85; a logo.png in the
+      data directory overrides it through the new logo_override command
+      (data URL, 2 MB cap, a hand-rolled base64 with the RFC vectors
+      tested) - deviation 23 is now implemented, not only written. (5) The
+      expired banner has a ✕ that hides it for one 8-hour shift in memory
+      only, back on every start, load refused throughout; the clock-suspect
+      banner has none. DESIGN.md: shell logo, banner, card, wait dialog,
+      open questions closed except the door-label order. license README
+      diagram line. Also fixed: a late pop returns the wait dialog's status
+      box from bad to door-open (the no-pop warning kept it red after the
+      door opened - pre-existing since slice 4, seen by the owner in a
+      screenshot this morning).
+    - >-
+      Walked by the owner on the built desktop against the simulator, with
+      licenses issued for the test with the development key from the
+      owner-controlled .assets/smc-v2/dev-license-signing.key (machine
+      X71V-ZXS8-8XXD): E1 the Deprecision mark - "ok"; E2 a license
+      expiring 2026-09-21 installed on 2026-09-22 - no banner, ลงทะเบียน
+      enabled, a load accepted (action 101) - "ok"; E3 slot 12 loaded,
+      โดย nonthasak in the dialog and on the card - "เห็นละครับ"; E4 a
+      license expiring 2026-09-20 - the banner with its ✕, hidden on click,
+      ลงทะเบียน still disabled - "ใช่เป็นตามนั้นครับ เยี่ยมเลย". The one-year
+      license was restored afterwards and verified (expires 2027-09-20).
+    - >-
+      Checks on d8041a8: cargo fmt --check; clippy native and ui on wasm32
+      with -D warnings; cargo test 60 passed; scripts/check-windows.sh
+      passed. Pushed; draft pull request 8 opened; the windows-cross-check
+      job runs on it.
+  not_completed:
+    - The merge (owner). Slices 9 and 10.
+  boundaries:
+    - No plan change. The dialog line for the operator and the tone fix are inside slice 8's "the UI changed to match".
+    - The legacy checkout was not written to; the logo was copied out.
+    - The test licenses live only in the session scratchpad; the dev signing key stayed where it is.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "8"
+  repository:
+    head: "7ba7662"
+    branch: hq/20260921
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "d8041a8"
+    branch: feat/design-decisions
+    base: "af0b93d"
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/smc-v2/pull/8
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  legacy_source:
+    path: /Users/non/dev/smc/smc-app
+    revision: "7116171"
+    read_only: true
+    files_read: renderer/public/images/deprecision.png (copied, downscaled)
+  desktop_walk:
+    data_dir: /tmp/smc-dev
+    actions_rows: 101-109
+  preceding_records:
+    - memory/events/2026/09/22/20260922T050804_smc_v2_app_slice8_authorized.yaml
+
+unresolved:
+  - The no-pop and left-open warn flags are not persisted by the tick (noted in pull request 6).
+  - Door-label order on the physical cabinet; production keygen before the first sale; real hardware may change the state machine.
+
+next_action:
+  action: >-
+    The owner reviews and merges smc-v2 pull request 8; the agent records
+    the merge and syncs the checkout. Slice 9 (6d, the owner's walkthrough
+    of every function not yet exercised) needs the owner at the Mac for
+    about 45 minutes; the agent prepares the checklist and waits for the
+    owner's time.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 at revision 0.4, phase 8, with this record as its latest event and pull request 8 named in it.

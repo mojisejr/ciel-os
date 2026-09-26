@@ -1,0 +1,175 @@
+schema_version: ciel.event.v0.1
+id: evt_20260923T194241_mumate_login_identity_day_close_handoff
+type: closeout
+recorded_at: 2026-09-23T19:42:41+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close the day and hand this lane to tomorrow's session before the owner
+    clears this one. Slices 1 and 2 are both done, slice 2 is applied to
+    production, and slice 3 CANNOT be completed by this lane alone - the reason
+    is stated below rather than left for a fresh session to discover.
+  scope:
+    - The day's arc, so a cold session does not re-derive it.
+    - Exact state of both repositories and of production.
+    - What tomorrow can and cannot do, and the one blocker that decides it.
+  out_of_scope:
+    - Push, pull request, traffic flip. All three remain the owner's.
+    - Any further production statement.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      SLICE 1 ACCEPTED AND CLOSED. Seven defects fixed, the two that would have
+      signed every member out at the flip among them. Accepted by the owner at
+      14:46 after he answered the three recorded differences.
+    - >-
+      SLICE 2 BUILT, PROVEN AND APPLIED TO PRODUCTION. The owner ran every
+      statement himself. Verified after the run - 5,280 rows, 0 collisions, 0
+      blank providers, 0 rows still spelling Google GOOGLE, unique index
+      present, CHECK present.
+    - >-
+      A team-facing explanation of the problem exists as a shared document, in
+      Thai, written for people who are not engineers.
+    - >-
+      One correction that changed the owner's plans - the object storage is
+      Supabase, not S3, migrated 2026-06-17. He was about to plan a migration
+      that had already happened, and found it by asking a cost question.
+
+  not_completed:
+    - Nothing is pushed. 23 ciel-os commits and 11 mootech-fe commits have never left this machine.
+    - No pull request exists. The traffic flip is undecided.
+    - Slice 3 is not opened and cannot be finished by this lane - see the blocker.
+    - PLAN.md is deliberately untouched, still at revision 0.2, still reading phase 1, still carrying an unachievable DoD 2.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: "e6491cd"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 23
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: mootech-fe
+    head: "8b5c17dcc62e60de5ed9223abe1c5c64cdaa4211"
+    branch: feat/mumate-login-identity-s1
+    base: "4837b4763748a211b7dabf9673815cd6fd44f54e"
+    ahead_of_base: 11
+    working_tree: clean-no-remote-ref-nothing-pushed
+    origin_main_now: "7e22f54"
+  production: applied 2026-09-23 by the owner; 5280 rows, 0 collisions, index and CHECK present
+
+the_slice_3_blocker:
+  statement: >-
+    SLICE 3 CANNOT BE FINISHED BY THIS LANE. PLAN.md revision 0.2 records that
+    the LINE console work is a TEAM dependency, not an owner action - the owner
+    checked and does not hold the rights to request the email permission or to
+    add a redirect URI on that channel. Slice 3's linking flow needs a redirect
+    URI on that channel. Until a team member with those rights does it, the
+    slice can be designed and built but not completed or tested end to end.
+  verified_by_this_lane_today:
+    - >-
+      The Connected Accounts screen EXISTS - mootech-fe
+      features/v2-account/components/ConnectedScreen.tsx, 150 lines - but it is
+      DISPLAY ONLY. It shows each provider as "ใช้อยู่" or "ยังไม่ได้เชื่อม"
+      and has no action to link one. Slice 3 adds that action.
+    - >-
+      NextAuth has no database adapter configured, so the session strategy is
+      JWT. That confirms the plan's claim - starting a second provider
+      authorization through NextAuth signIn REPLACES the current session rather
+      than attaching to it. Slice 3 must own its own authorization routes.
+  what_tomorrow_can_do_without_the_team:
+    - Design the authorization routes - state, nonce, server-side token verification - and write them behind a flag.
+    - Design unlink, which PLAN.md requires before production use and which nothing has yet.
+    - Wire ConnectedScreen's action path, testable against a stub.
+    - Re-measure nothing; the production numbers are fresh as of today.
+  what_it_cannot_do: Finish slice 3, or prove any real LINE linking round trip.
+
+before_any_pull_request:
+  - >-
+    origin/main has moved to "7e22f54", 45 commits ahead of the base, up from 23
+    this afternoon. Rebase once immediately before the PR.
+  - >-
+    ONE FILE WILL CONFLICT - vitest.config.mts. Both this branch and upstream
+    add entries to its hand-written include list. The resolution is to keep both
+    sides' lines; scripts/vitest-include-drift.test.ts will catch a mistake.
+    Every other file this branch touches is untouched upstream.
+  - >-
+    Upstream changes in the watched auth paths remain purely additive -
+    lib/v2/resolve-user.ts gains memberCookieMismatch (+17, no existing line
+    modified) and lib/db gains 0033, which does not collide with this branch's
+    0034. Re-check guardV2 in middleware.ts against the still-unmerged
+    fix/maintenance-gate-and-line-share at the rebase.
+
+decisions_already_made_do_not_re_ask:
+  - Slice 1 accepted. is_info and is_email keep their honest values rather than legacy's hardcoded ones; a rollback flips is_email back and that is accepted because rollback is for genuine necessity.
+  - The member avatar is stored as the provider's own CDN URL. No copy into our storage.
+  - Collision survivors chosen by - whoever PAID wins, otherwise whoever holds more, a genuine tie broken deterministically.
+  - The 657 dead credential rows are deleted and the 98 members behind them are routed to support.
+  - No join by email. Provider spelling stays asymmetric - google lower, LINE upper.
+  - Collision recovery ships as manual support first.
+
+gotchas_learned_today_worth_not_rediscovering:
+  - >-
+    A legacy NAME survives a migration and misleads the next reader.
+    downloadLineImageToS3 writes to Supabase Storage. Read the implementation,
+    never the identifier.
+  - >-
+    The Supabase SQL editor opens a NEW SESSION per run. Temp tables do not
+    survive between runs, and neither would a transaction spanning them. Make
+    every part self-contained.
+  - >-
+    A migration must ASSERT its expected counts and abort, not state them in a
+    comment. Today an order-dependent expectation was wrong and the assertion
+    rolled the whole transaction back with nothing written to production.
+  - >-
+    testenv/scripts/anonymize.sql sets user_provider.id_token = '' on every row,
+    so the local restore cannot host any identity-uniqueness work. Every future
+    lane needing identity distinctness hits this.
+  - >-
+    Drizzle wraps driver errors in a "Failed query:" error whose own code is
+    undefined. Any error-code check must walk the cause chain.
+  - >-
+    FOUR times in this workstream a test passed for a reason unrelated to what
+    it claimed to prove, and all four were caught by asking "how would I know if
+    this were wrong?" rather than by review. Every one looked right on review.
+
+housekeeping:
+  - >-
+    .assets/mumate holds three files with REAL MEMBER IDENTIFIERS - the 20-row
+    collision dump, its ready-to-run restore, and the 657-row dead credential
+    dump saved by the owner. .assets is gitignored and holds no tracked file,
+    verified. Delete them once the change is settled. The restore file carries
+    one placeholder in picture_url because this machine's guard refuses to write
+    the production project reference to disk; its header says so.
+  - The relay-protocol and slice-2 authorization records written by other sessions are unconfirmed by the owner in his own turn. He can strike any that misstate him.
+
+unresolved:
+  - The application has never run against the production index. The unique-violation recovery in mootech-fe "5149b0c" is now the code path that matters and only the flip exercises it.
+  - The traffic flip, undecided, and the round, unpushed at 23 commits.
+  - PLAN.md's unachievable DoD 2 and its phase. A revision bump must repeat outcome.parallelism approved.
+  - The 98 members routed to support, with nobody scheduled.
+  - The anonymizer blanking every id_token.
+  - Carried unchanged - the LINE email scope, the non-transactional wallet and ledger write, and the live `|| '/'` bug in pages/login/index.tsx line 42.
+
+next_action:
+  action: >-
+    A fresh session runs `bun run wake`, reads this record and PLAN.md revision
+    0.2, then asks the owner which of three he wants - close the round with a
+    push and pull request, decide the traffic flip, or open slice 3 knowing it
+    cannot be finished without a team member's LINE console access. It must NOT
+    assume slice 3 is startable just because slices 1 and 2 are done. Nothing is
+    pushed and no production statement is run without the owner saying so in his
+    own turn.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - The topic branch still has no remote ref and no production endpoint constant is flipped.

@@ -1,0 +1,156 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T102700_mumate_control_room_ops_final_closeout_lessons
+type: closeout
+recorded_at: 2026-09-24T10:27:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-control-room-ops-001
+  lane: single
+  objective: >-
+    Final closeout. The MuMate control room is now something two people run
+    fast: an alert a human reads in three seconds on Discord and on the phone,
+    one page that shows the whole system, an agent that reads the same
+    incident through the Grafana API, and management access that no longer
+    depends on the owner's residential address - with three emergency doors
+    proven by use. Opened 2026-09-21 morning, closed 2026-09-24 morning.
+  scope:
+    - What the workstream delivered across slices 1 and 2, and what it deliberately did not.
+    - The lessons worth carrying into the next workstream and into the flip.
+  out_of_scope:
+    - The migration lane and the login lane; the watcher and Beszel work, which are candidates in the plan's "Carried out of this plan" section.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      Slice 1 (closeout 20260922T055602): Discord posts only on state change -
+      red once with one line per failing service, the raw ops-status lines for
+      the agent and the first command in the footer; orange every 30 minutes
+      while still broken; green on recovery with the outage length. Grafana
+      contact point with severity emoji, runbook_url on every rule and a link
+      back; dashboard "mumate ops"; runbooks/00-owner-3-minutes.md for the
+      phone; token expiry register. Rehearsed twice with induced bazi outages:
+      alert in 4 minutes from the timer, 2-3 minutes from the synthetic probes,
+      phone push, silence while still down, green on recovery.
+    - >-
+      Slice 2 (closeout 20260924T102001): mumate-2 on the tailnet as
+      100.120.15.24 with Tailscale SSH, proven from the Mac and from the
+      owner's phone; the three tcp/22 rules removed so both public addresses
+      scan closed on 22 while the staging hostnames answer 200; three
+      emergency doors each exercised for real first; cloud-init joins a new
+      host at first boot.
+    - >-
+      Also delivered along the way: a Grafana Viewer service account so the
+      agent reads alerts, rules and Loki through the API instead of ssh; the
+      CIEL PR template and a pr-template check in mumate-infra (PR 15) after
+      the owner pointed out the agent had been ignoring the template.
+  not_completed:
+    - The passive watcher, Beszel plus Dozzle, the backup and restore proof on mumate-2, DigitalOcean Droplet Backups, reboot-required and fail2ban in ops-status, the expiry-date warning, and ufw's public 22 on the host. All are written into PLAN.md revision 0.2 under "Carried out of this plan" with their acceptance ideas, so reopening them costs a decision rather than a rediscovery.
+    - Better Stack push notifications are paid; that channel stays e-mail. The phone is covered once, through Grafana IRM, not twice.
+  evidence_of_limits:
+    - >-
+      LESSON 1 - prove the new door by using it before you remove the old one.
+      The 2026-09-21 lock-out happened because an address allowlist protected
+      the management port and the owner's residential address changed
+      overnight. The fix was not one of the two options that lesson named
+      (open 22 key-only plus fail2ban, or keep the allowlist with a helper
+      script): the owner picked a third, Tailscale, which removes the failure
+      mode instead of mitigating it. What made it safe was the order - all
+      three doors were exercised while public 22 still existed, and the door-2
+      test deliberately broke public access to prove the tailnet carried the
+      session alone. Anyone can close a port; closing it after demonstrating
+      three independent ways back in is the difference.
+    - >-
+      LESSON 2 - an alert that is not read is not an alert. The observability
+      base was complete on 2026-09-20 and still failed the owner: a raw JSON
+      blob every five minutes with no recovery message. The fix was not more
+      data, it was state (post on change), wording (what broke, where, since
+      when, what to run) and colour. The rule the runbook now carries: if you
+      cannot tell what broke in three seconds, the alert is broken.
+    - >-
+      LESSON 3 - a rule that cannot fire is worse than no rule. The
+      log-silence rule as first written asked whether each service had logged
+      in 15 minutes; a silent service returns no series rather than a zero, so
+      it could never fire - and 24 hours of Loki showed it would have been
+      wrong anyway (fe writes no log at all, be and bazi about one line an
+      hour, caddy 15,786). It now asks whether the host as a whole is silent.
+      The check that matters is: "if the thing I fear happened right now,
+      which query would change?"
+    - >-
+      LESSON 4 - routing beats wording. Rehearsal 1 reached the phone and not
+      Discord because a child notification policy that matches replaces the
+      parent's receiver - "continue" affects siblings, not the parent. The
+      symptom was a contact point reporting "No delivery attempts" while the
+      alert clearly fired. One contact point with two integrations is the
+      shape that works.
+    - >-
+      LESSON 5 - verify the owner's UI work through the API, not by asking.
+      Twice a change looked done and was not: a contact-point template that
+      had been tested but not saved, and a rule that had been edited but not
+      renamed. Both were caught in seconds by reading
+      /api/v1/provisioning/contact-points and /api/prometheus/grafana/api/v1/rules
+      with the Viewer token. A read-only token for the agent pays for itself.
+    - >-
+      LESSON 6 - put the standard where the work happens, not in the agent's
+      memory. The owner had to point out several times that pull requests were
+      not using the repository's template. The durable fix was the template
+      plus a GitHub check inside mumate-infra, not a note in CIEL: AGENTS.md
+      already carried the rule, and adding repository mechanics to it would
+      have been the wrong place. A red check on a private repository does not
+      block the merge button (no branch protection on the free plan), so it is
+      a visible net rather than a wall.
+    - >-
+      LESSON 7 - the agent's own reach is now a dependency to watch. Access
+      runs through this Mac's tailnet membership; if it is signed out the
+      agent has no path until the owner uses bin/ssh-allow.sh or the console.
+      Tailscale's coordination service is a third party: existing sessions
+      survive an outage, new ones do not. The Tailscale auth key expires
+      2026-12-21 - an expired key strands no running host but blocks every new
+      one, including a rendered cloud-init.
+    - >-
+      LESSON 8 - "the harness refuses this" is a fact to report, not a wall to
+      climb around. Read-only ssh to the host was refused by the classifier on
+      2026-09-21 and reported as such rather than worked around; the answer
+      turned out to be better than the workaround would have been - a Grafana
+      Viewer token that reads the same incident without touching the host at
+      all.
+
+evidence:
+  plan: workstreams/mumate-control-room-ops-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "722c00cbcea2a3cb2242e66317ed387db78f1fef"
+    branch: hq/20260921
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main 768c71a = host /opt/mumate; PR 13 (readable alerts), 14 (alerting follow-ups), 15 (PR template + check), 16 (tailscale access) all merged"
+  delivered_state:
+    alerts: "health timer posts on change only; Grafana rules 9 (4 mumate + 5 synthetic) all health ok; one contact point discord-infra = Discord + Grafana IRM; dashboard mumate ops"
+    access: "firewall mumate-web inbound tcp/80, tcp/443, udp/443; mumate-2 on the tailnet 100.120.15.24; three emergency doors proven"
+    agent_reach: "env/grafana-read.env (Viewer token) on the Mac; ssh deploy@mumate-2 over the tailnet"
+  decision_closing_the_plan: memory/events/2026/09/24/20260924T102639_mumate_control_room_ops_plan_0_2_close_at_two_slices.yaml
+  opening_decision: memory/events/2026/09/21/20260921T111554_mumate_control_room_ops_workstream_opened_slice1_authorized.yaml
+  answers_lesson: memory/events/2026/09/21/20260921T085647_mumate_infra_move_ssh_locked_out_by_own_allowlist_lesson.yaml
+
+unresolved:
+  - The "Carried out of this plan" items need a new workstream and a fresh decision when the owner wants them; nothing waits on them.
+  - env/README.md expiry dates for the other tokens (owner); the Tailscale key expires 2026-12-21.
+  - Carried by mumate-infra-move-001: step 3c under the two-hour quiet gate (open this morning); the payment test webhook from the team; Vercel Preview resolving to the production database, to be gated before the flip; mootech-fe origin/main failing its own verify-architecture pre-push gate, so a push there needs --no-verify and silently skips gitleaks with it.
+  - Carried by mumate-login-identity-001: it shares project mootech-fe, its FE image waits for the shadow's FE slot after 3c, and the migration's slice-3 closeout must name it in the flip preconditions.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Move to mumate-infra-move-001 step 3c on the owner's own go while the
+    quiet gate holds: re-verify the gate, diff the Vercel environment, have
+    the owner trigger container-build for mootech-fe and bazi-sft-dataset,
+    deploy the tested SHAs on the shadow, walk the parity smoke, then hand the
+    FE slot back to mumate-login-identity-001 and collect the overnight
+    evidence from be and bazi.
+  acceptance_check:
+    - Wake reads mumate-control-room-ops-001 as completed at revision 0.2 with no validation error, and mumate-infra-move-001 unchanged at revision 0.2 awaiting its own go.

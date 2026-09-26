@@ -1,0 +1,86 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T095443_mumate_control_room_ops_slice2_authorized_tailscale
+type: decision
+recorded_at: 2026-09-24T09:54:43+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-control-room-ops-001
+  lane: single
+  objective: >-
+    Slice 2: management access to the control room stops depending on an
+    address allowlist. The host joins the MuMate tailnet and serves Tailscale
+    SSH; public port 22 is closed only after three emergency doors are proven;
+    a new host gets the same from its first boot.
+  scope:
+    - Authorize slice 2 of plan revision 0.1 (Tailscale, break-glass proof, then the port-22 removal behind a second go).
+    - Record the owner's choice of option (c) over (a) open 22 key-only and (b) allowlist plus a helper script, and why.
+  out_of_scope:
+    - The migration lane's step 3c and the flip; slice 3 (watcher) and slice 4 (Beszel, backup proof) of this plan.
+    - Any application, DNS, Vercel, Render, Supabase, or scheduler change; any change to ports 80/443.
+
+outcome:
+  status: decided
+  parallelism: approved   # same project (mumate-infra) as mumate-infra-move-001, and mootech-fe is now shared with mumate-login-identity-001; one session works one lane at a time, own paths only
+  decision: >-
+    On 2026-09-24 the owner said the operations work is to be finished today
+    and that Tailscale comes first, before deciding whether to continue into
+    the migration lane's 3c ("ต่อ tailscale ให้เสร็จ ให้พร้อม แล้วค่อยมาดูว่า
+    เราจะลุย 3c ต่อเลยหรือเปล่า"), confirming the purpose in his own words:
+    not opening port 22 unnecessarily, and both of them reaching the server
+    conveniently through Tailscale. He had already performed the first
+    emergency door this morning - reset the Droplet root password in the
+    DigitalOcean control panel and completed the forced password change in
+    the Recovery Console, proving that door works and keeping the password in
+    his password manager. The agent asked for a go at the step level and the
+    owner gave it for everything up to, but not including, the removal of the
+    port-22 rules, which the plan and this decision both keep behind a second,
+    separate go.
+  authorizes:
+    - Slice 2 of plan revision 0.1 - mumate-infra pull request 16 (tailscale-join.sh, ssh-allow.sh, cloud-init and renderer, tailscale in ops-status and the Discord embed, runbook 03 emergency doors, runbook 04 row, env example and register).
+    - Placing env/tailscale.env on mumate-2 as deploy from the owner's assets file, and the owner running `cd /opt/mumate && git pull --ff-only && bash bin/tailscale-join.sh` as root in the DigitalOcean console.
+    - Proving SSH over the tailnet from the Mac and the phone, and exercising break-glass 2 (bin/ssh-allow.sh) and 3 (Tailscale SSH as root in ACL check mode), all while public port 22 stays open.
+  does_not_authorize:
+    - Removing the three tcp/22 rules from the cloud firewall or tightening ufw's public 22 - that needs a separate go after the proofs above.
+    - Any change to ports 80/443, DNS, or any application; any deploy or rollback on the shadow.
+    - Starting the migration lane's 3c, which still needs the owner's own go in his chat under the two-hour quiet gate.
+
+evidence:
+  plan: workstreams/mumate-control-room-ops-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "0974a3a"
+    branch: hq/20260921
+    working_tree: shared-standing-branch-own-paths-only
+  application:
+    mumate-infra: "main e1e69f6; PR 16 https://github.com/mojisejr/mumate-infra/pull/16 head 01bc87e (infra/tailscale-access); host /opt/mumate still at df5e0ca"
+  tailnet_observed:
+    - "tailscale status on the owner's Mac: 100.68.202.90 macbook-air--nonthasak (macOS, active); 100.89.116.12 z-flip7--nonthasak (android, offline, last seen 2 days) - the phone must be brought online for the DoD proof"
+    - "mumate-2: tailscale not installed; root SSH refused by key (Permission denied (publickey)); deploy sudo is systemctl and journalctl only - hence install from the DO console as root"
+  emergency_doors:
+    door_1_do_console: "proven 2026-09-24 morning by the owner (root password reset in Settings, forced change completed in the Recovery Console, hostname/uptime/docker checked, session exited)"
+    door_2_ssh_allow: "bin/ssh-allow.sh in PR 16, not yet exercised"
+    door_3_tailscale_root: "ACL check mode, not yet exercised"
+  lesson_this_answers: memory/events/2026/09/21/20260921T085647_mumate_infra_move_ssh_locked_out_by_own_allowlist_lesson.yaml
+  previous_record: memory/events/2026/09/22/20260922T110405_mumate_control_room_ops_pr14_pr15_merged_grafana_applied_pr_standard_carried.yaml
+
+unresolved:
+  - Owner steps before the host is touched: save the ACL (tagOwners tag:server; acls member → tag:server:22; ssh accept deploy, check root), generate the tagged auth key into .assets/mumate/tailscale/.env, bring the phone's Tailscale online, review and merge PR 16.
+  - The two unidentified allowlisted addresses (101.109.13.197, 101.109.54.71) are retired with the port-22 removal, not identified.
+  - Tailscale's coordination service is a third party - established sessions survive an outage, new ones do not; doors 1 and 2 stay for that reason.
+  - Carried: env/README.md expiry dates; Better Stack push is paid (e-mail only); slice 3 (watcher) and slice 4 (Beszel, backup proof, DO Droplet Backups) undecided.
+  - Carried from the migration lane: 3c go under the quiet gate (open at 09:46 +07 today - fe 7e22f54 quiet since 23 Sep 18:06, bazi 722cdf1 since 19:00, be 0705378 unchanged); payment test webhook from the team; Vercel Preview resolving to the production database (found by the login lane, to be gated before the flip); mootech-fe origin/main failing its own verify-architecture pre-push gate, which makes any push from that repository need --no-verify and silently skips gitleaks with it.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner saves the ACL, generates the auth key, brings the phone online and
+    merges PR 16. Then the agent places env/tailscale.env, the owner runs the
+    one-line join in the DO console, and both prove SSH over the tailnet;
+    break-glass 2 and 3 are exercised; only then does the agent ask for the
+    second go to remove the port-22 rules, and the slice-2 closeout follows.
+  acceptance_check:
+    - DoD 2 of PLAN.md revision 0.1 - ssh deploy@mumate-2 over Tailscale from the Mac and the phone; a scan of the reserved address showing only 80/443; both break-glass routes exercised and recorded; a rendered cloud-init containing the Tailscale step; PR merged after owner review.

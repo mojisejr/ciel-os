@@ -1,0 +1,79 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T201108_mumate_infra_move_slice3f_recovery_pr_merged_shadow_activation_pending
+type: closeout
+recorded_at: 2026-09-25T20:11:08+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Record the owner merge of the planned slice-3f FE recovery mechanism and
+    distinguish that source-control change from shadow activation and proof.
+  scope:
+    - Read-only verification of pull request 19's merge and current shadow state.
+    - This merge checkpoint only.
+  out_of_scope:
+    - Pulling the merged infrastructure revision onto the host, deploying it,
+      inducing an unhealthy condition, recreating FE, login work, traffic, DNS,
+      production, secrets, database writes, and provider changes.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      The owner merged mumate-infra pull request 19. origin/main now resolves to
+      a8acbec2d7e4f758c36a8c6cfe7f4501b2612154, incorporating the reviewed
+      one-attempt FE recovery guard.
+    - >-
+      The shadow host remains on its previous infrastructure revision. This is
+      expected: merging the repository did not pull files to the host, change an
+      image tag, or restart any service.
+    - >-
+      Read-only verification found the existing shadow FE healthy and its health
+      endpoint answering 200 with database OK on the same existing image.
+  not_completed:
+    - >-
+      The recovery guard is not active on the host and its controlled shadow proof
+      has not occurred, so slice 3f remains unaccepted.
+    - >-
+      Login phase 8b remains blocked behind the 3f activation and proof gate.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "3"
+  repository:
+    head: "e65a45c700c57bcbfba7d254f28c31579ca200d1"
+    branch: hq/20260921
+    working_tree: this-event-only
+  pull_request:
+    url: https://github.com/mojisejr/mumate-infra/pull/19
+    merged_at: 2026-09-25T20:09:55+07:00
+    merge_commit: a8acbec2d7e4f758c36a8c6cfe7f4501b2612154
+  shadow_read_only:
+    infrastructure_revision: 466497497ef04af22b7f238c67bd62dc8a7a09d7
+    fe_image: ghcr.io/mojisejr/mootech-fe:08285cca7f69ffa28d32eb8c8b6388811d161dda-staging
+    fe_status: healthy
+    health: 200-db-ok
+
+unresolved:
+  - >-
+    Host activation and the bounded unhealthy-condition proof require an explicit
+    owner go because they change shadow runtime state.
+  - The exact first stalled LINE callback stage is still unknown and waits for login phase 8b.
+
+next_action:
+  action: >-
+    On explicit owner authorization, pull the merged infrastructure revision onto
+    the shadow host without changing image tags, verify the timer sees the new
+    recovery script, induce one bounded FE-only unhealthy condition, and prove
+    one recovery, no loop, health 200, and a subsequent safe read before closing 3f.
+  acceptance_check:
+    - The host reports the merged infrastructure revision and existing FE image tag.
+    - The controlled incident produces at most one FE recreate and later healthy observation.
+    - No traffic, production, database data, provider, or login identity mutation occurs.

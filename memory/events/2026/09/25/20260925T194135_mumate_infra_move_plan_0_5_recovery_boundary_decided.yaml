@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T194135_mumate_infra_move_plan_0_5_recovery_boundary_decided
+type: decision
+recorded_at: 2026-09-25T19:41:35+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Amend the paused infrastructure plan to own the bounded recovery proof for a
+    running-but-unhealthy FE database client, without resuming the migration.
+  scope:
+    - Plan revision 0.5 and planned slice 3f recovery boundary.
+    - Recovery acceptance criteria required before the login lane retries shadow acceptance.
+  out_of_scope:
+    - Executing slice 3f, any host or Compose mutation, deployment, traffic, DNS,
+      production, migration, provider setting, secret value, or login-flow retry.
+
+outcome:
+  status: decided
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      The owner approved adding a narrow, planned slice 3f after evidence showed
+      health detection reports the FE wedge but does not restore service.
+    - >-
+      The plan keeps the infrastructure workstream paused and assigns it only the
+      runtime recovery boundary. Login-specific callback timing and merge proof stay
+      with mumate-login-identity-001.
+  not_completed:
+    - >-
+      No recovery mechanism is chosen or implemented. The planned slice needs an
+      explicit execution decision before any external or application change.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "3"
+  repository:
+    head: "48c414f59d8a62d731196e23a7962086e2dfa01e"
+    branch: hq/20260921
+    working_tree: plan-amendment-and-this-record
+  prior_observation: memory/events/2026/09/25/20260925T193259_mumate_login_identity_shadow_callback_db_wedge_observed.yaml
+
+unresolved:
+  - The mechanism must prove recovery without creating broad shared-database load.
+  - A manual FE recreate may restore the surface but is not evidence of a durable recovery design.
+  - Existing paused slice-3 items and the migration flip remain paused.
+
+next_action:
+  action: >-
+    Keep this workstream paused until the owner explicitly authorizes bounded 3f
+    execution, after a proposed mechanism and its deterministic fault proof are reviewed.
+  acceptance_check:
+    - Wake identifies the plan at revision 0.5 without changing its paused state.
+    - No host, container, secret, provider, traffic, or production state changed for this decision.

@@ -1,0 +1,149 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T103730_mumate_infra_move_cold_entry_for_3c_before_clear
+type: closeout
+recorded_at: 2026-09-24T10:37:30+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Cold entry for step 3c. The owner is clearing the session before starting
+    it, so this record carries everything a fresh session needs to run the
+    rebuilt-shadow parity smoke without re-deriving anything: what the shadow
+    runs now, what 3c will build it from, who does which step, how to diff the
+    Vercel environment without taking a checkout another lane holds, and how
+    the FE slot is handed to the login lane afterwards.
+  scope:
+    - The state of every checkout, the host, and the churn gate at 10:37 +07 on 2026-09-24.
+    - The step plan for 3c with the owner's parts marked, and the two method decisions taken before the clear.
+    - Housekeeping done in this session that a later reader would otherwise wonder about.
+  out_of_scope:
+    - Starting 3c. It is not started; it needs the owner's own go under the quiet gate, re-verified at the moment it starts.
+    - mumate-control-room-ops-001, which is complete, and mumate-login-identity-001, which is another session's lane.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      The operations workstream this lane waited on is finished:
+      mumate-control-room-ops-001 is complete at plan 0.2 (final closeout
+      20260924T102700). The control room now posts a readable Discord embed on
+      state change with a phone push through Grafana IRM, has the dashboard
+      "mumate ops", and is reached over the tailnet - public port 22 no longer
+      exists on the firewall (inbound is tcp/80, tcp/443, udp/443 only).
+      Practical consequence for this lane: the agent reaches the host as
+      `ssh deploy@mumate-2` (Tailscale SSH, no key, no public address) and
+      reads Grafana through env/grafana-read.env on the Mac; the three
+      emergency doors are in runbooks/03-new-host.md.
+    - >-
+      Checkout survey at the time of this record - ciel-os on hq/20260921 at
+      3351929 clean (shared with other sessions; commit own paths only);
+      mumate-infra on main 768c71a clean, which is also what the host runs at
+      /opt/mumate; mootech-be on main 0705378 clean, the SHA the shadow runs;
+      mootech-fe held by mumate-login-identity-001 on
+      feat/mumate-login-identity-s1 91a2f1b clean, plus a second worktree
+      lamun-585-colleague on feat/585-colleague-multi; bazi-sft-dataset
+      detached at 60c05f0 with a second worktree bazi-testenv on pdf-dev at
+      5a501b2 (stale). No worktree needs to be created or moved for 3c.
+    - >-
+      Housekeeping with the owner's go - the untracked marker
+      .claude/INCUBATED_BY in the bazi-sft-dataset checkout was removed, which
+      is why that checkout now reports clean and why this lane no longer shows
+      "unverified work in bazi-sft-dataset" in wake. Its content is preserved
+      here verbatim so nothing is lost - "oracle: bongbing-oracle / date:
+      2026-07-10 / source: https://github.com/mojisejr/bazi-sft-dataset /
+      branch: pdf-dev / note: MuMate bazi - delegate จาก o (opilot). BRANCH
+      หลัก = pdf-dev เท่านั้น (main เก่า +200 commits). long-term team dev."
+      The owner said to commit it so the oracle chapter closes; the agent
+      removed it instead of opening a pull request against the team's
+      repository, because the file is a dead marker from a tool the owner no
+      longer uses and committing it would cost the team a review for no
+      benefit. Its one useful fact - that pdf-dev is the authoritative branch
+      and main is far behind - is already recorded across this lane. If the
+      owner would rather have it in the repository, a one-file pull request
+      against pdf-dev restores it.
+  not_completed:
+    - 3c itself. Not started, and not to be started without the owner's own go given to the session that runs it.
+    - The payment callback item of DoD 3c still waits for a test-mode webhook from the launch team; if it has not arrived when the rest of 3c passes, record it as unproven on the shadow and carry it into the flip preconditions rather than holding the slice open.
+  evidence_of_limits:
+    - >-
+      The quiet gate is a moment-in-time fact, not a standing one. At 10:37
+      +07 today it was open - mootech-fe origin/main 7e22f54 last committed
+      2026-09-23 18:06 +07, bazi-sft-dataset origin/pdf-dev 722cdf1 last
+      2026-09-23 19:00 +07, mootech-be 0705378 unchanged since 2026-09-19 -
+      but the launch team merges during the working day, so the next session
+      must re-read it with `gh api repos/mojisejr/<repo>/commits/<branch>`
+      (which touches no checkout) at the moment it starts, not trust this line.
+    - >-
+      The Vercel environment diff needs a directory linked to the Vercel
+      project, and the only linked directory for mootech-fe is the checkout
+      the login lane holds. Method decided with the owner before the clear -
+      copy .vercel/project.json into a scratchpad directory, run the vercel
+      CLI there, report only variable names added, removed or changed (never
+      values), then delete the directory. It touches no checkout. The
+      alternative, if production values on disk are unwanted even briefly, is
+      for the owner to read the variable list from the Vercel dashboard.
+    - >-
+      The shadow's FE slot is promised to mumate-login-identity-001 after this
+      smoke, by the owner's ordering decision. Its before-state is FE
+      921f449-staging, BE 0705378, BAZI 911c87a-staging; when 3c hands the
+      slot back, tell session ciel-os-d9 the exact FE_TAG left behind so it
+      replaces that before-state. FE has no scheduler (Vercel crons are absent
+      in the container, BE MORNING_CRON_ENABLED=false), so their FE image can
+      run during the overnight no-duplicate-jobs observation without affecting
+      what be and bazi prove.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: "3351929042094a84fe628aa966c728286d754cd6"
+    branch: hq/20260921
+    working_tree: this-event-only-before-this-record
+    pull_request: none-until-hq-round-close
+  application:
+    mumate-infra: "main 768c71a = host /opt/mumate"
+    mootech-fe: "shadow runs 921f449-staging; origin/main 7e22f54 (97+ commits ahead of the shadow's build) = what 3c builds from"
+    mootech-be: "0705378 on the shadow and on origin/main - unchanged, no rebuild needed"
+    bazi-sft-dataset: "shadow runs 911c87a-staging; origin/pdf-dev 722cdf1 = what 3c builds from"
+  host_state:
+    ops_status: "be/fe/bazi all ✅; caddy ok; alloy ready; tailscale 100.120.15.24; disk 11%; mem 1093/3915MB; mumate-health.timer active"
+    access: "ssh deploy@mumate-2 over the tailnet; no public port 22"
+  step_plan_for_3c:
+    - "1 (agent): re-verify the quiet gate from GitHub; pull /opt/mumate if behind; record the exact SHAs to be built."
+    - "2 (agent): Vercel env diff by the scratchpad method above; report names only; stop and ask if anything material changed."
+    - "3 (OWNER): run the container-build workflow, target staging, push true, in mootech-fe at main 7e22f54 and in bazi-sft-dataset at pdf-dev 722cdf1 - both repositories have .github/workflows/container-build.yml; the agent cannot dispatch it."
+    - "4 (agent): bin/deploy.sh FE_TAG=<sha>-staging BAZI_TAG=<sha>-staging --profile full on mumate-2; deploy.sh auto-rolls back to .env.last-good if unhealthy within 120 s, and the health timer will post a red Discord embed if it does."
+    - "5 (both): parity smoke per DoD 3c - login, FE→BE, FE→Bazi, storage, maintenance bypass, representative v1 and v2 paths, database host is Supabase, every container reports the tested SHA."
+    - "6 (agent): checkpoint event; tell ciel-os-d9 the FE_TAG the slot is left on so the login lane can take it."
+    - "7 (overnight, then agent): one night of be and bazi logs proving no duplicate reminder, reconciliation or daily Bazi job; then the slice-3 closeout with the flip preconditions."
+  flip_preconditions_to_report_at_slice_3_closeout:
+    - "The launch team's merge rate over the previous two days, whether a 24-hour release freeze is agreed, and how the final Bazi commit will be named given that pdf-dev receives direct pushes without pull requests."
+    - "mumate-login-identity-001 - FE-native registration is dark today (constants/api/endpoint.ts:55 still points register_or_login at the BE), so the smoke's meaning holds; it changes at that lane's flip slice, and the shadow's FE build SHA depends on whether its work has merged."
+    - "Vercel Preview resolves to the production Supabase database (found by the login lane on 2026-09-24) - any branch push creates a preview deployment wired to production data; gate this before the flip, not after."
+    - "mootech-fe origin/main fails its own verify-architecture pre-push gate (three useCurrentUser imports under pages/v2 and one arbitrary Tailwind class in AppHeader default props), so any push from that repository needs --no-verify, which silently skips gitleaks as well - run gitleaks by hand before such a push."
+    - "The observability base and tailnet access from mumate-control-room-ops-001 are live; that side of the preconditions is satisfied."
+  previous_record: memory/events/2026/09/21/20260921T085647_mumate_infra_move_ssh_locked_out_by_own_allowlist_lesson.yaml
+  related_workstreams:
+    - "mumate-control-room-ops-001 - complete at 0.2 (final closeout 20260924T102700)"
+    - "mumate-login-identity-001 - active, shares project mootech-fe, holds that checkout, waits for the FE slot"
+
+unresolved:
+  - 3c awaits the owner's own go with the gate re-verified at that moment.
+  - Payment test webhook from the launch team.
+  - Vercel Preview pointing at the production database; the mootech-fe pre-push gate failing on origin/main.
+  - Whether the removed .claude/INCUBATED_BY should instead be committed to bazi-sft-dataset pdf-dev as a one-file pull request - the owner's call.
+  - Carried to a future workstream from the completed ops lane - the passive watcher, Beszel plus Dozzle behind the tailnet, backup and restore proven on mumate-2, DigitalOcean Droplet Backups, reboot-required and fail2ban in ops-status, the expiry-date warning, ufw's public 22 on the host, and the env/README.md expiry dates.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    A fresh session runs `bun run wake`, reads this record, and waits for the
+    owner's go on 3c. On go, it starts at step 1 of the step plan above and
+    reports before each step that changes the shadow.
+  acceptance_check:
+    - 3c starts only on the owner's word and only while the two-hour quiet condition still holds at that moment, re-read from GitHub rather than from this record.

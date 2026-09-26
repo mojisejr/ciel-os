@@ -1,0 +1,96 @@
+schema_version: ciel.event.v0.1
+id: evt_20260922T050500_smc_v2_app_slice7_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-22T05:05:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. Slice
+    7 (the proposal's 6b): the Windows cross-check as a script and a CI job,
+    so a broken cfg(windows) branch fails on the pull request and not on the
+    owner's Windows PC.
+  scope:
+    - Slice 7 of plan revision 0.4, delivered as smc-v2 draft pull request 7 on feat/windows-cross-check from main 8c68e8d.
+  out_of_scope:
+    - Slices 8-10; the merge, which is the owner's.
+
+outcome:
+  status: ready-for-owner-review
+  completed:
+    - >-
+      scripts/check-windows.sh (smc-v2 e987fcc): cargo check and cargo
+      clippy -D warnings, --all-targets, on x86_64-pc-windows-msvc for
+      cu12 (COM ports through serialport), license (MachineGuid from the
+      registry) and workflow - the crates that build for Windows without
+      the C toolchain. store, ops, cabinet, api and app stop at
+      libsqlite3-sys (SQLite compiled with cl.exe) and wait for slice 10.
+      Neither command links, so no MSVC linker is needed; the target comes
+      from rust-toolchain.toml. Passes on main from the Mac in about 3 s
+      warm. README gained the one line.
+    - >-
+      Negative proof, shown once and reverted, not in the branch: a
+      #[cfg(target_os = "windows")] function in crates/license returning a
+      &str as u32 passes cargo test and the native clippy (the function is
+      never compiled there) and fails the script with E0308, exit 101.
+    - >-
+      .github/workflows/windows-cross-check.yml: the first CI job in
+      smc-v2; runs the script on every pull request and on main from
+      ubuntu-latest, toolchain and targets installed by rustup from
+      rust-toolchain.toml, Swatinem/rust-cache. First run on pull request 7:
+      run 35660317193, job check, success, 2026-09-21T22:00:05Z to
+      22:00:56Z (51 s), "Windows cross-check passed for cu12, license,
+      workflow".
+    - >-
+      Correction in the same HQ commit: the two records of this morning
+      (slice 6 merged, slice 7 authorized) were stamped 08:30 and 08:31
+      while the clock read 04:50; renamed to 20260922T045000 and
+      20260922T045100 with matching ids and recorded_at, content unchanged.
+  not_completed:
+    - The merge (owner). Slices 8-10.
+  boundaries:
+    - No crate code changed; the deliberately broken function was reverted before the commit.
+    - CI runs only this script; fmt, native clippy and the tests stay local until the simulator binary and the Tauri system libraries are available on a runner (not in this slice's scope).
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "7"
+  repository:
+    head: "2935b9c"
+    branch: hq/20260921
+    working_tree: this-event-and-the-two-renames-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "e987fcc"
+    branch: feat/windows-cross-check
+    base: "8c68e8d"
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/smc-v2/pull/7
+    ci_run: https://github.com/mojisejr/smc-v2/actions/runs/35660317193
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/22/20260922T045100_smc_v2_app_slice7_authorized.yaml
+
+unresolved:
+  - The no-pop and left-open warn flags are not persisted by the tick (noted in pull request 6); the owner has not asked for a change.
+  - Door-label order on the physical cabinet; production keygen before the first sale; real hardware may change the state machine.
+
+next_action:
+  action: >-
+    The owner reviews and merges smc-v2 pull request 7; the agent records
+    the merge and syncs the checkout. Slice 8 (6c, the five design
+    decisions applied) is next and needs nobody at the machine except for
+    the owner's look at the mark; it starts under the standing direction
+    unless the owner says otherwise.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 at revision 0.4, phase 7, with this record as its latest event and pull request 7 and the CI run named in it.

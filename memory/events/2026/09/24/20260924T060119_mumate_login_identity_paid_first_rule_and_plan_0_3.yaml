@@ -1,0 +1,283 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T060119_mumate_login_identity_paid_first_rule_and_plan_0_3
+type: decision
+recorded_at: 2026-09-24T06:01:19+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record owner decision 6, the production measurement that contradicts a
+    number revision 0.2 stated, and the linking-surface constraints found by
+    read-only reconnaissance. PLAN.md is advanced 0.2 -> 0.3 in the same commit.
+  scope:
+    - Owner decision 6 and the plan revision it required.
+    - The 1,443-member measurement and the mechanism behind it.
+    - Slice 3 design constraints and the corrected callback path.
+  out_of_scope:
+    - Push, pull request, traffic flip, any production statement. All the owner's.
+    - Slice 3 implementation. Not started.
+
+outcome:
+  status: decided
+  parallelism: approved
+  slice: "2"
+  completed:
+    - >-
+      OWNER DECISION 6 (2026-09-24, his own turn). Paid members are the thing
+      being protected; a paid member harmed by any change here is fixed case by
+      case. A member who has not paid and breaks is an acceptable cost. Cleanup
+      that is not urgent is not done. The goal is that a new member can link
+      their own account and an existing ACTIVE member can come in, use the
+      product and link. Prefer whatever is not risky and not dangerous; the
+      system must move forward and the user flow must work.
+    - >-
+      THE NUMBER 0.2 GOT WRONG. 0.2 put the cost of no-join-by-email at 98
+      members, measured over one class only - blank provider holding a "ya29"
+      access token - and slice 2 deleted those. Measured read-only by the owner
+      2026-09-24 the real exposure is 1,443 members holding NO usable Google row,
+      out of 2,253 google rows of which only 466 can still identify anyone.
+    - >-
+      THE 1,787 UNUSABLE ROWS ARE THE SAME 1,787 SLICE 2 RESPELLED from GOOGLE to
+      google. The migration was correct and changed no behaviour, but it
+      normalised the spelling of rows that remain unusable, so they now look
+      healthy to any query that checks spelling. Recorded so a later reader does
+      not conclude the cleanup covered them.
+    - >-
+      WHY THEY EXIST AND WHY NO SQL REPAIRS THEM. mootech-be
+      src/user/user.service.ts registerOrLogin looks a member up by id_token,
+      falls to email discovery on a miss, and then calls createUserProvider with
+      the CURRENT login's token - it adds a row and never repairs the old one.
+      Before token.providerId = account.providerAccountId landed (last old-style
+      row 2026-06-19) the value sent as identity was a short-lived Google access
+      token, so every login minted one more dead row for the same human. A stable
+      subject cannot be derived from a dead token; it is only learned when the
+      member authenticates again.
+    - >-
+      THE COROLLARY THAT MAKES DECISION 6 COHERENT. One login through the legacy
+      path heals a member completely, because the same email-discovery branch now
+      writes the stable subject. The 1,443 are therefore not members the system
+      broke - they are members who have not logged in with Google since roughly
+      2026-06-19. The exposed group IS the inactive group by construction, while
+      the active members the owner wants served heal themselves for as long as
+      the legacy path serves traffic.
+    - >-
+      PLAN.md ADVANCED 0.2 -> 0.3, execution phase 1 -> 3. Adds revision 0.3
+      section, decision 6, the measurement, ten slice-3 design constraints, eight
+      DoD 3 additions, the slice-5 paid-member precondition, and the corrected
+      DoD 2.
+    - >-
+      DoD 2 CORRECTED with owner authority. It said "on an anonymized local
+      restore", which is unachievable because testenv/scripts/anonymize.sql
+      blanks user_provider.id_token on every row - the exact column the unique
+      index is built on. It now reads "on a SYNTHETIC seed that reproduces the
+      production shape at production scale", which is what the slice was actually
+      proven on. Two sessions deliberately left this untouched rather than
+      advance it quietly; the owner asked for the correction on 2026-09-24.
+
+  not_completed:
+    - >-
+      NOTHING IS PUSHED. The mootech-fe branch push was ATTEMPTED and blocked -
+      see the pre-push finding below. ciel-os is unpushed at 25 commits before
+      this one.
+    - The flip is undecided. Slice 3 is not started. No production statement was run by this agent.
+    - >-
+      The paid-member measurement is WRITTEN BUT NOT RUN. The agent cannot reach
+      production; the two statements are handed to the owner.
+
+  evidence_of_limits:
+    - >-
+      A read-only production query to find the owner's own accounts was REFUSED
+      by the harness classifier, as was "git push --no-verify". Both were handed
+      to the owner as pasteable commands instead. No workaround was attempted.
+    - >-
+      The length(id_token) <= 32 criterion that defines the unusable class is
+      this lane's, not the codebase's. It is well supported - a Google subject is
+      a ~21-digit string, and the owner's own five rows split 21 against 253, 336,
+      338, 338 - but it is an inference, and the counting statement inherits it.
+
+what_this_decision_does_and_does_not_authorize:
+  why_slice_2: >-
+    This record is bound to slice 2 because slice 2 is the slice it actually
+    acts on: it CLOSES that slice's scope, stating that no further cleanup of the
+    unusable Google rows is authorized, and it corrects that slice's DoD 2. It is
+    not bound to slice 3 because slice 3 is NOT opened by it.
+  parallelism: >-
+    outcome.parallelism approved is repeated because the grant is real and
+    standing, not because repeating it makes wake read green. The owner approved
+    this lane's overlap with the MuMate infrastructure and CU12 sessions when
+    slice 1 opened, it is written into PLAN.md's authority section, and he
+    exercised it again on 2026-09-24 by deciding that the infrastructure lane is
+    told before this lane pushes. Without this line wake reports
+    owner-confirmation-required, which would tell a fresh session the owner has
+    not blessed the overlap - the opposite of what happened.
+  slice_3_is_not_authorized: >-
+    Slice 3 remains unopened and requires its own owner decision event, as
+    PLAN.md's sequencing section demands of every slice after slice 1. The owner
+    asked for the plan to be revised and laid out with its DoD; he did not say
+    start it. Execution phase 3 with state idle means slice 3 is the next slice
+    and is NOT running. Do not read this record's "authorized" lifecycle as
+    permission to write slice-3 code.
+  what_he_did_authorize: >-
+    Decision 6 itself, the plan revision and the DoD 2 correction, the branch
+    push (which he runs himself after the harness refused --no-verify), telling
+    the infrastructure lane first, and letting the infrastructure lane's 3c take
+    the staging slot before this lane's image.
+
+the_pre_push_finding:
+  what: >-
+    The push was attempted and refused by .githooks/pre-push. verify-architecture
+    reported four violations: pages/v2/fortune/sage.tsx:15,
+    pages/v2/shop/checkout.tsx:13 and pages/v2/shop/qrcode.tsx:7 import
+    useCurrentUser inside pages/v2, and features/v2-shell/components/AppHeader.tsx:185
+    carries an arbitrary Tailwind class in default props.
+  whose_they_are: >-
+    Not this lane's. All four exist verbatim on origin/main and this branch
+    touches none of those files, verified file by file. origin/main currently
+    does not pass its own pre-push gate, so any branch pushed from this
+    repository hits the same four.
+  what_passed_anyway: >-
+    lint, npm test at 2734 passed / 171 skipped, the tsx lane at 6 files, and
+    gitleaks at 0 findings across the 12 commits - gitleaks was run by hand
+    afterwards because verify-architecture dies before the hook reaches it, so
+    the secret scan would otherwise have been skipped silently.
+  not_fixed_because: >-
+    The four files belong to other lanes and this plan forbids editing code
+    another lane owns. The owner chose to push with --no-verify himself.
+
+slice_3_constraints_found_by_reconnaissance:
+  redirect_uri_unblocked: >-
+    The owner confirmed 2026-09-24 that he DOES hold the right to add redirect
+    URIs and added them. PLAN 0.2's "team dependency" is superseded for the
+    redirect URI. The LINE email-scope request is a separate permission, remains
+    a team dependency, and slice 3 does not need it.
+  callback_path_corrected: >-
+    This lane told the owner to register /api/v2/account/link/line/callback and
+    he did. THAT PATH IS WRONG and the correction is owed to him. guardV2 is open
+    post-launch, but the MAINTENANCE gate allowlists /api/auth and NOT
+    /api/v2/account/*, so with MAINTENANCE_MODE=on a provider callback is
+    rewritten to /maintenance and answers HTTP 200 - the provider reads success
+    while the link never happens. Identical to the failure the Omise webhook
+    exemption exists to prevent. Routes belong at /api/auth/link/*.
+  session_fallback_is_a_takeover_primitive: >-
+    resolveSessionUserId falls back to cookie-mumate-id, which is client-settable
+    and not httpOnly. Acceptable for reads; for a route that attaches a login
+    credential to an account it is an account-takeover primitive. Slice 3 needs a
+    session-only variant; none exists.
+  google_inside_the_line_webview: >-
+    Google OAuth is hard-blocked in LINE's in-app browser and must be escorted to
+    an external browser, which carries neither the v2_access cookie nor the
+    NextAuth session cookie. A Google link started from inside LINE arrives at
+    the callback with no signed-in session. The codebase has no answer. Decide
+    before implementation, not in test.
+  net_new_security_code: >-
+    Nothing in the repository mints or verifies an OAuth state, a PKCE verifier
+    or an OIDC nonce, and nothing verifies an id_token signature, iss, aud or
+    exp. lib/calculator/nonce.ts is the right shape to copy but binds only a
+    timestamp. pages/api/instagram/callback.ts checks no state at all and is a
+    cautionary example, not a model. This is the largest new-code item in slice 3.
+  cookie_rules_already_paid_for: >-
+    The state cookie must be SameSite=Lax, Secure in production, HttpOnly.
+    SameSite=None is proven to be dropped by the LINE webview - that took every
+    provider's login down on 2026-09-22. The LINE authorize URL must carry
+    disable_ios_auto_login=true or iOS app-switches mid-authorize and destroys
+    the state cookie. Do not use the broader disable_auto_login; tried, rejected.
+  ok_false_is_the_sign_out_flag: >-
+    Both callers of the register-login response clear member cookies and call
+    signOut on ok === false, while the House B convention under pages/api/v2
+    returns { ok: false } on every failure. A link route that follows House B
+    blindly logs the member out mid-link.
+  connected_screen_is_a_lie_by_construction: >-
+    ConnectedScreen.tsx:120 decides "connected" by string-equality against the
+    current session's provider, so a second linked provider still renders as not
+    linked however well the backend works. No endpoint returns the caller's
+    linked providers; /api/profile does not.
+
+how_paid_and_active_are_measured:
+  login_at_is_not_a_login_clock: >-
+    "user".login_at is set only in the first-time create branch
+    (mootech-be src/user/user.service.ts:515); the three refresh-on-login sites
+    at :586, :641 and :700 are commented out, and the FE store that would refresh
+    it is not wired to anything. It is effectively the account-creation
+    timestamp. Reading it as recency gives a wrong answer with no error.
+  closest_true_login_clock: >-
+    user_provider.update_at, restamped on each successful non-LINE login carrying
+    an email (src/user-provider/user-provider.service.ts:111-126). Migration 0034
+    deliberately did not restamp it, so it is uncontaminated. Corroborate with
+    log_calculate."createAt", log_activity."createAt", user_matching.create_at -
+    all 'YYYY-MM-DD HH:mm:ss' Asia/Bangkok strings that sort lexically.
+  paid_spans_six_tables: >-
+    v2_payment (APPROVED and failure_code not 'gateway_reversed'), payment
+    (APPROVED), member_pay_as_use (total > 0, never balance - that starts at 3
+    free credits), book_order (PAID or DONE), member_payment (plan_code MEMBER),
+    member_subscription (tier_code PLUS or PRO). QI, SINSAE and BOOK purchases
+    write NO member_* row, so a membership-only test drops every one of those
+    buyers.
+  comps_cannot_be_separated: >-
+    member_payment is written both by a real approved payment and by a promo code
+    redemption with an empty payment_id, and the table has no payment_id column.
+    The measurement therefore reports money-provably-moved separately from the
+    broader set including comps. Protect the broad set.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: "172f541"
+    branch: hq/20260921
+    working_tree: this-event-and-plan-only
+    ahead_of_origin_main: 25
+  application:
+    repository: mootech-fe
+    head: "91a2f1b8b0484f7582012e40c63be8537c72b6e2"
+    branch: feat/mumate-login-identity-s1
+    ahead_of_origin_main: 12
+    behind_origin_main: 0
+    working_tree: clean-no-remote-ref-nothing-pushed
+    diff_shape: 11 files, 1780 insertions, 0 deletions; 10 new files, only vitest.config.mts modified (+3)
+  the_route_is_still_dark:
+    constant: "constants/api/endpoint.ts:55 register_or_login still backendURLGenerator('/user/register-login')"
+    only_caller: "constants/api/api-user-register-or-login.ts:22"
+    switches: "none - no flag or environment variable selects between the BE and FE route"
+  verification:
+    check: "bun run check exit 0, 44 pass / 0 fail across 8 files"
+    coordination: "mumate-infra-move-001 holder notified before the push attempt, per owner decision 5; replied with no objection"
+
+unresolved:
+  - >-
+    The paid-member measurement has not been run. Two read-only statements are
+    written and handed to the owner; the numbers are unknown until he runs them.
+  - >-
+    Whether production is currently serving logins. If it is gated, the 1,443
+    cannot shrink on its own and the "they heal themselves" property does not
+    operate. curl showed /v2/login answering 200 but the maintenance gate uses
+    rewrite, which also answers 200, so the check was inconclusive.
+  - >-
+    The owner is himself a collision case - Google b54b765a-c01b-471f-bf7c-0c2a1a448bdd
+    holds the payments and four unusable rows plus one usable one, while LINE
+    f948bb56-f930-4fb3-be3f-5b328ea1beca is a separate member with no email. He
+    can test the collision path with his own accounts but not the ordinary path;
+    that needs a provider account that has never signed in.
+  - Slice 3's answer for a Google link started inside the LINE webview, where no session cookie survives.
+  - The four inherited verify-architecture violations on origin/main, owned by other lanes.
+  - >-
+    Vercel Preview points at the production database - .env.preview.local and
+    .env.production.local resolve to the same Supabase pooler host and database.
+    Carried by mumate-infra-move-001 as well; it outlives this lane and should be
+    gated before the flip.
+  - Carried unchanged - the LINE email scope, the non-transactional wallet and ledger write, the live `|| '/'` bug in pages/login/index.tsx line 42, the 98 members routed to support with nobody scheduled, and the three .assets/mumate dumps holding real member identifiers.
+
+next_action:
+  action: >-
+    The owner runs the two read-only statements and the branch push. Then slice 3
+    opens on the corrected callback path with a decision recorded first for the
+    Google-inside-LINE-webview case and for the session-only identity rule. The
+    flip stays undecided and is gated on the paid-member precondition in PLAN 0.3
+    slice 5.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - The topic branch still has no remote ref until the owner pushes, and no production endpoint constant is flipped.

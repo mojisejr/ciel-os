@@ -1,0 +1,220 @@
+schema_version: ciel.event.v0.1
+id: evt_20260925T101720_mumate_login_identity_slice3_complete_handoff_before_clear
+type: closeout
+recorded_at: 2026-09-25T10:17:20+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Slice 3 is done. Both directions now link against real providers, every
+    refusal that can be reached by hand has been reached, and what remains
+    unexercised is named rather than glossed. Written as a hand-off: the owner
+    clears after this, so a cold session must be able to pick the lane up from
+    this file alone.
+  scope:
+    - The Google link, the last acceptance item slice 3 was waiting on.
+    - Everything slice 3 has now proven, and the four things it has not.
+    - An observation the owner made that is worth keeping and not worth fixing.
+    - The state a cold session needs.
+  out_of_scope:
+    - Slice 4 and 4b. Planned in 0.4, unauthorized, no code.
+    - The database-pool fault. Recorded separately today; not this lane's file.
+    - The flip, production, traffic, mumate-infra.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      GOOGLE LINKED, and it is the last thing slice 3 was waiting on. The callback
+      answered "Location: /v2/settings/connected?linked=google", and its query
+      carried iss=https://accounts.google.com with Google's real scopes - so
+      Google's RS256 path and its published key set were exercised against Google
+      itself for the first time. Until today that branch had never executed
+      anywhere: its only test was an HS256 token, which jose rejects on the
+      algorithm header before it resolves a key.
+    - >-
+      BOTH DIRECTIONS NOW WORK AGAINST REAL PROVIDERS. DoD 3's own sentence -
+      "Google-to-LINE and LINE-to-Google linking work" - is satisfied in full.
+      Google-to-LINE was proven at 07:00 ICT inside the LINE in-app browser on
+      Android; LINE-to-Google was proven in an ordinary browser, which is required
+      rather than incidental: linking Google inside the LINE webview is refused by
+      design under owner decision 7.
+    - >-
+      THE SEQUENCE PROVED FOUR MECHANISMS IN ONE PASS, three of them for free.
+      Unlinking Google removed all five of its rows and left LINE as the only
+      method, and the screen then rendered LINE as an un-unlinkable badge - the
+      last-method rule, proven at the surface rather than in a fixture. Re-linking
+      Google produced one fresh row. And a bare call to the callback with no query
+      at all answered link_error=state_missing, so that refusal is now proven
+      against a real request rather than only a test.
+    - >-
+      THE OWNER HAD TO ADD THE REDIRECT URI TO GOOGLE FIRST, and noticed it
+      himself before pressing the button. Worth recording because the failure it
+      would have caused - redirect_uri_mismatch - looks like a code fault and is
+      not one. The new URI is NEXTAUTH_URL + /api/auth/link/callback/google, which
+      is a DIFFERENT path from NextAuth's own
+      /api/auth/callback/google; both must exist or sign-in breaks.
+    - >-
+      A NOTE ON WHERE THE CONFIGURATION TRUTH LIVES. The staging value was read
+      from the running container, not from the checked-out copies, because the two
+      copies in .assets disagree with each other and with reality - one says
+      localhost:3000, the other a production hostname. For a value that must match
+      character for character, the running process is the only source worth
+      trusting.
+
+  not_completed:
+    - >-
+      iOS HAS NEVER BEEN EXERCISED. Every webview pass has been Android. The iOS
+      app-switch that disable_ios_auto_login=true exists to prevent is the specific
+      hazard, and an Android pass says nothing about it. This is the teammate's
+      pass before merge, already agreed.
+    - >-
+      COLLISION AT PRODUCTION SCALE. Proven against one real pair today; only the
+      flip reaches the population.
+    - >-
+      member_missing is unreachable without deleting a member row. Deliberately not
+      attempted; the case is not worth the risk.
+    - >-
+      The merge that made all of this possible is one hand-run SQL statement. No
+      member can do it. That is slice 4, still unauthorized.
+
+an_observation_the_owner_made:
+  what: >-
+    The profile avatar follows whichever provider was used to sign in. Sign in
+    with LINE and it is the LINE picture; sign in with Google and it is the Google
+    one. The owner decided it is not worth fixing now and asked for it to be
+    written down.
+  why_it_happens: >-
+    Slice 1 closed the avatar gap by refreshing user.picture_url from the
+    provider's own CDN on EVERY login, for every provider (commit 03c5dc1). That
+    was correct when a member had exactly one way in. Slice 3 has just made two
+    ways in normal, so the same rule now rewrites the picture on each sign-in and
+    it flips.
+  why_it_is_worth_keeping: >-
+    It is the first behaviour found where a slice-1 decision only becomes visible
+    because slice 3 succeeded. Nothing is broken and no data is lost - the rule is
+    doing exactly what it was written to do. But it is a preview of the class of
+    question slice 4 will raise repeatedly: when one member has two providers,
+    which one supplies the member's face, name, and email. Deciding it per-field
+    is a design conversation, not a defect report.
+  not_acted_on: No code change, no plan change. Recorded at the owner's instruction.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: "5e27b59"
+    branch: hq/20260921
+    working_tree: this-event-only
+    ahead_of_origin_main: 51
+    origin_main: "f58cc9c"
+    pushed: nothing
+  application:
+    repository: mootech-fe
+    local_head: "d43d582"
+    pushed_head: "49097ffc6dc29296b1115ff531660324d8a2c7eb"
+    branch: feat/mumate-login-identity-s1
+    working_tree: clean
+    pull_request: none
+    unpushed: >-
+      d43d582 is one commit ahead of the remote. It adds tests only and the shadow
+      does not run it.
+  deployed_to_shadow:
+    image: ghcr.io/mojisejr/mootech-fe:49097ffc6dc29296b1115ff531660324d8a2c7eb-staging
+    restore_point_if_the_slot_is_handed_back: FE 7e22f54-staging / BE 0705378 / BAZI 722cdf1-staging
+  observed_today:
+    google_to_line: "07:00 ICT, LINE in-app browser, Android, ?linked=line"
+    line_to_google: "?linked=google, ordinary browser, callback carried iss=https://accounts.google.com"
+    unlink_google: 200, removed all five google rows
+    last_method_rule: LINE rendered as an un-unlinkable badge while it was the only method
+    state_missing: proven by a real bare call to the callback
+    collision: "?link_error=owned_by_another, 04:55 ICT, against production rows"
+  google_console:
+    added: NEXTAUTH_URL + /api/auth/link/callback/google
+    staging_value_read_from: the running container, NEXTAUTH_URL=https://app.staging.mumate.co
+    warning: >-
+      Both .assets copies of that variable are wrong or stale. Read it from the
+      running process, never from a checked-out env file.
+
+for_a_cold_session:
+  what_this_lane_is: >-
+    MuMate members had one account per provider. This lane gives each member one
+    internal identity that can carry both Google and LINE, and moves
+    register-login from the backend into mootech-fe behind an unflipped seam.
+  where_it_stands: >-
+    Slices 1 and 2 accepted and applied. Slice 3 complete as of this record -
+    every acceptance item met except the ones named above. Slice 4 (the member
+    merges their own two accounts) and 4b (stop creating the second account) are
+    planned in revision 0.4 and NOT authorized; each needs its own decision event.
+    Slice 5, the flip, waits behind both under owner decision 10.
+  the_single_most_important_fact: >-
+    constants/api/endpoint.ts is still absent from this branch's diff. Everything
+    built here is DARK - no existing route changed behaviour and no real member has
+    ever touched it. Check that before believing anything else.
+  read_these_in_order:
+    - This record.
+    - 20260925T060135_..._plan_0_4_merge_is_the_goal.yaml - the four decisions that reshaped the plan.
+    - 20260925T100736_..._fe_wedged_on_one_db_connection.yaml - a fault that will arrive with the infra move.
+    - workstreams/mumate-login-identity-001/PLAN.md at revision 0.4.
+  hard_won_lessons_do_not_relearn_them:
+    - >-
+      LINE's web login signs its id_token with HS256 against the channel secret.
+      The ES256 keys it publishes belong to the LIFF/SDK flow. Reaching for them
+      cost a day.
+    - >-
+      A `type: decision` event with `outcome.status: recorded` authorizes NOTHING
+      and reports no error. It must say `decided`. Two events in this lane had it
+      wrong.
+    - >-
+      Three defects in two days were found by a person, none by a gate, and two of
+      the gates had been cited as evidence they were not: 2,945 specs green over a
+      verifier no test executed, and twelve real-Postgres proofs behind a variable
+      nobody exports.
+    - >-
+      The shadow and production share one database. Every staging login is a real
+      account event.
+
+unresolved:
+  - >-
+    Whether the owner accepts slice 3. The evidence is complete and this record
+    does not claim the acceptance.
+  - >-
+    DoD 4 says the merge moves "exactly one user_provider row". The owner's own
+    account held FIVE google rows, so it must read "every provider row of the
+    losing account". Correction agreed, not yet written into PLAN.md.
+  - >-
+    Nothing stops a member unlinking the provider they are signed in with, which
+    strands their own session until they sign in by the other method. Found while
+    planning today's sequence; no guard exists and none was added.
+  - >-
+    lib/db/index.ts runs the whole application on one database connection with no
+    recycling. Not this lane's file; most plausibly mumate-infra-move-001's.
+  - >-
+    iOS, Google's behaviour for a member who is not its owner, and the avatar
+    question above.
+  - >-
+    Carried unchanged - the mission-timing defect at ConnectedScreen.tsx:167-175,
+    connect_google in the engine, the three .assets/mumate/slice2-* dumps kept by
+    owner decision, the AWS bucket s3-ps-cdn parked by owner decision, and Vercel
+    Preview resolving to the production database.
+
+next_action:
+  action: >-
+    The owner accepts slice 3, or names what is missing. If he accepts, the next
+    executable step is the slice-4 decision event, carrying the DoD correction
+    about multiple provider rows. He also asked to return to the database-pool
+    fault as its own conversation. Nothing in this lane is waiting on another
+    session. Do not touch production, do not flip constants/api/endpoint.ts, do
+    not edit lib/db/index.ts or mumate-infra from this lane, and do not push
+    without his word.
+  acceptance_check:
+    - bun run check and bun run wake pass with no new validation error.
+    - Wake reports this lane authorized at plan revision 0.4.
+    - constants/api/endpoint.ts is still absent from `git diff origin/main..HEAD --name-only`.

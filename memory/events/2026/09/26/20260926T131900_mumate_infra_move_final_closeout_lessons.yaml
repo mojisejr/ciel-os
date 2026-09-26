@@ -1,0 +1,202 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T131900_mumate_infra_move_final_closeout_lessons
+type: closeout
+recorded_at: 2026-09-26T13:19:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Final closeout. This workstream set out to move MuMate from Vercel and
+    Render to DigitalOcean and is closing at slice 3 by the owner's decision. It
+    delivered a complete, proven replacement stack and never moved a domain.
+    This record says what exists, what it is worth, what it cost, and what a
+    future reader must not re-derive.
+  scope:
+    - What slices 1 to 3 actually delivered, and the evidence for each.
+    - What was not delivered and where its criteria live.
+    - The lessons, including the ones that were corrections to this lane's own claims.
+  out_of_scope:
+    - Slices 4 and 5. Their criteria stay in PLAN.md and their preconditions in the closing decision.
+    - The login lane's work, which used this lane's shadow and closed on its own.
+
+outcome:
+  status: ready-for-owner-merge
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      SLICE 1 - all three services run as containers built from the launch
+      team's own production branches, with truthful health surfaces, no
+      build-time secrets in images, pinned runtimes, and manual container-build
+      workflows in mootech-fe and bazi-sft-dataset that tag images by exact SHA
+      and never by latest.
+    - >-
+      SLICE 2 - a private mumate-infra control room: one sgp1 Droplet, Caddy,
+      Compose, bin/ scripts for deploy, rollback, backup, restore-verify,
+      logs and ops-status, systemd timers, and Thai runbooks. Reached over the
+      tailnet with Tailscale SSH after public port 22 was removed from the
+      firewall, with three emergency doors exercised for real before the old
+      door was closed.
+    - >-
+      SLICE 3a-3b - the shadow stack running behind app, api and
+      bazi.staging.mumate.co against the production Supabase project with every
+      scheduler disabled, plus an observability base: Caddy request ids threaded
+      browser to app, bin/logs.sh, a health timer posting readable Discord
+      embeds, DigitalOcean alert policies, and Grafana Alloy shipping logs with
+      the known personal-data lines redacted before they leave the host.
+    - >-
+      SLICE 3c - parity smoke on a shadow rebuilt from the launch team's current
+      revisions. Seven of ten DoD items proven, including the one every earlier
+      record expected to end unproven: PAYMENT CALLBACK. The owner added a second
+      Beam webhook endpoint beside production's, put its own HMAC key on the
+      shadow, and paid a real PromptPay charge; the shadow's access log shows the
+      same gate answering 401 to two forged signatures and 200 to Beam's own
+      delivery, with the whole purchase walking app.staging.mumate.co and never
+      touching production. The endpoint was disabled and the key restored as soon
+      as the proof existed. Storage and maintenance-bypass were deferred and the
+      v1 leg was dropped by the owner because v1 is not used.
+    - >-
+      SLICE 3d - Tailscale SSH and MagicDNS made the canonical operator path,
+      with the public reserved IP demoted to a documented emergency door.
+    - >-
+      SLICE 3e - control-room correctness: wait_healthy repaired in bin/_lib.sh,
+      LINK_STATE_SECRET documented in env/fe.env.example, the host brought level
+      with origin/main so its runbooks carry the same emergency doors, and DoD 3c
+      item 9 proven from one overnight of logs - no duplicate reminder,
+      reconciliation or daily Bazi job, with the disabled reminder's own refusal
+      quoted rather than inferred from silence.
+    - >-
+      SLICE 3f-3g - the FE database-client recovery work and a rehearsal
+      database the shadow could serve from, which let the login lane walk a real
+      member-data merge without staking real members' data. Both were delivered
+      by other sessions in this lane; the arena has since been torn down and the
+      shadow restored to production.
+    - >-
+      OUTSIDE THE PLAN BUT INSIDE THE LANE - mootech-fe pull request 814. A
+      database hang used to produce no answer at all: the health route awaited
+      its probe unbounded, so a rejection reached its 503 and a hang did not, and
+      the test that guarded it faked failure only as a rejection. The route now
+      bounds the probe, the client is a singleton in production where it had
+      never been one, and idle_timeout is set. Proven by the pair that matters -
+      the new test times out after 15 s against the old handler and passes in
+      126 ms against the new one - and then proven again on a real container,
+      where a wedged client produced a 503 in 5.010 s and an unhealthy mark where
+      hours earlier the same condition had produced silence.
+  not_completed:
+    - >-
+      THE MOVE ITSELF. Slice 4, the two-hour maintenance flip, never ran. The
+      public domains still serve from Vercel and Render. Slice 5, observation and
+      provider retirement, therefore never began either. Both sets of criteria
+      stay in PLAN.md and their preconditions are enumerated in the closing
+      decision recorded alongside this event.
+    - >-
+      The FE container's recovery gap - 814 made a wedged client visible, not
+      recoverable - and the thin off-platform backup layer. Both parked by the
+      owner, both written down.
+
+lessons:
+  - >-
+    A CAPABILITY PROVEN IS NOT A CAPABILITY DEPLOYED. This lane built and
+    evidenced an entire replacement stack and moved nothing. That is not a
+    failure of the work; it is the shape of the work. Anyone reading the
+    evidence here could mistake it for a completed migration, and the closing
+    decision exists so they cannot.
+  - >-
+    A DEPLOY'S VERDICT IS THE SCRIPT'S EXIT CODE. This lane reported "step 4
+    succeeded" from an ops-status read taken inside deploy.sh's own health-wait
+    window, minutes before the script decided the opposite, and separately
+    reported exit 0 for a failed deploy because the command was piped through
+    tail. Read the exit code, and check $pipestatus when a pipe is in the way.
+  - >-
+    REPAIR THE CHECK, NOT THE HOUSEKEEPING - AND PROVE IT WITH A TEST THAT MUST
+    STILL FAIL. wait_healthy asked compose for exited containers and then treated
+    their presence as ill health, so it could never pass while anything in the
+    project was exited. The fix would have looked identical to a fix that simply
+    lowered the bar; the test that separated them was the one designed to fail -
+    a profile whose service is absent must still be caught. Demand that shape
+    from any "the check was too strict" repair.
+  - >-
+    A TEST THAT PROVES THE WRONG PATH LETS A DEFECT SURVIVE ITS OWN SUITE. The
+    health route's test faked the database as a rejection while the fault this
+    stack actually produced was a hang. It passed, for years of commits, against
+    code that could hang forever. When writing the guard, ask which failure the
+    system really produces.
+  - >-
+    A NUMBER CHOSEN WITHOUT READING THE NEIGHBOURING FILE CAN SILENTLY DISABLE
+    THE THING IT ENABLES. The health probe's 5000 ms budget exactly equalled the
+    Dockerfile's HEALTHCHECK timeout, so Docker killed the probe at 5.000 s and
+    the 503 the repair existed to produce never reached it. Both lines live in
+    the same repository.
+  - >-
+    VERIFY A PEER'S CLAIM RATHER THAN TAKE IT, AND EXPECT THE SHARPER READING TO
+    COME FROM WHOEVER DID NOT WRITE THE CODE. It happened repeatedly in this
+    round, in both directions, including a correction relayed AGAINST this lane
+    that was later withdrawn - max 1 was the amplifier of a self-deadlock in
+    another lane's code, not its cause, and this lane's original position was the
+    one that survived.
+  - >-
+    A RELAYED GO IS NOT THE OWNER'S GO. A three-hop instruction to start work
+    arrived while a directly-heard instruction to stand by was still in force.
+    Stopping and asking cost one message; starting would have cost a production
+    database repair committed to the wrong branch.
+  - >-
+    ON A SHARED BRANCH, recorded_by.agent IDENTIFIES THE AUTHOR AND THE GIT
+    AUTHOR DOES NOT. Every commit in this tree carries one identity, so work by
+    another session was attributed to this one until the event field settled it.
+    The same branch produced three commit-count slips in a day, including one by
+    this lane after it had warned another lane about exactly that.
+  - >-
+    DESCRIBE A DESIGNED LAYER AS DESIGNED, NOT AS LIVE. A runbook table in this
+    lane described a nightly backup with 14-day retention; the timer was disabled
+    by design and the bucket held one six-day-old object. Check a recovery claim
+    against the host, not against the repository that describes the host.
+  - >-
+    THE HARNESS REFUSES SOME OUTWARD WRITES AND AN OWNER CANNOT LIFT THAT FROM
+    INSIDE THE SESSION. A pull-request merge was refused after an explicit
+    in-session grant. Handing the owner one pasteable line is the efficient
+    response - not retrying, and never asking another session to run it, which
+    would launder the same refusal.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "3"
+  repository:
+    head: "6e3e6a9f110000a490b209ce8bc911bbc87aa750"
+    branch: hq/20260921
+    working_tree: this-record-the-closing-decision-and-the-plan
+    pull_request: none-until-hq-round-close
+  application_final_state:
+    mumate-infra: "origin/main 4664974 at last observation; host /opt/mumate level with it"
+    mootech-fe: "814 merged; the pool and health-probe repair is on origin/main and in every image built since"
+    mootech-be: "0705378d884114a4fd0e73aed59656638f335fdc - carried unchanged the entire lane, never rebuilt"
+    bazi-sft-dataset: "722cdf1b5f35f2124c9f59042caf8a9c5d6106b7-staging on the shadow"
+  shadow_final_state:
+    services: "be 0705378 healthy; fe c23440f86a22-staging healthy; bazi 722cdf1b5f35-staging healthy"
+    database: "production Supabase pooler, restored by the login lane after the rehearsal"
+    arena: "torn down; no pgtmp container"
+    access: "ssh deploy@mumate-2 over the tailnet; no public port 22"
+    cost_note: "the Droplet keeps running and keeps costing while serving no users; ending that is an owner action this lane does not take"
+  what_still_serves_production: "Vercel and Render, unchanged since before this workstream opened"
+  closing_decision: memory/events/2026/09/26/20260926T131821_mumate_infra_move_close_at_slice_3.yaml
+  previous_record: memory/events/2026/09/26/20260926T004000_mumate_infra_move_slice3g_arena_standing_fe_serves_from_it.yaml
+
+unresolved:
+  - The migration is not done. Slices 4 and 5 and every precondition listed in the closing decision.
+  - The FE container's recovery gap, the thin off-platform backup layer, profile-blind rollback.sh, 3c's storage and maintenance-bypass proofs, and the untidied /opt/mumate/env/fe.env.pre-arena.
+  - The DigitalOcean Droplet continues to cost money with no users on it.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Nothing in this workstream. It is closed. If the owner wants the move
+    finished, or any of the carried candidates taken, that opens a NEW workstream
+    which cites this one's closing decision for its preconditions rather than
+    reopening this plan.
+  acceptance_check:
+    - Wake reports this workstream completed with this event as its newest record.
+    - A future reader can tell from this record alone that a replacement stack exists, is proven, and is not serving anyone.

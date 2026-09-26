@@ -1,0 +1,82 @@
+schema_version: ciel.event.v0.1
+id: evt_20260924T140717_mumate_infra_move_slice3d_tailnet_access_authorized
+type: decision
+recorded_at: 2026-09-24T14:07:17+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-infra-move-001
+  lane: single
+  objective: >-
+    Resume only the narrow Slice 3d correction: make Tailnet/MagicDNS the
+    canonical operator access path and preserve the public reserved-IP path as
+    an explicit emergency door. Correct the owner workstation alias and the
+    human-facing infra documentation without changing server or product state.
+  scope:
+    - PLAN.md revision 0.3 and Slice 3d authorization.
+    - The owner-local SSH alias and a docs-only mumate-infra topic branch/PR.
+    - Strict host-key and no-mutation proof.
+  out_of_scope:
+    - Slice 3c's deferred smoke, Slice 4, and every deployment operation.
+    - deploy.sh including dry-run, FE tags, server/Tailscale/firewall/provider/
+      production/traffic state, login code, and application repositories.
+
+outcome:
+  status: decided
+  parallelism: approved
+  slice: "3"
+  completed:
+    - >-
+      The owner authorized the narrow 3d scope after collision proof: CIEL HQ,
+      mumate-infra and the target runbook paths were clean, no visible active
+      lane held those paths, and other live CIEL lanes did not claim them.
+    - >-
+      The canonical normal access path is owner-confirmed as `ssh deploy@mumate-2`
+      over Tailscale SSH/MagicDNS. Existing alias `mumate` is stale because it
+      hard-codes the intentionally retired public port-22 path at 167.99.29.220.
+    - >-
+      Owner-local alias correction and docs-only PR are authorized. Unknown or
+      changed host keys must fail closed; no known_hosts deletion or automatic
+      trust is authorized. Public IP remains emergency-only after ssh-allow or
+      Recovery Console.
+  not_completed:
+    - The local alias edit, strict proof, infra commit/PR, and closeout remain to do.
+    - 3c and Slice 4 remain paused.
+  evidence_of_limits:
+    - >-
+      This decision does not authorize any deploy or even deploy dry-run. A
+      reachable host proves only the access path, not readiness to change it.
+
+evidence:
+  plan: workstreams/mumate-infra-move-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "9efbdd3b1d4cac95fea12c2de93556d4bfe4b09c"
+    branch: hq/20260921
+    working_tree: plan-and-decision-only-before-this-record
+  access:
+    direct_tailnet_preflight: >-
+      deploy@mumate-2 reached hostname mumate-2 and read healthy compose status;
+      the stale public-IP alias timed out at 167.99.29.220:22.
+    current_local_alias: /Users/non/.ssh/config Host mumate -> 167.99.29.220
+  collision_proof: >-
+    HQ hq/20260921 9efbdd3 clean; mumate-login-identity-001 phase 3 idle
+    authorized with a clean mootech-fe branch; mumate-infra main=origin/main
+    clean; no visible active child held the target workstream/event/runbook paths.
+
+unresolved:
+  - 3c storage, maintenance-bypass and overnight-log evidence remain paused.
+  - The independent wait_healthy exited-container defect remains a separate infra PR.
+  - The docs PR needs owner review and merge after its evidence is complete.
+
+next_action:
+  action: >-
+    Edit the owner-local SSH aliases, prove strict Tailnet access, create the
+    docs-only mumate-infra PR, then record the 3d closeout with its exact commit
+    and PR checkpoint. Return the shadow FE slot unchanged to the login lane.
+  acceptance_check:
+    - No server, deployment, provider, firewall, production or login-code mutation occurred.
+    - Wake validates the revised plan decision before implementation continues.
