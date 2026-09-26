@@ -1,0 +1,141 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T131717_smc_v2_app_round_handoff_slices_6_8_merged
+type: closeout
+recorded_at: 2026-09-26T13:17:17+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    record hands the lane over before the owner pushes and merges the HQ
+    round and clears the session: what is delivered, what is left, and
+    everything a cold session needs to resume from Wake alone.
+  scope:
+    - Close the lane's work for HQ round hq/20260921 and leave a cold entry for the next session.
+  out_of_scope:
+    - Slices 9 and 10; neither is started and neither is decided by this record.
+
+outcome:
+  status: handoff
+  completed:
+    - >-
+      Plan revision 0.4 was decided by the owner on 2026-09-21 ("รับ 0.4
+      ทั้งชุด เลยครับลุยๆ"): the proposal's 6a-6d become plan slices 6-9 and
+      Windows becomes slice 10, so that every platform-independent problem
+      is met on the Mac and the Windows slice meets only Windows problems.
+      The five DESIGN.md questions were answered in the same message.
+    - >-
+      Slice 6 (6a) delivered and merged as smc-v2 pull request 6, main
+      8c68e8d: the gateway thread keeps its endpoint and reopens a
+      transport that died after opening, through the same Gateway handle,
+      with a back-off; a zero-length TCP read is end of stream and reported
+      at once; a cabinet scenario for a restart with the door still open;
+      and the wait dialog is reopened after a restart over a door in
+      transition, asking for the PIN where it needs one (DESIGN.md
+      deviation 25, raised by the owner on the walk: "user เข้ามาน่าจะงง
+      เพราะเดิมมันมี dialog เด้งขึ้นมากั้น").
+    - >-
+      Slice 7 (6b) delivered and merged as pull request 7, main af0b93d:
+      scripts/check-windows.sh (cargo check and clippy -D warnings on
+      x86_64-pc-windows-msvc for cu12, license, workflow) and
+      .github/workflows/windows-cross-check.yml - the first CI job in
+      smc-v2, green on the pull request in 51 s. The rest of the workspace
+      stops at libsqlite3-sys and waits for slice 10.
+    - >-
+      Slice 8 (6c) delivered and merged as pull request 8, main eeffc7f:
+      expiry judged on the machine's local calendar day with one day of
+      grace; the home-screen HN scan closed as no; the operator's name on
+      the ประตูเปิด card and in the wait dialog that covers it; the legacy
+      Deprecision logo bundled as the default mark with a data-directory
+      logo.png overriding it (deviation 23 now implemented); the expired
+      banner dismissable for one 8-hour shift in memory only. A late pop
+      now returns the wait dialog's status box from bad to door-open.
+      DESIGN.md's open questions are closed except the door-label order.
+    - >-
+      Every one of those was walked by the owner on the built desktop
+      against the simulator and recorded as owner observation in the
+      slice closeouts (actions 85-109 in /tmp/smc-dev).
+    - >-
+      Tidy: the application and the simulator are stopped; both checkouts
+      are on main, clean and equal to origin (smc-v2 eeffc7f,
+      cu12-simulator 17771d5); no pull request is open in either; smc-v2's
+      target was cleaned on 2026-09-22 (12.7 GiB freed) and rebuilt, with
+      tests, clippy native and wasm, the .app bundle and the Windows
+      cross-check all passing afterwards.
+  not_completed:
+    - >-
+      Slice 9 (6d), the owner's walkthrough of every function never
+      exercised. Not started; it needs the owner at the Mac for about 45
+      minutes. A fifteen-item checklist was drafted in the session
+      scratchpad and is lost with the session - the list of functions is
+      in PLAN.md under slice 9 and in the 20260921T093000 research record,
+      so the next session rewrites it from those in a few minutes.
+    - Slice 10 (Windows). Needs the owner's Windows machine.
+  boundaries:
+    - Nothing was pushed from HQ by this lane; the owner pushes and merges the round.
+    - The legacy checkout was never written to.
+    - The licenses issued for the slice-8 walk (grace day, expired, one year) lived only in the session scratchpad and go with it; the development signing key stays in .assets/smc-v2/dev-license-signing.key, untracked. /tmp/smc-dev holds the one-year development license and the walk's data.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.4"
+  slice: none
+  repository:
+    head: "15337bc"
+    branch: hq/20260921
+    working_tree: this-event-and-the-plan-header-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "eeffc7f"
+    branch: main
+    working_tree: clean-equal-to-origin
+    merged_this_round:
+      - "pull request 6 → 8c68e8d (slice 6)"
+      - "pull request 7 → af0b93d (slice 7)"
+      - "pull request 8 → eeffc7f (slice 8)"
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  hq_commits_this_lane_this_round:
+    - "c48aa38 plan 0.4 decided, slice 6 authorized"
+    - "04dd863 slice 6 ready for owner review"
+    - "2935b9c slice 6 merged, slice 7 authorized"
+    - "f8f3e31 slice 7 ready for owner review (+ two records re-stamped 08:30/08:31 → 04:50/04:51 before push)"
+    - "7ba7662 slice 7 merged, slice 8 authorized"
+    - "7c136fe slice 8 ready for owner review"
+    - "23ce074 slice 8 merged"
+    - "this record"
+  preceding_records:
+    - memory/events/2026/09/22/20260922T054143_smc_v2_app_slice8_merged.yaml
+
+unresolved:
+  - >-
+    The workflow's tick sets warned_no_pop and warned_left_open without a
+    Persist, so a restart re-records door-did-not-open or door-left-open
+    once more (action 99 after 97). The rows are truthful; noted in pull
+    request 6, the owner has not asked for a change. Two lines if wanted.
+  - Door-label order on the physical cabinet - needs the real cabinet.
+  - Production keygen before the first sale; the build carries the development key.
+  - Real hardware may change the state machine.
+
+next_action:
+  action: >-
+    Nothing is in flight. When the owner returns to CU12: run Wake, read
+    this record, then either (a) record a slice-9 decision and walk the
+    checklist with the owner at the Mac - CSV export, the ส่งข้อมูลให้ช่าง
+    zip, backup now and the folder picker, user delete, an admin changing
+    their own PIN, disabling a slot empty / loaded / with its door open
+    (the legacy's emergency !), reset of an occupied card, a wrong-machine
+    licence, a tampered licence, the clock-suspect banner, the บันทึก page
+    while the board is down, and a USB scanner into the dialogs - or (b)
+    take the persisted-warning fix first if the owner wants it, or (c)
+    jump to slice 10 when the Windows machine is ready.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 active at revision 0.4, execution idle, with this record as its latest event and smc-v2 main eeffc7f.
