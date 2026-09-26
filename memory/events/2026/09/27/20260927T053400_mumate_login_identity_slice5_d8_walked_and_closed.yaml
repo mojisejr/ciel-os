@@ -1,0 +1,115 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T053400_mumate_login_identity_slice5_d8_walked_and_closed
+type: closeout
+recorded_at: 2026-09-27T05:34:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close slice 5. The owner walked D8 on production on both paths, and the row
+    counts taken afterwards agree with the walk. Slice 5's last open DoD item is
+    met, so the slice is complete.
+  scope:
+    - The owner's D8 walk on production, both paths.
+    - Read-only row counts on production that attribute every new row to one of the two paths.
+  out_of_scope:
+    - Slice 6 (the flip), and the unlink route's last-method fix that is its precondition. Neither is authorized.
+    - Pushing HQ, which is the owner's call when he closes the round.
+
+outcome:
+  status: slice-complete-pr-merged
+  parallelism: approved
+  slice: "5"
+  execution_phase: "5"
+  completed:
+    - >-
+      D8 "YES" PATH, WALKED BY THE OWNER ON HIS OWN ACCOUNT (decision 21). He
+      unlinked Google, signed in with Google, answered "เคยใช้" and proved with
+      LINE. He landed on the connected screen with Google attached, with no
+      second Google sign-in and no refresh. That is decision 23's promise, which
+      the 2026-09-26 21:30 walk did not meet; PR 826 now meets it.
+    - >-
+      D8 "NO" PATH, WALKED FOR THE FIRST TIME ON PRODUCTION. A Google account
+      never used with MuMate answered "ไม่เคย" and landed on /v2/register as
+      before.
+    - >-
+      ROW COUNTS AGREE WITH THE WALK. The query was read-only, run through the
+      mumate_backup role from mumate-2 at 05:30 with the owner's explicit
+      go-ahead, and returned counts only. The window starts at 2026-09-27
+      05:20:00 Bangkok, before the walk began. There was no before-count; a
+      fixed start time earlier than the walk gives the same answer, because
+      every row in the window is accounted for below.
+      users_new = 1. google_rows_new = 2: one attached to a member created
+      before the window (the "yes" re-attach, 05:22:10) and one attached to the
+      member created in the window (the "no" registration, 05:25:59).
+      line_rows_new = 0. new_users_without_provider = 0. Members holding two
+      live Google identities = 1, the same pre-existing member measured on
+      2026-09-26, so decision 22 held and the count did not grow.
+    - >-
+      DoD 5 IS MET. D1-D7, D9 and D10 were met by PR 825 and PR 826 (tests,
+      typecheck, lint, build, and mutation checks in their records). D8 is met
+      here. D3's production half is the row counts above.
+  not_completed:
+    - >-
+      D3's proof column names ops_audit_log, but a plain link writes no audit
+      row. Only an identity merge does (lib/auth/link-account-store.ts
+      recordIdentityMerge), and the window held zero ops_audit_log rows. D3
+      therefore rests on the row counts, which settle it on their own. This is
+      a wording gap in the DoD, not a missing behaviour.
+    - >-
+      D2's proof column also names a production walk. The owner reported the
+      two D8 paths, not a separate sign-in with an already-known identity, so
+      D2 rests on its tests. This is not claimed as walked.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.8"
+  slice: "5"
+  execution_phase: "5"
+  repository:
+    head: "c6b26a4"
+    branch: hq/20260926
+    working_tree: this-closeout-only
+  application:
+    repository: mootech-fe
+    main: "e97ede7 (PR 825 a92abe5, PR 826 e97ede7)"
+    production_deployment: "mootech-luxc0ms0a, the owner's promote at 05:12"
+    switch: "LOGIN_ASK_BEFORE_CREATE on since 2026-09-26"
+  production_read:
+    source: "production, read-only via mumate_backup from mumate-2, BEGIN READ ONLY ... ROLLBACK, counts only"
+    window_start: "2026-09-27 05:20:00 Asia/Bangkok"
+    users_new: 1
+    google_rows_new: 2
+    google_new_on_existing_member: 1
+    google_new_on_new_member: 1
+    google_rows_at: "05:22:10 and 05:25:59"
+    line_rows_new: 0
+    new_users_without_provider: 0
+    members_two_live_google: 1
+    ops_audit_log_rows_in_window: 0
+  previous_record: memory/events/2026/09/27/20260927T051600_mumate_login_identity_handoff_before_clear_d8_pending.yaml
+
+unresolved:
+  - >-
+    Slice 6 (the flip) is not authorized. Before it can run it needs its own
+    decision, the unlink route's last-method fix (judge by identities that can
+    authenticate, not by provider names), and the paid-member re-measurement
+    taken immediately before the flip.
+  - Why Vercel created no deployment for the push of e97ede7 is still unknown. If it recurs, check the Vercel GitHub integration and don't assume a merge has deployed.
+  - DoD 5 D3 names ops_audit_log as proof, but a plain link writes none. Reword the DoD if the plan is revised; the behaviour needs nothing.
+  - The mootech-fe checkout still sits on the merged branch fix/mumate-login-identity-s5-seam.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Nothing in this lane runs until the owner decides on slice 6. When he
+    wants the flip, the first work is a decision record authorizing the
+    unlink last-method fix and slice 6, then that fix, then the paid-member
+    re-measurement. HQ may push hq/20260926 when the owner closes the round.
+  acceptance_check:
+    - A fresh Wake reports zero validation errors and this event as the newest.
+    - No claim here says slice 6 or the unlink fix is authorized.
