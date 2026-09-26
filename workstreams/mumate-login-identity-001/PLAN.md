@@ -3,9 +3,9 @@
 **Workstream:** `mumate-login-identity-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.7
-**Execution phase:** 4
-**Execution state:** idle
+**Plan revision:** 0.8
+**Execution phase:** 5
+**Execution state:** executing
 **Parallelism:** proposed
 
 ## Objective and owner agreement
@@ -472,6 +472,76 @@ one remaining unknown — the provider round trip — and it is not a condition 
 slice 4. Nothing about the safety rules in DoD 4 is relaxed: the same row
 counts, the same refusals, the same explicit confirmation.
 
+## Revision 0.8 — the prevention slice gets a number, a DoD, and a one-per-provider rule
+
+Slice 4 shipped to production on 2026-09-26 (mootech-fe PR 815). The plan had
+deferred DoD 4b until the merge conversation existed. It exists now, so this
+revision writes that DoD. The owner reviewed the design in session on
+2026-09-26 and answered every question put to him.
+
+### Renumbering, and why it is not cosmetic
+
+CIEL's parser reads only headings of the form "### <digits>." A 4b heading was
+therefore never a declared slice. A decision naming slice "4b" would have
+authorized nothing, and Wake would have reported that only as an unmet
+condition. The owner chose to renumber rather than change CIEL (owner decision
+15):
+
+| Before 0.8 | From 0.8 |
+|---|---|
+| 4b — stop handing out the second account | **5** |
+| 5 — flip through the seam | **6** |
+
+In every record dated before this revision, "slice 5" means the flip and "4b"
+means today's slice 5. The 4-legacy heading stays unparsed on purpose: it is
+reference, not work.
+
+### Owner decisions 15-22 (2026-09-26)
+
+15. Renumber the slices as above.
+16. Ask on **every** provider identity that has no owner, in **both**
+    directions (Google after LINE, LINE after Google). A genuinely new member
+    pays one extra tap, once.
+17. "I have used MuMate before" is proven only by signing in with the other
+    provider. No email, phone or name shortcut (this restates decision 2).
+18. No dead end. Cancelling or failing the proof returns the member to the
+    question, and "create a new account" is always available. A wrong choice is
+    repaired later through slice 4's merge.
+19. A member who already holds both providers gets a visible way out on the
+    connected screen: contact the team through the LINE OA.
+20. Release behind a server switch that defaults off, in two steps: merge, then
+    set the switch and redeploy. With the switch off, behaviour must be
+    byte-for-byte today's.
+21. The production proof uses the owner's own account: unlink Google, sign in
+    with Google, answer "yes", prove with LINE, and get Google re-attached. One
+    fresh Google account covers the "no" path.
+22. **One live identity per provider per member.** A member may hold at most
+    one Google and one LINE identity that can still authenticate. Linking a
+    second identity of the same provider is refused. To change one, the member
+    unlinks the old identity first, through the existing unlink route and its
+    last-method guard. Dead legacy rows (`ya29…` access tokens) do not count.
+    Members who already hold two live identities of one provider (one member,
+    measured 2026-09-26) are left as they are; the rule governs new links only.
+
+The agent drafts the question screen's wording, and the owner approves it at
+pull-request review.
+
+### What was measured to write decision 22
+
+Measured read-only on production through the backup lane's `mumate_backup` role
+on 2026-09-26:
+
+- 260 members hold more than one Google row. In 259 of them, a dead `ya29` row
+  sits beside one live row. **One** member holds two live Google identities.
+- The only unique index is `(lower(provider), id_token)`. It stops one identity
+  belonging to two members, but it does not stop one member holding two
+  identities of the same provider.
+- `linkProvider` checks only the first of those. The screen hides the button,
+  but nothing else stops a direct call to the start route from attaching a
+  second Google today.
+- Without decision 22, slice 5's "yes" path would make that outcome ordinary:
+  a member picks the wrong Google account and it gets attached.
+
 ## Relationship to existing work
 
 This workstream takes ownership of only the login/identity portion formerly
@@ -869,20 +939,36 @@ birth data between accounts. The wide merge that revision 0.3 inventoried
 remains unbuilt and unauthorized. If the losing side holds something the member
 needs, that is support's work and the dump is the recovery.
 
-### 4b. Stop handing out the second account in the first place
+### 5. Stop handing out the second account in the first place
 
-**Added in 0.4**, and sequenced after slice 4 because a member who already holds
-two accounts gains nothing from prevention.
+**Numbered 4b until revision 0.8.** Added in 0.4 and sequenced after slice 4
+because a member who already holds two accounts gains nothing from prevention.
 
 Today a member who signs in with a second provider is silently given a new empty
-account. Slice 4b interrupts that: before creating a second account, **ask**.
-Never infer. Owner decision 2 forbids treating a matching email as proof, and
-LINE carries no email here in any case, so the question is put to the person
-rather than answered by a join.
+account: every one of the five callers of `UserRegisterOrLogin` (home, the
+deep-link self-heal, and three modals) reaches the legacy BE route, which creates
+a member for any identity it cannot find. Slice 5 interrupts that: before a new
+member is created, **ask**. Never infer.
 
-DoD 4b is deliberately not written yet. It touches the login surface every member
-crosses, and it should be written after slice 4 has shown what the merge
-conversation actually needs to say.
+The "yes" path reuses slice 3's link flow; it adds no new way to write member
+data. Decision 22 is enforced inside `linkProvider`, so it holds for the
+connected screen, a direct call to the start route, and this slice's question
+alike.
+
+DoD 5:
+
+| # | Criterion | Proof |
+|---|---|---|
+| D1 | An identity with no owner is never silently turned into a new member, from any of the five entry points | tests per entry point |
+| D2 | A known identity sees nothing new: no extra screen, no extra tap | tests; production walk |
+| D3 | "Yes" attaches the new identity to the proven member through the link flow; no new `user` row | row counts before and after; `ops_audit_log` |
+| D4 | "No" creates the member exactly as today, **including the referral code** | tests |
+| D5 | No dead end: cancel or failure returns to the question; "create new" always works; inside the LINE app, a Google proof shows the existing open-in-browser guidance | tests per failure |
+| D6 | A member holding both providers sees a way out on the connected screen | tests; production walk |
+| D7 | Switch off = today's behaviour | tests with the switch off |
+| D8 | The owner walks both paths on production (decision 21) | walk result and row counts |
+| D9 | Tests, typecheck, lint, build and gitleaks pass; the pull request carries the template | CI and local |
+| D10 | Linking a provider the member already holds live is refused with a readable message and writes nothing — from the connected screen, the start route called directly, and the question's "yes" path | tests |
 
 ### 4-legacy. The inventory that produced owner decision 5
 
@@ -937,17 +1023,19 @@ release does not attempt it automatically, and the checklist any later automatic
 merge must satisfy. No cross-application identity-rewrite tooling exists today;
 deleting a member currently leaves the engine rows orphaned by design.
 
-### 5. Flip through the seam, observe, then stop using the old path
+### 6. Flip through the seam, observe, then stop using the old path
+
+**Numbered 5 until revision 0.8.**
 
 **Precondition added in 0.4, and it outranks the one below.** Owner decision 10:
 the flip may not run before slice 4 ships. The flip gives 1,443 members a new
 empty account on their next login, which is not only a harm to absorb — it
 creates more members holding two accounts, which is the condition slice 4 exists
 to repair. Flipping first means manufacturing cases faster than we can clear
-them. Slice 4b should also ship first, so the flip does not immediately reopen
+them. Slice 5 (formerly 4b) should also ship first, so the flip does not immediately reopen
 the same tap.
 
-After slices 1-4b close and the owner authorizes the flip, repoint the FE client
+After slices 1-5 close and the owner authorizes the flip, repoint the FE client
 to the new route with the legacy route retained as a bounded rollback. Test on
 local first, then a reviewed PR and owner merge. Notify the infrastructure lane
 before push. Observe login success, ambiguous identities, duplicate creation,
@@ -1058,8 +1146,8 @@ call, or the rollback stops being one line.
 | 2 | cleanup and unique index succeed on anonymized restore | 4-8 h | heavy: schema + identity data | slice 1 closeout; owner decision |
 | 3 | explicit linking works without identity mutation on collision | 6-10 h | heavy: OAuth + auth + DB | slice 2 closeout; **team** LINE console steps |
 | 4 | a member joins their own two accounts; payment side never loses; nothing but the credential moves | unknown | heavy: identity write + irreversible-feeling UX | slice 3 closed, including one observed successful link |
-| 4b | a second account is no longer created without asking | unknown | heavy: touches the login surface everyone crosses | slice 4 closed |
-| 5 | reviewed flip, observation, old FE path retired later | 4-6 h + observation | owner-attended production gate | slices 1-4b closed |
+| 5 (was 4b) | a second account is no longer created without asking; one live identity per provider | 1-2 days | heavy: touches the login surface everyone crosses | slice 4 closed |
+| 6 (was 5) | reviewed flip, observation, old FE path retired later | 4-6 h + observation | owner-attended production gate | slices 1-5 closed |
 
 Every slice after slice 1 requires a new owner decision event. Slices are
 sequential because they touch the same identity seam and schema.
