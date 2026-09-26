@@ -1,0 +1,204 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T013000_mumate_login_identity_session_close_shadow_returned_and_findings
+type: closeout
+recorded_at: 2026-09-26T01:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close this session with the shadow returned to production, the rehearsal database
+    removed, and the evidence the owner asked to be kept - including the re-authentication
+    proof, the exact accounting of what reached production, and two security observations
+    found while verifying something else.
+  scope:
+    - The re-authentication that closes the last unproven sentence in the merge copy.
+    - The restore: shadow back on production, arena gone, and one thing the restore undid.
+    - Exact production-write accounting for the whole rehearsal.
+    - Two findings about secrets in logs, reported and not acted on.
+    - What is left for a cold session: slice 4b and slice 5, with estimates from actuals.
+  out_of_scope:
+    - Slice 4b and slice 5. Neither authorized, neither started.
+    - Deleting the way-back env copy on the host. The owner's call.
+    - Fixing anything in mootech-be or in the log pipeline.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: "4"
+  execution_phase: "8d"
+  completed:
+    - >-
+      SIGNING IN AGAIN WITH THE MOVED CREDENTIAL LANDS ON THE SURVIVOR, which closes the one
+      sentence in the rewritten copy that had only data behind it. Caddy's access log after
+      the merge shows /api/auth/signout, then /api/auth/signin/line, then
+      /api/auth/callback/line, and then nine requests to /api/user?user_id=<survivor>. The
+      owner confirmed he arrived in the paying account. So "หลังรวม คุณยังเข้าได้ทั้ง LINE และ
+      Google" is now observed and not only inferred from the rows.
+    - >-
+      THE SHADOW IS BACK ON PRODUCTION AND THE ARENA IS GONE. env/fe.env.pre-arena was
+      restored over env/fe.env, fe recreated, and /api/health answers 200 db ok with
+      dbLatencyMs 5-6 - the pooler's latency, where the arena answered in 1-2 ms, which is
+      itself the evidence of which database it is reading. bin/arena.sh down removed the
+      container and the volume; arena.sh status reports it is not running; disk is back to
+      16%. be 0705378, bazi 722cdf1, caddy and alloy healthy throughout.
+    - >-
+      THE RESTORE QUIETLY UNDID THE HEALTH TIMEOUT, AND THE SCRIPT CAUGHT IT. env/fe.env.pre-arena
+      was copied before HEALTH_DB_TIMEOUT_MS was added, so restoring it removed that line and
+      would have put the probe back to being killed at 5.000 s before its own 503 arrives.
+      The restore script checked for the key rather than assuming, reported it missing, and it
+      was re-added: 53 keys to 54, fe recreated, health confirmed. A way-back file is a
+      snapshot of a moment, not of an intention.
+    - >-
+      THE SHADOW KEEPS THE BRANCH BUILD. fe runs c23440f...-staging, which is this lane's
+      build and not a main-line image. That is how the slot was before this session too (it
+      held 626c9c5), and the login lane owns that slot until the flip.
+  not_completed:
+    - >-
+      env/fe.env.pre-arena still exists on the host. It is a copy of the production
+      environment at mode 600 and it will drift. Removing it is a deletion, which is the
+      owner's decision, so it was reported rather than done.
+    - >-
+      Neither slice 4b nor slice 5 is authorized or started, and DoD 4b is still deliberately
+      unwritten - the plan defers it until slice 4 has shown what the merge conversation needs
+      to say, which it now has.
+    - >-
+      Nothing in this lane is pushed beyond the feature branch, and no pull request is open.
+      HQ is 78 commits ahead of origin/main and unpushed.
+
+production_write_accounting:
+  what_reached_production_during_the_whole_rehearsal: >-
+    Caddy's log for api.staging.mumate.co from 2026-09-25T23:24Z: 5 successful POST
+    /user/register-login, 3 OPTIONS preflights, 9 GET /health, 3 GET /chinese-horoscope.
+    Every POST is the legacy login path, which for a LINE identity that already exists reads
+    the provider row, calls LINE to check the user id, downloads the member's profile image
+    to the S3 bucket, sets picture_url and saves the `user` row, then ensures a refer_code.
+  so: >-
+    Production's `user` row for the owner's own account was written up to five times, and an
+    S3 object written per call. No provider row, no account and no merge touched production;
+    every identity movement happened in the arena and was reversed there once.
+  why: >-
+    The arena isolates the FE's own database, not the FE's callers. register-login traffic is
+    not flipped yet, so the FE posts to the BE, and the BE container reads and writes
+    production. Pointing be and bazi at the arena is possible - slice 2's dogfood set DB_HOST
+    to pgtmp - and should be done before slice 5 rehearses the flip itself.
+
+findings_reported_not_acted_on:
+  oauth_codes_and_state_reach_the_log_pipeline:
+    observed: >-
+      Caddy logs the full request URI including the query string, so every provider callback
+      records its `code` and `state`. 31 access-log lines in this morning's window carry one
+      or both. alloy/config.alloy redacts e-mail, Thai mobile numbers and JWT-shaped strings,
+      and drops the BE's indented user-record lines; an OAuth authorization code and this
+      lane's signed link `state` match none of those shapes, so they are shipped to Grafana
+      Cloud as written.
+    how_bad: >-
+      An authorization code is single-use and short-lived, and each one observed here was
+      already consumed by the exchange that logged it. The link `state` is signed with
+      LINK_STATE_SECRET and bounded. So this is not an open door; it is secrets in a log
+      store that a third party holds, which is a different and smaller problem than a
+      credential leak - and it is one narrow redaction rule away from not existing.
+    whose: the infrastructure lane's pipeline, with the app's URL shapes as input. Not this lane's to change.
+  be_logs_the_whole_login_input:
+    observed: >-
+      mootech-be's registerOrLogin opens with console.log('registerOrLogin _input', _input),
+      printing email, name, image URL and the idToken the FE sent. alloy's drop rule catches
+      the BE's multi-line indented records; a single-line inspect of that input is not
+      indented, and a LINE userId is not JWT-shaped, so it can pass the filters. It is a
+      stable personal identifier rather than a password - authentication still goes through
+      LINE - and alloy's own comment already says fixing the source belongs to the
+      application repository.
+    whose: mootech-be, reference-only for this lane.
+
+what_a_cold_session_needs_to_know:
+  where_slice_4_stands: >-
+    DoD 4 is met on the arena, recorded at 20260926T011500. The proof is a rehearsal on
+    production-shaped data, not a production behaviour claim. Slice 4's code is on
+    feat/mumate-login-identity-s1 at c23440f, pushed, no pull request.
+  the_next_two_slices: >-
+    4b - stop handing out a second account in the first place - has no DoD written, by design:
+    the plan defers writing it until the merge conversation exists, and it now does. 5 - flip
+    through the seam, observe, stop using the old path - is the only thing that will prove any
+    of this against real members.
+  estimates_from_actuals: >-
+    Measured from this workstream's own records, slice to slice: slice 1 took 5h12m from
+    authorization to acceptance, slice 2 took 1h51m, slice 3 took 22h20m across two days with
+    a failed phone attempt and two defects in between, slice 4 took 18h43m including a
+    five-hour wedge incident, the arena, two walks and a copy rewrite. The pattern is that a
+    slice touching the login surface with a phone walk in it costs most of a day of elapsed
+    time, and the variance is entirely unknowns found mid-slice rather than the work that was
+    planned.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  execution_phase: "8d"
+  reauthentication:
+    source: Caddy access log after the merge at 2026-09-26T00:03:52Z
+    sequence: "/api/auth/signout -> /api/auth/signin/line -> /api/auth/callback/line -> 9x /api/user?user_id=<survivor>"
+    owner_report: arrived in the paying account, same account as before
+  restore:
+    order: "cp -p env/fe.env.pre-arena over env/fe.env -> force-recreate fe -> re-add HEALTH_DB_TIMEOUT_MS -> force-recreate fe -> bin/arena.sh down"
+    health_after: "200 · db ok · dbLatencyMs 5-6 · sha c23440f"
+    arena_after: "not running; container and volume removed; disk 16%"
+    keys_in_fe_env: "53 after the restore, 54 after re-adding HEALTH_DB_TIMEOUT_MS"
+    still_on_host: env/fe.env.pre-arena, mode 600, the owner's to delete
+  production_writes:
+    window_start: "2026-09-25T23:24:00Z"
+    counts: "POST /user/register-login 5 · OPTIONS 3 · GET /health 9 · GET /chinese-horoscope 3"
+  log_findings:
+    oauth_lines_with_code_or_state: 31
+    redaction_rules_present: "email, Thai mobile, JWT shapes; BE indented record lines dropped"
+  repository:
+    head: "31b0ac3"
+    branch: hq/20260921
+    working_tree: this-event-only
+
+unresolved:
+  - >-
+    OAuth authorization codes and the signed link state are written to the access log and
+    shipped to Grafana Cloud unredacted. One narrow rule would end it; it belongs to the
+    infrastructure lane.
+  - >-
+    mootech-be logs the whole login input, and a LINE userId is not redacted by the shapes
+    alloy replaces.
+  - >-
+    A rehearsal on the arena is not hermetic while be and bazi point at production. Making it
+    so matters most before slice 5.
+  - >-
+    env/fe.env.pre-arena remains on the host as a second copy of the production environment.
+  - >-
+    DoD 4b is unwritten, and the affordance for a member who already holds both providers is
+    still missing - which is why this rehearsal could only reach a collision because the
+    snapshot predated slice 3's link.
+  - >-
+    HQ holds two corrections this session owes the round pull request: the wedges attributed
+    to max 1 under load, and "nothing outside the arena is written".
+  - >-
+    The off-platform backup layer is one file dated 2026-09-19 with mumate-backup.timer
+    disabled, PITR is not enabled, and a real restore has never been performed.
+  - >-
+    mootech-fe's verify-architecture gate is red on four violations in other lanes' files, so
+    every push needs --no-verify and skips gitleaks with it.
+  - >-
+    Carried unchanged - the 1,783 dead rows, iOS, collision at production scale,
+    member_missing, nothing stops a member unlinking the provider they are signed in with,
+    the mission-timing defect at ConnectedScreen.tsx, connect_google in the engine, the three
+    .assets/mumate/slice2-* dumps, the AWS bucket s3-ps-cdn, and Vercel Preview resolving to
+    the production database.
+
+next_action:
+  action: >-
+    In a fresh session, with the owner: write DoD 4b together, because the plan deliberately
+    left it until the merge conversation existed and it now does. Before slice 5 rehearses
+    the flip, point be and bazi at the arena so a rehearsal is hermetic. Nothing in this lane
+    is pushed beyond its feature branch and nothing should be until the owner decides to open
+    the pull request.
+  acceptance_check:
+    - A fresh Wake reports zero validation errors and this event as the newest.
+    - The shadow is serving production and no arena exists.
+    - No production claim is made for slice 4; its proof is the rehearsal.
