@@ -1,0 +1,109 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T062500_mumate_login_identity_s6_6c_baseline_walked_6a_pr827
+type: closeout
+recorded_at: 2026-09-27T06:25:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Checkpoint 6c and 6a. The owner walked the four baseline cases on the
+    shadow over the arena before the flip, and every outcome matched the
+    legacy path's expected behaviour. 6a is offered as mootech-fe PR 827, and
+    the flip commit is stacked on it for the 6d image.
+  scope:
+    - The 6c walk and its arena row counts.
+    - 6a's pull request, and the push-gate obstacle.
+    - The flip commit.
+  out_of_scope:
+    - 6d, which follows the flip image build and an arena reset.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      6c WALKED BY THE OWNER ON app.staging.mumate.co, legacy path, all writes
+      in the arena. (1) Known LINE: straight in, no new rows. (2) Known Google:
+      straight in, no new rows. (3) STAGED EXPOSED MEMBER. The agent set the
+      owner's one live Google row to a ya29-shaped token inside the arena,
+      keeping its email. Signing in with that Google showed /v2/welcome-back;
+      the owner answered "ไม่เคย", and the BE logged "NO HAVE - usersEmails -
+      OTHER", which is its email discovery. At 06:15:56 a new live Google row
+      was attached to the owner's EXISTING member, with no new user. That is
+      the rescue the flip will remove. (4) Fresh Google through the owner's
+      invite link, answered "ไม่เคย", then registered: one new user, one Google
+      row, 20 welcome points, one log_activity row, and one
+      bazi_referral_redemption written to the arena. Writing that redemption to
+      the arena proves the shadow bazi's repointing took effect.
+    - >-
+      ARENA COUNTS AFTER 6c: users 5,121 -> 5,122 (+1, walk 4); user_provider
+      5,308 -> 5,310 (+1 on the existing member, walk 3; +1 on the new member,
+      walk 4); new users without a provider row 0. The first attempt at walk 3
+      was not observed (no rescue marker, staged row untouched). The owner was
+      given step-by-step instructions and walked it again; the second attempt
+      is the one recorded.
+    - >-
+      6a OFFERED AS mootech-fe PR 827
+      (https://github.com/mojisejr/mootech-fe/pull/827), branch
+      fix/mumate-login-identity-s6-unlink-live at 5f99ea9. It was written by a
+      subagent in a separate worktree. Unlink and the Connected screen now share
+      one rule, leavesAWayIn, built on countLiveIdentities. npm test passed
+      3,210 with 193 skipped; the touched specs with real Postgres passed 88/88;
+      tsc, lint (0 errors) and build (VAPID gate) are green; gitleaks is clean.
+      Each mutation turned its tests red: name count 4, button rule 5, locked
+      rows 1.
+    - >-
+      PUSH GATE. The pre-push verify-architecture fails on four violations
+      that exist on main e97ede7 (checked by the coordinator). The harness
+      refused --no-verify to the agent, so the owner ran the push himself.
+      That matches the lane's PR 815 record.
+    - >-
+      FLIP COMMIT 7be9ea6 on feat/mumate-login-identity-s6-flip, stacked on
+      5f99ea9. The change is one line at constants/api/endpoint.ts:55, with the
+      rollback written in a same-line comment. callApi sends path_params as the
+      POST body (utils/fetch.ts), so refer_code reaches req.body, which is what
+      the FE route reads. tsc exit 0; the related specs passed 114 with 12
+      skipped. No PR is opened for the flip until the owner accepts the
+      rehearsal. The staging build is run 36278959348.
+  not_completed:
+    - >-
+      The subagent found that a member whose only Google row is dead still
+      sees Google as "linked" on the Connected screen, with no link button,
+      although linkProvider would accept their real Google. This is existing
+      behaviour and a screen/copy question for the owner. It is recorded in
+      PR 827 and not changed.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.9"
+  slice: none
+  repository:
+    head: "5abdb46"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    pr_6a: "https://github.com/mojisejr/mootech-fe/pull/827 (5f99ea9)"
+    flip_branch: "feat/mumate-login-identity-s6-flip 7be9ea6"
+    worktree: "scratchpad fe-6a (git worktree of the mootech-fe checkout)"
+  host:
+    staged_member_id_file: "env/.s6-owner-id (mode 600, host only; delete at 6e)"
+    local_git_excludes: "env/*.pre-arena*, env/.s6-owner-id added to /opt/mumate/.git/info/exclude"
+
+unresolved:
+  - Secret-bearing leftovers from earlier lanes sit untracked in the host checkout (env/be.env.bak-20260920-cors, env/fe.env.bak-3c, .arena-*.txt/.err). They are not this lane's to delete. The owner decides.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the flip image is built: reset the arena (arena.sh up, same backup),
+    recreate fe/be/bazi, and deploy the flip image on the shadow. Prove
+    isolation again, and that the FE posts to /api/auth/register-login-fe.
+    The owner then walks the same four cases for 6d, followed by the rollback
+    walk.
+  acceptance_check:
+    - 6d walk results recorded against the 6c table above.
