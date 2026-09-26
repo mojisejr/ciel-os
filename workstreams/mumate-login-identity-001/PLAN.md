@@ -597,8 +597,25 @@ rehearsal shrinks those steps; it does not replace them.
 ### Ownership of the arena
 
 Owner decision 14 gave the arena to `mumate-infra-move-001`. That lane closed on
-2026-09-26, so nobody holds it. Who runs `arena.sh up/down`, and the shadow env
-edits, is settled in the decision that authorizes this revision.
+2026-09-26, so nobody holds it. Decision 25 below settles it for slice 6.
+
+### Owner decisions 24-29 (2026-09-27)
+
+24. Slice 6 is authorized under this revision. The production flip (6g) still
+    waits for the owner's explicit go, given after he accepts the rehearsal
+    at 6e.
+25. This lane runs `arena.sh up/down` and edits the shadow's env files itself
+    for slice 6. This replaces decision 14 for this slice only.
+26. The production observation window is **seven days**. The agent reminds
+    the owner when it ends.
+27. Rollback fires on any of: a new member with no provider row (one is
+    enough); repeated `register-login-fe` errors; new members per day above
+    three times the 6f baseline. It is done by Vercel's promote of the
+    previous deployment, followed by a one-line revert PR.
+28. The owner holds `mootech-be` and nobody else changes it. No team
+    notification is needed beyond him.
+29. The agent dispatches `container-build` itself where the harness permits,
+    and hands it to the owner as one line where it does not.
 
 ## Relationship to existing work
 

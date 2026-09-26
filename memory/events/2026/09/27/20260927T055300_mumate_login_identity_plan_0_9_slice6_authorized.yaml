@@ -1,0 +1,84 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T055300_mumate_login_identity_plan_0_9_slice6_authorized
+type: decision
+recorded_at: 2026-09-27T05:53:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Authorize plan revision 0.9 slice 6: fix the unlink route's last-method
+    rule, rehearse the flip on the shadow over the arena with both FE and BE
+    serving from it, then flip production on the owner's go and observe for
+    seven days.
+  scope:
+    - Plan revision 0.9, phases 6a-6h, DoD 6 (F1-F10), owner decisions 24-29.
+    - mootech-fe topic branches for 6a and the flip, up to pull requests ready for the owner's review.
+    - Staging only on the mumate-2 host - arena up and down, shadow FE and BE env edits, staging image builds and deploys.
+    - Read-only production reads through mumate_backup.
+  out_of_scope:
+    - Merging any pull request, and any production env, deployment or database write.
+    - Accepting the rehearsal (6e) and the production flip (6g), which are the owner's.
+    - Any change in mootech-be.
+
+outcome:
+  status: decided
+  parallelism: approved   # mootech-fe is shared with mootech-ga4-instrumentation-001, which has no running session; own paths only
+  slice: "6"
+  decision: >-
+    On 2026-09-27, after slice 5 closed, the owner asked for slice 6 laid
+    out. Then he proposed flipping on staging first and logging in against the
+    arena himself, and merging to production only if that walk is good. The
+    agent agreed and added that the shadow BE must also serve from the arena,
+    because it wrote production throughout slice 4's rehearsal. That became
+    plan revision 0.9. The owner answered: approve ("อนุมัติ"); this lane runs
+    the arena ("lane นี้ทำไปเลย"); seven days of observation with a reminder
+    ("7 วันเตือนผมด้วย"); the rollback triggers as proposed ("ตามที่คุนว่า"); he
+    alone holds mootech-be ("ผมเอง ไม่มีใครแตะ be อีกแล้ว"). He granted the
+    permissions the work needs, asked for a safety check before each risky
+    step, and said to meet him when staging is ready for his test or at a
+    stop for a decision.
+  owner_decisions: "24-29, as written in PLAN.md revision 0.9"
+  authorizes:
+    - 6a through a mootech-fe pull request marked ready for the owner's review.
+    - >-
+      6b-6d on staging, with a safety check before each risky step. That means
+      arena.sh up from the latest nightly backup, the shadow FE and BE pointed
+      at the arena with .pre-arena copies and recorded reverse steps, arena-only
+      staging of test cases, staging images built from this lane's branches, and
+      deploys to the shadow.
+    - 6f's read-only production measurement.
+  does_not_authorize:
+    - Merging any pull request; accepting the rehearsal; the production flip; any production write.
+    - Leaving the arena standing beyond seven days from up, or past 6e.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.9"
+  slice: "6"
+  execution_phase: "6"
+  repository:
+    head: "5461280"
+    branch: hq/20260926
+    working_tree: this-decision-and-plan-decisions-24-29
+  application:
+    mootech-fe: "origin/main e97ede7"
+    flip_line: "constants/api/endpoint.ts:55, one application caller (constants/api/api-user-register-or-login.ts:22), verified 2026-09-27"
+  shadow_as_last_recorded: "FE on production DB, image c23440f...-staging, arena down (2026-09-26 01:30 record)"
+
+unresolved:
+  - bin/arena.sh does not know about the BE; its status and down guard the FE only. The BE edit is manual with written reverse steps.
+  - The rehearsal cannot prove the transaction pooler, the Vercel deploy path, or real volume.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Open 6a on a mootech-fe topic branch. In parallel, run the safety check
+    for 6b, then bring the arena up with FE and BE on it, build and deploy
+    the baseline image, stage the test cases, and stop when staging is ready
+    for the owner's 6c walk.
+  acceptance_check:
+    - Wake reports mumate-login-identity-001 at revision 0.9, lifecycle authorized for slice 6, and no validation error.
