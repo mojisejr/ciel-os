@@ -1,0 +1,99 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T051600_mumate_login_identity_handoff_before_clear_d8_pending
+type: closeout
+recorded_at: 2026-09-27T05:16:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Hand this MuMate session over before the owner clears it. The slice-5 repair
+    is on production, D8 is the only thing left in slice 5, and a cold session
+    must be able to pick it up without reading the whole round.
+  scope:
+    - The production deploy of PR 826 and the deploy anomaly that preceded it.
+    - Cold-session entry for mumate-login-identity-001 and mumate-backup-001.
+  out_of_scope:
+    - D8 itself, which needs the owner at a browser.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      DEPLOY ANOMALY. PR 826 was merged at 22:04 UTC (main e97ede7), but Vercel
+      never created a Production deployment for it: none on GitHub, none in
+      `vercel ls`. Five minutes later it had still not appeared, although the
+      #825 merge had deployed within about 1.5 minutes. vercel.json has no
+      ignore step. GitHub and Vercel status pages were operational, and the
+      branch preview (d557b0e) had built normally. The cause is not visible
+      from the CLI or GitHub. The agent did not deploy, because the repository
+      forbids CLI deploys. The owner used the dashboard's promote to production.
+    - >-
+      PRODUCTION VERIFIED, NOT ASSUMED. Deployment mootech-luxc0ms0a was
+      created at 05:12 Bangkok with target production, and reached Ready by
+      05:14. On bazichart.mumate.co, GET /api/auth/identity-hold answers 405
+      (it answered 400 from the NextAuth catch-all while the old code was
+      live). A POST without an Origin header to identity-hold or
+      identity-attach answers 403 cross_origin. The new routes are live and
+      refuse a cross-site call.
+  for_a_cold_session:
+    where_slice_5_stands: >-
+      Plan 0.8, slice 5 (formerly 4b). PR 825 (the question, and one live
+      identity per provider) and PR 826 (Fix A, the belt, and Fix C, the held
+      identity) are both merged and live. LOGIN_ASK_BEFORE_CREATE was switched
+      on by the owner on 2026-09-26. The only open DoD item is D8, the owner's
+      production walk of both paths.
+    how_to_run_d8: >-
+      Before the walk, count "user" rows and user_provider rows created since a
+      fixed time, read-only through the mumate_backup role from mumate-2 (see
+      the 2026-09-26 21:30 record for the query shape).
+      "yes" path: unlink Google on the connected screen, sign out, sign in with
+      Google, answer "เคยใช้", and prove with LINE. Expect to land on the
+      connected screen with "เชื่อม Google เรียบร้อยแล้ว", with no second Google
+      screen and no refresh.
+      "no" path: use a Google account never used with MuMate and answer
+      "ไม่เคย". Expect the normal /v2/register.
+      Count again afterwards: exactly one new member (from "no") and no stray
+      rows. Then write the slice-5 closeout.
+    not_authorized: >-
+      Slice 6 (the flip) needs its own decision, and so does the unlink route's
+      last-method fix, which is its precondition.
+    backup_lane: >-
+      mumate-backup-001 is completed. Its first unattended run is 2026-09-27
+      09:02 Bangkok. Expect 💾 in Discord; a 🚨, or a stale ❌ within 26 hours,
+      is an incident. The one-shot 2026-09-28 check scheduled in this session
+      dies with it, so a later session should list s3://mumate-backups/pg/ once
+      for the two nightly objects.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.8"
+  slice: none
+  repository:
+    head: "6440084"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mootech-fe_main: "e97ede7 (PR 826 merged)"
+    production_deployment: "mootech-luxc0ms0a, created 05:12, Ready 05:14, by the owner's promote"
+    route_checks: "GET identity-hold 405; POST identity-hold 403 cross_origin; POST identity-attach 403 cross_origin"
+
+unresolved:
+  - D8 is not walked; the "no" path has never been walked on production.
+  - Why Vercel created no deployment for the push of e97ede7 is unknown. If it recurs, check the Vercel GitHub integration and don't assume a merge has deployed.
+  - The promoted deployment's link to commit e97ede7 was not confirmed via `vercel inspect`, which showed no commit metadata. Behaviour matches the new code.
+  - Carried from 2026-09-27 05:05 - the 2026-09-26 21:55 closeout's timestamp is about 50 minutes ahead of when it was written.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the owner is at a browser, run D8 as written in for_a_cold_session and
+    record the slice-5 closeout. HQ may push hq/20260926 when the owner closes
+    the round; nothing in this lane blocks that.
+  acceptance_check:
+    - D8 walked on both paths with row counts before and after, and a slice-5 closeout recorded.
