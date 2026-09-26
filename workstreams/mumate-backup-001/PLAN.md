@@ -1,11 +1,11 @@
 # MuMate — an off-platform backup that runs, fails loudly, and has been restored against a clock
 
 **Workstream:** `mumate-backup-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.1
-**Execution phase:** 1
-**Execution state:** executing
+**Execution phase:** none
+**Execution state:** idle
 **Parallelism:** proposed
 
 ## Objective and owner agreement
