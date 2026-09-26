@@ -1,10 +1,10 @@
 # MuMate — parallel DigitalOcean migration with a controlled domain flip
 
 **Workstream:** `mumate-infra-move-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.6
-**Execution phase:** 3
+**Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
 
