@@ -1,0 +1,106 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T161500_mumate_backup_checkpoint_pr23_open_role_and_drill_done
+type: closeout
+recorded_at: 2026-09-26T16:15:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-backup-001
+  lane: single
+  objective: >-
+    Checkpoint while mumate-infra pull request 23 waits for the owner's merge:
+    what steps 1, 2, 5, 6, 7 and K7 found and did, and what remains.
+  scope:
+    - Host read, the alerting pull request, the read-only role, the timed drill, the runbook, the storage inventory.
+  out_of_scope:
+    - Steps 3 and 4 (manual run and timer), which need the merged scripts on the host.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      HOST READ. mumate-backup.timer disabled; s3://mumate-backups/pg/ held one
+      object, mumate-1-20260919T220406Z.sql.gz, 131,758,971 bytes; the dump role
+      was postgres - not a superuser, but table owner with bypassrls,
+      createrole and createdb - so K7's condition applied.
+    - >-
+      THREE SILENT DEFECTS IN backup.sh, not two. Failures other than a tiny
+      object never alerted; pg_dump piped into gzip inside alpine's sh had no
+      pipefail, so a dump dying midway would publish as the newest backup; and
+      the retention loop returned 1 whenever its last pass deleted nothing, so a
+      SUCCESSFUL run exited 1 before its 💾 - enabling a failure alert without
+      that fix would have produced a false 🚨 every night. The test proves it:
+      run against the previous backup.sh it fails "successful backup exited
+      non-zero".
+    - >-
+      mumate-infra PR 23 (feat/backup-alerts, head 28ce053): gzip on the host,
+      upload to partial/ and move into pg/ only after the size check, an EXIT
+      trap alerting with the step, a stamp read by the new bin/backup-age.sh,
+      ops-status and health-notify reporting a stale backup as ❌ without ever
+      blocking FE recovery, and scripts/backup.test.sh, which goes red against
+      each removed guard.
+    - >-
+      K7 APPLIED ON PRODUCTION. Role mumate_backup: LOGIN BYPASSRLS, granted
+      pg_read_all_data (postgres holds it with admin option; postgres lacks grant
+      option on 21 auth/realtime/storage tables, so per-table grants would have
+      silently narrowed the dump), default_transaction_read_only on. Created
+      from a SCRAM verifier computed on the host, so the password reached
+      neither Postgres logs nor this session. Checked as the role: INSERT,
+      UPDATE, DELETE and CREATE all false, CREATE TABLE refused; a full pg_dump
+      exited 0 with empty stderr in 39 s and the same 221 COPY tables as the
+      postgres dump of 09-19. env/backup.env now connects as it; the pre-role
+      copy made for rollback was deleted once proven.
+    - >-
+      DRILL (step 5), 08:57 UTC: arena.sh up restored the 09-19 dump into pgtmp
+      in 78 s (5,018 users, the 2 documented noise errors); the shadow FE
+      pointed at it answered db ok 5 s later with 1 connection seen in pgtmp -
+      RTO 83 s from start to serving. fe.env returned byte-identical by
+      checksum, FE back on the pooler at 6 ms, arena down, no temporary env copy
+      left.
+    - >-
+      RUNBOOK 02 (step 6) rewritten as three paths: A Supabase dashboard restore
+      (project alive), B droplet pgtmp with the measured 83 s (project gone; be
+      and bazi must be repointed too, which the drill did not do), C a new
+      Supabase project (written, not drilled, per K5).
+    - >-
+      INVENTORY (step 7) - THE LARGEST FINDING OF THE SLICE. Supabase Storage is
+      in active use: bucket mootech holds 13,665 files, about 7.1 GB, with
+      uploads today; five small buckets hold about 44 MB more. mootech-be moved
+      its object storage from AWS S3 to Supabase Storage. pg_dump and
+      Supabase's daily backups hold only the storage.objects ROWS, not the
+      files, so no backup layer anywhere holds them. Also outside every backup:
+      legacy files on AWS s3-ps-cdn, and the env and secrets of Vercel, Render
+      and /opt/mumate/env.
+
+evidence:
+  plan: workstreams/mumate-backup-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: "1c56d11"
+    branch: hq/20260926
+    working_tree: this-event-only
+  application:
+    mumate-infra:
+      pull_request: "https://github.com/mojisejr/mumate-infra/pull/23"
+      head: "28ce053"
+      state: OPEN
+      host: "/opt/mumate at 978c2de; env/backup.env switched to mumate_backup"
+
+unresolved:
+  - PR 23 awaits the owner's merge; steps 3 and 4 wait for it.
+  - Supabase Storage files (about 7.1 GB) have no backup anywhere. Out of this slice's scope by the plan; needs its own owner decision.
+  - Path C of runbook 02 is undrilled.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    After the owner merges PR 23: pull on the host, run bin/backup.sh then
+    bin/restore-verify.sh on the new object, induce one failure for D2, enable
+    mumate-backup.timer, and close out after two nightly runs.
+  acceptance_check:
+    - Wake reports no validation error with this event as the newest record for mumate-backup-001.
