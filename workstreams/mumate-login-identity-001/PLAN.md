@@ -5,7 +5,7 @@
 **Execution lane:** single
 **Plan revision:** 0.8
 **Execution phase:** 5
-**Execution state:** idle
+**Execution state:** executing
 **Parallelism:** proposed
 
 ## Objective and owner agreement
@@ -496,7 +496,7 @@ In every record dated before this revision, "slice 5" means the flip and "4b"
 means today's slice 5. The 4-legacy heading stays unparsed on purpose: it is
 reference, not work.
 
-### Owner decisions 15-22 (2026-09-26)
+### Owner decisions 15-23 (2026-09-26 and 2026-09-27)
 
 15. Renumber the slices as above.
 16. Ask on **every** provider identity that has no owner, in **both**
@@ -525,6 +525,14 @@ reference, not work.
 
 The agent drafts the question screen's wording, and the owner approves it at
 pull-request review.
+
+23. (2026-09-27, after the first production walk.) The "yes" path must not ask
+    for the first provider twice. The first provider's identity, as NextAuth has
+    just verified it, is held in a short-lived, HttpOnly, signed cookie. After
+    the member proves the other provider, that identity is attached through
+    `linkProvider` under every rule the link flow applies. The proof standard is
+    unchanged: the same browser holds both providers within minutes. The proven
+    account's member cookie is minted before anything else reads it.
 
 ### What was measured to write decision 22
 

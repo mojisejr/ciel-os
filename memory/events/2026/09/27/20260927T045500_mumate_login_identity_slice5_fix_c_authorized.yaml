@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T045500_mumate_login_identity_slice5_fix_c_authorized
+type: decision
+recorded_at: 2026-09-27T04:55:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Authorize the slice-5 follow-up found by the owner's first production walk.
+    It has three parts: Fix A (mint the member cookie for the proven account),
+    the belt (the connected screen re-reads the profile once the cookie
+    arrives), and Fix C (hold the first provider's verified identity so "yes"
+    does not ask for it twice). A seam test walks the whole path.
+  scope:
+    - Owner decision 23 in plan 0.8, and one mootech-fe pull request.
+  out_of_scope:
+    - Slice 6, the unlink route's last-method rule, and any change to BE.
+
+outcome:
+  status: decided
+  parallelism: approved
+  slice: "5"
+  decision: >-
+    On 2026-09-26 the agent reported the walk's two findings: the "not found"
+    card, which was a defect, and the second Google sign-in, which was by
+    design. It recommended Fix C and said Fix C needed the owner's decision. On
+    the morning of 2026-09-27 the owner said "Fix C ผมเอา ถ้าไม่ติดอะไรและแก้ได้เลย
+    คุนแก้เลย". That approves Fix C, and approves Fix A and the belt as part of
+    the same repair.
+  authorizes:
+    - One mootech-fe pull request carrying Fix A, the belt, Fix C and the seam test, marked ready for the owner's review.
+  does_not_authorize:
+    - Merging, changing LOGIN_ASK_BEFORE_CREATE, or any production write.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.8"
+  slice: "5"
+  execution_phase: "5"
+  repository:
+    head: "469d7b7"
+    branch: hq/20260926
+    working_tree: this-decision-and-decision-23-in-the-plan
+  cites: memory/events/2026/09/26/20260926T213000_mumate_login_identity_slice5_d8_first_walk_defects_and_plan.yaml
+  application:
+    mootech-fe: "main a92abe5, synced 2026-09-27 04:51"
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Implement on a mootech-fe topic branch, prove it, and open the pull request.
+  acceptance_check:
+    - Wake reports plan 0.8 slice 5 authorized by this event and no validation error.
