@@ -1,0 +1,101 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T063500_mumate_login_identity_s6_6d_flipped_walk_and_rollback
+type: closeout
+recorded_at: 2026-09-27T06:35:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Checkpoint 6d. The flipped build was walked on the shadow over a freshly
+    reset arena. The harm the plan predicted for exposed members was observed,
+    referral and welcome-point parity held, and the rollback was walked and
+    timed. What remains of the rehearsal is the owner's acceptance (6e).
+  scope:
+    - The arena reset, the flip image and its deploy.
+    - The 6d walk against the 6c table, and the rollback walk.
+  out_of_scope:
+    - 6e onward.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      SETUP. Arena re-created from the same backup object as 6c (5,121 users,
+      5,308 provider rows; the owner's Google row live again). The flip image
+      was built from 7be9ea6 (run 36278959348) and deployed by deploy.sh.
+      pg_stat_activity again showed exactly be, fe and bazi on the arena. The
+      client bundle carries auth/register-login-fe in 1 file and
+      /user/register-login in 0.
+    - >-
+      6d WALKED BY THE OWNER. (1) Known LINE and (2) known Google: straight in,
+      through POST /api/auth/register-login-fe (2 calls, both 200), 0 calls to
+      the legacy BE, 0 new rows. (3) STAGED EXPOSED MEMBER, re-staged by the
+      stored id: the question at 06:25:58, "ไม่เคย", then register-login-fe at
+      06:26:06 created a NEW member, and /v2/register followed. The owner's
+      existing member received nothing (provider rows 2 -> 2). This is the harm
+      revision 0.3 predicted, now observed: after the flip, an exposed member
+      who answers "no" gets an empty account instead of their own.
+    - >-
+      F3 PARITY HELD. The owner had opened his invite link before walk 3, so
+      the account created through the FE route carried the referral. It has
+      its own refer_code, total_point 20, one log_activity row, and one
+      bazi_referral_redemption from POST /api/referral at 06:26:27. That
+      matches 6c's walk-4 account field for field. The owner chose to skip a
+      separate walk 4, because this account already exercised the same path.
+    - >-
+      ROLLBACK REHEARSED. deploy.sh back to e97ede7-staging took 15 s,
+      healthy. The bundle is back to /user/register-login in 1 file and the new
+      route in 0. The arena connections are unchanged. R1, known LINE at
+      06:30:59: legacy POST 200, BE "HAVE". R2 at 06:31:31, the owner's Google,
+      now owned by the empty account the FE route created: legacy POST 200, BE
+      "HAVE", no question. Rows written by the new route are read by the old
+      one, so a rollback strands nobody. Arena after all walks: 5,122 users,
+      5,309 provider rows, 0 members without a provider.
+    - >-
+      PRODUCTION UNTOUCHED, CHECKED. A read-only count through mumate_backup
+      at 06:28 found 0 users and 0 provider rows created since 06:20. The
+      newest production user is D8's, at 05:25:58.
+  not_completed:
+    - >-
+      The 15 s is a container swap on the shadow. Production's rollback is
+      Vercel's promote of the previous deployment, a different mechanism. The
+      owner used it on 2026-09-27 at 05:12, but it has not been timed.
+    - >-
+      The rehearsal does not cover the transaction pooler (the arena is a
+      direct connection) or the Vercel deploy path. 6g's own walk covers both.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.9"
+  slice: none
+  repository:
+    head: "8c2e941"
+    branch: hq/20260926
+    working_tree: this-record-only
+  host:
+    flip_image: "ghcr.io/mojisejr/mootech-fe:7be9ea67451dc539bc6f3d463e2d2ee990debff9-staging"
+    rolled_back_to: "e97ede7272674e5dc15175709325385372f4822f-staging, 15 s"
+  dod_6:
+    F2: "met in the database (pg_stat_activity each phase); S3 profile-image exception recorded 06:03"
+    F3: "met (field-for-field match with 6c)"
+    F4: "met (6c rescued, 6d empty account)"
+    F5: "shadow rollback walked and timed; the production rollback deployment is to be named before 6g"
+
+unresolved:
+  - The shadow still serves from the arena, with a flip-branch image available and main deployed, until the owner accepts at 6e.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner accepts or rejects the rehearsal. On acceptance: run the reverse
+    steps of the 2026-09-27 06:03 record, delete env/.s6-owner-id, run
+    arena.sh down, and prove F6. Then comes 6a's merge by the owner, followed
+    by 6f.
+  acceptance_check:
+    - The owner's 6e answer recorded.
