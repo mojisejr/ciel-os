@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T161500_orchard_decision_lab_slice2_authorized
+type: decision
+recorded_at: 2026-09-27T16:15:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Authorize Slice 2: an evidence-visible synthetic deterministic playground
+    that proves hard-rule bypass and NoOp trace behavior before private-data or
+    provider work begins.
+  scope:
+    - Add TypeScript domain rules, application orchestration, NoOp adapter, and local presentation route.
+    - Prove Durian wet-condition STOP, Mangosteen/unsupported-scope UNKNOWN, stale-evidence bypass, and replay.
+    - Use Bun's local server only; no framework, persistence, CSV, or external call is required.
+  out_of_scope:
+    - Reading the owner CSV files, SQLite/local event storage, or daily dogfood entry.
+    - OpenRouter/Jev invocation, source retrieval, Google Sheet/API access, or a public deployment.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner explicitly authorized implementation of Slice 2 after the
+      local input privacy remediation checkpoint.
+    - >-
+      The implementation chooses a small Bun local-server presentation over a
+      new UI framework, leaving the domain/application/adapters boundary intact.
+  not_completed:
+    - The Slice 2 implementation and its proof are not yet claimed complete.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: 70cfc9cf5cae3b52a70edc73e4c0d75ce0bf4dcf
+    branch: hq/20260926
+    working_tree: this-decision-and-plan-state
+  proof_contract: workstreams/orchard-decision-lab-001/PLAN.md#2-synthetic-deterministic-trace
+
+unresolved:
+  - The application has no CSV importer, local persistence, provider client, or public-source workflow in this slice.
+  - The retained Google-export filename prefix needs a Slice 3 mapping decision.
+
+next_action:
+  action: >-
+    Implement and prove the synthetic deterministic trace, then present the
+    local playground for owner review before recording a Slice 2 closeout.
+  acceptance_check:
+    - Bun tests prove all hard bypasses and replay without invoking a provider.
+    - A local browser route shows the full evidence-visible trace for each fixture.

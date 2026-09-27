@@ -3,9 +3,9 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
-**Execution phase:** 1
-**Execution state:** idle
+**Plan revision:** 0.2
+**Execution phase:** 2
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -97,6 +97,16 @@ facts, hard rules, `STOP`/`UNKNOWN` bypass and NoOp trace.
 evidence controls have deterministic unit/integration/E2E proof and replay.
 
 **Gate:** Slice 1 closeout and owner review.
+
+**Proof contract before implementation:**
+
+| DoD evidence | Proof lane | Owner |
+|---|---|---|
+| Pure rule outcomes and exact replay | Hard Gate: Bun typecheck and deterministic tests | agent |
+| `STOP`, `UNKNOWN`, stale and out-of-scope never invoke judgment | Hard Gate: spy-provider integration tests | agent |
+| Facts, applied rules, bypass reason and NoOp trace are readable | Eye Truth: local playground route plus direct browser inspection | agent, then owner review |
+| External provider/database access | API Truth: N/A; Slice 2 has neither | agent |
+| Device-specific behavior | Device Truth: N/A; local desktop playground only | agent |
 
 ### 3. Read-only CSV seed
 
