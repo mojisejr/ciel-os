@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T213156_orchard_decision_lab_slice4_accepted_slice5_authorized
+type: decision
+recorded_at: 2026-09-27T21:31:56+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Record the owner's acceptance of Slice 4 and the bounded authorization to
+    begin Slice 5's live Jev comparison.
+  scope:
+    - Accept the local Slice 4 dogfood loop.
+    - Use the existing OpenRouter credential for a local synthetic-only control.
+    - Enforce a total experimental ceiling of USD 3 in the Lab.
+  out_of_scope:
+    - Sending private dogfood observations, CSV data, orchard identifiers or notes to a provider.
+    - Public deployment, other-user access, source retrieval, agricultural policy activation or farm action.
+
+outcome:
+  status: decided
+  slice: "5"
+  decision: >-
+    The owner accepted Slice 4 and authorized Slice 5 to use the local OpenRouter
+    credential, provided the experiment remains synthetic-only and total spend
+    does not exceed USD 3.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.9"
+  slice: "5"
+  repository:
+    head: d1d4ecdc216ade8d66a18fee15cf8442ae029c66
+    branch: hq/20260926
+    working_tree: slice4-accepted-slice5-authorized
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 1f8f70f9f305552649ef667d8e9774ffe35b4add
+  authorization:
+    provider: OpenRouter
+    credential: existing-local-owner-controlled
+    budget_ceiling_usd: 3
+    payload_boundary: versioned-synthetic-allow-list-only
+  proof_contract: workstreams/orchard-decision-lab-001/PLAN.md#5-live-bounded-jev-comparison
+
+unresolved:
+  - The live API response, availability and reported cost are not yet observed.
+  - No agricultural policy claim, source retrieval or daily-use value is proven by this authorization.
+  - The owner remains the only authority for later source/policy scope and Go/No-Go.
+
+next_action:
+  action: >-
+    Implement and test the local safety gates, then run one synthetic live Jev
+    control only if the configured key and budget guard are both ready.
+  acceptance_check:
+    - The deterministic outcome remains authoritative when the provider is unavailable or invalid.
+    - The owner can inspect a Thai explanation of the live contribution, fallback, latency and cost.

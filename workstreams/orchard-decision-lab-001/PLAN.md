@@ -3,9 +3,9 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.8
-**Execution phase:** 4
-**Execution state:** idle
+**Plan revision:** 0.9
+**Execution phase:** 5
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -63,8 +63,8 @@ This workstream does not authorize:
   pilot;
 - Google Sheet mutation, a Google API client, Gemini Spark integration, or
   export of the owner's raw Sheet data;
-- an OpenRouter credential, real provider call, external source retrieval, or
-  source/policy activation before their declared gates;
+- external source retrieval or source/policy activation before their declared
+  gates;
 - an external orchard connector, shadow read, autonomous farm action, or a
   chemical product/formula/dose recommendation;
 - a change to DAC2/Takai or a CIEL runtime feature.
@@ -155,6 +155,26 @@ fallback and safety controls pass with a live synthetic control; provider
 contribution, fallback and cost are explained in Thai.
 
 **Gate:** explicit owner approval for credential and budget after Slice 4.
+
+**Authorized bounded experiment (2026-09-27):** The owner accepted Slice 4
+and opened a one-time local experiment using the existing OpenRouter credential,
+with a total experimental ceiling of USD 3. The first live control is
+synthetic-only: no private dogfood observation, imported CSV value, orchard
+identifier, free-text note, or source research payload may be sent. The
+implementation must stop live calls when its local budget ledger reaches the
+ceiling; a provider-side account limit, if any, is additional protection rather
+than the only control.
+
+**Proof contract before implementation:**
+
+| DoD evidence | Proof lane | Owner |
+|---|---|---|
+| Missing key, disabled live flag, budget exhaustion, hard stop, stale and out-of-scope all prevent a provider request | Hard Gate: config and request-spy tests | agent |
+| The request is built exclusively from one versioned synthetic allow-list and rejects untrusted response shapes | Hard Gate: request/response validation tests | agent |
+| Timeout, non-success response, malformed response and cost-overrun degrade to NoOp without changing the deterministic result | Hard Gate: mocked transport tests | agent |
+| One live synthetic control returns a typed decision, validates it, and records only a local redacted trace, latency and reported cost | API Truth: OpenRouter request under the USD 3 ceiling | agent |
+| A Thai screen makes the provider contribution, fallback, cost, latency and synthetic-data boundary legible | Eye Truth: local browser inspection | agent, then owner review |
+| Device-specific behavior | Device Truth: N/A; local browser only | agent |
 
 ### 6. Curated public-source evidence
 
