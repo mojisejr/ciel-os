@@ -617,6 +617,24 @@ Owner decision 14 gave the arena to `mumate-infra-move-001`. That lane closed on
 29. The agent dispatches `container-build` itself where the harness permits,
     and hands it to the owner as one line where it does not.
 
+### Owner decisions 30-31 (2026-09-27, after the flip)
+
+Research for `mumate-be-retirement-001` found that legacy `register-login`
+checked every LINE login against the LINE Messaging `/profile` API with the OA
+token. That API only knows users who have added the OA as a friend. In the
+seven days before the flip it rejected 200 of 442 login attempts
+(`PROFILE_NOT_FOUND`), and the FE signed those users out. The FE route does
+not make this check.
+
+30. OA friendship does **not** gate login ("R11 = ไม่ต้อง"). The FE route
+    stays as it is. Growing OA friends is a LINE Login channel setting for the
+    team (the add-friend option), not a login check.
+31. Decision 27's volume trigger moves from about 47 to **about 80 new members
+    in a day** ("R11b = ขยับเลย"). The daily 6h report shows LINE and Google new
+    members separately, because members the old check used to turn away can
+    now register and are expected to raise the count. The other two triggers
+    are unchanged.
+
 ## Relationship to existing work
 
 This workstream takes ownership of only the login/identity portion formerly
