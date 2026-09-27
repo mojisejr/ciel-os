@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T160906_mumate_vercel_to_do_s1_staging_production_connections_inventoried
+type: closeout
+recorded_at: 2026-09-27T16:09:06+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Checkpoint slice 1 after its first step: every production connection the
+    staging host holds today, read as env key names and connection hostnames
+    only, and what the owner has to supply before staging can be isolated.
+  scope:
+    - Read-only inventory of mumate-2 (/opt/mumate at cc3ce8b) and local code in mootech-fe and bazi-sft-dataset.
+  out_of_scope:
+    - Any change on the host. None was made.
+
+outcome:
+  status: recorded
+  slice: "1"
+  completed:
+    - "Host: fe (image 5621534-staging), bazi (722cdf1-staging), caddy and alloy up; mumate-health.timer every 5 min; mumate-backup.timer 02:00 UTC (09:00 Bangkok), next run 2026-09-28."
+    - "FE production connections: DATABASE_URL (production Supabase pooler); BAZI_BASE_URL is https://bazi-sft-dataset.vercel.app, so staging FE calls production bazi, which writes production data - not listed in the plan; SUPABASE_PROJECT_URL plus SUPABASE_SERVICE_ROLE_KEY for the production project, which bypass RLS; Beam and Omise keys, recorded live on 2026-09-24, and BEAM_API_BASE unset, which the code defaults to Beam production (lib/payment/beam-gateway.ts:84); VAPID_PRIVATE_KEY, which reaches real members' push subscriptions once a restored copy holds them if it equals production's; DASHBOARD_DISCORD_WEBHOOK."
+    - "FE retired-BE leftovers on staging: AI_CONSUME_SECRET, CONSENT_SECRET, CREDIT_ENFORCE, NEXT_PUBLIC_BACKEND_URL. The rollback that reads them is production's, not staging's."
+    - "bazi production connections: APP_DATABASE_URL (production Supabase pooler). The Neon set (DATABASE_URL, DATABASE_URL_UNPOOLED, PG*, POSTGRES_*, NEON_*) is only a fallback when APP_DATABASE_URL is unset (src/lib/env.ts getDatabaseUrl), so staging needs no Neon copy; the set can be removed. CLERK_* (team auth) and GEMINI_API_KEY write no member data."
+    - "Staging storage: FE uses one bucket (default 'mootech', lib/storage/friend-photo.ts) and bazi five (SUPABASE_DIVINE/FORTUNE/MASCOT/ORACLE/SACRED_BUCKET), all through a service-role key."
+    - "bin/arena.sh already restores the nightly backup into the pgtmp service with a 7-day expiry (owner decision 13, 2026-09-25); the lasting staging database builds on it."
+  not_completed:
+    - "Live or test status of the current Omise keys: a host read of the key prefixes was refused by the harness (production reads); left for the owner."
+    - Every slice-1 DoD item.
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "1"
+  repository:
+    head: "1b57623"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mumate-infra: "local main and host /opt/mumate both at cc3ce8b"
+
+unresolved:
+  - "Staging storage location - a separate Supabase project recommended (decision 20260927T160545); owner's call."
+  - "Beam Playground credentials and Omise test keys to be placed by the owner; current Omise key status unverified."
+  - "Whether staging may get its own VAPID pair, generated on the host without printing, or the owner places one."
+  - "Secret-bearing env copies on the host: fe.env.bak-3c, fe.env.pre-arena, fe.env.pre-arena-be, bazi.env.pre-arena-be, be.env.bak-20260920-cors."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    With the owner's answers: open the mumate-infra slice-1 PR (a lasting
+    staging database built on arena.sh, the staging data rule, environment
+    labels and multi-host views), restore the staging database, then switch
+    FE DATABASE_URL, FE BAZI_BASE_URL (to the staging bazi container) and bazi
+    APP_DATABASE_URL together, with .pre-slice1 copies and reverse steps.
+  acceptance_check:
+    - A cold session can list staging's production connections and the owner's open items from this record without re-reading the host.
