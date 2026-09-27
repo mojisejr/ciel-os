@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T103900_mumate_be_retirement_slice2_authorized
+type: decision
+recorded_at: 2026-09-27T10:39:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Authorize slice 2 of plan 0.4: disable v1 by a tested redirect rule
+    (keeping the code), and close the seam so that no reachable code calls
+    mootech-be. The branch is stacked on slice 1 and taken up to a pull
+    request for the staging rehearsal.
+  scope:
+    - A mootech-fe topic branch stacked on feat/mumate-be-retirement-s1, ready for review, never merged by the agent.
+  out_of_scope:
+    - Merging, production env, Render, and slices 3-4 (each needs its own record).
+    - Deleting v1 code (R1 rev 0.4 keeps it).
+
+outcome:
+  status: decided
+  parallelism: approved   # mootech-fe shared with mumate-login-identity-001 (6h observation only) and mootech-ga4-instrumentation-001 (no session); own branch only
+  slice: "2"
+  decision: >-
+    The owner approved the whole staging path on 2026-09-27: "staging first,
+    then production" (R6); v1 disabled "if it can be done safely" (R1); and
+    "ถ้าไม่มีอะไรต้องเคาะแล้ว เริ่มได้เลย ก็ไม่ต้องรอครับลุยได้" (if there is
+    nothing left to decide, start; no need to wait). Slice 1 is built on
+    feat/mumate-be-retirement-s1 (96c2351, all gates green). Its chart
+    agent confirmed that slice 1 must not reach production without slice 2's
+    redirect, because v1 /my-destiny and /calculator degrade. Slice 2 is
+    therefore built now so that slice 3 rehearses both together.
+  authorizes:
+    - Slice 2 of plan revision 0.4 through a mootech-fe pull request stacked on slice 1, with DoD V1-V5 proven locally.
+  does_not_authorize:
+    - Merging, env changes on any platform, or slices 3-4.
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "2"
+  repository:
+    head: "f4a7189"
+    branch: hq/20260926
+    working_tree: this-decision-only
+  application:
+    slice_1_branch: "feat/mumate-be-retirement-s1 96c2351 (merge of s1x 6f608b0 and s1y c002ca3); tsc 0, lint 0 errors, 3,325 tests passed, build green"
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 2 on a branch stacked on slice 1. Then prepare slice 3 (the
+    infra compose profile, the Caddy tombstone, the arena, and the B2
+    measurement) for the owner's staging walk.
+  acceptance_check:
+    - Wake reports lifecycle authorized for slice 2 and no validation error.
