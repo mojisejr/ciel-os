@@ -1,0 +1,75 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T100500_mumate_be_retirement_plan_0_4_slice1_authorized
+type: decision
+recorded_at: 2026-09-27T10:05:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Reopen BE retirement under plan revision 0.4 and authorize slice 1: v2
+    stops needing mootech-be. Home and first-run move to live engine values,
+    and register, edit-birth, consent, friends and friend photos move into
+    mootech-fe. The work goes up to a pull request and a staging proof.
+    Production is decided after staging (R6).
+  scope:
+    - Plan revisions 0.3 (re-measurement, four research passes) and 0.4 (the owner's answers).
+    - A mootech-fe topic branch and pull request, ready for the owner's review, never merged by the agent.
+    - Read-only production reads through mumate_backup, and a restored arena for the measurement.
+  out_of_scope:
+    - Any production merge, env change, Render action or credential rotation.
+    - Slices 2-4, each of which needs its own record.
+    - Any change in mootech-be (read only) or bazi-sft-dataset.
+
+outcome:
+  status: decided
+  parallelism: approved   # mootech-fe is shared with mumate-login-identity-001 (6h observation only, no code) and mootech-ga4-instrumentation-001 (no running session); own branch only
+  slice: "1"
+  decision: >-
+    On 2026-09-27, after slice 6 of the login lane went live, the owner asked
+    whether the backend could now be retired so that only FE and bazi remain.
+    He said v2 is launched and v1 is not used at all. He asked for the legacy
+    calls to be removed and the endpoints closed in the same work, and for
+    everything to be done on staging before production. He asked for agents
+    to research it. Four passes re-measured the system (plan 0.3). The owner
+    then answered each proposal: R11 "ไม่ต้อง"; R11b "ขยับเลย"; R1 disable v1
+    without deleting code; R2/R3, "we use pure bazi in v2, don't we?" (checked,
+    three legacy-chart uses remain, and slice 1 removes them); R4 "ใช่"; R5
+    drop the BE target (production FE monitoring is kept, see plan); R6
+    staging first, production decided afterwards; R7 agreed in principle,
+    decided last, to keep rollback open.
+  owner_decisions: "R1-R7 as answered in PLAN.md revision 0.4; R11/R11b recorded in mumate-login-identity-001 as decisions 30-31"
+  authorizes:
+    - Slice 1 of plan revision 0.4 through a mootech-fe pull request marked ready for review, with DoD B1-B6 proven locally and on the arena.
+  does_not_authorize:
+    - Merging, production env, Render, the Grafana or pm2 changes, or slices 2-4.
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "1"
+  repository:
+    head: "7302757"
+    branch: hq/20260926
+    working_tree: this-decision-and-plan-revision-0.4
+  application:
+    mootech-fe: "main f3ba279"
+    mootech-be: "main 0705378 (Render live deploy)"
+    bazi-sft-dataset: "origin/pdf-dev 72ca612"
+  research: "four read-only passes on 2026-09-27, summarised in PLAN.md revision 0.3 with path:line evidence"
+
+unresolved:
+  - The research reports themselves were returned in session. Their findings live in the plan's 0.3 section, not as separate files.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Implement slice 1 on a mootech-fe topic branch. Measure the mascot and
+    element-cycle changes on a restored arena. Then open the pull request and
+    record the closeout that offers it. Slice 2 and the staging rehearsal
+    (slice 3) follow with their own records.
+  acceptance_check:
+    - Wake reports mumate-be-retirement-001 at revision 0.4, lifecycle authorized for slice 1, and no validation error.

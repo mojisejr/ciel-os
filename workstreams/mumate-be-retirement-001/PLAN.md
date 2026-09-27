@@ -1,12 +1,12 @@
 # MuMate — retire `mootech-be`: every live responsibility moves into `mootech-fe`
 
 **Workstream:** `mumate-be-retirement-001`
-**State:** paused
+**State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution phase:** none
 **Execution state:** idle
-**Parallelism:** none
+**Parallelism:** proposed
 
 ## Objective and owner agreement
 
@@ -313,6 +313,61 @@ Production at 07:04: 0 new members since the flip.
 - **R11 · LINE OA friendship at login** (login lane, live now): either keep
   the check dropped, or restore it in the FE route.
 
+## Revision 0.4 — the owner's answers (2026-09-27)
+
+The owner answered 0.3's proposals on the same day. Where an answer differs
+from a proposal, the answer wins and the slices below are edited to match.
+
+- **R1 → disable v1, do not delete it.** "ไม่ต้องลบ code แต่ทำให้ใช้ไม่ได้" (don't
+  delete the code; make it unusable). One middleware rule redirects every v1
+  route. The v1 code stays in the tree, unreachable; git history holds it
+  anyway. Deleting it is an optional cleanup for later, not part of this plan.
+  Consequence: the seam closes by making code **unreachable** and removing the
+  env, not by deleting every BE constant. Unreachable v1 code may still name
+  `backendURLGenerator`.
+- **R2/R3 → v2 becomes bazi-only.** The owner asked whether v2 is not already
+  pure bazi. Checked in code at `f3ba279`: v2's content (fortune, element,
+  destiny, matching) is from the engine. The legacy chart is still used in
+  three places:
+  1. the "registered" gate: register needs BE's `result.code`
+     (`useV2ProfileForm.ts:96-114`), and home sends anyone without
+     `user.result_code` to `/v2/register` (`useV2Home.ts:131-135`);
+  2. the home mascot's **animal**: `animalFromCompute(computeSource)` reads
+     BE's stored chart (`pages/v2/index.tsx:90`), while the element already
+     comes from the engine persona;
+  3. first-run's mascot and six-facet `elementCycle`, read from BE's stored
+     chart (`useFirstRunSource.ts:75-80`).
+
+  So slice 1 takes 0.3's option C1: home and first-run derive the animal,
+  day stem and the `element_cycle` row **live from the engine** for every
+  member, existing and new. Register and edit-birth write the `user` columns
+  and mint `result_code` as the "registered" flag, with a minimal
+  `log_calculate` row kept only for the ops calc count. After slice 1, v2
+  reads no legacy chart. The replay becomes a measurement shown at staging
+  acceptance: how many existing members' mascot animal or `element_cycle` row
+  would change (births near 3-5 February and 23:00-24:00 are expected). It
+  is not a port-fidelity gate.
+- **R4 → yes.** Friend photos go to Supabase Storage through an FE server
+  route. The owner adds the service key to FE env.
+- **R5 → drop the BE target; keep production watched.** The owner expected
+  the new setup to cover it. Checked: `mumate-infra`
+  `observability/grafana/synthetic-checks.json` probes only the three
+  `*.staging.mumate.co` hosts. Production FE (`bazichart.mumate.co`) is
+  watched today only by the pm2 monitor. The BE target leaves the pm2
+  monitor. Production FE and bazi checks are added to the Grafana synthetic
+  checks before the pm2 monitor itself is retired, so production is never
+  unwatched.
+- **R6 → staging first; production is decided afterwards.** The owner wants
+  staging to be convincing before choosing what production does, and when.
+  This plan authorizes slices 1-3 (staging) one slice at a time. Slice 4 is
+  re-planned with the owner after slice 3's acceptance.
+- **R7 → agreed in principle, decided last.** Suspend, then seven quiet days,
+  then delete. The repository is archived, not deleted. BE-only credentials
+  are rotated. The owner confirms each irreversible step at the end, after
+  the removal has held, keeping rollback open until then.
+- **R11 → recorded in the login lane** as owner decisions 30-31: no OA-friendship
+  gate, and the volume trigger raised to ~80 a day.
+
 ## Execution slices and acceptance criteria
 
 **Rewritten in revision 0.3.** The 0.2 slices ("v2 stops needing the backend,
@@ -329,8 +384,11 @@ restored copy of production, with row counts, Caddy logs and
 
 One mootech-fe pull request, on one topic branch:
 
-- **1a Chart read (S).** `pages/api/chinese-horoscope.ts` reads `log_calculate`
-  through Drizzle and keeps the `{data}` / `{data:null}` shape.
+- **1a Mascot and element cycle from the engine (S–M, rev 0.4).** Home and
+  first-run stop reading the stored chart. The animal, day stem and
+  `element_cycle` row come live from the engine on the member's merged birth.
+  `pages/api/chinese-horoscope.ts` no longer calls BE: it either goes, or
+  answers from Drizzle for any remaining reader.
 - **1b Chart write (M).** A session-bound FE `POST` computes through the
   engine's `public-calc`: year branch, then `yearBelow`; day stem, then element
   and power via `chinese_horoscope8_square_above`; then `element_cycle` by
@@ -357,7 +415,7 @@ DoD 1:
 | # | Criterion | Proof |
 |---|---|---|
 | B1 | No v2 page or v2 API route reaches BE: `/v2/register`, edit-birth, home, first-run, element-finder, compatibility add/edit with photo | code search + staging walk with BE stopped (slice 3) |
-| B2 | Chart replay restricted to the v2 fields (`yearBelow.id`, `dayAbove.element`/`power`, `elementCycle.id`) over every member's current `log_calculate` row on the arena; every difference is counted and classified (new-year boundary, 23:00 boundary, other) | replay report; the owner accepts it (R3) |
+| B2 | Measurement on the arena: for every member's current chart, how many would show a different mascot animal or `element_cycle` row under the engine, counted and classified (new-year boundary, 23:00 boundary, other) | report shown at staging acceptance (rev 0.4) |
 | B3 | A member created through the FE route has the same `user` columns and `log_calculate` shape v2 needs as one created through BE; `time` is never NULL | tests + arena rows |
 | B4 | Consent: first-run completes and writes `consent` + `onboarded_at` in a production-mode build | tests + staging walk |
 | B5 | Friend add/edit respects the member/free quota exactly as BE did; photos land in Storage and render | tests + staging walk |
@@ -367,14 +425,15 @@ DoD 1:
 
 A second mootech-fe pull request, stacked on slice 1:
 
-- **2a Redirect v1 (R1).** One middleware rule maps every v1 route to its v2
-  counterpart or to `/v2`, and is tested route by route. The v1 pages,
-  components, wrappers and dead constants are then deleted: the 19 v1 call
-  sites and about 20 dead ones, `lib/credit/wallet-client.ts`,
-  `pages/api/chat/balance.ts`, Omise v1 and the OTP modals.
-- **2b Close the seam.** `backendURLGenerator`, `ENDPOINT`,
-  `NEXT_PUBLIC_BACKEND_URL` and the build-time guard at `endpoint.ts:16-21` are
-  removed, along with the legacy rollback comment on `endpoint.ts:55`.
+- **2a Disable v1 (R1, rev 0.4).** One middleware rule maps every v1 route
+  to its v2 counterpart or to `/v2`, and is tested route by route. The v1
+  code stays in the tree, unreachable; deleting it is optional later
+  cleanup.
+- **2b Close the seam.** No reachable code calls BE. Every server-side BE
+  reader (`onboarding.ts`, `chinese-horoscope.ts`, `compute.ts`,
+  `wallet-client.ts` via `/api/chat/balance`) is removed or unreachable, and
+  `NEXT_PUBLIC_BACKEND_URL` leaves the env contract. Unreachable v1 code may
+  still name `backendURLGenerator`, which then points nowhere.
   `CONSENT_SECRET`, `AI_CONSUME_SECRET`, `CREDIT_ENFORCE` and `RENDER_API_KEY`
   leave the code and `.env.example` in the same commit, so
   `env-example-drift` stays green.
@@ -393,7 +452,7 @@ DoD 2:
 | # | Criterion | Proof |
 |---|---|---|
 | V1 | Every former v1 route answers a redirect to its mapped v2 target; no v1 page renders | route-table test + staging walk of every v1 URL |
-| V2 | `git grep` for `backendURLGenerator`, `NEXT_PUBLIC_BACKEND_URL`, `onrender`, `api.staging` and `:4000` in app code returns nothing | grep in PR body |
+| V2 | No reachable page or API route can call BE: every remaining reference to `backendURLGenerator` or `ENDPOINT` sits in a v1 file behind the redirect, and is listed | reachability list in the PR body |
 | V3 | The served client bundle carries no BE host and no BE path | bundle probe on staging, then production |
 | V4 | `/ops` overall health no longer depends on Render | test + screen |
 | V5 | Tests, typecheck, lint, build and gitleaks pass; both templates filled | CI + local |
@@ -431,7 +490,9 @@ DoD 3:
 
 ### 4. Production: the backend leaves the system
 
-In order, each step an owner action or gated on one:
+**Re-planned with the owner after slice 3 is accepted (R6, rev 0.4).** The
+sequence below is 0.3's proposal and is kept as the starting point, not as an
+authorization. In order, each step an owner action or gated on one:
 
 1. Merge PR 1 (may precede 2026-10-04, R6). Verify that the deployment exists
    and carries the change (bundle probe, not assumption). The owner walks
