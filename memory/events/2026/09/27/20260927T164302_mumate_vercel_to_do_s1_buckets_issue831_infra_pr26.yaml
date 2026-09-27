@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T164302_mumate_vercel_to_do_s1_buckets_issue831_infra_pr26
+type: closeout
+recorded_at: 2026-09-27T16:43:02+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Checkpoint slice 1: staging storage ready, the D3 surfaces put to the team
+    as an issue, and the lasting staging database offered as an infra PR.
+  scope:
+    - The staging Supabase project, mootech-fe issue 831, mumate-infra PR 26.
+  out_of_scope:
+    - Any env change on the staging host. None was made; see next_action for why the switch waits.
+
+outcome:
+  status: recorded
+  slice: "1"
+  completed:
+    - "Owner placed .assets/mumate/staging-supabase.env with the staging project URL, a legacy service_role JWT, and the staging VAPID pair. Checked without printing values: role service_role, project ref matches the URL, VAPID lengths plausible."
+    - "Six public buckets created in the staging project (mootech, divine-cards, fortune-sage, oracle-cards, sacred-map, mootech-v2). A probe object was written with FE's header style (Bearer + apikey), read back through the public URL, and deleted."
+    - "mootech-fe issue 831 opened for the owner to walk through with เอ็ม: every bazi browser-facing surface in six groups, a proposed destination each (tailnet, FE, one public path, Vercel redirect, drop), the owner's pre-work (30-day Vercel path traffic, LINE console LIFF and webhook lists), and three questions per row. Pages were classified from code; layouts were not read."
+    - "mumate-infra PR 26 (draft, feat/staging-db, 7 files): pgstaging service in profile staging, bin/staging-db.sh over a target-parameterised arena.sh (pgtmp default unchanged, nothing else accepted), fe and bazi pointer checks before a drop, pgstaging logs kept off Loki, runbooks/05-staging-data.md with the data rule, scripts/staging-db.test.sh 9/9 with a mutation shown red. All repo tests pass; compose config and alloy fmt pass; the PR-template check passes."
+  not_completed:
+    - "Staging env switch (DB, bazi URL, storage, VAPID, Neon removal, BE leftovers)."
+    - "Control room: environment labels end to end, host inventory, per-host ops-status and comparison view, per-environment alerts and synthetics."
+    - "D3 destinations (issue 831)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "1"
+  repository:
+    head: "2198952"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mootech-fe_issue: "https://github.com/mojisejr/mootech-fe/issues/831"
+    mumate-infra_pr: "https://github.com/mojisejr/mumate-infra/pull/26"
+    mumate-infra_branch_head: "feat/staging-db, one commit on cc3ce8b"
+
+unresolved:
+  - "The storage and VAPID values are held back from the host on purpose: while FE still writes the production database, staging uploads would put staging-bucket URLs into production rows. They go in together with the database switch."
+  - "Beam webhook for staging and its HMAC key: owner to create and place (.assets/mumate/staging-beam.env)."
+  - "NEXT_PUBLIC_VAPID_PUBLIC_KEY is baked at build: the mootech-fe GitHub staging variable changes and a staging image is rebuilt at the switch."
+  - "pgtmp logs still ship to Loki; PR 26 drops only pgstaging's."
+  - "PR 26 is a draft; the owner reviews and merges, or tells the agent to mark it ready."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    After PR 26 merges and the host pulls it: bin/staging-db.sh up, then one
+    switch with .pre-slice1 copies - FE DATABASE_URL and BAZI_BASE_URL
+    (http://bazi:3000), bazi APP_DATABASE_URL with the Neon set removed,
+    staging storage values in both, the VAPID pair, the retired-BE keys
+    removed - set the staging VAPID build variable, owner dispatches the
+    staging FE build, deploy, and prove with a read-only check that no
+    staging write reaches production. Then the control-room work.
+  acceptance_check:
+    - A cold session can continue slice 1 from this record, the decision, and the inventory checkpoint.
