@@ -3,9 +3,9 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
-**Execution phase:** 2
-**Execution state:** idle
+**Plan revision:** 0.4
+**Execution phase:** 3
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -121,6 +121,11 @@ accepted/rejected rows and provenance without touching the current Sheet.
 **DoD:** exactly five CSV contracts import into a local normalized preview;
 source row, hash, parser revision and rejection reason replay; no Google client
 or write path exists; grower-facing import status and errors are Thai-first.
+
+**Filename handling:** preserve each raw Google-export filename and map it by
+the suffix after ` - ` to the five canonical contracts. A mismatched, duplicate,
+or missing suffix is rejected visibly; the importer never renames or edits an
+owner file.
 
 **Gate:** Slice 2 closeout; owner supplies manual CSV exports when ready.
 
