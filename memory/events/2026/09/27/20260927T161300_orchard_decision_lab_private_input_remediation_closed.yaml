@@ -1,0 +1,69 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T161300_orchard_decision_lab_private_input_remediation_closed
+type: closeout
+recorded_at: 2026-09-27T16:13:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Close the local privacy-remediation actions identified by the private-input
+    readiness checkpoint without reading, copying, or importing private data.
+  scope:
+    - Verify that the owner moved the five private CSV files to ignored imports/.
+    - Restrict the existing local .env file to owner-only read/write.
+  out_of_scope:
+    - Renaming, editing, parsing, importing, or committing any CSV file.
+    - Reading or recording the credential value, calling a provider, or starting a slice.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - >-
+      The five private CSV files now reside under the child repository imports/
+      directory, and Git confirms their location is ignored.
+    - >-
+      The agent changed the exact local .env file mode from 644 to 600 at the
+      owner's request; the credential value was not read or recorded.
+  not_completed:
+    - No CSV was parsed, imported, or normalized; no provider call occurred.
+    - This checkpoint does not authorize Slice 2 or Slice 3.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 4efa7b04998f24cfc46c552898a3d3026a03c791
+    branch: hq/20260926
+    working_tree: this-private-input-remediation-closeout
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    commit: ece3cf1f76d4a9ba06a28e72398f9c3f3cdaa311
+  checks:
+    - .env mode observed as 600 after change.
+    - Each CSV under imports/ passed git check-ignore.
+    - No raw CSV bytes, headers, hashes, credential values, or provider payloads entered CIEL.
+
+unresolved:
+  - >-
+    The five imported file names retain their Google-export prefix rather than
+    the canonical names in the Slice 3 contract. Do not rename or decide the
+    importer mapping until the owner chooses that handling.
+  - >-
+    Semantic CSV/header validation, local import, replay, and UI proof await
+    their authorized slices.
+  - Slice 2 remains unstarted and requires its declared owner gate.
+
+next_action:
+  action: >-
+    Ask the owner whether to rename the five local CSV files to their canonical
+    names now, or have the later importer recognize the retained export prefix;
+    separately obtain explicit authorization before starting Slice 2.
+  acceptance_check:
+    - Private inputs stay ignored and .env remains owner-only readable.
+    - A later Slice 3 importer has one documented filename mapping rule.
