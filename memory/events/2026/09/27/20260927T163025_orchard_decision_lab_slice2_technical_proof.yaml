@@ -1,0 +1,81 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T163025_orchard_decision_lab_slice2_technical_proof
+type: closeout
+recorded_at: 2026-09-27T16:30:25+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Record the completed technical proof for the synthetic deterministic
+    playground while leaving its owner-visible review explicitly open.
+  scope:
+    - Add deterministic Durian/Mangosteen fixture rules and a bounded NoOp judgment adapter.
+    - Expose a local-only Bun playground with readable evidence trace and replay metadata.
+    - Prove provider bypass, deterministic replay, and rendered local route behavior.
+  out_of_scope:
+    - Private CSV access, persistence, daily dogfood writes, OpenRouter/Jev calls, or external retrieval.
+    - A public deployment, production policy, or agricultural prescription.
+
+outcome:
+  status: recorded
+  slice: "2"
+  completed:
+    - >-
+      The Lab now has a synthetic, local-only deterministic trace for Durian
+      wet-condition STOP, unsupported Mangosteen scope, stale evidence, and a
+      fresh inspection path.
+    - >-
+      STOP, UNKNOWN, stale, and out-of-scope paths are proved to bypass the
+      judgment provider; the live implementation uses only the NoOp adapter.
+    - >-
+      The local route makes facts, rules, missing evidence, provider status,
+      final outcome, future owner-choice boundary, and replay metadata visible.
+  not_completed:
+    - Owner review of the visible playground is still required before treating Slice 2 as fully accepted.
+    - No private CSV, local database, provider credential, or external API was used.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: 05fd522213a9b504dc4fc0f8a564713b4df73ead
+    branch: hq/20260926
+    working_tree: this-slice2-technical-proof-record
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 08ea1fb81db3f02743306210722055e50bb11b58
+  checks:
+    - bun run check: 9 tests passed, 0 failed, 31 expectations.
+    - >-
+      E2E starts the local Bun server on an ephemeral port and verifies the
+      hard-stop route renders facts, applied rule, explicit Jev bypass, and STOP.
+    - >-
+      Static review confirms the route binds 127.0.0.1 and production source
+      does not read the OpenRouter credential or private imports directory.
+  eye_truth:
+    - >-
+      Browser automation could not remain attached to the host browser window;
+      this is an observation-tool limitation, not an application failure.
+      The owner-visible route remains ready at http://127.0.0.1:3000 after bun run dev.
+
+unresolved:
+  - >-
+    Owner needs to review the local trace presentation and confirm it explains
+    the STOP/UNKNOWN/NoOp flow clearly enough for learning Jev.
+  - The retained Google-export filename prefix remains a Slice 3 importer-mapping decision.
+  - Slice 3 is not authorized by this record; it requires explicit owner direction.
+
+next_action:
+  action: >-
+    Have the owner run bun run dev in the Lab, inspect the four synthetic
+    scenarios, and either accept Slice 2 or request a focused presentation
+    adjustment before a separate Slice 3 decision.
+  acceptance_check:
+    - The owner can distinguish deterministic STOP/UNKNOWN from the path eligible for a provider.
+    - The owner sees that no judgment call occurs when a hard policy or stale/out-of-scope boundary applies.
