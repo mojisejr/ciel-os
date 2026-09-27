@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T164915_orchard_decision_lab_thai_first_slice2_closed
+type: closeout
+recorded_at: 2026-09-27T16:49:15+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Close the Thai-first implementation correction for Slice 2 while retaining
+    the owner-visible acceptance check that cannot be inferred from tests.
+  scope:
+    - Amend the canonical Lab contract and every future owner-visible DoD with Thai-first requirements.
+    - Render the current Slice 2 synthetic trace in Thai, with technical detail secondary.
+    - Prove all synthetic journeys preserve Thai outcome, reason, and Jev boundary wording.
+  out_of_scope:
+    - CSV import, persistence, OpenRouter/Jev invocation, any external API, or multi-language infrastructure.
+
+outcome:
+  status: recorded
+  slice: "2"
+  completed:
+    - >-
+      PRD/SPEC v0.4 define Thai as the primary grower language and make English
+      codes, IDs, and locators supporting audit detail rather than instructions.
+    - >-
+      The local Slice 2 route now renders Thai facts, rule reasons, stale and
+      out-of-scope boundaries, outcomes, Jev bypass, NoOp eligibility, and
+      technical disclosure.
+    - >-
+      Automated tests cover all four synthetic journeys, and direct local
+      browser inspection observed both hard STOP and NoOp-eligible paths.
+  not_completed:
+    - Owner acceptance of Thai clarity remains required; tests cannot prove a grower understands the screen.
+    - Slice 3 remains unstarted and unapproved.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: f9a445338010cedbae15b1aa1befd003985073b6
+    branch: hq/20260926
+    working_tree: thai-first-slice2-closeout
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 22e3009a516580a2e39c4d57ef6f2042abbe4180
+  checks:
+    - bun run check: 10 tests passed, 0 failed, 40 expectations.
+    - >-
+      E2E requests all four local fixture routes and asserts their Thai
+      outcome text plus the appropriate Jev-bypass or NoOp boundary.
+  eye_truth:
+    - >-
+      Local browser inspection observed the Thai hard-stop route: “หยุดก่อน”,
+      its rain/wet-soil reason, and explicit Jev bypass.
+    - >-
+      Local browser inspection observed the Thai fresh-inspection route:
+      eligibility reaches NoOp only and states no Jev/API external call occurs.
+
+unresolved:
+  - Owner must confirm the Thai trace is clear enough for the intended grower before Slice 2 is accepted.
+  - The retained Google-export filename prefix remains a future Slice 3 importer-mapping decision.
+  - A need for a second display language has not been established and is intentionally deferred.
+
+next_action:
+  action: >-
+    Have the owner review the four Thai synthetic scenarios and record either
+    Slice 2 acceptance or one focused wording correction; then seek separate
+    authorization before starting Slice 3.
+  acceptance_check:
+    - The owner can state the safe action, reason, missing-evidence condition, and Jev boundary for each scenario.
+    - The owner explicitly authorizes any next slice after accepting the screen.
