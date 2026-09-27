@@ -1,0 +1,84 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T060032_orchard_decision_lab_state_contract_v1_closed
+type: closeout
+recorded_at: 2026-09-28T06:00:32+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Make the first practical, local-only daily orchard state contract usable
+    and inspectable before any source or provider work.
+  scope:
+    - Thai morning-state, crop-stage, optional forecast and intended-work capture.
+    - Append-only completed-work and changed-plan records.
+    - A redacted pre-decision State Inspector plus PRD/SPEC and plan revision.
+  out_of_scope:
+    - Source retrieval, research LLM calls, private-state provider calls,
+      policy activation, public deployment or autonomous orchard action.
+
+outcome:
+  status: recorded
+  slice: "6"
+  completed:
+    - >-
+      orchard-state/v1 now separates the pre-decision context from completed
+      work, owner choice and feedback recorded later in the local journal.
+    - >-
+      New records capture crop stage, optional forecast status and multiple
+      intended/completed activities without requiring free text.
+    - >-
+      The provider-ready JSON still excludes identifiers, free text, trace
+      identity and all post-decision data; legacy entries show explicit gaps.
+  not_completed:
+    - The owner has not yet dogfooded the revised workflow across 5–10 ordinary days.
+    - Crop-stage/activity vocabulary remains a first practical version.
+    - Slice 6b source retrieval, reviewer responsibility and budget remain unopened.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.2"
+  slice: "6"
+  repository:
+    head: b4800ddd7a27f5dc525f313d9cf0cba7415ad366
+    branch: hq/20260926
+    working_tree: state-contract-v1-closeout-prepared
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 86e8b59e2dd40ba4ba56599a9e30009a6a173626
+  checks:
+    - bun run check: 30 tests passed, 0 failed, 142 expectations.
+    - git diff --check: no whitespace errors.
+    - >-
+      Local browser inspection used a synthetic-only in-memory journal: it
+      showed Thai planned/actual work separation, exclusions and copyable
+      pre-decision JSON without opening a private record.
+  proof_lanes:
+    hard_gate: closed
+    api_truth: not-applicable-local-only-no-provider-or-source-call
+    eye_truth: closed-synthetic-journal; pending-owner-dogfood-usability-review
+    device_truth: not-applicable-local-browser-only
+
+unresolved:
+  - >-
+    Forecast status is owner-recorded context only; a source locator and
+    reviewer-verified public weather evidence are future 6b work.
+  - >-
+    The current deterministic rain/wet-soil behavior remains a Playground
+    fixture, not agricultural policy.
+  - >-
+    Any provider request using a real redacted state needs its own explicit
+    owner decision after local dogfood review.
+
+next_action:
+  action: >-
+    Owner dogfoods the revised local daily form and State Inspector over 5–10
+    normal cases, noting missing or misleading field labels. Then refine the
+    state contract locally or explicitly open the 6b source/reviewer scope.
+  acceptance_check:
+    - The owner can complete a real morning entry without translating technical terms.
+    - The owner can explain why work completed later is not in the pre-decision JSON.
