@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.1
+**Plan revision:** 1.2
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -189,6 +189,21 @@ journal; it excludes plot reference and free-text notes from the provider-ready
 state; Thai presentation shows what the state knows, what is missing and what
 cannot leave the machine. No source retrieval or provider call occurs.
 
+**6a.1 — Daily state contract v1 owner-visible result:** The owner records a
+morning observation, crop stage, optional forecast check, and one or more
+intended activities. Later, the owner can record completed activities and a
+structured reason when plans change. The State Inspector makes the boundary
+between the pre-decision provider snapshot and local after-the-fact journal
+visible.
+
+**6a.1 DoD:** New entries distinguish crop stage, morning facts, optional
+forecast, intended work, completed work, and changed-plan reason without
+requiring free text. Existing journal entries replay with explicit missing
+state rather than fabricated values. Provider-ready JSON excludes plot
+reference, free text, trace identity, completed work, owner choice, and later
+feedback. All additions remain local; no source, LLM, or provider request
+occurs.
+
 **6b — Owner-visible result:** A source-linked, reviewer-verified scenario
 explains what source fact, candidate claim and model contribution each mean.
 
@@ -196,9 +211,10 @@ explains what source fact, candidate claim and model contribution each mean.
 are required before the source can enter a Lab snapshot; source status and the
 distinction between claim and evidence are understandable in Thai.
 
-**Gate:** The owner authorized 6a on 2026-09-28. 6b source-retrieval scope,
-reviewer responsibility and any research-provider budget remain a separate
-owner decision after 6a review.
+**Gate:** The owner authorized 6a.1 on 2026-09-28 as the first practical state
+contract for dogfood. 6b source-retrieval scope, reviewer responsibility and
+any research-provider budget remain a separate owner decision after 6a.1
+review.
 
 **6a proof contract before implementation:**
 
@@ -208,6 +224,16 @@ owner decision after 6a review.
 | An empty journal, selected trace and missing data each render an explicit Thai state | Hard Gate: server/E2E tests | agent |
 | The local screen makes facts, freshness, provenance, gaps, exclusion and JSON copy controls legible | Eye Truth: local browser inspection | agent, then owner review |
 | Source, LLM, and provider network access | API Truth: N/A; 6a has none | agent |
+| Device-specific behavior | Device Truth: N/A; local browser only | agent |
+
+**6a.1 proof contract before implementation:**
+
+| DoD evidence | Proof lane | Owner |
+|---|---|---|
+| New structured fields and later completed-work events replay without changing the original morning trace | Hard Gate: TypeScript journal and replay tests | agent |
+| Legacy trace becomes explicit missing state; provider JSON has no private or post-decision fields | Hard Gate: compiler/redaction tests | agent |
+| Thai form and State Inspector distinguish intended work, completed work, and excluded fields | Eye Truth: local E2E/browser inspection | agent, then owner review |
+| Source, LLM, and provider network access | API Truth: N/A; 6a.1 has none | agent |
 | Device-specific behavior | Device Truth: N/A; local browser only | agent |
 
 ### 7. Evidence dossier and Go-to-Pilot decision
