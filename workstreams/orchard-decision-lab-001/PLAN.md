@@ -3,9 +3,9 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.0
-**Execution phase:** 5
-**Execution state:** idle
+**Plan revision:** 1.1
+**Execution phase:** 6
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -176,16 +176,39 @@ than the only control.
 | A Thai screen makes the provider contribution, fallback, cost, latency and synthetic-data boundary legible | Eye Truth: local browser inspection | agent, then owner review |
 | Device-specific behavior | Device Truth: N/A; local browser only | agent |
 
-### 6. Curated public-source evidence
+### 6. State contract and curated public-source evidence
 
-**Owner-visible result:** A source-linked, reviewer-verified scenario explains
-what source fact, candidate claim and model contribution each mean.
+**6a — Local State Inspector owner-visible result:** A grower can select a
+local dogfood trace and see exactly which structured facts, freshness,
+provenance, missing evidence and excluded private fields form a future
+provider-ready state. It renders both Thai tables and copyable JSON, but makes
+no external request.
 
-**DoD:** research LLM output remains a candidate; verification and locator are
-required before the source can enter a Lab snapshot; source status and the
+**6a DoD:** the state compiler is deterministic and replayable from the local
+journal; it excludes plot reference and free-text notes from the provider-ready
+state; Thai presentation shows what the state knows, what is missing and what
+cannot leave the machine. No source retrieval or provider call occurs.
+
+**6b — Owner-visible result:** A source-linked, reviewer-verified scenario
+explains what source fact, candidate claim and model contribution each mean.
+
+**6b DoD:** research LLM output remains a candidate; verification and locator
+are required before the source can enter a Lab snapshot; source status and the
 distinction between claim and evidence are understandable in Thai.
 
-**Gate:** owner approval of source-retrieval scope after Slice 5.
+**Gate:** The owner authorized 6a on 2026-09-28. 6b source-retrieval scope,
+reviewer responsibility and any research-provider budget remain a separate
+owner decision after 6a review.
+
+**6a proof contract before implementation:**
+
+| DoD evidence | Proof lane | Owner |
+|---|---|---|
+| Identical local journal input compiles to identical state; plot reference and note cannot appear in provider-ready JSON | Hard Gate: compiler and redaction tests | agent |
+| An empty journal, selected trace and missing data each render an explicit Thai state | Hard Gate: server/E2E tests | agent |
+| The local screen makes facts, freshness, provenance, gaps, exclusion and JSON copy controls legible | Eye Truth: local browser inspection | agent, then owner review |
+| Source, LLM, and provider network access | API Truth: N/A; 6a has none | agent |
+| Device-specific behavior | Device Truth: N/A; local browser only | agent |
 
 ### 7. Evidence dossier and Go-to-Pilot decision
 

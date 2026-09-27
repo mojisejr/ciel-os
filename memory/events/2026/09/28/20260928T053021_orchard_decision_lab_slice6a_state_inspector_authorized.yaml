@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T053021_orchard_decision_lab_slice6a_state_inspector_authorized
+type: decision
+recorded_at: 2026-09-28T05:30:21+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Begin the local-only State Inspector so the owner can judge the quality and
+    boundaries of a real orchard decision state before any external source or
+    provider receives it.
+  scope:
+    - Compile local dogfood records into a deterministic provider-ready state.
+    - Show facts, freshness, provenance, gaps, excluded fields, JSON and Thai tables.
+    - Keep all State Inspector activity local.
+  out_of_scope:
+    - Source retrieval, research LLM calls, a second Jev call, private-data export,
+      policy activation, public deployment or autonomous orchard action.
+
+outcome:
+  status: decided
+  slice: "6"
+  decision: >-
+    The owner authorized the local-only State Inspector first and delegated its
+    implementation approach, while leaving external source retrieval for a
+    later explicit scope decision.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.1"
+  slice: "6"
+  repository:
+    head: 41b065b7a7d067c3c912f03ddb729c09c71341a1
+    branch: hq/20260926
+    working_tree: slice6a-state-inspector-authorized
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 42fdd010a4f91afa8ab0296e29f61924b6f4bc84
+  proof_contract: workstreams/orchard-decision-lab-001/PLAN.md#6-state-contract-and-curated-public-source-evidence
+
+unresolved:
+  - The initial state schema is a local data-quality artifact, not an agricultural policy.
+  - Source scope, reviewer and research-provider budget remain unapproved.
+  - No private-data provider envelope has been approved.
+
+next_action:
+  action: >-
+    Implement the deterministic local State Inspector, prove its redaction and
+    presentation behavior, then ask the owner to review the compiled state.
+  acceptance_check:
+    - The owner can identify what the state knows, what it lacks, and what cannot leave the machine.
+    - The provider-ready JSON contains no plot reference or free-text note.
