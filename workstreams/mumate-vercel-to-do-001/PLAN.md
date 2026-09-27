@@ -3,7 +3,7 @@
 **Workstream:** `mumate-vercel-to-do-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -130,7 +130,14 @@ Added for revision 0.2 (same session, read-only):
   must observe both droplets**, so staging and production can be compared — the
   same event seen on one and not the other is itself a signal. Cost: one more
   droplet (list price about USD 24/month for s-2vcpu-4gb, unchecked against the
-  company bill); company-side Owner action for billing.
+  company bill); company-side Owner action for billing. **Revision 0.3 (owner,
+  2026-09-27): the production droplet is created at the start of slice 5, not in
+  slice 1.** Slices 1-4 prove everything on staging and would leave a new
+  droplet idle, billed and in need of patching; a rebuild from the repository
+  takes about 6.5 minutes, so creating it late costs nothing and proves the
+  rebuild with the configuration that passed slice 4. The control room is built
+  multi-host from slice 1 and proven on staging; the side-by-side comparison is
+  proven when the second host exists, in slice 5.
 - **D2 Staging isolation — decided: full.** Staging gets its own Postgres
   restored from the nightly backup, its own Storage bucket, Beam Playground and
   Omise test keys, no production QStash. The owner's reason: rehearse every case
@@ -194,24 +201,22 @@ Slices 1 to 5 move no production traffic, change no DNS for a production
 hostname, and change no provider setting on Vercel. Every slice needs its own
 owner decision after the previous closeout.
 
-### 1. Two environments on DigitalOcean, one control room
+### 1. An isolated staging and a multi-host control room
 
 Make `mumate-2` a staging that cannot reach production data, money or users
-(D2). Create the production droplet from the repository, joined to the tailnet,
-no public port 22, no application traffic, no production secret yet. Remove the
-shadow's production connections, live payment keys and the BE residue that R7
-does not need to keep. Settle D3 surface by surface with the team, and list the
-LIFF apps of channel `2011679472` with their endpoint URLs. Extend the control
-room to both hosts: one dashboard with an environment label, alerts and
-synthetics per environment, `ops-status` for both, and a comparison view of
-what each runs (image SHAs, env key names, timer states).
+(D2). Remove the shadow's production connections, live payment keys and the BE
+residue that R7 does not need to keep. Settle D3 surface by surface with the
+team, and list the LIFF apps of channel `2011679472` with their endpoint URLs.
+Make the control room multi-host by design: a host inventory, an environment
+label on every log, metric and alert, alerts and synthetics per environment,
+`ops-status` per host, and a comparison view of what each host runs (image
+SHAs, env key names, timer states). No droplet is created in this slice.
 
 DoD: staging serves FE and bazi against its own database and bucket with test
 keys, and a read-only check shows no staging write reaches production. The
-production droplet exists, is tailnet-only, and was built by the repository's
-scripts. The control room reports both hosts side by side. The staging
-data-handling rule is written in `mumate-infra`. Every bazi browser surface has
-a recorded destination.
+control room carries the environment label end to end and reports staging
+through the multi-host views. The staging data-handling rule is written in
+`mumate-infra`. Every bazi browser surface has a recorded destination.
 
 ### 2. The applications run correctly off Vercel
 
@@ -248,8 +253,8 @@ rebuilt from a fresh owner-run Vercel read, with the example files brought level
 with the code; the D4 release flow (staging automatic, production promotion by
 เอ็ม); a rate limit on bazi's ops login.
 
-DoD: every item merged and running on staging; the production droplet carries
-the same configuration with its timers disabled.
+DoD: every item merged and running on staging, and written so the same
+repository configures the production host with its timers disabled.
 
 ### 4. Parity proven on staging — the 100% checklist and the drills
 
@@ -264,17 +269,22 @@ sized to production's busiest hour, with event-loop lag and memory recorded.
 DoD: the D6 checklist has no open row, the rollback time is a measured number,
 and the owner signs the checklist.
 
-### 5. Production dressed and verified without traffic
+### 5. The production droplet created, dressed and verified without traffic
 
-Production env from the fresh Vercel read, production images from the GitHub
-`production` Environment, the same smoke as slice 4 against the production
-droplet through a pinned host entry or a verification hostname, reading
-production data without writing beyond what the smoke records. The cutover
-runbook of slice 6 — order, gates, flip-back triggers, who does what, the
-team's DNS steps — is written and rehearsed end to end on staging.
+Create the production droplet from the repository with the company Owner's
+billing approval: tailnet-only, no public port 22, the configuration that passed
+slice 4, timers disabled. Then production env from the fresh Vercel read,
+production images from the GitHub `production` Environment, the control room's
+side-by-side view proven with both hosts, and the same smoke as slice 4 against
+the production droplet through a pinned host entry or a verification hostname,
+reading production data without writing beyond what the smoke records. The
+cutover runbook of slice 6 — order, gates, flip-back triggers, who does what,
+the team's DNS steps — is written and rehearsed end to end on staging.
 
-DoD: production passes the smoke, the runbook rehearsal is timed, and D7's
-conditions are recorded as met or the slice waits.
+DoD: the production droplet was built by the repository's scripts; the control
+room compares staging and production side by side; production passes the
+smoke; the runbook rehearsal is timed; D7's conditions are recorded as met or
+the slice waits.
 
 ### 6. The cutover behind a maintenance gate, opened by the owner
 
@@ -344,11 +354,11 @@ remains, the recovery path and every unresolved risk.
 
 | Slice | Active effort | Waits on |
 |---|---:|---|
-| 1 · two environments, one control room | 8-12 h | slice-1 decision; company Owner for billing; เอ็ม for D3 surfaces |
+| 1 · isolated staging, multi-host control room | 6-10 h | slice-1 decision; เอ็ม for D3 surfaces |
 | 2 · apps off Vercel | 10-16 h plus review | slice 1 staging; team coordination |
 | 3 · control room parity | 12-18 h | slice 1 |
 | 4 · parity proven | 6-10 h | slices 2-3 |
-| 5 · production dressed | 4-8 h | slice 4 signed |
+| 5 · production droplet created and dressed | 6-10 h | slice 4 signed; company Owner for billing |
 | 6 · gated cutover | 4 h prep plus the window | D7; owner, reviewers and the team's DNS in the window |
 | 7 · observation, retirement | 3-6 h over the owner's window | slice 6 stable |
 
