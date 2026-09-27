@@ -1,0 +1,78 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T062135_mumate_handoff_before_clear_s2_waiting_for_1004
+type: closeout
+recorded_at: 2026-09-28T06:21:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Hand MuMate over before the owner clears this session. Slice 1 is closed;
+    slice 2 is proven on staging and waits only for merges after 2026-10-04.
+    This record is the cold-session entry for all MuMate work.
+  scope:
+    - mumate-vercel-to-do-001 (slices 1-2), the observing lanes' daily check, and the dates ahead.
+  out_of_scope:
+    - Slice 3 or later; any merge of mootech-fe or bazi-sft-dataset before 2026-10-04.
+
+outcome:
+  status: recorded
+  slice: "2"
+  completed:
+    - "D5: the owner walked login on https://app.staging.mumate.co with LINE and Google and reported it done (2026-09-28)."
+    - "Step 8 applied: mumate-infra PR 28 merged (749b1b7). The owner disabled the Grafana synthetic check mumate-bazi-staging (no probe for 247 s while the fe check kept probing) and paused the Better Stack monitor. The host pulled it; caddy was force-recreated (admin off: a Caddyfile change needs a recreate, `up -d` alone kept the old site). https://bazi.staging.mumate.co no longer completes TLS, http gives 404; app.staging 307 and api.staging 410 as before; fe carries MUMATE_ENV=staging and /api/health sends X-MuMate-Env staging, X-MuMate-Platform container; ops-status all green."
+    - "Tidy: the three scratch worktrees (bazi-s2, fe-s2, fe-s2b) were removed after checking they were clean and every branch was pushed; mumate-infra checkout back on main 749b1b7; mootech-fe checkout on main fd3220b."
+  for_a_cold_session:
+    read_first:
+      - "memory/events/2026/09/28/20260928T051750_mumate_vercel_to_do_slice2_authorized.yaml (the owner's answers A-E and the five merge fences)"
+      - "memory/events/2026/09/28/20260928T060940_mumate_vercel_to_do_s2_staging_proven_prs_drafted.yaml (every branch, PR and staging proof)"
+      - "memory/events/2026/09/28/20260928T045413_mumate_vercel_to_do_slice1_closeout_d3_bazi_api_only.yaml (slice 1 and D3)"
+      - "memory/events/2026/09/27/20260927T132102_mumate_handoff_before_clear_both_lanes_observing.yaml (daily check and rollback of the observing lanes)"
+    state:
+      - "Staging mumate-2: fe 850d8fbed5c8-staging and bazi 7000d190cd44-staging, both built from do/s2-staging integration branches (build-only, no PR); pgstaging from pg/mumate-2-20260927T020209Z.sql.gz, expires 2026-10-11; env copies *.pre-slice1 and *.pre-s2."
+      - "Open draft PRs, none to merge before 2026-10-04: bazi-sft-dataset 43 hardening, 44 LLM timeouts, 45 trusted client, 46 cron source; mootech-fe 832 client identity, 833 platform seams, 834 DB pool, 835 ops/launch, 836 cron source."
+      - "Secrets for the merges: BAZI_CLIENT_ID_SECRET in .assets/mumate/infra-mumate/bazi-client-id-secret.env (on staging already)."
+    dates:
+      - "2026-09-28 after 09:00 Bangkok: first daily read-only check of the observing lanes (login, be-retirement) and s3://mumate-backups/pg/ for the second nightly backup (timer 02:00 UTC). Production reads may be refused; then hand the owner the SQL."
+      - "Daily to 2026-10-04; then remind the owner both windows closed, login slice-6 closeout and be-retirement R7 step by step (20260927T132102)."
+      - "2026-10-04 00:30 Bangkok: first account-purge run with bazi PR 42 live - check that the three cancelled users were not purged."
+      - "After 2026-10-04: slice-2 step 10 - one merge at a time, bazi before FE, each watched and revertable; fences in the slice-2 decision."
+      - "2026-10-11: pgstaging expires (runbook 05: refresh or remove)."
+  not_completed:
+    - "Slice 2 step 10 (merges) and its closeout."
+    - "Per-branch npm run build and full npm run lint for FE PRs 832-836 before they leave draft."
+    - "Slice 3 needs its own owner decision; the plan allows it beside slice 2."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: "19c4fc3"
+    branch: hq/20260926
+    working_tree: this-record-only
+    unpushed_commits_on_hq: 73
+  application:
+    mumate-infra: "main 749b1b7 on the laptop and on mumate-2"
+
+unresolved:
+  - "Before merging bazi 43 and 45: owner-run check that the bazi Vercel project sets APP_DATABASE_URL and ADMIN_DOCTRINE_TOKEN in Production and Preview; BAZI_CLIENT_ID_SECRET placed on both Vercel projects (bazi first) before 45 and 832."
+  - "Merging FE PRs one by one conflicts in vitest.config.mts include lines each time (keep both sides)."
+  - "For slice 6: while the Vercel bazi project stays up as the flip-back target (D10), its UI and admin routes stay public and write production; bazi's LINE webhook and any /api/v1 client stop at the cutover (ask เอ็ม); LIFF endpoints of channel 2011679472 unverified."
+  - "Beam live payment on staging with its own webhook not yet tried; check production's log for a cross-delivered event after the first one."
+  - "The DO DNS record bazi.staging.mumate.co still exists and serves nothing; removal optional. The Grafana check and Better Stack monitor are disabled/paused, not deleted."
+  - "mootech-ga4-instrumentation-001 slice-3 CSV was due 2026-09-24; nothing recorded since 09-17 - ask the owner."
+  - "HQ hq/20260926 is 73 commits ahead of origin/main (MuMate and orchard sessions); the owner pushes when the round closes."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In a fresh session: run Wake, read the records named above, run the
+    2026-09-28 daily check and the second-backup check after 09:00, and wait
+    for 2026-10-04 before any mootech-fe or bazi merge. Offer slice 3 as the
+    next owner decision.
+  acceptance_check:
+    - A cold session can state the slice-2 state, the PRs held until 2026-10-04, the daily check, and the dates ahead from this record and the ones it names.
