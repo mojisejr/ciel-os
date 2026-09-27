@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T104906_mumate_be_retirement_slice3_authorized
+type: decision
+recorded_at: 2026-09-27T10:49:06+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Authorize slice 3 of plan 0.4: rehearse "BE gone" on the staging shadow
+    over the arena, with slices 1 and 2 deployed and be stopped, and prove
+    that no request reaches BE while the owner walks v2 and every v1 URL.
+  scope:
+    - mumate-infra PR 24 (BE_SCALE / MUMATE_BE_MODE switch, default no change), up to the owner's merge.
+    - On the staging host only - arena up/down, FE and bazi env pointed at the arena with .pre-arena backups and written reverse steps, BE_SCALE=0, MUMATE_BE_MODE=retired, staging image builds and deploys.
+    - Read-only production reads through mumate_backup.
+  out_of_scope:
+    - Any production merge, env change, Render action, or credential rotation (slice 4, re-planned with the owner after this slice, R6).
+
+outcome:
+  status: decided
+  parallelism: approved   # mootech-fe shared with mumate-login-identity-001 (6h observation only); mumate-infra has no other session
+  slice: "3"
+  decision: >-
+    The owner approved the staging path on 2026-09-27: "R6 = ใช่แบบนั้นอ่ะผมว่า
+    เวิร์คและปลอดภัย" (yes, that way works and is safe) and "ลุยได้" (go ahead).
+    This lane ran the arena and the shadow env edits for the login lane's
+    rehearsal the same morning, under that lane's decision 25. The same
+    conditions apply here: the agent runs the arena, and the owner accepts
+    the rehearsal.
+  authorizes:
+    - Slice 3 of plan revision 0.4 on staging, with DoD S1-S5; the owner merges mumate-infra PR 24 and walks the rehearsal.
+  does_not_authorize:
+    - Anything on production; leaving the arena past its expiry; accepting the rehearsal on the owner's behalf.
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: "ffdf248"
+    branch: hq/20260926
+    working_tree: this-decision-and-the-s1-checkpoint
+  application:
+    infra_pr: "https://github.com/mojisejr/mumate-infra/pull/24"
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    After slice 2 is built: the owner pushes the FE branches and merges PR
+    24, and provides the Supabase storage values for the shadow FE. The agent
+    builds the staging image, points FE and bazi at the arena, switches BE to
+    retired mode, deploys, proves isolation, and hands over the walk.
+  acceptance_check:
+    - Wake reports lifecycle authorized for slice 3 and no validation error.

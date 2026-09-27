@@ -1,0 +1,111 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T104900_mumate_be_retirement_s1_built_b2_measured
+type: closeout
+recorded_at: 2026-09-27T10:49:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Checkpoint for slice 1. It is built on one combined branch with every
+    gate green, and DoD B2 has been measured on a fresh arena. What is left
+    is its staging proof (slice 3) and its pull request.
+  scope:
+    - Two parallel implementation passes (X consent/friends/upload, Y chart to engine), merged.
+    - The B2 chart-drift measurement.
+  out_of_scope:
+    - Pushing and the pull request, which wait for slice 2 so the owner pushes both in one line.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      X (6f608b0): consent, friend add/edit and friend photo upload moved
+      into FE.
+      - Consent has migration 0035_consent.sql (conditional, a no-op on
+        production), is written in one transaction with the BE's values,
+        and removes CONSENT_SECRET.
+      - Friends: POST and PUT-profile keep BE's quota (20/20 from
+        member_payment) and its 410 body verbatim. They are session-only,
+        can edit own rows only, and serialize concurrent adds.
+      - Upload uses Supabase Storage REST with the BE's env names and key
+        shape. It accepts JPEG/PNG/WEBP up to 4 MB and never overwrites a
+        file.
+    - >-
+      Y (c002ca3): v2 reads no legacy chart. lib/chart/engine-chart maps
+      engine public-calc to the animal (pillars.year.branch), the day
+      element and power (a 10-stem table that matches
+      chinese_horoscope8_square_above, checked by test), and the
+      element_cycle row by (element, power, gender).
+      - Home and first-run compute live.
+      - Register and edit-birth write through the new session-bound
+        POST /api/v2/birth-chart. It mints result_code and a minimal
+        log_calculate row, and writes time='' rather than NULL; the
+        /api/profile bug is fixed too.
+      - element-finder no longer calls BE.
+      - It deliberately does not repoint the shared `calculate` constant,
+        because v1 /friend/[id] posts a friend's birth through it. A new
+        save_birth constant serves v2.
+      - Edit-birth stops wiping surname and stops forcing gender to MALE.
+    - >-
+      COMBINED feat/mumate-be-retirement-s1 at 96c2351 (X then Y, no
+      conflicts): tsc 0; lint 0 errors / 135 warnings (unchanged); npm test
+      279 files passed / 22 skipped, 3,325 tests passed / 211 skipped;
+      build green with the VAPID gate.
+    - >-
+      B2 MEASURED at 10:45. The arena was restored from
+      mumate-2-20260927T020209Z (5,130 users). Engine: bazi.staging.mumate.co
+      public-calc, which is pure computation (no-op knowledge repository, no
+      DB write). The script reached the DB through an SSH tunnel with a
+      read-only session and printed counts only.
+      - 4,468 members have a result_code; 2,800 were skipped because they are
+        refresh-flagged (today's v2 already sends them to /v2/register).
+      - Of 1,668 compared, 1,639 are the same (98.3%) and 29 differ (1.7%).
+        The animal differs for only 5.
+      - By cause: 26 were born in the Jan 20 - Feb 20 window; 3 have a stored
+        chart made from an older birth, where the engine uses the current
+        birth. None are late-hour and none are other.
+      - element_cycle: none newly available and none lost.
+  not_completed:
+    - >-
+      Y ran `npx true` by accident, which fetched and executed the public npm
+      package true@0.0.4 from the cache. Nothing in the repository changed.
+      It is recorded so the owner knows.
+    - Slice 1 must not reach production without slice 2's redirect, because v1 /my-destiny and /calculator lose fields they draw.
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.4"
+  slice: none
+  repository:
+    head: "ffdf248"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    branch: "feat/mumate-be-retirement-s1 96c2351 (s1x 6f608b0 + s1y c002ca3), local, not pushed"
+  measurement:
+    arena_source: "s3://mumate-backups/pg/mumate-2-20260927T020209Z.sql.gz"
+    members_with_result_code: 4468
+    refresh_flagged_skipped: 2800
+    compared: 1668
+    same: 1639
+    any_difference: 29
+    animal_differs: 5
+    by_cause: "newYearWindow 26, birthChanged 3, lateHour 0, other 0"
+
+unresolved:
+  - The arena from this measurement is still up (expires 2026-10-04). Slice 3 reuses it or rebuilds it.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Slice 2 (in progress), then slice 3: merge of mumate-infra PR 24 by the
+    owner, the Supabase storage values for the shadow FE, and a staging
+    image from the slice 1+2 branch.
+  acceptance_check:
+    - Slice 2 branch built with V1-V5 green.
