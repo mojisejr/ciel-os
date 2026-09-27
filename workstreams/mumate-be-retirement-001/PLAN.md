@@ -3,7 +3,7 @@
 **Workstream:** `mumate-be-retirement-001`
 **State:** paused
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -165,93 +165,300 @@ slice will follow unless the owner says otherwise before that slice starts):
 - **Q4 · member code redemption.** Default: **port** (money-adjacent, still
   used on the v1 profile). Slice 3.
 
+## Revision 0.3 — re-measured after the v2 launch and the login flip (2026-09-27)
+
+The owner asked on 2026-09-27 whether the backend can now be taken out, leaving
+only `mootech-fe` and the engine. He said v2 is launched and **v1 is no longer
+used at all**, and asked that the legacy calls be removed and the endpoints
+closed in the same work, rehearsed completely on staging before production.
+Four read-only research passes re-measured the system. They read FE `f3ba279`,
+BE `0705378`, engine `origin/pdf-dev` `72ca612`, infra `bfbc59a`, and Render
+production metrics and logs for 2026-09-20 → 2026-09-27. Their findings replace
+the 2026-09-18 evidence wherever the two differ.
+
+### What changed since 0.2
+
+- **Login no longer uses the backend.** `register_or_login` was flipped to
+  `/api/auth/register-login-fe` on production at 06:47 today
+  (`mumate-login-identity-001` 6g, mootech-fe PR 828). Group #1 of the 0.2
+  table is gone. The BE route stays live only as that flip's rollback, until
+  its observation window closes on **2026-10-04**.
+- **v1 is dead in use but alive by URL.** Only `/` redirects to `/v2`
+  (`pages/index.tsx:36-37`). No middleware or `next.config` rule covers the
+  other v1 routes. `/my-destiny`, `/register`, `/profile*`, `/friend/*`,
+  `/matching*`, `/survey`, `/fortune-stick`, `/chinese-calendar`, `/share/*`,
+  `/calculator`, `/welcome`, `/login` and `/payment/*` all still render. v2
+  never links into v1. The BE logs agree: v1 matching and friend-list calls
+  appeared once, on launch day 09-20, and never again.
+- **D1's reason is gone.** The verbatim chart port existed because v1
+  `/my-destiny` renders the full legacy JSON. v2 reads five values from the
+  chart: year animal, day-stem element, day-stem yin/yang, the `element_cycle`
+  row, and dob/time/gender. It also needs a non-empty `user.result_code` as its
+  "registered" gate. No v2 screen reads the analytics, the 8-square cycles, the
+  power scores, the share card or `share_img_profile_url`. The engine's
+  `public-calc` plus two reference tables already in Supabase
+  (`element_cycle`, `chinese_horoscope8_square_above`) cover every one of those
+  values.
+
+### v2's remaining backend dependencies: 7 call sites in 4 groups
+
+| # | Dependency | v2 caller | Without BE today | FE replacement | Size |
+|---|---|---|---|---|---|
+| A1 | `POST /chinese-horoscope` (compute, writes `log_calculate` + `user`) | `/v2/register` (`useV2ProfileForm.ts:96`), `/v2/settings/edit-birth` (`EditBirthScreen.tsx:114`) | register cannot finish: every new member is stuck | FE route: engine `public-calc` + Drizzle lookups, subset JSON, the same `user` writes | M |
+| A2 | anonymous `POST /chinese-horoscope` | `/v2/element-finder` via `pages/api/calculator/compute.ts:216` (new since 09-18) | error | derive the animal from the engine enrichment the route already fetches (`compute.ts:152`) | S |
+| A3 | chart read (`GET`, via FE BFF `pages/api/chinese-horoscope.ts:74-85`) | `/v2` home mascot, `/v2/first-run` | home falls back to the default mascot; first-run shows "unavailable" | Drizzle `SELECT result FROM log_calculate WHERE code AND user_id` (BE's own query, `be:chinese-horoscope.service.ts:1340-1351`) | S |
+| A4 | `POST /consent` | `/v2/first-run` via `pages/api/v2/onboarding.ts:79` | first-run gate loops | migration for `consent`; the existing Drizzle fallback (`onboarding.ts:62-74`, today non-production only) becomes the path | S |
+| A5/A6 | `POST /member-with-friend`, `PUT /member-with-friend/profile` | `/v2/service/compatibility/[kind]` (`useCompatibility.ts:196,213`) | cannot add or edit a friend | FE POST + PUT beside the existing GET/DELETE, with BE's quota rule from `member_payment` | S–M |
+| A7 | `POST /object-storage/upload-file` | friend photo in `AddFriendSheet.tsx:160` | cannot upload a friend photo | FE server route writing to Supabase Storage, needs a service-role key and bucket in FE env | S–M |
+
+v1-only call sites: 19, all deleted rather than ported once v1 is retired.
+Dead call sites: about 20 (OTP, register-tel/line, check-line, card, ai/*,
+upload-slip, payment.create, compat POSTs, `consumeCredit`, `new_friend`).
+
+### Production traffic, measured on Render (7 days to 2026-09-27 07:00)
+
+- 11,921 requests in total. About 84% (roughly 1,440 a day) come from the
+  owner's local pm2 `mootech-monitor`, which polls the BE root every 60 s. It
+  also watches the FE, and it lives in the BE repository
+  (`mootech-be/scripts/monitor`).
+- Real traffic in the logs: register-login **442 calls in 09-20 → 09-26
+  (UTC days), of which 200 (45%) were LINE `PROFILE_NOT_FOUND` rejections**
+  and 125 were known-member logins; 109 first-time creations and 7 email
+  links. These are attempts, not people, because one person may retry.
+  Zero after the flip at 23:47Z; 48 chart computes plus 10 that failed with 500 in
+  the share-card renderer; 7 + 7 v1 matching calls and 14 v1 friend lists,
+  all on 09-20. In 7 days there was no call to `/ai/*`, fortune, survey,
+  member-code, Omise, OTP, SMS or SendGrid.
+- No third party calls the BE. The Omise webhook points at v2 and nothing
+  arrived. BE has no LINE webhook or QStash. The engine does not call BE.
+- The crons run and skip every day (`MORNING_CRON_ENABLED != true`). No
+  scheduled writes.
+- Render plan: standard (1 CPU / 2 GB), one instance, about 90 MB used.
+
+### A finding that belongs to the login lane, recorded here because this research found it
+
+Legacy `register-login` checked every LINE login against the LINE Messaging
+API `/profile/{userId}` with the OA channel token
+(`be:src/line-message/line-message.service.ts:12-24`,
+`user.service.ts:279-285`). That API only knows users who have **added the OA
+as a friend**. Everyone else was rejected with `PROFILE_NOT_FOUND`, and the FE
+signed them out: 200 of 442 login attempts in the seven days before the
+flip, about 29 a day. The FE route does not make
+this call (0.2's Q1 default, never put to the owner). So since 06:47 today, a
+LINE user who is not an OA friend can sign in and register. That is a product
+change as well as a fix. It can also push new members per day above the
+login lane's "3× baseline" rollback trigger for a benign reason. The owner
+decides whether OA friendship should gate login (decision R11 below).
+Production at 07:04: 0 new members since the flip.
+
+### Data and schema the FE must own before the BE repository is archived
+
+- `consent` table (+ `idx_consent_user_id`), `user.onboarded_at`,
+  `user.onboarding_goal`: DDL exists only in
+  `mootech-be/migrations/2026-08-09_onboarding-consent.sql:44-56`.
+- `member_pay_as_use.balance`: DDL only in BE
+  (`src/member-pay-as-use/migrations/2026-06-26-wallet-balance.sql:23-24`).
+- A latent FE bug that the BE call currently hides: `/api/profile.ts:84-90`
+  writes `"time" = NULL` for an unknown time, but `user.time` is NOT NULL, so
+  the write fails silently. Today BE's recompute rewrites `time=''` afterwards.
+  Any replacement writes `time=''`.
+
+### Everything outside the app code (names only)
+
+- FE env: `NEXT_PUBLIC_BACKEND_URL` (5 readers: `endpoint.ts:14`,
+  `onboarding.ts:31`, `chinese-horoscope.ts:19`, `compute.ts:19`,
+  `wallet-client.ts:6`), `CONSENT_SECRET`, `AI_CONSUME_SECRET`,
+  `CREDIT_ENFORCE`, `RENDER_API_KEY`. Also `.env.example`, `Dockerfile`,
+  `container-build.yml:64` and the GitHub Environment variable, with
+  `scripts/env-example-drift.test.ts` enforcing that they change together.
+- Ops: `lib/ops/health.ts` reads Render and folds `health.be` into `/ops`
+  overall health. `scripts/ops-health.test.ts`, the consent tests, e2e and
+  testenv all expect a BE on :4000.
+- Infra: `docker-compose.yml:7` requires `BE_TAG` for **every** compose
+  command, and `deploy.sh`/`rollback.sh` run `up -d --remove-orphans`, which
+  restarts `be` unless it is moved to a profile. `ops-status.sh` loops over
+  `be`. The Caddy `api.staging.mumate.co` site and the Grafana synthetic check
+  `mumate-be-staging` also depend on it.
+- Production BE has no custom domain. It is only `mootech-be.onrender.com`,
+  so there is no mumate.co DNS record to remove.
+
+### Decisions proposed in 0.3 (open until the owner decides)
+
+- **R1 · Retire v1 by redirect, then delete it.** One middleware rule
+  redirects every v1 route to its v2 counterpart, or to `/v2`; for example
+  `/calculator` goes to `/v2/element-finder`, and `/payment/*` and `/share/*`
+  go to `/v2`. The v1 pages, components, wrappers and their 19 BE call sites
+  are deleted in the same slice. Supersedes D2 (payment freeze) and D3.
+- **R2 · Chart: engine plus a small FE writer, staged.** Replaces D1. Ship the
+  Drizzle read first, then the writer. Existing `log_calculate` rows are never
+  rewritten; new rows carry the subset. The proof is a replay restricted to
+  the fields v2 reads.
+- **R3 · Engine wins where it disagrees with the legacy chart.** For example,
+  births near 3-5 Feb or between 23:00 and 24:00. The replay counts these. They
+  affect only new charts and edits, because stored rows are kept.
+- **R4 · Friend photos:** an FE server route to Supabase Storage with a
+  service-role key the owner adds to Vercel, rather than moving photos to the
+  engine's avatar model.
+- **R5 · Uptime monitoring:** drop the BE target from the pm2 monitor, and
+  move FE monitoring out of the BE repository (for example, into the existing
+  Grafana synthetic checks) before the repository is archived.
+- **R6 · Production order:** the FE changes may reach production before
+  2026-10-04. Anything that removes the flip's rollback path
+  (`backendURLGenerator`, `NEXT_PUBLIC_BACKEND_URL`) and the Render suspend
+  wait until the login lane's observation closes on 2026-10-04.
+- **R7 · Render:** suspend, then seven quiet days, then delete. Archive the
+  GitHub repository; never delete it. Rotate BE-only credentials (SendGrid,
+  8x8, Dify, expired v1 Omise); check before rotating any shared ones (DB
+  role, Supabase service key, LINE token).
+- **R11 · LINE OA friendship at login** (login lane, live now): either keep
+  the check dropped, or restore it in the FE route.
+
 ## Execution slices and acceptance criteria
 
-### 1. v2 stops needing the backend, except for the chart
+**Rewritten in revision 0.3.** The 0.2 slices ("v2 stops needing the backend,
+except for the chart"; "the chart moves, proven by replay"; "v1 leftovers";
+"the backend leaves") assumed v1 had to keep working and that login still ran
+on the backend. Neither is true now. Their acceptance ideas survive where they
+still apply; their text is superseded. Every slice is rehearsed on the shadow
+over the arena before it reaches production. That is the pattern
+`mumate-login-identity-001` slice 6 proved on 2026-09-27: FE and engine on a
+restored copy of production, with row counts, Caddy logs and
+`pg_stat_activity` as the proof.
 
-Add `pages/api/identity/register-login.ts` (or under `/api/v2/`) implementing
-the register-login contract from `research/consumers-and-decisions.md` §3:
-lookup `user_provider` by `(id_token, provider)`; found → refresh email/picture,
-ensure refer code; email match on another provider → link; first login →
-insert `user`, `user_provider`, `log_activity` welcome row; return the same
-response shape `{is_user_new, is_email, is_info, user_id, name, ref_code,
-picture_url, is_refresh, result_code}`. Identity comes from the NextAuth
-session on the server, never from the body. Q1 default applies. Repoint
-`constants/api/endpoint.ts:55` to `localApi`.
+### 1. v2 stops needing the backend
 
-Add migration for table `consent` (mirror of the BE entity) and promote the
-Drizzle fallback in `pages/api/v2/onboarding.ts:62-74` to the production path;
-delete the BE call and `CONSENT_SECRET`.
+One mootech-fe pull request, on one topic branch:
 
-Add POST / PUT / PUT profile / GET new-friend to `pages/api/member-with-friend/`
-(read and delete are already there), with the member/free quota read from
-`member_payment` as BE does. Repoint `endpoint.ts:104-109`.
+- **1a Chart read (S).** `pages/api/chinese-horoscope.ts` reads `log_calculate`
+  through Drizzle and keeps the `{data}` / `{data:null}` shape.
+- **1b Chart write (M).** A session-bound FE `POST` computes through the
+  engine's `public-calc`: year branch, then `yearBelow`; day stem, then element
+  and power via `chinese_horoscope8_square_above`; then `element_cycle` by
+  (element, power, gender). It inserts `log_calculate` with a subset JSON that
+  keeps the paths v2 reads. It updates `user` (`dob`, `time` = `''` when
+  unknown, `is_remember_time`, `gender`, `result_code`, `is_refresh=false`,
+  `name`, `surname`, `account_name`) and returns `{ code }`. Register and
+  edit-birth point at it. The `/api/profile` `time=NULL` bug is fixed in the
+  same change.
+- **1c Element finder (S).** `compute.ts` builds the animal from the engine
+  enrichment and stops calling BE.
+- **1d Consent (S).** An FE migration for `consent` (a mirror of BE's DDL,
+  idempotent against the existing table). The Drizzle path in `onboarding.ts`
+  becomes the production path. `CONSENT_SECRET` and the BE call go.
+- **1e Friends (S–M).** `POST /api/member-with-friend` and
+  `PUT /api/member-with-friend/profile`, bound to the session, with BE's
+  member/free quota rule read from `member_payment`.
+- **1f Friend photo (S–M).** A server route that stores the image in Supabase
+  Storage and returns the same key shape (R4).
+- The seven v2 constants become `localApi`.
 
-Add `pages/api/upload/profile-image.ts` writing to Supabase Storage with a
-server-side service-role key (new env `SUPABASE_SERVICE_ROLE_KEY`,
-`SUPABASE_STORAGE_BUCKET`), returning the same `s3_key`; or route through the
-engine's existing avatar upload if its bucket and key shape match — decided in
-the slice by reading both. Repoint `endpoint.ts:66`.
+DoD 1:
 
-Slice 1 is done when: a fresh incognito login (LINE and Google) on the arena
-creates `user` + `user_provider` rows through the frontend with
-`NEXT_PUBLIC_BACKEND_URL` pointed at a dead host; v2 first-run completes and
-`user.onboarded_at` is set; v2 compatibility can add and edit a friend with a
-photo; `bun run typecheck` and `vitest run` are green; a unit test covers each
-branch of register-login (found / link / new / orphan); the four BE constants
-are `localApi`; and a draft pull request holds the change with no behaviour
-change for anything not listed.
+| # | Criterion | Proof |
+|---|---|---|
+| B1 | No v2 page or v2 API route reaches BE: `/v2/register`, edit-birth, home, first-run, element-finder, compatibility add/edit with photo | code search + staging walk with BE stopped (slice 3) |
+| B2 | Chart replay restricted to the v2 fields (`yearBelow.id`, `dayAbove.element`/`power`, `elementCycle.id`) over every member's current `log_calculate` row on the arena; every difference is counted and classified (new-year boundary, 23:00 boundary, other) | replay report; the owner accepts it (R3) |
+| B3 | A member created through the FE route has the same `user` columns and `log_calculate` shape v2 needs as one created through BE; `time` is never NULL | tests + arena rows |
+| B4 | Consent: first-run completes and writes `consent` + `onboarded_at` in a production-mode build | tests + staging walk |
+| B5 | Friend add/edit respects the member/free quota exactly as BE did; photos land in Storage and render | tests + staging walk |
+| B6 | Tests, typecheck, lint, build (VAPID gate) and gitleaks pass; the PR carries both templates | CI + local |
 
-### 2. The chart moves, proven by replay
+### 2. v1 retires, and the legacy seam closes
 
-Port `POST /chinese-horoscope` and `GET /chinese-horoscope` (+ `share-profile`,
-the two compatibility `check` GETs) into `lib/horoscope/` + `pages/api/chinese-horoscope*`
-per D1. The 8-square arithmetic and the analytic lookups become plain functions
-over Drizzle queries; the share card uses the same fonts and layout (node-canvas
-or an equivalent that renders identically — decided in the slice by pixel
-comparison on three fixtures). `log_calculate` and `user` writes match BE
-column for column.
+A second mootech-fe pull request, stacked on slice 1:
 
-Build `scripts/horoscope-replay.ts`: read `log_calculate` rows (read-only
-connection), run the ported compute with the stored inputs, deep-diff against
-the stored `result`, print a summary and every differing path. Run it on the
-arena database restored from the production dump.
+- **2a Redirect v1 (R1).** One middleware rule maps every v1 route to its v2
+  counterpart or to `/v2`, and is tested route by route. The v1 pages,
+  components, wrappers and dead constants are then deleted: the 19 v1 call
+  sites and about 20 dead ones, `lib/credit/wallet-client.ts`,
+  `pages/api/chat/balance.ts`, Omise v1 and the OTP modals.
+- **2b Close the seam.** `backendURLGenerator`, `ENDPOINT`,
+  `NEXT_PUBLIC_BACKEND_URL` and the build-time guard at `endpoint.ts:16-21` are
+  removed, along with the legacy rollback comment on `endpoint.ts:55`.
+  `CONSENT_SECRET`, `AI_CONSUME_SECRET`, `CREDIT_ENFORCE` and `RENDER_API_KEY`
+  leave the code and `.env.example` in the same commit, so
+  `env-example-drift` stays green.
+- **2c Ops and tests.** `lib/ops/health.ts` and `/ops` stop reading Render. The
+  consent, ops-health, e2e and testenv expectations of a BE on :4000 are
+  rewritten or removed. The Render cold-start comment in `mint-member.ts`
+  goes. The docs are corrected: `project_map.md`, `MUMATE-GITHUB-FLOW.md`,
+  `docs/be-phase1-consolidation.md` (retired) and
+  `docs/auth/register-login-fe-parity.md`.
 
-Slice 2 is done when: the replay reports zero differences over the full table
-(or the owner accepts a written list of explained differences); v1 register,
-profile edit, my-destiny, share link, the public calculator, v2 register,
-edit-birth, home and first-run all work on the arena with BE unreachable;
-`pages/api/chinese-horoscope.ts` and `pages/api/calculator/compute.ts` no longer
-reference BE; and a draft pull request holds the change.
+**2b removes the login flip's rollback path, so this PR merges only after
+2026-10-04 (R6).**
 
-### 3. v1 leftovers, payment freeze, dead code
+DoD 2:
 
-Per Q2–Q4 defaults: repoint v1 matching to the v2 lane; port `survey/calculate`,
-`fortune-telling`, `member-payment-code/check`, `ai/balance` display (or drop
-the counter); turn off the MATE chat modal; apply D2 to `/payment/*`; delete the
-fifteen dead constants, their wrappers and unmounted components; change
-`lib/ops/health.ts` to stop reading Render; update `scripts/monitor` to stop
-pinging BE.
+| # | Criterion | Proof |
+|---|---|---|
+| V1 | Every former v1 route answers a redirect to its mapped v2 target; no v1 page renders | route-table test + staging walk of every v1 URL |
+| V2 | `git grep` for `backendURLGenerator`, `NEXT_PUBLIC_BACKEND_URL`, `onrender`, `api.staging` and `:4000` in app code returns nothing | grep in PR body |
+| V3 | The served client bundle carries no BE host and no BE path | bundle probe on staging, then production |
+| V4 | `/ops` overall health no longer depends on Render | test + screen |
+| V5 | Tests, typecheck, lint, build and gitleaks pass; both templates filled | CI + local |
 
-Slice 3 is done when: `grep -rn backendURLGenerator` in `mootech-fe` returns
-only `endpoint.ts`'s own definition; every v1 page in
-`research/fe-call-sites.md` §6 works on the arena with BE unreachable, or is a
-`SalesClosedNotice`; and a draft pull request holds the change.
+### 3. Rehearse "BE gone" on staging
 
-### 4. The backend leaves the system
+Infra and the shadow (mumate-infra PR plus host steps, all on staging):
 
-Remove `NEXT_PUBLIC_BACKEND_URL` from code and env (note `endpoint.ts:16-21`
-throws at build time on a bazichart host — that guard goes too); remove
-`CONSENT_SECRET`, `AI_CONSUME_SECRET`, `RENDER_API_KEY` from the frontend's
-env contract; merge the slice PRs in the order 1 → 2 → 3 → 4 with the owner;
-owner suspends the Render service; seven days of production with no error
-attributable to BE; owner deletes the Render service and its env; archive
-`mootech-be` on GitHub.
+- Compose: `be` moves to a profile and `BE_TAG` becomes optional
+  (`${BE_TAG:-unset}`). `ops-status.sh` stops looping over `be`.
+  `.githooks/pre-push` drops `BE_TAG`.
+- Caddy: `api.staging.mumate.co` becomes a **logging tombstone** answering
+  410. That keeps it out of the 5xx-burst alert, while any leftover call still
+  lands in the access log. Grafana's `mumate-be-staging` check is paused.
+- `arena.sh up` from the latest backup. FE and bazi point at the arena (env
+  backups with written reverse steps, as on 2026-09-27). `be` is stopped and
+  stays stopped across deploys.
+- The FE image is built from the slice 1+2 branch (`container-build`,
+  `target=staging`), keeping the staging `NEXT_PUBLIC_BACKEND_URL` until 2b
+  removes it, so nothing falls back to `localhost:4000` in a tester's browser.
+- The owner walks: a new member through LINE and through Google, register,
+  first-run and consent, home mascot, edit birth (with an unknown time),
+  element-finder signed out, compatibility add plus edit plus photo, the
+  existing-member login, and every v1 URL (it must redirect).
 
-Slice 4 is done when: production has run seven days with Render suspended and
-the frontend reports no BE-related error; the Render service is deleted; the
-archived repository is recorded; and this workstream closes
-`ready-for-owner-merge`.
+DoD 3:
+
+| # | Criterion | Proof |
+|---|---|---|
+| S1 | During the walk window, the Caddy access log shows **0** requests to `api.staging.mumate.co` (apart from paused probes), `be` is not running, and the arena's `pg_stat_activity` shows only fe and bazi | logs, `docker compose ps`, pg_stat_activity |
+| S2 | Every walk passes, with arena row counts matching (one new member per new-account walk, no member without a provider, consent row written, friend and photo rows present) | walk results + counts |
+| S3 | The bundle probe on staging finds no BE host or path | probe |
+| S4 | The shadow is returned (env restored, arena down) with reverse steps proven, and the compose profile change is left in place | health + `arena.sh status` |
+| S5 | The owner accepts the rehearsal | record |
+
+### 4. Production: the backend leaves the system
+
+In order, each step an owner action or gated on one:
+
+1. Merge PR 1 (may precede 2026-10-04, R6). Verify that the deployment exists
+   and carries the change (bundle probe, not assumption). The owner walks
+   register, first-run and compatibility; row counts are taken.
+2. On or after 2026-10-04, once the login lane's 6h has closed: merge PR 2 and
+   verify the same way.
+3. Remove the FE env keys from Vercel (all environments) and the GitHub
+   Environment variable, then redeploy and probe.
+4. Drop the BE target from the pm2 monitor, and move FE uptime monitoring
+   (R5). Confirm in Omise that no webhook targets BE.
+5. **Suspend** the Render service (reversible). Seven quiet days: Render
+   metrics show no non-monitor traffic, and the FE shows no BE-related error.
+6. **Delete** the Render service (irreversible). Archive `mootech-be` on
+   GitHub, after copying its `consent` and `balance` DDL into
+   `mootech-fe/lib/db`. On the DO host, remove the `be` service from compose
+   (mumate-infra PR), the container, and `env/be.env` with its `.bak` copies.
+   Rotate the BE-only credentials (R7).
+
+DoD 4:
+
+| # | Criterion | Proof |
+|---|---|---|
+| P1 | PR 1 and PR 2 live; production bundle carries no BE host or path | probe per deploy |
+| P2 | Production walks pass with row counts | walk + counts |
+| P3 | Seven days with Render suspended: no non-monitor request reached it and no FE error names BE | Render metrics + FE logs |
+| P4 | Render deleted, repository archived, host and env cleaned, BE-only credentials rotated | record, with names only |
+| P5 | This workstream closes `ready-for-owner-merge` | closeout |
 
 ## Authority boundary
 
