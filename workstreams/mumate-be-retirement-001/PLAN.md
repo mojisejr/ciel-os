@@ -349,7 +349,7 @@ from a proposal, the answer wins and the slices below are edited to match.
   is not a port-fidelity gate.
 - **R4 → yes.** Friend photos go to Supabase Storage through an FE server
   route. The owner adds the service key to FE env.
-- **R5 → drop the BE target; keep production watched.** The owner expected
+- **R5 → drop the BE target; keep production watched** (revised below). The owner expected
   the new setup to cover it. Checked: `mumate-infra`
   `observability/grafana/synthetic-checks.json` probes only the three
   `*.staging.mumate.co` hosts. Production FE (`bazichart.mumate.co`) is
@@ -367,6 +367,21 @@ from a proposal, the answer wins and the slices below are edited to match.
   the removal has held, keeping rollback open until then.
 - **R11 → recorded in the login lane** as owner decisions 30-31: no OA-friendship
   gate, and the volume trigger raised to ~80 a day.
+
+**The owner's follow-up the same morning** ("เริ่มได้เลย ... ลุยได้"):
+
+- R2/R3 accepted, on the condition that nothing breaks. The staging walk in
+  slice 3 is where "nothing breaks" is proven.
+- R5 revised. The owner's direction is that DigitalOcean becomes production.
+  `mumate-infra-move-001` closed at slice 3 on 2026-09-26 with no cutover
+  scheduled, so that is a direction, not a dated plan. The zero-work reading
+  is adopted: the pm2 monitor keeps watching production FE, only its BE
+  target is removed, and no new production checks are added. Monitoring
+  moves when production moves.
+- R1 accepted "if it can be done safely": a redirect rule tested route by
+  route, reversible by removing the rule.
+- R6 and R7 confirmed as written.
+
 
 ## Execution slices and acceptance criteria
 
