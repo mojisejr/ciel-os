@@ -3,7 +3,7 @@
 **Workstream:** `mumate-be-retirement-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.4
+**Plan revision:** 0.5
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -382,6 +382,34 @@ from a proposal, the answer wins and the slices below are edited to match.
   route, reversible by removing the rule.
 - R6 and R7 confirmed as written.
 
+
+## Revision 0.5 — slice 4 re-planned with the owner after the rehearsal (2026-09-27)
+
+Slice 3 was walked at 12:4x with be stopped: nothing broke, and no request
+reached the backend. The owner then asked whether production must wait until
+2026-10-04, and whether staging has to go back to BE. Both were answered and
+decided the same afternoon ("ตามนี้เลย ABC").
+
+- **A. Production now, in one pull request.** Slices 1 and 2 ship together,
+  from branch `feat/mumate-be-retirement-s2`, because slice 1 alone degrades
+  v1 pages. They do not wait for 2026-10-04. The cost: the login flip's
+  rollback is no longer one line. It becomes a revert of this merge (plus the
+  line), which still works because **Render stays up, unsuspended**, until the
+  observation below closes. Before the merge, the owner puts
+  `SUPABASE_PROJECT_URL`, `SUPABASE_SERVICE_ROLE_KEY` and
+  `SUPABASE_STORAGE_BUCKET` into Vercel production. Production's `consent`
+  schema was checked read-only on 2026-09-27: it matches `0035_consent.sql`,
+  so the migration is a no-op there.
+- **B. Staging stays without BE.** Staging is meant to become production, so
+  it does not go back to BE. The arena is gone. FE and bazi read production's
+  database again. The FE runs the slice 1+2 image. `BE_SCALE=0` and
+  `MUMATE_BE_MODE=retired` stay. The rollback for staging is `BE_SCALE=1` plus
+  the kept `*.pre-arena-be` backups; the be image and `env/be.env` are still
+  on the host.
+- **C. The rehearsal is accepted** (DoD S5).
+- **Unchanged:** R7. The irreversible steps (Render delete, repository
+  archive, credential rotation) and the pm2 BE target are decided last, after
+  the production removal has held for seven days.
 
 ## Execution slices and acceptance criteria
 
