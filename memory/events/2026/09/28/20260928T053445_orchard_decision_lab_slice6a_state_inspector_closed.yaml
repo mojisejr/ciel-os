@@ -1,0 +1,85 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T053445_orchard_decision_lab_slice6a_state_inspector_closed
+type: closeout
+recorded_at: 2026-09-28T05:34:45+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Deliver the local-only State Inspector that makes provider-ready state
+    quality and redaction visible before any private record reaches a provider.
+  scope:
+    - Deterministically compile local dogfood journeys to orchard-state/v1.
+    - Render Thai facts, freshness, gaps, excluded fields and copyable JSON.
+    - Keep the complete 6a flow local with no source or provider call.
+  out_of_scope:
+    - Opening a real trace during agent review, source retrieval, research LLM,
+      second Jev call, private-data export, policy activation or public deployment.
+
+outcome:
+  status: recorded
+  slice: "6"
+  completed:
+    - >-
+      A local journey compiles deterministically to a minimal orchard-state/v1
+      containing only crop, intent, observation time, rain/wet-soil facts,
+      freshness, evidence status and explicit gaps.
+    - >-
+      Provider-ready JSON excludes plot reference, free-text note, trace ID,
+      owner choice and later feedback; the screen names those exclusions without
+      exposing their values.
+    - >-
+      The local `/state` screen provides Thai tables, JSON copy control, a
+      candidate data-readiness question, and a visible no-provider boundary.
+  not_completed:
+    - The owner has not yet reviewed a selected real trace in State Inspector.
+    - Candidate choices are not a live Jev request or agricultural policy.
+    - Slice 6b source retrieval, review ownership and budget remain unopened.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.1"
+  slice: "6"
+  repository:
+    head: b0fecccd75b7d1b47c4ab1f403792f924ede830c
+    branch: hq/20260926
+    working_tree: slice6a-state-inspector-closeout-prepared
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 573959c5a7be8a291560196753cfa2174cfb5220
+  checks:
+    - bun run check: 30 tests passed, 0 failed, 139 expectations.
+    - >-
+      Local browser inspection used a non-matching trace selector: it confirmed
+      Thai State Inspector navigation and no-provider boundary without opening a
+      private trace payload.
+  proof_lanes:
+    hard_gate: closed
+    api_truth: not-applicable-local-only-no-provider-or-source-call
+    eye_truth: closed-boundary-screen; pending-owner-selected-trace-usability-review
+    device_truth: not-applicable-local-browser-only
+
+unresolved:
+  - >-
+    State freshness currently comes from the manual dogfood entry; it is not yet
+    corroborated by a weather connector or reviewer-verified evidence source.
+  - >-
+    The compact state is deliberately not enough to support agricultural action.
+    It is the owner-visible contract to review before any later data expansion.
+  - >-
+    Public-source research and any provider submission of a redacted real state
+    remain separate owner decisions.
+
+next_action:
+  action: >-
+    Owner opens one ordinary local State Inspector entry and decides whether the
+    proposed state fields accurately represent the daily decision context. Then
+    either refine the state schema locally or authorize Slice 6b source scope.
+  acceptance_check:
+    - The owner recognizes the state as a faithful but privacy-minimal summary.
+    - The owner can name at least one missing fact that would matter for a future decision.
