@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.9
+**Plan revision:** 1.0
 **Execution phase:** 5
 **Execution state:** idle
 **Parallelism:** none
