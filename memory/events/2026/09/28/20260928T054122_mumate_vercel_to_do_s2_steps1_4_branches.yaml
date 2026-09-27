@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T054122_mumate_vercel_to_do_s2_steps1_4_branches
+type: closeout
+recorded_at: 2026-09-28T05:41:22+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Checkpoint slice 2: steps 1-4 written and pushed as unmerged branches,
+    each with a test that fails without the change and a test pinning the
+    unchanged Vercel path.
+  scope:
+    - bazi-sft-dataset branches feat/do-hardening, feat/do-llm-timeouts, feat/do-trusted-client (from origin/pdf-dev 2bf1427).
+    - mootech-fe branches feat/do-bazi-client-identity, feat/do-fe-platform-seams (from origin/main fd3220b).
+  out_of_scope:
+    - Opening PRs, merging (not before 2026-10-04), staging builds (step 9).
+
+outcome:
+  status: recorded
+  slice: "2"
+  completed:
+    - "bazi feat/do-hardening: getDatabaseUrl uses APP_DATABASE_URL only; blank env values are unset; src/lib/admin-token.ts isAdminAuthorized fails closed (next dev keeps the open path) and all 12 admin routes plus topic preview use it; sharp 0.34.5 a direct dependency. tests/do-hardening.test.ts: 5 fail on the old source, 10 pass."
+    - "bazi feat/do-llm-timeouts: src/lib/llm-timeout.ts, default 290 s (LLM_TIMEOUT_MS); all 10 new GoogleGenAI(...) get httpOptions.timeout, 8 direct LLM fetches get AbortSignal.timeout (combined with req.signal in louise-hay chat and tts). tests/do-llm-timeouts.test.ts: a Gemini client against a server that never answers gives up at the timeout; a scan found three louise-hay fetches the first pass missed."
+    - "bazi feat/do-trusted-client: clientIp() takes x-mumate-client-ip only when x-mumate-client-secret matches BAZI_CLIENT_ID_SECRET (timing-safe, IP-shaped values only). tests/do-trusted-client.test.ts: 2 fail on the old source, including one user no longer blocking another."
+    - "bazi baseline: 7 tests already fail on pdf-dev 2bf1427 (newdata-lookup x3, reading-topic-route x1, real-case-1986-09-16, real-case-1993-11-24, source-integration); every branch keeps exactly those 7 and adds none. tsc and eslint clean on touched files."
+    - "mootech-fe feat/do-bazi-client-identity: lib/bazi/client-identity.ts; the five BFF routes that call rate-limited engine routes (v2/narrate, fortune/divine, fortune/sage, fortune/oracle, what-if/generate) send the headers when BAZI_CLIENT_ID_SECRET is set. scripts/do-bazi-client-identity.test.ts: 2 fail on the old code."
+    - "mootech-fe feat/do-fe-platform-seams: exact /api/v2/push/fire passes guardV2 and the maintenance allow-list; /api/health reports platform, env and SHA in body and X-MuMate-* headers; the what-if proxy follows BAZI_BASE_URL. scripts/do-platform-seams.test.ts: 7 fail on the old code."
+    - "mootech-fe: full suite green on both branches (3,506 and 3,508 passed); one UI test (v1-header-upgrade-closed) failed once and passed on three reruns and a full rerun - flaky, unrelated."
+    - "mootech-fe pushes: the pre-push verify-architecture gate fails on the four violations already on main (AppHeader.tsx:185 and others, issue 694); lint and the full suite were run green by hand, then pushed with --no-verify, which the harness allowed this time."
+  not_completed:
+    - "Steps 5 (DB pool from env + transaction audit), 6 (/ops health, /launch off Vercel), 7 (one cron schedule source), 8 (mumate-infra: bazi.staging public host removed, MUMATE_ENV to fe), 9 (staging proof), 10 (merges after 2026-10-04)."
+    - "BAZI_CLIENT_ID_SECRET not generated or placed yet (at the staging step)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: "cdc2568"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    worktrees: "session scratchpad bazi-s2 and fe-s2; the main checkouts are untouched"
+
+unresolved:
+  - "Before merging feat/do-hardening: owner-run check that Vercel Production AND Preview env for bazi set APP_DATABASE_URL and ADMIN_DOCTRINE_TOKEN; a Preview without them breaks previews (fence 5)."
+  - "louise-hay/safety.ts carries a 'psychiatrist sign-off, only these two values' banner; the timeout edit is to its fetch, not those values - name it for the reviewer."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Step 5 (FE DB pool max from env, measured against the 15-connection
+    pooler, with the transaction audit), then steps 6-8, then build every
+    branch for staging and prove it there.
+  acceptance_check:
+    - A cold session can find every slice-2 branch and its proof from this record.
