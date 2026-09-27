@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T201803_mumate_vercel_to_do_s1_fe_deployed_control_room_pr27
+type: closeout
+recorded_at: 2026-09-27T20:18:03+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Checkpoint slice 1: the staging FE image with the staging VAPID key is
+    live, and the multi-host control room is offered as mumate-infra PR 27.
+    The owner moved D3 to the end of slice 1.
+  scope:
+    - Staging deploy of mootech-fe fd3220b-staging; mumate-infra PR 27.
+  out_of_scope:
+    - D3 (mootech-fe issue 831) - the owner said on 2026-09-27 "D3 เดี๋ยวค่อยคุยก็ได้ครับ เดี๋ยว D3 เอาไว้ปิดจบ slice 1".
+
+outcome:
+  status: recorded
+  slice: "1"
+  completed:
+    - "Owner dispatched the mootech-fe staging build (run 36321148654, success) which pushed fd3220be01ab93731e1aad96f521a25a62c01aa4-staging."
+    - "bin/deploy.sh (dry run, then real) moved staging fe to that tag; healthy in about 35 s; ops-status all ✅; pgstaging survived deploy's --remove-orphans, as PR 26 expected. The staging VAPID public key is present in 12 files of the running build; fe still holds its pgstaging session; https://app.staging.mumate.co/api/health 200."
+    - "mumate-infra PR 27 (draft, feat/multi-host-control-room): hosts.tsv; bin/hosts.sh status|compare (side by side, ≠ on difference, key names only, fails on env mismatch or unreachable host); env/host prefix on alert.sh, health-notify.sh and ops-status; MUMATE_HOST/MUMATE_ENV required by compose; Grafana 5xx by env/host/service, per-host log silence via absent_over_time, disk/mem summaries with env/host; dashboard env and host variables; env examples as on the isolated staging; runbook 04 §8. scripts/hosts.test.sh 14/14, main's files would fail its pinning checks; all repo tests and pre-push green; hosts.sh compare run live against mumate-2; the new Loki and Prometheus queries checked live."
+  not_completed:
+    - "PR 27 merge, host pull, and applying the rules and dashboard to Grafana through the provisioning API, then checking them."
+    - "D3 destinations (issue 831) - last item of slice 1."
+    - "The first Beam payment on staging and the production-log check for a cross-delivered event (owner, optional for the DoD)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "1"
+  repository:
+    head: "9ab3a80"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mumate-infra_pr: "https://github.com/mojisejr/mumate-infra/pull/27"
+    staging_tags: "fe fd3220be01ab-staging, bazi 722cdf1b5f35-staging, be retired"
+
+unresolved:
+  - "The side-by-side view is proven with one real host and two fake ones; with two real hosts in slice 5 (plan 0.3 trade-off)."
+  - "Synthetic check for bazi.staging.mumate.co assumes a public bazi host; D3 may remove it."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    After the owner merges PR 27: pull on mumate-2, confirm ops-status and a
+    test alert show staging/mumate-2, apply the four rules and the dashboard
+    to Grafana with the mumate-infra service account and confirm the rules
+    evaluate Normal. Then D3 with the owner and เอ็ม, then the slice-1 closeout.
+  acceptance_check:
+    - A cold session can finish slice 1 from this record.
