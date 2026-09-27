@@ -3,9 +3,9 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** 2
-**Execution state:** idle
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -35,6 +35,10 @@ shared agreements are:
   outcomes. Chemical product, formula and dosage recommendations are excluded.
 - The owner alone decides data access, credential/budget opening, pilot entry,
   and final Go/No-Go. An agent may implement, measure and recommend.
+- Thai is the default language for every owner/grower-facing screen, message,
+  action and explanation. English rule IDs, source titles and provider fields
+  remain available only as supporting audit detail, never as the primary
+  instruction a grower must understand.
 
 ## Project links
 
@@ -94,7 +98,8 @@ locations; record the workstream and owner decision.
 facts, hard rules, `STOP`/`UNKNOWN` bypass and NoOp trace.
 
 **DoD:** Durian rain/wet-soil safety, Mangosteen unsupported scope, and stale
-evidence controls have deterministic unit/integration/E2E proof and replay.
+evidence controls have deterministic unit/integration/E2E proof and replay;
+the complete trace is understandable in Thai without technical English.
 
 **Gate:** Slice 1 closeout and owner review.
 
@@ -104,7 +109,7 @@ evidence controls have deterministic unit/integration/E2E proof and replay.
 |---|---|---|
 | Pure rule outcomes and exact replay | Hard Gate: Bun typecheck and deterministic tests | agent |
 | `STOP`, `UNKNOWN`, stale and out-of-scope never invoke judgment | Hard Gate: spy-provider integration tests | agent |
-| Facts, applied rules, bypass reason and NoOp trace are readable | Eye Truth: local playground route plus direct browser inspection | agent, then owner review |
+| Thai facts, applied rules, bypass reason and NoOp trace are readable | Eye Truth: local playground route plus direct browser inspection | agent, then owner review |
 | External provider/database access | API Truth: N/A; Slice 2 has neither | agent |
 | Device-specific behavior | Device Truth: N/A; local desktop playground only | agent |
 
@@ -115,7 +120,7 @@ accepted/rejected rows and provenance without touching the current Sheet.
 
 **DoD:** exactly five CSV contracts import into a local normalized preview;
 source row, hash, parser revision and rejection reason replay; no Google client
-or write path exists.
+or write path exists; grower-facing import status and errors are Thai-first.
 
 **Gate:** Slice 2 closeout; owner supplies manual CSV exports when ready.
 
@@ -125,7 +130,8 @@ or write path exists.
 sees the evidence trace, selects an action, and later records feedback.
 
 **DoD:** local events, snapshots, owner choices and outcome feedback are
-append-only/replayable for declared Durian/Mangosteen journeys.
+append-only/replayable for declared Durian/Mangosteen journeys, with Thai
+entry, outcome and feedback wording.
 
 **Gate:** Slice 3 closeout and owner review of import behavior.
 
@@ -135,7 +141,8 @@ append-only/replayable for declared Durian/Mangosteen journeys.
 an allow-listed question, with visible validation, clamp, cost and latency.
 
 **DoD:** server-only local credential, pinned model, redaction, timeout/error
-fallback and safety controls pass with a live synthetic control.
+fallback and safety controls pass with a live synthetic control; provider
+contribution, fallback and cost are explained in Thai.
 
 **Gate:** explicit owner approval for credential and budget after Slice 4.
 
@@ -145,7 +152,8 @@ fallback and safety controls pass with a live synthetic control.
 what source fact, candidate claim and model contribution each mean.
 
 **DoD:** research LLM output remains a candidate; verification and locator are
-required before the source can enter a Lab snapshot.
+required before the source can enter a Lab snapshot; source status and the
+distinction between claim and evidence are understandable in Thai.
 
 **Gate:** owner approval of source-retrieval scope after Slice 5.
 
@@ -155,7 +163,8 @@ required before the source can enter a Lab snapshot.
 `GO_TO_PILOT`, `NO_GO`, or `NOT_ENOUGH_EVIDENCE` with proof gaps explicit.
 
 **DoD:** dossier separates PRD coverage, safety/replay, source provenance,
-Jev value/cost, daily dogfood feedback and commercial claims.
+Jev value/cost, daily dogfood feedback and commercial claims in Thai-first
+language, while retaining technical evidence detail for audit.
 
 **Gate:** Slice 6 closeout plus owner review of accumulated dogfood evidence.
 
