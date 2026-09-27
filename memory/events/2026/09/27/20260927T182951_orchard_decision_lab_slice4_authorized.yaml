@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T182951_orchard_decision_lab_slice4_authorized
+type: decision
+recorded_at: 2026-09-27T18:29:51+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Accept the Slice 3 local CSV preview and begin Slice 4: a local append-only
+    dogfood loop for observation, owner choice, feedback, and replay.
+  scope:
+    - Add local SQLite append-only storage and Thai local dogfood screens for Durian/Mangosteen.
+    - Prove observation -> deterministic trace -> owner choice -> feedback -> replay with synthetic test data.
+    - Keep writes disabled by default until the owner intentionally opens a private local route.
+  out_of_scope:
+    - Provider calls, public/tunnel write exposure, Google Sheet mutation, public users, or a later evidence dossier.
+
+outcome:
+  status: decided
+  completed:
+    - The owner accepted Slice 3 after reviewing the local CSV preview and authorized the next slice.
+  not_completed:
+    - Slice 4 implementation, synthetic write/replay proof, and owner private-route review remain to be performed.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  repository:
+    head: 75c088622fc1002e8a89de1aa38fab122fdb06b4
+    branch: hq/20260926
+    working_tree: slice4-plan-and-decision
+  owner_statement: >-
+    The Slice 3 preview is okay; proceed to the next slice.
+  slice3_acceptance:
+    - The owner reviewed the private local preview through the existing tunnel.
+
+unresolved:
+  - The existing tunnel has not been established as a private route for submitting actual orchard records.
+  - Slice 5 credential/budget and all provider work remain unauthorized.
+
+next_action:
+  action: >-
+    Implement local SQLite append-only dogfood with synthetic proof and a
+    default-disabled write gate, then present the owner-safe review flow.
+  acceptance_check:
+    - No update/delete path can rewrite a local dogfood event.
+    - A synthetic journey replays exactly and shows linked choice/feedback.

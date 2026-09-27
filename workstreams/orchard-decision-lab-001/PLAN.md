@@ -3,9 +3,9 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.4
-**Execution phase:** 3
-**Execution state:** idle
+**Plan revision:** 0.5
+**Execution phase:** 4
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -137,6 +137,11 @@ sees the evidence trace, selects an action, and later records feedback.
 **DoD:** local events, snapshots, owner choices and outcome feedback are
 append-only/replayable for declared Durian/Mangosteen journeys, with Thai
 entry, outcome and feedback wording.
+
+**Write safety:** Slice 4 writes only to the ignored local SQLite path. The
+default configuration keeps dogfood writes disabled until the owner expressly
+opens them on a private local route; a remote tunnel does not by itself prove
+that private orchard facts are safe to submit.
 
 **Gate:** Slice 3 closeout and owner review of import behavior.
 
