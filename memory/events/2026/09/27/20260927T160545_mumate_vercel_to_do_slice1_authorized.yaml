@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T160545_mumate_vercel_to_do_slice1_authorized
+type: decision
+recorded_at: 2026-09-27T16:05:45+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Authorize slice 1 of plan 0.3: make mumate-2 an isolated staging that
+    cannot reach production data, money or users, settle bazi's browser
+    surfaces with the team, and make the control room multi-host, with no
+    droplet created.
+  scope:
+    - mumate-infra PRs for slice 1 (staging database service and data-handling rule, environment label end to end, host inventory, per-host ops-status and comparison view, per-environment alerts and synthetics, env examples brought up to date), up to the owner's merge.
+    - On the staging host only - restore the staging database from the nightly backup, point FE and bazi at staging-owned data, storage and test keys, and remove the shadow's production connections, each env edit with a .pre-slice1 copy and written reverse steps.
+    - Read-only production reads through mumate_backup, owner-run when the harness refuses them.
+    - A session with เอ็ม on each bazi browser surface (D3) and the LIFF apps of channel 2011679472.
+  out_of_scope:
+    - Creating any droplet (slice 5), any production merge or env change, any Vercel setting, any DNS record.
+    - The nightly backup job and the daily observation check. Both read production through the read-only role mumate_backup from mumate-2 by design; they are operations tooling, not staging applications, and stay until slice 5 gives them a production host.
+    - The be service definition, env/be.env and the other residue R7 step 5 removes.
+
+outcome:
+  status: decided
+  parallelism: approved   # mootech-fe and bazi-sft-dataset shared with mumate-login-identity-001 and mumate-be-retirement-001, both observing only to 2026-10-04; plan 0.2 approved parallel work
+  slice: "1"
+  decision: >-
+    The owner said on 2026-09-27, after the cold-session summary of what slice
+    1 needs from him: "ถ้าไม่มีอะไรต้องเคาะ และเราพร้อมทุกอย่างแล้ว ผมคิดว่าเรา
+    น่าจะเริ่มกันได้เลยครับ slice 1 ถ้าไม่ติดอะไรแล้ว go กันได้เลยครับ" (if
+    nothing needs deciding and we are ready, start slice 1; if nothing blocks,
+    go). The agent checked before recording: nothing blocks the start. Two
+    points surfaced and are put to the owner inside the slice rather than
+    before it - the backup exclusion above, and where staging's file storage
+    lives (see unresolved). If PR 830 has to be reverted, this workstream's
+    mootech-fe changes pause first.
+  authorizes:
+    - Slice 1 of plan revision 0.3 with its DoD, on staging and in mumate-infra; the owner merges the infra PRs, creates the staging storage and places the test keys.
+  does_not_authorize:
+    - Anything on production, creating a droplet, any billing change, or closing slice 1 on the owner's behalf.
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "1"
+  repository:
+    head: "e7f418d"
+    branch: hq/20260926
+    working_tree: this-decision-only
+  application:
+    bazi-sft-dataset_pr_42: "merged 2026-09-27 15:58 Bangkok as 2bf1427 on pdf-dev; GitHub shows its Production deployment success (read after Wake)"
+    mumate-infra: "local main fast-forwarded to origin/main cc3ce8b"
+
+unresolved:
+  - "Staging file storage. FE (lib/storage/friend-photo.ts) and bazi (SUPABASE_SERVICE_ROLE_KEY, five SUPABASE_*_BUCKET) reach Supabase Storage with a service-role key that bypasses every RLS policy in its project. A staging bucket inside the production Supabase project would put the production key on staging, which breaks D2. The agent recommends a separate Supabase project for staging storage; the owner decides, because it is an account and possibly a cost."
+  - "bazi PR 42 is live; whether the 2026-10-04 00:30 purge run skips the three cancelled users is checked after that run."
+  - "Production reads through mumate_backup may be refused by the harness; those checks are then owner-run."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Read the staging host's current env key names and services read-only,
+    list every production connection it holds, then restore the staging
+    database from the nightly backup and open the first mumate-infra PR.
+    Put the storage question to the owner with the recommendation.
+  acceptance_check:
+    - Wake reports mumate-vercel-to-do-001 lifecycle authorized for slice 1 at revision 0.3 and no validation error.
