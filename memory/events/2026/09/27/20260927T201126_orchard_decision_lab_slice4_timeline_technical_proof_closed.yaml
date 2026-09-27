@@ -1,0 +1,81 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T201126_orchard_decision_lab_slice4_timeline_technical_proof_closed
+type: closeout
+recorded_at: 2026-09-27T20:11:26+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Record the Slice 4 timeline correction: make local dogfood history visible
+    without changing, inferring, or exporting private journal events.
+  scope:
+    - Add newest-first local history from the append-only journal.
+    - Show deterministic result and explicit choice/feedback pending states in Thai.
+    - Label the current rain/wet-soil behavior as a Playground fixture.
+  out_of_scope:
+    - Agricultural policy changes, provider calls, external data access, or private-data export.
+
+outcome:
+  status: recorded
+  slice: "4"
+  completed:
+    - >-
+      The Lab can list and reopen prior local traces without creating an event;
+      each card distinguishes recorded choice/feedback from still-pending work.
+    - >-
+      The local screen visibly labels the current rain/wet-soil behavior as a
+      test fixture rather than a policy claim.
+    - >-
+      Automated checks cover history presentation together with the existing
+      observation -> trace -> choice -> feedback -> replay flow.
+  not_completed:
+    - The owner has not yet accepted the history UX after personal use.
+    - The policy for inspection during fresh rain/wet-soil conditions remains an owner decision.
+    - Slice 5 credential/budget and live Jev remain unauthorized.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.8"
+  slice: "4"
+  repository:
+    head: bbf5f9281591437466499cb3df79e9fd5d5b5a65
+    branch: hq/20260926
+    working_tree: slice4-timeline-technical-proof-closeout
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 1f8f70f9f305552649ef667d8e9774ffe35b4add
+  checks:
+    - bun run check: 22 tests passed, 0 failed, 88 expectations.
+    - >-
+      Local browser inspection confirmed the timeline, pending labels, trace
+      links, and fixture boundary; no raw private field or note is recorded here.
+  proof_lanes:
+    hard_gate: closed
+    api_truth: not-applicable-no-external-api
+    eye_truth: closed-agent-local-inspection; pending-owner-usability-review
+    device_truth: not-applicable-local-browser-only
+
+unresolved:
+  - >-
+    Existing private records remain only in the ignored local SQLite database;
+    this closeout intentionally contains no field, note, identifier, or event payload.
+  - >-
+    A history makes the loop legible but does not yet prove daily usefulness,
+    retention, or commercial value.
+  - >-
+    Any rule widening the rain/wet-soil stop to inspection requires a source-linked,
+    owner-approved policy decision rather than an implementation guess.
+
+next_action:
+  action: >-
+    The owner reviews the history after a few real use cycles and decides whether
+    the local dogfood loop is usable. If accepted, record Slice 4 acceptance
+    before separately considering the Slice 5 credential/budget gate.
+  acceptance_check:
+    - The owner can identify what has happened, what they chose, and what is pending without translating technical terms.
+    - The owner either accepts the current fixture boundary or names a policy question for a future sourced policy-pack slice.
