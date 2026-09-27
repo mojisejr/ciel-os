@@ -1,0 +1,113 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T132102_mumate_handoff_before_clear_both_lanes_observing
+type: closeout
+recorded_at: 2026-09-27T13:21:02+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Hand MuMate over before the owner clears this session. Both active lanes
+    have shipped. Both are in a seven-day observation that ends 2026-10-04,
+    and neither is closed, because each DoD still needs that window. This
+    record is the cold-session entry for both.
+  scope:
+    - mumate-be-retirement-001 and mumate-login-identity-001 state, what runs daily, what the owner decides after 10-04, and the side items noticed today.
+  out_of_scope:
+    - Closing either workstream. The owner asked to close if everything was complete. The agent advised against it, because login DoD F9 and retirement DoD P3-P5 are time-bound, and closing would also stop Wake from surfacing the daily check and the rollback path.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      STATE AT HANDOFF. MuMate production runs mootech-fe plus the bazi engine
+      only.
+      - Login moved to the FE route: #828, 06:47.
+      - The rest of v2 left mootech-be: #830, 13:10. The chart comes from
+        the engine; register/edit-birth, consent, friends and friend photos
+        are written by the FE; v1 URLs redirect with 307.
+      - Render mootech-be is still up and unsuspended. It is the rollback
+        for both.
+      - Staging (DO shadow) runs the same FE code with be in retired mode
+        (BE_SCALE=0, MUMATE_BE_MODE=retired).
+  for_a_cold_session:
+    read_first:
+      - "memory/events/2026/09/27/20260927T131926_mumate_be_retirement_live_on_production_observation_open.yaml (observation_protocol)"
+      - "memory/events/2026/09/27/20260927T065300_mumate_login_identity_s6_6g_flipped_on_production_observation_open.yaml (observation_protocol) + 20260927T100100 (decisions 30-31: triggers)"
+    daily_until_2026_10_04: >-
+      Read-only through mumate_backup from mumate-2, counts only. Report:
+      - new members per day split LINE/Google (login trigger: more than ~80
+        a day);
+      - new members without a provider (trigger: any);
+      - members with two live Google identities (baseline 1);
+      - the exposed count (baseline 1,442);
+      - friend rows with Storage photos;
+      - time NULL writes (expect 0).
+      Also Render http_request_count by status (expect 204 = 0, and 200 at
+      the pm2 monitor's rate only), and any FE error naming a BE path.
+    rollback_if_needed: >-
+      The owner merges a revert of mootech-fe PR 830. That restores every BE
+      call while Render is up. To also undo the login flip, revert
+      constants/api/endpoint.ts:55 as well. Vercel promote is no longer clean
+      (#829 and #830 sit after the flip). Keep the old Vercel env
+      (NEXT_PUBLIC_BACKEND_URL, CONSENT_SECRET, AI_CONSUME_SECRET), because the
+      reverted code reads it.
+    on_or_after_2026_10_04: >-
+      Remind the owner that both windows have closed. Write the login slice-6
+      closeout (the final one, ready-for-owner-merge). Then take R7 with the
+      owner, one step at a time:
+      1. remove the pm2 BE target;
+      2. suspend Render, then seven quiet days;
+      3. delete Render;
+      4. copy the consent/balance DDL into mootech-fe/lib/db, then archive
+         mootech-be;
+      5. host: remove the be service (mumate-infra PR), env/be.env, and the
+         .bak and *.pre-arena-be copies;
+      6. rotate the BE-only credentials (SendGrid, 8x8, Dify, expired Omise
+         v1);
+      7. remove the old Vercel env.
+      Close this workstream after the last irreversible step.
+    other_lanes: >-
+      mumate-backup-001: the first unattended backup ran 2026-09-27 09:02
+      (142 MB). Check s3://mumate-backups/pg/ once on 2026-09-28 for the
+      second night. mootech-ga4-instrumentation-001: its slice-3 CSV was due
+      2026-09-24 and nothing is recorded since 09-17. Ask the owner.
+  not_completed:
+    - Both observations (to 2026-10-04) and R7.
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.5"
+  slice: none
+  repository:
+    head: "e5aac04"
+    branch: hq/20260926
+    working_tree: this-record-only
+    unpushed_commits_on_hq: 30
+  application:
+    mootech-fe_main: "fd3220b (#830), includes #828 flip, #827 unlink fix, #829 teammate's notifications"
+    mumate-infra_main: "cc3ce8b (#24 retired-mode switch, #25 wait_healthy fix), pulled on the host"
+    checkouts: "mootech-fe checkout on main fd3220b; scratch worktrees removed"
+
+unresolved:
+  - "External v1 links (LINE rich menu, LIFF, old share links) now land on v2 targets. They cannot be verified from the repository; the owner may click the rich menu once."
+  - "Rehearsal side effects in real storage: one friend photo (slice 3 W1) and the LINE avatar uploads (login 6c) sit in the production Supabase Storage bucket."
+  - "Owner decisions not yet taken: the Connected screen shows a dead-only Google as 'linked' with no link button (from PR 827); five paid exposed members are left for support (decision F7)."
+  - "Cleanup candidates, not urgent: v1 code (kept by R1), v1-only DB API routes (/api/survey, /api/log-*, /api/product, /api/payment-package, /api/chinese-calendar/*), bazi_chinese_horoscope_cache and the lib/destiny/map-* helpers, e2e specs that drive v1, and 2,800 refresh-flagged members who are sent to /v2/register (a pre-v2 flag)."
+  - "mootech-fe pre-push verify-architecture fails on four violations that already exist on main (sage.tsx, checkout.tsx, qrcode.tsx, AppHeader.tsx:185). Every branch today needed --no-verify from the owner."
+  - "Secret-bearing leftovers from earlier lanes on the host: env/be.env.bak-20260920-cors, env/fe.env.bak-3c, env/fe.env.pre-arena."
+  - "A subagent ran `npx true` by accident (npm package true@0.0.4 from the cache); no repository change."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Daily read-only check until 2026-10-04, then remind the owner, close login
+    slice 6, and take R7 step by step. HQ hq/20260926 (30 commits ahead) is
+    pushed when the owner closes the round.
+  acceptance_check:
+    - A cold session can run the daily check and the rollback from this record and the two it names, without reading the whole round.
