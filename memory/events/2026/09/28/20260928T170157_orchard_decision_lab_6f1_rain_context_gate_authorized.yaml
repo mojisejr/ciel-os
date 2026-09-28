@@ -1,0 +1,39 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T170157_orchard_decision_lab_6f1_rain_context_gate_authorized
+type: decision
+recorded_at: 2026-09-28T17:01:57+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: Define and test the first source-linked rain-context evidence gate.
+  scope:
+    - Not-active pure policy-pack contract and deterministic tests.
+    - Durian rain-context evidence only: no rain, missing context, complete context.
+  out_of_scope:
+    - Connection to daily decisions, journal writes, State Inspector runtime behavior, Jev/provider input, research LLM calls, product/formula/dosage selection or public deployment.
+outcome:
+  status: decided
+  slice: "6"
+  decision: Owner accepted Step 4 and authorized 6f.1 policy-pack contract plus tests.
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "2.1"
+  slice: "6"
+  repository:
+    head: a6c638b07dbae486aa289883c4c259d1c099afcb
+    branch: hq/20260926
+    working_tree: 6f1-rain-context-gate-authorized
+  source_review:
+    review_id: durian-rain-waterlogging-state-review-v1
+    claim_id: capture-waterlogging-before-future-policy
+    owner_review_record: memory/events/2026/09/28/20260928T143924_orchard_decision_lab_owner_source_reviews_recorded.yaml
+unresolved:
+  - The contract is not active and cannot alter a daily result.
+  - A later owner decision is required before connecting any policy pack to a real decision or Jev.
+next_action:
+  action: Implement the source-linked contract and deterministic tests only.
+  acceptance_check:
+    - Tests prove the three allowed outcomes and prove no provider, journal or agricultural instruction path exists.

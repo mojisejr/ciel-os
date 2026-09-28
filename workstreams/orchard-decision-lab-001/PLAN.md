@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 2.0
+**Plan revision:** 2.1
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -318,6 +318,20 @@ formula, and dosage selection, and retain the separate authorization required
 before private-state Jev input or policy activation. This is a documentation
 contract only; it changes no runtime behavior.
 
+**6f.1 — Rain-context evidence-gate policy-pack contract owner-visible
+result:** A source-linked, deterministic contract can classify a Durian record
+as not applicable when it contains no rain, `INSPECT_FIRST` when a rain-context
+fact is missing, or ready for the next policy pack when all three facts are
+present. It is not wired to the daily journal, State Inspector, decision
+result, Jev, or a farming instruction.
+
+**6f.1 DoD:** The pack names its official-source locator, the local owner-review
+record it relies on, required state, exact three internal outcomes, missing-data
+behavior, exclusions, and tests. The pure evaluator produces no product,
+formula, dosage, schedule, or autonomous action. Its declaration remains
+`NOT_ACTIVE`; a later owner decision is required to connect it to a real daily
+decision.
+
 **Gate:** The owner authorized 6a.1 on 2026-09-28 as the first practical state
 contract for dogfood. On 2026-09-28, after a read-only audit of six local
 dogfood journeys, the owner authorized 6b.1: a no-cost, official-source-only
@@ -330,9 +344,11 @@ revision for the demonstrated rain-context facts. The owner then authorized
 authorized 6f.0: documentation-only definition of the first daily decision use
 case and Policy–Jev boundary. During 6e dogfood, the owner authorized 6d.1:
 the narrow conditional rain-context correction after observing that a no-rain
-entry could still store a selected rain-time. Research LLM calls,
-research-provider budget, source-to-policy activation, policy activation, and
-private-state provider requests remain separate decisions.
+entry could still store a selected rain-time. The owner then authorized 6f.1:
+a not-active, source-linked rain-context evidence-gate policy-pack contract and
+its deterministic tests. Research LLM calls, research-provider budget,
+source-to-policy activation, policy activation, and private-state provider
+requests remain separate decisions.
 
 **6a.2 gate:** The owner approved the hybrid vocabulary refinement on
 2026-09-28 after reviewing Thai grower terminology research. It is a local

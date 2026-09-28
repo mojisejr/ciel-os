@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T170500_orchard_decision_lab_6f1_rain_context_gate_closed
+type: closeout
+recorded_at: 2026-09-28T17:05:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: Define and prove the first source-linked rain-context evidence-gate policy contract.
+  scope:
+    - Not-active domain contract, official-source locator, local owner-review reference and deterministic tests.
+  out_of_scope:
+    - Runtime activation, daily decision wiring, journal writes, State Inspector behavior, Jev/provider use, research LLM calls, agricultural product/formula/dosage recommendation or public deployment.
+outcome:
+  status: recorded
+  slice: "6"
+  summary: >-
+    durian-rain-context-evidence-gate-v1 now proves three bounded internal
+    outcomes: not applicable without rain, inspect first with incomplete rain
+    context, and ready for the next policy when context is complete. It remains
+    NOT_ACTIVE and is not imported by any runtime path.
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "2.1"
+  slice: "6"
+  repository:
+    head: 8f1b3726f11d0eb5ff5807a39ab8983edf223eeb
+    branch: hq/20260926
+    working_tree: 6f1-rain-context-gate-closed
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 926920a97ff828b525110dca526cb3ba454440b0
+  hard_gate:
+    command: bun run check
+    result: 46 pass; 0 fail; 202 expectations
+  runtime_imports: none
+  provider_calls: none
+unresolved:
+  - This pack cannot alter a daily result until the owner separately authorizes runtime activation.
+  - The next safety/freshness pack is not yet specified.
+next_action:
+  action: Owner reviews the three outcomes, then decides whether to authorize a read-only policy-contract viewer or another bounded policy-pack contract.
+  acceptance_check:
+    - No new path is permitted to turn this internal gate into agricultural advice or a Jev request.
