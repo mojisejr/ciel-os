@@ -1,7 +1,7 @@
 # CU12 Simulator — private remote binding
 
 **Workstream:** `cu12-simulator-remote-binding-001`
-**State:** paused
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.1
 **Execution phase:** none

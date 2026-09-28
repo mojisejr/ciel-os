@@ -1,11 +1,11 @@
 # CIEL — Windows portability and fresh Wake proof
 
 **Workstream:** `ciel-windows-portability-001`
-**State:** paused
+**State:** active
 **Execution lane:** single
 **Plan revision:** 0.1
-**Execution phase:** none
-**Execution state:** idle
+**Execution phase:** 2
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective

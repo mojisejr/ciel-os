@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T163545_windows_portability_phase2_authorized
+type: decision
+recorded_at: 2026-09-28T16:35:45+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-windows-portability-001
+  lane: single
+  objective: >-
+    Prove that the owner's Windows machine can reconstruct CIEL HQ and the
+    CU12 simulator from their private remotes and run Wake and the checks,
+    with no hidden state, while the Mac stays the primary HQ.
+  scope:
+    - Authorize Phase 2 of plan revision 0.1, the Windows fresh-session proof, walked step by step with the owner at the Windows machine.
+  out_of_scope:
+    - smc-v2-app-001 slice 10; it gets its own decision after this proof.
+    - Windows COM, USB serial, RS485, real hardware, secrets, .env, automatic synchronization.
+
+outcome:
+  status: decided
+  decision: >-
+    On 2026-09-28 the owner said the Windows machine is ready, asked whether
+    CIEL could run on Windows in parallel with the Mac as primary, and on
+    the agent's recommendation told it to close the remote-binding
+    prerequisite, record this decision, and walk the steps together.
+    Phase 1's bootstrap guide and asset manifest exist (HQ a3ee7da,
+    docs/portability/). Its DoD 4, a deterministic test over them, was
+    never delivered. That does not block the proof and stays deferred.
+  authorizes:
+    - >-
+      Phase 2 of plan revision 0.1. The Windows machine clones ciel-os at the
+      pushed round branch with core.autocrlf=false (the repository has no
+      .gitattributes) into its own branch win/20260928, and clones
+      cu12-simulator into checkouts/. It follows WINDOWS_BOOTSTRAP.md:
+      projects.local.yaml from the example, bun install, bun run wake,
+      bun run check, the child divergence, and cargo test.
+    - >-
+      Parallel working: the Windows machine commits only this workstream's
+      paths (its events, its PLAN.md, docs/portability/) and pushes only
+      win/*. The Mac merges it into the round branch at a quiet moment;
+      the Mac stays primary.
+  does_not_authorize:
+    - Pushing from Windows to hq/* or main.
+    - Editing AGENTS.md, README.md or src/ from Windows while Mac lanes are live.
+    - Pushing hq/20260926. That remains the owner's act, and it comes first.
+
+evidence:
+  plan: workstreams/ciel-windows-portability-001/PLAN.md
+  plan_revision: "0.1"
+  execution_phase: "2"
+  prerequisite_closed: memory/events/2026/09/28/20260928T163544_cu12_remote_binding_completed.yaml
+  repository:
+    head: "90cf9ef"
+    branch: hq/20260926
+    working_tree: this-event-and-the-plan-header-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  preceding_records:
+    - memory/events/2026/09/04/20260904T054116_windows_portability_authorized.yaml
+
+unresolved:
+  - Phase 1 DoD 4 (a deterministic test over the bootstrap guide and manifest) is not delivered; deferred.
+  - The Windows machine's Git, Bun and Rust state is not observable from the Mac; each step is the owner's report.
+  - The Windows clock must sync automatically. recorded_at orders every event, and nothing validates it.
+
+next_action:
+  action: >-
+    The owner pushes hq/20260926. Then, at the Windows machine, the owner
+    walks the steps the agent gives one at a time and reports each result.
+    The agent records the proof as a Phase 2 closeout.
+  acceptance_check:
+    - Wake lists ciel-windows-portability-001 active at revision 0.1, phase 2, executing.
