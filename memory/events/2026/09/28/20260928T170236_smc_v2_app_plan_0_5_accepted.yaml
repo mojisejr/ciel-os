@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T170236_smc_v2_app_plan_0_5_accepted
+type: decision
+recorded_at: 2026-09-28T17:02:36+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    record keeps the owner's acceptance of plan revision 0.5 and is not an
+    authorization of any slice.
+  scope:
+    - Record revision 0.5. It inserts slice 10 (the simulator as a port, with a banner and marked audit rows) and moves Windows to slice 11.
+  out_of_scope:
+    - Starting slice 10 or 11. Each needs its own decided decision.
+
+outcome:
+  status: recorded
+  decision: >-
+    From the CU12 simulator console syncup of 2026-09-28 (Q7, Q8 and Q9),
+    the owner accepted revision 0.5 of this plan ("รับ revision ของ smc-v2
+    ด้วยเลยครับ"). No decision had ever named slice 10, so moving Windows to
+    slice 11 moves no authorization. The earlier decisions stay valid as
+    history of revision 0.4.
+  authorizes: []
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.5"
+  repository:
+    head: "a6c638b"
+    branch: hq/20260926
+    working_tree: this-event-the-plan-revision-and-the-sprint-005-decision-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  preceding_records:
+    - memory/events/2026/09/28/20260928T162042_smc_v2_app_slice9_merged.yaml
+
+unresolved:
+  - Slice 10 follows cu12-simulator-sprint-005 slice 2, as that plan suggests.
+
+next_action:
+  action: >-
+    None for this workstream until cu12-simulator-sprint-005 slice 2 is
+    merged. Then record a decided decision for slice 10 of revision 0.5.
+  acceptance_check:
+    - Wake lists smc-v2-app-001 at revision 0.5 with eleven declared slices and no slice authorized.

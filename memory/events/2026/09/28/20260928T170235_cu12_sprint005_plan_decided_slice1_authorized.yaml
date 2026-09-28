@@ -1,0 +1,76 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T170235_cu12_sprint005_plan_decided_slice1_authorized
+type: decision
+recorded_at: 2026-09-28T17:02:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-005
+  lane: single
+  objective: >-
+    A Thai console for the CU12 simulator that the owner's test and demo
+    team can run beside SMC v2 on the same machine, driven through one
+    local control endpoint that the agent uses too.
+  scope:
+    - Open the workstream at plan revision 0.1 and authorize slice 1.
+  out_of_scope:
+    - Slices 2 and 3; each gets its own decision.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner and the agent held a syncup on 2026-09-28 over fourteen
+    questions. Twelve of the agent's leans held, and the two that did not
+    (a diagnosis use, and macOS as well as Windows) were walked to their
+    consequences. The agreed understanding is in PLAN.md. The owner read
+    the plan and replied "รับ plan A ทั้งชุด และ go slice 1 เลยครับ และ รับ
+    revision ของ smc-v2 ด้วยเลยครับลุยยาวๆ".
+  authorizes:
+    - >-
+      Slice 1 of plan revision 0.1 is authorized, on a topic branch from
+      cu12-simulator main 17771d5, delivered as a draft pull request. It
+      covers runtime-shared physics, unlock time, a board switch (up,
+      silent, unplugged), a one-shot no-pop and a monitor. It adds a
+      loopback control endpoint under CU12_SIM_CONTROL_PORT (GET
+      /api/state as JSON, POST actions with query arguments) and
+      CU12_SIM_HOOKS for initial hooks. README gains an agent section, and
+      black-box tests drive the simulator through the endpoint only.
+    - >-
+      The sprint-4 boundary "no network control endpoint" is lifted for
+      this workstream. The endpoint binds 127.0.0.1 only.
+  does_not_authorize:
+    - Slices 2 and 3.
+    - A new dependency without the reason named in the slice closeout (plan invariant 6).
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-005/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "a6c638b"
+    branch: hq/20260926
+    working_tree: this-event-the-new-plan-and-the-smc-v2-revision-record-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/21/20260921T003000_cu12_sprint004_slice3_merged_workstream_closed.yaml
+
+unresolved:
+  - >-
+    The owner's "ลุยยาวๆ" is read as a standing direction to go on to the
+    next slice when nothing blocks, as he gave it on 2026-09-20. Each slice
+    still gets its own decision event, and the owner's time at the Mac is
+    asked for before slice 2's walk.
+
+next_action:
+  action: >-
+    Branch from cu12-simulator main 17771d5 and build slice 1 with tests.
+    Open the draft pull request and record the slice-1 closeout.
+  acceptance_check:
+    - Wake lists cu12-simulator-sprint-005 at revision 0.1, phase 1, with slice 1 authorized.
