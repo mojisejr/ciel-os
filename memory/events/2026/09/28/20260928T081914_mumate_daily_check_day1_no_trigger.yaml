@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T081914_mumate_daily_check_day1_no_trigger
+type: closeout
+recorded_at: 2026-09-28T08:19:14+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Record the first daily read-only check of the two observing lanes
+    (mumate-be-retirement-001 and mumate-login-identity-001), 2026-09-28, day 1
+    of 7.
+  scope:
+    - The protocols of 20260927T131926 and 20260927T065300 as amended by 20260927T100100.
+  out_of_scope:
+    - Any change; the second nightly backup (checked after 09:15, recorded with the next record).
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Production counts, run by the owner (the harness refused the agent's production read) with .assets/mumate/daily-check-20260928.sql through mumate_backup, BEGIN READ ONLY ... ROLLBACK, read at 2026-09-28 08:18 Bangkok. The query shape was verified first on pgstaging, where it reproduced both baselines."
+    - "Login lane: new members 2026-09-27 (from 06:47) 7 = LINE 3, Google 4; 2026-09-28 (to 08:18) 3 = LINE 0, Google 3. No provider 0. time NULL among new members 0. Two live Google identities 1 (baseline 1). Exposed 1,442 (baseline 1,442). No trigger (triggers: >~80 a day, any member without a provider, repeated register-login-fe errors)."
+    - "be-retirement lane since 2026-09-27 13:10: consent rows 7, friend rows 5 of which 1 with a Storage photo (FE writes both), members updated with dob and time NULL 0. Render mootech-be 2026-09-27 06:10Z..2026-09-28 01:10Z: 200 at 55-60 an hour (the pm2 monitor), 204 = 1 in the 10:10-11:10Z hour, source unidentified (Render holds no log for that window). No FE error naming a BE path was looked for: no historical Vercel log source is available to this session."
+    - "bazi (for the Vercel CRON_SECRET finding of 20260928T081112): bazi_account_deletion canceled 3, pending 1 (requested 2026-09-26), none overdue; bazi_feature_quota rows older than yesterday 151, oldest period 2026-09-01 - the same 151 as the 09-27 copy, so qi-quota-reset has still not pruned. The owner took the Vercel fix on himself (2026-09-28)."
+  observations:
+    - "New members are below the pre-flip baseline of ~16 a day (7 in about 17 hours of a Sunday, 3 by 08:18 Monday). Not a trigger; the counts are small and the flip removed a gate rather than adding one. Watch on day 2."
+    - "The single 204 on Render is the only non-monitor BE request seen since PR 830."
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.5"
+  slice: none
+  repository:
+    head: "251b9d6"
+    branch: hq/20260926
+    working_tree: this-record-only
+
+unresolved:
+  - "Day 1 of 7; windows close 2026-10-04 (login 06:47, be-retirement 13:10)."
+  - "The Render 204 of 2026-09-27 10:10-11:10Z is unexplained."
+  - "Production reads stay owner-run: the harness refuses them for the agent (Production Reads), so each daily check needs the owner to run the SQL file."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Report the second nightly backup after 09:15; on 2026-09-29 hand the owner
+    the same SQL (dates unchanged, it counts from the flip) and read Render
+    again; on or after 2026-10-04 remind the owner and close login slice 6.
+  acceptance_check:
+    - Seven days of counts with no trigger fired, or a rollback recorded.
