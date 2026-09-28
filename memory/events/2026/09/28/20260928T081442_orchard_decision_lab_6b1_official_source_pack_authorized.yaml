@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T081442_orchard_decision_lab_6b1_official_source_pack_authorized
+type: decision
+recorded_at: 2026-09-28T08:14:42+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Prove that the Lab can make public agricultural evidence and its review
+    boundary visible before making any agricultural policy or provider input.
+  scope:
+    - Curate a narrow official-source-only Durian rain/waterlogging review pack.
+    - Render Thai source, candidate-claim, evidence-gap and review-status views.
+    - Keep the pack local, source-controlled and outside decision/policy execution.
+  out_of_scope:
+    - Research LLM calls, paid research provider, credentials, source-to-policy
+      activation, private-state provider calls, public deployment or chemical advice.
+
+outcome:
+  status: decided
+  slice: "6"
+  decision: >-
+    After the read-only local journal audit, the owner authorized 6b.1 using
+    official public sources only. The owner is the required human reviewer;
+    all claims remain pending until the owner reviews their source links.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "6"
+  repository:
+    head: 251b9d641bdf8fa81f028f0a59e4702b75449d07
+    branch: hq/20260926
+    working_tree: 6b1-official-source-pack-authorized
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 456807afd120e23b458c1ef3a3821e474d0d2fed
+  local_audit:
+    method: read-only SQLite journal audit
+    result: 24 hash-linked events across 6 replayable journeys; provider-state redaction passed for all 6
+  source_retrieval:
+    method: read-only official Department of Agricultural Extension pages
+    result: source locators reviewed; no credential, provider or LLM request used
+  proof_contract: workstreams/orchard-decision-lab-001/PLAN.md
+
+unresolved:
+  - The owner has not yet reviewed or accepted any candidate interpretation.
+  - The current rain/wet-soil fixture remains separate from this source pack.
+  - Research LLM budget and all source-to-policy activation remain unapproved.
+
+next_action:
+  action: >-
+    Implement and locally prove the 6b.1 source-review page, then ask the
+    owner to read the linked sources and explicitly accept, reject or revise
+    each candidate claim before any later activation decision.
+  acceptance_check:
+    - A source locator, source fact, candidate claim and missing evidence are visibly distinct.
+    - No source pack content changes a deterministic rule or leaves the machine.

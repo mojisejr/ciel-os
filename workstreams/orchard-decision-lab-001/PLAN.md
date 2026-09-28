@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.3
+**Plan revision:** 1.4
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -227,10 +227,27 @@ explains what source fact, candidate claim and model contribution each mean.
 are required before the source can enter a Lab snapshot; source status and the
 distinction between claim and evidence are understandable in Thai.
 
+**6b.1 — Curated public-source pack owner-visible result:** The owner can open
+one Thai source-review page for a narrow Durian rain/waterlogging context and
+see the official source locator, source fact, candidate system interpretation,
+what evidence still must be collected, and why it is not an agricultural rule
+or Jev input.
+
+**6b.1 DoD:** The locally source-controlled pack uses only named official
+Department of Agricultural Extension sources and retrieval timestamps. Every
+candidate interpretation references a source locator, remains
+`OWNER_REVIEW_PENDING`, and cannot become a Lab snapshot, deterministic policy,
+or provider payload. The screen is Thai-first, offers direct source links for
+the owner to review, and distinguishes verified source location from an
+unverified candidate claim. There is no research-LLM request, new credential,
+or billable provider call.
+
 **Gate:** The owner authorized 6a.1 on 2026-09-28 as the first practical state
-contract for dogfood. 6b source-retrieval scope, reviewer responsibility and
-any research-provider budget remain a separate owner decision after 6a.1
-review.
+contract for dogfood. On 2026-09-28, after a read-only audit of six local
+dogfood journeys, the owner authorized 6b.1: a no-cost, official-source-only
+review pack. The owner is the required human reviewer. Research LLM calls,
+research-provider budget, source-to-policy activation, and private-state
+provider requests remain separate decisions.
 
 **6a.2 gate:** The owner approved the hybrid vocabulary refinement on
 2026-09-28 after reviewing Thai grower terminology research. It is a local
@@ -266,6 +283,16 @@ to the 6b gate.
 | Typed activity text never enters provider-ready JSON; only repeated exact local text appears as an unpromoted candidate | Hard Gate: compiler and candidate tests | agent |
 | Thai forms distinguish stage, today's focus, known activities, typed other work, and candidate status | Eye Truth: synthetic local browser inspection | agent, then owner review |
 | Source, LLM, and provider network access | API Truth: N/A; 6a.2 has none | agent |
+| Device-specific behavior | Device Truth: N/A; local browser only | agent |
+
+**6b.1 proof contract before implementation:**
+
+| DoD evidence | Proof lane | Owner |
+|---|---|---|
+| Every source ID/locator is valid and every candidate claim references it; no candidate can enter a snapshot or policy | Hard Gate: TypeScript source-pack and boundary tests | agent |
+| The official locators resolve to the reviewed public source pages | API Truth: read-only source retrieval during curation; no runtime network path | agent |
+| Thai source-review page shows source fact, pending candidate claim, evidence gaps and review boundary | Eye Truth: synthetic local browser inspection | agent, then owner source review |
+| Research LLM, paid provider, credentials and private daily state | API Truth: N/A; explicitly excluded from 6b.1 | agent |
 | Device-specific behavior | Device Truth: N/A; local browser only | agent |
 
 ### 7. Evidence dossier and Go-to-Pilot decision
