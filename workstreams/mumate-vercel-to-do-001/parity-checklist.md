@@ -25,9 +25,13 @@ Status: ✅ proven · ⏳ agent, waiting on time · 👤 needs the owner · ✋ 
 | 13 | (backup) | nightly `pg_dump` to Spaces + restore | restore-verify of the 09-28 night: **184 tables, 5,138 users, 92 s**, pgtmp removed | ✅ |
 | 14 | Planned maintenance window | FE `MAINTENANCE_MODE` + bypass cookie | on: `/` and `/v2/home` show the page, `/api/health` 200, cron 200 during; bypass → httpOnly cookie, site normal; off restored | ✅ · note: the app's page answers **200**, not 503 |
 | 15 | Login providers | fe login route (login lane) | D5 walk (LINE and Google) 2026-09-28 morning; B-1 08:20–08:21: signout 200, `signin/google` 302 → `callback/google` 302 → `register-login-fe` 200, one Google provider row touched, 0 new users | ✅ · re-run |
-| 16 | Payment and webhook | Beam live on staging with its own webhook (owner, D2 amendment) | — | 👤 one real payment (B-2) |
+| 16 | Payment and webhook | Beam live on staging with its own webhook (owner, D2 amendment) | B-2 2026-09-28: owner bought QI_60 (35 THB) by PromptPay QR on staging — QR 15:24:36, Beam webhook to staging 15:25:05 (200, 139 ms, HMAC ok), `v2_payment` APPROVED, ledger `qi:buy:QI_60` +90 Qi exactly once. **Beam also delivered the same event to production** (Vercel log 15:25:05, 200, `PAID CHARGE WITH NO USABLE ROW (NO_ROW)`): nothing granted there, but every staging payment raises a false 🔴 in production's log, and every production payment reaches staging | ✅ payment · ✋ cross-delivery (see below) |
 | 17 | QStash scheduled push | `QSTASH_TOKEN` only on production at cutover | staging has no token | proven at the cutover — owner 2026-09-28 (B-3) |
 | 18 | SSE chat | Caddy passes `text/event-stream` uncompressed | edge test: SSE not compressed; B-1 08:21:33 `POST /api/chat/bazi` 200 `text/event-stream`, no Content-Encoding, 7.96 s, 20,355 B through Caddy; the owner saw the answer stream in | ✅ |
 | 19 | Load test at production's busiest hour | k6/curl from outside, event-loop lag and memory recorded | — | 👤 busiest-hour number (B-4) |
+
+**Cross-delivery (found in B-2):** Beam sends each event to every webhook endpoint of the merchant. Options: keep it and
+note it in the slice-6 runbook; remove the staging endpoint from Beam between payment drills; or later, an fe change that
+tags the environment on each order and treats another environment's event as quiet. Owner's decision.
 
 **Owner signature (B-5):** not signed.
