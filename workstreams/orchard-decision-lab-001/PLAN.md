@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.2
+**Plan revision:** 1.3
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -204,6 +204,22 @@ reference, free text, trace identity, completed work, owner choice, and later
 feedback. All additions remain local; no source, LLM, or provider request
 occurs.
 
+**6a.2 — Hybrid orchard-activity vocabulary owner-visible result:** The owner
+chooses familiar Thai orchard activities for planned and completed work, and
+may also type a local-only “other work” phrase. Repeated exact phrases become
+visible vocabulary candidates for owner review; they never become a standard
+choice automatically.
+
+**6a.2 DoD:** Work focus remains distinct from the crop's actual season stage.
+The form offers the reviewed grower-facing activity labels, preserves legacy
+structured IDs for replay, and records an optional typed activity separately
+from the general note. Candidate detection groups exact normalized local text
+only after it appears in at least two distinct journeys; it performs no LLM
+classification, semantic merge, external request, or automatic promotion.
+Typed activity text remains out of the provider-ready JSON, while structured
+work focus and standard selected activities remain inspectable. All additions
+remain local; no source, LLM, or provider request occurs.
+
 **6b — Owner-visible result:** A source-linked, reviewer-verified scenario
 explains what source fact, candidate claim and model contribution each mean.
 
@@ -215,6 +231,12 @@ distinction between claim and evidence are understandable in Thai.
 contract for dogfood. 6b source-retrieval scope, reviewer responsibility and
 any research-provider budget remain a separate owner decision after 6a.1
 review.
+
+**6a.2 gate:** The owner approved the hybrid vocabulary refinement on
+2026-09-28 after reviewing Thai grower terminology research. It is a local
+usability and data-quality refinement inside Slice 6a, not authorization for
+agricultural policy, research-provider calls, source activation, or a change
+to the 6b gate.
 
 **6a proof contract before implementation:**
 
@@ -234,6 +256,16 @@ review.
 | Legacy trace becomes explicit missing state; provider JSON has no private or post-decision fields | Hard Gate: compiler/redaction tests | agent |
 | Thai form and State Inspector distinguish intended work, completed work, and excluded fields | Eye Truth: local E2E/browser inspection | agent, then owner review |
 | Source, LLM, and provider network access | API Truth: N/A; 6a.1 has none | agent |
+| Device-specific behavior | Device Truth: N/A; local browser only | agent |
+
+**6a.2 proof contract before implementation:**
+
+| DoD evidence | Proof lane | Owner |
+|---|---|---|
+| Standard labels, work focus, local typed activity, and legacy events parse/replay without changing the morning trace | Hard Gate: TypeScript journal and replay tests | agent |
+| Typed activity text never enters provider-ready JSON; only repeated exact local text appears as an unpromoted candidate | Hard Gate: compiler and candidate tests | agent |
+| Thai forms distinguish stage, today's focus, known activities, typed other work, and candidate status | Eye Truth: synthetic local browser inspection | agent, then owner review |
+| Source, LLM, and provider network access | API Truth: N/A; 6a.2 has none | agent |
 | Device-specific behavior | Device Truth: N/A; local browser only | agent |
 
 ### 7. Evidence dossier and Go-to-Pilot decision
