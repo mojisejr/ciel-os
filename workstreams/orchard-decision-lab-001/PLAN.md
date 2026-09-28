@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.6
+**Plan revision:** 1.7
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -271,12 +271,20 @@ remain outside Lab snapshots, deterministic policy execution and Jev/provider
 input. The Thai-first screen makes the source-to-claim-to-state-to-boundary
 sequence legible.
 
+**6d — Rain-context daily state owner-visible result:** The morning dogfood
+form captures standing-water status, a simple rain-time window and soil-drying
+status when relevant; it records the inspection time automatically. Legacy
+records replay with explicit missing values. No field activates policy or
+provider use.
+
 **Gate:** The owner authorized 6a.1 on 2026-09-28 as the first practical state
 contract for dogfood. On 2026-09-28, after a read-only audit of six local
 dogfood journeys, the owner authorized 6b.1: a no-cost, official-source-only
 review pack. The owner then authorized 6b.2: a local-only recorder for that
 required human review. After accepting both current candidate claims, the
-owner authorized 6c: a non-activating Policy Proposal Sandbox. Research LLM calls,
+owner authorized 6c: a non-activating Policy Proposal Sandbox. After owner
+usability confirmation, the owner authorized 6d: a narrow local daily-state
+revision for the demonstrated rain-context facts. Research LLM calls,
 research-provider budget, source-to-policy activation, and private-state
 provider requests remain separate decisions.
 
