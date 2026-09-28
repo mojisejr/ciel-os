@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T143801_mumate_vercel_to_do_slice3_closeout
+type: closeout
+recorded_at: 2026-09-28T14:38:01+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Close slice 3 of plan 0.3 (the control room replaces every Vercel platform
+    duty): every item merged, running on staging, and written so the same
+    repository configures a production host with its timers disabled.
+  scope:
+    - mumate-infra PRs 29-35 on main 3c918fb, pulled on mumate-2; the first release run.
+  out_of_scope:
+    - Slice 4 and later; any mootech-fe or bazi merge; production.
+
+outcome:
+  status: recorded
+  slice: "3"
+  dod:
+    - "Six cron timers, installed, disabled on production until the flip - met: cron.tsv + mumate-cron@.service + 6 timers (PR 30); on staging 4 on (push-reminders, manifest-morning, qi-quota-reset, account-purge), bazi-alerts and reconcile-payment off (owner Q2); cron.tsv enables nothing on production."
+    - "Caddy production site block (FE only), :80 redirect, HSTS, encode, body cap, keep-alive 502 fix - met (PR 29): caddy/sites/production.caddy loaded only where MUMATE_ENV=production; HSTS as Vercel sends; keep-alive fixed by construction (the race did not reproduce before the fix, 80/80)."
+    - "D11 retry through a restart and a static maintenance page - met (PR 29): fe recreate under load 90 x 200; fe stopped -> 503 maintenance page after 20.5 s."
+    - "rollback.sh recreates fe and bazi; one-command rollback to the previous SHA - met (PR 29): 13 s to the previous FE SHA on staging."
+    - "bazi autoheal like fe-recover - met (PR 31): proven by a real network fault on staging, recreated in 7 s on the same image."
+    - "Env inventories from a fresh Vercel read, examples level with the code - met (PR 33), names only."
+    - "D4 release flow (staging by button, production promotion by เอ็ม) - met for staging: release run 36392624548 on 2026-09-28 07:37 UTC joined the tailnet by OIDC as tag:ci, deployed the running SHAs through deploy.sh (healthy, deploy-history ok line 07:37:29Z), ran cron-check, logged out. Production path gated (RELEASE_ACTORS, staging history, no production host until slice 5); เอ็ม not yet added to mumate-infra or RELEASE_ACTORS (before slice 5). Automatic staging release on merge deferred until the slice-2 merges (owner Q3)."
+    - "Rate limit on bazi's ops login - dropped by owner decision Q5 (bazi has no public hostname on DO)."
+  completed:
+    - "A4 first run 36379302192 failed at Tailscale (403): mumate-infra uses GitHub's immutable OIDC subject repo:mojisejr@22347555/mumate-infra@1376540880; the owner changed the trust credential subject to that form (2026-09-28) and the rerun passed."
+    - "Tailnet policy (owner, 2026-09-28): tag:ci owned by admins; acls tag:ci -> tag:server:22; ssh tag:ci -> tag:server as deploy (accept); tests/sshTests pin tag:ci to port 22 and deploy-not-root and passed on save."
+    - "Owner answers the same day: go covers slice 4; the closeout-typed record on closed mumate-backup-001 was dropped (option ข) by revert ed556ef."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "ed556ef"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mumate-infra_main: "3c918fb (PRs 29-35), pulled on mumate-2"
+    release_run_ok: "https://github.com/mojisejr/mumate-infra/actions/runs/36392624548"
+    checkpoints:
+      - memory/events/2026/09/28/20260928T073305_mumate_vercel_to_do_slice3_authorized.yaml
+      - memory/events/2026/09/28/20260928T081112_mumate_vercel_to_do_s3_five_infra_prs_proven_on_staging.yaml
+      - memory/events/2026/09/28/20260928T115540_mumate_vercel_to_do_s3_a4_blocked_oidc_subject.yaml
+
+unresolved:
+  - "cron-check exits 2 on a main-built image until mootech-fe 836 / bazi 46 merge; cron-install then keeps that service's timers off."
+  - "A git pull that deletes and recreates caddy/ leaves caddy on a stale bind mount until `docker compose up -d --force-recreate caddy` (runbook 01)."
+  - "Before slice 5: add เอ็ม (jaroensakyod, to be confirmed) to mumate-infra with write and to RELEASE_ACTORS."
+  - "PRODUCTION (owner took it on): bazi Vercel project has no CRON_SECRET; account-purge's first pending deletion comes due about 2026-10-26."
+  - "Staging env/fe.env CRON_SECRET has unrecorded origin."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Slice 4 (authorized by the owner's go the same day): run the parity drills
+    on staging and build the D6 checklist for the owner to sign.
+  acceptance_check:
+    - Wake shows no validation error and this closeout as a checkpoint of mumate-vercel-to-do-001.
