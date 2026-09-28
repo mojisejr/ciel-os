@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 2.1
+**Plan revision:** 2.2
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -332,6 +332,17 @@ formula, dosage, schedule, or autonomous action. Its declaration remains
 `NOT_ACTIVE`; a later owner decision is required to connect it to a real daily
 decision.
 
+**6f.2 — Read-only policy-contract viewer owner-visible result:** The owner can
+open `/policy` and inspect the not-active pack's source, local review reference,
+required state, exclusions, synthetic input, Thai output table and copyable JSON.
+The viewer uses three fixed synthetic examples only; it never reads a dogfood
+trace, accepts form input, writes a journal event, or calls Jev.
+
+**6f.2 DoD:** The page visibly labels the pack `NOT_ACTIVE`, identifies the
+official source and review reference, and presents all three outcomes in Thai.
+Every displayed input/output comes from a named synthetic fixture. Tests prove
+the route neither accesses a dogfood trace nor exposes a write/provider path.
+
 **Gate:** The owner authorized 6a.1 on 2026-09-28 as the first practical state
 contract for dogfood. On 2026-09-28, after a read-only audit of six local
 dogfood journeys, the owner authorized 6b.1: a no-cost, official-source-only
@@ -348,7 +359,8 @@ entry could still store a selected rain-time. The owner then authorized 6f.1:
 a not-active, source-linked rain-context evidence-gate policy-pack contract and
 its deterministic tests. Research LLM calls, research-provider budget,
 source-to-policy activation, policy activation, and private-state provider
-requests remain separate decisions.
+requests remain separate decisions. The owner then authorized 6f.2: a
+read-only synthetic policy-contract viewer for that not-active pack.
 
 **6a.2 gate:** The owner approved the hybrid vocabulary refinement on
 2026-09-28 after reviewing Thai grower terminology research. It is a local
