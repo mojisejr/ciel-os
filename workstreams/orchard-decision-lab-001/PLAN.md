@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.5
+**Plan revision:** 1.6
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -255,11 +255,28 @@ policy, or enters a Jev/provider payload. The Thai-first screen clearly says
 that accepting a candidate is a review position, not agricultural advice or an
 activation.
 
+**6c — Policy Proposal Sandbox owner-visible result:** For each accepted
+candidate claim, the owner can see a non-activating policy-design blueprint:
+its source claim, required state, current contract gaps, narrowly allowed
+non-action outcomes, and a deterministic what-if check using temporary local
+form values. The sandbox can say only whether evidence is still missing or is
+ready for a human to author a later policy.
+
+**6c DoD:** A blueprint is visible only when the latest local owner review for
+its named candidate is `ACCEPT`. The what-if form neither writes to the daily
+journal nor reads a private trace. Missing facts return an explicit
+data-contract gap; complete synthetic facts return only
+`READY_FOR_POLICY_AUTHORING`, never agricultural instructions. Accepted claims
+remain outside Lab snapshots, deterministic policy execution and Jev/provider
+input. The Thai-first screen makes the source-to-claim-to-state-to-boundary
+sequence legible.
+
 **Gate:** The owner authorized 6a.1 on 2026-09-28 as the first practical state
 contract for dogfood. On 2026-09-28, after a read-only audit of six local
 dogfood journeys, the owner authorized 6b.1: a no-cost, official-source-only
 review pack. The owner then authorized 6b.2: a local-only recorder for that
-required human review. Research LLM calls,
+required human review. After accepting both current candidate claims, the
+owner authorized 6c: a non-activating Policy Proposal Sandbox. Research LLM calls,
 research-provider budget, source-to-policy activation, and private-state
 provider requests remain separate decisions.
 
@@ -317,6 +334,17 @@ to the 6b gate.
 | A recorded review cannot activate snapshot, policy or Jev input | Hard Gate: boundary and E2E tests | agent |
 | Thai screen distinguishes a local review position from agricultural advice or system activation | Eye Truth: synthetic local browser inspection | agent, then owner review |
 | Research LLM, paid provider, credentials and private daily state | API Truth: N/A; explicitly excluded from 6b.2 | agent |
+| Device-specific behavior | Device Truth: N/A; local browser only | agent |
+
+**6c proof contract before implementation:**
+
+| DoD evidence | Proof lane | Owner |
+|---|---|---|
+| Only latest-accepted candidate claims create a proposal; non-accepted claims stay absent | Hard Gate: pure proposal and server tests | agent |
+| Unknown facts produce named data-contract gaps; complete temporary facts produce only readiness for human policy authoring | Hard Gate: deterministic sandbox tests | agent |
+| No proposal path writes a daily event, enters a snapshot, invokes a provider, or returns agricultural instructions | Hard Gate: route/boundary tests | agent |
+| Thai screen visibly separates source claim, required facts, temporary what-if result and non-activation boundary | Eye Truth: synthetic local browser inspection | agent, then owner review |
+| Provider, research LLM, credentials and private daily state | API Truth: N/A; explicitly excluded from 6c | agent |
 | Device-specific behavior | Device Truth: N/A; local browser only | agent |
 
 ### 7. Evidence dossier and Go-to-Pilot decision
