@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T171500_orchard_decision_lab_6f3_state_quality_gate_closed
+type: closeout
+recorded_at: 2026-09-28T17:15:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: Define and prove the not-active state freshness and completeness policy contract.
+  scope:
+    - Pure state-quality contract and deterministic tests.
+  out_of_scope:
+    - Agricultural advice, runtime activation, daily decision wiring, journal writes, State Inspector changes, Jev/provider input, research LLM calls or public deployment.
+outcome:
+  status: recorded
+  slice: "6"
+  summary: >-
+    state-quality-gate-v1 now returns INSPECT_FIRST for stale or incomplete
+    morning state and READY_FOR_NEXT_POLICY only when freshness, crop stage,
+    work focus and intended activities are complete. It remains NOT_ACTIVE.
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "2.3"
+  slice: "6"
+  repository:
+    head: fdb8f2950ace65297eea39a457655ebd570d40ab
+    branch: hq/20260926
+    working_tree: 6f3-state-quality-gate-closed
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 4a27450b8fd3c2abbc2b8a66b2ebac4bca902c9d
+  hard_gate:
+    command: bun run check
+    result: 50 pass; 0 fail; 215 expectations
+  runtime_imports: none
+  provider_calls: none
+unresolved:
+  - The state-quality gate remains not active and cannot alter the daily result.
+  - The policy viewer currently shows the rain-context pack only; adding the second pack to it needs separate owner authorization.
+next_action:
+  action: Owner decides whether to add the state-quality pack to the read-only policy viewer before considering any runtime policy activation.
+  acceptance_check:
+    - The owner can inspect both contracts without exposing private orchard state or enabling a decision path.

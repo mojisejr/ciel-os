@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 2.2
+**Plan revision:** 2.3
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -343,6 +343,19 @@ official source and review reference, and presents all three outcomes in Thai.
 Every displayed input/output comes from a named synthetic fixture. Tests prove
 the route neither accesses a dogfood trace nor exposes a write/provider path.
 
+**6f.3 — State freshness and completeness policy-pack contract owner-visible
+result:** A not-active deterministic pack evaluates whether morning facts are
+fresh and whether crop stage, work focus and intended activities are known.
+Stale or missing data becomes `INSPECT_FIRST`; a complete fresh state becomes
+`READY_FOR_NEXT_POLICY`. This is a product data-quality boundary, not an
+agricultural recommendation, so its basis is the versioned Lab state contract
+and owner authorization rather than an agronomic source claim.
+
+**6f.3 DoD:** The contract names its Lab-state basis and reviewer status,
+required state, missing-data behavior, exclusions and deterministic tests. It
+is `NOT_ACTIVE`, has no runtime import, journal/provider path or Jev input, and
+cannot select a product, formula, dosage, schedule or autonomous action.
+
 **Gate:** The owner authorized 6a.1 on 2026-09-28 as the first practical state
 contract for dogfood. On 2026-09-28, after a read-only audit of six local
 dogfood journeys, the owner authorized 6b.1: a no-cost, official-source-only
@@ -360,7 +373,9 @@ a not-active, source-linked rain-context evidence-gate policy-pack contract and
 its deterministic tests. Research LLM calls, research-provider budget,
 source-to-policy activation, policy activation, and private-state provider
 requests remain separate decisions. The owner then authorized 6f.2: a
-read-only synthetic policy-contract viewer for that not-active pack.
+read-only synthetic policy-contract viewer for that not-active pack. The owner
+then authorized 6f.3: a not-active state freshness/completeness policy-pack
+contract and deterministic tests.
 
 **6a.2 gate:** The owner approved the hybrid vocabulary refinement on
 2026-09-28 after reviewing Thai grower terminology research. It is a local
