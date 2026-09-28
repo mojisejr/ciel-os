@@ -1,0 +1,37 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T180419_orchard_decision_lab_6f4_ordered_policy_viewer_authorized
+type: decision
+recorded_at: 2026-09-28T18:04:19+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: Make the first two not-active policy-pack contracts visible as an ordered synthetic sequence.
+  scope:
+    - Read-only /policy viewer with State Quality first and Rain Context second.
+    - Named synthetic examples, Thai table and copyable JSON for each pack.
+  out_of_scope:
+    - Real-state composition, dogfood-trace reads, journal writes, policy activation, daily decision changes, Jev/provider input, research LLM calls, agricultural advice or public deployment.
+outcome:
+  status: decided
+  slice: "6"
+  decision: Owner accepted Step 7 and authorized the ordered multi-pack policy viewer.
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "2.4"
+  slice: "6"
+  repository:
+    head: 99079598795158e538f27b440c09af073a478d62
+    branch: hq/20260926
+    working_tree: 6f4-ordered-policy-viewer-authorized
+  prerequisites:
+    - memory/events/2026/09/28/20260928T170800_orchard_decision_lab_6f2_policy_contract_viewer_closed.yaml
+    - memory/events/2026/09/28/20260928T171500_orchard_decision_lab_6f3_state_quality_gate_closed.yaml
+unresolved:
+  - Both policy packs remain NOT_ACTIVE and synthetic-only.
+next_action:
+  action: Extend the read-only policy viewer without constructing a real decision pipeline.
+  acceptance_check:
+    - The viewer makes the ordering and both not-active boundaries legible without private state.

@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T181000_orchard_decision_lab_6f4_ordered_policy_viewer_closed
+type: closeout
+recorded_at: 2026-09-28T18:10:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: Make the first two not-active policy-pack contracts inspectable as one ordered synthetic sequence.
+  scope:
+    - Read-only /policy viewer with State Quality before Rain Context.
+    - Named synthetic examples with Thai tables and copyable JSON.
+  out_of_scope:
+    - Real-state composition, dogfood-trace reads, journal writes, policy activation, daily decision changes, Jev/provider input, research LLM calls, agricultural advice or public deployment.
+outcome:
+  status: recorded
+  slice: "6"
+  summary: >-
+    The local policy viewer now shows State Quality first and Rain Context second.
+    Each NOT_ACTIVE contract presents its source/basis, required state, exclusions,
+    fixed Thai output table and copyable named synthetic JSON without reading private orchard state.
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "2.4"
+  slice: "6"
+  repository:
+    head: 99079598795158e538f27b440c09af073a478d62
+    branch: hq/20260926
+    working_tree: 6f4-ordered-policy-viewer-closed
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commits:
+      - 57e816347d89497d6d265b9b192370daabd45b2e
+      - 740ce10dc61663f4594b1095c8b3528a95e1f9e6
+  hard_gate:
+    command: bun run check
+    result: 50 pass; 0 fail; 221 expectations
+  eye_truth:
+    route: /policy
+    observed: State Quality appeared before Rain Context; both remained NOT_ACTIVE and displayed Thai tables plus copyable JSON.
+  route_boundary:
+    private_state_reads: none
+    journal_writes: none
+    provider_calls: none
+unresolved:
+  - Both policy packs remain NOT_ACTIVE and are not part of a real daily decision pipeline.
+  - Passing one displayed pack means only that a later policy may be considered; it does not authorize work or call Jev.
+next_action:
+  action: Owner reviews whether the ordered policy vocabulary and boundaries are clear before authorizing any synthetic pipeline composition or policy activation work.
+  acceptance_check:
+    - The owner can distinguish a readable contract viewer from a working daily decision system.

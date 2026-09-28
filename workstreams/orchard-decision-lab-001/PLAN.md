@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 2.3
+**Plan revision:** 2.4
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -356,6 +356,17 @@ required state, missing-data behavior, exclusions and deterministic tests. It
 is `NOT_ACTIVE`, has no runtime import, journal/provider path or Jev input, and
 cannot select a product, formula, dosage, schedule or autonomous action.
 
+**6f.4 — Ordered multi-pack policy viewer owner-visible result:** `/policy`
+shows State Quality followed by Rain Context in one read-only synthetic sequence.
+The owner can inspect a complete/insufficient example for State Quality and the
+existing three Rain Context examples, including each exact Thai output and
+copyable JSON. The viewer does not compose real results or read a private trace.
+
+**6f.4 DoD:** The displayed sequence makes clear that State Quality is checked
+first, Rain Context follows only conceptually, and every pack remains
+`NOT_ACTIVE`. Each displayed input/output is a named fixture; tests prove the
+route remains read-only, synthetic-only and provider-free.
+
 **Gate:** The owner authorized 6a.1 on 2026-09-28 as the first practical state
 contract for dogfood. On 2026-09-28, after a read-only audit of six local
 dogfood journeys, the owner authorized 6b.1: a no-cost, official-source-only
@@ -375,7 +386,8 @@ source-to-policy activation, policy activation, and private-state provider
 requests remain separate decisions. The owner then authorized 6f.2: a
 read-only synthetic policy-contract viewer for that not-active pack. The owner
 then authorized 6f.3: a not-active state freshness/completeness policy-pack
-contract and deterministic tests.
+contract and deterministic tests. The owner then authorized 6f.4: an ordered,
+read-only synthetic viewer for both policy-pack contracts.
 
 **6a.2 gate:** The owner approved the hybrid vocabulary refinement on
 2026-09-28 after reviewing Thai grower terminology research. It is a local
