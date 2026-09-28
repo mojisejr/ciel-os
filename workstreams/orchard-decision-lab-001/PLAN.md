@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.4
+**Plan revision:** 1.5
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -242,10 +242,24 @@ the owner to review, and distinguishes verified source location from an
 unverified candidate claim. There is no research-LLM request, new credential,
 or billable provider call.
 
+**6b.2 — Local owner-review record owner-visible result:** After reading a
+source and its candidate system interpretation, the owner can append one
+local review decision—accept for later consideration, request revision, or
+reject—with an optional note. The record makes the latest owner position and
+its append-only history visible without changing the source pack itself.
+
+**6b.2 DoD:** Review events are local-only, append-only and hash-chained. A
+decision is accepted only for a known candidate claim. It never changes a
+candidate's pending status, creates a Lab snapshot, activates a deterministic
+policy, or enters a Jev/provider payload. The Thai-first screen clearly says
+that accepting a candidate is a review position, not agricultural advice or an
+activation.
+
 **Gate:** The owner authorized 6a.1 on 2026-09-28 as the first practical state
 contract for dogfood. On 2026-09-28, after a read-only audit of six local
 dogfood journeys, the owner authorized 6b.1: a no-cost, official-source-only
-review pack. The owner is the required human reviewer. Research LLM calls,
+review pack. The owner then authorized 6b.2: a local-only recorder for that
+required human review. Research LLM calls,
 research-provider budget, source-to-policy activation, and private-state
 provider requests remain separate decisions.
 
@@ -293,6 +307,16 @@ to the 6b gate.
 | The official locators resolve to the reviewed public source pages | API Truth: read-only source retrieval during curation; no runtime network path | agent |
 | Thai source-review page shows source fact, pending candidate claim, evidence gaps and review boundary | Eye Truth: synthetic local browser inspection | agent, then owner source review |
 | Research LLM, paid provider, credentials and private daily state | API Truth: N/A; explicitly excluded from 6b.1 | agent |
+| Device-specific behavior | Device Truth: N/A; local browser only | agent |
+
+**6b.2 proof contract before implementation:**
+
+| DoD evidence | Proof lane | Owner |
+|---|---|---|
+| Known claim reviews append with a valid hash chain; update/delete fail; unknown claims are rejected | Hard Gate: TypeScript store, application and route tests | agent |
+| A recorded review cannot activate snapshot, policy or Jev input | Hard Gate: boundary and E2E tests | agent |
+| Thai screen distinguishes a local review position from agricultural advice or system activation | Eye Truth: synthetic local browser inspection | agent, then owner review |
+| Research LLM, paid provider, credentials and private daily state | API Truth: N/A; explicitly excluded from 6b.2 | agent |
 | Device-specific behavior | Device Truth: N/A; local browser only | agent |
 
 ### 7. Evidence dossier and Go-to-Pilot decision

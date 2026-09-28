@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T090000_orchard_decision_lab_6b2_local_owner_review_authorized
+type: decision
+recorded_at: 2026-09-28T09:00:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Make the owner's review position on an evidence-backed candidate claim
+    locally visible without turning that position into agricultural advice.
+  scope:
+    - Append one local owner-review decision for a known candidate claim.
+    - Preserve the review history with hash-chain and update/delete guards.
+    - Render the latest local review position in Thai on the evidence page.
+  out_of_scope:
+    - Source changes, policy activation, Lab snapshot creation, Jev input,
+      research LLM calls, paid provider calls, credentials, public deployment
+      or chemical advice.
+
+outcome:
+  status: decided
+  slice: "6"
+  decision: >-
+    The owner authorized 6b.2: local-only append-only recording of the
+    owner's review position for the existing candidate claims. Acceptance is
+    explicitly a review position, not authorization to activate policy,
+    snapshot or Jev behavior.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.5"
+  slice: "6"
+  repository:
+    head: 89ecadd7fb4f71a6100323bb23ea2330bbeaf575
+    branch: hq/20260926
+    working_tree: 6b2-local-owner-review-authorized
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 32d94422a5dd1b8352cd277f37867c5bd410b60e
+  prior_proof:
+    source_pack_closeout: memory/events/2026/09/28/20260928T081814_orchard_decision_lab_6b1_official_source_pack_closed.yaml
+    local_audit: 24 hash-linked events across 6 replayable journeys; provider-state redaction passed for all 6
+  proof_contract: workstreams/orchard-decision-lab-001/PLAN.md
+
+unresolved:
+  - The owner has not yet recorded an actual review decision for either candidate claim.
+  - Research LLM budget and all source-to-policy activation remain unapproved.
+
+next_action:
+  action: >-
+    Implement and locally prove the 6b.2 review recorder, then let the owner
+    review each official source and append the owner's actual position.
+  acceptance_check:
+    - Unknown candidate claims cannot be recorded.
+    - A recorded review cannot alter policy, snapshot or Jev boundaries.
