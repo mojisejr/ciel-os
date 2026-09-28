@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T145046_smc_v2_app_slice9_authorized
+type: decision
+recorded_at: 2026-09-28T14:50:46+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    decision starts slice 9 (the proposal's 6d): the owner at the Mac walks
+    every function not yet exercised, and what fails is fixed in the same
+    slice.
+  scope:
+    - Authorize slice 9 of plan revision 0.4.
+  out_of_scope:
+    - Slice 10 (Windows); it gets its own decision.
+    - An SMC operations room like mumate-infra; the owner raised it and deferred it.
+
+outcome:
+  status: decided
+  decision: >-
+    On 2026-09-28 the agent reported the lane from Wake and the
+    20260926T131717 handoff, recommended slice 9 with the persisted-warning
+    fix folded in unless the owner objected, and asked three questions. The
+    owner replied "go slice 9", said he has the 45 minutes now, has no USB
+    barcode scanner and will type instead, and did not object to the fix.
+    A scanner in keyboard mode types the HN and Enter, so typing them into
+    the dialogs exercises the same path; a physical scanner stays
+    unobserved. The owner also authorized deleting smc-v2's merged remote
+    branch feat/design-decisions ("ทำได้เลยถ้าเห็นว่าเหมาะสม").
+  authorizes:
+    - Slice 9 (6d) of plan revision 0.4 - on topic branch feat/owner-walkthrough from smc-v2 main eeffc7f as a draft pull request - the owner's walkthrough on the Mac against the simulator at 17771d5 of CSV export, the ส่งข้อมูลให้ช่าง zip, backup now and the folder picker, user delete confirmation, an admin changing their own PIN, disabling a slot empty / loaded / with its door open, reset of an occupied card with admin PIN and reason, the clock-suspect banner, a wrong-machine license, a tampered license, restart with a door open, the บันทึก page while the board is down, and the HN typed with Enter into the dialogs; fixes for what fails, in the same slice.
+    - The persisted-warning fix - the workflow tick persists a slot after it sets warned_no_pop or warned_left_open, so a restart does not record door-did-not-open or door-left-open a second time (action 99 after 97, noted in the 20260926T131717 handoff).
+  does_not_authorize:
+    - Slice 10.
+    - Production license keygen; the walk uses the development key in .assets/smc-v2.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "9"
+  repository:
+    head: "05f607b"
+    branch: hq/20260926
+    working_tree: this-event-and-the-plan-header-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "eeffc7f"
+    branch: main
+    working_tree: clean-equal-to-origin-fetched-2026-09-28T14:49
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin-fetched-2026-09-28T14:49
+  preceding_records:
+    - memory/events/2026/09/26/20260926T131717_smc_v2_app_round_handoff_slices_6_8_merged.yaml
+
+unresolved:
+  - A physical USB barcode scanner is not observed in this slice; typing stands in for it.
+
+next_action:
+  action: >-
+    Finish the fix with fmt, clippy and tests; build the .app; start the
+    simulator with door physics; walk the checklist with the owner; fix
+    what fails; open the draft pull request and record the slice-9
+    closeout on its head.
+  acceptance_check:
+    - Wake lists smc-v2-app-001 at revision 0.4, phase 9, with slice 9 authorized once this event is committed.
