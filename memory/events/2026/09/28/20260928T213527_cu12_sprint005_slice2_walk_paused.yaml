@@ -1,0 +1,123 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T213527_cu12_sprint005_slice2_walk_paused
+type: closeout
+recorded_at: 2026-09-28T21:35:27+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-005
+  lane: single
+  objective: >-
+    A Thai console for the owner's team, on the control endpoint the agent
+    uses too. This record pauses slice 2 partway through the owner's walk,
+    at his word ("closeout เอาไว้ก่อน … พรุ่งนี้ผมมาทำต่อ").
+  scope:
+    - Slice 2 of plan revision 0.1, the console page and its walk with SMC v2.
+  out_of_scope:
+    - Slice 3 and smc-v2-app-001 slice 10.
+
+outcome:
+  status: handoff
+  completed:
+    - >-
+      The console page was built, served at / by the control endpoint, and
+      checked in headless Chrome against a live simulator. cu12-simulator
+      c7133fa on feat/console-page (base 2de54ec) is pushed, and draft pull
+      request 6 is open. There are 9 endpoint tests. The full suite passed
+      15 runs in a row after the endpoint tests' start learned to retry the
+      free-port race, which had failed once in 8 runs. fmt, clippy and the
+      Windows cargo check pass.
+    - >-
+      Owner walk on the Mac, steps 1-5 of 6, with SMC v2 (the release .app
+      of main 444cc48) against the simulator. The owner reported "ถึงขั้นที่
+      5 ละทุกอย่างโอเค". The agent checked the application's actions rows
+      30-44 against each button. The connection line and lamp worked. HN101
+      was loaded and dispensed with the doors closed from the console
+      (rows 30-37). ประตูไม่เด้ง gave door-did-not-open and a cancel (38-40).
+      ปลดล็อกแล้วถูกปฏิเสธ gave a cancel with "failed operation (0x11)"
+      (41-42). ตู้ไม่ตอบตอนปลดล็อก gave a cancel with "no response from the
+      board after 3 attempt(s)" (43-44). Closing the application showed as
+      disconnected on the console (52 s quiet), and reopening it connected
+      again at once.
+    - >-
+      The agent fired "board silent for 15 s" through curl alone while both
+      screens were up, and the endpoint answered with the silent state and
+      its until_ms. Whether the page and SMC showed it as expected was not
+      yet confirmed by the owner.
+    - The application and the simulator are stopped. No port is left listening.
+  not_completed:
+    - Walk step 6 (the hex panel), and the owner's eye on the curl-fired board-down.
+    - Any copy or layout change the owner asks for after the walk.
+    - Marking pull request 6 ready, and the merge.
+  findings:
+    - >-
+      Port 5000, the simulator's historical default, is held on macOS by
+      Control Center (AirPlay Receiver) on *:5000. The owner saved the
+      application's port in Admin, which stored the default
+      tcp:127.0.0.1:5000. The application then connected to AirPlay and saw
+      "no response", which is not a refusal. The owner caught it as "port
+      ไม่ตรงกัน". The agent moved the walk to wire 5012 and console 5013.
+      These become the console binary's defaults in slice 3 and the
+      application's Simulator entry in smc-v2 slice 10. The existing
+      binary's default stays 5000 under plan invariant 1. The README will
+      warn about it.
+    - >-
+      The console's two ports (the page's and the wire's) read as one
+      number to a tester. The header already shows the wire address, but
+      the owner compared the browser's URL with the application. Slice 3
+      should put the wire address first and say plainly that it is the one
+      to give the application.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-005/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "283c670"
+    branch: hq/20260926
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "c7133fa"
+    branch: feat/console-page
+    base: "2de54ec"
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/cu12-simulator/pull/6
+  application:
+    repository: smc-v2
+    head: "444cc48"
+    walk_data: session scratchpad (actions rows 30-44); goes with the session
+  preceding_records:
+    - memory/events/2026/09/28/20260928T171309_cu12_sprint005_slice2_authorized.yaml
+
+unresolved:
+  - >-
+    The walk's data directory, holding licenses and actions 1-44, lives in
+    this session's scratchpad. A new session starts a fresh one: issue a
+    dev license from .assets/smc-v2/dev-license-signing.key (walk licenses
+    are kept in .assets/smc-v2/licenses-walk-20260928/) and set up the first
+    admin.
+  - >-
+    The application's stored port in that data directory is now
+    tcp:127.0.0.1:5000 (AirPlay on macOS). Start it with
+    SMC_ENDPOINT=tcp:127.0.0.1:5012, and do not save the port in Admin,
+    until smc-v2 slice 10 adds the Simulator entry.
+  - hq/20260926 is still unpushed. The Windows walk and smc-v2 slice 11 wait on that and on the owner.
+
+next_action:
+  action: >-
+    Tomorrow, with the owner at the Mac: run Wake and read this record.
+    Start the simulator with CU12_SIM_PORT=5012 CU12_SIM_CONTROL_PORT=5013
+    CU12_SIM_HOOKS="FF 0F" CU12_SIM_PHYSICS=door from
+    checkouts/cu12-simulator on feat/console-page. Start SMC v2 with
+    SMC_ENDPOINT=tcp:127.0.0.1:5012 and a data directory, and open
+    http://127.0.0.1:5013. Finish walk step 6 (the hex panel) and the
+    curl-fired board-down seen on both screens. Take the owner's copy and
+    layout changes and add the README warning about port 5000 on macOS.
+    Then record the slice-2 closeout, mark pull request 6 ready, and after
+    the merge go on to slice 3 with 5012/5013 as the console's defaults.
+  acceptance_check:
+    - Wake shows cu12-simulator-sprint-005 at revision 0.1, phase 2, with this record as its latest event and pull request 6 named in it.
