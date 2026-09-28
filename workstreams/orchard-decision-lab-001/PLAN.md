@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.9
+**Plan revision:** 2.0
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -277,6 +277,19 @@ status when relevant; it records the inspection time automatically. Legacy
 records replay with explicit missing values. No field activates policy or
 provider use.
 
+**6d.1 — Conditional rain-context correction owner-visible result:** When the
+owner records that no rain was observed, the form neither asks for nor stores
+standing-water, rain-time, or soil-drying facts. The State Inspector presents
+those facts as not applicable because there was no rain, rather than as facts
+the owner supplied. Existing append-only journal events remain unchanged.
+
+**6d.1 DoD:** A no-rain submission omits all three rain-context fields from its
+new local observation and produces `NOT_APPLICABLE` evidence without invented
+values. A rain submission still requires explicit values or `UNKNOWN` for the
+three facts. The Thai form visibly explains the conditional behavior. Tests
+cover both paths and legacy events replay unchanged. No policy activation,
+Jev/provider request, research LLM call, or raw-data export occurs.
+
 **6e — Rain-context dogfood validation owner-visible result:** The owner uses
 the revised morning form in ordinary local dogfood and inspects the resulting
 state. The Lab reports only structural coverage—whether the three new facts
@@ -315,9 +328,11 @@ usability confirmation, the owner authorized 6d: a narrow local daily-state
 revision for the demonstrated rain-context facts. The owner then authorized
 6e: local-only dogfood validation of that revised state. The owner then
 authorized 6f.0: documentation-only definition of the first daily decision use
-case and Policy–Jev boundary. Research LLM calls, research-provider budget,
-source-to-policy activation, policy activation, and private-state provider
-requests remain separate decisions.
+case and Policy–Jev boundary. During 6e dogfood, the owner authorized 6d.1:
+the narrow conditional rain-context correction after observing that a no-rain
+entry could still store a selected rain-time. Research LLM calls,
+research-provider budget, source-to-policy activation, policy activation, and
+private-state provider requests remain separate decisions.
 
 **6a.2 gate:** The owner approved the hybrid vocabulary refinement on
 2026-09-28 after reviewing Thai grower terminology research. It is a local
