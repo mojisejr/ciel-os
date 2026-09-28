@@ -1,9 +1,9 @@
 # Orchard Decision Lab — local dogfood proof before a sellable pilot
 
 **Workstream:** `orchard-decision-lab-001`
-**State:** active
+**State:** paused
 **Execution lane:** single
-**Plan revision:** 2.5
+**Plan revision:** 2.6
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -495,6 +495,21 @@ contract and owner approval; `GO_TO_SELL` remains unproven until a real pilot.
 **Gate:** owner decision following Slice 7.
 
 ## Sequencing and review
+
+## Pause checkpoint — 2026-09-28
+
+The owner explicitly parked this workstream after 6f.5. The completed local
+proof is the fixed-fixture policy dry run at `/policy`: it explains ordering,
+stop, skip and future-policy readiness without touching private dogfood state.
+This pause does not activate either policy pack and does not authorize a
+provider request, public deployment, or daily decision change.
+
+**Resume entrypoint:** from `checkouts/orchard-decision-lab`, run `bun run dev`
+and open `/policy`. First inspect the four named dry runs. If the owner still
+wants the next evidence layer, record a new owner decision for a read-only
+replay of one selected private Lab trace. That replay must remain local,
+separate from daily decision output, policy activation and Jev input. CIEL
+never receives the trace's raw orchard facts.
 
 Every slice is sequential because each evidence layer interprets the previous
 one. Slice 1 uses no external provider and has a light document/boundary review.
