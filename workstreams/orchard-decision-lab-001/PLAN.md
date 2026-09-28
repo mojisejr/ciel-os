@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.7
+**Plan revision:** 1.8
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -277,6 +277,18 @@ status when relevant; it records the inspection time automatically. Legacy
 records replay with explicit missing values. No field activates policy or
 provider use.
 
+**6e — Rain-context dogfood validation owner-visible result:** The owner uses
+the revised morning form in ordinary local dogfood and inspects the resulting
+state. The Lab reports only structural coverage—whether the three new facts
+were answered or explicitly unknown, and whether the automatically recorded
+inspection time is present—without exporting or interpreting raw orchard data.
+
+**6e DoD:** At least one owner-recorded journey exercises the revised form and
+the owner confirms the wording remains practical. A read-only local audit can
+count new-field presence/unknown states and state replay without printing a
+plot reference, note or other raw orchard fact. No provider, research LLM,
+policy activation or change to the form occurs in this validation slice.
+
 **Gate:** The owner authorized 6a.1 on 2026-09-28 as the first practical state
 contract for dogfood. On 2026-09-28, after a read-only audit of six local
 dogfood journeys, the owner authorized 6b.1: a no-cost, official-source-only
@@ -284,7 +296,8 @@ review pack. The owner then authorized 6b.2: a local-only recorder for that
 required human review. After accepting both current candidate claims, the
 owner authorized 6c: a non-activating Policy Proposal Sandbox. After owner
 usability confirmation, the owner authorized 6d: a narrow local daily-state
-revision for the demonstrated rain-context facts. Research LLM calls,
+revision for the demonstrated rain-context facts. The owner then authorized
+6e: local-only dogfood validation of that revised state. Research LLM calls,
 research-provider budget, source-to-policy activation, and private-state
 provider requests remain separate decisions.
 
