@@ -1,0 +1,39 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T163200_orchard_decision_lab_6f0_first_decision_use_case_authorized
+type: decision
+recorded_at: 2026-09-28T16:32:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: Define the first daily decision use case and its Policy-Jev boundary.
+  scope:
+    - Documentation-only PRD and SPEC clarification for daily-plan-readiness-v1.
+    - Explicit policy-pack responsibilities and future bounded Jev outcomes.
+  out_of_scope:
+    - Runtime policy activation, private-state provider input, research LLM calls, agricultural product advice or public deployment.
+outcome:
+  status: decided
+  slice: "6"
+  decision: Owner authorized 6f.0 documentation-only first decision-use-case contract.
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.9"
+  slice: "6"
+  repository:
+    head: fe84b7c65af52e9f5c2fecd28a6e666b5a4035b9
+    branch: hq/20260926
+    working_tree: 6f0-first-decision-use-case-authorized
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    prior_commit: 4b52009d94bd5f8418f54c302b763777f833c2ea
+unresolved:
+  - 6e owner-recorded rain-context dogfood still needs its declared read-only structural audit.
+  - No policy pack is activated and no private state may be sent to Jev.
+next_action:
+  action: Update and verify the Lab PRD and SPEC without changing runtime behavior.
+  acceptance_check:
+    - The documents name the use case, the three bounded future outcomes and all policy-pack contract fields.

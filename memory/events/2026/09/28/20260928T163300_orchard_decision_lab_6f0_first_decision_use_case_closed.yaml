@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T163300_orchard_decision_lab_6f0_first_decision_use_case_closed
+type: closeout
+recorded_at: 2026-09-28T16:33:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: Lock the first daily decision use case before policy or Jev implementation.
+  scope:
+    - PRD and SPEC wording for daily-plan-readiness-v1.
+    - CIEL plan revision and decision record.
+  out_of_scope:
+    - Runtime changes, policy activation, private-state Jev input, research LLM calls, agricultural recommendations or public deployment.
+outcome:
+  status: recorded
+  slice: "6"
+  summary: >-
+    The Lab contract now defines daily-plan-readiness-v1: continue the intended
+    morning plan, inspect first, or wait. Policy packs supply constraints and
+    Jev remains a future bounded selector only after separate authorization.
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.9"
+  slice: "6"
+  repository:
+    head: fe84b7c65af52e9f5c2fecd28a6e666b5a4035b9
+    branch: hq/20260926
+    working_tree: 6f0-first-decision-use-case-closed
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 694d4113a569b4a2da6a640770a21204df35f5a2
+  hard_gate:
+    command: bun run check
+    result: 41 pass; 0 fail; 190 expectations
+  runtime_change: none
+  provider_calls: none
+unresolved:
+  - 6e's owner-recorded rain-context dogfood needs its separate structural audit.
+  - The first deterministic policy-pack implementation needs a separate authorization after that evidence is reviewed.
+next_action:
+  action: Complete the 6e read-only structural audit, then decide whether to authorize one deterministic safety/freshness policy pack.
+  acceptance_check:
+    - Audit evidence contains no raw orchard value and the next policy scope remains bounded to daily-plan-readiness-v1.

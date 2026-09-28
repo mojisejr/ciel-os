@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.8
+**Plan revision:** 1.9
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -289,6 +289,22 @@ count new-field presence/unknown states and state replay without printing a
 plot reference, note or other raw orchard fact. No provider, research LLM,
 policy activation or change to the form occurs in this validation slice.
 
+**6f.0 — First decision-use-case contract owner-visible result:** The PRD and
+SPEC name one daily question before any policy activation: “For the work I
+intended this morning, should I continue the plan, inspect the field first, or
+wait?” The contract separates its small source-linked policy packs—safety and
+freshness, rain-context evidence, and activity context—from a future bounded
+Jev choice.
+
+**6f.0 DoD:** The PRD and SPEC agree on the named use case and the only future
+Jev outcomes: `CONTINUE_PLAN`, `INSPECT_FIRST`, and `WAIT`. Every future policy
+pack must declare required state, missing-evidence behavior, source/reviewer
+status, allowed outcomes, and deterministic tests. A hard rule or missing fact
+bypasses Jev. The documents explicitly exclude fertilizer, chemical product,
+formula, and dosage selection, and retain the separate authorization required
+before private-state Jev input or policy activation. This is a documentation
+contract only; it changes no runtime behavior.
+
 **Gate:** The owner authorized 6a.1 on 2026-09-28 as the first practical state
 contract for dogfood. On 2026-09-28, after a read-only audit of six local
 dogfood journeys, the owner authorized 6b.1: a no-cost, official-source-only
@@ -297,9 +313,11 @@ required human review. After accepting both current candidate claims, the
 owner authorized 6c: a non-activating Policy Proposal Sandbox. After owner
 usability confirmation, the owner authorized 6d: a narrow local daily-state
 revision for the demonstrated rain-context facts. The owner then authorized
-6e: local-only dogfood validation of that revised state. Research LLM calls,
-research-provider budget, source-to-policy activation, and private-state
-provider requests remain separate decisions.
+6e: local-only dogfood validation of that revised state. The owner then
+authorized 6f.0: documentation-only definition of the first daily decision use
+case and Policy–Jev boundary. Research LLM calls, research-provider budget,
+source-to-policy activation, policy activation, and private-state provider
+requests remain separate decisions.
 
 **6a.2 gate:** The owner approved the hybrid vocabulary refinement on
 2026-09-28 after reviewing Thai grower terminology research. It is a local
