@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T182000_orchard_decision_lab_6f5_synthetic_pipeline_closed
+type: closeout
+recorded_at: 2026-09-28T18:20:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: Prove the ordered policy sequence can be understood as a bounded dry run before any activation.
+  scope:
+    - Fixed-fixture State Quality then Rain Context dry runs on /policy.
+    - Thai step-by-step result, stop/skip/future-readiness summary and copyable JSON.
+  out_of_scope:
+    - Private dogfood reads, journal writes, policy activation, daily decision changes, Jev/provider input, research calls, agricultural advice or public deployment.
+outcome:
+  status: recorded
+  slice: "6"
+  summary: >-
+    /policy now runs four named synthetic states through the ordered contracts.
+    State Quality stops incomplete input before Rain Context; a no-rain state skips
+    the rain pack; incomplete post-rain facts stop at Rain Context; complete facts
+    become ready only for a future policy. Every displayed pack remains simulated and not active.
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "2.5"
+  slice: "6"
+  repository:
+    head: f857cab72120ef95ff77d0c102d2dc6390181608
+    branch: hq/20260926
+    working_tree: 6f5-synthetic-pipeline-closed
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: b6f85896be9768328e23e16f0cf38aaed9d80ff2
+  hard_gate:
+    command: bun run check
+    result: 54 pass; 0 fail; 241 expectations
+  eye_truth:
+    route: /policy
+    observed: Four dry runs visibly showed ordered step results, stop/skip/future-policy summaries, Thai labels and copyable JSON.
+  route_boundary:
+    private_state_reads: none
+    journal_writes: none
+    provider_calls: none
+unresolved:
+  - The pipeline is a fixture-only learning tool; it does not compose a private daily state or alter a daily decision.
+  - Both policy packs remain NOT_ACTIVE; future readiness neither authorizes work nor calls Jev.
+next_action:
+  action: Owner reviews the four dry runs and decides whether a separately authorized read-only replay of a selected private trace is needed next.
+  acceptance_check:
+    - Any later trace replay remains visibly separate from activation, daily action and Jev.

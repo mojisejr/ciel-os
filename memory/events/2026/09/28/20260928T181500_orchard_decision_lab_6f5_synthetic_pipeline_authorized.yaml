@@ -1,0 +1,36 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T181500_orchard_decision_lab_6f5_synthetic_pipeline_authorized
+type: decision
+recorded_at: 2026-09-28T18:15:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: Make the first two policy-pack contracts understandable as one bounded dry-run sequence.
+  scope:
+    - Named synthetic state fixtures through State Quality then Rain Context.
+    - Read-only Thai step results and copyable dry-run JSON on /policy.
+  out_of_scope:
+    - Private dogfood reads, journal writes, policy activation, daily decision changes, Jev/provider input, research calls, agricultural advice or public deployment.
+outcome:
+  status: decided
+  slice: "6"
+  decision: Owner authorized Step 6f.5 synthetic policy-pipeline dry run.
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "2.5"
+  slice: "6"
+  repository:
+    head: f857cab72120ef95ff77d0c102d2dc6390181608
+    branch: hq/20260926
+    working_tree: 6f5-synthetic-pipeline-authorized
+  prerequisites:
+    - memory/events/2026/09/28/20260928T181000_orchard_decision_lab_6f4_ordered_policy_viewer_closed.yaml
+unresolved:
+  - The packs remain NOT_ACTIVE and must not be treated as daily decision logic.
+next_action:
+  action: Implement and prove the fixed-fixture dry run without adding a private state or provider path.
+  acceptance_check:
+    - The owner can see where a run stops, skips or becomes ready only for a later policy.

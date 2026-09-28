@@ -3,7 +3,7 @@
 **Workstream:** `orchard-decision-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 2.4
+**Plan revision:** 2.5
 **Execution phase:** 6
 **Execution state:** idle
 **Parallelism:** none
@@ -367,6 +367,21 @@ first, Rain Context follows only conceptually, and every pack remains
 `NOT_ACTIVE`. Each displayed input/output is a named fixture; tests prove the
 route remains read-only, synthetic-only and provider-free.
 
+**6f.5 — Synthetic policy-pipeline dry run owner-visible result:** `/policy`
+also renders named fixture runs through the ordered policy sequence. For each
+run, the owner can see the normalized synthetic state, every pack actually
+visited, the exact Thai result at each step, and whether the sequence stopped,
+skipped a pack, or is ready only for a future policy. The dry run makes no
+agricultural recommendation.
+
+**6f.5 DoD:** The pipeline evaluates State Quality first and evaluates Rain
+Context only after that first pack is ready. A missing-data result stops the
+sequence; a not-applicable result is shown as a skip; no run is presented as
+permission to work or to call Jev. Inputs and outputs are fixed named fixtures
+with copyable JSON. Tests prove deterministic ordering and the `/policy` route
+remains read-only, synthetic-only, provider-free and independent of private
+dogfood traces.
+
 **Gate:** The owner authorized 6a.1 on 2026-09-28 as the first practical state
 contract for dogfood. On 2026-09-28, after a read-only audit of six local
 dogfood journeys, the owner authorized 6b.1: a no-cost, official-source-only
@@ -387,7 +402,9 @@ requests remain separate decisions. The owner then authorized 6f.2: a
 read-only synthetic policy-contract viewer for that not-active pack. The owner
 then authorized 6f.3: a not-active state freshness/completeness policy-pack
 contract and deterministic tests. The owner then authorized 6f.4: an ordered,
-read-only synthetic viewer for both policy-pack contracts.
+read-only synthetic viewer for both policy-pack contracts. The owner then
+authorized 6f.5: a read-only dry run through that ordered sequence using named
+synthetic fixtures only.
 
 **6a.2 gate:** The owner approved the hybrid vocabulary refinement on
 2026-09-28 after reviewing Thai grower terminology research. It is a local
