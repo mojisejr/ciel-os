@@ -1,0 +1,89 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T171045_cu12_sprint005_slice1_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-28T17:10:45+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-005
+  lane: single
+  objective: >-
+    A Thai console the owner's test and demo team can run beside SMC v2,
+    driven through one local control endpoint that the agent uses too.
+    This record closes slice 1, the endpoint.
+  scope:
+    - Slice 1 of plan revision 0.1.
+  out_of_scope:
+    - The console page (slice 2) and the file for the team (slice 3).
+
+outcome:
+  status: ready-for-owner-review
+  completed:
+    - >-
+      Runtime-shared switches: physics on and off, the unlock time, a
+      one-shot no-pop, and a board switch (up; silent; unplugged, which
+      closes the connection and refuses new ones) that can be timed. A
+      monitor keeps the connection state, the request count, the last
+      request's time, command and lock, and the last 50 frames and notes.
+    - >-
+      A loopback HTTP endpoint on CU12_SIM_CONTROL_PORT: GET /api/state as
+      JSON, and POST hook, physics, nopop, drop, ask, board and reset with
+      query arguments, each answering with the new state. A foreign Host or
+      Origin is refused with 403. CU12_SIM_HOOKS sets the initial hooks.
+      README gains an agent section with one curl line per action.
+    - >-
+      No dependency was added (plan invariant 6): the HTTP server is
+      hand-rolled on std. Whether a real browser needs more is slice 2's
+      test.
+    - >-
+      One behaviour change outside the new variables: a client's broken
+      TCP connection now ends that connection, not the simulator. Before,
+      the error ended the process. No earlier test depended on that.
+    - >-
+      cu12-simulator e03134f on feat/control-endpoint (base 17771d5), pushed.
+      Draft pull request 5 is open. The new tests/control_endpoint.rs has 8
+      black-box tests that drive the endpoint only and check literal frames
+      over TCP. cargo test passed 41, run three times in a row with no
+      failure. Every earlier test passes unchanged. cargo fmt --check,
+      clippy with -D warnings, and cargo check for x86_64-pc-windows-msvc
+      pass. smc-v2 main 444cc48 cargo test (60 passed) runs against this
+      simulator build, including its kill-and-restart gateway test. A live
+      curl returned valid JSON.
+  not_completed:
+    - The merge (owner). Slices 2 and 3.
+  boundaries:
+    - Stdin control is unchanged and has no new command.
+    - The wire protocol is unchanged.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-005/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "e51e152"
+    branch: hq/20260926
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "e03134f"
+    branch: feat/control-endpoint
+    base: "17771d5"
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/cu12-simulator/pull/5
+  preceding_records:
+    - memory/events/2026/09/28/20260928T170235_cu12_sprint005_plan_decided_slice1_authorized.yaml
+
+unresolved:
+  - The endpoint has not yet been used by a browser. Slice 2's page is the first real test of the hand-rolled server.
+
+next_action:
+  action: >-
+    The owner reviews and merges cu12-simulator pull request 5. Then the
+    agent syncs the checkout, records slice 2's decision under the owner's
+    "ลุยยาวๆ", builds the Thai console page on the endpoint, and asks the
+    owner for about 20 minutes at the Mac for its walk with SMC v2.
+  acceptance_check:
+    - Wake shows cu12-simulator-sprint-005 at revision 0.1, phase 1, with this record as its latest event and pull request 5 named in it.
