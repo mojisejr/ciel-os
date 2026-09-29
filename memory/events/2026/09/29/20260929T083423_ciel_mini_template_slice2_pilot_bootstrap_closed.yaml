@@ -1,0 +1,81 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T083423_ciel_mini_template_slice2_pilot_bootstrap_closed
+type: closeout
+recorded_at: 2026-09-29T08:34:23+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-mini-template-001
+  lane: single
+  objective: >-
+    Give the owner an independent local MBTI's-Planner pilot with CIEL-mini
+    continuity files, while preserving the owner's right to choose the pilot's
+    first meaningful outcome.
+  scope:
+    - Slice 2 of plan revision 0.3 only.
+    - Local clone, removal of clone-created origin, CIEL project registration,
+      and machine-local binding for `mbti-planner-pilot`.
+  out_of_scope:
+    - Filling the pilot project contract, choosing a feature, using raw source
+      material, creating application code, remote publication, or deployment.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Cloned `ciel-mini-template` into independent local repository
+      `checkouts/mbti-planner-pilot` at
+      396c4c0b3d1c0041a24f3398bd74dabf90d41e88 on `main`.
+    - >-
+      Removed the clone-created `origin` remote and registered
+      `mbti-planner-pilot` as a local-only CIEL project with its local binding.
+    - >-
+      Preserved the blank template project contract and source-material
+      boundary: only `materials/README.md` exists at the baseline, while a
+      hypothetical raw CSV matches the ignored-material rule.
+  not_completed:
+    - >-
+      No pilot owner alignment has occurred. `PROJECT.md` contains only its
+      starting prompts, and no MBTI's-Planner outcome has been selected.
+    - >-
+      No application code, raw source material, external interaction, or pilot
+      feature claim exists.
+
+evidence:
+  plan: workstreams/ciel-mini-template-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: dcfd36c98014b3fdafc378ec1f930d1e48bfef9a
+    branch: hq/20260926
+    working_tree: pilot-registration-plan-phase-and-this-closeout-only
+  pilot_repository:
+    path: checkouts/mbti-planner-pilot
+    head: 396c4c0b3d1c0041a24f3398bd74dabf90d41e88
+    branch: main
+    identity: local-only
+    origin: absent
+    working_tree: clean
+  verification:
+    - bun run wake: template and pilot bindings are both available and clean
+    - git -C checkouts/mbti-planner-pilot remote -v: no output
+    - rg --files checkouts/mbti-planner-pilot/materials: materials/README.md only
+    - git check-ignore -v materials/example-private.csv: ignored by .gitignore
+
+unresolved:
+  - The pilot owner must now supply and confirm the first project alignment.
+  - The template has not yet been tested in a fresh Codex conversation or with a
+    real raw source; both are intentionally deferred to Slice 3.
+
+next_action:
+  action: >-
+    Open `checkouts/mbti-planner-pilot` in Codex and begin its first conversation
+    as the project owner. Read the template files, state the intended first
+    MBTI's-Planner outcome in ordinary language, and confirm the AI's
+    restatement before any substantive code is written.
+  acceptance_check:
+    - The owner confirms or corrects the pilot's first alignment.
+    - The pilot has a dated alignment record and a filled project contract
+      before any application feature is claimed complete.
