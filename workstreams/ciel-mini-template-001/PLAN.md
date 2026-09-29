@@ -4,7 +4,7 @@
 **State:** active
 **Execution lane:** single
 **Plan revision:** 0.2
-**Execution phase:** 1
+**Execution phase:** 2
 **Execution state:** idle
 **Parallelism:** none
 
