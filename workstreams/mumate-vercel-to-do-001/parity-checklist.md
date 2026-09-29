@@ -4,13 +4,13 @@ Every Vercel duty is either **done and proven on staging** or **accepted as drop
 the owner** — never "skipped" (plan 0.3, D6). The owner signs this file before slice 5.
 Evidence is on staging `mumate-2` unless noted; times are UTC. Staging runs the
 `do/s2-staging` integration builds (fe `850d8fb`, bazi `7000d19`), so the rows marked
-**re-run** are repeated on the merged SHAs after the slice-2 merges (after 2026-10-04).
+**re-run** are repeated on the merged SHAs after the slice-2 merges (fence moved to 2026-09-29 by the owner).
 
 Status: ✅ proven · ⏳ agent, waiting on time · 👤 needs the owner · ✋ owner decision (keep or drop)
 
 | # | Vercel duty | DigitalOcean replacement | Proof | Status |
 |---|---|---|---|---|
-| 1 | 6 crons with `CRON_SECRET` | systemd timers + `bin/cron-call.sh`, one runner per job (`cron.tsv`, mumate-infra #30) | push-reminders and manifest-morning ran exactly once in each of 270 consecutive minutes (03:00–07:30, 0 failures); fe down 07:42–07:43 → 🔴 once per job, no repeat, recovery 🟢; reconcile-payment one-off drill 200 (07:49:56) | ✅ minute jobs · ⏳ qi-quota-reset 17:00 and account-purge 17:30 first runs tonight · bazi-alerts: owner 2026-09-28 — proven at the cutover (no LINE channel on staging, D2) |
+| 1 | 6 crons with `CRON_SECRET` | systemd timers + `bin/cron-call.sh`, one runner per job (`cron.tsv`, mumate-infra #30) | push-reminders and manifest-morning ran exactly once in each of 270 consecutive minutes (03:00–07:30, 0 failures); fe down 07:42–07:43 → 🔴 once per job, no repeat, recovery 🟢; reconcile-payment one-off drill 200 (07:49:56) | ✅ minute jobs · ✅ nightly: qi-quota-reset 2026-09-28 17:00:00 → 200 and account-purge 17:30:00 → 200, each exactly once, 0 non-200 cron lines since; pgstaging quota rows older than yesterday 0 (the job pruned, not only answered) · bazi-alerts: owner 2026-09-28 — proven at the cutover (no LINE channel on staging, D2) |
 | 2 | Instant rollback | `deploy.sh` rolls back by itself; `bin/rollback.sh` one command; Vercel kept as DNS flip-back (D10) | bad deploy: unhealthy at 07:39:37, healthy on last-good 07:39:49 (**12 s**), ⚠️ alert; image not in GHCR refused at pull, service untouched; manual rollback **9.0 s decision → healthy**, 80/80 requests 200 during it | ✅ · re-run |
 | 3 | Auto-deploy on merge; preview per branch | D4 release button (mumate-infra #32/#35): staging by any writer, production by `RELEASE_ACTORS` and only for SHAs healthy on staging | run 36392624548: OIDC → tailnet → deploy → cron-check, all green | ✅ button · ⏳ auto-build/release on merge after the slice-2 merges (owner Q3) · per-branch previews: **dropped** by the owner 2026-09-28 (Vercel previews live while the Vercel projects live) |
 | 4 | Horizontal scaling, 1 DB connection per instance | `DB_POOL_MAX` (fe PR 834, pooler 15); one fe replica; load test decides | 30 parallel requests → 5 pooler connections (slice 2); load test (row 19): one fe process peaked at 123% CPU of 200% and 158 MiB of 1 GiB — no second replica needed at this load | ✅ (public pages; see row 19) |
