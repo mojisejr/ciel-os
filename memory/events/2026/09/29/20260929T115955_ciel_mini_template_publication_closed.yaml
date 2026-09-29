@@ -1,0 +1,94 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T115955_ciel_mini_template_publication_closed
+type: closeout
+recorded_at: 2026-09-29T11:59:55+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-mini-template-001
+  lane: single
+  objective: >-
+    Publish the reviewed CIEL-mini teaching template without publishing the
+    MBTI's-Planner pilot or any learner material.
+  scope:
+    - Slice 6 of plan revision 0.4 only.
+    - >-
+      License the clean template under CC BY-NC 4.0, create and seed its public
+      GitHub repository, verify a fresh clone, and register its remote identity
+      in CIEL HQ.
+  out_of_scope:
+    - >-
+      Publishing the pilot, its uncommitted application work, raw materials,
+      credentials, deployment, or learner data.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Added LICENSE and README terms identifying Creative Commons
+      Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) in template
+      commit 07460feab0b68c61eb57fff9ad3c0381bb3809f1.
+    - >-
+      Created the public repository https://github.com/mojisejr/ciel-mini-template
+      and pushed its main branch at that exact revision.
+    - >-
+      Verified a fresh shallow clone contains only the template's expected
+      tracked files, including AGENTS.md, PROJECT.md, LICENSE, memory/.gitkeep,
+      and materials/README.md.
+    - >-
+      Changed the CIEL project identity from local-only to the matching
+      canonical remote github.com/mojisejr/ciel-mini-template.
+  not_completed:
+    - >-
+      Slice 3 is still active in the separate local pilot: it has alignments
+      and a successful build but no committed checkpoint yet.
+    - >-
+      The cold-start/missed-closeout recovery proof and the evidence-backed HQ
+      template v1 decision remain in Slices 4 and 5.
+
+evidence:
+  plan: workstreams/ciel-mini-template-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: 6a9b20458f187bd490288b1bccff1a8a2c77456b
+    branch: hq/20260926
+    working_tree: project-remote-registration-and-this-closeout-only
+  template_repository:
+    url: https://github.com/mojisejr/ciel-mini-template
+    canonical_remote: github.com/mojisejr/ciel-mini-template
+    branch: main
+    head: 07460feab0b68c61eb57fff9ad3c0381bb3809f1
+    visibility: public
+    license: CC-BY-NC-4.0
+  verification:
+    - >-
+      gh repo view mojisejr/ciel-mini-template: visibility PUBLIC, default
+      branch main, and expected repository URL
+    - >-
+      fresh depth-one clone at 07460feab0b68c61eb57fff9ad3c0381bb3809f1 with
+      clean status and only the expected tracked template files
+    - >-
+      git -C checkouts/ciel-mini-template remote -v: origin matches the public
+      canonical remote
+
+unresolved:
+  - >-
+    CC BY-NC 4.0 permits non-commercial use under its stated terms; it is not
+    an OSI open-source license because its commercial-use restriction is
+    intentional.
+  - >-
+    The pilot must still close its current session and later prove recovery
+    before its observed use can complete the original learning evaluation.
+
+next_action:
+  action: >-
+    Continue the MBTI's-Planner pilot in its own repository until its owner and
+    AI record a matching checkpoint and commit; then perform the fresh-session
+    recovery exercise before HQ evaluates a template v1 decision.
+  acceptance_check:
+    - Pilot Git and memory contain a completed owner-confirmed flow checkpoint.
+    - A separate fresh pilot session visibly reconstructs and resolves context
+      from repository evidence rather than prior chat.
