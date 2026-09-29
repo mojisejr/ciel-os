@@ -1,0 +1,84 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T082440_ciel_mini_template_materials_boundary_decided
+type: decision
+recorded_at: 2026-09-29T08:24:40+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-mini-template-001
+  lane: single
+  objective: >-
+    Amend the CIEL-mini template plan so a learner can safely use local raw
+    project material with their AI builder without turning that material into
+    committed project history or a new harness.
+  scope:
+    - Plan revision 0.2 and Slice 1's visible ignored `materials/` folder.
+    - Owner-directed AI use of named local PDFs, CSVs, images, notes, and other
+      source material.
+    - The boundary between raw local inputs and durable Git/memory/lesson facts.
+  out_of_scope:
+    - Creating the template child repository or pilot clone in this decision.
+    - Automatic scanning, upload, sync, external sharing, or indexing of raw
+      material; any provider, remote, deployment, or CIEL runtime work.
+
+outcome:
+  status: decided
+  parallelism: approved
+  completed:
+    - >-
+      The owner directed that the template contain a local raw-material bucket
+      because a learner may arrive with a PDF, CSV, evidence, or another source
+      that should inform the project without being committed.
+    - >-
+      The plan uses visible `materials/`, not a hidden folder, so a learner can
+      find and use it. Its contents are ignored while its tracked guide and AI
+      instructions explain the boundary.
+    - >-
+      AI source use is owner-directed: it looks in `materials/` when asked for
+      a named source, derives only the needed conclusion, and does not copy raw
+      or private content into Git, memory, lessons, or an external service by
+      default.
+  not_completed:
+    - >-
+      No raw material has been copied, inspected, committed, uploaded, or sent
+      to an external service. No child repository exists yet.
+
+evidence:
+  plan: workstreams/ciel-mini-template-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  authorization:
+    observed_directly_by_this_session: true
+    summary: >-
+      The owner requested the plan revision and asked for a renewed Slice 1
+      explanation and readiness report before execution.
+  repository:
+    head: 1e23bcc402e976fc8568907d8326416525e01314
+    branch: hq/20260926
+    working_tree: plan-revision-and-decision-only
+  supersedes_authorization:
+    event: memory/events/2026/09/29/20260929T081049_ciel_mini_template_pilot_opened.yaml
+    reason: >-
+      Revision 0.1 did not declare the local raw-material boundary. This new
+      decision is the sole authorization for Slice 1 at plan revision 0.2.
+
+unresolved:
+  - The exact first MBTI's-Planner flow and whether it needs a particular raw
+    source remain decisions for the pilot's own alignment.
+  - The template wording must be measured against real learner use; it is not
+    claimed effective before the dogfood proof.
+  - No policy for a future public template distribution or remote hosting is
+    decided here.
+
+next_action:
+  action: >-
+    Present Slice 1 of revision 0.2 to the owner. On Go, create and register
+    the local-only `ciel-mini-template`, including its ignored visible
+    `materials/` boundary, then validate the baseline with Wake before any
+    pilot clone.
+  acceptance_check:
+    - Wake identifies plan revision 0.2 and this decision as authorizing Slice 1.
+    - No raw project input enters Git, memory, lessons, or an external service
+      while the template baseline is created.

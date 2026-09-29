@@ -3,7 +3,7 @@
 **Workstream:** `ciel-mini-template-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** 1
 **Execution state:** idle
 **Parallelism:** none
@@ -33,6 +33,10 @@ The owner has approved these boundaries:
   perfectly compliant. The template instead makes an incomplete session visible
   through a dated alignment record without its matching checkpoint, and tells
   the next AI session how to recover it.
+- A visible local `materials/` folder holds owner-supplied raw inputs such as
+  PDFs, CSVs, images, notes, and evidence. Its raw contents never enter Git;
+  the AI uses a named material only when the owner asks it to, and records only
+  the conclusion needed to continue—not copied raw data or private details.
 - Each child repository is local-only and has ordinary Git history. There is no
   deployment, account, provider, public remote, billable service, or external
   write in this workstream.
@@ -55,6 +59,10 @@ The owner has approved these boundaries:
 - CIEL's existing ledger is intentionally not copied into the child. Its useful
   minimum here is a dated, append-only memory record plus Git history, not a
   second runtime.
+- A visible ignored folder is preferable to a hidden dot-directory for this
+  teaching template: a learner can drag source material into `materials/` and
+  see where it belongs, while tracked `materials/README.md` explains the
+  boundary to both the learner and the AI.
 
 ## Execution slices and acceptance criteria
 
@@ -79,6 +87,11 @@ write the minimal template files; commit the template baseline locally.
   learner's words, the AI's restatement, intended outcome, constraints, and
   questions. A matching dated checkpoint records actual result, evidence,
   unresolved items, and next action.
+- `materials/` is present in every clone. `.gitignore` ignores its contents but
+  retains its short tracked guide. The guide says what belongs there, that the
+  AI checks it when the owner refers to source material, and that it may not
+  copy raw/private content into Git, memory, lessons, chat outside the local
+  task, or an external service without the owner's explicit permission.
 - `lessons/` keeps only durable explanations a learner can reuse; it is not a
   daily log. A short root guide explains the start, build, try, close, and
   recover loop in learner language.
@@ -89,6 +102,10 @@ write the minimal template files; commit the template baseline locally.
   with a clean Git working tree.
 - A reader can identify what the AI may do, what the learner must decide, why
   alignment/checkpoint exist, and how a later session detects an unclosed one.
+- A learner can put a PDF, CSV, image, note, or other project input into the
+  visible `materials/` folder; Git tracks its handling guide but not the raw
+  file. The AI's instructions make source use owner-directed and prohibit raw
+  or private data from being copied into durable project records by default.
 - No script, package dependency, custom validator, hosted service, or `origin`
   remote is introduced.
 
@@ -111,6 +128,8 @@ alignment specific to MBTI's Planner.
 - The pilot's `PROJECT.md` says what the first user-visible flow is and does not
 claim that MBTI can deterministically choose a person's career or admission
 outcome.
+- A pilot alignment can cite one owner-named file in `materials/` as an input
+  without adding that raw file to Git or duplicating it into memory.
 
 **Proof:** CIEL project/Wake validation; both repositories' remotes, status, and
 initial commits; owner review of the pilot's first alignment.
@@ -128,6 +147,9 @@ end-to-end flow, not the entire application.
 **DoD:**
 
 - The owner confirms an alignment before the feature changes begin.
+- Where the owner elects to use source material, the AI reads only the named
+  local material and states the conclusion it will use; it does not turn raw
+  content or personal details into a committed record by default.
 - The AI builder creates the code and runs relevant local checks; the owner
   tries the visible result and states whether it matches the intended outcome.
 - The session ends with the matching checkpoint and a local Git commit that can
@@ -184,6 +206,9 @@ CIEL closeout.
   other HQ runtime into the template.
 - A generic education platform, multi-learner management, a skill package,
   background agent, cloud sync, database, analytics, or automated enforcement.
+- Automatic scanning, indexing, upload, synchronization, or external sharing
+  of `materials/` content. Secrets, private data, and raw learner files remain
+  local unless the owner gives a separate explicit instruction.
 - Public deployment, user accounts, paid services, external providers, or
   publishing the template remotely.
 - Claiming that MBTI determines a learner's career, academic stream, ability,
