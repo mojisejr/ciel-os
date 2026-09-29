@@ -36,4 +36,4 @@ tags the environment on each order and treats another environment's event as qui
 from Beam and re-add it only for a payment drill — **and (ค) after the slice-2 merges**; the NO_ROW message also still
 says "Omise dashboard" for a Beam charge.
 
-**Owner signature (B-5):** not signed.
+**Owner signature (B-5):** signed by the owner on 2026-09-29 ("เซ็น"), after the day-2 check found no trigger. Signed with two items that need code on main and follow the slice-2 merges: automatic staging release on merge (row 3, Q3) and the re-runs on the merged SHAs (rows 2, 15, 19); their results are appended here.

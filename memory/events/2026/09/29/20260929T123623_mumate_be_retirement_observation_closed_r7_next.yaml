@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T123623_mumate_be_retirement_observation_closed_r7_next
+type: closeout
+recorded_at: 2026-09-29T12:36:23+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Close the observation of PR 830 on production (the owner shortened it to
+    end on 2026-09-29) and hand slice 4 over to its remaining steps (R7), which
+    are not taken yet.
+  scope:
+    - The observation opened by 20260927T131926; the order of what follows.
+  out_of_scope:
+    - Any R7 step; closing this workstream (P3-P5 are not met).
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Observation 2026-09-27 13:10 to 2026-09-29 12:32 Bangkok, no trigger: Render mootech-be 204 = 1 in the whole window (2026-09-27 10:10-11:10Z, before 830's first full day; unexplained), 0 since; 200 at the pm2 monitor's rate; consent 63, friend rows 14 (2 with a Storage photo), members updated with dob and time NULL 0. The FE writes all of these."
+    - "Render mootech-be stays up and unsuspended; it is still the rollback for PR 830."
+  plan_state:
+    - "Slice 4 step 1 (PR 830 live) - done 2026-09-27. Steps 3-6 (R7) remain, one at a time, each an owner action, and not in the week of the DigitalOcean cutover: remove the Vercel FE env keys and redeploy; drop the pm2 BE target; suspend Render then seven quiet days (P3); delete Render, archive mootech-be after copying the consent/balance DDL, clean the host, rotate BE-only credentials (P4)."
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.5"
+  slice: none
+  repository:
+    head: "d7c5a48"
+    branch: hq/20260926
+    working_tree: this-record
+  application:
+    mootech-fe_main: "2782b36"
+
+unresolved:
+  - "The Render 204 of 2026-09-27 10:10-11:10Z is unexplained."
+  - "A revert of PR 830 no longer lands cleanly by promote; #831-#846 sit on top."
+  - "Secret-bearing leftovers on the host (env/be.env.bak-20260920-cors, env/fe.env.bak-3c, env/fe.env.pre-arena) wait for R7 step 5."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the owner chooses, R7 step by step starting with removing the Vercel
+    FE env keys; not in the same week as the mumate-vercel-to-do-001 cutover.
+  acceptance_check:
+    - Each R7 step has its own record with names only.
