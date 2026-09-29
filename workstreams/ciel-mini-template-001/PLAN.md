@@ -3,7 +3,7 @@
 **Workstream:** `ciel-mini-template-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** 2
 **Execution state:** idle
 **Parallelism:** none
@@ -117,22 +117,18 @@ write the minimal template files; commit the template baseline locally.
 **Owner-visible result:** `mbti-planner-pilot` starts from the template but is
 an independent, registered local Git repository suitable for real use.
 
-**Scope:** clone the template locally, remove its clone-created `origin`,
-register the pilot identity/binding, and make the pilot's first project
-alignment specific to MBTI's Planner.
+**Scope:** clone the template locally, remove its clone-created `origin`, and
+register the pilot identity/binding. This slice deliberately leaves
+`PROJECT.md` unfilled: creating a repository is a technical action, while
+choosing its first user-visible outcome belongs to the pilot owner.
 
 **DoD:**
 
 - Wake observes both child repositories as available local-only projects.
 - The pilot has no remote and its own clean Git baseline.
-- The pilot's `PROJECT.md` says what the first user-visible flow is and does not
-claim that MBTI can deterministically choose a person's career or admission
-outcome.
-- A pilot alignment can cite one owner-named file in `materials/` as an input
-  without adding that raw file to Git or duplicating it into memory.
 
 **Proof:** CIEL project/Wake validation; both repositories' remotes, status, and
-initial commits; owner review of the pilot's first alignment.
+initial commits.
 
 ### 3. Build one owner-confirmed pilot flow
 
@@ -147,9 +143,14 @@ end-to-end flow, not the entire application.
 **DoD:**
 
 - The owner confirms an alignment before the feature changes begin.
+- The pilot's `PROJECT.md` says what the first user-visible flow is and does not
+  claim that MBTI can deterministically choose a person's career or admission
+  outcome.
 - Where the owner elects to use source material, the AI reads only the named
   local material and states the conclusion it will use; it does not turn raw
   content or personal details into a committed record by default.
+- A pilot alignment can cite one owner-named file in `materials/` as an input
+  without adding that raw file to Git or duplicating it into memory.
 - The AI builder creates the code and runs relevant local checks; the owner
   tries the visible result and states whether it matches the intended outcome.
 - The session ends with the matching checkpoint and a local Git commit that can
