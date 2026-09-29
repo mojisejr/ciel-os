@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T125020_mumate_vercel_to_do_s2_bazi43_merged_admin_closed
+type: closeout
+recorded_at: 2026-09-29T12:50:20+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the first slice-2 merge under the open fence: bazi PR 43
+    (hardening, admin routes fail closed), with ADMIN_DOCTRINE_TOKEN placed
+    first and the production deployment verified.
+  scope:
+    - bazi-sft-dataset PR 43, Vercel bazi-sft-dataset env ADMIN_DOCTRINE_TOKEN, the production deployment it produced.
+  out_of_scope:
+    - PRs 44-46 and FE 832-836.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Found before the merge: ADMIN_DOCTRINE_TOKEN was absent from the Vercel bazi project (Production and Preview), although 20260927T153228 recorded it as set; production admin routes answered 200 without a token (doctrine-audit, matching, 2026-09-29 before the merge)."
+    - "The owner generated the token (openssl rand -hex 32) into .assets/mumate/infra-mumate/bazi-admin-doctrine-token.txt (mode 600) and added it to Production and Preview with vercel env add --sensitive; vercel env ls lists both. The owner passes the value to the team."
+    - "The owner merged PR 43 at 2026-09-29T05:46:44Z: pdf-dev 4abf7b5. Vercel production deployment bazi-sft-dataset-kjsq9u3y0 Ready."
+    - "Verified on https://bazi-sft-dataset.vercel.app: without a token doctrine-audit, matching, doctrine-config 401; with the token doctrine-audit, matching 200; /api/health db ok. mootech-fe calls no /api/reading, /api/almanac or /api/divine-cards path, so no user-facing route is behind the token."
+    - "Rollback target: deployment bazi-sft-dataset-fy16rw944 (Instant Rollback) or a revert of 4abf7b5."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "41c5968"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    bazi-sft-dataset: "pdf-dev 4abf7b5 (PR 43)"
+
+unresolved:
+  - "The team (เอ็ม, ซินแส) must type the token into the admin pages' token field; not yet confirmed that they have it."
+  - "Staging still runs the integration build; the token on staging bazi.env is not re-checked here."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    bazi PR 44 (LLM and Gemini timeouts, no env needed) on the owner's word,
+    then 45 after BAZI_CLIENT_ID_SECRET is placed on the Vercel bazi project.
+  acceptance_check:
+    - Each merge has a verified production deployment before the next one.
