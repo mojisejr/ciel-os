@@ -3,7 +3,7 @@
 **Workstream:** `ciel-mini-template-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.4
+**Plan revision:** 0.5
 **Execution phase:** 3
 **Execution state:** idle
 **Parallelism:** none
@@ -229,6 +229,28 @@ template's canonical remote in CIEL HQ.
 **Proof:** local template Git status/log, public remote head, a fresh-clone
 inspection, and an HQ closeout event.
 
+### 7. Final evidence-led teaching decision
+
+**Owner-visible result:** The original pilot and recovery evidence are reviewed
+alongside the published template, so the owner can decide whether it is ready
+to use with the first learner or needs one smallest, specific revision.
+
+**Scope:** after Slices 3 through 5 are actually complete, reconcile their
+evidence with the already-published template and record the final teaching
+verdict. This slice makes the publication a checkpoint, not an unsupported
+claim that the complete pilot evaluation has already finished.
+
+**DoD:**
+
+- The pilot's completed flow checkpoint and fresh-session recovery evidence
+  are available for HQ review.
+- The final verdict distinguishes what has been demonstrated from what remains
+  a hypothesis for the first learner.
+- Any follow-up is limited to one evidence-backed template revision or a
+  clearly bounded next pilot.
+
+**Proof:** owner review and final HQ closeout.
+
 ## Out of scope
 
 - Building CIEL's CLI, events validator, portfolio reader, workstreams, or any
@@ -246,8 +268,10 @@ inspection, and an HQ closeout event.
 
 ## Delivery discipline
 
-Slices are sequential. Each child change is committed in that child's Git
-repository. HQ plan/decision/closeout records are committed only on this
-workstream's own paths in the existing HQ standing branch. A slice may propose
-the next slice but does not silently authorize it; the owner decides after its
-evidence is reviewed.
+Slices normally proceed sequentially. The owner separately authorized Slice 6
+to run out of order after reviewing the initial pilot use; publication does not
+replace the pilot, recovery, or final-review evidence in Slices 3 through 5 and
+7. Each child change is committed in that child's Git repository. HQ
+plan/decision/closeout records are committed only on this workstream's own paths
+in the existing HQ standing branch. A slice may propose the next slice but does
+not silently authorize it; the owner decides after its evidence is reviewed.

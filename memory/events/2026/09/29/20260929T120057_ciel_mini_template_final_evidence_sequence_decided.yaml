@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T120057_ciel_mini_template_final_evidence_sequence_decided
+type: decision
+recorded_at: 2026-09-29T12:00:57+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-mini-template-001
+  lane: single
+  objective: >-
+    Keep public template publication distinct from the still-unfinished pilot
+    and recovery evaluation, so the teaching verdict remains evidence-led.
+  scope:
+    - >-
+      Plan revision 0.5, which records publication as an owner-approved
+      out-of-order Slice 6 and adds a final evidence sequence as Slice 7.
+    - >-
+      No template, pilot, remote, or learner-content change: this decision
+      corrects the ordering of evidence in the workstream plan only.
+  out_of_scope:
+    - >-
+      Treating public publication as completion of the pilot, recovery, or
+      learner-readiness evaluation.
+    - Any change to mbti-planner-pilot or its uncommitted work.
+
+outcome:
+  status: decided
+  parallelism: none
+  completed:
+    - >-
+      The owner-approved public publication is now recorded as a completed
+      out-of-order checkpoint rather than the final workstream delivery.
+  not_completed:
+    - >-
+      Slices 3 through 5 and the final teaching decision in Slice 7 await pilot
+      evidence and the owner's later review.
+
+evidence:
+  plan: workstreams/ciel-mini-template-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "7"
+  authorization:
+    observed_directly_by_this_session: true
+    summary: >-
+      The owner previously directed continuous progress through slices that do
+      not require a new decision, while this current request explicitly
+      authorized public publication after reviewing the pilot's initial use.
+  repository:
+    head: 9803cf2da4c0b62779bb480310e2a5e7216dddea
+    branch: hq/20260926
+    working_tree: plan-ordering-and-this-decision-only
+  prior_publication_closeout: memory/events/2026/09/29/20260929T115955_ciel_mini_template_publication_closed.yaml
+
+unresolved:
+  - The pilot needs a committed owner-confirmed checkpoint.
+  - The pilot needs a fresh-session missed-closeout recovery exercise.
+
+next_action:
+  action: >-
+    Resume the pilot in its own repository; do not begin final teaching review
+    until its checkpoint and recovery evidence exist.
+  acceptance_check:
+    - Pilot evidence satisfies Slices 3 and 4 before Slice 5 and Slice 7 run.
