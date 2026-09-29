@@ -3,14 +3,14 @@
 **Workstream:** `ciel-mini-template-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution phase:** 3
 **Execution state:** idle
 **Parallelism:** none
 
 ## Objective and owner agreement
 
-Create and dogfood a deliberately small, local-only `ciel-mini-template` that
+Create and dogfood a deliberately small `ciel-mini-template` that
 lets one project owner and an AI builder preserve shared intent across disposable
 sessions. Clone it into `mbti-planner-pilot`, use it to build one real
 MBTI's-Planner flow, then revise the template only from observed use before it
@@ -37,16 +37,18 @@ The owner has approved these boundaries:
   PDFs, CSVs, images, notes, and evidence. Its raw contents never enter Git;
   the AI uses a named material only when the owner asks it to, and records only
   the conclusion needed to continue—not copied raw data or private details.
-- Each child repository is local-only and has ordinary Git history. There is no
-  deployment, account, provider, public remote, billable service, or external
-  write in this workstream.
+- The pilot remains local-only. After the owner reviewed the pilot's first
+  use, the owner explicitly approved publishing the reusable template as a
+  public GitHub repository under a non-commercial license. This publication
+  contains template files only: never the pilot, its uncommitted work, or raw
+  `materials/` contents.
 
 ## Project links
 
 | Project ID | Role | Local binding |
 |---|---|---|
 | `ciel-os` | workstream plan, owner decision, and later HQ review | `.` |
-| `ciel-mini-template` | reusable local-only template; created in slice 1 | `checkouts/ciel-mini-template` |
+| `ciel-mini-template` | reusable public template; created in slice 1 and published in slice 6 | `checkouts/ciel-mini-template` |
 | `mbti-planner-pilot` | cloned local-only dogfood project; created in slice 2 | `checkouts/mbti-planner-pilot` |
 
 ## Starting evidence
@@ -201,6 +203,32 @@ actual use; revise only evidence-backed template files if the owner approves.
 **Proof:** HQ review record and, if changed, a template commit plus a final
 CIEL closeout.
 
+### 6. Owner-approved public template publication
+
+**Owner-visible result:** A learner or teacher can clone the same small template
+from a public repository, while its use is explicitly limited to
+non-commercial purposes.
+
+**Scope:** add a clear Creative Commons Attribution-NonCommercial 4.0
+International (`CC BY-NC 4.0`) license notice to the template; create and seed
+the public `mojisejr/ciel-mini-template` GitHub repository; register the
+template's canonical remote in CIEL HQ.
+
+**DoD:**
+
+- The template has a tracked `LICENSE` that identifies `CC BY-NC 4.0` and
+  points to its canonical legal text; the README links to the same terms in
+  learner-friendly language.
+- The public repository is on `main`, has the template's reviewed files, and
+  has no pilot application, raw `materials/` data, credentials, or local-only
+  project binding files.
+- A fresh clone of the public repository contains the expected continuity
+  files and `materials/README.md`.
+- CIEL HQ records the remote identity and the exact published revision.
+
+**Proof:** local template Git status/log, public remote head, a fresh-clone
+inspection, and an HQ closeout event.
+
 ## Out of scope
 
 - Building CIEL's CLI, events validator, portfolio reader, workstreams, or any
@@ -211,7 +239,8 @@ CIEL closeout.
   of `materials/` content. Secrets, private data, and raw learner files remain
   local unless the owner gives a separate explicit instruction.
 - Public deployment, user accounts, paid services, external providers, or
-  publishing the template remotely.
+  publishing the pilot or a learner's project. The owner-approved publication
+  of the template in Slice 6 is the single exception.
 - Claiming that MBTI determines a learner's career, academic stream, ability,
   or admission result. The pilot may support reflection and planning only.
 
