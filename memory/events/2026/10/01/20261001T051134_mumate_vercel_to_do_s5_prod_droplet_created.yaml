@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T051134_mumate_vercel_to_do_s5_prod_droplet_created
+type: closeout
+recorded_at: 2026-10-01T05:11:34+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the production droplet's creation from the repository script, the
+    script fix it needed, and the host's state before any env is placed.
+  scope:
+    - mumate-infra PR 36; DigitalOcean resources created with doctl context mumate-ops; host bootstrap on mumate-prod-1.
+  out_of_scope:
+    - Env files, images, deploy, control-room rows (next steps).
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Tailscale auth key made by the owner (console.tailscale.com, Reusable, Pre-approved, tag:server, not ephemeral, 7 days) into mumate-infra/env/tailscale.env (mode 600, expires 2026-10-07)."
+    - "Dry-run showed do-create.sh would have added a public 22 rule for --owner-ip to the shared firewall mumate-web and reused staging's reserved IP 167.99.29.220. Fixed in mumate-infra PR 36 (owner-merged, main 5425bf7): --reserved-ip new|<ip> required, --owner-ip optional (omitted = no public 22); runbook 03 updated."
+    - "Owner approved droplet backups (weekly, about +USD 4.8; total about USD 28.8/month)."
+    - "Created 2026-09-30T22:0xZ from main 5425bf7: droplet mumate-prod-1 id 605089616 (s-2vcpu-4gb, sgp1, ubuntu-24-04, backups, monitoring, tags mumate,prod, public 178.128.107.239, private 10.104.0.3); reserved IP 209.38.56.234 assigned to it; both in project mumate-prod 50147b8b-95ef-420d-ab1d-82719180a0ef. Reused: ssh key mumate_do 59434540, firewall mumate-web dc94f372 (80/443 only, by tag), the three tag alerts to nonthasak.l@gmail.com."
+    - "Joined the tailnet about 2 minutes after creation (100.95.78.27, tagged). cloud-init ended in error as runbook 03 §2 foresees: the private repo clone failed (|| true), so the last runcmd (enable mumate-health.timer) failed. Finished by hand as deploy: read-only deploy key 164987717 'mumate-prod-1 deploy (read-only, 2026-10-01)' added to mumate-infra, /opt/mumate checked out at 5425bf7 tracking origin/main, env/ mode 700; mumate-health and mumate-backup units linked with sudo systemctl link, none enabled; no cron unit installed."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "dc005b7"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mumate-infra: "main 5425bf7 (PR 36)"
+    host: "mumate-prod-1 605089616, reserved 209.38.56.234, tailnet 100.95.78.27"
+
+unresolved:
+  - "cloud-init.yaml still ends in error on every new host while the repo is private; the clone step could use the deploy key flow or the runbook stays the fix."
+  - "Staging mumate-2 carries tag prod (legacy); tags are used by the firewall and alerts (tag mumate) only."
+  - "The owner's Tailscale key record in env/README says .assets/mumate/tailscale/.env; that file holds no TS_AUTHKEY line (checked by pattern, not read)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Production .env (MUMATE_ENV=production) and the env files (fe, bazi,
+    alert, alloy) from a fresh Vercel read, placed by the owner; then the
+    owner's production image builds after the agent checks the inputs.
+  acceptance_check:
+    - bin/ops-status.sh on mumate-prod-1 shows every line it can before images run.
