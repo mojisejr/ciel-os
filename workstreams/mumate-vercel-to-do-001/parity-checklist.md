@@ -37,3 +37,10 @@ from Beam and re-add it only for a payment drill — **and (ค) after the slice
 says "Omise dashboard" for a Beam charge.
 
 **Owner signature (B-5):** signed by the owner on 2026-09-29 ("เซ็น"), after the day-2 check found no trigger. Signed with two items that need code on main and follow the slice-2 merges: automatic staging release on merge (row 3, Q3) and the re-runs on the merged SHAs (rows 2, 15, 19); their results are appended here.
+
+**Re-runs on the merged SHAs (2026-09-30, staging on fe `c10e91e` + bazi `49e22f2`, built from main/pdf-dev by container-build runs 36670138369 / 36670141017, released by the button run 36670462026; FE 0036-0038 and bazi 0054 applied to pgstaging first):**
+
+- Row 2 ✅ — bad deploy (HEALTH_TIMEOUT=2 to the old integration tags): declared unhealthy 04:50:14, healthy on the merged SHAs 04:50:25 (**~11 s**), alert sent, deploy-history `rolled-back`; 89/90 requests 200, 1 exceeded the probe's own 5 s client timeout while Caddy held it (no 5xx). Manual rollback (`bin/rollback.sh --profile full` from the old tags back to the merged SHAs): **9.2 s decision → healthy**, 80/80 × 200, max 2.8 s. The two minute jobs missed 04:50:00 during the drill: 🔴 then 🟢 one minute later.
+- Row 19 ✅ — k6 from outside through Caddy/TLS, 50 VUs × 3 min, public pages (`/`, `/v2`, `/what-if`, `/api/health`, `/v2/login`): 8,177 requests, **0 failed**, p95 226 ms, max 4.0 s; fe CPU ≤ 95 %, mem ≤ 102 MiB; bazi ≤ 1 %; pgstaging ≤ 14 %.
+- Row 3 — button release proven on the merged SHAs (run above); automatic staging release on merge not yet built (needs a design and the owner's decision).
+- Row 15 — owner's login walk on staging pending.
