@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20260930T121453_mumate_vercel_to_do_slice5_authorized
+type: decision
+recorded_at: 2026-09-30T12:14:53+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Authorize slice 5 of plan 0.3 (the production droplet created, dressed and
+    verified without traffic), with the billing approved and the release rights
+    kept with the owner and the agent for now.
+  scope:
+    - "Create the production droplet from the repository (s-2vcpu-4gb, sgp1, about USD 24/month): tailnet-only, no public port 22, slice 4's configuration, timers disabled."
+    - "Production env from a fresh Vercel read; production images from the GitHub production Environment; the control room's side-by-side view with both hosts; the slice-4 smoke against the production droplet through a pinned host entry or a verification hostname, reading production data without writing beyond what the smoke records."
+    - "The slice-6 cutover runbook written and rehearsed end to end on staging, timed."
+  out_of_scope:
+    - "DNS, traffic, Vercel settings, the cutover itself (slice 6)."
+    - "Adding เอ็ม to mumate-infra or RELEASE_ACTORS (the owner defers it)."
+
+outcome:
+  status: decided
+  parallelism: approved   # beside the teammate's feature work on mootech-fe and bazi; nothing here touches Vercel or DNS
+  slice: "5"
+  decision: >-
+    The owner, asked for the two slice-5 preconditions, answered "อนุมัติครับ
+    ลุยได้เลย ทีมอนุมัติเรียบร้อยแล้ว" (billing for the production droplet,
+    about USD 24/month, approved by the team), and then "เดี๋ยวผมค่อยเพิ่มเอ็ม
+    ทีหลัง ตอนนี้ผมขอทำกับคุนก่อน เราคุมก่อน": เอ็ม is not added to
+    mumate-infra or RELEASE_ACTORS now; RELEASE_ACTORS stays mojisejr.
+  also_decided:
+    - "Checklist row 3: automatic staging release on merge is dropped in favour of the button (owner 2026-09-30: the button is safer than full automation)."
+    - "Checklist row 15 re-run passed on the merged SHAs (owner's walk, 'ราบรื่นดี')."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "5"
+  repository:
+    head: "6456ab5"
+    branch: hq/20260926
+    working_tree: this-decision-and-checklist-rows-3-15
+
+unresolved:
+  - "D7 for the cutover is not met (promo running, frequent team merges); slice 5 does not depend on it."
+  - "Issue 694 keeps FE pushes owner-run."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Read the slice-5 path in mumate-infra (do-create.sh, cloud-init, env
+    inventories, runbooks), then create the production droplet step by step,
+    stopping to report at each point that needs the owner.
+  acceptance_check:
+    - Wake reports mumate-vercel-to-do-001 authorized for slice 5 at revision 0.3 with no validation error.

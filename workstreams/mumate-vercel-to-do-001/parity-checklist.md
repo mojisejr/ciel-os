@@ -42,5 +42,5 @@ says "Omise dashboard" for a Beam charge.
 
 - Row 2 ✅ — bad deploy (HEALTH_TIMEOUT=2 to the old integration tags): declared unhealthy 04:50:14, healthy on the merged SHAs 04:50:25 (**~11 s**), alert sent, deploy-history `rolled-back`; 89/90 requests 200, 1 exceeded the probe's own 5 s client timeout while Caddy held it (no 5xx). Manual rollback (`bin/rollback.sh --profile full` from the old tags back to the merged SHAs): **9.2 s decision → healthy**, 80/80 × 200, max 2.8 s. The two minute jobs missed 04:50:00 during the drill: 🔴 then 🟢 one minute later.
 - Row 19 ✅ — k6 from outside through Caddy/TLS, 50 VUs × 3 min, public pages (`/`, `/v2`, `/what-if`, `/api/health`, `/v2/login`): 8,177 requests, **0 failed**, p95 226 ms, max 4.0 s; fe CPU ≤ 95 %, mem ≤ 102 MiB; bazi ≤ 1 %; pgstaging ≤ 14 %.
-- Row 3 — button release proven on the merged SHAs (run above); automatic staging release on merge not yet built (needs a design and the owner's decision).
-- Row 15 — owner's login walk on staging pending.
+- Row 3 ✅ — button release proven on the merged SHAs (run above). Automatic staging release on merge: **dropped by the owner 2026-09-30** in favour of the button ("เผลอๆ กดปุ่มจะปลอดภัยกว่า auto ทั้งหมดด้วย"); the agent builds staging images and presses the button.
+- Row 15 ✅ — owner's walk on staging 2026-09-30 ~12:05: LINE (`callback/line` 302) and Google (`callback/google` 200), one existing provider row touched each, 0 new members; `POST /api/chat/bazi` 200 through Caddy (LLM and FE → bazi on the merged code). The owner: "ราบรื่นดี".
