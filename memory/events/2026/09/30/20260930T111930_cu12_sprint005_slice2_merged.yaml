@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20260930T111930_cu12_sprint005_slice2_merged
+type: closeout
+recorded_at: 2026-09-30T11:19:30+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-005
+  lane: single
+  objective: >-
+    Record that slice 2, the Thai console page, merged, and leave the lane
+    idle before slice 3.
+  scope:
+    - The merge of cu12-simulator pull request 6 and the checkout sync.
+  out_of_scope:
+    - Slice 3; it needs its own decision.
+
+outcome:
+  status: merged
+  completed:
+    - >-
+      The owner merged cu12-simulator pull request 6 ("merged sim #6
+      เรียบร้อย"). The merge commit is 0d7c4b1, parents 2de54ec and 8a90a57,
+      at 2026-09-30T03:54:46Z. The checkout was fast-forwarded to main
+      0d7c4b1, clean and equal to origin, and the local topic branch was
+      deleted. The repo runs no CI.
+    - The plan header returns to phase none, idle. Slices 1 and 2 are delivered, and slice 3 remains.
+  not_completed:
+    - Slice 3.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-005/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "fc37aee"
+    branch: hq/20260926
+    working_tree: this-event-the-smc-v2-slice-10-closeout-and-the-plan-header-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "0d7c4b1"
+    branch: main
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/cu12-simulator/pull/6
+  preceding_records:
+    - memory/events/2026/09/30/20260930T105003_cu12_sprint005_slice2_ready_for_owner_review.yaml
+
+unresolved:
+  - >-
+    Slice 3's console binary must default to wire 5012 and console 5013, and
+    put the wire address first. Port 5000 is AirPlay's on macOS. On
+    2026-09-28 the owner compared the browser's URL with the application's
+    port.
+
+next_action:
+  action: >-
+    After smc-v2 pull request 10 merges, record slice 3's decision and
+    build it.
+  acceptance_check:
+    - Wake shows cu12-simulator-sprint-005 at revision 0.1, idle, with this record as its latest event.

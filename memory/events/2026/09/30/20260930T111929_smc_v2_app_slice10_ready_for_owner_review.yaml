@@ -1,0 +1,118 @@
+schema_version: ciel.event.v0.1
+id: evt_20260930T111929_smc_v2_app_slice10_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-30T11:19:29+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    record closes slice 10, the simulator as a port the team can choose,
+    and hands the lane over before the owner clears the session.
+  scope:
+    - Slice 10 of plan revision 0.6.
+  out_of_scope:
+    - Slice 11 (Windows), and cu12-simulator-sprint-005 slice 3.
+
+outcome:
+  status: ready-for-owner-review
+  completed:
+    - >-
+      smc-v2 e8a4e28 on feat/simulator-port (base 444cc48) is pushed as
+      pull request 10. The existing port entry becomes Simulator (ทดสอบ) on
+      tcp:127.0.0.1:5012, and a stored 5000 gets a note to choose again.
+      There is still no default port. A door-open banner reading
+      "เชื่อมต่อกับตู้จำลอง ไม่ใช่ตู้จริง" shows on every screen while the
+      endpoint is tcp:, with no ✕. Migration 0002 adds actions.simulated.
+      The Store carries a switch set by AppState::connect, so every row is
+      marked by whoever records it. set_port writes switched-to-simulator
+      (marked) and switched-to-board (unmarked) rows with the admin and the
+      port. The บันทึก page shows a ตู้จำลอง pill, and the CSV gains a
+      ตู้จำลอง column. The append-only triggers are unchanged, and a test
+      shows they refuse an update of the new column. DESIGN.md gains
+      deviations 26-28.
+    - >-
+      Checks: cargo test 61 passed. fmt --check, clippy native and ui
+      wasm32 with -D warnings, and scripts/check-windows.sh pass. The new
+      store test covers the marks, a shared switch across clones, and the
+      trigger. The shell test covers the switch in and out, the CSV header
+      and a marked row ending ",ใช่".
+    - >-
+      Owner walk on the Mac, 2026-09-30, against the sprint-5 console on
+      5012/5013. The .app was built from e8a4e28 and started with no
+      SMC_ENDPOINT on .assets/smc-v2/walk-20260930/data, which migration
+      0002 upgraded in place. The owner reported "1 - 6 เป็นไปตามที่คุนบอก
+      ครบถ้วนครับ": no port at start, the switch to Simulator with the
+      banner, a load, the switch back to a serial port with the banner
+      gone, the log page, and a CSV export. The agent read the rows: 1
+      switched-to-simulator by the admin, marked, note tcp:127.0.0.1:5012;
+      2-4 HN201 load-requested, door-opened and load-completed, all marked;
+      5 switched-to-board, unmarked, note /dev/cu.Bluetooth-Incoming-Port.
+    - The application and the simulator are stopped.
+  not_completed:
+    - The merge of pull request 10 (owner).
+  observations:
+    - >-
+      The walk's rows show a load of HN201 but no dispense, although the
+      checklist asked for both. HN201 is still loaded in slot 1 of the walk
+      data. The CSV the owner exported was not found in .assets, Desktop,
+      Downloads or Documents, so its content rests on the owner's word and
+      on the shell test.
+    - >-
+      cu12 gateway test a_simulator_that_ends_and_comes_back… flakes under
+      parallel runs. It restarts a simulator on the port it just freed,
+      which a parallel test can take. At load average ~40 on 8 cores, the
+      sprint-5 simulator build failed 1/15 and the pre-sprint-5 build
+      (17771d5) failed 0/15. At load ~4 it was sprint-5 0/15 and pre-sprint-5
+      1/15. Run alone it passed 20/20. That is 2 failures in 60 parallel
+      runs across both builds, about 3%, in the same test each time. The
+      result followed the load, not the build, so it is a harness race that
+      predates sprint 5. This PR does not change it.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "10"
+  repository:
+    head: "fc37aee"
+    branch: hq/20260926
+    working_tree: this-event-and-the-sprint-005-plan-header-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "e8a4e28"
+    branch: feat/simulator-port
+    base: "444cc48"
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/smc-v2/pull/10
+  simulator:
+    repository: cu12-simulator
+    head: "0d7c4b1"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/30/20260930T105106_smc_v2_app_plan_0_6_slice10_authorized.yaml
+
+unresolved:
+  - bun run check in HQ is red on the pre-existing projects-registry assertion (a827400/ba59b5e). It is unrelated to this lane and is with the owner.
+  - hq/20260926 is still unpushed. Slice 11 (Windows) and the Windows walk wait on that.
+  - Production keygen before the first sale; the door-label order and real hardware remain as before.
+
+next_action:
+  action: >-
+    The owner merges smc-v2 pull request 10. A fresh session then runs Wake,
+    reads this record and 20260930T105003, syncs smc-v2 to main, and
+    records the merge. It then records the decision for
+    cu12-simulator-sprint-005 slice 3, the one file for the team. That
+    slice ships a cu12-console binary defaulting to wire 5012 and console
+    5013, opens the browser, and puts the wire address first. It adds a
+    workflow_dispatch-only Windows build on Actions and a macOS build made
+    locally, with the owner's walk of about 5 minutes. After that comes
+    Windows: the push of hq/20260926, then ciel-windows-portability-001
+    Phase 2, then smc-v2 slice 11.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 at revision 0.6, phase 10, with this record as its latest event and pull request 10 named in it.
