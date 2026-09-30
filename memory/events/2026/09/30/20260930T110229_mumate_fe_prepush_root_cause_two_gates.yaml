@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20260930T110229_mumate_fe_prepush_root_cause_two_gates
+type: closeout
+recorded_at: 2026-09-30T11:02:29+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    The owner asked the agent to fix the root cause of the mootech-fe push
+    block before returning to the slice-2 merges, and to record it. Record
+    what was fixed, what was found behind it, and how the remaining FE
+    branches get pushed.
+  scope:
+    - mootech-fe .githooks/pre-push gates on main c02dc64; branch fix/v1-retired-routes-promo.
+  out_of_scope:
+    - Refactoring the four verify-architecture violations (team code, issue 694).
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "The owner pushed FE 833's updated branch himself (e9dd1a6; PR 833 MERGEABLE/CLEAN)."
+    - "Gate 1, npm test: fixed on local branch fix/v1-retired-routes-promo (one line: '/promo' added to the KEPT list of scripts/v1-retired-routes.test.ts; the free-month landing of #837 is a live v2 promo page). With it the full suite is green (3,516 passed). scripts/v1-header-upgrade-closed.test.tsx failed once under full-suite load and passed alone 3/3 and in the next full run: flaky, not blocking."
+    - "Gate 2, verify-architecture, still fails on main: three ban-inline-identity-import (pages/v2/fortune/sage.tsx:15, pages/v2/shop/checkout.tsx:13, pages/v2/shop/qrcode.tsx:7) and one no-arbitrary-tailwind-default-props (features/v2-shell/components/AppHeader.tsx:185). Known since 2026-09-27 (issue 694 open). Fixing them changes auth wiring on the payment pages: not a minimal fix, not this lane's, deferred to the team."
+    - "So no agent push to mootech-fe passes the hook until issue 694 is fixed on main, and the harness refuses the agent's --no-verify. Workaround kept: the agent prepares each branch (merge of main, vitest include lines kept both, tests run) and the owner pushes it with --no-verify, one command per branch."
+    - "Recurrence: a teammate's merge put a red test on main (#837), so the teammate's pushes did not run the hook (core.hooksPath unset or --no-verify); the PR template asks for it but nothing enforces it server side (#318, CI archived by #321)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "e8825f4"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mootech-fe: "main c02dc64; fix/v1-retired-routes-promo local only (1 commit on c02dc64, not pushed)"
+
+unresolved:
+  - "Issue 694 (verify-architecture red on main) blocks every hook-honouring push to mootech-fe; the team owns the fix."
+  - "fix/v1-retired-routes-promo is not pushed; the owner decides whether to push it (--no-verify) and merge, or leave it to the teammate."
+  - "Whether the team runs the hook (git config core.hooksPath .githooks) is the owner's to raise with them."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner merges FE 833; the agent prepares 834's branch and hands the owner
+    one push command; the same for 835 and 836.
+  acceptance_check:
+    - Each merge has a verified production deployment before the next one.
