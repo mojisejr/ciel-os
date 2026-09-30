@@ -3,9 +3,9 @@
 **Workstream:** `cu12-simulator-sprint-005`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
-**Execution phase:** none
-**Execution state:** idle
+**Plan revision:** 0.2
+**Execution phase:** 3
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -153,21 +153,35 @@ the audit — is `smc-v2-app-001` plan revision 0.5, slice 10.
 
 **Deliverable**
 
-- A second binary, `cu12-console`, in the same crate: TCP on its default
-  port, control on, physics on, all doors closed. It opens the default
-  browser on the page and prints where it listens. The existing binary is
-  unchanged.
+- A second binary, `cu12-console`, in the same crate: wire on
+  `tcp:127.0.0.1:5012` and the console on `http://127.0.0.1:5013` by
+  default (port 5000 belongs to AirPlay on macOS), control on, physics on,
+  all doors closed. It prints the wire address first, the one to choose in
+  the application, then the console address, and opens the default browser
+  on the page. `CU12_SIM_PORT` and `CU12_SIM_CONTROL_PORT` still override.
+  If a port is taken it says so in Thai and waits for Enter, so a
+  double-clicked window does not vanish. The existing binary is unchanged,
+  its default of 5000 included.
 - `.github/workflows/release.yml`, `workflow_dispatch` only, builds the
-  Windows `.exe` and attaches it to a GitHub release. The macOS binary is
-  built locally and attached to the same release. README: how to open an
-  unsigned file the first time on each platform.
+  Windows `.exe` and attaches it to a GitHub release. The macOS binary
+  (Apple Silicon only) is built locally and attached to the same release.
+  README: how to open an unsigned file the first time on each platform.
+  The repository is private, so the owner forwards the two files to the
+  team; the release is where they are kept.
 
 **Acceptance**
 
-- On the Mac, a double-click on the release's macOS file opens the page,
-  and SMC v2 connects to it.
-- The workflow runs once and succeeds. Its duration is recorded in the
-  closeout as the free-tier cost of a release.
+- The binary's defaults, its first printed line, and the unchanged old
+  binary are covered by tests; the fmt, test, clippy and Windows-target
+  checks of slice 1 pass.
+- The workflow runs once and succeeds. It can only be dispatched once the
+  workflow file is on `main`, so this follows the merge. Its duration is
+  recorded in the closeout as the free-tier cost of a release.
+- On the Mac, a double-click on the macOS file downloaded from the release
+  opens the page, and SMC v2 (main `f2e023a`) connects to it through
+  "Simulator (ทดสอบ)". The same walk dispenses HN201 and exports the CSV
+  into `.assets/smc-v2/walk-20260930/`, which closes the two coverage gaps
+  left by `smc-v2-app-001` slice 10.
 - On Windows, when the owner's Windows machine is next in use: the `.exe`
   opens the page, and `curl` on the state endpoint answers. Using it with
   SMC v2 on Windows waits for `smc-v2-app-001` slice 11 (Windows).
@@ -181,3 +195,13 @@ the audit — is `smc-v2-app-001` plan revision 0.5, slice 10.
   owner review, merge, then sync, as in sprints 3 and 4.
 - Suggested order with the application: slice 1 → slice 2 →
   `smc-v2-app-001` slice 10 → slice 3.
+
+## Revisions
+
+- 0.1 (2026-09-28): the plan as agreed in the syncup.
+- 0.2 (2026-09-30): slice 3 pins the console binary's ports to 5012/5013
+  with the wire address printed first, keeps a failed start's window open,
+  builds the macOS file for Apple Silicon only, keeps releases in the
+  private repository with the owner forwarding the files, orders the
+  workflow run after the merge, and adds the dispense and CSV that
+  `smc-v2-app-001` slice 10's walk left out. Slices 1 and 2 are unchanged.

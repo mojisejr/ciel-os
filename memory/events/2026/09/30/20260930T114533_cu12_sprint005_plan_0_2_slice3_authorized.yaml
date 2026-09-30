@@ -1,0 +1,91 @@
+schema_version: ciel.event.v0.1
+id: evt_20260930T114533_cu12_sprint005_plan_0_2_slice3_authorized
+type: decision
+recorded_at: 2026-09-30T11:45:33+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-005
+  lane: single
+  objective: >-
+    Adopt plan revision 0.2 and start slice 3, one file the team opens with
+    a double-click.
+  scope:
+    - Decide plan revision 0.2 and authorize its slice 3.
+  out_of_scope:
+    - smc-v2-app-001 slice 11 (Windows) and ciel-windows-portability-001 Phase 2.
+
+outcome:
+  status: decided
+  decision: >-
+    The agent explained revision 0.2 slice by slice with the reason for
+    each change, and asked three questions. The owner answered: "1
+    อนุมัติแผนตามนี้ครับ", "2 โอเคครับ" (the releases stay in the private
+    repository and he forwards the files to the team), and "3 ทีมไม่มี mac
+    intel ครับไม่เป็นไร ส่วนใหญ่ทีมใช้ window เดี๋ยวค่อยคิด อีกทีตรงนี้"
+    (Apple Silicon only for macOS; most of the team is on Windows, and he
+    will think about that side again later). Revision 0.2 changes only
+    slice 3; slices 1 and 2 are as delivered.
+  authorizes:
+    - >-
+      Slice 3 of plan revision 0.2, on a topic branch from cu12-simulator
+      main 0d7c4b1 as a draft pull request. A second binary, cu12-console,
+      defaults to wire tcp:127.0.0.1:5012 and console
+      http://127.0.0.1:5013, prints the wire address first, opens the
+      default browser, starts with control and physics on and all doors
+      closed, honours CU12_SIM_PORT and CU12_SIM_CONTROL_PORT, and on a
+      taken port says so in Thai and waits for Enter. The existing binary
+      is unchanged, its 5000 default included. A workflow_dispatch-only
+      .github/workflows/release.yml builds the Windows .exe into a release
+      of the private repository; the agent builds the Apple Silicon macOS
+      file locally and attaches it. README covers opening an unsigned file
+      the first time on each platform.
+    - >-
+      After the owner merges, dispatching the workflow once, creating the
+      release and uploading the macOS file, then the owner's Mac walk from
+      the downloaded file, which also dispenses HN201 and exports the CSV
+      into .assets/smc-v2/walk-20260930/.
+  does_not_authorize:
+    - smc-v2-app-001 slice 11. That lane's lifecycle reads authorized, but its only decision at 0.6 names slice 10, which merged in 20260930T113643; slice 11 has no decision.
+    - Making cu12-simulator public, code signing, an Intel or universal macOS build.
+  note: >-
+    This lane's wake lifecycle read authorized before this record, but that
+    decision (20260928T171309) named slice 2, which merged in
+    20260930T111930. Slice 3 is authorized by this record only.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-005/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: "e7811b3"
+    branch: hq/20260926
+    working_tree: this-event-the-plan-revision-0-2-and-the-plan-header-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "0d7c4b1"
+    branch: main
+    working_tree: clean-equal-to-origin
+  application:
+    repository: smc-v2
+    head: "f2e023a"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/30/20260930T111930_cu12_sprint005_slice2_merged.yaml
+    - memory/events/2026/09/30/20260930T113643_smc_v2_app_slice10_merged.yaml
+
+unresolved:
+  - Most of the team is on Windows. The Windows acceptance of slice 3 waits for the owner's Windows machine, and the owner will revisit the Windows side later.
+  - The workflow can only be dispatched once release.yml is on main, so the release follows the merge.
+
+next_action:
+  action: >-
+    Branch from cu12-simulator main 0d7c4b1, build cu12-console with tests,
+    release.yml and the README section, open the draft pull request, and
+    ask the owner to review and merge.
+  acceptance_check:
+    - Wake lists cu12-simulator-sprint-005 at revision 0.2, phase 3, executing, with slice 3 authorized.
