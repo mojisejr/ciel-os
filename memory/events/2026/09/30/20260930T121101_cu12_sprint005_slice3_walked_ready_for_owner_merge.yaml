@@ -1,0 +1,138 @@
+schema_version: ciel.event.v0.1
+id: evt_20260930T121101_cu12_sprint005_slice3_walked_ready_for_owner_merge
+type: closeout
+recorded_at: 2026-09-30T12:11:01+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-005
+  lane: single
+  objective: >-
+    Slice 3, one file the team opens with a double-click. This is the plan's
+    last slice. This record closes it after the merge, the release, and the
+    owner's walk from the downloaded file.
+  scope:
+    - Slice 3 of plan revision 0.2, the plan's last declared slice.
+  out_of_scope:
+    - The Windows acceptance, which waits for the owner's Windows machine.
+    - smc-v2-app-001 slice 11.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - >-
+      The owner merged cu12-simulator pull request 7 ("merged #7
+      เรียบร้อยแล้วครับ"). The merge commit is 1a3b97c, parents 0d7c4b1 and
+      9762268, merged at 2026-09-30T04:59:51Z. The checkout was
+      fast-forwarded to main 1a3b97c, clean and equal to origin. The topic
+      branch is gone locally and on the remote.
+    - >-
+      The agent dispatched workflow release on main 1a3b97c with tag
+      console-v0.1.0 (run 36671462258). It succeeded in 61 s end to end,
+      53 s for the one windows-latest job: tests with build 29 s, release
+      build 5 s, upload 8 s. That is about one billed Windows minute per
+      release, the free-tier cost the plan asked for. On windows-latest,
+      the console binary's tests passed 6/6: 3 black-box and 3 unit,
+      including the taken-port Thai message and the wire-first line.
+    - >-
+      Release console-v0.1.0 targets 1a3b97c. It holds two assets of
+      different provenance. cu12-console-windows-x64.exe (375808 B) was
+      built, tested and uploaded by the workflow, and its log is the
+      record. cu12-console-macos-arm64.zip (275184 B) was built by the
+      agent on the owner's Mac from 1a3b97c with
+      scripts/build-macos-console.sh and uploaded by hand. It has no build
+      log; its sha256
+      6e93a7606b83446d928e0bf3d37de77286e5f788003c79651af5d5a4085493da is
+      what ties the published file to that build.
+    - >-
+      The owner's walk on the Mac, 2026-09-30, used the zip downloaded from
+      the release, not a local build. The downloaded
+      ~/Downloads/cu12-console-macos-arm64.zip had the same sha256. After
+      unzipping, the binary was mode rwx, ad-hoc signed, and carried
+      com.apple.quarantine. The first double-click showed Gatekeeper's
+      "cu12-console" Not Opened dialog (owner's screenshot). The owner
+      passed it with Privacy & Security → Open Anyway, the README's route.
+      He then reported "1 - 6 เป้นไปตามที่คุนว่าทุกขั้นตอนครับ": the window's
+      first line tcp:127.0.0.1:5012, the page opened by itself with every
+      door closed, SMC v2 switched to Simulator (ทดสอบ) with the banner, a
+      dispense of HN201, a CSV export, and the simulator stopping when the
+      window closed. The SMC v2 .app was the one built at e8a4e28, whose
+      source equals main f2e023a (git diff empty). It ran with
+      SMC_DATA_DIR=.assets/smc-v2/walk-20260930/data and no SMC_ENDPOINT.
+    - >-
+      The agent read the actions table after the walk. Rows 6-10 are new,
+      all marked simulated. 6 switched-to-simulator, note tcp:127.0.0.1:5012.
+      7-9 HN201 slot 1 dispense-requested, door-opened, dispense-completed.
+      10 cleared, note จ่ายยาครบ. The CSV the owner exported is
+      .assets/smc-v2/licenses-walk-20260928/smc-log-20260930-1208.csv, with
+      a byte-identical copy at ~/Desktop/smc-log-20260930-1208.csv. It is
+      not in walk-20260930/ as the plan suggested; the owner saved it where
+      the dialog opened and named the folder. Its header ends ",ตู้จำลอง".
+      It holds rows 1-10, with the simulator rows ending ",ใช่" and the
+      switch-to-board row empty there.
+    - >-
+      This closes the two coverage gaps left by smc-v2-app-001 slice 10
+      (20260930T111929, carried in 20260930T113643): a dispense of HN201
+      on the simulator is now recorded, and an exported CSV is on disk and
+      was read.
+    - The plan header returns to phase none, idle. Slices 1-3 are delivered.
+  not_completed:
+    - >-
+      The Windows acceptance of slice 3: the .exe opening the page on a
+      Windows desktop, and curl on the state endpoint there. The file
+      exists and passed its tests on a CI runner; nobody has opened it on
+      Windows. It waits for the owner's Windows machine.
+  observations:
+    - >-
+      20260930T115035 carries the non-delivery status ready-for-owner-review
+      on this plan's last slice, so wake warns on it. The agent checked only
+      validationErrors after that commit. This record's delivery status is
+      the one the warning asks for; that record is not amended.
+    - Thai text in a Windows 10 console without a Thai font may show as boxes. The addresses are ASCII and lead each line. Not observed.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-005/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: "6456ab5"
+    branch: hq/20260926
+    working_tree: this-event-and-the-plan-header-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "1a3b97c"
+    branch: main
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/cu12-simulator/pull/7
+    release: https://github.com/mojisejr/cu12-simulator/releases/tag/console-v0.1.0
+    workflow_run: "36671462258"
+  application:
+    repository: smc-v2
+    head: "f2e023a"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/30/20260930T115035_cu12_sprint005_slice3_pr_ready_release_after_merge.yaml
+    - memory/events/2026/09/30/20260930T114533_cu12_sprint005_plan_0_2_slice3_authorized.yaml
+
+unresolved:
+  - The Windows acceptance of slice 3 waits for the owner's Windows machine. Most of the team is on Windows, and the owner will revisit the Windows side later.
+  - hq/20260926 is still unpushed. ciel-windows-portability-001 Phase 2 and smc-v2-app-001 slice 11 wait on it.
+  - bun run check in HQ is red on the pre-existing projects-registry assertion (a827400/ba59b5e). It is unrelated to this lane and is with the owner.
+  - The walk files live only in gitignored .assets/smc-v2 (walk-20260930/data and licenses-walk-20260928/smc-log-20260930-1208.csv), which is shared scratch. Delete them by filename, never by directory.
+
+next_action:
+  action: >-
+    The owner forwards the two release files to the team when he chooses.
+    The next lane step is Windows: the owner pushes hq/20260926, then
+    ciel-windows-portability-001 Phase 2 resumes (its authorization
+    20260928T163545 stands). Check the simulator head there first, since
+    Phase 2 now has cu12-console and its .exe to exercise. Then comes a
+    decision for smc-v2-app-001 slice 11, which has none: that lane's
+    lifecycle reads authorized, but the decision named slice 10, which is
+    merged.
+  acceptance_check:
+    - Wake lists cu12-simulator-sprint-005 at revision 0.2, phase none, idle, with this record as its latest event, and no warning on 20260930T115035.
