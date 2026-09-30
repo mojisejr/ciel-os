@@ -1,0 +1,89 @@
+schema_version: ciel.event.v0.1
+id: evt_20260930T105106_smc_v2_app_plan_0_6_slice10_authorized
+type: decision
+recorded_at: 2026-09-30T10:51:06+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    decision takes port 5000 out of the application (plan revision 0.6) and
+    starts slice 10, the simulator as a port the team can choose.
+  scope:
+    - Decide plan revision 0.6 and authorize its slice 10.
+  out_of_scope:
+    - Slice 11 (Windows).
+
+outcome:
+  status: decided
+  decision: >-
+    On 2026-09-30 the agent recommended dropping port 5000 from the
+    application, because macOS gives it to AirPlay. The owner replied
+    "เลิกตามที่คุนแนะนำครับ", and added that if the plan needed no change
+    the agent should go ahead and record the decision ("ถ้าไม่ต้องคุนจัดการ
+    ได้เลย แล้วอาจจะบันทึก decision ของเราเอาไว้หน่อย"). The plan did need
+    one change, stated below and in revision 0.6, and it stays inside what
+    the owner decided. His "ลุยยาวๆ" of 2026-09-28 stands for going on
+    slice by slice, each with its own decision.
+  correction: >-
+    Revision 0.5 and the 2026-09-28 records said the port list had no
+    simulator choice and that the application defaulted to
+    tcp:127.0.0.1:5000. Both are wrong. The list already offers
+    `simulator (tcp:127.0.0.1:5000)` (crates/ui/src/admin.rs, since slice
+    4). The stored port has no default and stays empty until saved
+    (settings() in crates/app/src/logic.rs). On the 2026-09-28 walk that
+    entry was chosen, and the application met AirPlay on 5000. The agent
+    had read only the serial half of the list. The HQ coordinator carried
+    the "default" wording to the owner, and this record corrects it. The
+    owner's decision is unaffected: 5000 leaves the application.
+  authorizes:
+    - >-
+      Slice 10 of plan revision 0.6, on a topic branch from smc-v2 main
+      444cc48, delivered as a draft pull request. The existing entry becomes
+      `Simulator (ทดสอบ)` on tcp:127.0.0.1:5012. A stored 5000 from an
+      earlier build is shown as the old simulator port with a note to
+      choose again. The banner `เชื่อมต่อกับตู้จำลอง ไม่ใช่ตู้จริง` shows on
+      every screen while the endpoint is TCP. The switch to and from the
+      simulator is recorded in actions, and every action taken while on it
+      is marked by a new column in a reviewed migration, shown on the
+      บันทึก page and in the CSV. The append-only triggers stay. DESIGN.md
+      is updated.
+  does_not_authorize:
+    - Slice 11.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "10"
+  repository:
+    head: "9014e8f"
+    branch: hq/20260926
+    working_tree: this-event-the-plan-revision-and-the-sprint-005-slice-2-closeout-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "444cc48"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/28/20260928T170236_smc_v2_app_plan_0_5_accepted.yaml
+    - memory/events/2026/09/28/20260928T213527_cu12_sprint005_slice2_walk_paused.yaml
+
+unresolved:
+  - >-
+    The cu12-simulator-sprint-005 plan orders slice 10 after its slice 2
+    merges. Pull request 6 awaits the owner, and slice 10's walk needs
+    the console binary's port 5012, which the walk already uses by
+    environment.
+
+next_action:
+  action: >-
+    Branch from smc-v2 main 444cc48 and build slice 10 with tests. Open the
+    draft pull request, then ask the owner for about 15 minutes at the Mac
+    for its walk against the console.
+  acceptance_check:
+    - Wake lists smc-v2-app-001 at revision 0.6, phase 10, with slice 10 authorized.

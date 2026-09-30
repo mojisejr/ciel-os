@@ -3,9 +3,9 @@
 **Workstream:** `smc-v2-app-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.5
-**Execution phase:** none
-**Execution state:** idle
+**Plan revision:** 0.6
+**Execution phase:** 10
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -168,6 +168,17 @@ demonstrate and tell a broken cabinet from an application bug. Windows
 becomes slice 11. No decision has ever named slice 10, so the renumbering
 moves no authorization; slices 1–9 keep their numbers and records. It is
 eleven slices now.
+
+Revision 0.6 (owner, 2026-09-30: "เลิกตามที่คุนแนะนำครับ") takes port 5000
+out of the application. macOS's Control Center holds TCP 5000 for AirPlay.
+On the 2026-09-28 console walk, the port list's existing entry
+`simulator (tcp:127.0.0.1:5000)` was chosen, the application connected to
+AirPlay, and it reported a board that does not answer rather than a wrong
+port. Revision 0.6 also corrects revision 0.5's premise. The port list
+already has that simulator entry (`crates/ui/src/admin.rs`, since slice
+4), and there is no default port: the setting stays empty until saved.
+The agent had read only the serial-port half of the list. Slice 10
+therefore renames and re-points the existing entry rather than adding one.
 
 ### 1. The wire — a CU12 gateway proven against the simulator
 
@@ -420,19 +431,21 @@ The open questions of `DESIGN.md`, decided by the owner on 2026-09-21
 - Every item observed by the owner as pass, or fixed and observed again;
   recorded as owner observation in the closeout.
 
-### 10. The simulator as a port — for testing, demonstration and diagnosis (revision 0.5)
+### 10. The simulator as a port — for testing, demonstration and diagnosis (revisions 0.5, 0.6)
 
 The owner's team runs the CU12 simulator console beside the application on
 the same machine. On a ward, a technician points the application at it
 instead of the real board to tell a broken cabinet from an application
-bug. Today the port list shows only serial ports, so the simulator can be
-reached only through `SMC_ENDPOINT`, which the team cannot set.
+bug. The port list already offers `simulator (tcp:127.0.0.1:5000)`, in
+English and on the port macOS gives to AirPlay.
 
 **Deliverable**
 
-- Admin → การเชื่อมต่อ lists `Simulator (ทดสอบ)` after the serial ports.
-  It stores `tcp:127.0.0.1:<the console's wire port>`. Saving asks for the
-  admin PIN, as today.
+- The existing entry becomes `Simulator (ทดสอบ)` and stores
+  `tcp:127.0.0.1:5012`, the console's wire port (revision 0.6). A stored
+  `tcp:127.0.0.1:5000` from an earlier build is kept, but the port row
+  shows it as the old simulator port with a note to choose again. Saving
+  asks for the admin PIN, as today. There is still no default port.
 - While the endpoint is a TCP one, a banner shows on every screen:
   `เชื่อมต่อกับตู้จำลอง ไม่ใช่ตู้จริง`. It uses the strongest non-error
   tone, has no ✕, and sits above the expired banner. The owner's reason:
