@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20260930T122048_smc_v2_app_handoff_attribution_corrected
+type: closeout
+recorded_at: 2026-09-30T12:20:48+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Correct who proposed the order in the lane handoff 20260930T122020. That
+    record cannot be edited.
+  scope:
+    - One attribution in 20260930T122020's next_action.
+  out_of_scope:
+    - Any change to the order itself.
+
+outcome:
+  status: correction
+  completed:
+    - >-
+      20260930T122020 opens its next_action with "Owner's recommended
+      order, agreed in principle 2026-09-30 but not decided". That is wrong.
+      The order is the agent's recommendation: Windows first, then real
+      hardware on the Windows machine. The owner asked whether the next work
+      was the hardware and Windows. The agent recommended Windows first,
+      because the product runs on Windows with the CU12 on COM. The owner
+      then stopped the session without choosing. Nothing about the order is
+      decided or agreed. The steps in that record stand as a recommendation.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.6"
+  repository:
+    head: "bc7e7b1"
+    branch: hq/20260926
+    working_tree: this-event-only
+    pull_request: none-standing-multi-session-branch
+  preceding_records:
+    - memory/events/2026/09/30/20260930T122020_smc_v2_app_lane_handoff_before_windows_and_hardware.yaml
+
+unresolved:
+  - The owner has not decided whether Windows or real hardware comes first. Ask him when the lane resumes.
+  - Every unresolved item of 20260930T122020 stands.
+
+next_action:
+  action: >-
+    On resuming, read 20260930T122020 and this record. Ask the owner to
+    choose the order between Windows (the push of hq/20260926, then
+    ciel-windows-portability-001 Phase 2, then a slice 11 decision) and a
+    new real-hardware workstream, and offer the agent's recommendation of
+    Windows first. Slice 11 has no decision.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 at revision 0.6, phase none, idle, with this record as its latest event.
