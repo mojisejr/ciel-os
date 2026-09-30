@@ -1,0 +1,81 @@
+schema_version: ciel.event.v0.1
+id: evt_20260930T113643_smc_v2_app_slice10_merged
+type: closeout
+recorded_at: 2026-09-30T11:36:43+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    record notes that slice 10 merged and leaves the lane idle before
+    slice 11.
+  scope:
+    - Record the merge of smc-v2 pull request 10 and the checkout sync.
+  out_of_scope:
+    - Slice 11 (Windows); it needs its own decision.
+    - cu12-simulator-sprint-005 slice 3.
+
+outcome:
+  status: merged
+  completed:
+    - >-
+      The owner merged smc-v2 pull request 10 ("ผมทำ 0 ละ"). The merge
+      commit is f2e023a, parents 444cc48 and e8a4e28, merged at
+      2026-09-30T04:35:44Z. The windows-cross-check run on that push
+      (36669550742) completed with success. The checkout was fetched and
+      fast-forwarded to main f2e023a, which is clean and equal to origin.
+      The local topic branch feat/simulator-port was deleted, and the fetch
+      showed its remote branch already gone.
+    - The plan header returns to phase none, idle. Slices 1-10 are delivered and slice 11 remains.
+  not_completed:
+    - Slice 11 (Windows).
+    - >-
+      The two coverage gaps in 20260930T111929 remain open: the walk
+      loaded HN201 but did not dispense it, and the exported CSV was not
+      found on disk. The owner merged with them open. The agent proposes
+      closing both in the cu12-simulator-sprint-005 slice 3 walk, where
+      SMC v2 connects to the console binary anyway: dispense HN201 and
+      export the CSV into .assets/smc-v2/walk-20260930/.
+  boundaries:
+    - Only this workstream's paths were written. HQ was not pushed.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "10"
+  repository:
+    head: "8b41048"
+    branch: hq/20260926
+    working_tree: this-event-and-the-plan-header-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "f2e023a"
+    branch: main
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/smc-v2/pull/10
+  simulator:
+    repository: cu12-simulator
+    head: "0d7c4b1"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/30/20260930T111929_smc_v2_app_slice10_ready_for_owner_review.yaml
+
+unresolved:
+  - bun run check in HQ is red on the pre-existing projects-registry assertion (a827400/ba59b5e). It is unrelated to this lane and is with the owner.
+  - hq/20260926 is still unpushed. Slice 11 (Windows) and the Windows walk wait on that.
+  - Production keygen before the first sale; the door-label order, a physical barcode scanner and real hardware remain as before.
+  - The cu12 gateway test a_simulator_that_ends_and_comes_back… flakes about 3% under parallel runs, a harness race that predates sprint 5.
+
+next_action:
+  action: >-
+    Record the decision for cu12-simulator-sprint-005 slice 3 once the
+    owner authorizes it, and build it. Slice 11 follows the push of
+    hq/20260926 and ciel-windows-portability-001 Phase 2.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 at revision 0.6, phase none, idle, with this record as its latest event and smc-v2 main f2e023a.
