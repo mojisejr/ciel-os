@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T072323_mumate_vercel_to_do_slice5_closeout
+type: closeout
+recorded_at: 2026-10-01T07:23:23+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Close slice 5 of plan 0.3 (the production droplet created, dressed and
+    verified without traffic). The cutover (slice 6) waits for D7 and the
+    owner's go.
+  scope:
+    - mumate-prod-1, mumate-infra PRs 36-40, production builds and releases, the smoke, the control room, runbook 06 and its rehearsal.
+  out_of_scope:
+    - Slice 6 (DNS, Vercel maintenance, the gate); Grafana UI changes the owner applies.
+
+outcome:
+  status: recorded
+  slice: "5"
+  dod:
+    - "The production droplet was built by the repository's scripts - met: bin/do-create.sh from main 5425bf7 (PR 36 fixed it for a second host: explicit --reserved-ip, no public 22); the private-repo clone finished by runbook 03 §2 (read-only deploy key); env by bin/env-from-vercel.sh and build variables by bin/build-vars-from-vercel.sh (PR 37); images from the GitHub production Environment; deployed by the release button."
+    - "The control room compares staging and production side by side - met: hosts.tsv row (PR 38); bin/hosts.sh compare lines up mumate-2 and mumate-prod-1 (differences only env, tags, staging-only cron/pgstaging, staging-only env keys); Loki receives both hosts (production: alloy, bazi, caddy, fe); the two-host log-silence expression returns no series today. Applying it and the mumate-fe-production synthetic check in Grafana is an owner UI step (reader token only)."
+    - "Production passes the smoke - met (read-only, over the tailnet, 2026-10-01): fe /api/health ok db ok env production platform container; maintenance on: no-cookie pages show the maintenance page; bypass cookie: /v2 and /v2/login are the app (login buttons present); /what-if shows maintenance as it does on Vercel (campaign closed); NextAuth providers line-liff, line, google, facebook, twitter with 5 callbacks on https://bazichart.mumate.co; fe -> bazi over the compose network ok, db ok; caddy :80 308 to https for bazichart.mumate.co, 404 for other hosts, /healthz ok; cron-check agrees; 0 timers on production; health timer enabled (reports healthy). Release button production path proven twice (run 36789690877 failed on a wrong env value and was fixed; run 36794852814 ok, deploy-history ok)."
+    - "The runbook rehearsal is timed - met for every DigitalOcean-side step: runbooks/06-cutover.md (PR 40) rehearsed on staging 2026-10-01: recreate 9.1 s, maintenance on 2.1 s, cron off->on 11.8-13.8 s, caddy restart -> https 1.6 s, bypass ok, gate open 3.1 s (about 30 s of host time); staging fe.env restored byte-identical. Not rehearsable before the day: Vercel maintenance and cron switch, DNS propagation, first certificate issuance, live Beam."
+    - "D7's conditions are recorded as met or the slice waits - the cutover waits: the MUMATE100 promo runs and the team merges often; the owner has not said go."
+  completed:
+    - "Prepared for the cutover: draft mumate-infra PR 39 (production cron timers for five jobs, bazi-alerts off; merge only at runbook 06 step 3); current DNS recorded (CNAME to Vercel, TTL 3600, Namecheap); apex CAA none."
+    - "Staging and production both on mumate-infra main abfb499."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "5"
+  repository:
+    head: "6463e23"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mumate-infra: "main abfb499 (PRs 36-38 merged); PR 39 draft (cutover only); PR 40 open (runbook 06)"
+    host: "mumate-prod-1 605089616, 209.38.56.234: fe c10e91e, bazi 49e22f2 healthy, MAINTENANCE_MODE=on, no cron timers"
+    checkpoints:
+      - memory/events/2026/09/30/20260930T*_mumate_vercel_to_do_slice5_authorized.yaml
+
+unresolved:
+  - "Owner: merge PR 40; in Grafana apply the two-host log-silence query (alert-rules.yaml) and create the mumate-fe-production synthetic check with its alerting (synthetic-checks.json)."
+  - "Before the cutover: QSTASH_CURRENT/NEXT_SIGNING_KEY into prod-fill.env; QSTASH_TOKEN file for runbook step 1; confirm with เอ็ม GLASS_BOX_KEY, OPS_DASHBOARD_KEY, ANALYTICS_USER_ID_KEY, OPS_ADMINS (taken from staging) and whether bazi needs SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY (absent on Vercel bazi production, present in the teammate's env file and on staging)."
+  - "bazi-alerts: off on production by PR 39 (it fails daily on Vercel without LINE_*); owner decides when LINE is configured."
+  - "Backups keep running from mumate-2 against production; the production host's backup timer is linked and off - decide where backups run after the cutover."
+  - "Every new host's cloud-init still ends in error while mumate-infra is private (runbook 03 §2 covers it)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When D7 holds and the owner says go: a slice-6 decision, then runbook 06
+    step by step. Until then nothing in this lane is time-bound.
+  acceptance_check:
+    - Wake shows this closeout as the slice-5 checkpoint of mumate-vercel-to-do-001 with no validation error.
