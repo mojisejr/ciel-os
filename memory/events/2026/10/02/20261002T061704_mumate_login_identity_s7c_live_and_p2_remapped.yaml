@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T061704_mumate_login_identity_s7c_live_and_p2_remapped
+type: closeout
+recorded_at: 2026-10-02T06:17:04+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close 7c (PR 864 live on production after the owner's LINE-in-app walk)
+    and record the first paid support case of 7s: one owner-approved
+    identity remap, and one double payment handed to the team.
+  scope:
+    - 7c PR 864 merge and production deployment.
+    - 7s case P2 (one-row production remap) and case P1 (finding and hand-off).
+  out_of_scope:
+    - The LIFF carry-over (next), 7d, the iPhone walk.
+
+outcome:
+  status: recorded
+  slice: "7"
+  completed:
+    - "Walk inside LINE (Keep memo link, staging ee8a902): Google sent out to Chrome at /v2/login?openExternalBrowser=1 (06:06:48); LINE login stayed in LINE and reached the existing member in 1 s (06:07:00-06:07:01)."
+    - "PR 864 marked ready with both walks in its evidence; the owner merged it as a5f6f5f; Vercel production deployment 6797272442 success at 2026-10-02T06:10:50+07:00."
+    - "7s preflight read-only on production (agent-run at the owner's go). P1 is a double payment: the member bought PRO yearly 159 THB on the LIFF-created duplicate at 13:36 and again on the original account at 13:53 on 2026-10-01; after #860 the member reaches the original, which holds PRO to 2027-10-01. Recommended: refund the duplicate's payment through the payment provider - a team action; no database change. The owner asked for the member's name to have the team ask the member; given in the terminal, not recorded here."
+    - "P2 evidence: the LINE display name is held by exactly two members in production and both share the birth date; the original (2026-07-22) was never onboarded and holds no subscription, payment, wallet, charts or Qi transactions."
+    - "P2 applied by the agent on the owner's explicit approval ('คุนแก้ P2 ได้เลย'): one guarded statement in one transaction moved the original's Login-channel LINE user_provider row to the account holding the paid PRO; exactly one row moved. Postcheck: the paid account has two LINE rows and ACTIVE PRO to 2027-10-01; the original has none. Guarded inverse stored mode 600 in .assets/mumate/support (git-ignored); not executed."
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.10"
+  slice: "7"
+  repository:
+    head: 4b39c89
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe_main: "a5f6f5f (merge of PR 864, ee8a902)"
+    production_deployment: "6797272442 success"
+  database:
+    project: mumate-prod
+    p2_moved_rows: 1
+    p2_paid_account_line_rows_after: 2
+    p2_original_line_rows_after: 0
+  dod_7:
+    G4: "met for page load and login: no LiffBoot, no line-liff provider; the SDK stays only on demand for openWindow and shareTargetPicker inside the LIFF browser"
+    G5: "met on Android (Facebook to Chrome) and inside LINE; iOS not walked"
+    G8: "P2 closed; P1 handed to the team for a refund"
+
+unresolved:
+  - "P1 refund of the duplicate PRO payment is with the owner and the team; mark the case closed when they report it."
+  - "The P2 paid account now carries two live LINE identities, an exception to the one-per-provider rule; the normal unlink action is not a one-row rollback."
+  - "LIFF carry-over: approved in principle by the owner ('ควรทำเลย'); window signups lose their account from about 2026-10-05 21:41."
+  - "iPhone in the Facebook app not walked (x-safari-https:// unconfirmed; manual fallback always shown)."
+  - "Rich menu still opens LIFF URLs (team-owned); until it moves to plain URLs the LIFF SDK stays for openWindow and shareTargetPicker."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build the LIFF carry-over on a new mootech-fe branch with real-Postgres
+    tests, walk it on staging with a simulated LIFF-era session, and bring it
+    to the owner before 2026-10-05 21:41.
+  acceptance_check:
+    - Wake shows this record for mumate-login-identity-001 and no validation error.
