@@ -3,9 +3,9 @@
 **Workstream:** `mumate-login-identity-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.9
-**Execution phase:** 5
-**Execution state:** idle
+**Plan revision:** 0.10
+**Execution phase:** 7
+**Execution state:** executing
 **Parallelism:** proposed
 
 ## Objective and owner agreement
@@ -634,6 +634,80 @@ not make this check.
     members separately, because members the old check used to turn away can
     now register and are expected to raise the count. The other two triggers
     are unchanged.
+
+## Revision 0.10 — LIFF split identities, and a login loop the flip never touched
+
+Slice 6 closed on 2026-09-29 on the owner's confirmation that the LIFF channel
+and the LINE Login channel share a LINE provider. That confirmation was wrong.
+mootech-fe #860 (merged and on Vercel production 2026-10-01 17:26 Bangkok)
+states that the LIFF app "mumatelogin" (channel 2011679472, recorded in
+mootech-fe 435379d as created by ฟิว on 2026-09-20; the owner's console, where
+he is admin, does not show it) sits under a different provider, so the same person received a different LINE
+`sub` through LIFF login (#846, live 2026-09-28 21:41 to 2026-10-01 17:25) and
+became a new account. LINE documents that user IDs are per provider and that a
+channel can never move to another provider.
+
+### What the 2026-10-01 measurement found
+
+Run read-only on production by the owner's command (agent-executed at his
+explicit request), `.assets/mumate/impact-20261001.sql`, read 2026-10-01 19:27:
+
+- 82 new LINE accounts in the LIFF window; 12 match an older member on name plus
+  picture or birth date, 20 more on name alone, 50 match nobody. The picture
+  path was calibrated on the one known two-subject member and does match across
+  providers.
+- New members per day rose about four times for LINE and Google alike
+  (7.1 to 29.1, 8.9 to 37.6), so the rise was mostly real traffic.
+- Ever-paid members touched: three active paid members have a duplicate (one
+  paid 159 THB again on it), and one member paid on the duplicate while the
+  original is free. 11 accounts created in the window carry approved payments
+  (1,749 THB), 7 of them LINE.
+- Exactly one member has two LINE rows (the 2026-10-01 support case); no LINE
+  subject is on two members.
+- Share links minted 20-52 a day; referral redemptions 0-2 a day, before and
+  during the window alike.
+
+### What #860 did not fix
+
+A member reported a loop to the login page after opening a shared
+`/invite/<code>?c=` link from the **Facebook** app on **Android** and pressing
+LINE, before 17:25. The LIFF branch only ran inside LINE, so that member took
+the plain OAuth path, which #860 left unchanged. Mechanisms found in the code
+(file:line in the 2026-10-01 research, verified by the agent):
+
+1. A failed OAuth callback returns to `/v2/login?error=…` and the page never
+   shows it, so every failure looks like the login page again. A cookie-jar
+   switch (Android's LINE auto login handing the callback to another browser),
+   or the 6 s automatic second attempt overwriting the state cookie, produces
+   such a failure.
+2. The service worker reloads the page on `controllerchange`, which also fires
+   on a first-ever visit, and can cut an OAuth navigation already started.
+3. The 8 s "can't connect your account" screen offers a re-login that signs out
+   and starts again.
+4. Google inside an in-app browser has no working way out: `window.open` after
+   an `await`, and only LIFF's `openWindow` otherwise.
+
+Duplicates also outlive #860: a member whose LIFF login minted a duplicate keeps
+that MEMBER_ID for up to seven days, because the #860 self-heal signs out only
+when no MEMBER_ID is held. A member who signed up through LIFF in the window
+holds only a LIFF-provider subject and will get a second account on the next
+Login-channel login; the database cannot tell which window accounts those are.
+
+### Owner decisions 32-36 (2026-10-01)
+
+32. Fix the paid members touched ("ต้องแก้ 1 แน่ๆ"), case by case, each
+    production write approved by the owner.
+33. Leave the unpaid duplicates alone ("ข้อสองที่ซ้ำ แบบไม่จ่ายเงินผมคิดเหมือนคุน").
+34. Login stays NextAuth only. LIFF is removed, login included, because the
+    owner does not want MuMate bound to LINE directly and the channel is not
+    his.
+35. Every login ends in the external browser so members can install the PWA
+    and receive notifications. Direction: stop the loop first, then hand an
+    established session from LINE's in-app browser out to the external browser
+    ("ทาง 2"), so iPhone members are not pushed onto LINE's email/password
+    screen.
+36. Slice 7 is authorized and runs now, rehearsed on staging before production
+    ("slice 7 ถ้าปลอดภัยแล้วต้องทำเลย"; "ไปจำลอง สถานการณ์ให้ผมใน staging").
 
 ## Relationship to existing work
 
@@ -1270,6 +1344,49 @@ or environment variable switches between the two paths, so the new route is
 DARK until that line changes. Nothing else may acquire the power to route this
 call, or the rollback stops being one line.
 
+### 7. Stop the login loop, remove LIFF, and leave in-app browsers
+
+**Added in revision 0.10.** Authorized by owner decision 36.
+
+- **7a. Reproduce on staging before any fix.** `app.staging.mumate.co` (mumate-2)
+  runs fe c10e91e, the pre-#860 code. The owner or a teammate opens a staging
+  invite link from the Facebook app on Android with a LINE account absent from
+  staging's database and presses LINE, while the agent reads Caddy and the FE
+  container's log live. The agent also simulates the cookie-jar switch with a
+  scripted browser. Proof: the failing request and its NextAuth error, named.
+- **7b. Stop the loop** (one mootech-fe PR): show the NextAuth error on
+  `/v2/login`; drop the 6 s automatic second attempt; reload on
+  `controllerchange` only when a previous controller existed; end LIFF-era
+  sessions even when a MEMBER_ID is held; remove the `line-liff` provider and
+  `startLiffCredentialsLogin`; send the invite CTA to login without the
+  register→`/v2`→carousel detour, keeping the referral code.
+- **7c. Leave in-app browsers** (one mootech-fe PR): detect LINE, Facebook,
+  Messenger and Instagram in-app browsers before OAuth starts; LINE uses
+  `openExternalBrowser=1`; Facebook/Instagram on Android use an `intent://`
+  hand-off to Chrome; iOS gets an "open in browser" screen with a copy-link
+  fallback. Replace LIFF's share picker and `openWindow` with LINE's plain share
+  URL and the query parameter, then remove `LiffBoot` and `@line/liff`.
+- **7d. Session hand-off design** (LINE in-app → external browser, decision 35):
+  a single-use, short-lived code minted for a signed-in member and redeemed once
+  in the external browser. Design and threat model only until the owner approves
+  its storage (a schema change is a production write).
+- **7e. Staging walk.** Each PR's image on staging; the same Android/Facebook
+  walk plus a LINE in-app walk and an iPhone walk. The owner accepts.
+- **7f. Production.** The owner merges; Vercel deploys. A daily read-only check
+  for seven days counts post-fix accounts matching window accounts that hold
+  value, and routes each to support.
+- **7s. Support cases (decision 32).** Per case: a read-only preflight, a
+  guarded single-row SQL with its inverse stored mode 600 in
+  `.assets/mumate/support`, the owner's approval, and a postcheck.
+
+**DoD 7.** G1: 7a names the failing step with evidence. G2: on staging, a new
+LINE user from the Facebook app on Android reaches a member account without
+returning to the login page. G3: a login failure is shown, never silent. G4:
+no LIFF SDK is loaded and no `line-liff` provider is registered. G5: Google
+from inside LINE or Facebook reaches the external browser. G6: tsc, eslint and
+tests pass, with new tests for G3-G5. G7: the owner accepts the staging walk.
+G8: each paid case is closed or explicitly deferred by the owner.
+
 ## Authority and ownership boundary
 
 - Only slice 1 is authorized by the opening decision.
@@ -1300,6 +1417,7 @@ call, or the rollback stops being one line.
 | 4 | a member joins their own two accounts; payment side never loses; nothing but the credential moves | unknown | heavy: identity write + irreversible-feeling UX | slice 3 closed, including one observed successful link |
 | 5 (was 4b) | a second account is no longer created without asking; one live identity per provider | 1-2 days | heavy: touches the login surface everyone crosses | slice 4 closed |
 | 6 (was 5) | unlink fix; flip rehearsed on the shadow over the arena; reviewed production flip; observation; old FE path retired later (DoD 6, rev 0.9) | 1-2 days + observation | owner-attended rehearsal and production gate | slices 1-5 closed |
+| 7 | loop cause named on staging; loop stopped; LIFF removed; in-app browsers left before OAuth; paid cases closed (DoD 7, rev 0.10) | 2-3 days + 7d design | owner-attended staging walk and production merge | slice 6 closed; owner decision 36 |
 
 Every slice after slice 1 requires a new owner decision event. Slices are
 sequential because they touch the same identity seam and schema.
