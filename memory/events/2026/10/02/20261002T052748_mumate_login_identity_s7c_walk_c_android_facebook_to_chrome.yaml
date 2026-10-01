@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T052748_mumate_login_identity_s7c_walk_c_android_facebook_to_chrome
+type: closeout
+recorded_at: 2026-10-02T05:27:48+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record the owner's staging walk of 7c (draft PR 864) on Android from the
+    Facebook app: escape to Chrome, LINE login there, invite code carried.
+  scope:
+    - 7c branch feat/leave-in-app-s7c ee8a902, staging image ee8a902...-staging (container-build 36933621177, release on mumate-infra).
+    - Walk C, read live from Caddy and the FE log.
+  out_of_scope:
+    - iPhone and LINE-in-app walks; merging PR 864; 7d; 7s.
+
+outcome:
+  status: recorded
+  slice: "7"
+  completed:
+    - "05:19:00 Facebook WebView opened /invite/MUMATE190; 05:19:10 Chrome opened /v2/login?ref=MUMATE190 - the intent:// escape worked and the invite code travelled."
+    - "Chrome already held a staging session for the owner's Google-linked account, so /v2/login sent him home; correct for an existing member. He signed out."
+    - "05:21:13 LINE sign-in in Chrome, 05:21:15 callback back in Chrome (2 s, no email/password); asked, answered 'never used'; member minted 05:21:38; register form showed the referral code; the owner finished registration - onboarded, and bazi_referral_redemption has MUMATE190 for the new member."
+    - "Compared with walk A in the Facebook WebView (24 s with LINE email, password and an in-app verification code), Chrome on Android gives one-tap LINE login and the callback returns to the same browser."
+    - "Gates on ee8a902: tsc 0; eslint 0 errors; vitest 292 files / 3575 tests pass; verify-architecture only the 4 violations already on main; npm run build green with the VAPID gate; gitleaks clean. Draft PR 864 open."
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.10"
+  slice: "7"
+  repository:
+    head: 76b277f
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe_branch: "feat/leave-in-app-s7c ee8a902"
+    pull_request: "https://github.com/mojisejr/mootech-fe/pull/864 (draft)"
+    staging_fe: "ee8a902...-staging"
+  dod_7:
+    G2: "met on Android/Facebook with 7c (Chrome, one tap)"
+    G5: "met for the Facebook->Chrome path on Android; Google-in-LINE and iOS not yet walked"
+
+unresolved:
+  - "Walks still to do before PR 864 leaves draft: iPhone in the Facebook app (x-safari-https:// unconfirmed) and inside LINE (Google out, LINE stays in)."
+  - "/v2/welcome-back loaded twice one second apart after the LINE return to Chrome (05:21:18, 05:21:19); harmless to the member; cause not yet examined."
+  - "Staging account page of a member left without a login row returns 404 from /api/auth/link/connections (and earlier 500 from /api/referral); not this lane's."
+  - "LIFF carry-over decision before about 2026-10-05 21:41; paid cases 7s."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Walk 7c on an iPhone inside Facebook and inside LINE; then mark PR 864
+    ready for the owner. Bring the LIFF carry-over and the two paid cases to
+    the owner for decision.
+  acceptance_check:
+    - Wake shows this record for mumate-login-identity-001 and no validation error.
