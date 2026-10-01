@@ -1,0 +1,95 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T083748_ciel_mini_v1_review_decided
+type: decision
+recorded_at: 2026-10-01T08:37:48+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-mini-template-001
+  lane: single
+  objective: >-
+    Turn observed pilot use into a small, teachable CIEL-mini v1 candidate
+    while keeping unproved continuity claims visible.
+  scope:
+    - Plan revision 0.5, Slice 5 review and evidence-backed template revision.
+    - >-
+      Clarify first use from GitHub, the role of AGENTS.md, a learner-owned
+      acceptance check, and how repeated alignments share one session.
+    - >-
+      Prepare a reviewed template pull request; preserve the simple file-only
+      structure without adding a runtime, skill, hook, or validator.
+  out_of_scope:
+    - Changing the MBTI pilot or the nephew's deployed site.
+    - Claiming the nephew's public site proves use of Git or memory without
+      access to that project's repository or records.
+    - Claiming the missed-closeout recovery exercise is complete.
+
+outcome:
+  status: decided
+  parallelism: none
+  completed:
+    - >-
+      The owner reported that the pilot is finished, shared the nephew's live
+      site, and asked for a v1 assessment and template improvements; the owner
+      then explicitly directed the agent to continue.
+    - >-
+      Pilot Git contains owner-confirmed alignments, checkpoints, product
+      commits, and a teaching guide. Its current local build and two planner
+      tests passed in this review.
+    - >-
+      The public template repository has now been marked as a GitHub template
+      repository; GitHub reports isTemplate true.
+  not_completed:
+    - >-
+      No fresh pilot session intentionally recovered an unmatched alignment
+      in repository evidence reviewed here.
+    - >-
+      The nephew's public site can be inspected as a product, but its project
+      repository and learning process have not been provided for review.
+
+evidence:
+  plan: workstreams/ciel-mini-template-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "5"
+  repository:
+    head: ff88c6da0b13aca4c9f3fa0370429ca9a8d2de39
+    branch: hq/20260926
+    working_tree: this-decision-only
+  pilot_repository:
+    path: checkouts/mbti-planner-pilot
+    head: c8a8c3543cde3bf0b95fe48373197f82c79ffe71
+    branch: main
+  template_repository:
+    url: https://github.com/mojisejr/ciel-mini-template
+    head: 07460feab0b68c61eb57fff9ad3c0381bb3809f1
+    is_template: true
+  proof_contract:
+    - >-
+      Review the final template diff and verify no application-specific
+      material or new runtime entered the template.
+    - >-
+      Confirm the public repository's template setting and prepare a draft PR
+      whose exact head contains the v1 candidate files.
+    - >-
+      Report product inspection, pilot continuity evidence, and the missing
+      recovery and nephew-repository evidence as separate findings.
+
+unresolved:
+  - >-
+    The original Slice 4 intentionally missed-closeout recovery remains
+    unproved by the available pilot files.
+  - >-
+    The nephew's site uses 32 questions and a distinct flow from the local
+    eight-question pilot, so its production behavior cannot be attributed to
+    the pilot repository.
+
+next_action:
+  action: >-
+    Make the narrow template documentation and AGENTS.md changes, validate
+    them, and open a draft PR for owner review before a v1 tag or final
+    workstream closeout.
+  acceptance_check:
+    - Template stays file-only and project-neutral.
+    - PR shows the exact changes and unresolved proof boundary.
