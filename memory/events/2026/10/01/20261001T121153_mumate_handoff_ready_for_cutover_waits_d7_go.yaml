@@ -1,0 +1,80 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T121153_mumate_handoff_ready_for_cutover_waits_d7_go
+type: closeout
+recorded_at: 2026-10-01T12:11:53+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Close this round and hand MuMate over. Every secret input, guard and
+    runbook for the cutover is in place and verified; the cutover (slice 6)
+    waits only for D7, the owner's go and the time-bound pre-day steps. This
+    record replaces 20261001T095025 as the cold-session entry for MuMate work.
+  scope:
+    - State of mumate-vercel-to-do-001 after this round; what is ready, what waits on whom, the cutover entry point.
+  out_of_scope:
+    - Other workstreams in attention.
+
+outcome:
+  status: recorded
+  slice: none
+  state:
+    - "PRODUCTION IS STILL ON VERCEL (checked 2026-10-01 12:11): bazichart.mumate.co CNAME to Vercel, TTL 3600; /api/health 200 db ok platform vercel; /v2 200."
+    - "mumate-prod-1 (605089616, 209.38.56.234, tailnet 100.95.78.27): fe c10e91e + bazi 49e22f2 healthy, MAINTENANCE_MODE on, no cron timers, health timer on, mumate-infra main fb94491; root password set by the owner 2026-10-01 (reboot came back clean). Staging mumate-2 on the same SHAs (-staging) and fb94491."
+    - "mumate-infra main fb94491 (PR 42 merged): runbooks 00-06 production-first; guards in deploy.sh (--profile full), fe-recovery-prove.sh (refuses production), arena.sh (--production for path B). Draft PR 39 (0f745c3) = production cron timers, merge ONLY at runbook 06 step 3c."
+    - "Secrets for runbook 06 step 1 all present and verified (values never printed): .assets/mumate/infra-mumate/prod-fill.env holds ANALYTICS_USER_ID_KEY (owner's value, not staging's), QSTASH_CURRENT/NEXT_SIGNING_KEY and QSTASH_URL (us-east-1, verified against the QStash keys API); prod-qstash-token.env holds QSTASH_TOKEN. WHATIF_KEY and GITHUB_TOKEN accepted empty by the owner. Last fe dry-run: EMPTY exactly those two; bazi EMPTY 0."
+    - "Alerting covers production: Grafana synthetic mumate-fe-production + two-host log silence; Better Stack production monitor with keyword \"status\":\"ok\" (owner); DO alert policies by tag mumate on both droplets; health timer on both."
+    - "bazi pdf-dev moved to 6b5395c (1 commit after 49e22f2); mootech-fe main still c10e91e. The SHAs for the cutover are chosen near the day (runbook 06 pre-day)."
+  for_a_cold_session:
+    read_first:
+      - "this record"
+      - "mumate-infra runbooks/06-cutover.md (pre-day list, day-of steps 0-7, flip-back)"
+      - "mumate-infra runbooks/00 (owner) and 01 (deploy, rollback, env, cron)"
+      - "memory/events/2026/10/01/20261001T112451_mumate_control_room_production_runbooks_pr42.yaml and 20261001T120554_mumate_pre_day_inputs_complete_qstash_root_password.yaml"
+    waiting_on_owner:
+      - "D7 (promo over, team merges slower, not the R7 week) and the go - then a slice-6 decision event (type decision, status decided, slice 6) that also records WHATIF_KEY and GITHUB_TOKEN accepted empty."
+      - "Window (02:00-06:00), LINE OA notice, named reviewers."
+      - "TTL of bazichart.mumate.co 3600 -> 300 in Namecheap at least 24 h before the window."
+      - "เอ็ม: bazi production needs no SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY; LINE webhook/LIFF of channel 2011679472 on bazichart.mumate.co."
+      - "Better Stack: confirm the staging monitor exists, api.staging and bazi.staging monitors deleted."
+      - "Near the day: production images of the chosen SHAs (owner presses container-build target=production and release env=production)."
+    decided_defaults:
+      - "bazi-alerts stays off on production; backups keep running from mumate-2 until after the cutover; staging releases by the button; production builds and releases are pressed by the owner."
+      - "GLASS_BOX_KEY, OPS_DASHBOARD_KEY, OPS_ADMINS from staging (not used yet); WHATIF_KEY, GITHUB_TOKEN empty."
+    cutover_first_step: "Slice-6 decision event, then the TTL drop at least 24 h before the chosen window."
+    working_rules_learned:
+      - "The agent never pushes HQ; the owner pushes the round. FE pushes are the owner's (--no-verify); production DB reads are owner-run."
+      - "Vercel sensitive values come back empty; every one now has a source in prod-fill.env or an accepted-empty decision. Dry-run step 1 any time to re-check."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "5143733"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mumate-infra: "main fb94491 on laptop, mumate-2 and mumate-prod-1; PR 39 draft 0f745c3"
+    mootech-fe: "main c10e91e (deployed on both hosts)"
+    bazi-sft-dataset: "pdf-dev 6b5395c; hosts run 49e22f2"
+
+unresolved:
+  - "bazi health probe 5 s vs DB connect_timeout 10 s hides a DB failure as a timeout (deferred, 20261001T072537)."
+  - "Every new host's cloud-init ends in error while mumate-infra is private (runbook 03 §2)."
+  - "Beam cross-delivery fix (ค) still open; staging Beam endpoint stays disabled outside payment drills."
+  - "systemd timer Descriptions say (staging)/(none) - cosmetic. Optional Grafana dashboard re-import for per-host legends."
+  - "HQ hq/20261001 carries this round's records (5cec3fc, 0baf6e0, 5143733 and this one) unpushed; the owner pushes."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In a fresh session: Wake, read this record and runbooks/06-cutover.md; wait
+    for D7 and the owner's go, then write the slice-6 decision and walk the
+    pre-day list (TTL first) and runbook 06 step by step with the owner.
+  acceptance_check:
+    - A cold session can state where production runs, what is ready, what waits on the owner, and the first cutover step from this record alone.
