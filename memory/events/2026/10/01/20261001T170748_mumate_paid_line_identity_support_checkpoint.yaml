@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T170748_mumate_paid_line_identity_support_checkpoint
+type: closeout
+recorded_at: 2026-10-01T17:07:48+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-login-identity-001
+  lane: support-exception
+  objective: >-
+    Restore this member's access to the paid account from both LINE login
+    surfaces while preserving the paid account and a one-row rollback path.
+  scope:
+    - One owner-authorized production provider-identity remap for the reported paid/free split.
+  out_of_scope:
+    - Full member merge, Qi transfer, LIFF/channel configuration, or global login-flow fix.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - Owner explicitly approved the case-only change after the no-Qi-transfer and rollback impact was stated.
+    - Supabase mumate-prod preflight found one LINE identity per account, one paid active subscription and payment on the survivor, and separate 90/115 Qi wallets.
+    - A guarded, single-statement update changed exactly one user_provider.user_id from the free account to the paid account; provider and LINE subject were not changed.
+    - Postcheck found two distinct LINE subjects mapped to the paid member, zero to the free member, both member rows intact, active PRO and payment intact, and unchanged 90/115 Qi.
+    - A guarded inverse SQL note was stored locally in ignored .assets/mumate/support with owner-only file permissions; its read-only rollback predicate matched exactly one row after the change. Rollback was not executed.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.9"
+  slice: none
+  repository:
+    head: c21ac9f
+    branch: hq/20261001
+    working_tree: this-record-only
+  database:
+    project: mumate-prod
+    preflight_at: 2026-10-01T09:44:45Z
+    postcheck_at: 2026-10-01T09:46:37Z
+    moved_rows: 1
+    paid_line_identities_after: 2
+    free_line_identities_after: 0
+    rollback_guard_matches: 1
+
+unresolved:
+  - The member has not yet freshly logged in on both Chrome and LINE to confirm the visible Natcha PRO result; owner will ask the team and report back.
+  - The free member still holds 115 Qi and other data without its former LINE login; no transfer or deletion was authorized.
+  - This support exception leaves two live LINE identities on one member, contrary to the normal one-per-provider linking guard; do not use the normal unlink flow as a one-row rollback.
+  - Ownership/provider of the older LIFF channel and the system-wide cause of the split remain unverified.
+  - A separate read-only check found ops_audit_log grants anon SELECT without RLS; Data API exposure was not verified, and no case data was written there.
+
+next_action:
+  action: >-
+    Wait for the owner/team to obtain fresh Chrome and LINE login results from the
+    member. If either still shows the free account, inspect the exact surface and
+    session state before any further write; use the guarded local inverse only
+    after reviewing live state and an owner decision.
+  acceptance_check:
+    - Both fresh login surfaces show the paid Natcha PRO account.
+    - The unchanged Qi separation and pending systemic fix remain explicit to the owner.
