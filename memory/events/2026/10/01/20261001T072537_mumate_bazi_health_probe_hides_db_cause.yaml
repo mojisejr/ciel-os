@@ -1,0 +1,44 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T072537_mumate_bazi_health_probe_hides_db_cause
+type: closeout
+recorded_at: 2026-10-01T07:25:37+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record a deferred side issue found after the slice-5 closeout (raised by
+    the HQ session): bazi's health probe cannot report a database failure.
+  scope:
+    - bazi-sft-dataset Dockerfile HEALTHCHECK and src/app/api/health/route.ts on pdf-dev; the first production release.
+  out_of_scope:
+    - Changing either (team code; not blocking).
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "bazi's Dockerfile HEALTHCHECK has --timeout=5s; /api/health awaits createDbSqlClient()`select 1` with no timeout of its own, and src/db/client.ts sets connect_timeout 10 s. When the database cannot be reached, Docker kills the probe before the route can answer 503 (the same shape as mootech-fe's HEALTH_DB_TIMEOUT_MS 5000 against a 5 s probe). That is why the first production release showed only 'Health check exceeded timeout (5s)' instead of a db failure."
+    - "The first production release also had no earlier set to roll back to (first deploy on a new host): the safety net was absent, not untested. A wrong value that still parses (APP_DATABASE_URL = the project API URL) connects or hangs and points away from the cause - the same failure shape as port 5000 on the CU12 lane."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "ec5010a"
+    branch: hq/20260926
+    working_tree: this-record-only
+
+unresolved:
+  - "Deferred (not blocking: deploy.sh still sees unhealthy and stops): give bazi's health route a DB timeout below 5 s (or raise the probe timeout) so a database failure reports as such; owner/team decide."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Nothing now. The cutover waits for D7 and the owner's go (slice-5 closeout).
+  acceptance_check:
+    - Wake shows no validation error.
