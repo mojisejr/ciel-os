@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T174439_mumate_paid_line_support_member_confirmed
+type: closeout
+recorded_at: 2026-10-01T17:44:39+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-login-identity-001
+  lane: support-exception
+  objective: >-
+    Close the individual paid-account LINE access case after the owner reports
+    the member confirmed the issue is resolved.
+  scope:
+    - Owner-reported member confirmation following the one-row production identity remap.
+  out_of_scope:
+    - System-wide login repair, LIFF provider attribution, full account merge, or Qi transfer.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - The owner reports that the member has replied and the account-access problem is resolved for this case.
+    - The prior checkpoint records the guarded one-row remap, database postcheck, and local inverse SQL; no further production change was made for this closeout.
+    - The owner asked to close this case while waiting for another case.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.9"
+  slice: none
+  prior_checkpoint: memory/events/2026/10/01/20261001T170748_mumate_paid_line_identity_support_checkpoint.yaml
+  member_confirmation: owner-reported; exact device-by-device results were not supplied to the agent
+  repository:
+    head: 0f24c70
+    branch: hq/20261001
+    working_tree: this-record-only
+  rollback: >-
+    Guarded inverse SQL remains in the owner-controlled, Git-ignored local
+    .assets/mumate/support note; not executed.
+
+unresolved:
+  - The older LIFF channel's provider and the systemic cause of the two LINE subjects remain unverified.
+  - The free member still has its 115 Qi and other data but not the moved LINE login; no Qi transfer or deletion was approved.
+  - The individual exception has two live LINE identities on one paid member, beyond the normal one-per-provider linking guard; the normal unlink action is not a one-row rollback.
+  - The potential ops_audit_log exposure noted in the prior checkpoint remains separate and unverified through the Data API.
+
+next_action:
+  action: >-
+    Treat this individual support case as closed on the owner's report. Reopen
+    only on a new member failure report; handle LIFF/provider alignment and
+    the retained free-account data as separately authorized work.
+  acceptance_check:
+    - The member's resolution is recorded as an owner report, not a direct agent observation.
+    - No global login-flow or Qi-merge completion is inferred from this case closeout.
