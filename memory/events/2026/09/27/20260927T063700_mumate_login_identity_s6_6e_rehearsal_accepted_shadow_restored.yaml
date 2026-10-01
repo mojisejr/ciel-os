@@ -1,0 +1,81 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T063700_mumate_login_identity_s6_6e_rehearsal_accepted_shadow_restored
+type: closeout
+recorded_at: 2026-09-27T06:37:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    6e. The owner accepted the rehearsal. The shadow is back on production's
+    database, and the arena, with the real member data it held, is gone.
+    That closes the staging half of slice 6.
+  scope:
+    - The owner's acceptance, the restore, and the arena's removal, each proven.
+  out_of_scope:
+    - 6a's merge, 6f and 6g, which are later steps with their own owner gates.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      OWNER ACCEPTED THE REHEARSAL on 2026-09-27, in answer to the question put
+      after 6d ("1. ยอมรับ").
+    - >-
+      SHADOW RESTORED, IN THE RECORDED ORDER. fe.env, be.env and bazi.env were
+      copied back from their .pre-arena-s6 backups; cmp found each byte-identical
+      to its backup. All three database hosts read
+      aws-1-ap-southeast-1.pooler.supabase.com again. LOGIN_ASK_BEFORE_CREATE is
+      absent from the shadow again, as it was before 6b. fe, be and bazi were
+      force-recreated and are healthy: fe db ok sha e97ede7 (main), be db ok sha
+      0705378. pg_stat_activity on the arena showed 0 connections before it was
+      removed.
+    - >-
+      TIDIED. The three .pre-arena-s6 backups were deleted only after cmp
+      proved them identical to the live files, so they were redundant copies
+      of secrets. env/.s6-owner-id was deleted. bin/arena.sh down removed pgtmp
+      and the volume mumate_pgtmp_data, and status reports it not running. The
+      local git excludes added at 6c remain in /opt/mumate/.git/info/exclude;
+      they are harmless and protect a future rehearsal.
+    - >-
+      DoD 6 AFTER 6e. F2, F3, F4 and F6 are met. F5 is met for the shadow; the
+      production rollback deployment is to be named before 6g. F1 waits on PR
+      827's merge and its production check. F7-F10 belong to 6f-6h.
+  not_completed:
+    - The shadow FE keeps the main build e97ede7-staging, which replaces the slice-4 branch build it ran before. This is recorded as a deliberate improvement, not a change the owner asked for.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.9"
+  slice: none
+  repository:
+    head: "91673f8"
+    branch: hq/20260926
+    working_tree: this-record-only
+  host:
+    restore: "cp -p *.pre-arena-s6 -> force-recreate fe be bazi -> 0 arena connections -> arena.sh down"
+    health_after: "fe 200 db ok dbLatencyMs 5 sha e97ede7; be db ok dbLatencyMs 3 sha 0705378; bazi healthy"
+    arena: "not running; volume removed; Discord alert 'arena down' sent"
+  application:
+    pr_6a: "https://github.com/mojisejr/mootech-fe/pull/827, open, awaiting the owner"
+    flip_branch: "feat/mumate-login-identity-s6-flip 7be9ea6, no PR yet"
+
+unresolved:
+  - Secret-bearing leftovers from earlier lanes remain untracked in the host checkout (env/be.env.bak-20260920-cors, env/fe.env.bak-3c, env/fe.env.pre-arena). The owner decides.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner reviews and merges PR 827. The agent then confirms that a
+    Production deployment exists for the merge and carries the fix, because
+    one merge today produced no deployment. After that comes 6f, the
+    read-only measurement of the exposed and paid sets, handed to the owner
+    with user_ids only for the paid subset. 6g waits for the owner's explicit
+    go.
+  acceptance_check:
+    - PR 827 merged and its production deployment verified; 6f numbers delivered.

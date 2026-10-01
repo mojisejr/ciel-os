@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T100100_mumate_login_identity_owner_decisions_30_31_line_oa_and_trigger
+type: closeout
+recorded_at: 2026-09-27T10:01:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record owner decisions 30 and 31, taken during 6h. LINE OA friendship does
+    not gate login, and the volume rollback trigger moves to about 80 new
+    members a day. Both follow from a behaviour of the legacy route that the
+    flip removed and that no one had put to the owner.
+  scope:
+    - The finding, the two decisions, and the change to 6h's protocol.
+  out_of_scope:
+    - Any code change. The FE route already behaves the way decision 30 wants.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      FINDING (mumate-be-retirement-001 research, Render logs 2026-09-20..26
+      UTC). Legacy register-login called LINE Messaging /profile/{userId} with
+      the OA token (be:src/line-message/line-message.service.ts:12-24,
+      user.service.ts:279-285). That API only knows OA friends. It rejected
+      200 of 442 login attempts (PROFILE_NOT_FOUND), and the FE signed those
+      users out. These are attempts, not people. From the flip at 06:47 to
+      00:05Z the marker count is 0. Production at 07:04 had 0 new members since
+      the flip.
+    - >-
+      OWNER DECISION 30: no OA-friendship gate ("R11 = ไม่ต้อง").
+    - >-
+      OWNER DECISION 31: the volume trigger moves from ~47 to ~80 new members a
+      day, with LINE and Google new members reported separately each day
+      ("R11b = ขยับเลย").
+  not_completed: []
+
+observation_protocol_change:
+  supersedes: "rollback_triggers in 20260927T065300 (6g)"
+  rollback_triggers: "any one of: a new member with no provider row; repeated register-login-fe errors; more than ~80 new members in a day"
+  daily_report_adds: "new members per day split by provider (LINE / Google)"
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.9"
+  slice: none
+  repository:
+    head: "cb90151"
+    branch: hq/20260926
+    working_tree: this-record-and-plan-decisions-30-31
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Continue 6h under the changed trigger until 2026-10-04, then remind the
+    owner and write the slice-6 closeout.
+  acceptance_check:
+    - Daily 6h reports carry the LINE/Google split.

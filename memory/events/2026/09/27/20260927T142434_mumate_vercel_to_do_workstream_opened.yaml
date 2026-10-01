@@ -1,0 +1,85 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T142434_mumate_vercel_to_do_workstream_opened
+type: decision
+recorded_at: 2026-09-27T14:24:34+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Open a workstream for moving mootech-fe and the bazi engine from Vercel to
+    DigitalOcean on the owner's terms: DigitalOcean must already do 100% of
+    what Vercel does, the lost instant rollback is replaced by a designed and
+    measured one, and a real staging environment survives the move.
+  scope:
+    - Open the workstream at plan revision 0.1 with seven slices and seven owner decisions (D1-D7), each with the agent's recommendation.
+    - File the three read-only research reports of 2026-09-27 beside the plan.
+    - Link, not reopen, the completed mumate-infra-move-001 and mumate-control-room-ops-001.
+  out_of_scope:
+    - Authorizing any slice. Slice 1 needs the owner's answers to D1-D3 and its own decision.
+    - Any change to mootech-fe, bazi-sft-dataset, mumate-infra, a droplet, DNS, Vercel or Render.
+
+outcome:
+  status: recorded
+  parallelism: none
+  decision: >-
+    On 2026-09-27 the owner asked how ready MuMate is to leave Vercel, then
+    asked for detailed research focused on what must be done additionally
+    when not on Vercel. Three read-only passes ran (mootech-fe fd3220b,
+    bazi-sft-dataset origin/pdf-dev 72ca612, mumate-infra origin/main cc3ce8b
+    plus the ciel-os records) and the HQ session re-read the highest-impact
+    claims in code. The owner then said DigitalOcean must be 100% before any
+    move, that Vercel's easy rollback is what we lose because we would run
+    everything ourselves, that retiring the staging role would leave no test
+    ground so a staging droplet must be considered, and to open a new
+    workstream for this alone, linking, closing or parking older ones as
+    needed. This record opens it. Nothing needed closing or parking:
+    mumate-infra-move-001 and mumate-control-room-ops-001 are already completed
+    and are cited; the active be-retirement and login lanes are observing to
+    2026-10-04 and are sequenced ahead of any flip by D7.
+  not_authorized:
+    - Every slice of plan revision 0.1.
+    - Creating a droplet, changing staging's connections or keys, or any spend.
+    - Parallel lanes; the overlap with the observing lanes on mootech-fe and bazi-sft-dataset is put to the owner with slice 1.
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 2f42f86
+    branch: hq/20260926
+    working_tree: plan-research-and-this-event-in-one-commit
+    pull_request: none-until-hq-round-closes
+  application:
+    mootech-fe: main fd3220b, untouched
+    bazi-sft-dataset: origin/pdf-dev 72ca612, untouched (local checkout detached at 60c05f0, unchanged)
+    mumate-infra: origin/main cc3ce8b, untouched (local main 2 behind, not pulled)
+  sources:
+    - workstreams/mumate-vercel-to-do-001/research/fe-vercel-inventory.md
+    - workstreams/mumate-vercel-to-do-001/research/bazi-vercel-inventory.md
+    - workstreams/mumate-vercel-to-do-001/research/do-coverage.md
+  preceding_records:
+    - memory/events/2026/09/26/20260926T131821_mumate_infra_move_close_at_slice_3.yaml
+    - memory/events/2026/09/26/20260926T131900_mumate_infra_move_final_closeout_lessons.yaml
+    - memory/events/2026/09/27/20260927T132102_mumate_handoff_before_clear_both_lanes_observing.yaml
+
+unresolved:
+  - "LIVE ON PRODUCTION, NOT THIS PLAN'S WORK: bazi account-purge selects purgeAt <= now with no status filter, and cancelling a deletion keeps purgeAt, so a user who cancelled is still purged (16 tables) on the original date. Read in code at 72ca612; how many rows are affected is unmeasured. Owner to decide whether the team or this session fixes it."
+  - "LIVE ON PRODUCTION IF UNSET: bazi admin routes allow anyone when ADMIN_DOCTRINE_TOKEN is unset (almanac/route.ts:31). Whether Vercel production sets it is unknown; the owner can read it from the Vercel env list."
+  - "Owner-only checks before slice 1 can be sized: the current Vercel production env of both projects (CRON_SECRET, ADMIN_DOCTRINE_TOKEN, APP_DATABASE_URL, QSTASH_*), the Vercel region, whether Preview still resolves to the production database, Namecheap edit rights and the current TTL of bazichart.mumate.co, the LINE webhook and LIFF endpoint URLs, and any Supabase or Gemini IP restriction."
+  - "The local Vercel env pull in mootech-fe (.env.production.local, 2026-09-08) is stale and must not seed a DO env file."
+  - "Droplet price is the list price from memory (about USD 24/month for s-2vcpu-4gb), not checked against the company bill."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Put D1-D3 and D7 to the owner with the recommendations in the plan, and
+    ask for the owner-only checks listed above. When the owner answers, record
+    the answers and, if given, the slice-1 authorization (with or without
+    parallel approval) in a new decision.
+  acceptance_check:
+    - Wake lists mumate-vercel-to-do-001 as active at revision 0.1, idle, with no slice authorized and no validation error.

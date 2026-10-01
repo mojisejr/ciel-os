@@ -1,0 +1,88 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T095400_ciel_mini_template_projects_registry_test_repaired
+type: closeout
+recorded_at: 2026-10-01T09:54:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-mini-template-001
+  lane: single
+  objective: >-
+    Repair the projects-registry test this workstream's own bootstrap commits
+    broke, so the round can close on a green gate. Recorded by the HQ session,
+    against this workstream because the two projects it added are the cause.
+  scope:
+    - test/projects/validate.test.ts - the hardcoded expected list of projects/*/project.yaml.
+  out_of_scope:
+    - The project.yaml files themselves, which validate cleanly and were never the problem.
+    - Changing the test's design from a hardcoded list to a glob; that is a separate decision.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - >-
+      `bun run check` had been RED on hq/20260926 since 2026-09-29 08:32, about
+      49 hours, and no lane noticed. test/projects/validate.test.ts asserts an
+      exact hardcoded list of projects/*/project.yaml. Two projects were added
+      by this workstream without updating it: projects/ciel-mini-template in
+      a827400 (slice 1 bootstrap, 09-29 08:32) and projects/mbti-planner-pilot
+      in ba59b5e (slice 2 pilot bootstrap, 09-29 08:34). The test was last
+      updated 09-27 15:40 in 56ce5b0, when orchard-decision-lab was added - that
+      author did update it, which is why the omission reads as a slip rather
+      than an unknown rule.
+    - >-
+      Repaired by adding the two missing entries in alphabetical position.
+      `result.errors` was always [] - the registry validator itself never
+      objected, only the file-list assertion. After the change: 44 pass, 0 fail,
+      exit 0 in 13.7 s.
+    - >-
+      WHY IT STAYED INVISIBLE FOR TWO DAYS, which is the part worth carrying.
+      On 2026-09-30 the machine ran at load average 42.8 on 8 cores and the same
+      `bun run check` reported 16 failures: 15 were 5000 ms timeouts in fixtures
+      that shell out to git, and exactly 1 was this assertion. A load-induced
+      timeout and a real assertion failure are indistinguishable in a summary
+      line, so the real one hid behind the noise. Re-running at load 10.7 gave
+      43 pass / 1 fail / 0 timeouts in 20.5 s and isolated it immediately.
+    - >-
+      HQ also carried the fault forward: the HQ session reported "check and wake
+      both exit 0" to the owner and to two lanes at 10:55 on 09-30 while having
+      run only wake, reusing a check pass from 09-28 21:36 that predated
+      a827400. Asserting a verification not performed at that moment is what let
+      this sit. Both lanes were told, and both switched to reporting wake only
+      unless they had actually run check.
+
+evidence:
+  plan: workstreams/ciel-mini-template-001/PLAN.md
+  plan_revision: "0.5"
+  slice: none
+  repository:
+    head: "7d16df5"
+    branch: hq/20260926
+    working_tree: this-change-only
+  verification:
+    before: "43 pass / 1 fail (validates the committed project registry) at load 10.7"
+    after: "44 pass / 0 fail, bun run check exit 0, 13.72 s"
+    wake: "exit 0, validationErrors [], one carried warning (2026-09-16 ga4 parked closeout)"
+
+unresolved:
+  - >-
+    The test still hardcodes the project list, so the next project added without
+    touching it breaks the gate the same way. Whether to keep the explicit list
+    (it catches an unintended project) or derive it (it stops breaking) is an
+    owner decision and is not taken here.
+  - >-
+    Nothing warns when a load-induced timeout is mistaken for a real failure.
+    The practical rule, recorded rather than automated: when check fails with
+    several timeouts, read the load average before reading the failures.
+
+next_action:
+  action: >-
+    None for this workstream. The gate is green and the round can close. If the
+    owner wants the hardcoded list replaced with a derived one, that opens as its
+    own decision against this plan.
+  acceptance_check:
+    - bun run check exits 0.
+    - bun run wake exits 0 with validationErrors [] and no new warning.

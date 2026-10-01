@@ -1,0 +1,97 @@
+schema_version: ciel.event.v0.1
+id: evt_20260930T115035_cu12_sprint005_slice3_pr_ready_release_after_merge
+type: closeout
+recorded_at: 2026-09-30T11:50:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-005
+  lane: single
+  objective: >-
+    Slice 3, one file the team opens with a double-click. This record
+    checkpoints the code as ready for the owner's review. The release
+    and the walk can only follow the merge.
+  scope:
+    - The cu12-console binary, the release workflow, the macOS build script and the README section, as pull request 7.
+  out_of_scope:
+    - The workflow run, the release, the owner's walk, and the Windows acceptance. They come after the merge.
+
+outcome:
+  status: ready-for-owner-review
+  completed:
+    - >-
+      cu12-simulator 9762268 on feat/console-binary, branched from main
+      0d7c4b1, is pushed as pull request 7. The new binary cu12-console
+      puts the wire on tcp:127.0.0.1:5012 and the console on
+      http://127.0.0.1:5013, starts with physics on at 550 ms and every
+      door closed, and binds both ports before printing. It prints the wire
+      address first and opens the browser. On a taken port or a bad
+      variable it gives a Thai message and waits for Enter. tcp.rs gains
+      serve_listener, and serve_loopback calls it, so the cu12-simulator
+      binary is unchanged. release.yml is workflow_dispatch only. It tests
+      and builds on windows-latest and uploads cu12-console-windows-x64.exe
+      to the release named by its tag input.
+      scripts/build-macos-console.sh zips the Apple Silicon build, because
+      a bare file downloaded by a browser loses its execute bit. README
+      gains a team section with the first-open steps for an unsigned file.
+    - >-
+      Checks: cargo test 48 passed, 0 failed (42 before plus 6 new). fmt
+      --check, clippy --all-targets -D warnings, and cargo check --target
+      x86_64-pc-windows-msvc --all-targets pass. The macOS zip was built
+      and unzipped. The binary is an arm64 Mach-O with rwx mode, ad-hoc
+      signed. Run with no variables, it printed tcp:127.0.0.1:5012 first
+      and served the state (hooks FF 0F) and the Thai page on 5013.
+  not_completed:
+    - The owner's review and merge of pull request 7.
+    - The workflow dispatch, the release and its duration, and the upload of the macOS zip.
+    - >-
+      The owner's Mac walk from the downloaded file: first open through
+      Gatekeeper, the page, SMC v2 f2e023a on Simulator (ทดสอบ), a dispense
+      of HN201, and a CSV exported into .assets/smc-v2/walk-20260930/.
+    - The Windows acceptance, which waits for the owner's Windows machine.
+  observations:
+    - >-
+      The Windows .exe is in this slice, so Windows users on the team can
+      run it once the release exists. What is missing on Windows is
+      observation: nobody has opened it there. The workflow runs the
+      console binary's black-box tests on windows-latest before it builds,
+      and that will be the first Windows evidence.
+    - >-
+      On a Windows 10 console without a Thai font, Thai text may show as
+      boxes. The addresses are ASCII and come first on each line, so they
+      stay readable. Not observed.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-005/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: "ea4cea3"
+    branch: hq/20260926
+    working_tree: this-event-only
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "9762268"
+    branch: feat/console-binary
+    base: "0d7c4b1"
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/cu12-simulator/pull/7
+  preceding_records:
+    - memory/events/2026/09/30/20260930T114533_cu12_sprint005_plan_0_2_slice3_authorized.yaml
+
+unresolved:
+  - Most of the team is on Windows, and the owner will revisit the Windows side later. hq/20260926 is still unpushed.
+  - bun run check in HQ is red on the pre-existing projects-registry assertion (a827400/ba59b5e). It is unrelated to this lane and is with the owner.
+
+next_action:
+  action: >-
+    The owner reviews and merges pull request 7. The agent then syncs main,
+    dispatches release with a tag such as console-v0.1.0, records its
+    duration, and uploads the macOS zip to the same release. The owner
+    then walks from the downloaded file for about 8 minutes, and the agent
+    records the slice 3 closeout.
+  acceptance_check:
+    - Wake lists cu12-simulator-sprint-005 at revision 0.2, phase 3, executing, with this record as its latest event.

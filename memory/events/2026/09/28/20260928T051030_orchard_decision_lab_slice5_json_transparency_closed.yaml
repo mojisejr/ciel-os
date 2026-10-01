@@ -1,0 +1,79 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T051030_orchard_decision_lab_slice5_json_transparency_closed
+type: closeout
+recorded_at: 2026-09-28T05:10:30+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Make the live Jev Playground legible as an OpenRouter-style learning surface
+    without exposing a secret or fabricating provider output.
+  scope:
+    - Show the actual versioned synthetic request body as copyable JSON.
+    - Show normalized typed output as a Thai table and copyable JSON.
+    - Persist future response ID and probability distribution fields locally.
+  out_of_scope:
+    - A second provider call, provider-secret display, private-data submission,
+      agricultural policy activation, or a public deployment.
+
+outcome:
+  status: recorded
+  slice: "5"
+  completed:
+    - >-
+      The `/jev` screen now has copy controls for the exact synthetic request and
+      normalized output, alongside a Thai field/value table.
+    - >-
+      The output intentionally renders missing historical response fields as null
+      with a Thai explanation; it does not invent the first run's probability distribution.
+    - >-
+      Future permitted runs retain provider request ID and the validated Choice
+      probability distribution in the ignored local ledger.
+  not_completed:
+    - The sole earlier live run predates full probability persistence, so its
+      output remains correctly partial rather than complete-looking.
+    - No additional live call was made for this UX improvement.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.0"
+  slice: "5"
+  repository:
+    head: f4bfdcb14ffaf961504be1e94db897b41ee6537d
+    branch: hq/20260926
+    working_tree: slice5-json-transparency-closeout-prepared
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 42fdd010a4f91afa8ab0296e29f61924b6f4bc84
+  checks:
+    - bun run check: 27 tests passed, 0 failed, 123 expectations.
+    - >-
+      Local browser inspection confirmed request JSON, output table, output JSON,
+      copy controls, and the disabled live-call guard without a second provider call.
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-prior-synthetic-control; no-new-call-authorized-or-needed
+    eye_truth: closed-agent-local-browser-inspection
+    device_truth: not-applicable-local-browser-only
+
+unresolved:
+  - >-
+    Copy controls are present and browser-accessible; owner clipboard behavior on
+    their own browser remains a usability review item, not an API correctness claim.
+  - >-
+    The intended long-term request/output schema still needs labelled orchard
+    evidence and owner approval before it can accept a private-data envelope.
+
+next_action:
+  action: >-
+    Owner reviews the transparent Playground representation, then separately
+    decides whether a second synthetic call is worthwhile or whether to authorize
+    Slice 6 source evidence.
+  acceptance_check:
+    - The owner can copy and explain the state/questions and distinguish a typed output from policy.
+    - The owner sees null historical fields as missing evidence, not a system failure or fabricated result.

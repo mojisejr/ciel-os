@@ -1,0 +1,138 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T115819_mumate_be_retirement_s3_staging_ready_be_retired
+type: closeout
+recorded_at: 2026-09-27T11:58:19+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Checkpoint for slice 3. The shadow runs slices 1+2 with be stopped and
+    api.staging as a logged tombstone, FE and bazi serve from the arena, and
+    staging is ready for the owner's walk. This record carries the reverse
+    steps.
+  scope:
+    - Slice 2 build, the sync with main (#829), the owner's push, the staging image, the host setup, and the isolation proof.
+    - A defect in PR 24 found before first use, and its fix as PR 25.
+  out_of_scope:
+    - The walk itself and the owner's acceptance.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      SLICE 2 BUILT (eec49c8, by a subagent).
+      - One middleware rule (lib/v1-retired-routes.ts, redirectRetiredV1)
+        sends every v1 route to a v2 target with 307 no-store, keeps the
+        query string, and runs after the maintenance gate. The v1 code stays
+        in the tree.
+      - /api/chat/balance now answers 410; lib/credit/wallet-client.ts is
+        deleted.
+      - ENDPOINT no longer reads NEXT_PUBLIC_BACKEND_URL. v2 paths live in
+        constants/api/endpoint-local.ts.
+      - scripts/be-seam-closed.test.ts walks the import graph of everything
+        still reachable and proves endpoint.ts unreachable.
+      - /ops no longer reads Render.
+      - NEXT_PUBLIC_BACKEND_URL, AI_CONSUME_SECRET, CREDIT_ENFORCE and
+        RENDER_API_KEY left the env contract.
+    - >-
+      SYNCED WITH MAIN. A teammate's #829 (notifications, manifest, SW
+      auto-update; 6 files) landed on main at 3c53a16. None of its files
+      overlap with slices 1-2. main was merged into s1 (e9f01fb), then s1 into
+      s2 (5621534). On s2: tsc 0; lint 0 errors; npm test 281 files passed /
+      22 skipped, 3,501 tests passed / 211 skipped; build green with the
+      VAPID gate. The owner pushed both branches with --no-verify, because
+      the pre-push verify-architecture check fails on four violations that
+      already exist on main.
+    - >-
+      STAGING IMAGE built by container-build run 36295526910 (5621534,
+      target staging), from the s2 workflow file, which no longer inlines
+      NEXT_PUBLIC_BACKEND_URL.
+    - >-
+      HOST SETUP (the arena from 10:4x, restored from
+      mumate-2-20260927T020209Z, untouched since the read-only measurement).
+      - Backups made first: env/fe.env.pre-arena-be, env/bazi.env.pre-arena-be,
+        .env.pre-arena-be.
+      - fe.env: DATABASE_URL points at pgtmp; LOGIN_ASK_BEFORE_CREATE=true, as
+        on production; SUPABASE_PROJECT_URL, SUPABASE_SERVICE_ROLE_KEY and
+        SUPABASE_STORAGE_BUCKET were copied on the host from env/be.env, so
+        no value left the host.
+      - bazi.env: APP_DATABASE_URL points at pgtmp.
+      - .env: FE_TAG set to the new image; BE_SCALE=0; MUMATE_BE_MODE=retired.
+      - Deployed by hand (compose pull fe; up -d --remove-orphans; bazi
+        force-recreated), not by deploy.sh, because of the defect below.
+    - >-
+      ISOLATION PROVEN at 11:56-11:57.
+      - be container removed.
+      - pg_stat_activity on the arena shows exactly fe (172.18.0.2) and bazi
+        (172.18.0.4).
+      - ops-status: "be: retired mode (BE_SCALE=0), not running by design";
+        fe ✅ sha 5621534; bazi ✅.
+      - app.staging /api/health: db ok, sha 5621534.
+      - api.staging /health answers 200 {"mode":"retired"}; POST
+        /user/register-login answers 410.
+      - Bundle probe across the 23 chunks that 7 v2 pages load: 0 contain
+        localhost:4000, 0 api.staging, 0 onrender, 0 /user/register-login.
+        The one "/chinese-horoscope" hit is the FE's own
+        /api/chinese-horoscope in endpoint-local.
+      - v1 URLs: all 15 tested answer 307 to their mapped v2 target, and
+        ?ref= survives.
+    - >-
+      ARENA BASELINE at 11:57 (before the walk): users 5,130; user_provider
+      5,316; consent 144; member_with_friend 2,270; log_calculate 20,147;
+      newest user 2026-09-27 08:23:41. api.staging requests since the deploy:
+      4, all the agent's own probes.
+    - >-
+      DEFECT FOUND BEFORE USE. PR 24's BE_SCALE=0 makes deploy.sh and
+      rollback.sh time out, because wait_healthy lists services from compose
+      config, which still names be, and a service scaled to zero is never
+      seen. The result would be an auto-rollback on every deploy. The fix
+      (wait_healthy skips be when BE_SCALE=0, tested in isolation) is
+      mumate-infra PR 25, awaiting the owner.
+  not_completed:
+    - >-
+      Storage is not isolated. On staging, a friend-photo upload writes to the
+      real Supabase Storage bucket, because the arena isolates only the
+      database. Uploads during the walk are recorded as that exception.
+    - "Until PR 25 merges: do not run bin/deploy.sh or bin/rollback.sh on the host while BE_SCALE=0."
+
+reverse_steps:
+  note: Returns the shadow to production's database with be live. The FE image may stay or go back; the arena goes last.
+  steps:
+    - "cd /opt/mumate && cp -p env/fe.env.pre-arena-be env/fe.env && cp -p env/bazi.env.pre-arena-be env/bazi.env && cp -p .env.pre-arena-be .env"
+    - "docker compose --profile full up -d --remove-orphans   (be comes back: BE_SCALE and MUMATE_BE_MODE are gone with .env; caddy recreated to live mode; fe back to e97ede7-staging)"
+    - "docker compose --profile full up -d --force-recreate --no-deps fe bazi"
+    - "Confirm: ops-status all ✅ with be running; fe/be /health db ok on the pooler; pg_stat_activity on pgtmp shows 0 connections; api.staging /user/... proxies again"
+    - "bin/arena.sh down; then delete the three *.pre-arena-be files once cmp shows them identical to the live ones"
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.4"
+  slice: none
+  repository:
+    head: "10364e0"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    fe_branches: "feat/mumate-be-retirement-s1 e9f01fb, feat/mumate-be-retirement-s2 5621534 (pushed by the owner)"
+    staging_image: "ghcr.io/mojisejr/mootech-fe:56215348694302e607983a8a286cc0b03d72e87c-staging"
+    infra: "PR 24 merged (host at 5799b83); PR 25 open"
+
+unresolved:
+  - The arena expires on 2026-10-04.
+  - v1 URLs held outside the app (LINE rich menu, LIFF, old share links in chats, Omise v1 return URLs) now land on the v2 targets. None of these can be verified from the repository.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner walks slice 3 on app.staging.mumate.co. The agent counts arena
+    rows and api.staging requests for the walk window. Then the owner accepts
+    the rehearsal (S5) or not, and the shadow is returned with the reverse
+    steps.
+  acceptance_check:
+    - DoD S1-S3 proven for the walk window; the owner's answer recorded.

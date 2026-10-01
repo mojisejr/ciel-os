@@ -1,0 +1,87 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T162019_mumate_handoff_before_clear_fence_moved_to_0929
+type: closeout
+recorded_at: 2026-09-28T16:20:19+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Hand MuMate over before the owner clears this session. Slice 3 is closed,
+    slice 4 is proven except one row, and the owner moved the merge fence and
+    the end of the observation windows from 2026-10-04 to 2026-09-29. This
+    record is the cold-session entry for all MuMate work.
+  scope:
+    - mumate-vercel-to-do-001 slices 2-5, the two observing lanes (login, be-retirement), the dates ahead.
+  out_of_scope:
+    - Other workstreams in attention; the owner said they wait.
+
+outcome:
+  status: recorded
+  slice: "4"
+  owner_decision_today: >-
+    The owner, asked whether to start slice 5 on integration builds while the
+    2026-10-04 fence held, answered: "งั้นเราจะเลื่อนเข้ามาเป็นวันที่ 29 ครับ
+    พรุ่งนี้เราจะเริ่มทำงานต่อ วันนี้เราจะรอดูอีก 1 วันแล้วเราจะเดินงานต่อทันทีครับ".
+    Recorded reading: the observation windows of mumate-login-identity-001
+    and mumate-be-retirement-001 end on 2026-09-29 after the day-2 daily check
+    (instead of 2026-10-04, decision 26), and slice-2 fence A ("no mootech-fe
+    or bazi merge before 2026-10-04", 20260928T051750) moves to 2026-09-29.
+    The next session states this reading to the owner in one line and gets a
+    yes before the first merge; a trigger in the day-2 check voids it.
+  state:
+    - "Slice 1 closed (20260928T045413). Slice 2: code proven on staging from integration builds; FE 832-836 now pass per-branch `npm run build` and full `npm run lint` (0 errors, 135 warnings = main), Hard Gate boxes ticked; bazi 43-46 and FE 832-836 still draft and unmerged."
+    - "Slice 3 CLOSED (20260928T143801): mumate-infra PRs 29-35 merged, main 3c918fb, mumate-2 on main. Release button (Actions -> release) proven on staging by OIDC; RELEASE_ACTORS=mojisejr; tailnet policy has tag:ci with tests."
+    - "Slice 4 AUTHORIZED (20260928T143825). Checklist workstreams/mumate-vercel-to-do-001/parity-checklist.md: every row proven or decided by the owner except row 1's daily jobs (qi-quota-reset 17:00Z, account-purge 17:30Z first runs tonight on staging). Not signed yet (B-5). Load test: ~74 req/s ceiling on one fe process, 0 errors to 300 concurrent, ~100x the busiest recorded hour."
+    - "Beam delivers every event to every endpoint of the merchant; the owner disabled the staging webhook in Beam (option ข); fe fix (ค) later."
+    - "bazi Vercel Production now has CRON_SECRET (20260928T160856), NOT in effect until the next bazi production deployment; the owner chose (ข): the first bazi merge carries it. First pending deletion due about 2026-10-26."
+    - "Daily check day 1 (20260928T081914): no trigger. Production SQL is owner-run (harness refuses agent production reads): .assets/mumate/daily-check-20260928.sql, reusable as is."
+  for_a_cold_session:
+    read_first:
+      - "this record"
+      - "workstreams/mumate-vercel-to-do-001/parity-checklist.md"
+      - "memory/events/2026/09/28/20260928T051750_mumate_vercel_to_do_slice2_authorized.yaml (the merge fences B-E still apply)"
+      - "memory/events/2026/09/27/20260927T132102_mumate_handoff_before_clear_both_lanes_observing.yaml (login close + R7 steps)"
+    steps_2026_09_29:
+      - "1. Wake. After 09:15 Bangkok: read the staging nightly jobs (journalctl -u 'mumate-cron@qi-quota-reset' and '@account-purge' since 2026-09-28 17:00 UTC; expect 200) and the Render mootech-be 204/200 counts; hand the owner the day-2 SQL; compare with the triggers (>~80 new/day, any member without provider, two-live-Google baseline 1, exposed baseline 1,442)."
+      - "2. Close checklist row 1, ask the owner to sign (B-5), record slice 4's closeout."
+      - "3. State the fence reading above in one line; on the owner's yes: login slice-6 closeout (final, ready-for-owner-merge) and a be-retirement closeout of its observation; R7 stays step by step and not in the flip's week."
+      - "4. Slice-2 merges, one at a time, bazi before FE, each watched and revertable. Before bazi 43: owner sets ADMIN_DOCTRINE_TOKEN on the Vercel bazi project (and tells เอ็ม - admin routes fail closed after 43). Before bazi 45 and FE 832: BAZI_CLIENT_ID_SECRET (value in .assets/mumate/infra-mumate/bazi-client-id-secret.env) on both Vercel projects, bazi first. FE merges conflict in vitest.config.mts include lines (keep both). The first bazi merge also puts CRON_SECRET in effect: check a bazi cron answers 200 in Vercel's log."
+      - "5. After the merges: build staging images from main, release to staging with the button, re-run the short drills, then switch automatic staging release on merge (Q3)."
+      - "6. Slice 5 needs its own decision: billing for the production droplet (~USD 24/month, s-2vcpu-4gb sgp1), add เอ็ม to mumate-infra (write) and RELEASE_ACTORS."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "4"
+  repository:
+    head: "fe84b7c"
+    branch: hq/20260926
+    working_tree: this-record-only
+    unpushed_commits_on_hq: 98
+  application:
+    mumate-infra: "main 3c918fb on the laptop and mumate-2; merged local slice-3 branches deleted"
+    mootech-fe: "checkout main fd3220b clean"
+    bazi-sft-dataset: "checkout detached 60c05f0 clean (pdf-dev is 2bf1427)"
+    staging_tags: "fe 850d8fbed5c8-staging, bazi 7000d190cd44-staging"
+
+unresolved:
+  - "The fence reading needs the owner's one-line yes tomorrow; merging before it would act on an interpretation."
+  - "One Render 204 on 2026-09-27 10:10-11:10Z is unexplained."
+  - "`docker kill`/`stop` is a manual stop that restart policies ignore; app-recover does not act on an absent container (by design)."
+  - "The app's maintenance page answers HTTP 200."
+  - "Staging env/fe.env CRON_SECRET has unrecorded origin."
+  - "bazi-alerts on Vercel will fail daily once CRON_SECRET is in effect (no LINE_* on that project)."
+  - "Before slice 6: bazi LINE webhook and LIFF of channel 2011679472 (ask เอ็ม); Vercel bazi UI/admin routes public while Vercel is the flip-back target."
+  - "HQ hq/20260926 is 98 commits ahead of origin/main; the owner pushes when the round closes."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In a fresh session on 2026-09-29: run Wake, read this record and the
+    checklist, and walk steps_2026_09_29 with the owner one step at a time.
+  acceptance_check:
+    - A cold session can state the fence reading, the checklist's open row, the merge order and its pre-merge env steps, and slice 5's preconditions from this record alone.

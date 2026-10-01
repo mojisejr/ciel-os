@@ -1,0 +1,79 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T115817_ciel_mini_template_publication_decided
+type: decision
+recorded_at: 2026-09-29T11:58:17+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-mini-template-001
+  lane: single
+  objective: >-
+    Publish the reviewed CIEL-mini teaching template so it can be cloned for
+    future learners without publishing any pilot or learner material.
+  scope:
+    - >-
+      Plan revision 0.4, which adds owner-approved public publication as
+      Slice 6.
+    - >-
+      Add a CC BY-NC 4.0 license notice, create the public
+      mojisejr/ciel-mini-template repository, seed it from the clean template,
+      and register its canonical remote in CIEL HQ.
+  out_of_scope:
+    - >-
+      Publishing mbti-planner-pilot, its uncommitted application work, its
+      future Git history, raw materials, or any learner's project.
+    - >-
+      Deployment, accounts, paid services, external data use, or any change to
+      the template beyond the publication and licensing boundary.
+
+outcome:
+  status: decided
+  parallelism: approved
+  completed:
+    - >-
+      The owner reviewed the initial MBTI's-Planner pilot use and judged this
+      template version ready to publish as a reusable template.
+    - >-
+      The owner explicitly requested that others may use the template but may
+      not sell it or use it commercially.
+  not_completed:
+    - The public repository, license commit, fresh-clone check, and HQ remote
+      registration remain to be completed in Slice 6.
+
+evidence:
+  plan: workstreams/ciel-mini-template-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  authorization:
+    observed_directly_by_this_session: true
+    summary: >-
+      The owner instructed the agent to create a public repository, publish the
+      template, and include a license that permits use but prohibits sale or
+      commercial use.
+  repository:
+    head: ba59b5e91af6749d7a29b29bf5b9699ef5802390
+    branch: hq/20260926
+    working_tree: plan-revision-and-this-decision-only
+  template:
+    local_head: 396c4c0b3d1c0041a24f3398bd74dabf90d41e88
+    public_repository: github.com/mojisejr/ciel-mini-template
+    intended_license: CC-BY-NC-4.0
+
+unresolved:
+  - >-
+    The pilot is still in progress: it has alignment records and a successful
+    local build, but no committed session checkpoint or recovery proof yet.
+  - >-
+    CC BY-NC 4.0 makes the template source-available under non-commercial
+    terms; it is intentionally not an OSI open-source license.
+
+next_action:
+  action: >-
+    Add the license notice to the clean template, commit it, create and seed
+    the public repository, verify it from a fresh clone, register the canonical
+    remote in CIEL HQ, and close Slice 6 with the observed published revision.
+  acceptance_check:
+    - The public main head contains LICENSE and the expected template files.
+    - No pilot, raw material, credential, or ignored local binding is published.

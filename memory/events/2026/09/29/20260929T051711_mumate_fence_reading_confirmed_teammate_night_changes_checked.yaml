@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T051711_mumate_fence_reading_confirmed_teammate_night_changes_checked
+type: closeout
+recorded_at: 2026-09-29T05:17:11+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the owner's yes to the fence reading of 20260928T162019 and what
+    เอ็ม's night changes on 2026-09-28 (mootech-fe #837-#846, bazi pdf-dev
+    9 commits) mean for the 2026-09-29 steps.
+  scope:
+    - The fence reading, the LIFF login path, merge readiness of bazi 43-46 and FE 832-836, bazi CRON_SECRET, migrations staging will need.
+  out_of_scope:
+    - Any merge, any Vercel or staging change; step 1 (after 09:15).
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Owner yes (2026-09-29 ~05:15), asked in one line: the login and be-retirement observations end today after the day-2 check and slice-2 fence A moves from 2026-10-04 to 2026-09-29; a trigger in the day-2 check voids it. Owner: 'เรื่อง ที่ให้ผมยืนยันล่วงหน้า คือ ใช่ครับ'. Each merge still waits for the owner's word, one at a time."
+    - "mootech-fe main fd3220b -> 2782b36 (20 commits by เอ็ม, 18:25-21:42 BKK): promo MUMATE100 share and landing, LINE avatar fix, and LINE login fixes #841/#845/#846. #846 adds CredentialsProvider 'line-liff' (idToken verified at api.line.me against LINE_CLIENT_ID and LIFF channel 2011679472; jwt maps it to provider 'line' with the same sub). Owner (2026-09-29): LIFF channel and the LINE Login channel are in the same LINE provider, so the userId matches and no second identity is expected. Laptop checkout fast-forwarded to 2782b36."
+    - "bazi pdf-dev 2bf1427 -> 9a7a979 (9 commits): /ops campaign-link and promo-share (gated by OPS_ADMIN_SECRET, already fail-closed, untouched by PR 43), /fengshui, /siamsi. Nine Vercel production deployments since 2026-09-28 17:54 BKK, so bazi CRON_SECRET (set 16:08) has been IN EFFECT since then, not from the first merge: production qi-quota-reset (17:00Z) and account-purge (17:30Z) likely ran on Vercel on the night of 09-28; day-2 SQL section 5 shows it."
+    - "New migrations, owner/teammate-run (no db:apply): FE lib/db 0036 promo_share, 0037 discount FK ON DELETE, 0038 promo_share settings; bazi drizzle 0054 promo_campaign_link. pgstaging has none of them; they go on staging before main is released there (step 5). Day-2 SQL section 7 reports which reached production."
+    - "Trial merges in scratch worktrees (nothing pushed): bazi 43->46 on 9a7a979 clean; FE 832-836 each clean on 2782b36, in sequence only vitest.config.mts include lines conflict (keep both). Build/test of both merged sets running."
+    - "Day-2 SQL written: .assets/mumate/daily-check-20260929.sql (day-1 sections 1-5 plus 6: LIFF-path returning logins, new LINE members and name matches with older LINE members since 2026-09-28 21:41; 7: migrations on production)."
+    - "Remote branches feat/mumate-login-identity-s5, -s6-flip, fix/mumate-login-identity-s6-unlink-live were deleted on GitHub; all three are ancestors of main (no loss)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "15d093f"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mootech-fe: "main 2782b36 (laptop = origin)"
+    bazi-sft-dataset: "pdf-dev 9a7a979; checkout still detached 60c05f0"
+    bazi_vercel_production: "first post-CRON_SECRET deployment bazi-sft-dataset-c973310t2, 2026-09-28 17:54:53 +07:00"
+
+unresolved:
+  - "D7 for slice 6: the team merged 20 FE PRs in about 3 hours and the MUMATE100 promo is running; 'merge rate low' and 'production calm' are not met today."
+  - "bazi-alerts on Vercel now fails daily at 00:00Z (CRON_SECRET in effect, no LINE_* on the project)."
+  - "Staging proofs were made on the old bases (fe fd3220b, bazi 2bf1427); the merged SHAs are re-proven on staging after the merges (rows 2, 3, 15, 19)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    After 09:15 BKK: step 1 of 20260928T162019 (staging nightly jobs, Render
+    204/200, owner runs .assets/mumate/daily-check-20260929.sql), then step 2.
+  acceptance_check:
+    - The day-2 check is compared with every trigger plus sections 6-7 before the fence reading is used.

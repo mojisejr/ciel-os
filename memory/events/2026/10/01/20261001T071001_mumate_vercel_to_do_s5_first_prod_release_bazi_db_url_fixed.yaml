@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T071001_mumate_vercel_to_do_s5_first_prod_release_bazi_db_url_fixed
+type: closeout
+recorded_at: 2026-10-01T07:10:01+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the production build variables, the production images, the first
+    production release (failed on bazi) and its fix.
+  scope:
+    - GitHub Environment production of mootech-fe and bazi-sft-dataset; container-build runs; mumate-infra PRs 37 and 38; release run 36789690877; bazi.env on mumate-prod-1.
+  out_of_scope:
+    - The smoke, Grafana apply, the cutover runbook.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Agent ran bin/build-vars-from-vercel.sh (owner: 'commands you can run, run them'): mootech-fe production = NEXTAUTH_URL https://bazichart.mumate.co, NEXT_PUBLIC_ENABLE_CHAT false, NEXT_PUBLIC_OMISE_KEY / _V2 (live pkey_, same as Vercel), NEXT_PUBLIC_VAPID_PUBLIC_KEY (production pair); HOST and NEXT_PUBLIC_WHATIF_API_URL absent on Vercel and unused/defaulted in code. bazi production = NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY. Both Environments had no variables before."
+    - "Owner dispatched production builds from main c10e91e / pdf-dev 49e22f2 (tips unchanged since the staging proof): runs 36787415253 and 36787456530 success; images ghcr.io/mojisejr/mootech-fe:c10e91e… (667 MB) and bazi-sft-dataset:49e22f2… (599 MB) pulled on mumate-prod-1."
+    - "Owner merged mumate-infra PR 37 (env scripts) and PR 38 (hosts.tsv row mumate-prod-1 production, log-silence term, synthetic check mumate-fe-production; hosts test 19/19)."
+    - "Owner pressed release env=production (run 36789690877): gate 1 RELEASE_ACTORS, tailnet join as tag:ci, gate 2 (same SHAs healthy on staging) all passed - the D4 production path proven; deploy.sh brought up fe (healthy), bazi, caddy, alloy; bazi never became healthy (health check timeout 5 s), there was no earlier set to roll back to, alert 'deploy FAILED and rollback NOT healthy' sent. No DNS points at the host: no user impact."
+    - "Cause: APP_DATABASE_URL in prod-fill.env held the Supabase project API URL (https://<ref>.supabase.co), not a Postgres connection string; bazi accepted it as a URL and hung on connect. The correct value (postgresql, transaction pooler port 6543 of the production project, as the FE uses) was found, on the owner's pointer, in .assets/mumate/infra-mumate/from-jareonsak/engine-env.env and moved into prod-fill.env unprinted; bazi.env re-placed by the agent (9 names); bazi recreated: healthy, /api/health db ok 4 ms; fe /api/health ok, env production, platform container, db 5 ms."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "feaadea"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mumate-infra: "main with PRs 36-38"
+    host: "mumate-prod-1 fe c10e91e healthy, bazi 49e22f2 healthy, caddy and alloy up; MAINTENANCE_MODE=on; no timers"
+
+unresolved:
+  - "deploy-history on the production host records the failed release; a second release with the same SHAs records ok."
+  - "Caddy on mumate-prod-1 retries the bazichart.mumate.co certificate until the DNS flip; the cutover runbook must restart caddy right after the flip."
+  - "from-jareonsak/engine-env.env (2026-09-20) also lists SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY for bazi, which Vercel bazi production does not have; parity keeps them out - ask เอ็ม whether bazi storage features need them."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner presses release env=production again with the same SHAs; then the
+    agent runs the smoke over the tailnet, checks alloy shipping from
+    mumate-prod-1, and writes the cutover runbook.
+  acceptance_check:
+    - deploy-history on mumate-prod-1 has an ok line for c10e91e / 49e22f2.

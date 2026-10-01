@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T125209_mumate_be_retirement_pr830_open_awaiting_env_and_merge
+type: closeout
+recorded_at: 2026-09-27T12:52:09+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Offer slice 4's production change as mootech-fe PR 830, which carries
+    slices 1 and 2 in one merge. It waits on two owner actions: the Supabase
+    env in Vercel production, then the merge.
+  scope:
+    - PR 830, and staging's state after decision B.
+  out_of_scope:
+    - The merge and the Vercel env, both the owner's.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      PR 830 (https://github.com/mojisejr/mootech-fe/pull/830) opened from
+      feat/mumate-be-retirement-s2 (5621534) to main (3c53a16, fully
+      contained). It changes 81 files, +4,754/-705. The body carries the
+      rehearsal evidence, the drift figures, the v1 route map, the rollback
+      (revert the merge; Render stays up), and both templates.
+    - >-
+      STAGING AFTER B. FE runs 5621534-staging on the production pooler. be
+      is in retired mode. The arena is down. The three *.pre-arena-be
+      backups are kept for the staging rollback (BE_SCALE=1 plus restoring
+      them).
+  not_completed:
+    - The owner puts SUPABASE_PROJECT_URL, SUPABASE_SERVICE_ROLE_KEY and SUPABASE_STORAGE_BUCKET into Vercel production, then merges PR 830.
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.5"
+  slice: none
+  repository:
+    head: "e0cdcfe"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    pr: "https://github.com/mojisejr/mootech-fe/pull/830"
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    After the merge: confirm the Production deployment exists for the merge
+    SHA, probe the bazichart.mumate.co bundle (no backend host or path in the
+    chunks v2 pages load), have the owner walk production, take read-only
+    counts, and start the seven-day observation. Render stays up.
+  acceptance_check:
+    - Deployment and bundle verified; the owner's production walk recorded.

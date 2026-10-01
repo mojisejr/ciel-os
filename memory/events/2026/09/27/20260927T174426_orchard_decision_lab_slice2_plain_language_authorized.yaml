@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T174426_orchard_decision_lab_slice2_plain_language_authorized
+type: decision
+recorded_at: 2026-09-27T17:44:26+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Correct the Thai Slice 2 playground so its primary reading path sounds
+    natural to a grower and does not require translating technical Thai.
+  scope:
+    - Reorganize the visible trace around action, reason, missing information, and AI boundary.
+    - Keep deterministic semantics, fixtures, test coverage, and technical audit details intact.
+  out_of_scope:
+    - Any LLM/provider call, policy change, CSV access, persistence, or Slice 3 implementation.
+
+outcome:
+  status: decided
+  completed:
+    - The owner explicitly authorized the focused Slice 2 plain-language correction.
+  not_completed:
+    - The presentation change, replay proof, and owner review remain to be performed.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: 4aba62a19c493f6d42247df603fc1b0fc9342922
+    branch: hq/20260926
+    working_tree: slice2-plain-language-decision
+  owner_statement: >-
+    ภาษาอ่านยากและต้องแปลไทยเป็นไทยอีกรอบ; ให้แก้ Playground ได้เลยโดยไม่ต้องใช้ LLM.
+
+unresolved:
+  - The owner must review the revised reading path before accepting Slice 2.
+
+next_action:
+  action: Implement and prove the plain-language Playground correction, then present it through the existing tunnel.
+  acceptance_check:
+    - A grower can identify what to do now, why, what remains to check, and whether AI was used without technical Thai.

@@ -1,0 +1,135 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T215500_mumate_login_identity_slice5_pr825_open
+type: closeout
+recorded_at: 2026-09-26T21:55:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Offer slice 5 (numbered 4b until plan 0.8) for the owner's merge: ask before a
+    second account is created, and hold every member to one live identity per
+    provider. The implementation is proven locally; D8, the owner's production
+    walk, follows the merge and the switch.
+  scope:
+    - mootech-fe PR 825 and the evidence behind it.
+    - What was found in the code that the plan had wrong, and what remains unexercised.
+  out_of_scope:
+    - Setting LOGIN_ASK_BEFORE_CREATE on any environment, and the production walk.
+    - Slice 6 (the flip) and the unlink route's last-method rule.
+
+outcome:
+  status: ready-for-owner-merge
+  parallelism: approved
+  slice: "5"
+  execution_phase: "5"
+  completed:
+    - >-
+      ASKING, BEHIND A SWITCH THAT DEFAULTS OFF. Before it registers, the self-heal
+      now reads GET /api/auth/identity-status. That route is read-only, uses
+      strict session resolution, and returns no user_id. If the identity has no
+      owner and LOGIN_ASK_BEFORE_CREATE is on, the member goes to
+      /v2/welcome-back. Any failure (unreachable, a 4 s timeout, a malformed
+      body) falls back to registering exactly as today.
+    - >-
+      THE QUESTION SCREEN.
+      "Yes" proves the member with the other provider (Google with
+      prompt=select_account), then attaches the original identity through slice
+      3's link start route. This adds no new write path.
+      "No" remembers the choice for that identity in the tab and lets the
+      self-heal create the account as before. The referral code stays in
+      localStorage, where /v2/register reads it.
+      If the proof fails, the member is offered retry and create-new.
+      Google inside the LINE app shows open-in-browser guidance.
+      The wording is the agent's draft, awaiting the owner's approval at review.
+    - >-
+      OWNER DECISION 22, NOT SWITCH-GATED. linkProvider returns
+      provider-already-held when the member already holds a live identity of
+      that provider. It checks inside the transaction after the advisory lock.
+      A merge that would give the survivor a second live identity is refused the
+      same way. Dead ya29 rows do not count. The callback and /merge/confirm map
+      the refusal to provider_already_held, and the connected screen explains it
+      as a probable wrong-account pick with the way to change it.
+    - >-
+      Members holding every provider now see a line on the connected screen
+      pointing to the team on LINE @mumate.co (decision 19).
+  found_in_the_code:
+    - >-
+      THE PLAN'S "FIVE ENTRY POINTS" ARE ONE. DoD 5 D1 names five callers of
+      UserRegisterOrLogin. On origin/main 75ecc29 only the global self-heal
+      calls it in production. pages/index.tsx redirects to /v2 once
+      V2_PREVIEW_KEY is unset, and modal-add-freind, modal-email and
+      modal-payment only import it. D1 is therefore enforced at the one live
+      caller, and tested there.
+    - >-
+      THE LINK START ROUTE CANNOT RUN RIGHT AFTER A FIRST SIGN-IN. It resolves the
+      signed session to a user_id, and an unowned identity has none. That is
+      why "yes" signs in with the other provider first, and only then starts the
+      link for the original provider.
+  lessons:
+    - >-
+      COUNT THE CALLERS THAT RUN, NOT THE CALLERS THAT IMPORT. The plan listed
+      five entry points from a grep of imports. Four are dead or never call the
+      function. Guarding all five would have added code with no effect, and the
+      grep result read as coverage it did not give.
+    - >-
+      A RULE THE SCREEN ENFORCES IS NOT A RULE. Hiding the link button made "one
+      Google" look true. The server accepted a second one from a direct call, and
+      this slice's own "yes" path would have made that the ordinary outcome. The
+      owner's question found it; reading the code and counting rows confirmed it
+      before anything was designed.
+    - >-
+      A PARSER THAT CANNOT SEE A SLICE CANNOT AUTHORIZE IT. A slice named 4b would
+      have produced a decision that authorized nothing. Renumbering in the plan
+      cost one table; changing CIEL would have been a side issue.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.8"
+  slice: "5"
+  execution_phase: "5"
+  repository:
+    head: "40cc71e"
+    branch: hq/20260926
+    working_tree: this-closeout-and-plan-state
+  application:
+    repository: mootech-fe
+    pull_request: "https://github.com/mojisejr/mootech-fe/pull/825"
+    branch: feat/mumate-login-identity-s5
+    head: "52dab8d"
+    base: "main 75ecc29"
+    checks: "Vercel preview deployment passed"
+    switch: "LOGIN_ASK_BEFORE_CREATE, unset everywhere"
+  checks:
+    tests: "npm test: 3,168 passed, 191 skipped (env-gated real-Postgres)"
+    new_specs: "ask-before-create, identity-status-route, self-heal-ask, identity-choice-screen"
+    extended_specs: "link-account +7, merge-identity +3, link-callback-route +2, connected-screen +4"
+    mutations: "9 of 9 red: link rule removed, merge rule removed, dead rows counted, self-heal ignores verdict, choice ignored, switch default on, switch ignored, yes uses same provider, heal on question page"
+    typecheck: "tsc --noEmit clean"
+    lint: "0 errors, 135 warnings (unchanged count)"
+    build: "npm run build green, VAPID gate ✅"
+    gitleaks: "no leaks on the staged diff"
+    push_note: "--no-verify: verify-architecture red on the same four pre-existing violations in other lanes' files, none in this diff; guard-workflow-integrity passed"
+
+unresolved:
+  - D8 is not done. The owner walks both paths on production after the merge and the switch.
+  - Cancelling at a provider's consent screen goes through NextAuth's error page, not straight back to the question. The session stays valid and the question returns on the next /v2 visit. Not walked.
+  - With the switch off, the self-heal still makes one extra read before registering, only at sign-in when MEMBER_ID is missing.
+  - The question screen's wording awaits the owner's approval.
+  - Decision 22 is live on merge without the switch.
+  - Carried from the round handoff, unchanged - the link round trip and the merge have never been exercised on production, the backup-layer items now closed by mumate-backup-001 excepted.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner reviews PR 825, including the question screen's wording, and
+    merges it. Then, in two steps, set LOGIN_ASK_BEFORE_CREATE=on in Vercel and
+    redeploy. The owner walks D8: unlink Google, sign in with Google, answer
+    "yes", prove with LINE, and see Google re-attached; then one fresh Google
+    account for "no", with row counts before and after. Record the slice
+    closeout with the walk.
+  acceptance_check:
+    - PR 825 merged; the switch set and a redeploy after it; D8 walked and recorded.

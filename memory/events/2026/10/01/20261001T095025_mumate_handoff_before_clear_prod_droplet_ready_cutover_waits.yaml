@@ -1,0 +1,79 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T095025_mumate_handoff_before_clear_prod_droplet_ready_cutover_waits
+type: closeout
+recorded_at: 2026-10-01T09:50:25+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Hand MuMate over before the owner pushes HQ and clears this session.
+    Slices 1-5 are closed; the production droplet is built, dressed and
+    smoke-tested without traffic; the cutover (slice 6) waits for D7 and the
+    owner's go. This record is the cold-session entry for all MuMate work.
+  scope:
+    - mumate-vercel-to-do-001 state after slice 5, what waits on whom, the cutover entry point; the two observing lanes closed on 2026-09-29.
+  out_of_scope:
+    - Other workstreams in attention.
+
+outcome:
+  status: recorded
+  slice: none
+  state:
+    - "PRODUCTION IS STILL ON VERCEL (checked 2026-10-01 09:10): bazichart.mumate.co CNAME to Vercel, /api/health platform vercel, users normal, Vercel crons running."
+    - "Closed this round: login lane final (slice 6, ready-for-owner-merge, 20260929T123622); be-retirement observation (R7 waits, not in the cutover week); vercel-to-do slices 2 (all 9 PRs merged: bazi 43-46 pdf-dev 49e22f2, FE 832-836 main c10e91e), 4 (checklist signed), 5 (20261001T*_slice5_closeout)."
+    - "mumate-prod-1: droplet 605089616, reserved IP 209.38.56.234, tailnet 100.95.78.27, no public 22; fe c10e91e + bazi 49e22f2 healthy; MAINTENANCE_MODE=on; NO cron timers; health timer on; deploy-history ok. Staging mumate-2 runs the same SHAs (-staging images)."
+    - "mumate-infra main 2a72d63 (PRs 36-41 merged): do-create fix, bin/env-from-vercel.sh, bin/build-vars-from-vercel.sh, hosts.tsv with mumate-prod-1, runbooks/06-cutover.md (rehearsed on staging, DO side about 30 s). Draft PR 39 = production cron timers, MERGE ONLY at runbook 06 step 3."
+    - "Grafana: log-silence covers both hosts; synthetic checks fe-staging and fe-production (3 min); be-staging removed."
+    - "Secrets: .assets/mumate/infra-mumate/prod-fill.env (600) is the only local copy of several production values Vercel will not return (sensitive). Do not delete; never print."
+  for_a_cold_session:
+    read_first:
+      - "this record"
+      - "mumate-infra runbooks/06-cutover.md (the cutover, step by step, flip-back)"
+      - "memory/events/2026/10/01/*_mumate_vercel_to_do_slice5_closeout.yaml (DoD evidence, unresolved)"
+      - "workstreams/mumate-vercel-to-do-001/parity-checklist.md (signed; re-run results at the end)"
+    waiting_on_owner:
+      - "QStash: QSTASH_CURRENT_SIGNING_KEY and QSTASH_NEXT_SIGNING_KEY into prod-fill.env, and a one-line file prod-qstash-token.env with QSTASH_TOKEN (owner is asking เอ็ม)."
+      - "เอ็ม to confirm: GLASS_BOX_KEY, OPS_DASHBOARD_KEY, ANALYTICS_USER_ID_KEY, OPS_ADMINS (taken from staging); whether bazi needs SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY (absent on Vercel bazi production)."
+      - "The cutover go: only when D7 holds (promo over, team merges slower, not the R7 week) and the owner says go - then a slice-6 decision event (type decision, status decided, slice 6) before runbook 06."
+    decided_defaults:
+      - "bazi-alerts stays off on production (fails on Vercel too, no LINE_*)."
+      - "Backups keep running from mumate-2 until after the cutover."
+      - "Staging releases by the button, not automatic (owner: safer)."
+      - "Production builds and production releases are pressed by the owner; the agent checks inputs first."
+    cutover_first_step: "At least 24 h before the chosen window: lower the TTL of bazichart.mumate.co from 3600 to 300 in Namecheap (CNAME value unchanged)."
+    working_rules_learned:
+      - "FE pushes through the hook are blocked by verify-architecture on main (issue 694); the agent prepares branches and the owner pushes with --no-verify. npm test on main is green since PR 851."
+      - "Production DB reads are owner-run (harness refuses); a PreToolUse guard blocks any command containing the production Supabase project ref - keep the ref out of commands and records."
+      - "Vercel sensitive env values cannot be pulled; the scripts take them from --fill files."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "2981fc4"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mootech-fe: "main c10e91e (laptop = origin); scratch worktrees removed; merged local branches deleted"
+    bazi-sft-dataset: "pdf-dev 49e22f2; laptop checkout detached 60c05f0 (as before), clean"
+    mumate-infra: "main 2a72d63 on laptop, mumate-2 and mumate-prod-1 at abfb499 (later commits are docs/observability files only); local branch cutover/cron-on-production kept"
+
+unresolved:
+  - "bazi health probe 5 s vs DB connect_timeout 10 s hides a DB failure as a timeout (deferred, 20261001T*_bazi_health_probe_hides_db_cause)."
+  - "Every new host's cloud-init ends in error while mumate-infra is private (runbook 03 §2 covers it)."
+  - "Before slice 6 also: bazi LINE webhook and LIFF endpoints of channel 2011679472 confirmed on bazichart.mumate.co (ask เอ็ม); Beam cross-delivery fix (ค) still open."
+  - "HQ hq/20260926 is pushed by the owner this round; bun run check is red on a pre-existing project-registry assertion outside this lane."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In a fresh session: Wake, read this record and runbooks/06-cutover.md;
+    take the QStash values when the owner brings them (fill prod-fill.env,
+    no re-run needed until the cutover); otherwise wait for the owner's go.
+  acceptance_check:
+    - A cold session can state where production runs, what mumate-prod-1 holds, what waits on the owner, and the first cutover step from this record alone.

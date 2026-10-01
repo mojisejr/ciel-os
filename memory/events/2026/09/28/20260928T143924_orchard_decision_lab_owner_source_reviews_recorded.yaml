@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T143924_orchard_decision_lab_owner_source_reviews_recorded
+type: closeout
+recorded_at: 2026-09-28T14:39:24+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Record the owner's completed review of the current narrow public-source
+    candidate pack without activating agricultural behavior.
+  scope:
+    - Record the latest local owner-review result for the two known 6b candidates.
+  out_of_scope:
+    - Policy activation, snapshot creation, Jev input, source changes,
+      research/provider calls, public deployment or raw Lab-record export.
+
+outcome:
+  status: recorded
+  slice: "6"
+  summary: >-
+    The owner accepted both current candidate claims for later consideration.
+    This is verified as the latest local review position and remains a
+    non-activating review result.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.5"
+  slice: "6"
+  repository:
+    head: 6c5a43c41d79dcc52e4c1c02147d68b6beb62d6f
+    branch: hq/20260926
+    working_tree: owner-source-reviews-recorded
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 1c0d1fec398294cf772c379da956bf0813e37288
+  local_audit:
+    method: read-only SQLite latest-review query; no note or orchard record read
+    result: 2 expected claims; 2 latest known claims; 2 latest ACCEPT; all expected claims accepted
+
+unresolved:
+  - Acceptance authorizes later consideration only; no claim has been activated as policy.
+  - The current daily state still lacks some evidence fields named by the accepted rain/waterlogging claim.
+  - Research LLM budget and private-state provider requests remain unapproved.
+
+next_action:
+  action: >-
+    Propose a separately authorized, non-activating policy-proposal sandbox
+    that maps the accepted claim to required state, gaps, allowed outcomes and
+    deterministic tests before any daily-form or policy change.
+  acceptance_check:
+    - The proposal cannot produce agricultural instructions or provider input.
+    - It identifies only the additional state fields demonstrated as necessary.

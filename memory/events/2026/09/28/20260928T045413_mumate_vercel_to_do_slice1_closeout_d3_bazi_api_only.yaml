@@ -1,0 +1,87 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T045413_mumate_vercel_to_do_slice1_closeout_d3_bazi_api_only
+type: closeout
+recorded_at: 2026-09-28T04:54:13+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Close slice 1 of plan 0.3 (an isolated staging and a multi-host control
+    room): record the owner's D3 answer, apply the merged control room to the
+    host and Grafana, and check every DoD item.
+  scope:
+    - D3 destinations; mumate-infra PR 27 on mumate-2 and in Grafana; the slice-1 DoD.
+  out_of_scope:
+    - Slice 2 and later; any production change.
+
+outcome:
+  status: recorded
+  slice: "1"
+  owner_decision_d3: >-
+    The owner said on 2026-09-28: "เราตั้งใจจะใช้มันเป็น api server ให้กับ fe
+    ครับ และไม่มี user ทั่วไปใช้ นอกจากทีมใช้สำหรับสร้าง engine เท่านั้น ดังนั้น
+    เราจะปิดมันไว้ก่อน และใช้เฉพาะ ส่วน api ที่เชื่อมต่อกับ fe เท่านั้นครับ
+    จนกว่าเราจะต้องแก้ไข หรือ ต้องใช้ ui ส่วนนี้อีกแล้วค่อยมาคิดว่าจะเปิดหรือไม่".
+    bazi on DigitalOcean is an API server for the FE only. It has no public
+    hostname and no UI route, not even over the tailnet. Reopening any UI is a
+    new owner decision.
+  d3_destinations:
+    - "Kept: the API routes the FE calls server-side, over the compose network at http://bazi:3000 (engine chart, matching, ops engine behind FE /ops, qi grant, calendar, what-if generate)."
+    - "Closed: team tools (/ops, /reading/*, /stats, /tarot, /ylc-preview-test); the pre-v2 pages (/almanac, /divine-cards, /fortune-sage, /louise-hay, /love-match, /rectify-hour, /sacred-map, /what-if and the rest listed in mootech-fe issue 831); bazi's LIFF (sacred-map share, louise-hay); bazi's LINE webhook /api/webhooks/line; external /api/v1 clients."
+    - "Old what-if share links keep working only while the Vercel bazi project lives (D10)."
+  completed:
+    - "PR 27 merged (f376650) and pulled on mumate-2: ops-status prints 'where: staging/mumate-2'; a test alert went to Discord through alert.sh with the [mumate/staging/mumate-2] prefix."
+    - "Grafana, with the mumate-infra service account and X-Disable-Provenance: the four rules updated from alert-rules.yaml (5xx by env/host/service, log silence as absent_over_time per host with NoData OK and threshold > 0, env/host summaries); all four evaluate inactive with health ok. The dashboard mumate-ops is at version 2 with env and host variables; every panel query, run with staging/mumate-2, returns success. Before-copies of the rules and dashboard were kept in the session scratchpad only."
+  dod:
+    - "Staging serves FE and bazi against its own database and bucket - met (20260927T200022); payments are Beam live with a staging webhook by owner decision (20260927T162031), not test keys."
+    - "A read-only check shows no staging write reaches production - met from the staging side: no production host or credential in the fe and bazi container env, both sessions on pgstaging (20260927T200022). A production-side session check was judged unable to tell pooler clients apart and was not run."
+    - "The control room carries the environment label end to end and reports staging through the multi-host views - met: env/host on logs, metrics, rules, dashboard, Discord and ops-status; bin/hosts.sh status and compare on mumate-2."
+    - "The staging data-handling rule is written in mumate-infra - met: runbooks/05-staging-data.md (PR 26)."
+    - "Every bazi browser surface has a recorded destination - met: d3_destinations above."
+  not_completed:
+    - "The LIFF apps of channel 2011679472 and their endpoint URLs were not listed (needs the owner's LINE console). The plan's slice-1 text names it; the DoD does not."
+    - "The side-by-side view is proven with one real host; with two in slice 5 (plan 0.3 trade-off)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "1"
+  repository:
+    head: "1fb7b10"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mumate-infra: "main f376650 (PRs 26 and 27), pulled on mumate-2"
+    mootech-fe_issue: "https://github.com/mojisejr/mootech-fe/issues/831"
+    staging: "fe fd3220be01ab-staging, bazi 722cdf1b5f35-staging, pgstaging from pg/mumate-2-20260927T020209Z.sql.gz, expires 2026-10-11"
+  checkpoints:
+    - memory/events/2026/09/27/20260927T160545_mumate_vercel_to_do_slice1_authorized.yaml
+    - memory/events/2026/09/27/20260927T160906_mumate_vercel_to_do_s1_staging_production_connections_inventoried.yaml
+    - memory/events/2026/09/27/20260927T162031_mumate_vercel_to_do_s1_owner_answers_storage_vapid_beam_live.yaml
+    - memory/events/2026/09/27/20260927T164302_mumate_vercel_to_do_s1_buckets_issue831_infra_pr26.yaml
+    - memory/events/2026/09/27/20260927T200022_mumate_vercel_to_do_s1_staging_isolated_from_production.yaml
+    - memory/events/2026/09/27/20260927T200257_mumate_vercel_to_do_s1_staging_admin_exposure_log_review.yaml
+    - memory/events/2026/09/27/20260927T201803_mumate_vercel_to_do_s1_fe_deployed_control_room_pr27.yaml
+
+unresolved:
+  - "For slice 2 (D3 in code): remove the bazi.staging.mumate.co Caddy block and replace its synthetic check with the internal health already in ops-status; point FE pages/api/what-if/generate.ts at BAZI_BASE_URL instead of its hard-coded Vercel URL."
+  - "For slice 6 planning: while the Vercel bazi project stays up as the flip-back target (D10), its UI and admin routes stay public and still write the production database. D3 closes bazi on DigitalOcean only; the Vercel side needs its own gate or an earlier retirement."
+  - "bazi's LINE webhook closes at the cutover. If a LINE channel still delivers to it, those events stop; confirm with เอ็ม before slice 6."
+  - "LIFF apps of channel 2011679472: confirm every endpoint points at bazichart.mumate.co (moves with DNS), not a vercel.app host, before slice 6."
+  - "First real Beam payment on staging and the production-log check for a cross-delivered event - owner, whenever."
+  - "pgstaging expires 2026-10-11; refresh or remove per runbook 05."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Slice 1 is done. Slice 2 (the applications run correctly off Vercel) and
+    slice 3 (the control room replaces every Vercel platform duty) each need
+    an owner decision; the plan allows them side by side. Meanwhile the
+    2026-09-28 daily check of the observing lanes and the second-night backup
+    check, after 09:00.
+  acceptance_check:
+    - Wake shows no validation error and this closeout as the latest record of mumate-vercel-to-do-001.

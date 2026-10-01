@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T165000_orchard_decision_lab_6e_rain_context_dogfood_validated
+type: closeout
+recorded_at: 2026-09-28T16:50:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: Validate rain-context state through ordinary local dogfood without raw-data export.
+  scope:
+    - Read-only structural audit of revised local dogfood state.
+    - Owner review of the no-rain conditional form and State Inspector.
+  out_of_scope:
+    - Agricultural interpretation of the owner's facts, policy activation, Jev/provider input, research LLM calls or public deployment.
+outcome:
+  status: recorded
+  slice: "6"
+  summary: >-
+    The owner recorded and inspected a corrected no-rain journey. The new
+    observation omitted rain-context facts, while orchard-state/v1.3 presented
+    them as not applicable with no missing structural evidence.
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "6"
+  repository:
+    head: d575c16050fa4f1bffe21fd3a4f12d030ca86965
+    branch: hq/20260926
+    working_tree: 6e-rain-context-dogfood-validated
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 631977528283565316a4a7d331b56c293c9ca688
+  structural_audit:
+    scope: no raw orchard values, plot references or notes printed
+    observation_count: 9
+    latest_no_rain: true
+    latest_stored_rain_context_keys: 0
+    latest_state_version: orchard-state/v1.3
+    latest_rain_context_status: NOT_APPLICABLE for standing water, rain timing and soil drying
+    latest_missing_evidence_count: 0
+    append_only_hash_chain: valid
+  provider_calls: none
+unresolved:
+  - The initial daily-plan-readiness policy pack is not yet implemented or activated.
+  - Existing older no-rain observations retain their historical selected values in the append-only journal.
+next_action:
+  action: Obtain owner approval for one bounded deterministic safety/freshness policy-pack design before implementing any policy behavior.
+  acceptance_check:
+    - The pack contains no fertilizer, chemical product, formula or dosage selection and remains before Jev.

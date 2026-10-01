@@ -1,0 +1,75 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T210000_mumate_login_identity_plan_0_8_slice5_authorized
+type: decision
+recorded_at: 2026-09-26T21:00:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Authorize plan revision 0.8 slice 5 (numbered 4b until this revision):
+    stop handing out a second account by asking before one is created, and
+    enforce one live identity per provider per member.
+  scope:
+    - Plan revision 0.8 - renumbering, DoD 5, owner decisions 15-22.
+    - Implementation in mootech-fe on a topic branch, up to a pull request for owner review.
+  out_of_scope:
+    - Slice 6 (the flip), the unlink route's last-method rule (a slice-6 precondition), and any BE change.
+    - Setting the switch on production; that is step two of decision 20 and waits for the merge.
+
+outcome:
+  status: decided
+  parallelism: approved   # mootech-fe is shared with mootech-ga4-instrumentation-001, which has no running session; own paths only
+  slice: "5"
+  decision: >-
+    On 2026-09-26 the owner asked for slice 4b's meaning, flow, steps and DoD,
+    then raised a case the plan had not covered himself: a member who has linked
+    one Google and then links another. Code and production were read before
+    answering (screen hides the button, the server does not refuse; 260
+    members hold several Google rows, only one holds two live identities). The
+    owner chose one live identity per provider, changeable only by unlinking
+    first ("เอา ก"), asked whether the plan needed revising, and accepted
+    renumbering 4b to 5 and the flip to 6 because CIEL's parser cannot see 4b
+    ("ตามคุนว่า"). He accepted every other lean the agent put to him ("ตามคุน
+    ทั้งหมด"), asked the agent to draft the question screen's wording ("คุนร่างมา
+    เลย"), and said to write the plan, record it, start, and meet him at the pull
+    request unless blocked or a new decision appears ("เริ่มงานได้เลยถ้าไม่มี
+    blocker เจอกัน PR").
+  owner_decisions: "15-22, as written in PLAN.md revision 0.8"
+  authorizes:
+    - Slice 5 of plan revision 0.8 through a mootech-fe pull request marked ready for the owner's review, with the switch defaulting off.
+  does_not_authorize:
+    - Merging, setting the switch on any environment, or any production write.
+    - Slice 6, the unlink route's last-method change, or a change in mootech-be.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.8"
+  slice: "5"
+  execution_phase: "5"
+  repository:
+    head: "9bf754c"
+    branch: hq/20260926
+    working_tree: this-decision-and-plan-revision-0.8
+  application:
+    mootech-fe: "main 75ecc29, fetched and synced 2026-09-26"
+  measured:
+    source: "production, read-only via role mumate_backup, 2026-09-26"
+    members_with_several_google_rows: 260
+    of_which_dead_plus_one_live: 259
+    members_with_two_live_google: 1
+
+unresolved:
+  - The question screen's wording is the agent's draft until the owner approves it at review.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Implement slice 5 on a mootech-fe topic branch, prove DoD D1-D7, D9 and D10
+    locally, open the pull request, and record the closeout that offers it.
+    D8 (the owner's production walk) follows the merge and the switch.
+  acceptance_check:
+    - Wake reports mumate-login-identity-001 at revision 0.8, slices 1-6 declared, lifecycle authorized for slice 5, and no validation error.

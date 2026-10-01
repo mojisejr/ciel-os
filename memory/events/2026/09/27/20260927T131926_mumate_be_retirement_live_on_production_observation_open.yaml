@@ -1,0 +1,97 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T131926_mumate_be_retirement_live_on_production_observation_open
+type: closeout
+recorded_at: 2026-09-27T13:19:26+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Slices 1 and 2 are live on production as PR 830. MuMate's app no longer
+    calls mootech-be. The deployment, the bundle and the owner's walk are
+    verified, and a seven-day observation is open. Render stays up as the
+    rollback until the R7 decisions.
+  scope:
+    - The merge, the deployment, the bundle probe, the owner's walk, production counts, and Render traffic after the merge.
+  out_of_scope:
+    - R7 (Render suspend and delete, repository archive, credential rotation, the pm2 BE target), which is decided after the observation.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      ENV CHECKED BEFORE THE MERGE. vercel env ls production lists
+      SUPABASE_PROJECT_URL, SUPABASE_SERVICE_ROLE_KEY and
+      SUPABASE_STORAGE_BUCKET in Production, set by the owner. The values
+      were not read. PR 830 was MERGEABLE/CLEAN with the Vercel checks passing,
+      and main was unchanged at 3c53a16.
+    - >-
+      MERGED BY THE OWNER at 2026-09-27T06:10:06Z (fd3220b). GitHub Production
+      deployment 6688783615 succeeded. vercel inspect shows target
+      production, Ready, created 13:10:11, and aliased to bazichart.mumate.co.
+      The merge deployed on its own.
+    - >-
+      BUNDLE PROBE ON THE REAL DOMAIN (buildId P9icujOYJfcG4pRBOwD8S), over
+      the 23 chunks that 7 v2 pages load: localhost:4000 0, onrender 0,
+      mootech-be 0, /user/register-login 0. /v2/birth-chart appears in 1
+      chunk, which proves the new code is live. The v1 URLs /my-destiny,
+      /calculator, /register?ref=ABC, /payment/creditcard and / answer 307 to
+      their v2 targets on production.
+    - >-
+      OWNER'S PRODUCTION WALK: LINE login and home mascot; edit-birth; a
+      friend added with a photo; element-finder signed out; /my-destiny
+      redirect. All normal ("ทุกอย่างปกติ").
+    - >-
+      PRODUCTION COUNTS at 13:18, read-only, against 13:12:
+      - member_with_friend 2,270 to 2,271, and the new row's picture_url is a
+        Supabase Storage public URL. The Vercel Supabase values therefore
+        work.
+      - log_calculate +2; 1 user row touched; 0 rows with time NULL.
+      - 0 members without a provider since the login flip.
+      - consent unchanged, as expected: no one onboarded in the window.
+    - >-
+      RENDER AFTER THE MERGE (metrics from 06:10Z): 0 CORS preflights, so no
+      browser calls BE. The 200s run at about 5 per 5 minutes, the pm2
+      monitor's rate.
+  not_completed:
+    - The seven-day observation, and then R7.
+
+observation_protocol:
+  window: "2026-09-27 13:10 to 2026-10-04 13:10 Bangkok. It closes on the same day as the login lane's 6h (06:47), so a single reminder covers both."
+  daily_check: >-
+    Render http_request_count by status (expect 204 = 0, and 200 only at the
+    monitor's rate). Production read-only counts: new members with a
+    provider, consent rows as members onboard, friend rows with Storage
+    photos, 0 time NULL, 0 members without a provider. Any FE error that
+    names a BE path.
+  rollback: "Revert PR 830 (owner merges). Render is still up, so every BE path works again. This is also the login flip's rollback (plus endpoint.ts:55). Do not delete the old Vercel env (NEXT_PUBLIC_BACKEND_URL, CONSENT_SECRET, AI_CONSUME_SECRET) before R7, because the reverted code needs them."
+  after_window: "R7 with the owner: remove the pm2 BE target; suspend Render; seven quiet days; delete Render; archive mootech-be after copying its consent/balance DDL; clean the host (be service, env/be.env, the .bak and *.pre-arena-be copies); rotate the BE-only credentials; remove the old Vercel env."
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.5"
+  slice: none
+  repository:
+    head: "fedad23"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    pr: "https://github.com/mojisejr/mootech-fe/pull/830 merged, fd3220b"
+    deployment: "GitHub 6688783615; mootech-5hztylval, Ready 13:10:11, bazichart.mumate.co"
+  render_after_merge: "http 200 ~1/min (monitor), 204 = 0"
+
+unresolved:
+  - External v1 links (LINE rich menu, LIFF, old share links) now land on v2 targets and cannot be verified from the repository.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Run the daily check until 2026-10-04 13:10. Then remind the owner, with
+    the login lane's 6h closeout, and take R7 with him one step at a time.
+  acceptance_check:
+    - Seven days with no BE traffic besides the monitor and no BE-related error, or a revert recorded.

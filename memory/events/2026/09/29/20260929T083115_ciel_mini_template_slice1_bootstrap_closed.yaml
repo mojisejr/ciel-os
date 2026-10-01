@@ -1,0 +1,89 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T083115_ciel_mini_template_slice1_bootstrap_closed
+type: closeout
+recorded_at: 2026-09-29T08:31:15+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-mini-template-001
+  lane: single
+  objective: >-
+    Establish the local-only CIEL-mini template baseline and prove that CIEL HQ
+    can observe it without adding a runtime or leaking raw project material.
+  scope:
+    - Slice 1 of plan revision 0.2 only.
+    - The local child repository, template files, project registration, and
+      machine-local binding.
+  out_of_scope:
+    - Pilot clone, MBTI feature selection, application code, raw-material use,
+      remote publication, deployment, provider, account, or paid service.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Created local-only child repository `checkouts/ciel-mini-template` on
+      `main` at 396c4c0b3d1c0041a24f3398bd74dabf90d41e88. It has no `origin`
+      remote and a clean working tree.
+    - >-
+      Added the learner-facing start guide, AI builder agreement, blank project
+      contract, dated-memory entry point, durable-lessons guide, and visible
+      `materials/` guide. The template contains no custom executable harness.
+    - >-
+      Registered `ciel-mini-template` as a local-only CIEL project and bound it
+      to `checkouts/ciel-mini-template` on this machine.
+    - >-
+      Verified the raw-material boundary with Git ignore matching: a hypothetical
+      `materials/example-private.csv` is ignored, while the tracked
+      `materials/README.md` remains available to explain the rule.
+  not_completed:
+    - >-
+      No pilot clone exists. Slice 2 must let the pilot owner define the first
+      MBTI's-Planner flow through that project's own alignment rather than
+      inheriting a guessed product decision from HQ.
+    - >-
+      No raw PDF, CSV, image, personal data, secret, or other source material
+      was copied, read, committed, or sent outside the local project.
+
+evidence:
+  plan: workstreams/ciel-mini-template-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: e8796aa0d52c7b25d300338d704be732536614d1
+    branch: hq/20260926
+    working_tree: project-registration-plan-phase-and-this-closeout-only
+  template_repository:
+    path: checkouts/ciel-mini-template
+    head: 396c4c0b3d1c0041a24f3398bd74dabf90d41e88
+    branch: main
+    identity: local-only
+    origin: absent
+    working_tree: clean
+  verification:
+    - bun run bin/ciel.ts projects validate: 13 valid project files
+    - bun run wake: local-only binding available and clean
+    - git check-ignore -v materials/example-private.csv: ignored by .gitignore
+    - git check-ignore -v materials/README.md: retained by explicit exception
+
+unresolved:
+  - The template is structurally complete but not yet proven usable by a project
+    owner in a fresh Codex session.
+  - The first MBTI's-Planner outcome must be chosen by the pilot owner during
+    its own alignment.
+  - The wording about source material and recovery is a hypothesis until a real
+    pilot uses it.
+
+next_action:
+  action: >-
+    Begin Slice 2 only when the owner is ready to enter the cloned pilot and
+    state the first MBTI's-Planner outcome. Then clone the template locally,
+    remove the clone-created origin, register the pilot, and run that project's
+    first alignment without choosing its product meaning in advance.
+  acceptance_check:
+    - The pilot owner can open a fresh Codex session and confirm or correct the
+      first project alignment before substantive application work begins.
+    - Both template and pilot are available local-only projects before any
+      feature is claimed complete.

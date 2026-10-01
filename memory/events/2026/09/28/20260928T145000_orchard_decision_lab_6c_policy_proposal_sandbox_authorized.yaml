@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T145000_orchard_decision_lab_6c_policy_proposal_sandbox_authorized
+type: decision
+recorded_at: 2026-09-28T14:50:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Turn owner-accepted source candidates into inspectable policy-design
+    blueprints without turning them into orchard policy or provider input.
+  scope:
+    - Read the latest local owner-review position for the two accepted candidates.
+    - Render source-linked required state, contract gaps and temporary what-if results.
+    - Allow only data-gap or human-policy-authoring readiness outcomes.
+  out_of_scope:
+    - Daily-journal writes, private-trace reads, policy activation, snapshot
+      creation, Jev/provider calls, research LLM, public deployment or
+      agricultural instructions.
+
+outcome:
+  status: decided
+  slice: "6"
+  decision: >-
+    The owner authorized 6c, a local-only non-activating Policy Proposal
+    Sandbox, after accepting both current source candidates for later
+    consideration.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "6"
+  repository:
+    head: 05f607b4569608059e52cbe1e6594f56ca353464
+    branch: hq/20260926
+    working_tree: 6c-policy-proposal-sandbox-authorized
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 1c0d1fec398294cf772c379da956bf0813e37288
+  prerequisite:
+    owner_review_record: memory/events/2026/09/28/20260928T143924_orchard_decision_lab_owner_source_reviews_recorded.yaml
+    result: both expected candidate claims have latest local ACCEPT reviews
+  proof_contract: workstreams/orchard-decision-lab-001/PLAN.md
+
+unresolved:
+  - No accepted claim is an active policy, snapshot or Jev input.
+  - The daily state contract has not yet been revised for waterlogging-specific facts.
+  - Research LLM budget and private-state provider requests remain unapproved.
+
+next_action:
+  action: Implement and locally prove the 6c policy-design sandbox.
+  acceptance_check:
+    - No sandbox result is agricultural advice or an activation.
+    - The screen shows exactly why any additional state field is needed.

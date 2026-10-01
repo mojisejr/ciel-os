@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T103300_orchard_decision_lab_6b2_local_owner_review_closed
+type: closeout
+recorded_at: 2026-09-28T10:33:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Preserve an owner's source-review position locally without activating any
+    agricultural policy, snapshot or Jev behavior.
+  scope:
+    - Local append-only records for known candidate claims only.
+    - Thai evidence-page forms and latest-position rendering.
+    - Hash-chain and database update/delete guard proof.
+  out_of_scope:
+    - Changing source facts or candidate status, agricultural advice, policy
+      activation, snapshot creation, Jev input, research/provider calls,
+      public deployment or private-record export to CIEL.
+
+outcome:
+  status: recorded
+  slice: "6"
+  summary: >-
+    Slice 6b.2 is implemented locally. The owner can append accept-for-later,
+    request-revision or reject decisions with an optional local note for each
+    known source candidate. Those decisions remain non-activating.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.5"
+  slice: "6"
+  repository:
+    head: 89ecadd7fb4f71a6100323bb23ea2330bbeaf575
+    branch: hq/20260926
+    working_tree: 6b2-local-owner-review-closed
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 1c0d1fec398294cf772c379da956bf0813e37288
+  hard_gate:
+    command: bun run check
+    result: 38 pass; 0 fail; 177 expectations
+  eye_truth:
+    method: synthetic local browser at /evidence with an in-memory review store
+    result: >-
+      Thai source locator, pending claim, three owner-review options, optional
+      note, and no-policy/no-Jev boundary were visible.
+  implementation:
+    route: /evidence/review
+    storage: local SQLite evidence_review_events with hash chain and append-only triggers
+    known_claim_guard: enabled
+    provider_calls: none
+
+unresolved:
+  - The owner has not yet recorded an actual review decision for either candidate claim.
+  - A review acceptance remains non-activating; source-to-policy activation requires a separate owner decision.
+  - Research LLM budget and private-state provider requests remain unapproved.
+
+next_action:
+  action: >-
+    The owner reads the two official sources on /evidence and appends a review
+    position for each claim. Then evaluate whether the state contract needs a
+    separately authorized revision before any policy design.
+  acceptance_check:
+    - The actual owner decision and optional note appear as a local history item.
+    - The page still states that snapshot, policy and Jev input remain blocked.

@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T051750_mumate_vercel_to_do_slice2_authorized
+type: decision
+recorded_at: 2026-09-28T05:17:50+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Authorize slice 2 of plan 0.3 (the applications run correctly off
+    Vercel) with the owner's answers on how code reaches main.
+  scope:
+    - "mootech-fe and bazi-sft-dataset branches and PRs for: bazi hardening (APP_DATABASE_URL required, empty env tolerated, admin routes fail closed, sharp direct); bazi LLM and Gemini timeouts; FE-to-bazi trusted client identity with a shared secret; FE push/fire past the maintenance gate and guardV2, environment marker, bazi and what-if URLs from env; FE DB pool max from env with a transaction audit; FE /ops health from /api/health and /launch disabled off Vercel; one source of truth for cron schedules."
+    - "mumate-infra PR removing the public bazi.staging.mumate.co host and its synthetic check (D3)."
+    - "Staging image builds dispatched by the agent (target=staging only), deploys and proofs on staging, including env placement on the staging host."
+  out_of_scope:
+    - "Merging any mootech-fe or bazi-sft-dataset PR before 2026-10-04."
+    - "Production builds, Vercel settings, DNS."
+
+outcome:
+  status: decided
+  parallelism: approved   # mootech-fe and bazi-sft-dataset shared with the two observing lanes; no merge there before their windows close on 2026-10-04
+  slice: "2"
+  decision: >-
+    The owner asked whether slice-2 code could stay unmerged and be built to
+    DigitalOcean until the move ends. The agent advised against it: the merge
+    is only postponed to the cutover, platform and code would change on the
+    same day, the D10 flip-back would change code as well as host, the
+    branch drifts from a busy main, and D4 (staging deploys the merged SHA,
+    production promotes the same SHA) needs the code on main. It recommended
+    merging each change in a form that does nothing on Vercel, behind five
+    fences: a test that the unset-env path is unchanged; proof on staging from
+    a branch build before merge; no merge before 2026-10-04; one merge at a
+    time, bazi before FE, watched, revertable; and an owner-run check of the
+    Vercel Production and Preview env before any merge that depends on it.
+    The owner accepted: "โอเค งั้นไปตามคุนว่า ... ลุยได้".
+  owner_answers:
+    A: "No mootech-fe or bazi-sft-dataset PR merges before 2026-10-04 (owner: 'ผมยังไม่ต้อง merge pr ไหนเลยจนกว่าจะถึง 10-04 ... โอเค'). mumate-infra PRs touch staging only and are not held."
+    B: "The agent dispatches container-build.yml itself with target=staging for this slice ('dispatch เองได้เลย'). Production builds stay with the owner, or เอ็ม under D4. This changes the 2026-09-19 rule for staging builds only."
+    C: "/launch buttons are disabled off Vercel ('ปิดปุ่มเลย เพราะ launch ไปแล้ว')."
+    D: "bazi rate limits and budgets become per user through the FE's trusted identity; this is the one slice-2 change meant to alter Vercel production behaviour."
+    E: "bazi SHARE_URL from env is dropped (D3 closed the share page) - owner-accepted per D6."
+  owner_facts:
+    - "Supabase transaction pooler size: 15 connections (owner, 2026-09-28)."
+    - "The owner asked the agent to generate the trusted-identity secret and place it; the agent keeps it in .assets and on the staging host. Vercel placement comes before the merge, with the owner."
+    - "The owner walks login on staging when the agent says it is ready."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: "3b27642"
+    branch: hq/20260926
+    working_tree: this-decision-only
+
+unresolved:
+  - "mootech-fe pre-push fails on four violations already on main (issue 694); a push may need --no-verify, which the harness has refused before - then the owner pushes."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Start with the bazi hardening branch (step 1), then the other steps, each
+    proven on staging from a branch build; tell the owner when the staging
+    login walk is ready; merges wait for 2026-10-04.
+  acceptance_check:
+    - Wake reports mumate-vercel-to-do-001 lifecycle authorized for slice 2 at revision 0.3 with no validation error.

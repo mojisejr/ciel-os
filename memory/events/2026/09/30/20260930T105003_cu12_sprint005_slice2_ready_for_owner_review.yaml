@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20260930T105003_cu12_sprint005_slice2_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-30T10:50:03+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-005
+  lane: single
+  objective: >-
+    A Thai console for the owner's team, on the control endpoint the agent
+    uses too. This record closes slice 2, the console page.
+  scope:
+    - Slice 2 of plan revision 0.1.
+  out_of_scope:
+    - Slice 3, and smc-v2-app-001 slice 10.
+
+outcome:
+  status: ready-for-owner-review
+  completed:
+    - >-
+      The walk finished on 2026-09-30 on a fresh data directory at
+      .assets/smc-v2/walk-20260930/, with the simulator on 5012/5013 and
+      SMC v2 (.app of main 444cc48) on SMC_ENDPOINT=tcp:127.0.0.1:5012.
+      The owner activated with the walk license and set up the first
+      admin. Step 6: the hex panel was opened and read as understandable
+      ("อ่านรู้เรื่อง"). He wanted no word changed ("ไม่มีคำไหนอยากเปลี่ยนใน
+      ตอนนี้"). Steps 1-5 passed on 2026-09-28 (20260928T213527).
+    - >-
+      The agent fired "board silent for 15 s" with curl alone, and the
+      owner gave the go ("ยิงได้"). The endpoint answered silent with its
+      until_ms. SMC's system log shows three no-response attempts and
+      "poll failed" during the window. 17 s later the board read up by
+      itself and SMC was polling again, 1 s since its last request. That
+      is observed from the endpoint and the application's log. The owner
+      moved on to the next decision without saying what the two screens
+      showed, so the screens are not claimed as owner observation.
+    - >-
+      README now warns against port 5000 on macOS, which AirPlay holds, and
+      its examples use 5012/5013. cu12-simulator 8a90a57 on
+      feat/console-page (parent c7133fa, base 2de54ec) is pushed. The
+      suite passes (42 tests), and the repo runs no CI.
+  not_completed:
+    - The merge of pull request 6 (owner).
+    - Slice 3.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-005/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "9014e8f"
+    branch: hq/20260926
+    working_tree: this-event-the-smc-v2-plan-0-6-and-its-decision-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "8a90a57"
+    branch: feat/console-page
+    base: "2de54ec"
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/cu12-simulator/pull/6
+  preceding_records:
+    - memory/events/2026/09/28/20260928T213527_cu12_sprint005_slice2_walk_paused.yaml
+
+unresolved:
+  - The owner's eye on both screens during the curl-fired board-down was not stated. It rests on the endpoint and the application's log.
+
+next_action:
+  action: >-
+    The owner merges cu12-simulator pull request 6. The agent records the
+    merge and, as the plan orders, builds smc-v2-app-001 slice 10 next
+    (authorized beside this record). Slice 3 follows it.
+  acceptance_check:
+    - Wake shows cu12-simulator-sprint-005 at phase 2 with this record as its latest event and pull request 6 named in it.

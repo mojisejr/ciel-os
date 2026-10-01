@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T125037_mumate_be_retirement_s3_accepted_slice4_authorized
+type: decision
+recorded_at: 2026-09-27T12:50:37+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Accept the slice 3 rehearsal and authorize slice 4 as re-planned in plan
+    revision 0.5. Slices 1+2 go to production in one PR now, with Render kept
+    up as the rollback. Staging stays without BE. The irreversible steps are
+    decided last.
+  scope:
+    - A single mootech-fe pull request from feat/mumate-be-retirement-s2 to main, ready for the owner's merge.
+    - After the merge, verification of the deployment (bundle probe on bazichart.mumate.co), the owner's production walk, and read-only production counts.
+    - A seven-day observation of the removal.
+  out_of_scope:
+    - Merging (the owner's), Vercel env (the owner's), Render suspend or delete, repository archive, credential rotation, and the pm2 monitor, all of which R7 decides last.
+
+outcome:
+  status: decided
+  parallelism: approved   # mootech-fe shared with mumate-login-identity-001 (6h observation; this merge changes its rollback path, recorded) and mootech-ga4-instrumentation-001 (no session)
+  slice: "4"
+  decision: >-
+    After the slice 3 walk (12:4x; nothing broke; 0 BE requests), the agent
+    asked the owner to accept the rehearsal and put slice 4 to him. He asked
+    why production has to wait for 2026-10-04 ("ขึ้นเลยไม่ได้เหรอ"), and
+    whether staging must go back to BE when it is meant to become production.
+    He asked for the agent's view before anything was done. The agent
+    recommended A (production now, one PR, Render kept up, Supabase env in
+    Vercel first), B (staging stays without BE, arena down, production DB,
+    new image) and C (accept). The owner answered "ตามนี้เลย ABC".
+  owner_decisions: "A, B, C as written in PLAN.md revision 0.5"
+  authorizes:
+    - Slice 4 of plan revision 0.5 up to the owner's merge of one pull request, then verification and a seven-day observation.
+  does_not_authorize:
+    - Any irreversible step (R7), suspending Render, or merging on the owner's behalf.
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  repository:
+    head: "088453d"
+    branch: hq/20260926
+    working_tree: this-decision-and-plan-revision-0.5
+  staging_after_b:
+    fe: "5621534-staging on the production pooler (dbLatencyMs 6), healthy"
+    be: "retired mode, BE_SCALE=0, MUMATE_BE_MODE=retired"
+    arena: "down (container and volume removed)"
+    kept_for_rollback: "env/fe.env.pre-arena-be, env/bazi.env.pre-arena-be, .env.pre-arena-be"
+  production_read:
+    consent: "id uuid, user_id text, accepted_at text, policy_version text; consent_pkey + idx_consent_user_id; 144 rows"
+    user_columns: "onboarded_at, onboarding_goal present"
+
+unresolved:
+  - Until the owner merges, staging runs code that production does not yet have, against production's database. The team only uses staging, and the code is the same that ships.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Open the production PR. The owner sets the three Supabase values in
+    Vercel production and merges. The agent then verifies the deployment and
+    the bundle, the owner walks, and the seven-day observation starts.
+  acceptance_check:
+    - Wake reports lifecycle authorized for slice 4 and no validation error; the PR is open.

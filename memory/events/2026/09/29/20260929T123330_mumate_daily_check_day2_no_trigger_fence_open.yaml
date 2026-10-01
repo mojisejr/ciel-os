@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T123330_mumate_daily_check_day2_no_trigger_fence_open
+type: closeout
+recorded_at: 2026-09-29T12:33:30+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Record the day-2 read-only check of the two observing lanes, the last one
+    under the owner's fence reading (20260929T051711): no trigger, so both
+    observations end today and slice-2 fence A is open.
+  scope:
+    - Protocols of 20260927T131926 and 20260927T065300 as amended by 20260927T100100, plus sections 6-7 added for the LIFF path and last night's migrations.
+  out_of_scope:
+    - The lane closeouts themselves and any merge (next records).
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Production counts run by the owner (the harness refused the agent's run as Production Reads even with the owner's permission in chat) with .assets/mumate/daily-check-20260929.sql through mumate_backup on mumate-2, BEGIN READ ONLY ... ROLLBACK, read at 2026-09-29 12:32:30 Bangkok. Query verified first on pgstaging."
+    - "Login lane: new members 09-27 (from 06:47) 7 = LINE 3 / Google 4; 09-28 34 = LINE 10 / Google 25; 09-29 to 12:32 26 = LINE 5 / Google 21. No provider 0, time NULL 0. Two live Google 1 (baseline 1). Exposed 1,442 (baseline 1,442). No trigger."
+    - "be-retirement since 2026-09-27 13:10: consent 63, friend rows 14 (2 with a Storage photo), updated with dob and time NULL 0. Render mootech-be 2026-09-28 01:00Z..2026-09-29 05:00Z: 204 = 0; 200 at 55-59 an hour (monitor) except 28 in 00:00Z and 0 in 01:00Z with no Render event in that window (monitor side)."
+    - "LIFF path (#846, since 2026-09-28 21:41): returning members logged in 9, new LINE members 8, new LINE members sharing a name with an older LINE member 1. The owner confirmed the LIFF channel and the LINE Login channel are in the same LINE provider (same userId), so a second identity from LIFF is not expected; the one match is read as a name collision or a different LINE account."
+    - "bazi: account deletions canceled 3, pending 1, none overdue; quota rows older than yesterday 0 (151 on 09-28): Vercel production qi-quota-reset ran with CRON_SECRET in effect."
+    - "Migrations on production: FE 0036 yes, 0037 yes (v2_payment FK ON DELETE SET NULL), 0038 yes; bazi 0054 yes. pgstaging has none (step 5)."
+    - "Staging nightly jobs (checklist row 1): qi-quota-reset 2026-09-28T17:00:00Z 200, account-purge 17:30:00Z 200, each once; 0 non-200 cron lines since 16:55Z; pgstaging old quota rows 0. Row 1 closed in parity-checklist.md."
+  observations:
+    - "New members rose from about 16 a day to 26-34, mostly Google, in step with the MUMATE100 promo that started 2026-09-28 evening. Well under the ~80 trigger, and nothing without a provider."
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.5"
+  slice: none
+  repository:
+    head: "9ef17d5"
+    branch: hq/20260926
+    working_tree: this-record-and-checklist-row-1
+
+unresolved:
+  - "One new LINE member (since 21:41) shares a name with an older LINE member; not examined (owner-run read), not blocking."
+  - "Render 200 gap 2026-09-29 00:30-02:00Z with no Render event: the monitor host, unexamined."
+  - "The Render 204 of 2026-09-27 10:10-11:10Z is still unexplained."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner signs the parity checklist (B-5) and the agent records slice 4's
+    closeout; then the login slice-6 closeout and this lane's observation
+    closeout; then slice-2 merges one at a time, bazi 43 first.
+  acceptance_check:
+    - The fence reading of 20260929T051711 is used only because this check found no trigger.

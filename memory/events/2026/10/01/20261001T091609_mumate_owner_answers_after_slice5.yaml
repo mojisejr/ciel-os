@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T091609_mumate_owner_answers_after_slice5
+type: closeout
+recorded_at: 2026-10-01T09:16:09+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the owner's answers to the items left by the slice-5 closeout.
+  scope:
+    - mumate-infra PR 40; bazi-alerts on production; where backups run; QStash keys; Grafana steps.
+  out_of_scope:
+    - The cutover (waits for D7 and the owner's go).
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Owner merged mumate-infra PR 40 (runbooks/06-cutover.md with the staging rehearsal timings)."
+    - "bazi-alerts: stays off on production (as in draft PR 39); nothing to do now - it already fails daily on Vercel without LINE_* (owner: 'อันที่ล้มอยู่แล้วไม่ต้องไปทำอะไรก่อน')."
+    - "Backups: keep running from mumate-2 against production until after the cutover; move them later if nothing is at risk (owner)."
+    - "QStash signing keys and token: the owner asks เอ็ม first."
+    - "Owner confirmed, after the agent's live check at 09:10, that production stays on Vercel until both decide (DNS CNAME to Vercel, /api/health platform vercel, /v2 and /v2/login 200 without maintenance)."
+    - "Grafana: the agent gave the owner step-by-step UI instructions for the two-host log-silence query and the mumate-fe-production synthetic check with per-check alerts."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "ff88c6d"
+    branch: hq/20260926
+    working_tree: this-record-only
+
+unresolved:
+  - "Grafana changes are applied by the owner in the UI; the agent verifies them with the reader token afterwards."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner applies the two Grafana changes and asks เอ็ม for the QStash keys;
+    the cutover waits for D7 and the owner's go.
+  acceptance_check:
+    - The reader token sees the mumate-fe-production check and the two-host log-silence query.

@@ -1,0 +1,6 @@
+schema_version: ciel.project.v0.1
+id: ciel-mini-template
+repository:
+  vcs: git
+  canonical_remote: github.com/mojisejr/ciel-mini-template
+  default_branch: main

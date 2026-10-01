@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T083232_ciel_mini_template_slice2_bootstrap_decided
+type: decision
+recorded_at: 2026-09-29T08:32:32+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-mini-template-001
+  lane: single
+  objective: >-
+    Prepare an independent local MBTI's-Planner pilot without deciding the
+    pilot owner's first feature or project meaning on their behalf.
+  scope:
+    - Plan revision 0.3, which separates technical pilot bootstrap from owner
+      alignment and feature construction.
+    - >-
+      Slice 2 only: clone the local template, remove clone-created origin, and
+      register the pilot as a local-only CIEL project.
+  out_of_scope:
+    - Filling `PROJECT.md`, choosing the first MBTI's-Planner outcome, reading
+      raw material, creating application code, or claiming a pilot flow works.
+    - Any remote, deployment, provider, account, payment, or external data use.
+
+outcome:
+  status: decided
+  parallelism: approved
+  completed:
+    - >-
+      The owner gave standing direction to continue sequentially whenever no
+      further owner decision is required, while recording events along the way.
+    - >-
+      Technical pilot bootstrap does not decide the product meaning, so it may
+      proceed. The plan now puts the owner-confirmed first alignment at Slice 3
+      rather than hiding it inside the clone step.
+  not_completed:
+    - >-
+      The pilot does not exist yet, and no MBTI feature or raw source material
+      is authorized by this decision.
+
+evidence:
+  plan: workstreams/ciel-mini-template-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  authorization:
+    observed_directly_by_this_session: true
+    summary: >-
+      The owner directed the agent to continue through authorized slices and to
+      stop only where a remaining slice requires the owner's own decision.
+  repository:
+    head: a827400bf0a282164dae00e61d948df8bd4fd5a4
+    branch: hq/20260926
+    working_tree: plan-revision-and-this-decision-only
+  prior_closeout: memory/events/2026/09/29/20260929T083115_ciel_mini_template_slice1_bootstrap_closed.yaml
+
+unresolved:
+  - The pilot owner must state and confirm the first MBTI's-Planner outcome in
+    Slice 3; repository bootstrap cannot answer that question.
+  - The template remains unproven with an actual learner until the pilot is used.
+
+next_action:
+  action: >-
+    Clone `ciel-mini-template` locally to `mbti-planner-pilot`, remove the
+    clone-created origin, register the child project and local binding, validate
+    both with Wake, then pause before its first owner alignment.
+  acceptance_check:
+    - Wake observes both children as clean, available local-only repositories.
+    - The pilot retains the template's blank `PROJECT.md` and contains no raw
+      source material or application feature selected by HQ.

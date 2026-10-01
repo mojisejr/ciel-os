@@ -1,0 +1,142 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T161814_smc_v2_app_slice9_ready_for_owner_review
+type: closeout
+recorded_at: 2026-09-28T16:18:14+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    record closes slice 9 (6d): the owner walked every function not yet
+    exercised on the Mac, and what failed was fixed in the same slice and
+    walked again.
+  scope:
+    - Slice 9 of plan revision 0.4, as authorized by the 20260928T145046 decision.
+  out_of_scope:
+    - Slice 10 (Windows).
+    - An SMC operations room like mumate-infra; raised and deferred by the owner.
+
+outcome:
+  status: ready-for-owner-review
+  completed:
+    - >-
+      The owner walked the checklist from 14:58 to 16:16 on the built .app
+      (smc-v2 feat/owner-walkthrough) against cu12-simulator 17771d5 with
+      door physics on, the agent driving the simulator's hooks on the
+      owner's word. Passed first time, observed by the owner: first-run
+      activation and admin; CSV export; the ส่งข้อมูลให้ช่าง zip; backup now
+      with the folder picker; user delete confirmation; an admin changing
+      their own PIN; switching off an empty slot and a loaded one; reset of
+      an occupied card with admin PIN and reason; the HN typed with Enter
+      moving focus to the PIN; the บันทึก page while the board is down;
+      automatic reconnect when the board returns; the clock-suspect banner
+      with load refused and dispense allowed.
+    - >-
+      Restart with a door open (the persisted-warning fix folded in by the
+      decision): after the restart door-left-open stayed one row (action
+      15) and only reconciled followed (action 16); the wait dialog came
+      back over the open door.
+    - >-
+      Failed, fixed, walked again: (1) switching off a slot whose door is
+      open was unreachable - the wait dialog covers the admin menu; the
+      owner chose a button named ปิดใช้งานช่องนี้ in the wait dialog after
+      60 s; the first build cleared the slot but did not switch it off
+      because the switch needed an admin session, fixed by carrying `off`
+      inside the admin-PIN force-clear; slot 7 was then force-cleared and
+      switched off (actions 22-25), and ยกเลิก returned to the wait dialog.
+      (2) A wrong-machine license was refused on screen but stored over the
+      valid one, which would stop dispensing; now judged before storing -
+      the owner re-installed the valid one, pasted the wrong-machine and a
+      tampered license, both refused, and the stored text was checked
+      byte-for-byte equal to the valid license. (3) Board down left cards
+      looking usable; the owner accepted a red status box over the grid
+      ("ตู้ไม่ตอบสนอง ใช้งานช่องยาไม่ได้ชั่วคราว กำลังเชื่อมต่อใหม่…") and faded
+      empty cards, observed on and off. (4) The CSV's การกระทำ column was in
+      English slugs; now the บันทึก page's Thai words, observed in the
+      16:16 export (29 rows, none unmapped).
+    - DESIGN.md records all four; deviation 8 gains its exception.
+    - >-
+      smc-v2 commits 5c7871b (warning persistence) and 11715f2 (the four
+      walk fixes) on feat/owner-walkthrough, pushed; draft pull request 9
+      opened with the six-section description. cargo fmt --check, clippy
+      native and ui wasm32 with -D warnings, cargo test and
+      scripts/check-windows.sh pass locally. A shell test proves the
+      license fix: with it removed the kept-license assertion fails
+      (WrongMachine vs Expired).
+    - The application and the simulator are stopped.
+  not_completed:
+    - The merge of pull request 9 (owner).
+    - >-
+      Deleting smc-v2's merged remote branch feat/design-decisions: the
+      owner authorized it, the harness refused the push --delete as Git
+      Destructive; the owner runs it.
+    - Slice 10.
+  substitutions:
+    - >-
+      No USB barcode scanner was at hand. The owner typed the HN and Enter
+      in its place; that proves the dialog's keyboard path, which a scanner
+      in keyboard mode uses, not a physical scanner.
+  boundaries:
+    - >-
+      Wake reports this lane as claimed with uncommitted or unverified work
+      in smc-v2 while pull request 9 is open. That is the topic branch
+      mid-slice, not an interrupted lane.
+    - Nothing was written to a closed cu12-simulator or cu12-e2e-lab workstream.
+    - >-
+      The walk ran on a fresh data directory in the session scratchpad
+      (/tmp/smc-dev had been emptied by macOS). The walk licenses (valid,
+      wrong-machine, tampered; development key) and both CSV exports are
+      kept by the owner in .assets/smc-v2/licenses-walk-20260928/, untracked.
+      The walk's database goes with the session.
+    - The clock-suspect check was made by setting license_last_seen in that development database to 2026-10-10 and back, not by moving the system clock.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "9"
+  repository:
+    head: "478bf1d"
+    branch: hq/20260926
+    working_tree: this-event-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "11715f2"
+    branch: feat/owner-walkthrough
+    base: "eeffc7f"
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/smc-v2/pull/9
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  desktop_walk:
+    actions_rows: 1-29
+    csv_exports:
+      - .assets/smc-v2/licenses-walk-20260928/smc-log-20260928-1458.csv (header only, before any action)
+      - .assets/smc-v2/licenses-walk-20260928/smc-log-20260928-1611.csv (29 rows, English action slugs)
+      - .assets/smc-v2/licenses-walk-20260928/smc-log-20260928-1616.csv (29 rows, Thai action words)
+  preceding_records:
+    - memory/events/2026/09/28/20260928T145046_smc_v2_app_slice9_authorized.yaml
+
+unresolved:
+  - A physical USB barcode scanner is unobserved (substitution above).
+  - Door-label order on the physical cabinet - needs the real cabinet.
+  - Production keygen before the first sale; the build carries the development key.
+  - Real hardware may change the state machine.
+
+next_action:
+  action: >-
+    The owner reviews and merges smc-v2 pull request 9 and, if still
+    wanted, deletes the merged remote branch feat/design-decisions; the
+    agent then records the merge, syncs the checkout to main and deletes
+    the local topic branch. Slice 10 (Windows) waits for its own decision:
+    the Windows machine clones smc-v2 and cu12-simulator only, and CIEL
+    records stay on the Mac.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 at revision 0.4, phase 9, with this record as its latest event and pull request 9 named in it.

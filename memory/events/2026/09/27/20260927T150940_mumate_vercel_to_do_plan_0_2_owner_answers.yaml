@@ -1,0 +1,87 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T150940_mumate_vercel_to_do_plan_0_2_owner_answers
+type: decision
+recorded_at: 2026-09-27T15:09:40+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the owner's answers to the plan-0.1 questions and the revision 0.2
+    they produce: two droplets watched by one control room, a fully isolated
+    staging, bazi kept internal, a maintenance-gated cutover that the team
+    reviews and the owner opens, and no date for the flip.
+  scope:
+    - Plan revision 0.2 of workstreams/mumate-vercel-to-do-001/PLAN.md.
+    - The owner's answers A1-A5, B1-B7, C1-C2 and D1-D7 as given in chat on 2026-09-27.
+  out_of_scope:
+    - Authorizing slice 1. The owner asked for the updated plan and the steps, and said not to start yet ("ยังไม่ต้องเดินจริง").
+
+outcome:
+  status: recorded
+  parallelism: approved
+  decision: >-
+    The owner answered every question put on 2026-09-27. D1: mumate-2 stays
+    staging and a new production droplet is created, and the control room must
+    observe both so staging and production can be compared. D2: staging fully
+    isolated so every case can be rehearsed. D3: the owner asked whether bazi
+    needs a public hostname at all since it only serves the FE; the code
+    confirms the FE reaches bazi server-side only, so the target is no public
+    bazi hostname, with the remaining browser surfaces (team tools, what-if
+    share, bazi LIFF, any external /api/v1 client) settled with the team in
+    slice 1. D7: no date - wait until everything is calm and ready, users have
+    only just started on v2. Parallel work with the observing lanes approved.
+    D4: staging automatic, production promotion by เอ็ม only. D8 (new): the
+    cutover happens behind a maintenance gate, the team reviews production
+    through the bypass, the owner opens the gate; the existing gate from the
+    earlier AWS-to-Vercel move is to be reused (checked: it is, with named
+    gaps). D9: one real payment during the review. D10: Vercel kept until the
+    owner says. D11 (new): a deploy or a crash must show a maintenance page,
+    never a broken site. D5, D6 as recommended. C1: count the affected rows
+    read-only and open a fix PR in bazi. C2: ADMIN_DOCTRINE_TOKEN is not set on
+    Vercel.
+  not_authorized:
+    - Slice 1 or any later slice; a separate decision starts slice 1.
+  owner_supplied_facts_not_reverified:
+    - Vercel production has CRON_SECRET, APP_DATABASE_URL and QSTASH_*; ADMIN_DOCTRINE_TOKEN is absent.
+    - Vercel region is sin.
+    - mootech-fe Preview probably still resolves to the production database.
+    - The owner cannot edit Namecheap DNS; the team does.
+    - No Supabase or Gemini IP restriction exists.
+    - No LINE test channel is known.
+    - The LINE Messaging API webhook points at a Google Apps Script; channel 2009228997 lists eight LIFF apps.
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: 318fa2d
+    branch: hq/20260926
+    working_tree: plan-revision-and-this-event
+    pull_request: none-until-hq-round-closes
+  checked_in_code_this_revision:
+    maintenance_gate: "mootech-fe middleware.ts:5-8 and :469-500, pages/maintenance.tsx (no data dependency), scripts/container-smoke.sh step 3 - reusable; gaps: /api/v2/push/fire, no bazi gate, page cannot show when the app is down"
+    bazi_callers: "mootech-fe reaches bazi only server-side through BAZI_BASE_URL (lib/chart/engine-chart-server.ts, lib/matching/*, lib/ops/engine.ts, lib/qi/grant.ts, lib/v2-calendar/month.ts, lib/v2/calendar-access.ts)"
+    bazi_browser_surfaces: "38 pages under src/app incl. /ops and /reading/doctrine*; what-if SHARE_URL hard-coded (WhatIfExperience.tsx:45); LIFF in sacred-map/share.ts and louise-hay/liff-client.ts"
+    admin_token_routes: "13 bazi routes read ADMIN_DOCTRINE_TOKEN; mootech-fe never sends x-admin-token, so setting it cannot break the FE; bazi's admin pages have a token field"
+    liff: "mootech-fe LIFF default 2011679472-sNcCbR2K (lib/line/liff.ts:10); no 2009228997 id in either repository"
+
+unresolved:
+  - "C1 NOT DONE. The read-only count of cancelled-then-purged bazi accounts was refused by the harness as a production read three times, the last after the owner wrote 'อ่านได้เลย ผมอนุญาติ'; a local git read in bazi for the fix was refused under the same outcome. Both handed to the owner. The purge runs nightly at 17:30 UTC (00:30 Bangkok)."
+  - "C2 LIVE: with ADMIN_DOCTRINE_TOKEN unset, bazi's doctrine, knowledge-override, almanac, sacred-map upload, matching and divine-card image routes accept anyone on bazi-sft-dataset.vercel.app. Setting the token on Vercel and redeploying closes it; the team's admin pages then need the token typed in."
+  - "mootech-fe Preview on the production database is a risk today, independent of this plan."
+  - "The LIFF endpoints of channel 2011679472 are unseen; the eight apps on 2009228997 may be leftovers - a cleanup candidate, not this plan's work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Wait for the owner's go on slice 1. Before that, the owner runs the C1
+    count and C2 token step handed over in chat. When the go comes, record a
+    decision authorizing slice 1 of plan 0.2 with parallelism approved, then
+    start with the staging isolation and the production droplet request.
+  acceptance_check:
+    - Wake lists mumate-vercel-to-do-001 at revision 0.2 with no validation error and no slice authorized.

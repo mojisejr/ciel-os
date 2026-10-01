@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T162031_mumate_vercel_to_do_s1_owner_answers_storage_vapid_beam_live
+type: decision
+recorded_at: 2026-09-27T16:20:31+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the owner's answers to the three slice-1 questions of
+    20260927T160906: staging storage, the staging VAPID pair, and staging
+    payments. The last one amends D2.
+  scope:
+    - Slice 1 of plan 0.3, already authorized by 20260927T160545.
+  out_of_scope:
+    - Any change to production payment settings or webhooks.
+
+outcome:
+  status: recorded
+  slice: "1"
+  decision: >-
+    Storage - the owner created a separate Supabase project on the free tier
+    for staging. It holds storage buckets only; the staging database stays on
+    mumate-2, restored from the nightly backup. The owner places the project
+    URL and service-role key in .assets for the agent to move into the host
+    env without printing them.
+    VAPID - the owner generates a staging pair himself and places it in
+    .assets, as with earlier secrets; the agent moves it to the host and the
+    public key to the build.
+    Payments (amends D2, which said Beam Playground and Omise test keys) -
+    the owner said: "ตอนนี้ เป็น live ผมคิดว่า ใช้เป็น live นั่นแหละครับ และเรา
+    ไม่ได้ใช้ omise เราใช้ Beam ครับ เราสามารถเพิ่ม webhook ได้ อันนี้ผมคิดว่า
+    จ่ายจริงไปเลย ได้ แต่คนละ webhook กับ prod ... omise เราไม่ได้ใช้แล้วใน
+    ความเป็นจริงแต่เอาไว้สำรองเฉยๆ ดังนั้นไม่ซีเรียส". Staging keeps Beam live
+    keys; a staging payment is real money; Beam gets a second webhook pointing
+    at staging, separate from production's. Omise is an unused standby and its
+    keys stay as they are.
+  agent_notes:
+    - "Order ids are randomUUID (mootech-fe lib/payment/repo.ts:99,158) and Beam carries them in referenceId, so a staging order cannot settle a production order."
+    - "Unverified: whether Beam delivers an event only to the webhook of the link that made it, or to every webhook of the merchant. If every, production logs a not-found or invalid-signature line for each staging payment. Check production's log after the first staging payment."
+    - "A staging purchase grants credit only in the staging copy; its refund is the owner's."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "1"
+  repository:
+    head: "888ede5"
+    branch: hq/20260926
+    working_tree: this-record-only
+
+unresolved:
+  - "Beam per-webhook or per-merchant delivery, above."
+  - "Staging buckets to create in the new project: mootech (FE friend photos), divine-cards, fortune-sage, oracle-cards, sacred-map (bazi defaults), mootech-v2 (bazi mascot; the mascot-v2 upload guard refuses any project but production, which is wanted on staging)."
+  - "D3 explained to the owner in chat; his reading of it and the session with เอ็ม are pending."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the owner's .assets files exist: move the storage and VAPID values
+    into the staging env with .pre-slice1 copies, create the staging buckets,
+    and hand the owner the VAPID public-key build step. Meanwhile, open the
+    mumate-infra PR for the lasting staging database.
+  acceptance_check:
+    - A cold session knows staging payments are Beam live with their own webhook, not Playground.

@@ -1,0 +1,132 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T213000_mumate_login_identity_slice5_d8_first_walk_defects_and_plan
+type: closeout
+recorded_at: 2026-09-26T21:30:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record the owner's first production walk of slice 5 after PR 825 merged, the
+    defect it found, its cause as read from the code, and the plan for the next
+    session.
+  scope:
+    - The "yes" path as walked, the cause of the "ไม่พบข้อมูลผู้ใช้" screen, the second Google sign-in, and the fixes.
+  out_of_scope:
+    - Any code change tonight. The owner resumes tomorrow.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  observed_by_owner:
+    - >-
+      PR 825 merged at 14:13 UTC (merge commit a92abe5), and the question screen
+      appeared on sign-in with an unowned Google identity. The owner photographed
+      it; the wording renders as drafted.
+    - >-
+      On "เคยใช้ — ยืนยันด้วย LINE", the owner signed in with LINE, was then asked
+      to sign in with Google AGAIN, and landed on a card reading "ไม่พบข้อมูลผู้ใช้".
+      A refresh showed Google linked.
+  measured_after_the_walk:
+    source: "production, read-only via mumate_backup, 21:24"
+    users_created_since_21_00: 0
+    provider_rows_created_since_21_00: "1 google (the re-link)"
+    members_with_two_live_google: "1, the same pre-existing member"
+    reading: The link itself succeeded and no second account was created. D3's safety property held; the experience did not.
+  cause_1_not_found_card: >-
+    The card is ProfileGate's not_authenticated state. It appears when
+    /api/profile answers 401, and /api/profile trusts only the MEMBER_ID cookie
+    (pages/api/profile.ts: cookie-mumate-id must be a UUID). MEMBER_ID is minted
+    only by the self-heal. On this path nothing ever minted it. The unowned
+    Google identity was sent to the question instead of being registered. The
+    self-heal is deliberately skipped on /v2/welcome-back, so the LINE proof
+    was never minted there either. The link callback then lands on the connected
+    screen with a valid session and no MEMBER_ID, and the screen fetches
+    /api/profile once, immediately. Three seconds later the self-heal mints
+    MEMBER_ID for the proven account, but the screen never re-fetches. A refresh
+    reads the new cookie, which is why it "worked on refresh". This is a slice-5
+    defect: the flow changes who is signed in mid-way and never re-establishes
+    the member cookie the rest of the app reads.
+  cause_2_second_google_sign_in: >-
+    By design as shipped. The first Google sign-in is replaced when LINE signs in
+    (JWT sessions, no adapter), and the link start route needs a fresh provider
+    attestation bound to its signed state. So "yes" costs a second Google round
+    trip. It is correct but it is not what a member expects, and the owner read
+    it as a fault.
+  why_the_tests_did_not_catch_it: >-
+    identity-choice-screen tests inject navigate and startOAuth and stop at the
+    URL. connected-screen tests stub /api/profile as 200. No test followed the
+    member across the provider switch into a screen that reads MEMBER_ID. Every
+    unit was right; the seam between them was never walked.
+  plan_for_next_session:
+    - >-
+      STEP 1 - FIX A, THE DEFECT (no new decision needed; inside slice 5's DoD
+      D3/D5). Extract the self-heal's mint (register-login for a KNOWN identity,
+      which logs in and creates nothing, plus the four cookies) into
+      lib/auth/mint-member.ts, used by the self-heal and by /v2/welcome-back.
+      On proof success the page mints MEMBER_ID for the proven account BEFORE it
+      leaves for the link. Test: proof-success mints then navigates; a mint
+      failure still navigates and the self-heal remains the fallback.
+    - >-
+      STEP 2 - BELT FOR THE SAME SEAM. The connected screen re-fetches
+      /api/profile once when useCurrentUser flips to authed after a 401, so a
+      late self-heal never leaves a stale "not found" card. Test with a 401 then
+      a cookie appearing.
+    - >-
+      STEP 3 - FIX C, REMOVE THE SECOND GOOGLE SIGN-IN (NEEDS THE OWNER'S
+      DECISION). On "yes", the server issues a short-lived (10 min),
+      HttpOnly, HMAC-signed "held identity" cookie. It carries the provider and
+      subject that NextAuth has just verified for the current session, and it is
+      issued by a same-origin POST. After the LINE proof, a same-origin POST
+      attaches the held identity to the strictly resolved account through
+      linkProvider. The same outcomes apply: linked, already-linked,
+      provider-already-held, and owned-by-another, which reports and offers no
+      merge from a hold. The proof standard is unchanged: the member still
+      holds both providers within minutes in the same browser, which is what
+      the link flow proves today. Recommended; without it every "yes" costs
+      three provider screens.
+    - >-
+      STEP 4 - a seam test that walks unowned sign-in → question → yes → proof
+      → attach → connected screen with the real screen, the real cookies and a
+      real /api/profile gate stubbed only at the network edge. Then the owner
+      re-walks D8, including the "no" path, which has not been walked yet.
+  tonight: >-
+    The switch stays as the owner left it. A member who answers "yes" tonight
+    gets their identity linked correctly but sees the "not found" card until
+    they refresh. Unsetting LOGIN_ASK_BEFORE_CREATE and redeploying stops the
+    question entirely until the fix, which is the owner's call. Decision 22
+    stays live either way.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.8"
+  slice: none
+  repository:
+    head: "a932fe6"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main a92abe5 (PR 825 merged)"
+  code_read:
+    - "features/v2-account/components/ProfileGate.tsx: not_authenticated → ไม่พบข้อมูลผู้ใช้"
+    - "features/v2-account/components/ConnectedScreen.tsx: one /api/profile fetch on mount, 401 → not_authenticated"
+    - "pages/api/profile.ts: 401 unless cookie-mumate-id is a UUID"
+    - "lib/auth/use-self-heal-identity.ts: skipped on /v2/welcome-back by design"
+
+unresolved:
+  - Fix A and the belt are not written; the defect is live while the switch is on.
+  - Fix C needs the owner's decision.
+  - The "no" path has not been walked on production.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Next session: the owner decides Fix C. The agent implements Fix A, the belt,
+    Fix C if approved, and the seam test in one mootech-fe PR. The owner merges
+    it and re-walks D8 on both paths.
+  acceptance_check:
+    - After the fix, "yes" lands on the connected screen showing "เชื่อม Google เรียบร้อยแล้ว" with no refresh, and no new user row.

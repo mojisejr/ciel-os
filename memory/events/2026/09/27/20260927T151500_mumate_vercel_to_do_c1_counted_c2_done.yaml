@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T151500_mumate_vercel_to_do_c1_counted_c2_done
+type: closeout
+recorded_at: 2026-09-27T15:15:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the owner-run results of the two live production items carried by
+    plan 0.2: the bazi account-purge count (C1) and the admin token (C2).
+  scope:
+    - The owner's read-only count of bazi_account_deletion, pasted in chat, and its reading.
+    - The owner's report that ADMIN_DOCTRINE_TOKEN is now set.
+  out_of_scope:
+    - The account-purge code fix, which belongs to the team's bazi repository.
+    - Slice 1; the owner said not yet ("ยังไม่ go").
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - >-
+      C1 COUNTED by the owner with the handed-over command (BEGIN READ ONLY ...
+      ROLLBACK, counts only): canceled 3 (all 3 with canceled_at), earliest
+      future purge_at 2026-10-03 11:43:52 UTC; pending 1, purge_at 2026-10-26
+      15:28 UTC; no purged row. So no one has been wrongly purged yet. The
+      first cancelled user becomes due on the purge run of 2026-10-03 17:30 UTC
+      (2026-10-04 00:30 Bangkok), and the fix must be live on bazi production
+      before then. The absence of any purged row also means the purge has never
+      deleted anyone, so the cron's real behaviour on production is unobserved.
+    - >-
+      C2 DONE by the owner: ADMIN_DOCTRINE_TOKEN is set on the bazi Vercel
+      project (owner-reported; whether the redeploy that makes it effective has
+      run was not stated and is not verified here).
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.2"
+  slice: none
+  repository:
+    head: d77b28b
+    branch: hq/20260926
+    working_tree: this-record-only
+  production_read:
+    source: "owner-run, production via mumate_backup, BEGIN READ ONLY ... ROLLBACK"
+    canceled_total: 3
+    canceled_with_canceled_at: 3
+    canceled_next_purge_at: "2026-10-03T11:43:52Z"
+    pending_total: 1
+    pending_purge_at: "2026-10-26T15:28:08Z"
+    purged_total: 0
+
+unresolved:
+  - "DEADLINE 2026-10-04 00:30 Bangkok: the bazi account-purge fix (select only status = pending) must be deployed on bazi production before the purge run of 2026-10-03 17:30 UTC, or the first of three cancelled users is purged. Owned by the team (เอ็ม); the agent could not prepare it because the harness refused the related reads."
+  - "C2 is effective only after a bazi redeploy; confirm one ran after the token was set. The team's admin pages now need the token typed in."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Wait for the owner's go on slice 1 of plan 0.2. Independently, confirm with
+    the owner before 2026-10-03 that the account-purge fix is live on bazi
+    production.
+  acceptance_check:
+    - Wake shows this record as the newest for mumate-vercel-to-do-001 with no validation error.

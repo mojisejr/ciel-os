@@ -1,0 +1,69 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T081112_mumate_vercel_to_do_s3_five_infra_prs_proven_on_staging
+type: closeout
+recorded_at: 2026-09-28T08:11:12+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Checkpoint slice 3: every plan item written in mumate-infra as five stacked
+    draft PRs, each proven on staging except the D4 workflow run, which waits
+    for owner setup. Also the 2026-09-28 daily check as far as the harness
+    allowed before 09:00, and two production findings.
+  scope:
+    - mumate-infra PRs 29-33 and their proofs on mumate-2; staging env/bazi.env CRON_SECRET; names-only Vercel env read.
+  out_of_scope:
+    - Merges (owner), production host, Vercel settings, any mootech-fe or bazi change.
+
+outcome:
+  status: recorded
+  slice: "3"
+  completed:
+    - "PR 29 feat/s3-rollback-d11-edge: rollback.sh --profile full (the host .env has no COMPOSE_PROFILES, so the old script never recreated fe/bazi) and a non-zero ops-status no longer fails a healthy rollback; Caddy (edge) HSTS max-age=63072000 as Vercel sends, encode with an explicit type list (no SSE), 10 MB body cap; (app_proxy) keepalive 4s, lb_try_duration 20s, handle_errors 502/503/504 -> static maintenance page (text of pages/maintenance.tsx verbatim, Q4) with 503 + Retry-After; caddy/sites/<env>.caddy by MUMATE_ENV (production.caddy = bazichart.mumate.co, FE only); bin/caddy-validate.sh. Tests: rollback 8 (5 red on old script), caddy-edge 13 in Docker."
+    - "PR 29 on staging: caddy recreated 07:43; fe force-recreated under 90 requests = 90 x 200 (max 2.9 s); fe stopped = 503 maintenance page after 20.5 s, assets 200, back in 25 s; rollback.sh 13 s really moved fe to fd3220b-staging; deploy.sh back to 850d8fb-staging 17 s. Keep-alive race NOT reproduced before the fix (80/80 x 200 at ~5 s spacing) - the fix is by construction."
+    - "PR 30 feat/s3-cron-timers: cron.tsv (6 jobs, enable_on per Q2), mumate-cron@.service + 6 timers (UTC, AccuracySec=1s, no catch-up), bin/cron-call.sh (Bearer from env file, never printed; red once / orange 30 min / green), bin/cron-check.sh (tsv = timers = /app/vercel.json of the running images), bin/cron-install.sh (systemctl link, deploy has sudo systemctl only). 26 tests. On staging: 7 units linked, 4 timers on; push-reminders and manifest-morning 200 every minute from 00:53 UTC; qi-quota-reset 17:00 and account-purge 17:30 UTC not yet run."
+    - "Staging env/bazi.env had no CRON_SECRET; a staging-only value was generated into .assets/mumate/infra-mumate/staging-bazi-cron-secret.env (600) and appended on the host (env/bazi.env.pre-s3 kept, value never printed); bazi recreated healthy."
+    - "PR 31 feat/s3-bazi-autoheal: fe-recover.sh -> app-recover.sh <fe|bazi> (bazi judged by \"db\":\"ok\"); health-notify recovers the one app failing twice, never when both are down. On staging between two real ticks with isolated state and no alert: bazi disconnected 01:00:14 UTC, unhealthy after 77 s, obs 1 alerted only, obs 2 recreated it healthy in 7 s on the same image, obs 3 cleared the latch."
+    - "PR 32 feat/s3-release-flow: .github/workflows/release.yml (dispatch only; tag:ci over Tailscale SSH; production gate 1 = github.actor in Environment variable RELEASE_ACTORS, gate 2 = bin/release-check.sh on staging's deploy-history.log); deploy.sh records deploy-history.log. 15 tests, actionlint clean. Staging recorded its first ok line and release-check passed on the current tags. The workflow itself has not run."
+    - "PR 33 feat/s3-env-examples: both example files list every name the images read (read-only subagent inventory of 850d8fb / 7000d19 plus vercel env ls names), grouped, with the unset behaviour."
+    - "Daily check 2026-09-28, partial: Render mootech-be http_request_count 2026-09-27 06:10Z..2026-09-28 01:10Z = 200 at 55-60/h (the monitor), 204 = 1 in the 10:10-11:10Z hour; Render keeps no log for that window, so its source is unidentified. The production SQL (login and be-retirement counts) was refused by the harness (Production Reads) and handed to the owner as .assets/mumate/daily-check-20260928.sql; the query shape was verified on pgstaging (exposed 1,442, two live Google 1 - the baselines)."
+  findings:
+    - "D4 turning point: mumate-infra is private on GitHub Free, where Environment required reviewers do not exist; the production gate is an allow-list (RELEASE_ACTORS). A reviewer rule would need GitHub Pro - money, owner's call."
+    - "PRODUCTION: the bazi Vercel project lists no CRON_SECRET in Production or Preview (vercel env ls, names only), and all three bazi crons fail closed without it. Supporting data: the 09-27 copy of production (pgstaging) holds 151 bazi_feature_quota rows older than yesterday, oldest 2026-09-01 - qi-quota-reset has not pruned for weeks. account-purge therefore does not run either: one pending deletion (requested 2026-09-26) comes due about 2026-10-26. The bazi project also lists no LINE_* names, so bazi-alerts could not send anyway. Fix is a Vercel setting (owner)."
+    - "mootech-fe production holds ADMIN_DOCTRINE_TOKEN, which no fe code reads; bazi, which does, has none."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "3e77164"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mumate-infra_prs: "https://github.com/mojisejr/mumate-infra/pull/29 .. /33, stacked 29 <- 30 <- 31 <- 32 <- 33, all draft, sections check green"
+    mumate-infra_tip: "5ccd23b (feat/s3-env-examples), checked out on mumate-2"
+    staging_tags: "fe 850d8fbed5c8-staging, bazi 7000d190cd44-staging (unchanged)"
+
+unresolved:
+  - "mumate-2 runs the branch feat/s3-env-examples, not main, until PRs 29-33 merge; then `git checkout main && git pull --ff-only` (the cron unit links point at /opt/mumate/systemd and keep working)."
+  - "D4 needs owner setup before its first run: Tailscale OAuth client for tag:ci plus a policy letting tag:ci Tailscale-SSH to tag:server as deploy; mumate-infra Environments staging and production with TS_OAUTH_CLIENT_ID/TS_OAUTH_SECRET; production variable RELEASE_ACTORS (confirm เอ็ม's GitHub handle; jaroensakyod is the one write collaborator on mootech-fe)."
+  - "Staging env/fe.env CRON_SECRET has unrecorded origin (possibly production's value)."
+  - "The one Render 204 on 2026-09-27 10:10-11:10Z is unidentified; watch for another."
+  - "cron-check exits 2 on a main-built image until mootech-fe 836 / bazi 46 merge; cron-install then keeps that service's timers off."
+  - "Slice-2 unresolved items from 20260928T062135 stand, unchanged."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner runs the handed-over daily SQL and reviews/merges PRs 29-33 in
+    order; the agent reads the second backup after 09:15, then, after the
+    merges, returns mumate-2 to main. The owner decides on the bazi Vercel
+    CRON_SECRET and does the D4 setup, after which the agent runs the release
+    workflow once on staging and writes the slice-3 closeout.
+  acceptance_check:
+    - Wake shows no validation error and this closeout as the latest record of mumate-vercel-to-do-001.

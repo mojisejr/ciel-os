@@ -1,0 +1,81 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T162042_smc_v2_app_slice9_merged
+type: closeout
+recorded_at: 2026-09-28T16:20:42+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    record notes that slice 9 merged and leaves the lane idle before
+    slice 10.
+  scope:
+    - Record the merge of smc-v2 pull request 9 and the checkout sync.
+  out_of_scope:
+    - Slice 10; it needs its own decision.
+
+outcome:
+  status: merged
+  completed:
+    - >-
+      The owner merged smc-v2 pull request 9 ("merged เรียบร้อย"). The merge
+      commit is 444cc48, parents eeffc7f and 11715f2, merged at
+      2026-09-28T09:20:13Z. The checkout was fetched and fast-forwarded to
+      main 444cc48, which is clean and equal to origin. The local topic
+      branch feat/owner-walkthrough was deleted, and its remote branch is
+      already gone.
+    - The plan header returns to phase none, idle. Slices 1-9 are delivered and slice 10 remains.
+  not_completed:
+    - >-
+      smc-v2's merged remote branch feat/design-decisions is still on
+      origin as of this fetch. The owner authorized deleting it, but the
+      harness refused it as Git Destructive, so it is left for the owner.
+    - Slice 10 (Windows).
+  boundaries:
+    - Only this workstream's paths were written. HQ was not pushed.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "9"
+  repository:
+    head: "bd7fd18"
+    branch: hq/20260926
+    working_tree: this-event-and-the-plan-header-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "444cc48"
+    branch: main
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/smc-v2/pull/9
+  simulator:
+    repository: cu12-simulator
+    head: "17771d5"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/28/20260928T161814_smc_v2_app_slice9_ready_for_owner_review.yaml
+
+unresolved:
+  - A physical USB barcode scanner has not been observed. In slice 9 the owner typed the HN in its place.
+  - Door-label order on the physical cabinet needs the real cabinet.
+  - Production keygen is needed before the first sale. The build carries the development key.
+  - Real hardware may change the state machine.
+
+next_action:
+  action: >-
+    Nothing is in flight. When the owner is ready for Windows, record a
+    slice-10 decision. The Windows machine clones smc-v2 and
+    cu12-simulator from their remotes. The owner reads the machine code
+    off the screen, and the agent issues the license on the Mac with the
+    development key, so the key never leaves it. CIEL records stay on the
+    Mac. Build the .msi and the simulator in TCP mode there, then the
+    owner installs, activates, and completes one load and one dispense
+    against the simulator.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 at revision 0.4, phase none, idle, with this record as its latest event and smc-v2 main 444cc48.

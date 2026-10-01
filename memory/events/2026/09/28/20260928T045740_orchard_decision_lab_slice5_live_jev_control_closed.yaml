@@ -1,0 +1,85 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T045740_orchard_decision_lab_slice5_live_jev_control_closed
+type: closeout
+recorded_at: 2026-09-28T04:57:40+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Deliver the owner-authorized, local-only Slice 5 live Jev comparison without
+    submitting private orchard information to an external provider.
+  scope:
+    - Add a server-only OpenRouter Decisions adapter and Thai local comparison screen.
+    - Restrict the live call to one versioned synthetic control.
+    - Validate typed answer, probability distribution, cost and fallback behavior.
+  out_of_scope:
+    - Private dogfood or CSV provider submission, agricultural policy activation,
+      public deployment, source retrieval, or any autonomous orchard action.
+
+outcome:
+  status: recorded
+  slice: "5"
+  completed:
+    - >-
+      The local Lab ran one live synthetic control against OpenRouter using the
+      pinned configured model, then recorded only the redacted local result.
+    - >-
+      The provider returned READY_FOR_HUMAN_REVIEW at confidence 0.79; the served
+      model was typesafe/jev-1.13-20260917, latency was 743 ms, and reported cost
+      was USD 0.000028266.
+    - >-
+      The local one-call guard disabled a second live request. The Thai screen
+      presents the synthetic-only boundary, result, latency, cost and disabled state.
+    - >-
+      PRD/SPEC now distinguish this synthetic control from a future approved
+      private-data envelope.
+  not_completed:
+    - This single synthetic result does not establish Jev accuracy, daily usefulness,
+      agricultural policy validity, or commercial value.
+    - No public-source evidence has been retrieved or activated.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.9"
+  slice: "5"
+  repository:
+    head: eafce3b7dbfc8959a69f91a663609c6901ce2b63
+    branch: hq/20260926
+    working_tree: slice5-live-jev-closeout-prepared
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 91d0b35a3b5257162ad64494f8a985c6631bc90b
+  checks:
+    - bun run check: 27 tests passed, 0 failed, 118 expectations.
+    - >-
+      Live API control: one synthetic-only result; reported cost USD 0.000028266;
+      local UI and SQLite ledger agreed on choice, confidence, latency and cost.
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-one-live-synthetic-control
+    eye_truth: closed-agent-local-browser-inspection
+    device_truth: not-applicable-local-browser-only
+
+unresolved:
+  - >-
+    A typed synthetic result demonstrates endpoint integration and controls, not
+    calibrated quality on orchard data. Any threshold needs labelled evidence.
+  - >-
+    The local one-call guard is a Lab experiment control. A future repeated-use
+    design needs owner-approved budget, rate, retention and monitoring rules.
+  - >-
+    Slice 6's public-source scope, source list, reviewer process and research-LLM
+    budget remain unapproved.
+
+next_action:
+  action: >-
+    Owner decides whether to authorize Slice 6's curated public-source evidence
+    scope, or continues private dogfood without sending new data to a provider.
+  acceptance_check:
+    - The owner can distinguish a provider integration proof from an agricultural policy claim.
+    - Any Slice 6 authorization names source scope, reviewer responsibility and budget.

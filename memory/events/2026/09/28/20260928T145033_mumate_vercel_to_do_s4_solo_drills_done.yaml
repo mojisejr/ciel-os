@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T145033_mumate_vercel_to_do_s4_solo_drills_done
+type: closeout
+recorded_at: 2026-09-28T14:50:33+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Checkpoint slice 4: every drill the agent can run alone is done on
+    staging with evidence, and the D6 checklist exists for the owner; the
+    remaining rows need the owner (B-1..B-5) or time (tonight's daily jobs).
+  scope:
+    - Drills on mumate-2 2026-09-28 07:37-07:50 UTC; workstreams/mumate-vercel-to-do-001/parity-checklist.md.
+  out_of_scope:
+    - Production; merges; the owner's rows.
+
+outcome:
+  status: recorded
+  slice: "4"
+  completed:
+    - "Good deploy: release run 36392624548 (the D4 button), healthy, ok line in deploy-history."
+    - "Bad deploy: HEALTH_TIMEOUT=2 with FE fd3220b-staging - declared unhealthy 07:39:37, back on last-good healthy 07:39:49 (12 s), alert posted, deploy-history rolled-back. A SHA not in GHCR was refused at pull with .env restored and the service untouched."
+    - "Manual rollback: 9.0 s from decision to healthy, 80/80 requests 200 during it (max 4.4 s)."
+    - "Crash: SIGTERM to fe PID 1 (next-server) - Docker restarted it (RestartCount 0->1), healthy in 6 s, 45/45 requests 200."
+    - "FINDING: `docker compose kill fe` is a manual stop to Docker; restart: unless-stopped did not restart it. fe stayed down about 2 minutes (07:41:20-07:43:15) until the agent started it; users got the D11 maintenance page (55 x 503, 0 x 502); cron alerted 🔴 once per job and the health timer 🔴 then 🟢. app-recover does not act on an absent container by design. Staging only."
+    - "Cron: push-reminders and manifest-morning exactly once in each of 270 consecutive minutes (03:00-07:30), 0 failures; failure alerts proven by the outage above; reconcile-payment one-off drill 200."
+    - "Planned maintenance: MAINTENANCE_MODE=on (fe.env copied first, restored after) - / and /v2/home show the page, /api/health 200, cron 200 during it, bypass key sets an httpOnly cookie and the site behaves normally. The app's page answers HTTP 200, not 503."
+    - "Restore: restore-verify of pg/mumate-2-20260928T020159Z.sql.gz - 184 tables, 5,138 users, 92 s, pgtmp removed."
+    - "Reboot: sudo systemctl reboot 07:48:20 - host up 07:48:37, app.staging 200 at 38 s, every service, timer, tailscale and cron back unattended. unattended-upgrades enabled, automatic reboot off."
+    - "D6 checklist written: workstreams/mumate-vercel-to-do-001/parity-checklist.md (19 rows)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "4"
+  repository:
+    head: "3e62862"
+    branch: hq/20260926
+    working_tree: this-record-and-parity-checklist
+  application:
+    mumate-infra_main: "3c918fb on mumate-2"
+    staging_tags: "fe 850d8fbed5c8-staging, bazi 7000d190cd44-staging (unchanged at the end)"
+
+unresolved:
+  - "Owner rows: B-1 walk LINE + Google login and send one chat message (SSE); B-2 one real payment on staging; B-3 QStash on staging (test token) or accept proof only at cutover; B-4 production's busiest hour for the load test; B-5 sign."
+  - "Owner decisions in the checklist: bazi-alerts cannot run on staging (no LINE channel); no per-branch previews on DO; live proof of the LLM timeouts or accept the unit tests."
+  - "qi-quota-reset (17:00) and account-purge (17:30) fire for the first time tonight; the agent reads them on 2026-09-29."
+  - "The app's maintenance page answers 200; crawlers would index it during a long window. Not changed."
+  - "Rows marked re-run are repeated on merged SHAs after 2026-10-04."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Ask the owner for B-1..B-4 and the three keep-or-drop decisions; read
+    tonight's daily jobs on 2026-09-29; then the load test and the owner's
+    signature.
+  acceptance_check:
+    - Wake shows no validation error and this closeout as a checkpoint of mumate-vercel-to-do-001.

@@ -1,0 +1,91 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T124357_mumate_be_retirement_s3_walked_be_gone
+type: closeout
+recorded_at: 2026-09-27T12:43:57+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Checkpoint for slice 3. The owner walked v2 end to end on staging with
+    mootech-be stopped, and nothing broke. Arena row counts match the walk,
+    and no request reached the backend. What remains is the owner's
+    acceptance (S5) and returning the shadow (S4).
+  scope:
+    - The walk, its arena counts, the api.staging access log for the window, and PR 25 on the host.
+  out_of_scope:
+    - Acceptance, the restore, and slice 4.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      STAGED BEFORE THE WALK, inside the arena only. D8's fresh Google
+      identity (the only user created at 2026-09-27 05:25:58) was detached
+      from its account, so it signs in as a new person.
+    - >-
+      OWNER'S WALK (reported 12:4x):
+      - W1 (existing member via LINE): done. Home with the mascot; edit-birth
+        with unknown time; friend add with photo, then edit.
+      - W2 (element-finder signed out): passed.
+      - W3 (new member via Google, "ไม่เคย", register, first-run): reached
+        home.
+      - W4 (v1 URLs): redirected.
+      - In the owner's words, nothing hung and nothing failed ("ไม่เจอค้าง
+        ไม่เจออะไรเลย").
+    - >-
+      ARENA COUNTS, 11:58 → 12:43:
+      - users 5,130 → 5,131 and user_provider 5,316 → 5,317: one new member,
+        with a provider row, a result_code, and onboarded_at set.
+      - consent 144 → 145.
+      - member_with_friend 2,270 → 2,271; the new friend's picture_url is a
+        Supabase Storage public URL. One friend row updated.
+      - log_calculate +3.
+      - 0 new members without a provider. 0 rows written with time NULL.
+    - >-
+      S1, NO REQUEST REACHED THE BACKEND. The api.staging access log from
+      11:58 has 45 requests, all GET /health 200: the Grafana synthetic
+      probes answered by the tombstone. There were 0 calls to any BE route.
+      be is not running. pg_stat_activity on the arena shows only fe
+      (172.18.0.2); bazi held no connection at that moment.
+    - >-
+      PR 25 was merged by the owner and pulled onto the host (cc3ce8b).
+      deploy.sh is safe to run with BE_SCALE=0 again.
+  not_completed:
+    - S4 (return the shadow, arena down) and S5 (the owner's acceptance).
+    - The friend photo from W1 sits in the real Supabase Storage bucket, as recorded at 11:58.
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.4"
+  slice: none
+  repository:
+    head: "e054196"
+    branch: hq/20260926
+    working_tree: this-record-only
+  staging:
+    image: "mootech-fe 5621534-staging"
+    be: "BE_SCALE=0, MUMATE_BE_MODE=retired"
+    api_staging_window: "45 requests, all GET /health 200"
+  arena_counts:
+    users: "5130 -> 5131"
+    user_provider: "5316 -> 5317"
+    consent: "144 -> 145"
+    member_with_friend: "2270 -> 2271 (photo in Storage)"
+    log_calculate: "+3"
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner accepts or rejects the rehearsal. On acceptance, the agent runs
+    the reverse steps of the 11:58 record, arena down. Then slice 4 is planned
+    with the owner (R6).
+  acceptance_check:
+    - The owner's answer recorded; S4 proven.

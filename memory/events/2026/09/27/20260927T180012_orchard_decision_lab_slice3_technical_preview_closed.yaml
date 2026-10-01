@@ -1,0 +1,76 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T180012_orchard_decision_lab_slice3_technical_preview_closed
+type: closeout
+recorded_at: 2026-09-27T18:00:12+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Record the technical proof for a local, read-only CSV seed preview while
+    retaining the owner review of private displayed records as a separate fact.
+  scope:
+    - Map the five raw Google-export filenames by their canonical suffix.
+    - Parse, validate, normalize, and locally render row acceptance/rejection with provenance.
+    - Keep all raw data, hashes, and row contents inside the ignored Lab directory and local UI.
+  out_of_scope:
+    - CSV or Google Sheet writes, Google APIs, persistence, provider calls, or daily dogfood entry.
+
+outcome:
+  status: recorded
+  slice: "3"
+  completed:
+    - >-
+      The Lab has a local `/imports` preview that shows source filename,
+      canonical mapping, parser revision, local hash, accepted/rejected rows,
+      warnings, and Thai explanation without a source-file write path.
+    - >-
+      The real five-file local input set mapped successfully; 166 of 168 data
+      rows were accepted and 2 were visibly rejected for missing required
+      values. No raw row, hash, header, or field value entered CIEL.
+    - >-
+      The parser handles CSV quoting/newlines, Thai day/month/year dates, and
+      local date-time timestamps; a Google Calendar event ID is optional.
+  not_completed:
+    - The owner has not yet reviewed the private `/imports` preview through the tunnel.
+    - No normalized data was persisted; this slice is preview-only.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: a7d5f45c879e471efb5233cdb538add6075bc8c4
+    branch: hq/20260926
+    working_tree: slice3-technical-preview-closeout
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: af0802e7da0e7fd0f6e73f3d3e7105c115defd56
+  checks:
+    - bun run check: 17 tests passed, 0 failed, 58 expectations.
+    - >-
+      Local HTTP verification of /imports observed all five contracts and the
+      aggregate read-only acceptance/rejection counts without exposing raw rows.
+  proof_lanes:
+    hard_gate: closed
+    api_truth: not-applicable-no-external-api
+    eye_truth: pending-owner-private-preview-review
+    device_truth: not-applicable-local-browser-only
+
+unresolved:
+  - Owner needs to review the actual local preview, particularly the two rejected Work Log rows and the extra-column warnings, before accepting Slice 3.
+  - A later persisted normalized store is deliberately absent and belongs only to an authorized later slice.
+  - Slice 4 remains unstarted and unapproved.
+
+next_action:
+  action: >-
+    Have the owner open /imports through the existing tunnel, inspect the
+    five file cards and any rejected rows, then record acceptance or a focused
+    contract correction before requesting Slice 4.
+  acceptance_check:
+    - The owner can understand which file/rows are usable, which are not, and why without modifying the Sheet.
+    - The owner confirms whether the two rejected rows are genuinely incomplete or identifies an allowed rule change.

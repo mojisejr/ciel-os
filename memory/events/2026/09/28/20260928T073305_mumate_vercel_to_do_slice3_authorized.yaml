@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T073305_mumate_vercel_to_do_slice3_authorized
+type: decision
+recorded_at: 2026-09-28T07:33:05+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Authorize slice 3 of plan 0.3 (the control room replaces every Vercel
+    platform duty) with the owner's answers to the six questions put to him
+    in the same session.
+  scope:
+    - "mumate-infra branches and PRs, proven on the staging host mumate-2: six cron timers with a Bearer wrapper and OnFailure alert; Caddy production site block for the FE only (per host, not on staging), :80 redirect, HSTS, encode, body cap, keep-alive 502 fix; D11 retry through a restart and a static maintenance page when the upstream fails; rollback.sh that recreates fe and bazi and a one-command rollback to the previous SHA; bazi autoheal like fe-recover; env examples level with the code; the D4 release flow."
+    - "Env inventories rebuilt from an owner-run Vercel read (names only)."
+  out_of_scope:
+    - "Any mootech-fe or bazi-sft-dataset merge before 2026-10-04 (slice-2 fence A stands); production host, DNS, Vercel settings."
+    - "Other workstreams in attention (mootech-ga4-instrumentation-001 and the rest): the owner said they wait."
+    - "bazi-side leftovers (LIFF of channel 2011679472, bazi LINE webhook with เอ็ม): deferred by the owner."
+
+outcome:
+  status: decided
+  parallelism: approved   # beside slice 2, which waits only for merges after 2026-10-04 under its own decision 20260928T051750
+  slice: "3"
+  decision: >-
+    The owner answered the six slice-3 questions: "1. slice 3 เริ่มได้ ถ้าไม่ติดอะไรแล้ว
+    2. เอาตามนั้น 3. เอนตามคุนแนะนำ เว้นแต่ เจอจุดเปลี่ยนระหว่างทาง 4. ผมว่าไม่มีปัญหาอะไรตรงนี้
+    ตามที่คุนว่าได้ 5. โอเคตามนั้น จนกว่าจะเปลี่ยนแปลงอีกครั้ง 6. โอเคส่งมาเลยเมื่อคุนต้องการมัน".
+  owner_answers:
+    Q1: "Slice 3 is authorized."
+    Q2: "Cron timers on staging: all six installed; enabled only where no outward effect reaches real people. bazi-alerts (LINE push to real lineUserIds in the copied data) stays disabled on staging; reconcile-payment (calls Beam live) is enabled only during a drill; push-reminders and manifest-morning may run (the staging VAPID pair cannot deliver to production subscriptions)."
+    Q3: "D4 release flow as recommended: the workflow is built now; automatic staging build/deploy on merge is switched on only after the slice-2 merges, so a launch-team merge cannot replace the integration builds with a main that lacks slice 2. It needs a Tailscale OAuth client for CI (owner creates it) and a GitHub Environment production with เอ็ม as required reviewer (owner sets it, tells เอ็ม). The agent may deviate if it finds a turning point on the way, and says so."
+    Q4: "The static maintenance page reuses the text of mootech-fe pages/maintenance.tsx verbatim."
+    Q5: "The rate limit on bazi's ops login is accepted as dropped (D6), because D3 leaves bazi without a public hostname on DigitalOcean; revisit if that changes."
+    Q6: "The owner runs the fresh Vercel env read (names only, both projects, Production and Preview) when the agent sends the command; the same read serves the pre-merge check of bazi 43 and 45."
+  owner_facts:
+    - "Before the slice-2 merges the owner makes one real payment himself (2026-09-28)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "3a4cb5b"
+    branch: hq/20260926
+    working_tree: this-decision-only
+
+unresolved:
+  - "Slice 2 step 10 (merges after 2026-10-04) remains governed by 20260928T051750; Wake now reports slice 3 as the authorized slice."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Start slice 3 in mumate-infra on a topic branch, smallest proven piece
+    first (rollback.sh and the Caddy D11/keep-alive fix), each proven on
+    staging; run the 2026-09-28 daily check and the second-backup check
+    after 09:15.
+  acceptance_check:
+    - Wake reports mumate-vercel-to-do-001 lifecycle authorized for slice 3 at revision 0.3 with no validation error.

@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T115820_mumate_login_identity_6h_rollback_path_after_829
+type: closeout
+recorded_at: 2026-09-27T11:58:20+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Update 6h's rollback path and record the first day's reading. A
+    teammate's merge now sits after the flip, so promoting the pre-flip
+    deployment would also undo it.
+  scope:
+    - The rollback mechanism, and the 10:33 reading.
+  out_of_scope:
+    - Any change to the flip.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      mootech-fe #829 (notifications, manifest, SW auto-update) merged to
+      main as 3c53a16 after the flip. Promoting dpl_2oocNUwSCLn9yiACFqziEsao61Qa
+      would now roll #829 back with it. The flip's rollback is therefore the
+      one-line revert PR of constants/api/endpoint.ts:55, merged by the
+      owner. Promote stays only as an emergency option, and its cost must be
+      stated if it is used.
+    - >-
+      6h READING at 10:33, read-only: 2 new members since the flip (1 LINE,
+      1 Google), both with a provider row; 0 without a provider; members
+      holding two live Google identities still 1; 4 provider rows touched.
+      This proves the new-account path on production, which the owner's
+      walk skipped, with real sign-ups. No trigger fired.
+  not_completed: []
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.9"
+  slice: none
+  repository:
+    head: "10364e0"
+    branch: hq/20260926
+    working_tree: this-record-and-the-be-retirement-checkpoint
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Continue 6h daily until 2026-10-04 under decisions 30-31, then remind the
+    owner and write the slice-6 closeout.
+  acceptance_check:
+    - Daily readings recorded; any rollback goes through the revert PR.

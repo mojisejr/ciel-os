@@ -1,0 +1,82 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T084956_ciel_mini_v1_tag_published
+type: closeout
+recorded_at: 2026-10-01T08:49:56+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-mini-template-001
+  lane: single
+  objective: >-
+    Publish the owner-merged CIEL-mini template revision as version 1.0.0
+    while preserving the remaining teaching-proof boundary.
+  scope:
+    - Slice 5 of plan revision 0.5, release checkpoint after owner merge.
+    - Verify merged main, publish an annotated v1.0.0 tag, and record the result.
+  out_of_scope:
+    - Rewriting pilot history or changing the nephew's published site.
+    - Claiming the missed-closeout recovery exercise is complete.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Owner reported PR 1 merged. GitHub independently reports PR 1 merged at
+      2026-10-01T01:48:29Z with merge commit
+      20a5d54948b6c698fe500ccc5b74852aac2a1b80.
+    - >-
+      Fetched and fast-forwarded the template's clean local main to the exact
+      origin/main merge commit. The reviewed PR head is an ancestor of main.
+    - >-
+      Published annotated tag v1.0.0. The remote tag resolves to the same
+      merge commit, and its tracked tree contains only the eight expected
+      template files.
+    - >-
+      GitHub reports the repository remains PUBLIC, on main, and marked as a
+      Template repository.
+  not_completed:
+    - >-
+      The original Slice 4 deliberate missed-closeout recovery proof is still
+      pending, so this release does not complete the whole teaching workstream.
+    - >-
+      The nephew's own repository and process record have not been reviewed;
+      the public site review establishes product behavior only.
+
+evidence:
+  plan: workstreams/ciel-mini-template-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "5"
+  repository:
+    head: a0c312e64382db40e39f4298fc9b1f399ddceda3
+    branch: hq/20260926
+    working_tree: this-release-event-only
+  template_repository:
+    url: https://github.com/mojisejr/ciel-mini-template
+    merged_pr: https://github.com/mojisejr/ciel-mini-template/pull/1
+    main_head: 20a5d54948b6c698fe500ccc5b74852aac2a1b80
+    tag: v1.0.0
+    remote_tag_target: 20a5d54948b6c698fe500ccc5b74852aac2a1b80
+    visibility: public
+    is_template: true
+  verification:
+    - gh pr view 1: state MERGED and expected merge commit
+    - local main and origin/main: identical merge commit, clean working tree
+    - remote annotated tag dereference: expected merge commit
+    - v1.0.0 tree: eight expected template files, no pilot or raw materials
+
+unresolved:
+  - The deliberate unmatched-alignment recovery exercise remains pending.
+  - >-
+    The nephew's independent understanding and use of continuity files needs
+    direct observation or their project repository before a teaching claim.
+
+next_action:
+  action: >-
+    Use the released template with a learner, inspect the learner's own project
+    records and teach-back, and run the small fresh-session recovery exercise
+    before the final Slice 7 teaching verdict.
+  acceptance_check:
+    - Learner explains one decision and one observed result in their own words.
+    - A fresh session detects and resolves an intentionally open alignment.

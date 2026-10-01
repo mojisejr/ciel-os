@@ -1,0 +1,82 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T155536_mumate_vercel_to_do_account_purge_fix_pr
+type: closeout
+recorded_at: 2026-09-27T15:55:36+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Offer the fix for the live bazi account-purge defect (C1) as a pull request
+    before its deadline, and record that the admin-token item (C2) is complete.
+  scope:
+    - bazi-sft-dataset PR 42 against pdf-dev, the fix and its test.
+    - The owner's confirmation that bazi was redeployed after ADMIN_DOCTRINE_TOKEN was set.
+  out_of_scope:
+    - Merging PR 42 (the team or owner).
+    - Any plan slice; the owner has not given the slice-1 go.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - >-
+      The owner asked whether we can fix account-purge ourselves; the agent
+      recommended yes and did it under the owner's earlier C1 grant ("ตามนั้น":
+      count read-only, then open a fix PR for the team's review). This time the
+      harness allowed the repository reads that it had refused earlier under
+      the production-read outcome.
+    - >-
+      FIX: src/app/api/cron/account-purge/route.ts selects
+      and(eq(status, "pending"), lte(purgeAt, now)) instead of lte(purgeAt, now)
+      alone, with a comment saying why. New tests/account-purge-cron.test.ts
+      mocks @/db/client, captures the where condition the route sends, renders
+      it with PgDialect, and asserts both the status = 'pending' and the
+      purge_at <= now clauses; a second case proves 401 without CRON_SECRET and
+      no DB access.
+    - >-
+      PROOF: the new test failed on the unfixed route (rendered SQL
+      "bazi_account_deletion"."purge_at" <= $1, no status clause), then passed
+      2/2 after the fix. tsc --noEmit exit 0 with no output; eslint on both files
+      exit 0; npm run test:default-gate exit 0, 11 files and 102 tests passed.
+      Exit codes were read directly, not through a pipe.
+    - >-
+      PR: https://github.com/mojisejr/bazi-sft-dataset/pull/42, base pdf-dev
+      72ca612, head f430748, open and not draft, MERGEABLE, Vercel preview
+      pending at recording time. The description uses the six CIEL sections.
+    - >-
+      C2 COMPLETE: the owner confirmed bazi was redeployed after
+      ADMIN_DOCTRINE_TOKEN was set, so the admin routes now require the token
+      (owner-reported, not probed by the agent).
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: b6ece7b
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    bazi-sft-dataset_pr: "https://github.com/mojisejr/bazi-sft-dataset/pull/42"
+    branch: fix/account-purge-pending-only
+    base: "pdf-dev 72ca612"
+    head: f430748
+    worktree: "a scratch worktree outside the repository; the main checkout (detached 60c05f0) and bazi-testenv (pdf-dev) were not touched"
+
+unresolved:
+  - "DEADLINE: PR 42 must be merged and deployed on bazi production before the purge run of 2026-10-03 17:30 UTC (2026-10-04 00:30 Bangkok), or the first of three cancelled users is purged."
+  - "After the merge, the rows marked canceled stay canceled with their old purge_at; that is harmless once the filter is live, and no data needs restoring (0 purged)."
+  - "The scratch worktree and local branch fix/account-purge-pending-only remain until the PR merges; remove them then under the usual gate."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The team or owner reviews and merges bazi-sft-dataset PR 42 before
+    2026-10-04 00:30 Bangkok and confirms the Vercel production deploy. The
+    slice-1 go of plan 0.3 is still the owner's.
+  acceptance_check:
+    - PR 42 merged into pdf-dev and a bazi production deployment containing f430748 is live before the deadline.

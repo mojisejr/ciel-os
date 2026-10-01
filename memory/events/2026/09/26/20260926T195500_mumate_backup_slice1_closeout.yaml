@@ -1,0 +1,76 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T195500_mumate_backup_slice1_closeout
+type: closeout
+recorded_at: 2026-09-26T19:55:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-backup-001
+  lane: single
+  objective: >-
+    Final closeout of slice 1, the plan's only slice, and therefore of the
+    workstream. MuMate's off-platform backup now runs nightly as a read-only
+    role, fails loudly, is watched for staleness, and has been restored against
+    a clock. D1 closes on the owner's amended criterion, stated below, not the
+    one the plan was written with.
+  scope:
+    - The DoD verdict, the owner's amendment of D1, and what continues to be watched after close.
+  out_of_scope:
+    - Supabase Storage files (owner decision, not backed up), Path C drill, PITR.
+
+outcome:
+  status: ready-for-owner-merge
+  parallelism: approved
+  slice: "1"
+  owner_amendment_of_d1: >-
+    At about 19:50 on 2026-09-26 the owner was told plainly that D1 as written
+    (two nightly timer runs) cannot be met before 2026-09-28 and that the agent
+    recommended waiting. He replied "โอเค closeout เลย" - close now. D1 therefore
+    closes on this amended criterion: one successful run of the same script,
+    under the same role, service environment and bucket, and the timer armed
+    with its unit identical to the repository's. The two-night observation is
+    NOT claimed. It continues after close under D2 and D3's alarms: a failed
+    night posts 🚨, and a missing night turns ops-status ❌ within 26 hours.
+  dod_verdict:
+    D1: "met on the owner's amended criterion - manual run exit 0, 141,479,481 bytes, timer enabled, first run 2026-09-27 02:02 UTC; the two nights themselves are not observed"
+    D2: "met - induced failure on the host posted 🚨, exited 1, published nothing"
+    D3: "met - stale and never both ❌ on the host; the test fails if the check is removed"
+    D4: "met - restore-verify on the 09-26 object, 184 tables, 5,121 users"
+    D5: "met - 83 s, start to serving, in the pgtmp drill"
+    D6: "met - runbook 02 three paths, merged (mumate-infra bfbc59a)"
+    D7: "met - inventory; Storage excluded by owner decision"
+    D8: "met - gitleaks clean; no value printed; no temporary env copy or pgtmp left"
+  completed:
+    - The full step-by-step evidence and the seven lessons are in the two records this closes over; they are not repeated here.
+
+evidence:
+  plan: workstreams/mumate-backup-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "4f47262"
+    branch: hq/20260926
+    working_tree: this-closeout-and-plan-state
+  application:
+    mumate-infra: "PR 23 merged, merge commit bfbc59a; host /opt/mumate level with it"
+    production_change: "role mumate_backup (read-only) on Supabase, owner K7"
+  records:
+    decision: memory/events/2026/09/26/20260926T154500_mumate_backup_workstream_opened_slice1_authorized.yaml
+    checkpoint: memory/events/2026/09/26/20260926T161500_mumate_backup_checkpoint_pr23_open_role_and_drill_done.yaml
+    live_and_lessons: memory/events/2026/09/26/20260926T162000_mumate_backup_live_awaiting_two_nights_lessons.yaml
+
+unresolved:
+  - The first two unattended nights (2026-09-27, 2026-09-28) are unobserved at close. The alarms cover them; a session-only check is scheduled for 2026-09-28 09:23 and vanishes if this session ends.
+  - Supabase Storage files (about 7.1 GB) are outside every backup by the owner's decision.
+  - Runbook 02 Path C (new Supabase project) is written, not drilled.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Nothing in this workstream. If a 🚨 or a stale ❌ appears in Discord, it is
+    an incident for whichever session is open, read from `journalctl -u
+    mumate-backup.service`, not a reopening of this plan.
+  acceptance_check:
+    - Wake reports mumate-backup-001 completed with this closeout as its newest record and no validation error.

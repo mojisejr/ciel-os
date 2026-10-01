@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T143825_mumate_vercel_to_do_slice4_authorized
+type: decision
+recorded_at: 2026-09-28T14:38:25+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Authorize slice 4 of plan 0.3 (parity proven on staging: the 100%
+    checklist and the drills), started in the waiting time before 2026-10-04.
+  scope:
+    - "Drills on staging mumate-2 with evidence: each cron fires exactly once at its time and alerts on failure; a good deploy; a bad deploy that rolls itself back; a manual rollback timed from decision to healthy; a killed app showing the maintenance page and recovering unattended; a droplet reboot; a database restore; a planned maintenance window with bypass; every login provider; a payment and its webhook; a QStash push; SSE chat; a load test sized to production's busiest hour with event-loop lag and memory."
+    - "The D6 checklist (every Vercel duty: done and proven, or owner-accepted as dropped), for the owner to sign."
+    - "A short re-run on the merged SHAs after the slice-2 merges."
+  out_of_scope:
+    - "Any mootech-fe or bazi merge before 2026-10-04; production; the production droplet (slice 5); Vercel settings."
+
+outcome:
+  status: decided
+  parallelism: approved   # beside slice 2's wait and the two observing lanes; drills touch staging only
+  slice: "4"
+  decision: >-
+    The agent proposed walking the rest step by step and starting slice 4's
+    drills on staging now, on the integration builds that already carry the
+    slice-2 code, re-running a short smoke on the merged SHAs after the
+    2026-10-04 merges, and not creating the production droplet until slice 5
+    (the owner's own plan 0.3 rule). Asked whether his go covered slice 4 as
+    well as closing slice 3, the owner answered "go ครอบ" (2026-09-28).
+  owner_items_open:
+    - "B-1 walk every login provider on staging again."
+    - "B-2 one real payment on staging (Beam live with the staging webhook), proposed to count as his 'one real payment before the merges'."
+    - "B-3 QStash push on staging: a test token, or accept the row as dropped (D6)."
+    - "B-4 production's busiest hour, to size the load test."
+    - "B-5 sign the D6 checklist."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "4"
+  repository:
+    head: "ed556ef"
+    branch: hq/20260926
+    working_tree: this-decision-only
+
+unresolved:
+  - "Staging runs the do/s2-staging integration builds, not merged SHAs; the signature on the checklist follows the re-run on merged SHAs."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Write the D6 checklist from the plan's Vercel-duty table and the research
+    files, then run the agent-only drills on staging one by one, each with
+    evidence, and ask the owner for B-1..B-4 when their drill comes up.
+  acceptance_check:
+    - Wake reports mumate-vercel-to-do-001 lifecycle authorized for slice 4 at revision 0.3 with no validation error.

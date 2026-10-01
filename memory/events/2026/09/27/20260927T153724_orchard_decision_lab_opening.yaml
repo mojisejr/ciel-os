@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T153724_orchard_decision_lab_opening
+type: decision
+recorded_at: 2026-09-27T15:37:24+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Create a separate local Orchard Decision Lab that can prove whether
+    evidence-visible Durian/Mangosteen decision support merits a paid pilot.
+  scope:
+    - Open a local-only child repository in checkouts and register it with CIEL.
+    - Record the owner-approved product, data, safety and Go/No-Go contract.
+    - Authorize only Slice 1 bootstrap; no external provider or source call.
+  out_of_scope:
+    - Public deployment, other-user access, paid pilot, billing, or a production launch.
+    - Google Sheet mutation/API integration, owner CSV import, or external orchard connector.
+    - OpenRouter credential/provider call, source retrieval, policy activation, or chemical advice.
+
+outcome:
+  status: decided
+  completed:
+    - The owner approved a separate local Lab project rather than a CIEL runtime component.
+    - CIEL remains higher-level governance and does not store Lab raw data or traces.
+    - The first historical bridge is manual read-only CSV export, followed by local private dogfood entry.
+    - Only Slice 1 is authorized now.
+  not_completed:
+    - No live provider, real source retrieval, CSV import, or daily dogfood workflow is active yet.
+    - No Go-to-Pilot or Go-to-Sell verdict has been reached.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: b6ece7b03b902a8ca14174a21fb650f2a699c739
+  owner_authorization: >-
+    Owner explicitly directed on 2026-09-27 to update the contracts, open the
+    workstream, create the local project under CIEL checkouts, and begin.
+  product_contract:
+    - checkouts/orchard-decision-lab/docs/PRD.md
+    - checkouts/orchard-decision-lab/docs/SPEC.md
+
+unresolved:
+  - Slice 2 implementation technology is not selected by this opening decision.
+  - The owner must supply CSV exports before Slice 3 and separately approve a provider credential before Slice 5.
+
+next_action:
+  action: >-
+    Verify the registered local project and Slice 1 document boundary, then
+    prepare a Slice 1 closeout before proposing the synthetic trace slice.
+  acceptance_check:
+    - CIEL Wake identifies the local-only child project and authored workstream without validation errors.
+    - No external API call, credential, raw CSV import, or Google Sheet mutation has occurred.

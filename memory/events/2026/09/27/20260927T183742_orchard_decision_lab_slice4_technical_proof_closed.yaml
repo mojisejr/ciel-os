@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T183742_orchard_decision_lab_slice4_technical_proof_closed
+type: closeout
+recorded_at: 2026-09-27T18:37:42+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Record the technical delivery of Slice 4: a guarded local SQLite dogfood
+    journal for observation, deterministic trace, owner choice, feedback, and replay.
+  scope:
+    - Add local SQLite append-only event storage with hash links and update/delete rejection.
+    - Add Thai daily observation, choice, feedback, and replay screens.
+    - Keep real dogfood writes disabled unless the owner has confirmed a private route.
+  out_of_scope:
+    - Actual orchard-record submission through the current tunnel, provider calls, Google mutation, and public deployment.
+
+outcome:
+  status: recorded
+  slice: "4"
+  completed:
+    - >-
+      The local Lab writes only to the ignored SQLite journal when the explicit
+      local write switch is true; otherwise all dogfood write routes return a Thai 403 response.
+    - >-
+      Synthetic proof covers observation -> deterministic trace -> owner choice
+      -> feedback -> exact replay, plus SQLite rejection of update and delete attempts.
+    - >-
+      The live local screen at /dogfood was inspected in its default read-only
+      state, with Thai labels and disabled controls visible.
+  not_completed:
+    - The owner has not confirmed that the existing tunnel is a private route for real orchard records.
+    - No real private dogfood record has been submitted or inspected by an agent.
+    - Slice 5 credential/budget and all live Jev work remain unauthorized.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "4"
+  repository:
+    head: 8cde76a0ca75a0c2cf41a750567ee88d4a1362bc
+    branch: hq/20260926
+    working_tree: slice4-technical-proof-closeout
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 0166278790c489619a0983c7c385dadcdc506939
+  checks:
+    - bun run check: 22 tests passed, 0 failed, 79 expectations.
+    - Local browser inspection of /dogfood: Thai read-only notice and disabled form controls were visible.
+  proof_lanes:
+    hard_gate: closed
+    api_truth: not-applicable-no-external-api
+    eye_truth: closed-default-read-only-screen; pending-owner-private-route-review-for-real-data
+    device_truth: not-applicable-local-browser-only
+
+unresolved:
+  - >-
+    The current tunnel is not established as a private route. The owner must
+    confirm an appropriate local/private route before enabling real dogfood writes.
+  - >-
+    This technical proof uses synthetic events only and does not yet show daily
+    usefulness, usability, or commercial value.
+  - Slice 5 remains blocked on a separate owner credential and budget decision.
+
+next_action:
+  action: >-
+    The owner reviews /dogfood through a confirmed private local route. If that
+    route is approved, enable the explicit local write switch and record a real
+    owner acceptance or a focused correction before asking for Slice 5.
+  acceptance_check:
+    - The owner can understand the Thai form and the result/choice/feedback sequence without technical translation.
+    - The owner confirms the route is private before any actual orchard fact is submitted.

@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T123622_mumate_login_identity_s6_final_closeout_observation_ended
+type: closeout
+recorded_at: 2026-09-29T12:36:22+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close slice 6 (flip through the seam, observe, then stop using the old
+    path) and with it the workstream: the observation window the owner
+    shortened to end on 2026-09-29 closed with no trigger.
+  scope:
+    - Phase 6h and DoD 6 row F9; the final state of the login lane.
+  out_of_scope:
+    - Retiring the legacy register-login route (a later decision, per 6h); R7 of mumate-be-retirement-001.
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "6"
+  dod:
+    - "F1-F8 - met before the flip and at it: 20260927T065300 (6g flipped on production, observation open) and the 6a-6f records it cites."
+    - "F9 - met for the window 2026-09-27 06:47 to 2026-09-29 12:32 Bangkok, which the owner set on 2026-09-28 (20260928T162019) and confirmed on 2026-09-29 (20260929T051711) instead of 2026-10-04: new members with no provider 0 on each day (7, 34, 26 new members; LINE 3/10/5, Google 4/25/21); two live Google 1 (baseline 1); exposed 1,442 (baseline 1,442); no day near the ~80 trigger (decision 31); no rollback. register-login-fe errors were not read: no historical Vercel log source is available to the agent; no error was reported by the owner or the team."
+  completed:
+    - "During the window the teammate changed login on production (mootech-fe #841, #845, #846, 2026-09-28 21:11-21:42): OAuth callback back to /v2, an automatic second OAuth attempt after 6 s in LINE's webview, and a LIFF idToken credentials provider mapped to provider 'line'. The owner confirmed the LIFF and LINE Login channels share a LINE provider (same userId). In the 15 hours after #846: 9 returning logins, 8 new LINE members, no member without a provider."
+    - "The legacy route is kept (6h); the rollback path of 20260927T115820 still applies but is no longer a one-line revert, because #837-#846 sit on top of the flip."
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.9"
+  slice: "6"
+  repository:
+    head: "d7c5a48"
+    branch: hq/20260926
+    working_tree: this-record
+  application:
+    mootech-fe_main: "2782b36"
+    checkpoints:
+      - memory/events/2026/09/27/20260927T065300_mumate_login_identity_s6_6g_flipped_on_production_observation_open.yaml
+      - memory/events/2026/09/28/20260928T081914_mumate_daily_check_day1_no_trigger.yaml
+      - memory/events/2026/09/29/20260929T123330_mumate_daily_check_day2_no_trigger_fence_open.yaml
+
+unresolved:
+  - "The window ran about 2.2 days, not the seven of decision 26; the owner chose that. A later login defect after today is ordinary support, not this lane's trigger."
+  - "One new LINE member after #846 shares a name with an older LINE member; not examined."
+  - "Owner decisions still open from 20260927T132102: the Connected screen shows a dead-only Google as linked with no link button; five paid exposed members left for support (F7)."
+  - "Retiring the legacy register-login route is a later decision."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Nothing in this lane. The owner merges this record with the HQ round.
+  acceptance_check:
+    - Wake shows mumate-login-identity-001 with this closeout as its latest record and no validation error.

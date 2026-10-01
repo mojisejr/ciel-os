@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T151000_orchard_decision_lab_6c_policy_proposal_sandbox_closed
+type: closeout
+recorded_at: 2026-09-28T15:10:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Make the state required by owner-accepted claims inspectable before any
+    policy activation or provider use.
+  scope:
+    - Derive local PolicyProposal blueprints from latest accepted reviews only.
+    - Evaluate temporary synthetic facts as either evidence gaps or human-policy-authoring readiness.
+    - Render Thai state-contract gap and non-activation boundaries.
+  out_of_scope:
+    - Daily-journal writes, private-trace reads, agricultural instructions,
+      activated policies, snapshots, Jev/provider calls, research LLM,
+      public deployment or CIEL raw-record export.
+
+outcome:
+  status: recorded
+  slice: "6"
+  summary: >-
+    Slice 6c is implemented locally. The policy-design sandbox shows only
+    latest-accepted claims, required state and temporary evidence readiness;
+    it cannot produce active policy or orchard instructions.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "6"
+  repository:
+    head: 05f607b4569608059e52cbe1e6594f56ca353464
+    branch: hq/20260926
+    working_tree: 6c-policy-proposal-sandbox-closed
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: f68b0b779f4faec910fb36bed776c03187d54f97
+  hard_gate:
+    command: bun run check
+    result: 41 pass; 0 fail; 189 expectations
+  eye_truth:
+    method: synthetic local browser at /policy-proposals with two accepted in-memory reviews
+    result: >-
+      Thai source-to-state tables, missing-state markers, temporary what-if
+      controls, data-gap outcome and automatic-scheduling guard were visible.
+  provider_calls: none
+  daily_journal_writes: none
+
+unresolved:
+  - The accepted rain claim shows four state fields not currently captured: standing water, rain timing, inspection timing and soil-drying observation.
+  - A complete temporary sandbox result only permits later human policy authoring; it is not policy activation.
+  - Research LLM budget and private-state provider requests remain unapproved.
+
+next_action:
+  action: >-
+    Ask the owner to inspect /policy-proposals and decide whether to authorize
+    a narrow daily-state-contract revision for the demonstrated missing facts.
+  acceptance_check:
+    - The owner can explain which fields are new and why each is necessary.
+    - Any later daily-form change remains local and preserves replay.

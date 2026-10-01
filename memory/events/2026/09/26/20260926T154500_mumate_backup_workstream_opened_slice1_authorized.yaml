@@ -1,0 +1,69 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T154500_mumate_backup_workstream_opened_slice1_authorized
+type: decision
+recorded_at: 2026-09-26T15:45:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-backup-001
+  lane: single
+  objective: >-
+    Make MuMate's off-platform backup real: a nightly dump that runs, a failure
+    or a missing backup that reaches Discord, and a restore that has been timed
+    and written down as steps someone else can follow.
+  scope:
+    - Open plan revision 0.1 and authorize its single slice.
+    - Record the owner's seven answers (K1-K7) of 2026-09-26.
+  out_of_scope:
+    - PITR, a restore into a new Supabase project, Supabase Storage and AWS s3-ps-cdn backups.
+    - Any change in mootech-fe, mootech-be, bazi-sft-dataset, Vercel, Render, DNS, or the flip.
+
+outcome:
+  status: decided
+  parallelism: approved   # shares mumate-infra with no active lane; login-identity-001 is idle and touches mootech-fe only
+  decision: >-
+    On 2026-09-26 the owner read this session's summary of the MuMate lanes,
+    agreed that the backup layer comes first, asked for a step table, a DoD
+    table and the decisions needed, and answered each: K1 open the workstream;
+    K2 keep the Droplet, because DigitalOcean is to become MuMate's main server
+    and not only staging; K3 nightly at 09:00 Bangkok with 14-day retention;
+    K4 member data in the private Spaces bucket for 14 days accepted; K5 drill
+    into pgtmp, a Supabase-project restore deferred; K6 no PITR until truly
+    needed; K7 a read-only role for the dump if the current one is a superuser.
+    He said to open the workstream and run it to the end unless blocked
+    ("ถ้าพร้อมคุนเปิด workstream แล้วลุยได้เลย ถ้าไม่ติด blocker อะไรก็ยาวจนจบได้เลย").
+  authorizes:
+    - Slice 1 of plan revision 0.1, steps 0-8 as written in PLAN.md, including enabling mumate-backup.timer, one induced backup failure, the pgtmp restore drill with the shadow FE pointed at it and returned, and a mumate-infra pull request applied on the host after merge.
+    - Creating one read-only database role on production Supabase for pg_dump, only if the current role is found to be a superuser or owner.
+  does_not_authorize:
+    - Any other write to production Supabase, or a restore over production.
+    - Buying PITR or any new paid service.
+    - Repointing be or bazi, or any change outside mumate-infra and ciel-os.
+    - Merging a pull request; merges stay with the owner.
+
+evidence:
+  plan: workstreams/mumate-backup-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "063daaa0ebf6f65523e72e35b55ff7d8f2dae62c"
+    branch: hq/20260926
+    working_tree: this-decision-and-the-plan
+  cites:
+    closing_decision: memory/events/2026/09/26/20260926T131821_mumate_infra_move_close_at_slice_3.yaml
+    login_handoff: memory/events/2026/09/26/20260926T132500_mumate_login_identity_round_handoff_before_clear.yaml
+  application:
+    mumate-infra: "main 978c2de"
+
+unresolved:
+  - Whether the dump's role is a superuser, and whether Supabase Storage is used at all, are unknown until step 1 and step 7.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Step 1: read the host through the tailnet, read-only, then write the
+    alerting change on a mumate-infra topic branch.
+  acceptance_check:
+    - Wake lists mumate-backup-001 active at revision 0.1 with no validation error.

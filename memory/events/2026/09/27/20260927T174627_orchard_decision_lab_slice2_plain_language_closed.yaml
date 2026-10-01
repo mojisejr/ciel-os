@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T174627_orchard_decision_lab_slice2_plain_language_closed
+type: closeout
+recorded_at: 2026-09-27T17:46:27+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Close the owner-requested plain-language correction to the synthetic
+    Playground without changing deterministic policy or introducing an LLM.
+  scope:
+    - Replace the technical trace reading path with grower questions and short answers.
+    - Retain complete technical information only in a collapsed supporting detail.
+    - Prove the revised local route and keep the existing tunnel server on port 3000 for owner review.
+  out_of_scope:
+    - LLM/provider behavior, CSV access, persistence, policy semantics, and Slice 3 implementation.
+
+outcome:
+  status: recorded
+  slice: "2"
+  completed:
+    - >-
+      The primary reading path is now “ตอนนี้ควรทำอะไร?”, “เพราะอะไร?”,
+      “ระบบเห็นอะไรบ้าง?”, “ต้องเช็กอะไรเพิ่มไหม?”, and “AI ช่วยตอบไหม?”.
+    - >-
+      STOP now tells a grower to pause field work, explains rain plus wet soil,
+      and states that AI was not needed; technical rule IDs are collapsed.
+    - >-
+      Hard gate tests pass and direct local browser inspection observed the
+      shortened grower-facing hard-stop route.
+  not_completed:
+    - Owner feedback after trying this revision through the existing tunnel remains required.
+    - Slice 3 remains unstarted and unapproved.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: 6d747c18196eeb0cdd58aba0c17bbce68938a3a8
+    branch: hq/20260926
+    working_tree: slice2-plain-language-closeout
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 0027e324836a9a8765e98f024397b1b6a8506d87
+  checks:
+    - bun run check: 10 tests passed, 0 failed, 40 expectations.
+    - >-
+      Local HTTP route on port 3000 returned the new grower questions,
+      “หยุดก่อน”, its reason, AI boundary, and collapsed technical detail.
+  eye_truth:
+    - >-
+      Direct local browser inspection observed the five-question reading path
+      for rain/wet-soil STOP without requiring technical Thai.
+
+unresolved:
+  - Owner needs to judge whether the revised wording now feels natural for actual garden work.
+  - Slice 3 filename suffix mapping and explicit owner authorization remain required before CSV implementation.
+
+next_action:
+  action: >-
+    Keep the owner tunnel review open; if the wording is accepted, record
+    Slice 2 acceptance and ask for the separate Slice 3 authorization with
+    suffix filename mapping.
+  acceptance_check:
+    - The owner can use the first screen without translating technical Thai.
+    - The owner states whether to accept Slice 2 or requests one focused wording change.

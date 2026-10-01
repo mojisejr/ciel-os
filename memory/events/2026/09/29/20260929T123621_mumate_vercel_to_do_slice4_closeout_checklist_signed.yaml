@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T123621_mumate_vercel_to_do_slice4_closeout_checklist_signed
+type: closeout
+recorded_at: 2026-09-29T12:36:21+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Close slice 4 of plan 0.3 (parity proven on staging): the D6 checklist has
+    no open row, the rollback time is a measured number, and the owner signed.
+  scope:
+    - workstreams/mumate-vercel-to-do-001/parity-checklist.md rows 1-19 and the owner's signature.
+  out_of_scope:
+    - The slice-2 merges and the re-runs they enable; the production droplet and anything after it.
+
+outcome:
+  status: recorded
+  slice: "4"
+  dod:
+    - "The D6 checklist has no open row - met: rows 2, 4, 6-9, 12-16, 18, 19 proven on staging; row 1 closed today (staging qi-quota-reset 17:00:00Z and account-purge 17:30:00Z, 200 once each, 20260929T123330); rows 5, 17, the bazi-alerts part of 1, CRON per-branch previews (3) and CDN/WAF (8) decided by the owner on 2026-09-28; rows 10-11 proven for staging, production in the next slice by design."
+    - "The rollback time is a measured number - met: automatic 12 s (unhealthy 07:39:37 -> healthy on last-good 07:39:49), manual 9.0 s decision to healthy, 80/80 requests 200 during it."
+    - "The owner signs the checklist - met: owner 2026-09-29 'เซ็น', recorded in the file (B-5)."
+  completed:
+    - "Signed with two follow-ups that need code on main: automatic staging release on merge (row 3, owner Q3) and re-runs on the merged SHAs (rows 2, 15, 19). Their results are appended to the checklist after the slice-2 merges."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "4"
+  repository:
+    head: "d7c5a48"
+    branch: hq/20260926
+    working_tree: this-record-and-checklist-signature
+  application:
+    staging: "mumate-2 on integration builds fe 850d8fb, bazi 7000d19; mumate-infra main 3c918fb"
+    checkpoints:
+      - memory/events/2026/09/28/20260928T143825_mumate_vercel_to_do_slice4_authorized.yaml
+      - memory/events/2026/09/28/20260928T145033_mumate_vercel_to_do_s4_solo_drills_done.yaml
+      - memory/events/2026/09/29/20260929T123330_mumate_daily_check_day2_no_trigger_fence_open.yaml
+
+unresolved:
+  - "The next slice (production droplet) is not authorized; it needs the owner's decision on billing (about USD 24/month, s-2vcpu-4gb sgp1) and on adding เอ็ม to mumate-infra (write) and RELEASE_ACTORS."
+  - "D7 for the cutover is not met today: the MUMATE100 promo is running and the team merged 20 FE PRs on the evening of 2026-09-28."
+  - "The app's maintenance page answers HTTP 200; docker kill/stop is a manual stop that restart policies ignore (by design)."
+  - "Beam cross-delivery: staging endpoint disabled in Beam (option ข); the fe fix (ค) follows the slice-2 merges."
+  - "Staging env/fe.env CRON_SECRET has unrecorded origin."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Slice-2 merges under the open fence, one at a time, bazi 43 first, each on
+    the owner's word, after the owner sets ADMIN_DOCTRINE_TOKEN on the Vercel
+    bazi project.
+  acceptance_check:
+    - Wake shows no validation error and this closeout as a slice-4 checkpoint of mumate-vercel-to-do-001.

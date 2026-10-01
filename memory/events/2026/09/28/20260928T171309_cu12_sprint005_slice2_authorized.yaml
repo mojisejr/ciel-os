@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T171309_cu12_sprint005_slice2_authorized
+type: decision
+recorded_at: 2026-09-28T17:13:09+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-005
+  lane: single
+  objective: >-
+    Start slice 2, the Thai console page, on the merged control endpoint.
+  scope:
+    - Authorize slice 2 of plan revision 0.1.
+  out_of_scope:
+    - Slice 3 and smc-v2-app-001 slice 10; each gets its own decision.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner merged slice 1 and said "ลุยต่อ", which renews his "ลุยยาวๆ" of
+    17:02. Each slice still has its own decision, and this is slice 2's.
+  authorizes:
+    - >-
+      Slice 2 of plan revision 0.1, on a topic branch from cu12-simulator
+      main 2de54ec as a draft pull request. One Thai HTML page is embedded
+      in the binary and served at / by the control endpoint. It shows the
+      connection line, with "แอปไม่ได้ติดต่อมา" after 5 s; the signal lamp,
+      grey for status and amber for Unlock; the twelve door cards, which
+      blink on their Unlock; the physics switch; the board switch; the
+      scenario buttons, first on the page; the fault controls; and a folded
+      hex panel. Every button is one endpoint call.
+  does_not_authorize:
+    - Slice 3, the packaged file and the release workflow.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-005/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "8ce9cfc"
+    branch: hq/20260926
+    working_tree: this-event-the-slice-1-merge-record-and-the-plan-header-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "2de54ec"
+    branch: main
+    working_tree: clean-equal-to-origin
+  preceding_records:
+    - memory/events/2026/09/28/20260928T171308_cu12_sprint005_slice1_merged.yaml
+
+unresolved:
+  - The owner's walk with SMC v2 needs about 20 minutes of his time at the Mac once the page is built.
+
+next_action:
+  action: >-
+    Build the page, try it in a real browser against SMC v2, open the draft
+    pull request, then ask the owner for the walk.
+  acceptance_check:
+    - Wake lists cu12-simulator-sprint-005 at revision 0.1, phase 2, with slice 2 authorized.

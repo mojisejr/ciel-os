@@ -3,7 +3,7 @@
 **Workstream:** `smc-v2-app-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.4
+**Plan revision:** 0.6
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -152,7 +152,7 @@ reference material for slice 3.
 
 ## Execution slices and acceptance criteria
 
-Ten slices, sequential. Each ends with a CIEL closeout and, once the remote
+Slices are sequential. Each ends with a CIEL closeout and, once the remote
 exists, an owner-reviewed pull request in `smc-v2`. Revision 0.4 (owner,
 2026-09-21: "รับ 0.4 ทั้งชุด เลยครับลุยๆ") inserts four slices before Windows
 so that every platform-independent problem is met and fixed on the Mac and
@@ -160,6 +160,25 @@ the Windows slice meets only Windows problems. They were proposed and
 decided as 6a–6d with Windows as 7; CIEL numbers slices as integers, so
 they are slices 6–9 here and Windows is slice 10, the proposal names kept
 in each heading.
+
+Revision 0.5 (proposed 2026-09-28, from the owner's syncup on the CU12
+simulator console, `cu12-simulator-sprint-005`) inserts slice 10, the
+simulator as a port the application can choose, so the team can test,
+demonstrate and tell a broken cabinet from an application bug. Windows
+becomes slice 11. No decision has ever named slice 10, so the renumbering
+moves no authorization; slices 1–9 keep their numbers and records. It is
+eleven slices now.
+
+Revision 0.6 (owner, 2026-09-30: "เลิกตามที่คุนแนะนำครับ") takes port 5000
+out of the application. macOS's Control Center holds TCP 5000 for AirPlay.
+On the 2026-09-28 console walk, the port list's existing entry
+`simulator (tcp:127.0.0.1:5000)` was chosen, the application connected to
+AirPlay, and it reported a board that does not answer rather than a wrong
+port. Revision 0.6 also corrects revision 0.5's premise. The port list
+already has that simulator entry (`crates/ui/src/admin.rs`, since slice
+4), and there is no default port: the setting stays empty until saved.
+The agent had read only the serial-port half of the list. Slice 10
+therefore renames and re-points the existing entry rather than adding one.
 
 ### 1. The wire — a CU12 gateway proven against the simulator
 
@@ -412,7 +431,47 @@ The open questions of `DESIGN.md`, decided by the owner on 2026-09-21
 - Every item observed by the owner as pass, or fixed and observed again;
   recorded as owner observation in the closeout.
 
-### 10. Windows — build and prove on the owner's Windows machine
+### 10. The simulator as a port — for testing, demonstration and diagnosis (revisions 0.5, 0.6)
+
+The owner's team runs the CU12 simulator console beside the application on
+the same machine. On a ward, a technician points the application at it
+instead of the real board to tell a broken cabinet from an application
+bug. The port list already offers `simulator (tcp:127.0.0.1:5000)`, in
+English and on the port macOS gives to AirPlay.
+
+**Deliverable**
+
+- The existing entry becomes `Simulator (ทดสอบ)` and stores
+  `tcp:127.0.0.1:5012`, the console's wire port (revision 0.6). A stored
+  `tcp:127.0.0.1:5000` from an earlier build is kept, but the port row
+  shows it as the old simulator port with a note to choose again. Saving
+  asks for the admin PIN, as today. There is still no default port.
+- While the endpoint is a TCP one, a banner shows on every screen:
+  `เชื่อมต่อกับตู้จำลอง ไม่ใช่ตู้จริง`. It uses the strongest non-error
+  tone, has no ✕, and sits above the expired banner. The owner's reason:
+  a ward left on the simulator makes a nurse believe a door unlocked.
+- The switch is recorded in `actions` as its own rows: to the simulator
+  and back, with the admin's name. Every action taken while on the
+  simulator is marked, by a new column added in a reviewed migration. The
+  append-only rule and its triggers stay. The บันทึก page shows the mark
+  beside the action word, and the CSV carries it in its own column.
+  `DESIGN.md` gains the banner, the port entry and the mark, each as a
+  numbered deviation.
+
+**Acceptance**
+
+- Tests: the port list includes the simulator entry; the banner state
+  follows the endpoint; the switch rows and the marked rows are written;
+  the marked rows appear in the CSV; the triggers still refuse
+  update and delete.
+- On the Mac, with the console from `cu12-simulator-sprint-005`: the owner
+  switches to the simulator from Admin, sees the banner, loads and
+  dispenses one HN, switches back to the stored port, and sees the banner
+  go and the rows marked. Recorded as owner observation.
+- `cargo fmt --check`, `cargo test`, `cargo clippy --all-targets -- -D
+  warnings`, the `ui` wasm clippy, and `scripts/check-windows.sh` pass.
+
+### 11. Windows — build and prove on the owner's Windows machine
 
 What this slice meets, and nothing else: MSVC and the SQLite C build, COM
 with a real adapter (configurable, unproven against hardware), MachineGuid,

@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T153228_mumate_vercel_to_do_plan_0_3_prod_droplet_moved_to_slice5
+type: decision
+recorded_at: 2026-09-27T15:32:28+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the owner's decision to create the production droplet at the start
+    of slice 5 instead of slice 1 (plan revision 0.3), and leave the workstream
+    ready for a cold session to take the slice-1 go.
+  scope:
+    - Plan revision 0.3 of workstreams/mumate-vercel-to-do-001/PLAN.md.
+    - The state of the workstream at the end of the 2026-09-27 planning round.
+  out_of_scope:
+    - Authorizing slice 1. The owner said not yet ("ยังไม่ go").
+
+outcome:
+  status: recorded
+  parallelism: approved
+  decision: >-
+    The owner read plan 0.2 as not needing a production droplet before slice
+    4. Plan 0.2 in fact created it in slice 1; the agent agreed the owner's
+    reading is the better plan and recommended moving it: slices 1-4 prove
+    everything on staging, an early droplet would sit idle, billed and needing
+    patches, a rebuild from the repository takes about 6.5 minutes, and a late
+    rebuild proves the repository with the configuration that passed slice 4.
+    It also takes the company Owner's billing approval out of slice 1. The
+    trade-off accepted: the control room is built multi-host from slice 1 but
+    its side-by-side staging/production view is proven only in slice 5. The
+    owner said "โอเค ปรับแผนครับ" and asked for the decision to be recorded.
+  changes_in_0_3:
+    - "Slice 1 renamed 'An isolated staging and a multi-host control room'; no droplet is created; DoD drops the production droplet and proves the environment label end to end on staging."
+    - "Slice 3 DoD: configuration written so the same repository configures the production host with timers disabled, installed on staging only."
+    - "Slice 5 renamed 'The production droplet created, dressed and verified without traffic'; it starts by creating the droplet with the company Owner's billing approval and proves the side-by-side view with both hosts."
+    - "Effort: slice 1 6-10 h without billing; slice 5 6-10 h with billing."
+  not_authorized:
+    - Slice 1 or any later slice.
+  state_at_round_end:
+    - "Plan 0.3; decisions D1-D11 answered (d77b28b and this record); slice 1 awaits the owner's go."
+    - "Live bazi items: C2 ADMIN_DOCTRINE_TOKEN set on Vercel by the owner, redeploy unconfirmed; C1 account-purge fix owned by the team, deadline 2026-10-04 00:30 Bangkok (20260927T151500)."
+    - "HQ hq/20260926 not pushed; the owner pushes when the round closes."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: 1ad2bd6
+    branch: hq/20260926
+    working_tree: plan-revision-and-this-event
+    pull_request: none-until-hq-round-closes
+  preceding_records:
+    - memory/events/2026/09/27/20260927T142434_mumate_vercel_to_do_workstream_opened.yaml
+    - memory/events/2026/09/27/20260927T150940_mumate_vercel_to_do_plan_0_2_owner_answers.yaml
+    - memory/events/2026/09/27/20260927T151500_mumate_vercel_to_do_c1_counted_c2_done.yaml
+
+unresolved:
+  - "The bazi account-purge fix must be live before 2026-10-04 00:30 Bangkok; the first of three cancelled users is due then."
+  - "Confirm a bazi redeploy ran after ADMIN_DOCTRINE_TOKEN was set."
+  - "Production reads through mumate_backup are refused by the harness even after an in-chat grant; slice-1 checks that need them will be owner-run unless the owner adds a permission rule."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the owner says go, record a decision authorizing slice 1 of plan 0.3
+    with parallelism approved, then start: the staging database from the
+    nightly backup, the owner creating the staging bucket and placing test
+    payment keys, removing the shadow's production connections, the
+    multi-host control-room labels, and a session with เอ็ม on bazi's browser
+    surfaces and the LIFF apps of channel 2011679472.
+  acceptance_check:
+    - Wake lists mumate-vercel-to-do-001 at revision 0.3 with no validation error and no slice authorized.

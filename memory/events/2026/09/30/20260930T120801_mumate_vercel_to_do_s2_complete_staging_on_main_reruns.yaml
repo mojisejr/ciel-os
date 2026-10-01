@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20260930T120801_mumate_vercel_to_do_s2_complete_staging_on_main_reruns
+type: closeout
+recorded_at: 2026-09-30T12:08:01+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record that every slice-2 PR is merged and verified on Vercel production,
+    staging runs the merged SHAs, and the checklist re-runs the agent can do
+    alone are done.
+  scope:
+    - FE PRs 833-836 and 851; staging build, migrations, release and drills on mumate-2.
+  out_of_scope:
+    - Automatic staging release on merge; the owner's staging login walk; the production droplet.
+
+outcome:
+  status: recorded
+  slice: "2"
+  completed:
+    - "FE merges by the owner, each branch prepared by the agent (main merged in, vitest include lines kept both, slice-2 tests and tsc green) and pushed by the owner with --no-verify (issue 694): 833 -> 1b40add (mootech-7ay3c1uoe; /api/health now says platform vercel, env vercel-production, sha); 834 -> 6d35009 (7ots8ykvh); 835 -> 30713c3 (j0tvacaed; /ops, /launch 200); 836 -> c10e91e. Each verified on bazichart.mumate.co (/v2, checkout, what-if 200; health db ok) before the next."
+    - "PR 851 (agent, owner-merged 8cef751): '/promo' on the KEPT list; npm test on main is green again. It tells the teammate (@jaroensakyod) to set core.hooksPath and points at issue 694."
+    - "All nine slice-2 PRs are merged: bazi 43-46 (pdf-dev 49e22f2), FE 832-836 (main c10e91e)."
+    - "Staging: FE 0036-0038 and bazi 0054 applied to pgstaging (same shape as production: t|t|n|t); staging images from main/pdf-dev (container-build 36670138369, 36670141017, target staging); release button run 36670462026 success; fe c10e91e-staging and bazi 49e22f2-staging healthy, platform container, env staging. New env names in the merged code (NEXT_PUBLIC_LIFF_ID, SUPABASE_TAROT_BUCKET) both have code defaults; none added."
+    - "Re-runs appended to parity-checklist.md: row 2 (auto rollback ~11 s, manual 9.2 s, 80/80) and row 19 (8,177 requests, 0 failed, p95 226 ms). A first k6 run counted /privacy 404s (my path list; 404 on production too) and was discarded."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: "fc37aee"
+    branch: hq/20260926
+    working_tree: this-record-and-checklist-reruns
+  application:
+    mootech-fe: "main c10e91e"
+    bazi-sft-dataset: "pdf-dev 49e22f2"
+    staging: "mumate-2 fe c10e91e-staging, bazi 49e22f2-staging"
+
+unresolved:
+  - "Row 15 re-run needs the owner's login walk on staging."
+  - "Row 3 automatic staging release on merge is not built; it needs a design (cross-repo trigger or polling, and a token the owner would create) and the owner's decision."
+  - "Tarot images on staging: bazi's tarot bucket defaults to a name in the staging Supabase project, where the teammate's images were not uploaded; not a checklist row."
+  - "An LLM answer through production after bazi 44 and FE 832 is still not observed by the agent."
+  - "Issue 694 keeps every hook-honouring FE push blocked; FE pushes stay owner-run until the team fixes it."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner walks login on staging (row 15) and decides row 3's automatic
+    release; then the owner's decision for the production droplet slice.
+  acceptance_check:
+    - The checklist shows row 15 re-run and row 3 either built or deferred by the owner.

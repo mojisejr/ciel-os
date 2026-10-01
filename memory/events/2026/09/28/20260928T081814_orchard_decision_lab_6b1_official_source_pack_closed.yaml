@@ -1,0 +1,82 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T081814_orchard_decision_lab_6b1_official_source_pack_closed
+type: closeout
+recorded_at: 2026-09-28T08:18:14+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Establish a source-visible, review-gated public-evidence lane without
+    treating research as policy or exposing private orchard facts.
+  scope:
+    - One official-source-only Durian rain/waterlogging review pack.
+    - Thai source facts, candidate interpretations, evidence gaps and boundaries.
+    - Local tests, browser inspection and documented no-provider boundary.
+  out_of_scope:
+    - Research LLM, paid research provider, credentials, policy activation,
+      private-state provider calls, public deployment and chemical advice.
+
+outcome:
+  status: recorded
+  slice: "6"
+  completed:
+    - >-
+      The local evidence review page exposes two official Department of
+      Agricultural Extension locators, paraphrased source facts and two
+      owner-review-pending candidate interpretations.
+    - >-
+      Every candidate is source-linked and mechanically blocked from Lab
+      snapshot, deterministic policy and Jev input use.
+    - >-
+      The page explains the evidence still needed for a future Durian
+      rain/waterlogging interpretation without changing the existing fixture.
+  not_completed:
+    - The owner has not yet reviewed, accepted, revised or rejected either candidate claim.
+    - No source-backed deterministic policy or private-state provider envelope exists.
+    - Research LLM budget and any source-to-policy activation remain unopened.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "6"
+  repository:
+    head: 251b9d641bdf8fa81f028f0a59e4702b75449d07
+    branch: hq/20260926
+    working_tree: 6b1-official-source-pack-closeout-prepared
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 32d94422a5dd1b8352cd277f37867c5bd410b60e
+  checks:
+    - bun run check: 33 tests passed, 0 failed, 159 expectations.
+    - git diff --check: no whitespace errors.
+    - >-
+      Synthetic local browser inspection showed official source links,
+      Thai source facts, owner-review-pending candidates and the no-policy/no-Jev boundary.
+  proof_lanes:
+    hard_gate: closed
+    api_truth: closed-read-only-official-source-retrieval; no-runtime-network-path
+    eye_truth: closed-synthetic-local-page; pending-owner-source-review
+    device_truth: not-applicable-local-browser-only
+
+unresolved:
+  - >-
+    Source locator verification establishes the page and source section, not
+    owner acceptance of a candidate system interpretation.
+  - >-
+    The Lab still needs a separate owner decision before any candidate changes
+    a deterministic policy, becomes provider input or joins a private snapshot.
+  - The local dogfood loop has one journey with both choice and feedback; more ordinary-day evidence is still needed.
+
+next_action:
+  action: >-
+    Owner reviews the two linked official sources on /evidence and gives an
+    explicit accept, revise or reject decision for each candidate claim. Then
+    decide whether to add the approved fields to the state contract in a new slice.
+  acceptance_check:
+    - The owner can restate the difference between a source fact and a candidate system claim.
+    - The owner can decide whether waterlogging and inspection timing belong in daily state before policy activation is considered.

@@ -1,0 +1,138 @@
+schema_version: ciel.event.v0.1
+id: evt_20260926T162000_mumate_backup_live_awaiting_two_nights_lessons
+type: closeout
+recorded_at: 2026-09-26T16:20:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-backup-001
+  lane: single
+  objective: >-
+    Record the backup layer going live after mumate-infra PR 23 merged: every
+    DoD item that can be proven today is proven on the host, the nightly timer
+    is armed, and the lessons of the slice are written while they are fresh.
+    The slice itself is NOT closed here - D1 needs two nights, 2026-09-27 and
+    2026-09-28 - so this record names no slice.
+  scope:
+    - Steps 3 and 4 on the host, D2-D8 evidence, the owner's Storage decision, lessons.
+  out_of_scope:
+    - The final slice-1 closeout, which waits for D1.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      PR 23 MERGED by the owner at 09:10 UTC (merge commit bfbc59a); the host
+      pulled fast-forward to bfbc59a.
+    - >-
+      STEP 3, MANUAL RUN, as the read-only role: backup.sh exit 0 in 77 s,
+      pg/mumate-2-20260926T091103Z.sql.gz 141,479,481 bytes, 💾 posted, stamp
+      written. Exit 0 is itself evidence: the 09-19 object was kept, so the
+      retention loop's last pass deleted nothing - the exact case that used to
+      exit 1.
+    - >-
+      D4: restore-verify.sh on that object passed - 184 tables, 5,121 users,
+      the 2 documented noise errors, pgtmp removed. The drill had shown 185; the
+      public CREATE TABLE/VIEW lists of the 09-19 and 09-26 dumps were diffed and
+      are identical at 184. The 185th was arena.sh's own arena_meta table. No
+      table was lost to the role change.
+    - >-
+      D2 ON THE HOST: a scratch root (bin symlinked, real alert.env, a
+      backup.env pointing at backup-drill.invalid with dummy keys - no real
+      secret copied) made pg_dump fail. 🚨 "backup ล้ม · ขั้น: pg_dump → upload"
+      posted, exit 1, stamp unchanged, and the bucket listing afterwards held
+      only the two complete objects - no partial/.
+    - >-
+      STEP 4: sudo -n systemctl enable --now mumate-backup.timer; the installed
+      timer and service units are identical to the repository's; first run
+      2026-09-27 02:02 UTC (09:02 Bangkok). ops-status now shows "backup ✅".
+    - >-
+      D3 ON THE HOST: backup-age.sh reports a 27-hour stamp as stale ❌ and a
+      missing stamp as never ❌, each exit 1, with the timer enabled.
+    - >-
+      OWNER DECISION, 2026-09-26: Supabase Storage files (bucket mootech about
+      7.1 GB, 13,665 files) will NOT be backed up - too large and not needed.
+      Recorded in runbook 02 as an accepted risk, so nobody reads the gap as an
+      oversight.
+  dod_state:
+    D1: "pending - two nightly objects, 2026-09-27 and 2026-09-28"
+    D2: "met - induced failure on the host, plus scripts/backup.test.sh"
+    D3: "met - host check plus test; live from the first health tick after enabling"
+    D4: "met - restore-verify on the 09-26 object"
+    D5: "met - 83 s measured in the drill"
+    D6: "met - runbook 02 three paths, merged in PR 23"
+    D7: "met - inventory, and Storage excluded by the owner's decision"
+    D8: "met - gitleaks clean on every push; no value printed; no pgtmp, pre-role or pre-drill file left"
+
+lessons:
+  - >-
+    READ THE SCRIPT BEFORE ARMING IT. The plan said "make failure loud, then
+    enable the timer". Reading it found a third defect nobody had listed - a
+    successful run exiting 1 - which the new alert would have turned into a
+    false alarm every night. An alarm that cries wolf on day one teaches the
+    owner to ignore it, which is worse than no alarm.
+  - >-
+    A PIPE INSIDE A CONTAINER LEAVES THE HOST'S PIPEFAIL. `set -o pipefail` in
+    _lib.sh never saw pg_dump, because the pipe ran inside alpine's sh. Where a
+    pipeline crosses a docker run boundary, ask whose shell owns each pipe.
+  - >-
+    A FAKE CAN HIDE THE DEFECT IT WAS WRITTEN TO CATCH. The first test passed
+    against the reintroduced in-container pipe, because the fake docker never
+    ran sh -c. It needed a structural guard. Every mutation is worth running,
+    because the one that stays green shows where the test is blind.
+  - >-
+    GRANT THE ROLE, NOT THE TABLES. postgres lacked grant option on 21
+    auth/realtime/storage tables, so per-table grants would have silently
+    narrowed the dump. pg_read_all_data, which postgres holds with admin
+    option, plus BYPASSRLS gave identical coverage. It was proven by diffing
+    the COPY lists, not assumed.
+  - >-
+    A PASSWORD SENT AS SQL CAN LAND IN A LOG. The role was created from a SCRAM
+    verifier computed on the host, so the plaintext reached neither Postgres
+    logs nor this session.
+  - >-
+    A NUMBER THAT MOVES NEEDS ITS CAUSE FOUND BEFORE IT IS ACCEPTED. 185 → 184
+    tables looked like a table lost to the new role; it was the arena's own
+    bookkeeping table. Diffing the two dumps settled it in one command.
+  - >-
+    THE BIGGEST RISK WAS OUTSIDE THE THING BEING FIXED. The inventory step,
+    meant as a footnote, found 7.1 GB of member files outside every backup. The
+    owner accepted that risk knowingly, which is a different state from nobody
+    knowing.
+
+evidence:
+  plan: workstreams/mumate-backup-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: "857a262"
+    branch: hq/20260926
+    working_tree: this-event-only
+  application:
+    mumate-infra:
+      pull_request: "https://github.com/mojisejr/mumate-infra/pull/23"
+      merge_commit: "bfbc59a"
+      host: "/opt/mumate at bfbc59a; mumate-backup.timer enabled; env/backup.env as mumate_backup"
+    bucket_after: "pg/mumate-1-20260919T220406Z.sql.gz 131,758,971 · pg/mumate-2-20260926T091103Z.sql.gz 141,479,481 · no partial/"
+  previous_record: memory/events/2026/09/26/20260926T161500_mumate_backup_checkpoint_pr23_open_role_and_drill_done.yaml
+
+unresolved:
+  - D1 is pending until the 2026-09-28 run. A one-shot check is scheduled in this session only, and it disappears if the session ends.
+  - Path C of runbook 02 (new Supabase project) is written, not drilled (K5).
+  - Supabase Storage files are unbacked by the owner's decision.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    On or after 2026-09-28 09:05 Bangkok: list s3://mumate-backups/pg/ and the
+    mumate-backup.service journal. If objects dated 20260927T02 and 20260928T02
+    exist, each over 1 MB, write the final closeout naming slice "1" with
+    status ready-for-owner-merge, and set PLAN.md to completed. If either night
+    failed, a 🚨 or a stale ❌ will already be in Discord; diagnose from the
+    journal first.
+  acceptance_check:
+    - Wake reports no validation error, and mumate-backup-001 stays active until the slice-1 closeout exists.

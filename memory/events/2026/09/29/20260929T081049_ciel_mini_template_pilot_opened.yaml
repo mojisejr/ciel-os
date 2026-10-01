@@ -1,0 +1,80 @@
+schema_version: ciel.event.v0.1
+id: evt_20260929T081049_ciel_mini_template_pilot_opened
+type: decision
+recorded_at: 2026-09-29T08:10:49+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-mini-template-001
+  lane: single
+  objective: >-
+    Create and dogfood a local-only, project-scoped CIEL-mini template so a
+    learner and an AI builder can retain shared project context across sessions
+    without a separate runtime or harness.
+  scope:
+    - Record plan revision 0.1 and authorize its first bootstrap slice only.
+    - Create the local-only template repository, project identity/binding, and
+      its minimal human-readable continuity contract after the owner reviews the
+      slice plan.
+    - Preserve the later clone, MBTI's-Planner dogfood, recovery proof, and HQ
+      review as separately gated slices.
+  out_of_scope:
+    - Creating the pilot clone or application feature in this decision.
+    - Any external remote, deployment, provider, account, payment, skill,
+      daemon, database, validator, or CIEL runtime change.
+
+outcome:
+  status: decided
+  parallelism: approved
+  completed:
+    - >-
+      The owner explicitly opened `ciel-mini-template-001` after a shared
+      alignment. The purpose is to teach a learner to create with an AI, rather
+      than to hand over an application made for them.
+    - >-
+      The owner approved a local-only template and a separately cloned pilot,
+      with CIEL HQ retaining higher-level review through project files, dated
+      memory, lessons, and Git rather than chat transcript retention.
+    - >-
+      The owner set the learning boundary: a learner needs enough discipline to
+      maintain continuity with their agent, but an omitted closeout must be
+      visible and recoverable rather than punished or hidden by automation.
+  not_completed:
+    - >-
+      No child repository, project registration, template file, pilot clone, or
+      application code exists yet. This decision opens the workstream and
+      authorizes only the first planned slice after the owner has reviewed it.
+
+evidence:
+  plan: workstreams/ciel-mini-template-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  authorization:
+    observed_directly_by_this_session: true
+    summary: >-
+      The owner said to open the workstream after accepting the aligned pilot
+      shape and the recoverable-learning boundary.
+  repository:
+    head: 9ef17d5e9838f0b1470fab8ae5a0fed98fef2fc2
+    branch: hq/20260926
+    working_tree: plan-and-decision-only
+
+unresolved:
+  - The exact first MBTI's-Planner flow belongs to the pilot project's own
+    alignment and is not chosen by HQ in advance.
+  - The template's teaching wording must be judged by actual use, not by this
+    plan's confidence.
+  - The proposed Genesis Contract remains a proposed CIEL governance artifact;
+    this local child-project workstream does not ratify or amend it.
+
+next_action:
+  action: >-
+    Review plan revision 0.1 with the owner. If accepted, execute slice 1 only:
+    create and register the local-only `ciel-mini-template` baseline, validate
+    it with Wake, and return its readable contract before cloning a pilot.
+  acceptance_check:
+    - Wake recognizes the decision as authorizing slice 1 at plan revision 0.1.
+    - No child repository or external state changes before the owner reviews
+      this new workstream plan.

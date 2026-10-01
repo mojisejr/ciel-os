@@ -3,8 +3,8 @@
 **Workstream:** `mumate-login-identity-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.7
-**Execution phase:** 4
+**Plan revision:** 0.9
+**Execution phase:** 5
 **Execution state:** idle
 **Parallelism:** proposed
 
@@ -472,6 +472,169 @@ one remaining unknown — the provider round trip — and it is not a condition 
 slice 4. Nothing about the safety rules in DoD 4 is relaxed: the same row
 counts, the same refusals, the same explicit confirmation.
 
+## Revision 0.8 — the prevention slice gets a number, a DoD, and a one-per-provider rule
+
+Slice 4 shipped to production on 2026-09-26 (mootech-fe PR 815). The plan had
+deferred DoD 4b until the merge conversation existed. It exists now, so this
+revision writes that DoD. The owner reviewed the design in session on
+2026-09-26 and answered every question put to him.
+
+### Renumbering, and why it is not cosmetic
+
+CIEL's parser reads only headings of the form "### <digits>." A 4b heading was
+therefore never a declared slice. A decision naming slice "4b" would have
+authorized nothing, and Wake would have reported that only as an unmet
+condition. The owner chose to renumber rather than change CIEL (owner decision
+15):
+
+| Before 0.8 | From 0.8 |
+|---|---|
+| 4b — stop handing out the second account | **5** |
+| 5 — flip through the seam | **6** |
+
+In every record dated before this revision, "slice 5" means the flip and "4b"
+means today's slice 5. The 4-legacy heading stays unparsed on purpose: it is
+reference, not work.
+
+### Owner decisions 15-23 (2026-09-26 and 2026-09-27)
+
+15. Renumber the slices as above.
+16. Ask on **every** provider identity that has no owner, in **both**
+    directions (Google after LINE, LINE after Google). A genuinely new member
+    pays one extra tap, once.
+17. "I have used MuMate before" is proven only by signing in with the other
+    provider. No email, phone or name shortcut (this restates decision 2).
+18. No dead end. Cancelling or failing the proof returns the member to the
+    question, and "create a new account" is always available. A wrong choice is
+    repaired later through slice 4's merge.
+19. A member who already holds both providers gets a visible way out on the
+    connected screen: contact the team through the LINE OA.
+20. Release behind a server switch that defaults off, in two steps: merge, then
+    set the switch and redeploy. With the switch off, behaviour must be
+    byte-for-byte today's.
+21. The production proof uses the owner's own account: unlink Google, sign in
+    with Google, answer "yes", prove with LINE, and get Google re-attached. One
+    fresh Google account covers the "no" path.
+22. **One live identity per provider per member.** A member may hold at most
+    one Google and one LINE identity that can still authenticate. Linking a
+    second identity of the same provider is refused. To change one, the member
+    unlinks the old identity first, through the existing unlink route and its
+    last-method guard. Dead legacy rows (`ya29…` access tokens) do not count.
+    Members who already hold two live identities of one provider (one member,
+    measured 2026-09-26) are left as they are; the rule governs new links only.
+
+The agent drafts the question screen's wording, and the owner approves it at
+pull-request review.
+
+23. (2026-09-27, after the first production walk.) The "yes" path must not ask
+    for the first provider twice. The first provider's identity, as NextAuth has
+    just verified it, is held in a short-lived, HttpOnly, signed cookie. After
+    the member proves the other provider, that identity is attached through
+    `linkProvider` under every rule the link flow applies. The proof standard is
+    unchanged: the same browser holds both providers within minutes. The proven
+    account's member cookie is minted before anything else reads it.
+
+### What was measured to write decision 22
+
+Measured read-only on production through the backup lane's `mumate_backup` role
+on 2026-09-26:
+
+- 260 members hold more than one Google row. In 259 of them, a dead `ya29` row
+  sits beside one live row. **One** member holds two live Google identities.
+- The only unique index is `(lower(provider), id_token)`. It stops one identity
+  belonging to two members, but it does not stop one member holding two
+  identities of the same provider.
+- `linkProvider` checks only the first of those. The screen hides the button,
+  but nothing else stops a direct call to the start route from attaching a
+  second Google today.
+- Without decision 22, slice 5's "yes" path would make that outcome ordinary:
+  a member picks the wrong Google account and it gets attached.
+
+## Revision 0.9 — the flip is rehearsed on the shadow over the arena before production
+
+Slice 5 closed on 2026-09-27 (D8 walked on both paths, row counts agree). The
+owner proposed on the same day that the flip run first on staging, where he can
+log in against the arena, and reach production only once that walk is
+accepted. This revision writes slice 6 as phases 6a-6h and gives it a DoD,
+which it never had.
+
+### Why the rehearsal is worth its cost
+
+Before the flip, a member whose only Google row is a dead `ya29` token signs in,
+finds no owner (`lib/v2/resolve-user.ts` resolves by subject only), is asked
+slice 5's question, answers "no", and is rescued by the legacy BE's email
+discovery. After the flip, the same answer reaches the FE route, which
+deliberately does not discover by email, and the member gets a new, empty
+account. That difference has been read from the code but never seen happen. The
+arena is a restore of production, so it holds this class of member (2,444
+`ya29`-shaped rows on 2026-09-26). A staged case lets the owner walk the harm
+before any real member meets it, and walk the rollback before production needs
+it.
+
+### What 0.7 taught about the shadow, applied here
+
+The arena isolates only the FE's database. On 2026-09-26 the shadow BE kept
+reading and writing **production** throughout slice 4's rehearsal, because
+`register-login` was not yet flipped and the FE posted to it. That record
+already said the BE should point at the arena before the flip is rehearsed. So
+6b points the shadow BE at the arena too. `bin/arena.sh` knows only about the FE
+(`status` and `down` check `fe.env` alone). The BE edit is made by hand, with
+its reverse steps recorded, and `down` is not run until both are back.
+
+### What the rehearsal cannot prove
+
+- **The transaction pooler.** The arena is a direct connection; production goes
+  through Supabase's pooler (decision 12 foresaw this). `linkProvider` already
+  runs through the pooler on production, which lowers the risk. The FE
+  register route itself has never served production traffic.
+- **The Vercel deploy path.** The shadow runs a container. On 2026-09-26 a
+  merge failed to produce a Vercel deployment at all.
+- **Real volume, and what real members choose.**
+
+So production still carries its own walk and observation (6g, 6h). The
+rehearsal shrinks those steps; it does not replace them.
+
+### Ownership of the arena
+
+Owner decision 14 gave the arena to `mumate-infra-move-001`. That lane closed on
+2026-09-26, so nobody holds it. Decision 25 below settles it for slice 6.
+
+### Owner decisions 24-29 (2026-09-27)
+
+24. Slice 6 is authorized under this revision. The production flip (6g) still
+    waits for the owner's explicit go, given after he accepts the rehearsal
+    at 6e.
+25. This lane runs `arena.sh up/down` and edits the shadow's env files itself
+    for slice 6. This replaces decision 14 for this slice only.
+26. The production observation window is **seven days**. The agent reminds
+    the owner when it ends.
+27. Rollback fires on any of: a new member with no provider row (one is
+    enough); repeated `register-login-fe` errors; new members per day above
+    three times the 6f baseline. It is done by Vercel's promote of the
+    previous deployment, followed by a one-line revert PR.
+28. The owner holds `mootech-be` and nobody else changes it. No team
+    notification is needed beyond him.
+29. The agent dispatches `container-build` itself where the harness permits,
+    and hands it to the owner as one line where it does not.
+
+### Owner decisions 30-31 (2026-09-27, after the flip)
+
+Research for `mumate-be-retirement-001` found that legacy `register-login`
+checked every LINE login against the LINE Messaging `/profile` API with the OA
+token. That API only knows users who have added the OA as a friend. In the
+seven days before the flip it rejected 200 of 442 login attempts
+(`PROFILE_NOT_FOUND`), and the FE signed those users out. The FE route does
+not make this check.
+
+30. OA friendship does **not** gate login ("R11 = ไม่ต้อง"). The FE route
+    stays as it is. Growing OA friends is a LINE Login channel setting for the
+    team (the add-friend option), not a login check.
+31. Decision 27's volume trigger moves from about 47 to **about 80 new members
+    in a day** ("R11b = ขยับเลย"). The daily 6h report shows LINE and Google new
+    members separately, because members the old check used to turn away can
+    now register and are expected to raise the count. The other two triggers
+    are unchanged.
+
 ## Relationship to existing work
 
 This workstream takes ownership of only the login/identity portion formerly
@@ -869,20 +1032,36 @@ birth data between accounts. The wide merge that revision 0.3 inventoried
 remains unbuilt and unauthorized. If the losing side holds something the member
 needs, that is support's work and the dump is the recovery.
 
-### 4b. Stop handing out the second account in the first place
+### 5. Stop handing out the second account in the first place
 
-**Added in 0.4**, and sequenced after slice 4 because a member who already holds
-two accounts gains nothing from prevention.
+**Numbered 4b until revision 0.8.** Added in 0.4 and sequenced after slice 4
+because a member who already holds two accounts gains nothing from prevention.
 
 Today a member who signs in with a second provider is silently given a new empty
-account. Slice 4b interrupts that: before creating a second account, **ask**.
-Never infer. Owner decision 2 forbids treating a matching email as proof, and
-LINE carries no email here in any case, so the question is put to the person
-rather than answered by a join.
+account: every one of the five callers of `UserRegisterOrLogin` (home, the
+deep-link self-heal, and three modals) reaches the legacy BE route, which creates
+a member for any identity it cannot find. Slice 5 interrupts that: before a new
+member is created, **ask**. Never infer.
 
-DoD 4b is deliberately not written yet. It touches the login surface every member
-crosses, and it should be written after slice 4 has shown what the merge
-conversation actually needs to say.
+The "yes" path reuses slice 3's link flow; it adds no new way to write member
+data. Decision 22 is enforced inside `linkProvider`, so it holds for the
+connected screen, a direct call to the start route, and this slice's question
+alike.
+
+DoD 5:
+
+| # | Criterion | Proof |
+|---|---|---|
+| D1 | An identity with no owner is never silently turned into a new member, from any of the five entry points | tests per entry point |
+| D2 | A known identity sees nothing new: no extra screen, no extra tap | tests; production walk |
+| D3 | "Yes" attaches the new identity to the proven member through the link flow; no new `user` row | row counts before and after; `ops_audit_log` |
+| D4 | "No" creates the member exactly as today, **including the referral code** | tests |
+| D5 | No dead end: cancel or failure returns to the question; "create new" always works; inside the LINE app, a Google proof shows the existing open-in-browser guidance | tests per failure |
+| D6 | A member holding both providers sees a way out on the connected screen | tests; production walk |
+| D7 | Switch off = today's behaviour | tests with the switch off |
+| D8 | The owner walks both paths on production (decision 21) | walk result and row counts |
+| D9 | Tests, typecheck, lint, build and gitleaks pass; the pull request carries the template | CI and local |
+| D10 | Linking a provider the member already holds live is refused with a readable message and writes nothing — from the connected screen, the start route called directly, and the question's "yes" path | tests |
 
 ### 4-legacy. The inventory that produced owner decision 5
 
@@ -937,23 +1116,84 @@ release does not attempt it automatically, and the checklist any later automatic
 merge must satisfy. No cross-application identity-rewrite tooling exists today;
 deleting a member currently leaves the engine rows orphaned by design.
 
-### 5. Flip through the seam, observe, then stop using the old path
+### 6. Flip through the seam, observe, then stop using the old path
+
+**Numbered 5 until revision 0.8.**
 
 **Precondition added in 0.4, and it outranks the one below.** Owner decision 10:
 the flip may not run before slice 4 ships. The flip gives 1,443 members a new
 empty account on their next login, which is not only a harm to absorb — it
 creates more members holding two accounts, which is the condition slice 4 exists
 to repair. Flipping first means manufacturing cases faster than we can clear
-them. Slice 4b should also ship first, so the flip does not immediately reopen
+them. Slice 5 (formerly 4b) should also ship first, so the flip does not immediately reopen
 the same tap.
 
-After slices 1-4b close and the owner authorizes the flip, repoint the FE client
+After slices 1-5 close and the owner authorizes the flip, repoint the FE client
 to the new route with the legacy route retained as a bounded rollback. Test on
-local first, then a reviewed PR and owner merge. Notify the infrastructure lane
-before push. Observe login success, ambiguous identities, duplicate creation,
-and rollback readiness for an owner-decided window. Removing the legacy call
-from FE is a later decision; changing or deleting the BE endpoint remains with
-`mumate-be-retirement-001`.
+local first, then rehearse on the shadow over the arena (revision 0.9), then a
+reviewed PR and owner merge. The infrastructure lane this plan once told to
+notify is closed; the team that holds `mootech-be` is told instead, because its
+endpoint is the rollback. Observe login success, ambiguous identities, duplicate
+creation, and rollback readiness for an owner-decided window. Removing the
+legacy call from FE is a later decision; changing or deleting the BE endpoint
+remains with `mumate-be-retirement-001`.
+
+**Phases (revision 0.9).**
+
+- **6a — the unlink fix.** `unlinkProvider` judges "last method" by identities
+  that can authenticate (`countLiveIdentities` / `isDeadIdentityShape`, which
+  slices 4 and 5 already use), not by provider names. Its own PR, merged and
+  verified on production before 6g.
+- **6b — the arena, with both callers.** `bin/arena.sh up` from the latest
+  nightly backup. The shadow FE (`DATABASE_URL`) and the shadow BE (`DB_HOST`
+  and its credentials) both point at `pgtmp`, each with a `.pre-arena` copy and
+  written reverse steps. Health is 200 with db ok. The Caddy log from 6c's first
+  walk is read: if any shadow call writes through `bazi`, `bazi` is pointed at
+  the arena too before anything else runs. The arena expires at 6e or seven
+  days after `up`, whichever comes first (decision 13).
+- **6c — baseline walk, before the flip.** The shadow runs a main build, so the
+  FE still posts to the BE, and the BE now writes the arena. The owner walks,
+  on `app.staging.mumate.co`: a known Google identity, a known LINE identity, a
+  new account through "no", and one **staged exposed member**, arranged inside
+  the arena only so that its sole Google row is `ya29`-shaped. Row counts are
+  taken on the arena before and after.
+- **6d — flipped walk, then the rollback.** A staging image is built from the
+  flip branch (the one-line flip, plus 6a if it is not merged yet) and
+  deployed on the shadow. The same four walks run. The expected differences:
+  the exposed member's "no" now creates a new, empty account, and that is
+  counted. Then the previous image is redeployed and one known login is walked
+  again, which proves the rollback and times it.
+- **6e — accept and restore.** The owner accepts the rehearsal. Then FE and BE
+  point back at production, in the order recorded in 0.7's restore; health is
+  confirmed on both; `arena.sh down`.
+- **6f — measure, immediately before the flip.** Read-only, through
+  `mumate_backup`: the exposed set now (it was 1,443 on 2026-09-24), the paid
+  subset (both numbers, per the rules below), and those with no other usable
+  credential, whose `user_id`s alone go to the owner.
+- **6g — production flip.** A one-line PR, merged by the owner in a window he
+  chooses. No other merge lands for the first hours, because the rollback is
+  Vercel's promote of the previous deployment, which would also roll back
+  anything that landed after the flip. The deployment is proven to exist and
+  to carry the flip. Then the owner walks a known Google login, a known LINE
+  login and a new account, with row counts.
+- **6h — observe.** Daily read-only counts for the owner-decided window,
+  compared with a baseline taken in 6f. Then the closeout: the legacy route is
+  kept; retiring it is a later decision.
+
+DoD 6:
+
+| # | Criterion | Proof |
+|---|---|---|
+| F1 | Unlinking a provider is refused when the member's remaining identities include none that can authenticate; a live remaining identity still permits it | tests, including `ya29` + LINE |
+| F2 | During 6b-6d, nothing the shadow does writes production: FE and BE both serve from the arena | `arena.sh status`, both env files, Caddy log of the walk window |
+| F3 | Baseline and flipped walks both recorded on the arena. Known Google and known LINE are unchanged by the flip. A new account through the FE route carries the referral code and the welcome points exactly as the legacy route does | walk results, arena row counts |
+| F4 | The staged exposed member's outcome is observed both ways: rescued before the flip, a new empty account after it | arena row counts |
+| F5 | The rollback is walked on the shadow and timed; the production rollback deployment is named before 6g merges | record |
+| F6 | The shadow is back on production and the arena is gone, both proven | health on FE and BE, `arena.sh status` |
+| F7 | The exposed and paid numbers reach the owner within 24 h before 6g, and he confirms the paid list is handled or accepted | record, counts only |
+| F8 | The production flip is exactly one line; the deployment exists and carries it; the owner's three walks match their row counts | diff, external probe, counts |
+| F9 | Over the observation window: new members with no provider = 0, `register-login-fe` errors ≈ 0, no rollback trigger fires | daily counts |
+| F10 | Tests, typecheck, lint, build and gitleaks pass on each PR, and each carries the template | CI and local |
 
 **Precondition added in 0.3 — the paid-member check.** The flip is the moment the
 email-discovery rescue disappears. Measured 2026-09-24, 1,443 members hold no
@@ -1058,8 +1298,8 @@ call, or the rollback stops being one line.
 | 2 | cleanup and unique index succeed on anonymized restore | 4-8 h | heavy: schema + identity data | slice 1 closeout; owner decision |
 | 3 | explicit linking works without identity mutation on collision | 6-10 h | heavy: OAuth + auth + DB | slice 2 closeout; **team** LINE console steps |
 | 4 | a member joins their own two accounts; payment side never loses; nothing but the credential moves | unknown | heavy: identity write + irreversible-feeling UX | slice 3 closed, including one observed successful link |
-| 4b | a second account is no longer created without asking | unknown | heavy: touches the login surface everyone crosses | slice 4 closed |
-| 5 | reviewed flip, observation, old FE path retired later | 4-6 h + observation | owner-attended production gate | slices 1-4b closed |
+| 5 (was 4b) | a second account is no longer created without asking; one live identity per provider | 1-2 days | heavy: touches the login surface everyone crosses | slice 4 closed |
+| 6 (was 5) | unlink fix; flip rehearsed on the shadow over the arena; reviewed production flip; observation; old FE path retired later (DoD 6, rev 0.9) | 1-2 days + observation | owner-attended rehearsal and production gate | slices 1-5 closed |
 
 Every slice after slice 1 requires a new owner decision event. Slices are
 sequential because they touch the same identity seam and schema.

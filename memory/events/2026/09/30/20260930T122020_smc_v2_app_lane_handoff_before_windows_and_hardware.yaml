@@ -1,0 +1,96 @@
+schema_version: ciel.event.v0.1
+id: evt_20260930T122020_smc_v2_app_lane_handoff_before_windows_and_hardware
+type: closeout
+recorded_at: 2026-09-30T12:20:20+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: >-
+    Rebuild the Smart Medication Cart against the CU12 simulator only. This
+    record hands the lane over while the owner stops to prepare the Windows
+    machine and the hardware, so a cold session can resume it.
+  scope:
+    - The state of the CU12/SMC lane after cu12-simulator-sprint-005 slice 3, and the order of what comes next.
+  out_of_scope:
+    - Any new work. No slice is named here, so this record delivers nothing.
+
+outcome:
+  status: handed-over
+  completed:
+    - >-
+      On the Mac, the lane is proven against the simulator. smc-v2 slices
+      1-10 are merged (main f2e023a). The cu12-console simulator is
+      released as console-v0.1.0 (cu12-simulator main 1a3b97c), and the
+      owner walked it from the downloaded file with SMC v2
+      (20260930T121101). The two coverage gaps of slice 10 are closed by
+      that walk.
+    - >-
+      The owner stopped here on 2026-09-30 to prepare the Windows machine
+      and the hardware ("อยากจะหยุดตรงนี้ก่อน ไปเตรียมเครื่อง เตรียม
+      hardware"). The application and the simulator are stopped. Every
+      checkout is clean on main.
+  not_completed:
+    - Slice 11 (Windows).
+    - Any proof against real hardware. The plan puts it out of scope; it is not a slice of this workstream.
+  observations:
+    - >-
+      Wake reads this lane's lifecycle as authorized, "Owner decision
+      authorizes plan revision 0.6 slice 10". That slice merged in
+      20260930T113643. Slice 11 has no decision, and nothing authorizes
+      it.
+    - >-
+      The Mac is the proving machine, not the product's. The plan's v1
+      runs on Windows 10/11 with a CU12 on COM through a USB-to-RS485
+      adapter. The application is not finished until slice 11 passes.
+
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: "0.6"
+  repository:
+    head: "dc005b7"
+    branch: hq/20260926
+    working_tree: this-event-and-the-windows-portability-handoff-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  application:
+    repository: smc-v2
+    head: "f2e023a"
+    branch: main
+    working_tree: clean-equal-to-origin
+  simulator:
+    repository: cu12-simulator
+    head: "1a3b97c"
+    branch: main
+    working_tree: clean-equal-to-origin
+    release: https://github.com/mojisejr/cu12-simulator/releases/tag/console-v0.1.0
+  preceding_records:
+    - memory/events/2026/09/30/20260930T113643_smc_v2_app_slice10_merged.yaml
+    - memory/events/2026/09/30/20260930T121101_cu12_sprint005_slice3_walked_ready_for_owner_merge.yaml
+
+unresolved:
+  - hq/20260926 is unpushed. Every Windows step waits on it.
+  - bun run check in HQ is red on the pre-existing projects-registry assertion (a827400/ba59b5e). It is with the owner, and it also blocks Phase 2 DoD 4 of ciel-windows-portability-001.
+  - The cu12-console .exe has passed its tests on a CI runner but has never been opened on a Windows desktop.
+  - >-
+    Real hardware has no plan. The door behaviour is the owner's
+    recollection, not a measurement, and real hardware may change the state
+    machine. Still open: the door-label order, a physical barcode scanner,
+    and production keygen before the first sale.
+
+next_action:
+  action: >-
+    Owner's recommended order, agreed in principle 2026-09-30 but not
+    decided. (1) The owner pushes hq/20260926 or merges it to main. (2)
+    ciel-windows-portability-001 Phase 2 on the Windows machine; see that
+    lane's handoff of the same time. (3) Record a decision for smc-v2
+    slice 11 and build the .msi on Windows. The owner installs,
+    activates, and loads and dispenses against cu12-console.exe. (4) A new
+    workstream for real hardware on the Windows machine, starting with a
+    syncup on what is at hand: the CU12 board, the USB-to-RS485 adapter,
+    the cabinet and the PC. The syncup can start before (2) and (3); the
+    wiring should wait for them.
+  acceptance_check:
+    - Wake shows smc-v2-app-001 at revision 0.6, phase none, idle, with this record as its latest event.

@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T175329_orchard_decision_lab_slice3_authorized
+type: decision
+recorded_at: 2026-09-27T17:53:29+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Start Slice 3: a local, read-only preview of the owner's five manual CSV
+    exports, with visible acceptance/rejection and replayable provenance.
+  scope:
+    - Read only the five ignored CSV exports in the Lab imports directory.
+    - Preserve raw export names and map canonical contracts by suffix after ` - `.
+    - Build local parsing, validation, preview, test, and Thai owner-facing status.
+  out_of_scope:
+    - Editing CSV files, Google Sheet/API access, persistence, provider calls, or new daily data entry.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner accepted the current Slice 2 Playground and explicitly
+      authorized Slice 3 using the recommended suffix filename mapping.
+  not_completed:
+    - The Slice 3 importer, local preview, proof, and owner review remain to be performed.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: 59bc206dd61259e92b0d392dfc9f8042603a2f7f
+    branch: hq/20260926
+    working_tree: slice3-plan-and-decision
+  owner_statement: Slice 2 ok if ready go slice 3.
+  input_readiness:
+    - Five named CSV exports are present under the ignored Lab imports directory.
+    - The local .env file remains ignored and owner-only readable; no value was read.
+
+unresolved:
+  - CSV contents, row-level acceptance/rejection, and actual field mappings remain unproven until the local parser runs.
+  - Slice 4 and provider/source work remain unauthorized.
+
+next_action:
+  action: >-
+    Implement and prove the local read-only CSV preview without emitting raw
+    CSV data into CIEL or an external provider.
+  acceptance_check:
+    - Exactly five contracts are mapped from raw filenames by their suffix.
+    - Owner can inspect local accepted/rejected rows, reasons, and provenance without a Sheet write path.

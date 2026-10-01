@@ -1,0 +1,103 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T084037_ciel_mini_v1_review_checkpoint
+type: closeout
+recorded_at: 2026-10-01T08:40:37+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: ciel-mini-template-001
+  lane: single
+  objective: >-
+    Review the finished local pilot and the nephew's live site, then prepare a
+    small, evidence-backed CIEL-mini v1 template revision.
+  scope:
+    - Slice 5 of plan revision 0.5, review checkpoint only.
+    - >-
+      Clarify GitHub template startup, file roles, learner acceptance, session
+      alignment revisions, and live-result verification in the template.
+  out_of_scope:
+    - Modifying the pilot or nephew's site.
+    - Treating the nephew's deployed site as proof of its repository process.
+    - Claiming Slice 4 missed-closeout recovery was demonstrated.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      Inspected the local MBTI's-Planner pilot through its project contract,
+      nine commits after the template baseline, alignment/checkpoint records,
+      one lesson, and its six-session teaching guide.
+    - >-
+      Ran the pilot's two planner tests and production build successfully on
+      2026-10-01; the pilot remained a clean local-only repository.
+    - >-
+      Inspected the nephew's public site from its welcome page through 32
+      questions, four tie follow-up pairs, and the result/recommendation page.
+      The site itself labels the survey experimental, shows close results as
+      uncertain, and warns that MBTI does not determine study or career.
+    - >-
+      Set the public GitHub repository's isTemplate flag to true and verified
+      the setting through GitHub.
+    - >-
+      Prepared the three-file template revision and opened draft pull request
+      https://github.com/mojisejr/ciel-mini-template/pull/1 at
+      1d7c6d0eec73806d871bbb5b26e9cbbb141fe179.
+  not_completed:
+    - The template v1 revision has not merged or been tagged.
+    - >-
+      No intentionally unclosed alignment was recovered in a fresh pilot
+      session in the available repository evidence.
+    - >-
+      The nephew's repository and its AI/Git/memory history were not available
+      for this review, so learning-process claims remain owner-reported.
+
+evidence:
+  plan: workstreams/ciel-mini-template-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "5"
+  repository:
+    head: 5f53280046b15ca0c668d9a6009ff1fd97f16ffe
+    branch: hq/20260926
+    working_tree: this-closeout-only
+  pilot_repository:
+    path: checkouts/mbti-planner-pilot
+    head: c8a8c3543cde3bf0b95fe48373197f82c79ffe71
+    branch: main
+    status: clean
+  template_repository:
+    url: https://github.com/mojisejr/ciel-mini-template
+    public_main: 07460feab0b68c61eb57fff9ad3c0381bb3809f1
+    is_template: true
+    draft_pr: https://github.com/mojisejr/ciel-mini-template/pull/1
+    draft_pr_head: 1d7c6d0eec73806d871bbb5b26e9cbbb141fe179
+  verification:
+    - pilot bun test: 2 passed, 0 failed
+    - pilot bun run build: TypeScript and Vite build passed
+    - template git diff --check: passed
+    - template materials/example-private.pdf: ignored by .gitignore
+    - draft PR files: AGENTS.md, PROJECT.md, README.md only
+
+unresolved:
+  - >-
+    The current pilot repository demonstrates repeated aligned work and
+    checkpoints, but the deliberate missed-closeout recovery acceptance of
+    Slice 4 remains unproved.
+  - >-
+    The nephew's 32-question public survey is a distinct product from the
+    local pilot's eight-question MBTI-to-planner app; the nephew's own repo is
+    needed to audit how the template supported their work.
+  - >-
+    Classroom use, mobile use by learners, and the nephew's independent
+    explanation of their choices have not been directly observed here.
+
+next_action:
+  action: >-
+    Have the owner review the exact three-file template PR and provide the
+    nephew's repository if process-level evaluation is wanted. Merge and tag
+    v1 only after the owner accepts the review boundary; keep the recovery
+    experiment as an explicitly pending teaching proof.
+  acceptance_check:
+    - Owner accepts or corrects the v1 template text in PR 1.
+    - Final report separates demonstrated continuity from unproved recovery.

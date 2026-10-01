@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T200257_mumate_vercel_to_do_s1_staging_admin_exposure_log_review
+type: closeout
+recorded_at: 2026-09-27T20:02:57+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Answer the question left open by 20260927T200022: did anyone use staging
+    bazi's open admin routes while it wrote the production database.
+  scope:
+    - Read-only Loki queries (datasource grafanacloud-logs, reader token) over Caddy access logs for bazi.staging.mumate.co.
+  out_of_scope:
+    - Any change.
+
+outcome:
+  status: recorded
+  slice: "1"
+  completed:
+    - "Coverage: the earliest bazi.staging.mumate.co line in Loki is 2026-09-20 15:03 UTC, when that host first served, so the 14-day window covers its whole public life."
+    - "All requests over 14 days: GET 20,125, POST 1,720, PUT 1."
+    - "Every non-GET by path: POST /api/bazi/public-calc 1,688 (200); POST / 26 (404) and 2 (308); POST /wp-json/batch/v1 4 (308, a scanner); PUT /api/almanac 1 (401, the agent's own check after the fix). From 6 distinct client IPs."
+    - "GET on admin-like paths (/(api/)?(reading|ops|almanac|knowledge|doctrine|sacred-map|dataset|stats|divine-cards|matching).*): 0. The same pattern shape matches 16,890 GETs on /(api/)?(bazi|health).*, so the filter works."
+    - "Conclusion: no request reached a staging admin route through Caddy before the fix. The exposure was real and is closed; no use of it is visible."
+  not_completed:
+    - "Requests that bypass Caddy cannot be seen here; bazi's host port is bound to 127.0.0.1 only (docker-compose.yml), so the public path is Caddy."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "1"
+  repository:
+    head: "31a99f5"
+    branch: hq/20260926
+    working_tree: this-record-only
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Unchanged from 20260927T200022: owner dispatches the staging FE build and
+    runs the production-side session check; then the control-room work.
+  acceptance_check:
+    - The open question in 20260927T200022 has an evidence-backed answer.

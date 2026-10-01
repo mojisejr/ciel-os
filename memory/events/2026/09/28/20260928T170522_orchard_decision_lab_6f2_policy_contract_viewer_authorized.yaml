@@ -1,0 +1,36 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T170522_orchard_decision_lab_6f2_policy_contract_viewer_authorized
+type: decision
+recorded_at: 2026-09-28T17:05:22+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: Make the first not-active policy-pack contract inspectable in Thai.
+  scope:
+    - Read-only /policy route using named synthetic fixtures.
+    - Thai table and copyable JSON for input/output plus source and review references.
+  out_of_scope:
+    - Dogfood-trace reads, local writes, policy activation, daily decision changes, Jev/provider input, research LLM calls, agricultural advice or public deployment.
+outcome:
+  status: decided
+  slice: "6"
+  decision: Owner accepted Step 5 and authorized the read-only policy-contract viewer.
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "2.2"
+  slice: "6"
+  repository:
+    head: bd0dff18bc0c442358ce1016a91b18881d90d970
+    branch: hq/20260926
+    working_tree: 6f2-policy-contract-viewer-authorized
+  prerequisite:
+    policy_contract_closeout: memory/events/2026/09/28/20260928T170500_orchard_decision_lab_6f1_rain_context_gate_closed.yaml
+unresolved:
+  - The policy pack remains not active and synthetic-only.
+next_action:
+  action: Implement the read-only viewer and route with explicit no-private-state boundaries.
+  acceptance_check:
+    - All displayed input/output is named synthetic data and the page exposes no write or provider control.

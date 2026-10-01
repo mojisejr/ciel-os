@@ -1,0 +1,75 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T154300_orchard_decision_lab_slice1_bootstrap_closed
+type: closeout
+recorded_at: 2026-09-27T15:43:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Close Slice 1: establish the separately-owned local Orchard Decision Lab
+    and its evidence-visible product boundary before any decision logic runs.
+  scope:
+    - Create the local-only child repository in CIEL checkouts on a feature branch.
+    - Track the canonical PRD and SPEC in that child repository.
+    - Register the child project and record the CIEL workstream/owner decision.
+  out_of_scope:
+    - Decision logic, CSV import, daily dogfood data, provider credentials, external sources, or live Jev.
+    - Google Sheet mutation/API access, public deployment, other-user access, or paid-pilot activity.
+
+outcome:
+  status: recorded
+  slice: "1"
+  completed:
+    - >-
+      The local-only child repository exists at checkouts/orchard-decision-lab
+      on branch feat/l0-local-lab; it has no configured remote.
+    - >-
+      Canonical PRD and SPEC define the data lanes, CIEL separation, hard-rule
+      safety boundary, evidence dossier, and the later Go-to-Pilot decision.
+    - >-
+      CIEL project registration and local binding validate the child checkout;
+      no raw Lab record is stored in CIEL.
+    - >-
+      The child ignore rules keep credentials, imported CSVs, traces, and local
+      data out of Git.
+  not_completed:
+    - No deterministic scenario, CSV seed, dogfood loop, live provider call, or source retrieval exists.
+    - No Go-to-Pilot or Go-to-Sell conclusion is claimed.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 56ce5b0dafc56e04e267f83e8ebdd3c13d865151
+    branch: hq/20260926
+    working_tree: this-closeout-and-plan-state
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    baseline_commit: 692d855
+    contract_commit: 750c37de2a5c9fc410d98da44de7468afc969f0e
+    remote: none
+  product_contract:
+    - checkouts/orchard-decision-lab/docs/PRD.md
+    - checkouts/orchard-decision-lab/docs/SPEC.md
+  checks:
+    - CIEL project-registry validation passed before this closeout.
+    - Child repository git show --check passed at contract commit.
+
+unresolved:
+  - Slice 2 technology and local persistence implementation remain unselected.
+  - The owner must supply manual CSV exports only when Slice 3 is authorized.
+  - A provider credential and budget require a separate owner approval before Slice 5.
+
+next_action:
+  action: >-
+    Present Slice 1 for owner review, then request a new explicit decision to
+    authorize Slice 2 synthetic deterministic trace implementation.
+  acceptance_check:
+    - Wake reports the local-only child project and this Slice 1 closeout without validation errors.
+    - The child repo remains clean with no credential, raw CSV, trace, or local data committed.

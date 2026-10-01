@@ -1,0 +1,106 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T060300_mumate_login_identity_s6_staging_on_arena_ready_for_6c
+type: closeout
+recorded_at: 2026-09-27T06:03:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Checkpoint 6b. The shadow's FE, BE and bazi all serve from the arena, the
+    shadow runs a main build with the ask switch on as production does, and
+    staging is ready for the owner's 6c baseline walk. This record carries
+    the reverse steps, so a cold session can return the shadow to production.
+  scope:
+    - The safety check before 6b, and what it found that the plan had not.
+    - Arena up; env edits on fe, be and bazi; the baseline image and its deploy.
+  out_of_scope:
+    - 6a, which runs as a separate mootech-fe pull request.
+    - The walks themselves.
+
+outcome:
+  status: recorded
+  parallelism: approved
+  slice: none
+  completed:
+    - >-
+      SAFETY CHECK FOUND THREE THINGS THE PLAN DID NOT SAY. (1) bazi runs the
+      QI engine, including referral and mission QI, and writes through
+      APP_DATABASE_URL, which pointed at production. The compose file sets the
+      FE's BAZI_BASE_URL to http://bazi:3000, overriding fe.env, so the shadow
+      FE calls the shadow bazi. That bazi was repointed too, which 0.9's "only
+      if the Caddy log shows it" would have done after the fact. (2)
+      LOGIN_ASK_BEFORE_CREATE was unset on the shadow, so slice 5's question
+      would not have appeared. It is now true, as on production. (3) The shadow
+      FE ran a slice-4 branch build (c23440f). It now runs main.
+    - >-
+      CHECKED SAFE. BE crons: both @Cron jobs are gated by
+      MORNING_CRON_ENABLED=false, MIGRATION_ENABLED=false, and
+      DB_SYNCHRONIZE=false. The BE's login path makes no bazi call. The FE holds
+      no QSTASH_TOKEN. bazi's runtime reads only getDatabaseUrl
+      (APP_DATABASE_URL ?? DATABASE_URL). The shadow bazi (722cdf1) is 9 commits
+      behind pdf-dev, and none of them touch QI, referral, missions or the DB.
+    - >-
+      ARENA UP from s3://mumate-backups/pg/mumate-2-20260926T091103Z.sql.gz
+      (taken 2026-09-26 16:12 Bangkok, before D8): 185 tables, 5,121 users,
+      5,308 provider rows, 2 psql errors, expires 2026-10-03. The fresh Google
+      account used for D8's "no" path is therefore unknown in the arena and can
+      be reused.
+    - >-
+      F2 PROVEN FOR THE DATABASE. pg_stat_activity on the arena shows exactly
+      one connection each from be (172.18.0.2), fe (172.18.0.4) and bazi
+      (172.18.0.5). Health: fe 200 db ok sha e97ede7, dbLatencyMs 2; be db ok
+      sha 0705378, dbLatencyMs 1; bazi 200. identity-status answers through
+      app.staging.mumate.co.
+  not_completed:
+    - >-
+      F2's one known exception is outside the database. The legacy BE's LINE
+      login downloads the member's LINE profile image and uploads it to the
+      production S3 bucket (s3-ps-cdn), as every ordinary production login
+      does. The 6c walk will add such objects for the owner's own account. This
+      is recorded, not prevented.
+
+reverse_steps:
+  note: Run in this order. It returns the shadow to production's database with the main build. The arena is removed last.
+  steps:
+    - "cd /opt/mumate/env && cp -p fe.env.pre-arena-s6 fe.env && cp -p be.env.pre-arena-s6 be.env && cp -p bazi.env.pre-arena-s6 bazi.env"
+    - "cd /opt/mumate && docker compose --profile full up -d --force-recreate --no-deps fe be bazi"
+    - "Confirm: fe and be /health db ok with dbLatencyMs well above 2 (pooler), and pg_stat_activity on pgtmp shows no fe/be/bazi connection"
+    - "bin/arena.sh down"
+  untouched: env/fe.env.pre-arena (from 2026-09-24, another lane's leftover, still the owner's to delete)
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.9"
+  slice: none
+  repository:
+    head: "194400d"
+    branch: hq/20260926
+    working_tree: this-record-only
+  host:
+    mumate_infra: "/opt/mumate at bfbc59a"
+    images: "fe e97ede7272674e5dc15175709325385372f4822f-staging (build run 36277859575) · be 0705378 · bazi 722cdf1-staging"
+    env_changes: "fe 2 lines (DATABASE_URL -> pgtmp, LOGIN_ASK_BEFORE_CREATE=true) · be 4 lines (DB_HOST/USERNAME/PASSWORD/DATABASE -> pgtmp) · bazi 1 line (APP_DATABASE_URL -> pgtmp)"
+    backups: "env/{fe,be,bazi}.env.pre-arena-s6, mode 600"
+  arena_baseline:
+    at: "2026-09-27 06:02 Bangkok"
+    users: 5121
+    user_provider: 5308
+    newest_rows: "2026-09-26 15:37"
+
+unresolved:
+  - The arena holds real member data until 2026-10-03 at the latest, or until 6e, whichever comes first.
+  - Staging page views reach the production GA4 property; a handful of hits, recorded rather than filtered.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner walks 6c on app.staging.mumate.co. After his known-Google login,
+    the agent stages his Google row as dead inside the arena, then he walks the
+    exposed case and the new account. Meanwhile 6a finishes, and the flip image
+    is built from 6a plus the one-line flip for 6d.
+  acceptance_check:
+    - 6c walk results and arena row counts are recorded.

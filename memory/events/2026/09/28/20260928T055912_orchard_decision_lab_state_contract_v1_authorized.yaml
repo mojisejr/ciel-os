@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T055912_orchard_decision_lab_state_contract_v1_authorized
+type: decision
+recorded_at: 2026-09-28T05:59:12+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Refine the local daily state contract so it follows an actual grower's
+    morning observation, changing work plan and later work-recording flow
+    before any source or provider work begins.
+  scope:
+    - Add the local-only 6a.1 daily state contract and Thai journal flow.
+    - Keep pre-decision provider state distinct from work performed later.
+    - Update the Lab PRD/SPEC and prove replay/redaction locally.
+  out_of_scope:
+    - Source retrieval, research LLM calls, provider calls with private state,
+      policy activation, public deployment or autonomous orchard action.
+
+outcome:
+  status: decided
+  slice: "6"
+  decision: >-
+    The owner accepted the first practical orchard-state/v1 shape and
+    authorized local implementation of 6a.1 before the source-evidence lane.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.2"
+  slice: "6"
+  repository:
+    head: 6c2117e38667c2b09de6a3fc165ca1054aaa6014
+    branch: hq/20260926
+    working_tree: state-contract-v1-authorized
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 573959c5a7be8a291560196753cfa2174cfb5220
+  proof_contract: workstreams/orchard-decision-lab-001/PLAN.md
+
+unresolved:
+  - Crop-stage and activity vocabulary is intentionally a first dogfood version, not a final agricultural ontology.
+  - Forecast source/provenance is not yet a verified public-evidence integration.
+  - Source scope, reviewer and research-provider budget remain unapproved.
+
+next_action:
+  action: >-
+    Implement and locally prove 6a.1, then ask the owner to dogfood the daily
+    journal and State Inspector before deciding whether to open 6b.
+  acceptance_check:
+    - The owner can distinguish morning facts, intended work, completed work and later feedback.
+    - The provider-ready state cannot include local identifiers, free text or post-decision records.

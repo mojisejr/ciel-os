@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T054140_mumate_vercel_to_do_s5_prod_env_placed
+type: closeout
+recorded_at: 2026-10-01T05:41:40+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the production host's env: placed by the owner from a fresh Vercel
+    production read with a repository script, names only seen by the agent;
+    and the empty production build variables found before the first build.
+  scope:
+    - mumate-infra PR 37 (bin/env-from-vercel.sh, bin/build-vars-from-vercel.sh and their tests); env on mumate-prod-1.
+  out_of_scope:
+    - Production image builds, deploy, smoke.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Host .env written by the agent (no secrets): MUMATE_ENV=production, MUMATE_HOST=mumate-prod-1, FE_TAG c10e91e, BAZI_TAG 49e22f2 (production tags, no -staging), BE_SCALE=0, MUMATE_BE_MODE=retired, ports as staging; compose config ok."
+    - "bin/env-from-vercel.sh (PR 37; tests 17/17): allowlist env/<svc>.env.example, single-quoted values, --fill, --fill-file (only names Vercel returned empty), --same-as, --from-staging (deny list for staging-specific names), --set; names-only output. Two defects found and fixed during use: --fill-file first added an absent name (bazi would have received the FE's Supabase service key; caught in the dry-run, fixed b58f4da); the host count skipped names with digits (41 shown as 39, fixed da2d87b)."
+    - "Vercel returns 18 sensitive names empty. Sources: generated (LINK_STATE_SECRET, CALC_NONCE_SECRET); held files (ADMIN_DOCTRINE_TOKEN, BAZI_CLIENT_ID_SECRET, bazi CRON_SECRET); owner from provider consoles (SUPABASE_SERVICE_ROLE_KEY, BEAM_*, APP_DATABASE_URL) into .assets/mumate/infra-mumate/prod-fill.env (600); from staging by the owner's decision (fe GLASS_BOX_KEY, OPS_DASHBOARD_KEY, ANALYTICS_USER_ID_KEY; bazi GEMINI_API_KEY, OPS_ADMINS — staging values checked present, the owner states they are the production values); bazi OPEN_WEBUI_API_TOKEN from the FE's (equal on staging, and the FE calls bazi with it)."
+    - "Placed by the owner: fe.env 41 names (DB_POOL_MAX=5, MAINTENANCE_MODE=on), bazi.env 9 names, both 600; alert.env and alloy.env copied from mumate-2 (1 and 5 lines)."
+    - "Found: the GitHub Environment 'production' of mootech-fe and bazi-sft-dataset has no variables, so a production image would bake empty NEXTAUTH_URL, HOST, Omise and VAPID public keys. bin/build-vars-from-vercel.sh (tests 4/4) sets them from Vercel production, names taken from each app's container-build.yml."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "780d2cb"
+    branch: hq/20260926
+    working_tree: this-record-only
+  application:
+    mumate-infra: "PR 37 branch feat/env-from-vercel at c9e20c7 (not merged)"
+    host: "mumate-prod-1 env: .env, fe.env, bazi.env, alert.env, alloy.env"
+
+unresolved:
+  - "Before the cutover: QSTASH_CURRENT_SIGNING_KEY and QSTASH_NEXT_SIGNING_KEY into prod-fill.env and the fe script re-run; QSTASH_TOKEN only at the cutover (plan)."
+  - "ANALYTICS_USER_ID_KEY from staging: if it differs from Vercel production, GA4 user ids restart after the cutover (owner's call)."
+  - "Vercel sensitive values cannot be read back; prod-fill.env is now the only local copy of several production secrets (.assets is shared scratch, delete by filename only)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner runs build-vars-from-vercel.sh (dry-run, then real) for fe and
+    bazi; the agent checks the variables; then the owner dispatches the
+    production image builds with the inputs the agent gives.
+  acceptance_check:
+    - gh variable list --env production shows the build names for both repos before any production build.

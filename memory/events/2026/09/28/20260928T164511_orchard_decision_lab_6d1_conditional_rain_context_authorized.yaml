@@ -1,0 +1,38 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T164511_orchard_decision_lab_6d1_conditional_rain_context_authorized
+type: decision
+recorded_at: 2026-09-28T16:45:11+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: Prevent no-rain dogfood entries from recording invented rain-context facts.
+  scope:
+    - Conditional Thai form controls for rain-context facts.
+    - New local observation and provider-ready-state behavior only.
+    - Tests for no-rain, rain and legacy replay paths.
+  out_of_scope:
+    - Editing existing append-only records, policy activation, Jev/provider input, research LLM calls, agricultural advice or public deployment.
+outcome:
+  status: decided
+  slice: "6"
+  decision: Owner authorized the 6d.1 conditional rain-context correction.
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "6"
+  repository:
+    head: 787bccd312e75d687c15e255e8e4cc0fa122ce7d
+    branch: hq/20260926
+    working_tree: 6d1-conditional-rain-context-authorized
+  trigger:
+    observed_record: No-rain dogfood entry had selected rain timing because the prior form required the field.
+unresolved:
+  - Existing no-rain entries retain their historical rain-context selection by append-only design.
+  - The declared 6e structural audit remains open until the corrected journey is dogfooded.
+next_action:
+  action: Implement and verify conditional no-rain capture without altering existing journal records.
+  acceptance_check:
+    - A new no-rain observation contains no rain-context fact values.

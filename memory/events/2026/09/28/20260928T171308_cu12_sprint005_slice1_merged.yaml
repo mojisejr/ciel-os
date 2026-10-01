@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T171308_cu12_sprint005_slice1_merged
+type: closeout
+recorded_at: 2026-09-28T17:13:08+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: cu12-simulator-sprint-005
+  lane: single
+  objective: >-
+    Record that slice 1, the loopback control endpoint, merged.
+  scope:
+    - The merge of cu12-simulator pull request 5 and the checkout sync.
+  out_of_scope:
+    - Slice 2; its decision is recorded beside this.
+
+outcome:
+  status: merged
+  completed:
+    - >-
+      The owner merged cu12-simulator pull request 5 ("merged แล้วครับลุยต่อ").
+      The merge commit is 2de54ec, parents 17771d5 and e03134f, merged at
+      2026-09-28T10:12:49Z. The checkout was fast-forwarded to main 2de54ec,
+      clean and equal to origin, and the local topic branch was deleted.
+    - >-
+      cu12-simulator runs no CI. "Ready for review" on pull request 5 rested
+      only on the checks the agent ran locally, as its closeout lists: 41
+      simulator tests three times over, the smc-v2 suite (60) against the new
+      build, and cargo check for Windows.
+  not_completed:
+    - Slices 2 and 3.
+
+evidence:
+  plan: workstreams/cu12-simulator-sprint-005/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "8ce9cfc"
+    branch: hq/20260926
+    working_tree: this-event-the-slice-2-decision-and-the-plan-header-in-one-commit
+    pull_request: none-standing-multi-session-branch
+  simulator:
+    repository: cu12-simulator
+    head: "2de54ec"
+    branch: main
+    working_tree: clean-equal-to-origin
+    pull_request: https://github.com/mojisejr/cu12-simulator/pull/5
+  preceding_records:
+    - memory/events/2026/09/28/20260928T171045_cu12_sprint005_slice1_ready_for_owner_review.yaml
+
+unresolved:
+  - The endpoint has not yet been used by a real browser. Slice 2 tests that.
+
+next_action:
+  action: Slice 2, as decided beside this record.
+  acceptance_check:
+    - Wake shows cu12-simulator-sprint-005 at phase 2 with slice 2 authorized.

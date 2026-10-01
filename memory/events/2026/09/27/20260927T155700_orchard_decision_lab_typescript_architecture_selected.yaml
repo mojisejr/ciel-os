@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T155700_orchard_decision_lab_typescript_architecture_selected
+type: decision
+recorded_at: 2026-09-27T15:57:00+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Preserve the owner's implementation-language and architecture direction
+    before any Slice 2 playground code is created.
+  scope:
+    - Use strict TypeScript for Lab production and test code.
+    - Use a small clean architecture with pure domain, application use cases,
+      replaceable adapters, and a presentation-only local playground.
+    - Publish the planned code shape in the child repository specification.
+  out_of_scope:
+    - Authorization to begin Slice 2 or choose a UI, persistence, or provider framework.
+    - Provider credentials, Google Sheet/CSV access, external source retrieval, or live Jev.
+
+outcome:
+  status: recorded
+  completed:
+    - >-
+      The owner selected TypeScript and an understandable clean architecture,
+      deliberately without empty layers that have no present responsibility.
+    - >-
+      The child specification now documents the dependency direction and the
+      proposed domain/application/adapters/presentation/bootstrap structure.
+  not_completed:
+    - Slice 2 remains unstarted and requires its own explicit owner authorization.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 709823f5e07471d6d449b0e8ecac60a88a110532
+    branch: hq/20260926
+    working_tree: this-decision-record
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    commit: f5578d4bf32cb043425283480faf8d02ebe2bc2e
+  contract:
+    - checkouts/orchard-decision-lab/docs/SPEC.md#31-implementation-convention-typescript-clean-but-small
+    - checkouts/orchard-decision-lab/README.md
+
+unresolved:
+  - Slice 2 has not selected a UI or local persistence framework because it has not begun.
+  - The existing Slice 2 authorization gate remains in force.
+
+next_action:
+  action: >-
+    Await the owner's explicit authorization for Slice 2, then implement the
+    synthetic deterministic trace using this architecture.
+  acceptance_check:
+    - The first TypeScript code keeps domain rules independent of UI, storage, and provider adapters.

@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20260927T155622_mumate_handoff_before_clear_vercel_to_do_planned
+type: closeout
+recorded_at: 2026-09-27T15:56:22+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Hand MuMate over before the owner clears this session. This round opened
+    and planned the move off Vercel (plan 0.3, nothing authorized), found and
+    fixed two live bazi defects, and left the two observing lanes as they were.
+    This record is the cold-session entry for all MuMate work.
+  scope:
+    - mumate-vercel-to-do-001, the bazi PR 42 deadline, and pointers to the observing lanes.
+  out_of_scope:
+    - Starting slice 1; the owner said not yet ("ยังไม่ go").
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "mumate-vercel-to-do-001 opened (318fa2d), plan 0.2 with the owner's answers D1-D11 (d77b28b), plan 0.3 moving the production droplet to slice 5 (b6ece7b). Research in workstreams/mumate-vercel-to-do-001/research/."
+    - "C2: ADMIN_DOCTRINE_TOKEN set on the bazi Vercel project and redeployed by the owner; bazi admin routes are no longer open."
+    - "C1: owner-run count showed 3 cancelled deletion requests and 0 purged; fix offered as bazi-sft-dataset PR 42 (f430748), tests red then green (139e092)."
+  for_a_cold_session:
+    read_first:
+      - "workstreams/mumate-vercel-to-do-001/PLAN.md (revision 0.3) and memory/events/2026/09/27/20260927T153228_mumate_vercel_to_do_plan_0_3_prod_droplet_moved_to_slice5.yaml (its next_action is the slice-1 start list)"
+      - "memory/events/2026/09/27/20260927T132102_mumate_handoff_before_clear_both_lanes_observing.yaml (daily check and rollback for the login and be-retirement lanes, unchanged by this round)"
+    deadlines_and_dates:
+      - "bazi PR 42 merged and live on bazi production before 2026-10-04 00:30 Bangkok (purge run 2026-10-03 17:30 UTC)."
+      - "2026-09-28: first daily read-only check of the observing lanes, and s3://mumate-backups/pg/ for the second nightly backup."
+      - "2026-10-04: both observation windows close; then login slice-6 closeout and be-retirement R7, step by step."
+    waiting_on_owner:
+      - "The slice-1 go for mumate-vercel-to-do-001 (plan 0.3)."
+      - "Merging PR 42, or asking เอ็ม to."
+      - "Pushing HQ hq/20260926 when the round closes."
+    harness_note: "Read-only production queries through mumate_backup were refused three times this round, the last after an in-chat grant; the owner ran the count himself. Expect slice-1 checks that read production to be owner-run unless the owner adds a permission rule."
+  not_completed:
+    - Every slice of mumate-vercel-to-do-001.
+    - PR 42 merge and deploy.
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: 139e092
+    branch: hq/20260926
+    working_tree: this-record-only
+    unpushed_commits_on_hq: 38
+  application:
+    bazi-sft-dataset_pr_42: "open, MERGEABLE, head f430748, Vercel preview pending when recorded"
+    bazi_scratch_worktree: "fix/account-purge-pending-only in the session scratchpad; the main checkout (detached 60c05f0) and bazi-testenv untouched"
+    mumate-infra: "local main 2 behind origin/main cc3ce8b, not pulled; no change this round"
+
+unresolved:
+  - "PR 42 deadline 2026-10-04 00:30 Bangkok."
+  - "mootech-fe Vercel Preview probably resolves to the production database (owner's belief); a risk today, independent of the move."
+  - "LIFF apps of channel 2011679472 (the one mootech-fe uses) are unseen; the eight apps on channel 2009228997 look like leftovers."
+  - "The local branch and scratch worktree for PR 42 remain until the merge; remove them then."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In a fresh session: run Wake, read the two records named above, check
+    whether PR 42 has merged and deployed, run the 2026-09-28 daily check and
+    backup check, and wait for the owner's slice-1 go before touching staging.
+  acceptance_check:
+    - A cold session can state the PR 42 deadline, the daily check, and the slice-1 start list from this record and the two it names, without reading the whole round.

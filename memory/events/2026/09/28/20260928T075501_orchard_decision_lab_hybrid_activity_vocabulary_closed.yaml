@@ -1,0 +1,84 @@
+schema_version: ciel.event.v0.1
+id: evt_20260928T075501_orchard_decision_lab_hybrid_activity_vocabulary_closed
+type: closeout
+recorded_at: 2026-09-28T07:55:01+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: orchard-decision-lab-001
+  lane: single
+  objective: >-
+    Make local daily orchard-work recording understandable and inspectable
+    before introducing source-backed policy or private-state provider calls.
+  scope:
+    - Hybrid Thai activity vocabulary and distinct daily work focus.
+    - Local-only typed other-work recording and exact-text candidate detection.
+    - Provider-state redaction, tests and synthetic browser inspection.
+  out_of_scope:
+    - Agricultural policy, source retrieval, research LLM calls, provider calls
+      with private state, public deployment or automatic candidate promotion.
+
+outcome:
+  status: recorded
+  slice: "6"
+  completed:
+    - >-
+      Slice 6a.2 records season stage and today's work focus as distinct
+      structured fields, with Thai grower-facing labels for planned and
+      completed work.
+    - >-
+      Typed other-work text is append-only local journal data, excluded from
+      orchard-state/v1.1 provider-ready JSON, and only exact repeated local
+      text becomes an unpromoted owner-review candidate.
+    - >-
+      Legacy activity identifiers remain readable for replay but are no longer
+      offered as new choices.
+  not_completed:
+    - The owner has not yet dogfooded the refined vocabulary across ordinary workdays.
+    - Candidate promotion remains intentionally unimplemented pending owner review.
+    - Slice 6b source retrieval, reviewer responsibility and budget remain unopened.
+
+evidence:
+  plan: workstreams/orchard-decision-lab-001/PLAN.md
+  plan_revision: "1.3"
+  slice: "6"
+  repository:
+    head: 3e771644e700765596a27c1cade529e7cbffb089
+    branch: hq/20260926
+    working_tree: hybrid-activity-vocabulary-closeout-prepared
+  child_repository:
+    path: checkouts/orchard-decision-lab
+    branch: feat/l0-local-lab
+    commit: 456807afd120e23b458c1ef3a3821e474d0d2fed
+  checks:
+    - bun run check: 31 tests passed, 0 failed, 146 expectations.
+    - git diff --check: no whitespace errors.
+    - >-
+      Synthetic-only browser inspection showed the distinct stage/focus fields,
+      Thai standard activities, typed other-work input and local-only boundary.
+  proof_lanes:
+    hard_gate: closed
+    api_truth: not-applicable-local-only-no-provider-or-source-call
+    eye_truth: closed-synthetic-journal; pending-owner-dogfood-usability-review
+    device_truth: not-applicable-local-browser-only
+
+unresolved:
+  - >-
+    The vocabulary is a current Thai dogfood interface, not an agricultural
+    ontology or recommendation policy.
+  - >-
+    Typed other-work text remains private local data and cannot be sent to a
+    provider without a future owner-approved redaction contract.
+  - >-
+    The deterministic rain/wet-soil behavior remains a Playground fixture, not agricultural policy.
+
+next_action:
+  action: >-
+    Restart the local Lab, then have the owner dogfood planned and completed
+    work for 5–10 ordinary days. Review candidate phrases and usability before
+    deciding whether to revise vocabulary again or explicitly open Slice 6b.
+  acceptance_check:
+    - The owner can choose common work without translating English or merging stage with daily focus.
+    - The owner can explain why typed other-work text is visible locally but absent from provider JSON.
