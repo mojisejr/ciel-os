@@ -1,7 +1,7 @@
 # เคลียร์กัน — ระบบบิลระหว่างสองฝ่าย (ชื่อชั่วคราว)
 
 **Workstream:** `clear-together-pwa-001`
-**State:** blocked
+**State:** active
 **Execution lane:** single
 **Plan revision:** 0.4
 **Execution phase:** 3
