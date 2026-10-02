@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T122409_mumate_member_identity_slice2_closeout_live_on_production
+type: closeout
+recorded_at: 2026-10-02T12:24:09+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-member-identity-hardening-001
+  lane: single
+  objective: >-
+    Close slice 2 and the workstream: the member-identity hardening and the
+    support ID are live on production (Vercel), verified by the agent's probes
+    and the owner's phone walk.
+  scope:
+    - Vercel env alignment for bazi, the owner's merges of fe#873 and bazi#47, production verification.
+  out_of_scope:
+    - The DigitalOcean cutover; bazi /api/stats; pushing HQ.
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "2"
+  state:
+    - "Vercel production BAZI_CLIENT_ID_SECRET: bazi's existing value was Sensitive (unreadable, so the hash check could not run); with the owner's explicit authorization the agent set bazi's value to mootech-fe's (48 chars, Sensitive, never printed). Vercel: 'Overrode Environment Variable BAZI_CLIENT_ID_SECRET to Project bazi-sft-dataset'."
+    - "Owner merged mootech-fe PR 873 (merge fb1f037, 05:17:58Z) and bazi-sft-dataset PR 47 (05:18:13Z), 15 s apart instead of in sequence; the FE deployment was Ready at 12:19:36 and bazi at 12:20:27 (+07), so no window where bazi refused the old FE."
+    - "Rollback point before this: production FE c1df7dc."
+  verification:
+    - "bazichart.mumate.co /api/health sha fb1f037."
+    - "With a random UUID and with the owner's own id in cookie-mumate-id and no session: /api/user, /api/qi-wallet, /api/profile, /api/v2/account/delete, /api/missions, /api/member-with-friend, /api/auth/member-check all 401 with no data; /api/quota 410; /, /v2, /v2/login, /course 200."
+    - "bazi-sft-dataset.vercel.app: qi/wallet and home with a random id and no secret 403; tarot anonymous 200; health 200."
+    - "Owner's phone walk on production: Home cards, QI balance and history, a card draw, settings with ID สมาชิก — all fine. Home and QI go through secret-guarded bazi routes, so this also proves the two Vercel secrets match."
+    - "Vercel's runtime log stream showed no request lines, so it was not used as evidence."
+
+evidence:
+  plan: workstreams/mumate-member-identity-hardening-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "38d0fdc"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe: "main fb1f037 (PR 873 merged), Vercel production"
+    bazi-sft-dataset: "pdf-dev with PR 47 merged, Vercel production"
+    staging: "mumate-2 still runs the branch images fe 3b227ad / bazi 1c0076d"
+
+unresolved:
+  - "HQ hq/20261001 stays unpushed until the owner says so (ciel-os is public; the 10:26 finding describes the hole). The fix is live, so the earliest safe point has passed; the owner decides."
+  - "DigitalOcean cutover (mumate-vercel-to-do-001) is next, after about two days of this settling (owner's order, week of 2026-10-12); both DO hosts must be rebuilt from main/pdf-dev SHAs that include this change, and FE and bazi on each host must hold the same BAZI_CLIENT_ID_SECRET (staging verified equal by probe; prod-1 not yet checked). MUMATE100 end date still unknown."
+  - "Members whose browser had a member cookie without a session sign in once; watch support messages for login complaints over the next days."
+  - "bazi /api/stats is open and lists chat users' ids and recent louise-hay questions; several bazi internal tools are unauthenticated. Separate privacy item for the owner."
+  - "Local worktrees ../mootech-fe-support-id and ../bazi-sft-dataset-member-secret and the merged remote branches can be removed (remote branch deletion is the owner's)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Nothing more in this workstream. Next MuMate work: the owner decides the
+    HQ push, the /api/stats item, and the cutover date; start the cutover
+    from the newest mumate handoff.
+  acceptance_check:
+    - Slice 2 in the plan is met by the verification above.
