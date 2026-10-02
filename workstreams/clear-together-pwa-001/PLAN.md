@@ -1,10 +1,10 @@
 # เคลียร์กัน — ระบบบิลระหว่างสองฝ่าย (ชื่อชั่วคราว)
 
 **Workstream:** `clear-together-pwa-001`
-**State:** active
+**State:** blocked
 **Execution lane:** single
-**Plan revision:** 0.2
-**Execution phase:** none
+**Plan revision:** 0.3
+**Execution phase:** 2
 **Execution state:** idle
 **Parallelism:** none
 
@@ -26,20 +26,23 @@
 เจ้าของยืนยันเพิ่มเติมให้ใช้ private repository ไม่มีหน้าสมัครสมาชิก
 จัดการบัญชีเอง รองรับจ่ายรวมหลายบิลถ้า UI ยังง่าย และใช้วิธีแก้รายการผิดตามข้อเสนอ
 ข้อจำกัดค่าใช้จ่ายคือฟรีเท่านั้น ห้ามมีค่าเกินโควตาหรือสร้าง Neon branch เพิ่ม
-การยืนยันนี้ปรับขอบเขตแผน; ยังไม่ใช่การอนุญาตเริ่ม implementation หรือ provisioning
+เจ้าของสั่งให้ลุยต่อครบงานหลัง syncup: อนุญาต implementation และทรัพยากรที่ตรวจ
+ยืนยันว่าเป็น Free/Hobby ภายในงบศูนย์; owner review ยังจำเป็นก่อน merge
+และข้อมูลบิลจริงต้องมาจากเจ้าของเมื่อเริ่ม pilot
 
 ## Project links
 
 | Project ID | Role | Local binding |
 |---|---|---|
 | `ciel-os` | แผน การตัดสินใจ และหลักฐานการเปิด workstream | `.` |
+| `clear-together` | private application repository | `checkouts/clear-together` |
 
-ยังไม่มี child repository ของแอป การสร้างและลงทะเบียนโครงการจะอยู่ใน slice 2
-ตาม `checkouts/README.md`; ไม่ลงทะเบียน repository ที่ยังไม่มีอยู่จริง
+child repository ใช้ private canonical remote `github.com/mojisejr/clear-together`
+และ local binding ตาม `checkouts/README.md`
 งานใน HQ ใช้ standing branch ปัจจุบันและ commit เฉพาะไฟล์ของ workstream นี้
 งานใน child repository จะใช้ topic branch ตามสัญญาของโครงการนั้น
 
-## Starting evidence
+## Starting evidence at workstream opening
 
 - [mockup ที่เก็บไว้](design/mockup.html) เป็น HTML fragment ของหน้าจอที่เจ้าของยอมรับ
   มีสองรูปแบบ “สมุดบิล” และ “กล่องบิล” พร้อมข้อมูลตัวอย่าง
@@ -151,7 +154,7 @@ FAQ อัปเดต 2026-10-01 ระบุ 100 CU-hours/project/month แล
 - `git diff --check` และ Wake ไม่มี validation error ใหม่
 - closeout มี Git checkpoint และระบุขั้นถัดไปพร้อม unknowns ที่เหลือ
 
-**Review:** เจ้าของตรวจสรุป syncup และแผนปัจจุบันก่อนเริ่ม slice 2
+**Review:** ขอบเขต v0.2 ผ่าน syncup; คำสั่งลุยต่ออนุญาตเริ่มตามแผนปัจจุบัน
 
 ### 2. Build one complete local flow with two accounts
 
@@ -180,7 +183,8 @@ repository ภายนอกต้องเป็น private ตามคำข
 - review auth, สิทธิ์, การเก็บภาพ และ transaction พร้อม diff ที่เจ้าของตรวจได้
 
 **Location / review:** child repo ใช้ topic branch; HQ เก็บ decision/closeout
-เจ้าของตรวจ UI และหลักฐาน flow ก่อนอนุญาต preview deployment
+ทดสอบ UI และ flow ก่อน preview deployment ภายในงบฟรีที่เจ้าของอนุญาต
+นำผลให้เจ้าของตรวจเมื่อครบ
 
 ### 3. Deploy a private preview and verify installed use
 
@@ -232,8 +236,9 @@ repository ภายนอกต้องเป็น private ตามคำข
 - quota/retention/backup และเพดานไฟล์ต้องกำหนดใน implementation ภายใต้ free-only
   ออกแบบให้บริการพักเมื่อเต็ม แทนการเพิ่มค่าใช้จ่ายเพื่อรักษา uptime
 - Wake ไม่ยืนยัน human approval/review หรือ external rules นอก repository record;
-  อำนาจใน opening decision ครอบคลุม slice 1 เท่านั้น
+  decision เริ่มงานครอบคลุม slice 2 และคำสั่งให้ต่อไปภายในขอบเขตฟรี
+  การเปิดใช้กับข้อมูลจริงและการ merge ยังต้องมีหลักฐาน owner review
 
-**Next action:** นำเสนอขอบเขตที่ตรงกันและแผน 0.2; เมื่อเจ้าของสั่งเริ่ม slice 2
-ให้บันทึก authorization ของ slice นั้น แล้วสร้าง private child repository และ flow แรก
-ยังไม่มีการสร้าง application หรือทรัพยากรภายนอกใน revision นี้
+**Next action:** ทำ slice 2 จน flow สองทางผ่าน แล้วดำเนิน slice 3 เมื่อ scope
+เป็น Hobby และ Neon เป็น Free จริง; เตรียมผลและ PR ให้เจ้าของตรวจ
+ถ้าไม่มี Hobby scope ให้ทำงานในเครื่องต่อและคง deployment เป็น unresolved
