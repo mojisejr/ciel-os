@@ -5,7 +5,7 @@
 **Execution lane:** single
 **Plan revision:** 0.10
 **Execution phase:** 7
-**Execution state:** executing
+**Execution state:** idle
 **Parallelism:** proposed
 
 ## Objective and owner agreement
@@ -708,6 +708,14 @@ Login-channel login; the database cannot tell which window accounts those are.
     screen.
 36. Slice 7 is authorized and runs now, rehearsed on staging before production
     ("slice 7 ถ้าปลอดภัยแล้วต้องทำเลย"; "ไปจำลอง สถานการณ์ให้ผมใน staging").
+37. (2026-10-02) Build the LIFF carry-over now ("ใบส่งต่อ ผมคิดว่าควรทำเลย"),
+    rehearsed on staging first. A member who first signed up through LIFF and
+    whose browser still holds that session is attached, on the next LINE login,
+    to their own account instead of a new empty one. Temporary until
+    2026-10-31. Added to slice 7 as phase 7g.
+38. (2026-10-02) The P1 refund, the iPhone walk and moving the rich menu off
+    LIFF URLs wait for the owner's talk with the team; slice 7 closes without
+    them.
 
 ## Relationship to existing work
 
@@ -1375,6 +1383,11 @@ call, or the rollback stops being one line.
 - **7f. Production.** The owner merges; Vercel deploys. A daily read-only check
   for seven days counts post-fix accounts matching window accounts that hold
   value, and routes each to support.
+- **7g. LIFF carry-over (decision 37).** An HMAC-signed, httpOnly, 30-minute
+  cookie issued from a LIFF-era session for an account created in the LIFF
+  window with one LINE row; register-login attaches an unowned Login-channel
+  subject to that account; the self-heal ends LIFF-era sessions even with a
+  MEMBER_ID. Rehearsed on staging with a negative control.
 - **7s. Support cases (decision 32).** Per case: a read-only preflight, a
   guarded single-row SQL with its inverse stored mode 600 in
   `.assets/mumate/support`, the owner's approval, and a postcheck.
