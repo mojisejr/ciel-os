@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T053518_mumate_team_tests_on_staging_cutover_owner_only_staging_synced
+type: closeout
+recorded_at: 2026-10-03T05:35:18+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the owner's change to how the cutover is reviewed (the team tests
+    on staging beforehand; the cutover night is owner and agent only) and the
+    staging release that makes staging match production for that testing.
+  scope:
+    - Owner decisions of 2026-10-03 morning, staging DB refresh, staging build and release of fe fb1f037 and bazi 6c9b014.
+  out_of_scope:
+    - The cutover date, MUMATE100 and the slice-6 go (still held by the owner); PLAN and runbook 06 edits (made when the date is set).
+
+outcome:
+  status: recorded
+  slice: none
+  owner_decisions:
+    - "D8 changes (to be written into PLAN 0.4 and runbook 06 when the date is set): the team tests on staging before the cutover, from 2026-10-03; staging is kept in step with production as production changes. The cutover night is the owner and the agent only: maintenance on at Vercel, a team member repoints DNS at the start and keeps the phone on (ring) until the owner opens the site, the agent moves cron and checks the hosts, the owner tests on the real domain through the bypass (three logins, the real rich menu, one real purchase and refund per D9, push) and opens the site himself."
+    - "Flip-back DNS stays with that team member (phone on), not Namecheap shared access."
+    - "No staging LIFF app and no staging LINE OA: the team tests in a browser and inside LINE by opening staging links from a LINE Keep memo; the rich menu is checked by the owner on the real domain after the DNS flip (the LIFF endpoint is bazichart.mumate.co and its code is the same SHA on both platforms)."
+    - "Team members may pay on staging (Beam live, real money); the owner refunds."
+    - "Staging DB refreshed to the latest nightly backup."
+  state:
+    - "Staging DB: bin/staging-db.sh up from pg/mumate-2-20261002T020419Z.sql.gz (was 20260927T020209Z): 190 tables, 5359 users (was 5134), member_subscription 92, member_payment 50, 2 psql errors as before; delete before 2026-10-16; fe and bazi recreated."
+    - "Images built (container-build, target staging, push): mootech-fe fb1f037 run 37072723628, bazi-sft-dataset 6c9b014 run 37072727527, both success."
+    - "Released by the release button (run 37073117232, success): deploy-history 2026-10-02T22:34:19Z staging/mumate-2 ok FE_TAG=fb1f037…-staging BAZI_TAG=6c9b014…-staging. These are the SHAs Vercel production serves (fe main fb1f037, bazi pdf-dev 6c9b014 = PR 47)."
+  verification:
+    - "ops-status: fe and bazi healthy, /health.sha fb1f03701d0c and 6c9b014e1a60, backup ok, caddy ok, alloy ready."
+    - "app.staging.mumate.co/api/health: db ok, sha fb1f037, platform container, env staging. /v2, /v2/login, /what-if, /maintenance 200; /, /course, /chinese-calendar, /matching 307 to the same paths as bazichart.mumate.co; providers facebook google line twitter; /api/user with a random UUID and no session 401; MAINTENANCE_MODE not on; push-reminders and manifest-morning 200 after the recreate."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "3872d8b"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main fb1f037 (Vercel production; staging image fb1f037-staging)"
+    bazi-sft-dataset: "origin/pdf-dev 6c9b014 (Vercel production; staging image 6c9b014-staging)"
+    staging: "mumate-2 fe fb1f037-staging, bazi 6c9b014-staging, pgstaging from 2026-10-02 backup"
+    production_hosts: "mumate-prod-1 still fe c10e91e / bazi 49e22f2 (rebuilt from the frozen SHAs before the cutover)"
+
+unresolved:
+  - "PLAN 0.4 (D8 as above) and runbook 06 (team steps out of the window; DNS person on the phone; owner tests and opens) are not yet written; do it when the cutover date is set."
+  - "Keeping staging in step: every production merge in mootech-fe main or bazi pdf-dev needs a staging build and release before the team's sign-off counts; the sign-off must name the SHAs."
+  - "Refunds for team payments on staging are the owner's."
+  - "Held by the owner: HQ push, cutover date with MUMATE100 and the slice-6 go, bazi /api/stats."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner sends the team the staging test message; the agent rebuilds and
+    releases staging whenever production changes and collects issues the team
+    reports.
+  acceptance_check:
+    - The team's sign-off names the fe and bazi SHAs it tested on staging.
