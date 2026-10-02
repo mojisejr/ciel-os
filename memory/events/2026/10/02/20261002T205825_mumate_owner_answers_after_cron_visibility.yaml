@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T205825_mumate_owner_answers_after_cron_visibility
+type: closeout
+recorded_at: 2026-10-02T20:58:25+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the owner's answers after mumate-cron-visibility-001 closed, so a
+    cold session knows what is held and what is settled. Read this with
+    20261002T130617 (the MuMate cold-session entry).
+  scope:
+    - The open MuMate items left at the end of the cron-visibility round.
+  out_of_scope:
+    - Running any of them.
+
+outcome:
+  status: recorded
+  slice: none
+  state:
+    - "HELD by the owner, nothing to do until asked: HQ push; cutover date with the MUMATE100 end date and the slice-6 go; bazi /api/stats. Do not re-ask unprompted."
+    - "bazi-alerts duplicate-send defect: the owner fixes it next round (not now)."
+    - "Vercel cron history: not needed; the cron table on mumate ops is the view."
+    - "Remote branches feat/cron-visibility and fix/cron-panel-fit in mumate-infra deleted by the agent at the owner's word."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "9e608c4"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mumate-infra: "main 07ad550; PR 39 draft 5a5c0ac"
+
+unresolved:
+  - "The owner's look at the cron table (cron-visibility slice 1 DoD)."
+  - "The three held items above."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Wait for the owner. When the owner returns to MuMate, start from
+    20261002T130617 and this record.
+  acceptance_check:
+    - A cold session can say which items are held and which are settled from this record.
