@@ -1,0 +1,75 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T081242_mumate_be_retirement_r7_suspend_render_authorized
+type: decision
+recorded_at: 2026-10-02T08:12:42+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Stop paying for the retired BE now: suspend the Render service mootech-be
+    today (slice 4 step 5, R7), the week BEFORE the DigitalOcean cutover, and
+    move step 3 (removing the BE-era env keys from Vercel) to the Vercel
+    clean-up after the cutover.
+  scope:
+    - Owner, in dashboards: drop the BE target from the pm2 monitor; confirm no Omise webhook targets mootech-be.onrender.com; suspend Render mootech-be (srv-d8nc4j8k1i2s73d7e030).
+    - Agent, read-only: verify the suspend (Render state and metrics), production health and login on Vercel, no FE error that names BE; then a seven-day quiet window (P3).
+  out_of_scope:
+    - Deleting Render, archiving mootech-be, the consent/balance DDL copy, removing be from the DO hosts, rotating BE-only credentials (step 6 - after the cutover has held, each confirmed by the owner).
+    - Render dac2-pilot (another project; untouched). The Render workspace plan (decided with step 6 or a later cost workstream).
+
+outcome:
+  status: decided
+  slice: "4"
+  decision: >-
+    The owner asked whether Render could be suspended outright now and later
+    deleted or moved to the free tier. The agent read Render (mootech-be:
+    standard plan, running; MORNING_CRON_ENABLED off - both cron entries skip;
+    about 1,300 requests a day, all 200, the pm2 monitor's rate recorded at
+    the 2026-09-29 observation close; FE main b4633c5 has no BE call left,
+    only comments) and recommended: suspend today, not free tier, not delete
+    yet; drop the pm2 target and check Omise first; keep step 6 for after
+    the cutover. On billing the agent said Render stops charging the instance
+    while suspended, while any paid workspace plan continues (not verified
+    from the account). The owner answered "งั้นเราหยุดค่าใช้จ่ายที่ไม่จำเป็นกันก่อน".
+    The owner also proposed a workstream for cost; the agent recommended
+    keeping Render in this workstream and opening a cost workstream after the
+    cutover holds (week of 2026-10-12).
+  owner_decisions:
+    - "Suspend Render mootech-be today, after the pm2 target is dropped and Omise is checked."
+    - "Plan order change: slice 4 step 3 (remove BE-era env keys from Vercel and redeploy) moves after the DigitalOcean cutover, with the Vercel clean-up - the code no longer reads those keys (NEXT_PUBLIC_BACKEND_URL, CONSENT_SECRET, AI_CONSUME_SECRET, CREDIT_ENFORCE, RENDER_API_KEY appear only in comments on main b4633c5), and no production redeploy happens in the cutover-preparation week."
+    - "D7 of mumate-vercel-to-do-001 (R7 not in the cutover week) is kept: the suspend falls in the week before; the quiet days may overlap the cutover because the FE does not call BE; the delete waits until after."
+  authorizes:
+    - Slice 4 step 4 (pm2 target, Omise check - owner) and step 5 (suspend - owner), with the agent's read-only verification and the seven-day quiet window.
+  does_not_authorize:
+    - Step 6 or any irreversible step; any change to dac2-pilot; any Vercel env change.
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  repository:
+    head: "2d4b346"
+    branch: hq/20261001
+    working_tree: this-decision-only
+  render_read:
+    mootech_be: "srv-d8nc4j8k1i2s73d7e030, plan standard, not_suspended, region singapore"
+    requests: "200 only: 1354 (09-29), 792 (09-30), 1288 (10-01), 1391 (10-02 bucket)"
+    app_log: "CronjobService: Free morning / Morning notification disabled (MORNING_CRON_ENABLED != true) - skipping"
+  rollback: "Render -> mootech-be -> Resume (minutes); nothing in the FE depends on it"
+
+unresolved:
+  - "Workspace plan of Render unknown to the agent - the owner reads Billing; if paid and only dac2-pilot (free) remains after step 6, consider Hobby."
+  - "A cost workstream across vendors (Vercel after D10, Render workspace, DO droplet backups and staging size, Supabase plan) - proposed for after the cutover holds."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner drops the pm2 BE target, checks Omise, and suspends mootech-be; the
+    agent verifies Render state, Vercel production health and login, and the
+    absence of BE errors, then watches seven quiet days.
+  acceptance_check:
+    - Render shows mootech-be suspended; bazichart.mumate.co /api/health 200 and login providers unchanged; no FE log line names BE.
