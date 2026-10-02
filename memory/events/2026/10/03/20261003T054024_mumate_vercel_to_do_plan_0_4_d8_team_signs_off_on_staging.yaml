@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T054024_mumate_vercel_to_do_plan_0_4_d8_team_signs_off_on_staging
+type: closeout
+recorded_at: 2026-10-03T05:40:24+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Write the owner's 2026-10-03 D8 change into the plan as revision 0.4 so a
+    cold session reading PLAN.md sees the current cutover shape.
+  scope:
+    - PLAN.md objective point 4, D8, slice 6 steps 5-6 and DoD, the effort table.
+  out_of_scope:
+    - runbooks/06-cutover.md (mumate-infra; edited when the date is set), the slice-6 go.
+
+outcome:
+  status: recorded
+  slice: none
+  state:
+    - "PLAN 0.3 -> 0.4: the team signs off the frozen SHAs on staging before the window; the window is owner and agent; a team member repoints DNS at its start and stays on the phone for flip-back; the owner reviews on the real domain (including the real rich menu and the D9 purchase) and opens the gate. Decision source: 20261003T053518."
+    - "Slices and their acceptance are otherwise unchanged; slice 6 is still not authorized."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: none
+  repository:
+    head: "69f7fd8"
+    branch: hq/20261001
+    working_tree: plan-0.4-and-this-record
+  application:
+    staging: "mumate-2 fe fb1f037-staging, bazi 6c9b014-staging (team testing from 2026-10-03)"
+
+unresolved:
+  - "runbooks/06-cutover.md still describes the team review in step 5 and the reviewers to name; update it in mumate-infra when the cutover date is set."
+  - "Held by the owner: HQ push, cutover date with MUMATE100 and the slice-6 go, bazi /api/stats."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Collect the team's staging findings; keep staging on production's SHAs;
+    when the owner sets the date, update runbook 06 and ask for the slice-6 go.
+  acceptance_check:
+    - PLAN.md D8 and slice 6 match the owner's 2026-10-03 decision.

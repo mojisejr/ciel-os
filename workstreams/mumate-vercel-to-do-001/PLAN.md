@@ -3,7 +3,7 @@
 **Workstream:** `mumate-vercel-to-do-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -40,8 +40,9 @@ Four rules follow for this plan:
    becomes the only place to try things, and the control room sees staging and
    production side by side.
 4. **Users never meet a half-moved or broken site.** The move happens behind a
-   maintenance gate, the team reviews real production through a bypass, and only
-   the owner opens the gate. Outside planned windows, a failing app shows a
+   maintenance gate, the team signs off the same SHAs on staging beforehand, the
+   owner tests real production through a bypass, and only the owner opens the
+   gate (revision 0.4). Outside planned windows, a failing app shows a
    maintenance page, not an error.
 
 ## Why a new workstream
@@ -170,6 +171,15 @@ Added for revision 0.2 (same session, read-only):
   closed, be-retirement R7 is not in the same week, the team's merge rate is low,
   slice 5 is done — and the owner says go.
 - **D8 Maintenance-gated cutover with team review — decided (new).** See slice 6.
+  **Revision 0.4 (owner, 2026-10-03):** the team's review moves out of the window
+  to staging — the team tests staging from 2026-10-03 (browser, and inside LINE
+  through links opened from a LINE Keep memo; no staging LIFF app or OA), staging
+  is kept on the SHAs production serves, and the sign-off names those SHAs. The
+  window is the owner and the agent only; a team member repoints DNS at its start
+  and keeps the phone ringing until the owner opens the gate (flip-back DNS). The
+  owner tests on the real domain and opens the gate. Team members may pay on
+  staging (Beam live); the owner refunds. Record:
+  `memory/events/2026/10/03/20261003T053518_mumate_team_tests_on_staging_cutover_owner_only_staging_synced.yaml`.
   The existing FE gate is reused; the owner alone opens the gate.
 - **D9 Production payment test — decided (new).** One real purchase during the
   review window, then a refund.
@@ -289,7 +299,7 @@ the slice waits.
 ### 6. The cutover behind a maintenance gate, opened by the owner
 
 Announced to users ahead of time, in a low-traffic window chosen from measured
-traffic, with the reviewers named:
+traffic, after the team's staging sign-off on the frozen SHAs (D8 revision 0.4):
 
 1. The team lowers the DNS TTL at least 24 hours ahead; old values recorded.
 2. Releases frozen on named SHAs.
@@ -298,12 +308,13 @@ traffic, with the reviewers named:
    maintenance.
 4. Vercel crons off in both projects in the same step the DigitalOcean timers go
    on.
-5. The team repoints DNS for `bazichart.mumate.co`; LIFF endpoints repointed if
-   slice 1 found any on the old host.
-6. **Team review through the bypass on the real domain**, each reviewer first
-   confirming the environment marker says DigitalOcean. The checklist includes
-   every login provider, the D9 real payment and refund, a push, the cron
-   timers' first runs, and the bazi-backed pages.
+5. A team member repoints DNS for `bazichart.mumate.co` at the start of the
+   window and stays reachable by phone until the gate opens (the flip-back needs
+   them); LIFF endpoints repointed if slice 1 found any on the old host.
+6. **The owner's review through the bypass on the real domain**, first confirming
+   the environment marker says DigitalOcean: every login provider, the real rich
+   menu inside LINE, the D9 real payment and refund, a push, the cron timers'
+   first runs (agent), and the bazi-backed pages.
 7. **Pass: the owner opens the gate.** Fail: DNS points back to Vercel while
    maintenance is still on, and the owner reopens on Vercel. Users see
    maintenance in both cases, never a half-moved site.
@@ -311,7 +322,8 @@ traffic, with the reviewers named:
    remaining the flip-back target (D10).
 
 DoD: the public hostname serves the named SHAs from DigitalOcean; each job has
-exactly one runner; the team's review is recorded; the owner opened the gate;
+exactly one runner; the team's staging sign-off (with its SHAs) and the owner's
+review are recorded; the owner opened the gate;
 the flip-back path is still usable.
 
 ### 7. Observation and retiring Vercel
@@ -359,7 +371,7 @@ remains, the recovery path and every unresolved risk.
 | 3 · control room parity | 12-18 h | slice 1 |
 | 4 · parity proven | 6-10 h | slices 2-3 |
 | 5 · production droplet created and dressed | 6-10 h | slice 4 signed; company Owner for billing |
-| 6 · gated cutover | 4 h prep plus the window | D7; owner, reviewers and the team's DNS in the window |
+| 6 · gated cutover | 4 h prep plus the window | D7; the team's staging sign-off; owner and agent in the window, the team's DNS person at its start and on the phone |
 | 7 · observation, retirement | 3-6 h over the owner's window | slice 6 stable |
 
 About 50-75 active hours plus the observation window. Slices 2 and 3 can run
