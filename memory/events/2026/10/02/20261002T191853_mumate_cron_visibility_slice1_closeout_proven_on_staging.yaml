@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T191853_mumate_cron_visibility_slice1_closeout_proven_on_staging
+type: closeout
+recorded_at: 2026-10-02T19:18:53+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-cron-visibility-001
+  lane: single
+  objective: >-
+    Close slice 1: the cron table and the "cron silent" alert are built in
+    mumate-infra, proven on mumate-2, and live in Grafana Cloud.
+  scope:
+    - mumate-infra branch feat/cron-visibility, mumate-2, Grafana Cloud dashboard mumate-ops and rule group mumate-cron.
+  out_of_scope:
+    - mumate-prod-1 (slice 2), PR 39 rebase (slice 2), merging.
+
+outcome:
+  status: slice-1-done-on-staging
+  slice: "1"
+  state:
+    - "mumate-infra feat/cron-visibility (57c65c5, 0288223, c18b107, 3d98e10): cron.tsv gains count/reach/purpose/off_why; cron-call.sh keeps each run's time, result and numeric counts, never the body; new bin/cron-metrics.sh renders mumate_cron_* for Alloy's textfile collector (after each run, every 5 min from health-notify.sh, after cron-install.sh); Alloy enables the textfile collector on /rootfs/var/tmp/mumate-metrics; dashboard mumate ops gains a cron table; rule mumate-cron-silent; runbook 04 section 9."
+    - "States: 0 off, 1 ok, 2 last run failed, 3 silent past the job's limit (minute 3 min, 15-min 31 min, daily 25 h), 4 waiting for the first run, 5 skipped by the app, 6 cron.tsv says on but the timer is off. Each off row carries its reason; production before the cutover reads 'waits for the cutover night'."
+    - "Found and fixed on staging: state files written before this change had no last_ok, so the daily jobs read 'silent' after the upgrade; the last run now falls back to the file's mtime (test proven red without the fix)."
+    - "Grafana Cloud (service account token from the owner's .assets/mumate/grafana/.env, never printed): dashboard mumate-ops imported (versions 3 and 4; the live version 2 differed from the repository only in the host legends main already carried), rule mumate-cron-silent in folder mumate, group mumate-cron, 1 min."
+  verification:
+    - "scripts/*.test.sh 13/13 pass; cron.test.sh adds 25 checks (counts kept and no purged id in log, state or metrics; every job rendered with state, Bangkok schedule and reason; one TYPE per family; states 2-6; mtime fallback). Pre-push: compose, Caddyfile, bash -n, gitleaks; alloy fmt with grafana/alloy:v1.10.0."
+    - "mumate-2: cron-install turned the same four on; Prometheus shows six mumate-2 rows, node_textfile_scrape_error 0."
+    - "fe stopped 12:09:23-12:11:54Z: push-reminders and manifest-morning failed at 12:10 and 12:11, 200 again at 12:12; Prometheus state 1111112222 11; Discord 🔴 once and 🟢 once per job; mumate-cron-silent stayed inactive (2 min < 3 min limit)."
+    - "qi-quota-reset timer disabled 12:14:02Z: state 6, rule Pending 12:15:27, Alerting 12:16:29; cron-install.sh re-enabled it 12:16:45, rule inactive 12:17:27; the job now reads 'waiting for its first run' until 00:00 Bangkok."
+    - "Rendered panel (Grafana /render) shows all six rows with status colours, purpose, reach, Bangkok time, last success, 24 h counts and the off reasons."
+
+evidence:
+  plan: workstreams/mumate-cron-visibility-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "08cfab0"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mumate-infra: "feat/cron-visibility 3d98e10 (PR opened after this record); main fb94491"
+    staging: "mumate-2 /opt/mumate on feat/cron-visibility until the merge"
+    grafana: "dashboard mumate-ops v4, rule mumate-cron-silent"
+
+unresolved:
+  - "The owner has not yet looked at the panel (slice 1 DoD); offered at the end of the round."
+  - "mumate-2's /opt/mumate is on the feature branch until the merge; slice 2 returns it to main."
+  - "bazi-alerts sends before it marks sent and caps at 500 before filtering due rows; must be fixed before it is turned on anywhere."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Open the mumate-infra PR, merge it (owner-authorized), then slice 2 on
+    mumate-prod-1 and the PR 39 rebase.
+  acceptance_check:
+    - Slice 2 in the plan.

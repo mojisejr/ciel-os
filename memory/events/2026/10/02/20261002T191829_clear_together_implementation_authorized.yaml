@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T191829_clear_together_implementation_authorized
+type: decision
+recorded_at: 2026-10-02T19:18:29+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: clear-together-pwa-001
+  lane: single
+  objective: Build the owner-confirmed two-way private reimbursement PWA within a zero-cost boundary.
+  scope:
+    - Authorize application implementation in slice 2 of plan revision 0.3.
+    - Continue through free-only setup and preview proof once actual Hobby and Free scopes are verified.
+    - Create a private child repository and register its stable project identity.
+  out_of_scope:
+    - Paid or trial services, paid overages, extra Neon branches, owner-unreviewed merges, or invented real bills.
+outcome:
+  status: decided
+  decision: Owner explicitly instructed the agent to proceed at length after the scope syncup.
+  completed:
+    - Created the private clear-together repository and seeded its main branch once before starting codex/two-way-reimbursements.
+  not_completed:
+    - Vercel deployment and Neon/Blob provisioning are not yet permitted by verified free account state.
+evidence:
+  plan: workstreams/clear-together-pwa-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  authorization:
+    observed_directly_by_this_session: true
+    owner_instruction: "ผมว่าถ้าไม่มีอะไรต้องเคาะแล้ว ลุยเลยคับยาวๆ"
+  repository:
+    head: f4505b676dd9f32081cc211023dbc8f8ba2e142d
+    branch: hq/20261001
+  child:
+    canonical_remote: github.com/mojisejr/clear-together
+    baseline: a5cdb81
+  external_observations:
+    vercel_cli: 62.1.0
+    accessible_team_plan: pro
+    personal_scope_result: CLI rejects the personal account as a deploy scope.
+    neon_marketplace_free_plan_id: free_v3
+unresolved:
+  - No accessible Hobby deployment scope has been verified; owner was asked to prepare one while local implementation proceeds.
+  - Database, private Blob, production accounts, and real-data pilot remain uncreated.
+next_action:
+  action: Implement and prove the two-way flow in the private child repository using local Postgres and synthetic attachments.
+  acceptance_check:
+    - Auth, permissions, grouped payment, reversal, image limits, and totals pass meaningful end-to-end checks.
+    - No resource is created in the observed Pro scope and no additional Neon branch is created.
