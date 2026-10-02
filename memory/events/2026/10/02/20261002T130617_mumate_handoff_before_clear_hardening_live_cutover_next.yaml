@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T130617_mumate_handoff_before_clear_hardening_live_cutover_next
+type: closeout
+recorded_at: 2026-10-02T13:06:17+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Hand MuMate over before the owner clears this session. The identity
+    hardening is live and closed; the DigitalOcean cutover is the next MuMate
+    work, after the hardening settles. This record is the cold-session entry
+    for all MuMate work and replaces 20261002T103719.
+  scope:
+    - State and next steps of mumate-vercel-to-do-001, mumate-member-identity-hardening-001 and mumate-be-retirement-001 as of 2026-10-02 13:06.
+  out_of_scope:
+    - Other workstreams in attention.
+
+outcome:
+  status: recorded
+  slice: none
+  state:
+    - "PRODUCTION ON VERCEL: mootech-fe main fb1f037 (hardening + ID สมาชิก, PR 873), bazi pdf-dev with PR 47 (member routes need the FE client secret). Verified 12:20-12:24 by probes and the owner's phone walk."
+    - "mumate-member-identity-hardening-001: slices 1 and 2 closed (20261002T121000, 20261002T122409). Wake keeps it 'active' until HQ reaches origin/main."
+    - "mumate-vercel-to-do-001: ready since 20261001T121153/124635. Order (owner, 10:52): cutover after the hardening has settled about two days, likely the week of 2026-10-12; freeze agreed with the team when the date is set. D7: MUMATE100 is NOT over (end date unknown); go not given. Both DO hosts must be rebuilt from main/pdf-dev SHAs that include fb1f037 / PR 47; FE and bazi on each host need the SAME BAZI_CLIENT_ID_SECRET or bazi refuses member calls (mumate-2 verified by probe; mumate-prod-1 not checked). Staging mumate-2 currently runs the branch images fe 3b227ad / bazi 1c0076d."
+    - "mumate-be-retirement-001: Render mootech-be suspended 2026-10-02 08:15, quiet window to 2026-10-09; step 6 (delete Render, archive BE, DDL copy, credential rotation) after the cutover holds."
+  for_a_cold_session:
+    read_first:
+      - "this record"
+      - "memory/events/2026/10/02/20261002T122409_mumate_member_identity_slice2_closeout_live_on_production.yaml"
+      - "memory/events/2026/10/02/20261002T090651_mumate_handoff_cutover_plan_next_week_after_render_suspend.yaml (cutover plan and timeline)"
+      - "workstreams/mumate-vercel-to-do-001/PLAN.md and mumate-infra runbooks/06-cutover.md when the cutover starts"
+    ask_the_owner_first:
+      - "HQ push: hq/20261001 is unpushed and ciel-os is public; the fix is live, so it can go when the owner says."
+      - "Cutover date (agent: week of 2026-10-12 after two quiet days) and the MUMATE100 end date; the go for slice 6."
+      - "bazi /api/stats (open, lists chat users' ids and recent louise-hay questions) — fix as a separate item or not."
+    working_rules_learned:
+      - "mootech-fe, bazi-sft-dataset and ciel-os are PUBLIC; ask before pushing a security fix or its HQ record; no recipes in comments, commits or PRs."
+      - "bazi's Vercel secrets are Sensitive (pull returns empty); copy from the readable FE side with --sensitive --force and trust the CLI 'Overrode' line."
+      - "zsh: never name a variable `path`; macOS has no `timeout` (perl -e 'alarm N; exec @ARGV')."
+      - "Owner merged two dependent PRs 15 s apart; next time state the gap between merges in the merge request itself."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "2bbb2ac"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main fb1f037 (Vercel production)"
+    bazi-sft-dataset: "origin/pdf-dev with PR 47 (Vercel production)"
+    mumate-infra: "main fb94491; PR 39 draft"
+    staging: "mumate-2 fe 3b227ad-staging / bazi 1c0076d-staging"
+    render: "mootech-be suspended; dac2-pilot untouched"
+
+unresolved:
+  - "HQ hq/20261001 carries this session's records unpushed; the owner pushes when he decides."
+  - "Local worktrees ../mootech-fe-support-id and ../bazi-sft-dataset-member-secret, and the merged remote branches feat/member-support-id and feat/member-client-secret, can be removed (remote deletion is the owner's)."
+  - "Omise dashboard check for a webhook to mootech-be.onrender.com (owner, not blocking)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In a fresh session: Wake, read this record and the files above, ask the
+    owner the three questions; until the cutover date is set, only watch for
+    login complaints after the hardening.
+  acceptance_check:
+    - A cold session can state where production runs, that the hardening is live, what the cutover waits on, and the Render state from this record alone.
