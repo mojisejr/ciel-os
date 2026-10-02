@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T185601_clear_together_workstream_opened
+type: decision
+recorded_at: 2026-10-02T18:56:01+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: clear-together-pwa-001
+  lane: single
+  objective: >-
+    Make a private Thai PWA for two parties to submit receipt-backed claims,
+    attach transfer proof, and distinguish pending from paid reimbursements.
+  scope:
+    - Open plan revision 0.1 and preserve the owner-accepted mockup in HQ.
+    - Authorize slice 1 only, the durable brief and opening records.
+  out_of_scope:
+    - Application implementation and child repository creation in this opening.
+    - External resources, deployment, credentials, purchases, or billing commitments.
+outcome:
+  status: decided
+  decision: >-
+    After accepting the mockup's appearance and palette, the owner explicitly
+    said to open a workstream. This authorizes the opening artifacts only.
+  completed:
+    - Recorded the intended submit-receipt and attach-slip-to-mark-paid flow.
+    - Preserved both mockup layouts and separated proposed v1 boundaries from owner decisions.
+  not_completed:
+    - No product repository, auth accounts, database, Blob store, or deployment was created.
+evidence:
+  plan: workstreams/clear-together-pwa-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  authorization:
+    observed_directly_by_this_session: true
+    owner_instruction: "โอเค งั้นผมว่าเราเปิด workstream กันเลย"
+  design:
+    source: workstreams/clear-together-pwa-001/design/mockup.html
+    brief: workstreams/clear-together-pwa-001/design/BRIEF.md
+  repository:
+    head: 08cfab0f4e08e52cb88097e33eb49620cfd5dda3
+    branch: hq/20261001
+unresolved:
+  - Product name and primary layout remain provisional.
+  - Full-payment-per-claim boundary and correction/recovery flows need confirmation before implementation.
+  - Account setup, resource creation permission, provider plan eligibility, quota, and retention are unproven.
+  - Human approval and external rules beyond this recorded opening decision remain unknown.
+next_action:
+  action: Validate and commit the opening artifacts, then present plan 0.1 for owner review before slice 2.
+  acceptance_check:
+    - Wake recognizes clear-together-pwa-001 and the decision for plan 0.1 slice 1 without validation errors.
+    - Only the new workstream files and its own events are committed.
