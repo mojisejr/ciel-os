@@ -1,11 +1,11 @@
 # เคลียร์กัน — ระบบบิลระหว่างสองฝ่าย (ชื่อชั่วคราว)
 
 **Workstream:** `clear-together-pwa-001`
-**State:** blocked
+**State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
-**Execution phase:** 2
-**Execution state:** idle
+**Plan revision:** 0.4
+**Execution phase:** 3
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner agreement
@@ -25,9 +25,15 @@
 
 เจ้าของยืนยันเพิ่มเติมให้ใช้ private repository ไม่มีหน้าสมัครสมาชิก
 จัดการบัญชีเอง รองรับจ่ายรวมหลายบิลถ้า UI ยังง่าย และใช้วิธีแก้รายการผิดตามข้อเสนอ
-ข้อจำกัดค่าใช้จ่ายคือฟรีเท่านั้น ห้ามมีค่าเกินโควตาหรือสร้าง Neon branch เพิ่ม
+ข้อจำกัดเดิมคือฟรีเท่านั้นและห้ามสร้าง Neon branch เพิ่ม; เจ้าของยืนยันล่าสุด
+ให้ใช้ Vercel Pro เดิมเฉพาะทรัพยากรที่จำเป็นต่อ deployment และใช้ Neon แยก
+จาก marketplace installation ที่เป็น Launch โดยคง Neon Free หนึ่ง branch
+คำยืนยันนี้เกิดหลังแจ้งว่า Pro มี metered usage และไม่รับประกันค่าเพิ่มศูนย์
+ห้ามสมัครแพ็กเกจ/add-on ใหม่ เปลี่ยน billing ทีม หรือใช้ Neon paid/trial
+เจ้าของจะ review และ merge PR เอง
 เจ้าของสั่งให้ลุยต่อครบงานหลัง syncup: อนุญาต implementation และทรัพยากรที่ตรวจ
-ยืนยันว่าเป็น Free/Hobby ภายในงบศูนย์; owner review ยังจำเป็นก่อน merge
+ยืนยันว่า Neon เป็น Free และ Vercel เป็น Hobby หรือ Pro เดิมตามคำยืนยันล่าสุด;
+owner review ยังจำเป็นก่อน merge
 และข้อมูลบิลจริงต้องมาจากเจ้าของเมื่อเริ่ม pilot
 
 ## Project links
@@ -108,14 +114,18 @@ child repository ใช้ private canonical remote `github.com/mojisejr/clear-t
 [Blob quotas](https://vercel.com/docs/vercel-blob/usage-and-pricing),
 [Vercel Hobby](https://vercel.com/docs/plans/hobby),
 [Neon plans announcement](https://neon.com/blog/neon-backend-is-ga).
-ตรวจแผนบริการและข้อจำกัดจริงอีกครั้งก่อนสร้างทรัพยากร; ห้ามใช้ free trial
-หรือ paid plan แม้มีเครดิตเหลือ เพราะไม่ตรงกับข้อจำกัดไม่มีค่าใช้จ่าย
+ตรวจแผนบริการและข้อจำกัดจริงอีกครั้งก่อนสร้างทรัพยากร; Neon ต้องเป็น Free
+ห้าม trial หรือ paid upgrade ใหม่ Vercel Pro เดิมเป็นข้อยกเว้นที่เจ้าของยืนยัน
+และยังมีความเสี่ยง usage เกินรวมกับงานอื่นในทีม
 
-## Mandatory zero-cost boundary
+## Mandatory provider and cost boundary (revision 0.4)
 
-- Vercel ต้องอยู่บน Hobby และ Neon ต้องอยู่บน Free ที่ตรวจยืนยันจากบัญชีจริง
-  ก่อนสร้าง/เชื่อม resource; ถ้า scope ปัจจุบันเป็น paid ให้เลือก scope ฟรีก่อน
-  ไม่สมัคร Pro/Launch ไม่เพิ่ม payment method ไม่เปิด add-on ที่คิดเงิน
+- Vercel ใช้ Pro เดิมของเจ้าของใน scope `nons-projects-2ee1d9ee` ได้ตามคำยืนยันล่าสุด
+  สำหรับ hosting/functions และ private storage ที่จำเป็น; ไม่เปลี่ยนแพ็กเกจ
+  spend limit ทีม หรือเพิ่ม add-on/payment method
+- Neon ต้องเป็น standalone Free ที่ตรวจยืนยันจากบัญชีจริงก่อนสร้าง project
+  ห้ามใช้ marketplace Launch installation เดิม ห้าม downgrade งานอื่น
+  และห้ามสมัคร Launch/Scale หรือ trial
 - ใช้ Neon project ใหม่ของแอปนี้เพียงหนึ่ง branch หลัก หนึ่ง compute ขนาดเล็กสุด
   ที่แผนรองรับ พร้อม scale-to-zero; ไม่สร้าง preview branch/read replica
   ไม่เปิด automatic Neon branching integration และไม่ใช้ cron/polling ปลุก DB
@@ -183,20 +193,21 @@ repository ภายนอกต้องเป็น private ตามคำข
 - review auth, สิทธิ์, การเก็บภาพ และ transaction พร้อม diff ที่เจ้าของตรวจได้
 
 **Location / review:** child repo ใช้ topic branch; HQ เก็บ decision/closeout
-ทดสอบ UI และ flow ก่อน preview deployment ภายในงบฟรีที่เจ้าของอนุญาต
+ทดสอบ UI และ flow ก่อน deployment ภายใต้ provider boundary revision 0.4
 นำผลให้เจ้าของตรวจเมื่อครบ
 
 ### 3. Deploy a private preview and verify installed use
 
 **Result:** เปิดบนโทรศัพท์จริง ติดตั้ง PWA และทดลอง flow ด้วยข้อมูลสังเคราะห์ได้
 
-**Dependency:** อนุญาต external writes; ยืนยันบัญชี/scope/แผนบริการและทรัพยากรใหม่
+**Dependency:** เจ้าของอนุญาต deploy บน Pro เดิมและใช้ standalone Neon;
+ยืนยันบัญชี/scope/แผนบริการและทรัพยากรใหม่
 ใช้ CLI ที่รองรับ private Blob และตรวจ permission จากการสร้างจริง
 ไม่ใช้ resource ของแอปอื่นที่มีอยู่แล้ว
 
 **DoD / proof:**
 
-- ใช้ DB บน Neon Free หนึ่ง branch และ private Blob บน Hobby
+- ใช้ DB บน Neon Free หนึ่ง branch และ private Blob บน Vercel scope ที่เจ้าของอนุญาต
   ทดสอบด้วยข้อมูลสังเคราะห์ก่อน pilot; หลังเริ่มใช้จริง preview ไม่เชื่อม DB จริง
   ไม่มี automatic branching และ server secrets ไม่เข้าประวัติ Git
 - ตรวจและบันทึก plan IDs/limits/การหยุดเมื่อเต็มจาก provider จริง
@@ -231,14 +242,16 @@ repository ภายนอกต้องเป็น private ตามคำข
 - ยืนยันแล้วว่าบทบาทตามแต่ละบิลและส่งหากันได้สองทาง
   การย้อนรายการที่จ่ายรวมใช้ย้อนทั้งชุดโอนเพื่อรักษาความตรงกันของหลักฐาน
 - email ของสองบัญชี วิธีส่งมอบรหัสและ recovery ยังไม่ได้กำหนด
-- ยืนยันแล้วว่าเป็นการใช้ส่วนตัวระหว่างเจ้าของกับแฟน และ budget เป็นศูนย์
-  ยังต้องตรวจ Hobby/Free ของ scope จริงและ permission ก่อน provisioning
+- ยืนยันแล้วว่าเป็นการใช้ส่วนตัวระหว่างเจ้าของกับแฟน และใช้ Pro เดิมได้
+  Neon standalone ต้องเป็น Free หนึ่ง branch; ยังต้องตรวจบัญชีจริงก่อน provisioning
 - quota/retention/backup และเพดานไฟล์ต้องกำหนดใน implementation ภายใต้ free-only
   ออกแบบให้บริการพักเมื่อเต็ม แทนการเพิ่มค่าใช้จ่ายเพื่อรักษา uptime
 - Wake ไม่ยืนยัน human approval/review หรือ external rules นอก repository record;
-  decision เริ่มงานครอบคลุม slice 2 และคำสั่งให้ต่อไปภายในขอบเขตฟรี
+  decision เริ่มงานครอบคลุม slice 2 และคำยืนยันล่าสุดอนุญาต slice 3
+  ด้วย standalone Neon Free และ Pro เดิม
   การเปิดใช้กับข้อมูลจริงและการ merge ยังต้องมีหลักฐาน owner review
 
 **Next action:** ทำ slice 2 จน flow สองทางผ่าน แล้วดำเนิน slice 3 เมื่อ scope
-เป็น Hobby และ Neon เป็น Free จริง; เตรียมผลและ PR ให้เจ้าของตรวจ
-ถ้าไม่มี Hobby scope ให้ทำงานในเครื่องต่อและคง deployment เป็น unresolved
+เป็น Pro เดิมที่เจ้าของยืนยัน และ Neon standalone เป็น Free จริง; เตรียมผลและ PR ให้เจ้าของตรวจ
+ถ้า standalone Neon ยังไม่ authenticated ให้ขอ owner sign-in ครั้งเดียว
+พร้อมดำเนินงานประกอบ Vercel ที่ไม่ขึ้นกับ DB ต่อ; ไม่ใช้ paid integration แทน

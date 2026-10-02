@@ -1,0 +1,40 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T201719_clear_together_standalone_neon_deploy_authorized
+type: decision
+recorded_at: 2026-10-02T20:17:19+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: clear-together-pwa-001
+  lane: single
+  objective: Assemble a working trial deployment with standalone Neon Free and the existing Vercel Pro scope.
+  scope:
+    - Slice 3 hosted synthetic-data deployment and verification.
+    - Necessary hosting, functions, private files, server environment, and initial account setup.
+  out_of_scope:
+    - Paid Neon, extra Neon branches, new subscriptions/add-ons, team billing changes, owner-unreviewed merge, or invented real pilot acceptance.
+outcome:
+  status: decided
+  decision: Owner confirmed separate Neon and existing Vercel Pro for necessary deployment after receiving the Pro overage caveat; owner will merge the application PR themselves.
+evidence:
+  plan: workstreams/clear-together-pwa-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: 7b73691f6c75bfca348510b92ee944abc5cd63f2
+    branch: hq/20261001
+  authorization:
+    observed_directly_by_this_session: true
+    owner_instruction: "ใช้ neon แยก ... vercel pro ... deployment ... ประกอบให้ผมเลย ... ผม merge pr เอง"
+  application_pull_request: https://github.com/mojisejr/clear-together/pull/1
+  provider_boundary:
+    vercel_scope: nons-projects-2ee1d9ee
+    vercel_plan: existing active Pro
+    neon: Standalone verified Free organization; exactly one default branch; no branching integration.
+unresolved:
+  - Vercel Pro metered usage can incur additional charges; no absolute zero-cost guarantee or shared-team spend-limit change is recorded.
+  - Neon plugin skills are available but no callable Neon MCP tool was exposed; CLI currently awaits owner browser authentication as required by the Neon skill.
+  - Actual Free account state, cloud private upload/auth, and physical-phone installation still require proof.
+next_action:
+  action: Complete owner Neon sign-in, verify a standalone Free target, provision the minimal resources, apply committed migrations, and prove the trial URL before owner review.
