@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T121000_mumate_member_identity_slice1_closeout_staging_walked_prs_open
+type: closeout
+recorded_at: 2026-10-02T12:10:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-member-identity-hardening-001
+  lane: single
+  objective: >-
+    Close slice 1 (hardening + support ID on staging): the owner walked
+    staging, the DoD probes pass, and both PRs are open for the owner's
+    production decision (slice 2).
+  scope:
+    - Slice 1 DoD, the owner's staging walk, mootech-fe PR 873 and bazi-sft-dataset PR 47.
+  out_of_scope:
+    - Merging, Vercel env, production (slice 2 needs the owner's go).
+
+outcome:
+  status: slice-1-done-on-staging
+  slice: "1"
+  owner_reports:
+    - "Staging walk on the phone 2026-10-02: nothing odd found; ID สมาชิก shows and copies (screenshot in session)."
+    - "เอ็ม has been told privately."
+    - "bazi's own browser pages losing member-id calls: accepted."
+    - "HQ push: hold; the owner decides when."
+  dod:
+    - "Tests per route with own / other / no identity, each guard proven red without it: met (fe specs member-seal, member-check, member-routes-identity, member-routes-userid, bazi-fetch-secret, settings-support-id; bazi member-client-secret)."
+    - "tsc, eslint (0 errors), full vitest, npm run build (secret gate line present), gitleaks green; verify-architecture no new violation: met for fe at 3b227ad; bazi tsc/eslint/build/gitleaks green, 9 vitest failures pre-existing on clean pdf-dev."
+    - "Owner's staging walk incl. ID สมาชิก copy and /ops/users lookup: met (owner)."
+    - "Cookie-only probe on staging with the walking member's own id and no session: 9 member routes 401 with no data (agent, 12:0x)."
+  delivery:
+    - "mootech-fe PR 873 (draft → ready), head 3b227ad, base main bfcef7a."
+    - "bazi-sft-dataset PR 47 (draft → ready), head 1c0076d, base pdf-dev 04bc24a."
+
+evidence:
+  plan: workstreams/mumate-member-identity-hardening-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "206b370"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe: "PR 873 head 3b227ad; staging image 3b227ad-staging"
+    bazi-sft-dataset: "PR 47 head 1c0076d; staging image 1c0076d-staging"
+    staging: "mumate-2 deploy-history ok 2026-10-02T04:43:02Z"
+
+unresolved:
+  - "Slice 2 needs the owner's go (production), recorded as a decision before any step."
+  - "Production order: owner sets the same BAZI_CLIENT_ID_SECRET on Vercel production for mootech-fe and bazi-sft-dataset (reusing the DO value in .assets/bazi-client-id-secret.env keeps the cutover simple) → merge PR 873, verify → merge PR 47, verify. bazi fails closed without the env."
+  - "Do not push hq/20261001 (ciel-os is public) until the owner says so; slice 2 live is the earliest safe point."
+  - "The DigitalOcean cutover follows after the hardening is live and settled about two days (owner's order); MUMATE100 end date still unknown."
+  - "bazi /api/stats and unauthenticated internal tools remain a separate privacy item."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decides slice 2 (production): set the Vercel env, merge PR 873,
+    then PR 47 after the agent verifies each step with random-UUID and
+    owner-account probes.
+  acceptance_check:
+    - Slice 2 in the plan.
