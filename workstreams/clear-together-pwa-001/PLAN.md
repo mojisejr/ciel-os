@@ -1,11 +1,11 @@
 # เคลียร์กัน — ระบบบิลระหว่างสองฝ่าย (ชื่อชั่วคราว)
 
 **Workstream:** `clear-together-pwa-001`
-**State:** active
+**State:** blocked
 **Execution lane:** single
 **Plan revision:** 0.4
 **Execution phase:** 3
-**Execution state:** executing
+**Execution state:** idle
 **Parallelism:** none
 
 ## Objective and owner agreement
