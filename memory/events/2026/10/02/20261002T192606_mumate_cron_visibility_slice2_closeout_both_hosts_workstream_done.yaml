@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T192606_mumate_cron_visibility_slice2_closeout_both_hosts_workstream_done
+type: closeout
+recorded_at: 2026-10-02T19:26:06+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-cron-visibility-001
+  lane: single
+  objective: >-
+    Close slice 2 and the workstream: the cron view covers both DigitalOcean
+    hosts, mumate-infra main carries it, PR 39 is rebased on it, and both
+    hosts run main.
+  scope:
+    - mumate-infra PRs 43 and 44 (merged by the agent, owner-authorized), mumate-prod-1 and mumate-2 on main, PR 39 rebase, Grafana dashboard v5.
+  out_of_scope:
+    - Turning any production timer on (runbook 06 step 3), the cutover, bazi-alerts.
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "2"
+  state:
+    - "mumate-infra PR 43 merged 0170f82 (cron table, alert, scripts); PR 44 merged 07ad550 (table lists production first, all twelve rows visible). Both merged by the agent under 20261002T191854; the PR template check passed on each."
+    - "mumate-prod-1 and mumate-2 on main 07ad550. prod-1: cron-install.sh left all six timers off (is-active inactive x6), Alloy restarted, six rows read 'ปิด - รอคืนย้าย'. mumate-2: back from the feature branch to main, the same four timers on."
+    - "PR 39 (draft, merge only at runbook 06 step 3c) rebased onto 07ad550 as 5a5c0ac (force-with-lease from 0f745c3), MERGEABLE; it still changes only enable_on and the production comment; its test adds the two production checks for the panel (state 6 between 3c and 3d, none after 3d). Description updated."
+    - "Grafana Cloud: dashboard mumate-ops v5; rule mumate-cron-silent inactive and healthy."
+  verification:
+    - "Prometheus: count by host of mumate_cron_state = 6 for mumate-prod-1 (production) and 6 for mumate-2 (staging); node_textfile_scrape_error 0 on both."
+    - "Rendered panel at v5: six mumate-prod-1 rows (all off, waiting for the cutover) above six mumate-2 rows (four ok or waiting for the first run, two off with their reasons), nothing cut off."
+    - "scripts/*.test.sh 13/13 on main and on the rebased PR 39 tree."
+
+evidence:
+  plan: workstreams/mumate-cron-visibility-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "67b449d"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mumate-infra: "main 07ad550 (PR 43 0170f82, PR 44); PR 39 draft head 5a5c0ac"
+    hosts: "mumate-prod-1 and mumate-2 /opt/mumate at 07ad550"
+    grafana: "dashboard mumate-ops v5, rule mumate-cron-silent"
+
+unresolved:
+  - "The owner has not yet looked at the cron table (slice 1 DoD); it is on mumate ops, bottom section."
+  - "Merged remote branches feat/cron-visibility and fix/cron-panel-fit can be deleted (remote deletion is the owner's). Local worktree and branches removed."
+  - "At the cutover, runbook 06 step 3e can also be read from the cron table (five production rows ok or waiting for the first run, bazi-alerts off); runbook 06 does not say so yet - the PR 39 description does."
+  - "bazi-alerts sends before it marks sent and caps at 500 before filtering due rows; must be fixed before it is turned on anywhere."
+  - "Vercel's cron history is not in this view; until the cutover it stays in Vercel -> Settings -> Cron Jobs."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Nothing more in this workstream. MuMate continues from the newest
+    mumate-vercel-to-do-001 handoff; the three questions asked at the start
+    of this session (HQ push, cutover date with MUMATE100 and the slice-6 go,
+    bazi /api/stats) are still the owner's.
+  acceptance_check:
+    - Slice 2 in the plan is met by the verification above.
