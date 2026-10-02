@@ -1,10 +1,10 @@
 # เคลียร์กัน — ระบบบิลระหว่างสองฝ่าย (ชื่อชั่วคราว)
 
 **Workstream:** `clear-together-pwa-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
-**Plan revision:** 0.4
-**Execution phase:** 3
+**Plan revision:** 0.5
+**Execution phase:** 4
 **Execution state:** idle
 **Parallelism:** none
 
@@ -35,6 +35,15 @@
 ยืนยันว่า Neon เป็น Free และ Vercel เป็น Hobby หรือ Pro เดิมตามคำยืนยันล่าสุด;
 owner review ยังจำเป็นก่อน merge
 และข้อมูลบิลจริงต้องมาจากเจ้าของเมื่อเริ่ม pilot
+
+## Owner closure boundary — revision 0.5
+
+หลังเจ้าของ merge PR #1 เจ้าของยืนยันให้ “ปิดงานส่งมอบ เลื่อนการลองใช้งานจริงไว้ภายหลัง”
+บันทึกคำยืนยันใน `memory/events/2026/10/02/20261002T211316_clear_together_delivery_only_closure_authorized.yaml`
+ขอบเขตปิดรอบนี้คือแอปที่ merge/deploy แล้ว พร้อมบัญชีทดลอง เอกสารดูแล และหลักฐานทดสอบ
+ปรับ slice 4 เป็นการตรวจหลัง merge และส่งมอบ ไม่ถือว่าการติดตั้งบนมือถือจริงหรือ pilot
+ด้วยบิลจริงผ่านแล้ว เกณฑ์เหล่านั้นเลื่อนไปหลังส่งมอบตามคำยืนยันของเจ้าของ
+ไม่มีการแก้โค้ดแอปหรือเพิ่มทรัพยากรจากการปรับขอบเขตนี้
 
 ## Project links
 
@@ -185,7 +194,8 @@ repository ภายนอกต้องเป็น private ตามคำข
 - E2E ด้วยสอง session แยกกันพิสูจน์ยอดเงิน รูปจริง note และ paid history หลัง reload
 - จ่ายบิลเดียว/หลายบิลด้วยหนึ่งสลิป ยอดรวมตรง; กดซ้ำหรือเลือกบิลที่จ่ายแล้วไม่ทำยอดซ้ำ
 - แก้/ยกเลิกบิล pending และย้อน payment พร้อมเหตุผลได้ ประวัติเดิมยังอยู่
-- รูปหลังบีบอัดยังอ่านยอด/วันที่ได้จริงบนมือถือ; file limit และ quota guard ปฏิเสธไฟล์ได้
+- ตรวจภาพสังเคราะห์หลังบีบอัดบน viewport มือถือ; file limit และ quota guard ปฏิเสธไฟล์ได้
+  การอ่านบิลจริงบนโทรศัพท์จริงเลื่อนไปหลังส่งมอบตาม revision 0.5
 - ผู้ไม่ login/ผู้ไม่มีสิทธิ์เปิดรูปและแก้รายการไม่ได้; ผู้สร้าง mark paid บิลของตนเองไม่ได้
 - error ระหว่าง upload/commit และการกดจ่ายซ้ำไม่สร้างรายการ paid ที่ไม่มีสลิป
   หรือยอดรวมผิด; ทดสอบ transaction/retry ที่มีผลต่อข้อมูลจริง
@@ -196,9 +206,9 @@ repository ภายนอกต้องเป็น private ตามคำข
 ทดสอบ UI และ flow ก่อน deployment ภายใต้ provider boundary revision 0.4
 นำผลให้เจ้าของตรวจเมื่อครบ
 
-### 3. Deploy a private preview and verify installed use
+### 3. Deploy and verify a private hosted trial
 
-**Result:** เปิดบนโทรศัพท์จริง ติดตั้ง PWA และทดลอง flow ด้วยข้อมูลสังเคราะห์ได้
+**Result:** มี HTTPS URL และทดลอง flow ด้วยข้อมูลสังเคราะห์ผ่านสอง session ได้
 
 **Dependency:** เจ้าของอนุญาต deploy บน Pro เดิมและใช้ standalone Neon;
 ยืนยันบัญชี/scope/แผนบริการและทรัพยากรใหม่
@@ -213,45 +223,37 @@ repository ภายนอกต้องเป็น private ตามคำข
 - ตรวจและบันทึก plan IDs/limits/การหยุดเมื่อเต็มจาก provider จริง
   ไม่ถือว่า spending alert บน paid plan เป็นการรับประกันค่าใช้จ่ายศูนย์
 - HTTPS/login/private reads ผ่านบน deployment; service worker ไม่ cache ข้อมูลส่วนตัว
-- ทดสอบ flow บนมือถือจริง รวม reload, logout, กลับเข้าใช้ และติดตั้ง PWA
+- ทดสอบ flow ผ่าน HTTPS บน viewport มือถือ รวม reload, logout และกลับเข้าใช้
+  การติดตั้ง PWA บนโทรศัพท์จริงเลื่อนไปหลังส่งมอบตาม revision 0.5
 - ข้อจำกัด quota และการกู้คืนข้อมูล/ภาพมีวิธีที่เจ้าของตรวจและปฏิบัติได้
 
 **Review:** ส่ง preview และผลทดสอบให้เจ้าของยอมรับก่อนใช้บิลจริง
 
-### 4. Deliver the first private pilot
+### 4. Verify owner merge and close the application delivery
 
-**Result:** สองคนใช้งานจริงได้ตาม flow ที่ยอมรับ และรู้วิธีดูยอด/หลักฐานย้อนหลัง
+**Result:** เจ้าของได้รับแอปที่ merge แล้ว URL ที่ใช้ได้ และวิธีดูแล โดยแยกงานที่ยังไม่พิสูจน์
 
-**Dependency:** เจ้าของยอมรับ preview และอนุญาตเปิดใช้งานจริง
+**Dependency:** เจ้าของ merge PR และยืนยันปิดขอบเขตส่งมอบ เลื่อนการลองใช้งานจริงไว้ภายหลัง
 
 **DoD / proof:**
 
-- มีสองบัญชีจริงโดยไม่เผย credentials ใน repo/event/response
-- ใช้รายการนำร่องที่เจ้าของเลือก ตรวจยอดค้างและ paid history กับหลักฐานจริง
-- มีขั้นตอน backup/restore ของ metadata และภาพที่ทดสอบด้วยข้อมูลสังเคราะห์
-  พร้อมวิธีดูแล quota และจัดการกรณีทำรายการผิดที่เจ้าของยอมรับ
-- ส่งวิธีใช้งานสั้น ๆ และข้อจำกัด v1; เจ้าของตรวจรับ
-- child project PR/merge และ HQ closeout ตามสัญญาโครงการ พร้อม checkpoint
+- ตรวจ PR merge commit และ closeout copy ใน child main; local main clean และตรง fetched origin/main
+- ตรวจ production deployment จาก merge revision เป็น READY และ smoke HTTPS/login/read/logout ผ่าน
+- เอกสารบัญชี ภาพ backup/restore และ quota อยู่ใน merged PR; credentials อยู่เฉพาะที่เจ้าของควบคุม
+- บันทึก final closeout ใน HQ พร้อม Git checkpoint และหลักฐาน owner closure scope
+- คงรายการ unresolved ของ store ทดลองเก่า การเก็บ source ของ provider ค่า usage และการลองใช้งานจริง
+  ไม่รายงานสิ่งที่เลื่อนว่าเป็นผลทดสอบผ่าน
 
-**Review:** owner review ก่อน merge และยืนยันการส่งมอบ ไม่ถือว่า deploy เท่ากับตรวจรับ
+**Review:** merge และคำยืนยันปิดงานส่งมอบมาจากเจ้าของ; HQ record รอ integration ของ standing branch
+ตามจังหวะของเจ้าของ ไม่เปิด app PR ใหม่เพื่อทำซ้ำการ merge ที่เสร็จแล้ว
 
-## Unresolved and next action
+## Deferred after delivery
 
-- ชื่อ “เคลียร์กัน”, child repo ID และ domain ยังเป็นข้อเสนอ ไม่ใช่แบรนด์สุดท้าย
-- ยังไม่ตัดสินใจใช้ “สมุดบิล” หรือ “กล่องบิล” เป็น layout หลัก; แนะนำกล่องบิลสำหรับมือถือ
-- ยืนยันแล้วว่าบทบาทตามแต่ละบิลและส่งหากันได้สองทาง
-  การย้อนรายการที่จ่ายรวมใช้ย้อนทั้งชุดโอนเพื่อรักษาความตรงกันของหลักฐาน
-- email ของสองบัญชี วิธีส่งมอบรหัสและ recovery ยังไม่ได้กำหนด
-- ยืนยันแล้วว่าเป็นการใช้ส่วนตัวระหว่างเจ้าของกับแฟน และใช้ Pro เดิมได้
-  Neon standalone ต้องเป็น Free หนึ่ง branch; ยังต้องตรวจบัญชีจริงก่อน provisioning
-- quota/retention/backup และเพดานไฟล์ต้องกำหนดใน implementation ภายใต้ free-only
-  ออกแบบให้บริการพักเมื่อเต็ม แทนการเพิ่มค่าใช้จ่ายเพื่อรักษา uptime
-- Wake ไม่ยืนยัน human approval/review หรือ external rules นอก repository record;
-  decision เริ่มงานครอบคลุม slice 2 และคำยืนยันล่าสุดอนุญาต slice 3
-  ด้วย standalone Neon Free และ Pro เดิม
-  การเปิดใช้กับข้อมูลจริงและการ merge ยังต้องมีหลักฐาน owner review
+- การติดตั้ง PWA/reload/logout บนโทรศัพท์จริง และอ่านภาพบิลจริงหลังบีบอัด
+- การเปลี่ยนชื่อ/ID/รหัสบัญชีจากชุดทดลอง การใช้บิลนำร่องจริง และตรวจยอดกับหลักฐานจริง
+- ลบ Blob store ทดลองเดิมหลังตรวจแอปชุดใหม่: Vercel CLI บังคับให้เจ้าของยืนยันการลบถาวรเอง
+- นโยบาย retention ของเจ้าของ และ retention ของ source deployment ที่ลบจาก provider ยังไม่พิสูจน์
+- Neon ต้องคง Free หนึ่ง branch; Vercel Pro เดิมมี metered usage ร่วมกับแอปอื่น ไม่รับประกันค่าเพิ่มศูนย์
 
-**Next action:** ทำ slice 2 จน flow สองทางผ่าน แล้วดำเนิน slice 3 เมื่อ scope
-เป็น Pro เดิมที่เจ้าของยืนยัน และ Neon standalone เป็น Free จริง; เตรียมผลและ PR ให้เจ้าของตรวจ
-ถ้า standalone Neon ยังไม่ authenticated ให้ขอ owner sign-in ครั้งเดียว
-พร้อมดำเนินงานประกอบ Vercel ที่ไม่ขึ้นกับ DB ต่อ; ไม่ใช้ paid integration แทน
+**Next action:** ส่ง closeout การส่งมอบให้เจ้าของ; ไม่มีงาน implement เพิ่มในรอบนี้
+เจ้าของลองใช้งานจริงภายหลังและควบคุมการลบ store เก่า/ตั้งบัญชีจริงตาม OPERATIONS

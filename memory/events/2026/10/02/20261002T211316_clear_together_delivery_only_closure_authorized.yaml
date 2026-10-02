@@ -1,0 +1,36 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T211316_clear_together_delivery_only_closure_authorized
+type: decision
+recorded_at: 2026-10-02T21:13:16+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: clear-together-pwa-001
+  lane: single
+  objective: Close application delivery after owner merge; defer physical-phone and real-data pilot proof.
+  scope:
+    - Revise the final slice to post-merge verification and delivery handoff, without claiming deferred acceptance checks passed.
+outcome:
+  status: decided
+  decision: Owner chose to close delivery and try real use later. Plan revision 0.5 makes slice 4 the merged-delivery closeout; physical-phone and real-bill pilot checks are explicitly deferred.
+evidence:
+  plan: workstreams/clear-together-pwa-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  repository:
+    head: fbc7f97f163529879ae52b9a005dd7eee25f6fb5
+    branch: hq/20261001
+  owner_statement: ปิดงานส่งมอบ เลื่อนการลองใช้งานจริงไว้ภายหลัง
+  owner_merge_report: Owner reported PR merged and asked for CIEL workstream closeout.
+  verified_pull_request:
+    url: https://github.com/mojisejr/clear-together/pull/1
+    state: MERGED
+    merged_at: 2026-10-02T14:08:10Z
+    merge_commit: 1858cc41fe9f69ea7a799972086b5262a3a3a54a
+unresolved:
+  - Physical-phone installation and real-bill pilot acceptance remain unproved and deferred.
+  - Retired private Blob store still exists; deletion requires interactive owner confirmation due to the prior CLI rejection.
+  - Removed deployment source retention remains unverified; Vercel Pro usage remains metered.
+next_action:
+  action: Verify post-merge production smoke and clean child main, record final delivery closeout on HQ standing branch, and leave deferred owner use explicitly unresolved.
