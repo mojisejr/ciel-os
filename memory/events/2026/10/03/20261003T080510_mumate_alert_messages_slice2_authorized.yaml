@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T080510_mumate_alert_messages_slice2_authorized
+type: decision
+recorded_at: 2026-10-03T08:05:10+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-alert-messages-001
+  lane: single
+  objective: >-
+    Authorize slice 2 of plan 0.1 under the owner's go recorded at the
+    workstream's opening, now that slice 1 is proven.
+  scope:
+    - Merge of mumate-infra PR 46 by the agent, mumate-prod-1 pull and its env/alert.env urgent webhook, mumate-2 back to main, labelled tests from prod-1.
+  out_of_scope:
+    - Paging the phone for a test; the owner's channel renames and phone setting (owner actions).
+
+outcome:
+  status: decided
+  slice: "2"
+  decision: >-
+    At the opening (20261003T073209) the owner said "ขึ้นแผนแล้วถ้าไม่มีอะไรต้อง
+    เคาะแล้ว คุนลุยได้เลยครับ"; the decision recorded that the agent proceeds to
+    slice 2 and merges the PR when nothing needs the owner's call. Slice 1 is
+    proven and nothing new needs the owner's call.
+  authorizes:
+    - Slice 2 of plan 0.1 as written.
+  does_not_authorize:
+    - Paging the owner's phone for a test, printing a webhook URL, changing what is detected.
+
+evidence:
+  plan: workstreams/mumate-alert-messages-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "be9ab75"
+    branch: hq/20261001
+    working_tree: this-decision-and-the-slice-1-closeout
+  application:
+    mumate-infra: "PR 46 head cb9d025"
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Merge PR 46 and run slice 2.
+  acceptance_check:
+    - Slice 2 in the plan.

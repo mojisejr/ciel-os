@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T080508_mumate_alert_messages_slice1_closeout_proven_on_staging
+type: closeout
+recorded_at: 2026-10-03T08:05:08+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-alert-messages-001
+  lane: single
+  objective: >-
+    Close slice 1: both alert sources write the owner's shape and route by
+    urgency; Grafana is live; the host scripts are proven on mumate-2.
+  scope:
+    - mumate-infra feat/alert-messages (PR 46), Grafana Cloud contact points, policy and rules, mumate-2.
+  out_of_scope:
+    - mumate-prod-1 (slice 2), the owner's channel renames and phone setting.
+
+outcome:
+  status: slice-1-done-on-staging
+  slice: "1"
+  state:
+    - "PR 46 (2c6299a, cb9d025): alert.sh takes --level/--env/--what/--impact/--todo/--since/--detail and routes by what a message is about (production problem/recovery → ALERT_DISCORD_WEBHOOK_URGENT, else ALERT_DISCORD_WEBHOOK; missing urgent → ข้อมูล); health-notify, cron-call, deploy, rollback, backup, arena, restore-verify reworded in plain Thai with impact and the owner's action; backup and restore-verify say --env production; staging never repeats; runbooks 00 and 04 §4."
+    - "Grafana Cloud (owner's SA token, no webhook printed): discord-infra = IRM + webhook discord-infra-hook (ต้องดู, same URL as the old Discord integration, which was removed); discord-info = webhook discord-info-hook (ข้อมูล, the hosts' existing webhook); custom payload = templates/mumate.tmpl embedded + mumate.payload.urgent|info; policy group_by '...', repeat 30m, routes env=staging and job=~mumate-.*-staging → discord-info, repeat 1y; Thai what/impact/todo on all six rules; env in both absence matchers. An unused stack template 'mumate' was created and deleted."
+    - "Found on the way: a custom payload cannot call the stack's named templates and tmpl.Exec cannot reach a define in the same text, so the template computes its words in variables; the old receivers/test endpoint is 410, the new one is /apis/notifications.alerting.grafana.app/v1beta1/namespaces/stacks-1837278/receivers/<uid>/test with {integration, alert}."
+    - "Correction to the morning research: the provisioning API returns the Grafana Discord URL as [REDACTED], so the morning 'two different webhooks' comparison hashed that placeholder. Re-checked with the decrypting export: Grafana's webhook = the owner's .assets DISCORD_WEBHOOK_URL (id-hash 014f1ddb), the hosts' = 3b72114c - two different webhooks after all."
+    - "mumate-2: /opt/mumate on feat/alert-messages cb9d025; env/alert.env gained ALERT_DISCORD_WEBHOOK_URGENT (backup env/alert.env.bak-<UTC> kept)."
+  verification:
+    - "scripts/*.test.sh 14/14 pass; alert.test.sh 28 checks; mutation: staging no-repeat, env routing and the hosts 'staging alone' guard each go red when removed."
+    - "Grafana templates/test renders firing, resolved, quoted, probe and mixed alerts to valid JSON in the agreed shape; all six rules health ok after the update."
+    - "Labelled tests delivered: Grafana → ต้องดู and → ข้อมูล (receiver test per integration, no IRM page); mumate-2 alert.sh → ต้องดู (--env production) and → ข้อมูล."
+    - "Real staging drills: qi-quota-reset timer disabled 00:51:47Z → mumate cron silent firing 00:53:33Z with receivers [discord-info] only, re-enabled 00:53:40Z; alloy stopped 00:52:18Z → '🔴 STAGING · ตัวส่ง log (alloy) ล่ม · ไม่กระทบลูกค้า · 07:57 น.' to ข้อมูล, alloy up 00:57:10Z → 🟢 at 08:02 (the 🟢 line then reworded to '(ล่ม N นาที)')."
+    - "fe was not stopped for the drill as the plan said: the team is testing staging today; alloy and a cron timer gave a real problem on each path without touching the app."
+
+evidence:
+  plan: workstreams/mumate-alert-messages-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "be9ab75"
+    branch: hq/20261001
+    working_tree: this-record-and-the-slice-2-decision
+  application:
+    mumate-infra: "feat/alert-messages cb9d025, PR 46 open; main 182f3e9"
+    grafana: "contact points discord-infra (IRM + webhook), discord-info (webhook); policy by urgency; six rules with Thai words"
+
+unresolved:
+  - "Grafana repeats re-send the original 🔴 (templates cannot read the current time); the host side sends 🟠 'ยังไม่หาย N นาที'."
+  - "The owner has not yet read the samples; rename of the two channels and the phone setting are the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Merge PR 46, slice 2 on mumate-prod-1, then the owner's renames, phone
+    setting and look at the samples.
+  acceptance_check:
+    - Slice 2 in the plan.
