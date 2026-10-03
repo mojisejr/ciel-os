@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T120735_mumate_chat_keyboard_ios_slice1_closeout_pr875
+type: closeout
+recorded_at: 2026-10-03T12:07:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-chat-keyboard-ios-001
+  lane: single
+  objective: >-
+    Offer slice 1 for the owner's merge: the v2 chat pinned to the visible
+    area for the iPhone keyboard, 16px input, text-size zoom accounted for
+    (mootech-fe PR 875).
+  scope:
+    - ChatScreen.tsx, features/v2-chat/visible-area.ts, the new spec and its registration.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  slice: "1"
+  completed:
+    - "As recorded at fe 61c7be8 in evt_mumate_chat_keyboard_ios_branch_on_staging_for_owner_check (same head, no change since)."
+    - "Owner tried the branch on staging on his device and asked to merge, with the team checking on production: \"ผมลองละ ครับเดี๋ยวให้ทีม ลองบน prod เลยแล้วกันครับ เราพร้อม merge มั๊ย\". Which items of the staging checklist he ran was not itemized."
+  verification:
+    - "scripts/chat-visible-area.test.tsx 11 cases (7 red on the old ChatScreen, 11 green after); npm test 3850 passed; lint 0 errors; tsc clean; build success; staging /api/health sha 61c7be8."
+  not_verified:
+    - "A real keyboard in an automated check; LINE on iPhone, the installed PWA, Android and Samsung are not reported individually. The team's production check is the remaining proof."
+
+evidence:
+  plan: workstreams/mumate-chat-keyboard-ios-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "7aad66c"
+    branch: hq/20261001
+    working_tree: this-closeout-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261001
+  pull_request:
+    repository: github.com/mojisejr/mootech-fe
+    number: 875
+    url: https://github.com/mojisejr/mootech-fe/pull/875
+    base: main
+    head_sha: 61c7be81b0ff7cde8c9ab727ab24e9c03af1ad24
+    base_sha: 9695d274b2524d810e38f25e2f225a326e42dec2
+
+unresolved:
+  - "After the merge: Vercel production serves the merge SHA, the team checks the chat on production, staging is built and released to the merge SHA (staging is on the branch until then)."
+  - "iOS 26 standalone under-reports the viewport height (WebKit bug 301108); a small bottom band there may remain."
+  - "verify-architecture stays red on mootech-fe main in four files outside this lane; deferred."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner merges PR 875; the agent confirms production and releases staging
+    to the merge SHA; the team checks the chat on production.
+  acceptance_check:
+    - Production and staging /api/health report the merge SHA.
