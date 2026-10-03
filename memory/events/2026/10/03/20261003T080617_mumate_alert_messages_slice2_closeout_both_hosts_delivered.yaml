@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T080617_mumate_alert_messages_slice2_closeout_both_hosts_delivered
+type: closeout
+recorded_at: 2026-10-03T08:06:17+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-alert-messages-001
+  lane: single
+  objective: >-
+    Close slice 2 and deliver the workstream: PR 46 merged, both hosts on
+    main with both webhooks, labelled tests from production delivered.
+  scope:
+    - mumate-infra PR 46 merge, mumate-prod-1 and mumate-2.
+  out_of_scope:
+    - The owner's channel renames, phone notification setting and reading of the samples.
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "2"
+  state:
+    - "mumate-infra PR 46 merged 31b9f7c by the agent (owner's go, 20261003T073209; slice-2 decision recorded with the slice-1 closeout); branch deleted; both hosts on main 31b9f7c."
+    - "mumate-prod-1 env/alert.env gained ALERT_DISCORD_WEBHOOK_URGENT (backup env/alert.env.bak-<UTC> kept, value never printed); all six cron timers still inactive; fe/bazi unchanged (c10e91e / 49e22f2)."
+    - "Labelled tests from prod-1: '🔴 PRODUCTION · ทดสอบจากเครื่อง production — ไม่ใช่ของจริง' → ต้องดู; '✅ PRODUCTION · ทดสอบบรรทัดเดียวจากเครื่อง production — ไม่ใช่ของจริง · 08:05 น.' → ข้อมูล."
+    - "Local copies of the webhooks used to apply the change were deleted from the agent's scratchpad."
+  owner_actions:
+    - "Rename the two Discord channels: the one Grafana posted to before → 🚨 ต้องดู; the one the hosts posted to before → 📋 ข้อมูล."
+    - "On the phone: set ต้องดู's Discord notifications to all messages (host alerts reach the phone this way; Grafana's go through IRM)."
+    - "Read the test posts (marked ไม่ใช่ของจริง) and say if any wording should change."
+
+evidence:
+  plan: workstreams/mumate-alert-messages-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "5c95634"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mumate-infra: "main 31b9f7c (PR 46)"
+    hosts: "mumate-2 and mumate-prod-1 /opt/mumate at 31b9f7c, both with ALERT_DISCORD_WEBHOOK and ALERT_DISCORD_WEBHOOK_URGENT"
+    grafana: "discord-infra (IRM + webhook), discord-info (webhook), policy by urgency, six rules with Thai words"
+
+unresolved:
+  - "The owner's three actions above; wording changes after reading the samples are a follow-up, not a reopening."
+  - "Grafana repeats re-send the original 🔴 (no 🟠 'still broken N minutes' from Grafana)."
+  - "Old alert.env backups on both hosts hold the previous file (owner-held location); delete when no longer needed."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Nothing more for the agent. The owner renames the channels, sets the
+    phone notification and reads the samples.
+  acceptance_check:
+    - Slice 2 in the plan met except the owner's confirmation, listed above.
