@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T124644_mumate_chat_keyboard_ios_preliminary_closeout_observing_today
+type: closeout
+recorded_at: 2026-10-03T12:46:44+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-chat-keyboard-ios-001
+  lane: single
+  objective: >-
+    Preliminary closeout: the chat fix is live on production and staging;
+    the workstream stays open while members use it today.
+  scope:
+    - State after PR 875 and the later PR 876 release; no further change.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "PR 875 (merge a6a3f4e) is live; production and staging have since moved to fe 9daf818 (PR 876, menu label only), which contains it. Both /api/health report 9daf818."
+  owner_statement: "closeout เบื้องต้นกันก่อน เดี๋ยวถ้าวันนี้คนใช้แล้วไม่มีปัญหาเรื่องหน้าจอเลื่อนเราก็ค่อยมาปิด workstream กันครับ"
+
+evidence:
+  plan: workstreams/mumate-chat-keyboard-ios-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: "d0c6939"
+    branch: hq/20261001
+    working_tree: this-record-and-the-menu-record
+  application:
+    mootech-fe: "origin/main 9daf818 (Vercel production; staging image 9daf818-staging)"
+    bazi-sft-dataset: "origin/pdf-dev 6c9b014 (unchanged)"
+
+unresolved:
+  - "Today's use on production decides closing: no report of the chat screen sliding or a white band above the keyboard. Not yet reported."
+  - "iOS 26 standalone under-reports the viewport height (WebKit bug 301108); a small bottom band there may remain."
+  - "Rollback if a device regresses: revert PR 875."
+  - "mumate-vercel-to-do-001: staging matches production at fe 9daf818 / bazi 6c9b014; a team sign-off must name these SHAs."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the owner reports today's use was clean, record the final closeout
+    and mark the plan completed; if a device shows the problem, collect the
+    screenshot, device, app and iOS version.
+  acceptance_check:
+    - The owner confirms no sliding or white band reported today.
