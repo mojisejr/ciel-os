@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T121443_mumate_chat_keyboard_ios_merged_production_staging_team_check_pending
+type: closeout
+recorded_at: 2026-10-03T12:14:43+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-chat-keyboard-ios-001
+  lane: single
+  objective: >-
+    Record the merge of PR 875, production and staging on the merge SHA;
+    the team's production check and the workstream's closing are pending.
+  scope:
+    - Post-merge verification, staging build and release, child checkout cleanup.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Owner merged mootech-fe PR 875 at 2026-10-03T05:08:37Z; merge commit a6a3f4ea2efabccefda38bedf34ca9e89284f69b."
+    - "Vercel production deployment for a6a3f4e success; bazichart.mumate.co/api/health ok, db ok, sha a6a3f4e, platform vercel."
+    - "Staging image built from main (container-build run 37098910646) and released (release run 37099128828, fe a6a3f4e, bazi 6c9b014 unchanged); app.staging.mumate.co/api/health ok, sha a6a3f4e, env staging; /v2/chat 200. Staging again matches production."
+    - "mootech-fe checkout on clean main = origin/main a6a3f4e; topic branch fully merged, no open PR, remote branch gone, local branch deleted."
+  correction: "The PR 875 closeout's prose pointer lost its timestamp; the event it means is evt_20261003T103259_mumate_chat_keyboard_ios_branch_on_staging_for_owner_check."
+
+evidence:
+  plan: workstreams/mumate-chat-keyboard-ios-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: "4d98f9a"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main a6a3f4e (Vercel production; staging image a6a3f4e-staging)"
+    bazi-sft-dataset: "origin/pdf-dev 6c9b014 (unchanged on both)"
+
+unresolved:
+  - "The team checks the chat on production (iPhone Safari, LINE, installed PWA, text size largest and smallest, Android/Samsung); results not yet reported."
+  - "iOS 26 standalone under-reports the viewport height (WebKit bug 301108); a small bottom band there may remain."
+  - "Rollback if a device regresses: revert PR 875 (returns to the previous behaviour)."
+  - "mumate-vercel-to-do-001: staging matches production at fe a6a3f4e / bazi 6c9b014; a team sign-off must name these SHAs."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Collect the team's production check; when the owner says, mark the plan
+    completed with a final closeout.
+  acceptance_check:
+    - The owner confirms the chat is fixed on production.
