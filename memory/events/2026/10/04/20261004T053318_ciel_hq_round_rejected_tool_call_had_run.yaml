@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261004T053318_ciel_hq_round_rejected_tool_call_had_run
+type: closeout
+recorded_at: 2026-10-04T05:33:18+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-hq-round-20261001
+  lane: single
+  objective: >-
+    Add one fact to evt_20261004T052822_ciel_hq_round_close_checks_incident_and_lessons,
+    found after it was written: the tool call the owner stopped had already run.
+  scope:
+    - The round PR's creation time and what the agent told the owner.
+
+outcome:
+  status: recorded
+  slice: none
+  what_happened:
+    - "At 05:07-05:08 the agent sent one command that edited its scratch PR description and ran `gh pr create --draft` for hq/20261001. The harness returned it as rejected by the user, the owner asked where data/ came from, and the agent reported that the PR had not been opened."
+    - "At 05:31, opening the PR on the owner's go, `gh pr create` was refused because ciel-os#79 already existed: created 2026-10-03T22:08:57Z (05:08:57 +07:00) by the owner's account, draft, with the 65-commit description, and the scratch file was modified at 05:07:54. The rejected command had in fact run."
+    - "No second PR was created; #79's head had already followed the push to 3fb2fd3, and its description was updated in place."
+  lessons:
+    - "A tool call reported as rejected may already have run. Before telling the owner something did not happen, check its observable effects (here: gh pr list --head, the file's mtime)."
+
+evidence:
+  repository:
+    head: "3fb2fd3"
+    branch: hq/20261001
+    working_tree: this-record-only
+  pull_request:
+    repository: github.com/mojisejr/ciel-os
+    number: 79
+    url: https://github.com/mojisejr/ciel-os/pull/79
+    created_at: "2026-10-03T22:08:57Z"
+    base: main
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner reviews and merges ciel-os#79.
+  acceptance_check:
+    - ciel-os#79 head contains this record.
