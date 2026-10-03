@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T101005_mumate_chat_keyboard_ios_opened_slice1_authorized
+type: decision
+recorded_at: 2026-10-03T10:10:05+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-chat-keyboard-ios-001
+  lane: single
+  objective: >-
+    Open the workstream and authorize slice 1 of plan 0.1: the v2 chat screen
+    pinned to the visible area so the iPhone keyboard no longer pushes it up
+    and leaves a white band, checked by the owner on staging before merge.
+  scope:
+    - mootech-fe topic branch, ChatScreen.tsx and a new spec, staging build and release of the branch SHA, PR after the owner's staging check, staging release of the merge SHA.
+  out_of_scope:
+    - The v1 chat modal, other screens, the chat API.
+
+outcome:
+  status: decided
+  slice: "1"
+  parallelism: approved
+  decision: >-
+    The owner forwarded the tester's report and screenshots and asked for
+    research with agents. Three agents (code, Git history, platform
+    behaviour) found the cause in ChatScreen's #chat-vh handler. The owner
+    decided: "1. เปลี่ยนเลย 2. ไปที่ staging ก่อนเดี๋ยวผม เชคก่อน แล้วเราค่อย
+    merge 3 ทีมไม่ว่างเลยตอนนี้คุนทำให้ครอบคลุมที่สุดละกัน เปิด workstream
+    มาเลยครับถ้าไม่มีอะไรต้องเคาะแล้ว".
+  owner_decisions:
+    - "The composer input text becomes 16px."
+    - "The branch goes to staging first; the owner checks it there; the merge comes after."
+    - "No questions to the team (not available); cover every case the agent can."
+    - "Open the workstream."
+  parallelism_basis: "Wake at 10:10 shows every other active workstream that lists mootech-fe idle; the owner confirmed earlier today that no other work runs in mootech-fe, and said to open this one."
+  authorizes:
+    - Slice 1 of plan 0.1 as written, including the staging release of the branch SHA and, after the merge, of the merge SHA.
+  does_not_authorize:
+    - The merge (the owner merges), changes outside the v2 chat screen.
+
+evidence:
+  plan: workstreams/mumate-chat-keyboard-ios-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "5b59016"
+    branch: hq/20261001
+    working_tree: this-decision-and-plan-0.1
+  application:
+    mootech-fe: "origin/main 9695d27"
+
+unresolved:
+  - "Which app the tester used (Safari, installed PWA, LINE), the iOS version and the text-size setting are unknown; the team is not available."
+  - "iOS 26 standalone under-reports the viewport height (WebKit bug 301108, open); a small bottom band there may remain."
+  - "While the branch is on staging, staging does not match production."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 1 on a mootech-fe topic branch, test first; build and
+    release the branch to staging for the owner's check.
+  acceptance_check:
+    - Slice 1 DoD in the plan.
