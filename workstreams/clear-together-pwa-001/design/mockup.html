@@ -1,0 +1,222 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500&display=swap');
+#clear-together { --ct-ink:#254459; --ct-muted:#667b88; --ct-sky:#e2effc; --ct-blue:#3675a5; --ct-mint:#e0f1e8; --ct-green:#306b52; --ct-peach:#ffdcc8; --ct-orange:#875334; --ct-paper:#fffefd; --ct-line:#e6ecee; --ct-radius:24px; font-family:'IBM Plex Sans Thai',sans-serif; color:var(--ct-ink); }
+#clear-together * {box-sizing:border-box}
+#clear-together button,#clear-together input,#clear-together textarea {font:inherit}
+#clear-together button {color:inherit}
+#clear-together button svg {width:19px;height:19px;flex-shrink:0}
+#clear-together .ct-stage {padding:20px 12px 28px;min-height:890px}
+#clear-together .ct-preview {max-width:420px;margin:0 auto 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:light-dark(#657682,#b5c7d4)}
+#clear-together .ct-role {display:flex;background:light-dark(#e9eef2,#283540);padding:4px;border-radius:12px;gap:3px}
+#clear-together .ct-role button {border:0;background:transparent;color:light-dark(#516574,#b5c7d4);padding:7px 13px;border-radius:9px;min-height:36px;font-size:12px}
+#clear-together .ct-role button[aria-pressed=true] {background:light-dark(#ffffff,#425563);color:light-dark(#254459,#eef5fb);box-shadow:0 2px 7px #1026370a}
+#clear-together .ct-app {max-width:420px;margin:auto;background:var(--ct-paper);border:1px solid #dde6ea;border-radius:32px;overflow:hidden;box-shadow:0 18px 50px #25445910;color-scheme:light;min-height:760px}
+#clear-together .ct-head {display:flex;align-items:center;justify-content:space-between;padding:24px 24px 18px;gap:10px}
+#clear-together .ct-brand {display:flex;align-items:center;gap:10px;font-size:19px;font-weight:500;letter-spacing:-.5px}
+#clear-together .ct-logo {width:36px;height:36px;border-radius:12px;background:var(--ct-sky);display:grid;place-items:center;color:var(--ct-blue)}
+#clear-together .ct-avatars {display:flex;align-items:center;padding-left:6px}
+#clear-together .ct-avatar {width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:11px;background:var(--ct-sky);border:3px solid var(--ct-paper);margin-left:-6px}
+#clear-together .ct-avatar:nth-child(2) {background:var(--ct-mint)}
+#clear-together .ct-content {padding:0 24px 24px}
+#clear-together .ct-hello {font-size:12px;color:var(--ct-muted);margin:0 0 12px}
+#clear-together .ct-hero {padding:23px 22px;background:var(--ct-sky);border-radius:var(--ct-radius);position:relative;overflow:hidden;margin-bottom:14px}
+#clear-together .ct-hero:after {content:'';position:absolute;width:155px;height:155px;right:-50px;top:28px;background:#ffffff45;border-radius:50%;pointer-events:none}
+#clear-together .ct-hero-label {font-size:13px;margin-bottom:4px;position:relative;z-index:1}
+#clear-together .ct-amount {font-size:35px;line-height:1.4;font-weight:500;letter-spacing:-1.2px;position:relative;z-index:1;font-variant-numeric:tabular-nums}
+#clear-together .ct-amount small {font-size:14px;letter-spacing:0;font-weight:400;margin-left:6px}
+#clear-together .ct-hero-bottom {display:flex;justify-content:space-between;align-items:center;margin-top:13px;gap:6px;position:relative;z-index:1;font-size:12px}
+#clear-together .ct-mini-pill {background:#ffffff85;padding:5px 10px;border-radius:20px;white-space:nowrap}
+#clear-together .ct-paid-summary {display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--ct-muted);padding:0 2px 18px;gap:12px}
+#clear-together .ct-paid-summary strong {color:var(--ct-green);font-weight:500;font-variant-numeric:tabular-nums}
+#clear-together .ct-button {border:0;background:var(--ct-peach);color:var(--ct-orange);padding:12px 16px;min-height:46px;border-radius:15px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:500;text-decoration:none}
+#clear-together .ct-button.full {width:100%}
+#clear-together .ct-button.blue {background:var(--ct-blue);color:#fff}
+#clear-together .ct-button.soft {background:var(--ct-sky);color:var(--ct-blue)}
+#clear-together .ct-button.ghost {background:transparent;color:var(--ct-muted)}
+#clear-together .ct-button:disabled {opacity:.45}
+#clear-together .ct-list-top {display:flex;align-items:center;justify-content:space-between;margin:23px 0 13px;gap:10px}
+#clear-together .ct-list-title {font-size:15px;font-weight:500}
+#clear-together .ct-list-title span {color:var(--ct-muted);font-size:12px;margin-left:5px;font-weight:400}
+#clear-together .ct-filter {display:flex;border-bottom:1px solid var(--ct-line);gap:22px;margin-bottom:3px}
+#clear-together .ct-filter button {background:transparent;border:0;border-bottom:2px solid transparent;padding:10px 0;min-height:43px;font-size:12px;color:var(--ct-muted)}
+#clear-together .ct-filter button[aria-selected=true] {color:var(--ct-blue);border-color:var(--ct-blue);font-weight:500}
+#clear-together .ct-bill {width:100%;display:flex;gap:12px;align-items:center;padding:17px 0;text-align:left;border:0;border-bottom:1px solid var(--ct-line);background:transparent}
+#clear-together .ct-thumb {width:42px;height:52px;background:var(--ct-sky);border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+#clear-together .ct-thumb.mint {background:var(--ct-mint)}
+#clear-together .ct-mini-receipt {width:23px;height:34px;background:#fff;border-radius:3px;box-shadow:0 2px 4px #23445909;display:flex;flex-direction:column;padding:7px 4px;gap:3px;transform:rotate(-6deg)}
+#clear-together .ct-mini-receipt:before {content:'';height:3px;background:#acc4d2;width:10px;margin:0 auto 2px}
+#clear-together .ct-mini-receipt span {height:2px;width:100%;background:#d7e1e6}
+#clear-together .ct-bill-main {flex:1;min-width:0}
+#clear-together .ct-bill-name {font-size:13px;font-weight:500;margin-bottom:4px;overflow-wrap:anywhere}
+#clear-together .ct-bill-note {font-size:11px;color:var(--ct-muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+#clear-together .ct-bill-right {text-align:right;flex-shrink:0}
+#clear-together .ct-bill-price {font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;margin-bottom:5px}
+#clear-together .ct-status {display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:3px 8px;background:#fff0e5;color:var(--ct-orange);font-size:10px;white-space:nowrap}
+#clear-together .ct-status.paid {background:var(--ct-mint);color:var(--ct-green)}
+#clear-together .ct-status svg {width:11px;height:11px}
+#clear-together .ct-foot {display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;color:var(--ct-muted);margin-top:24px}
+#clear-together .ct-foot svg {width:12px;height:12px}
+#clear-together .ct-empty {padding:35px 12px;text-align:center;color:var(--ct-muted);font-size:13px}
+#clear-together .ct-back {background:transparent;border:0;display:flex;align-items:center;gap:5px;padding:0;min-height:38px;color:var(--ct-muted);font-size:12px;margin-bottom:12px}
+#clear-together .ct-page-title {font-size:22px;font-weight:500;margin:0 0 16px;letter-spacing:-.4px}
+#clear-together .ct-detail-amount {font-size:32px;font-weight:500;letter-spacing:-1px;margin:4px 0 0;font-variant-numeric:tabular-nums}
+#clear-together .ct-meta {font-size:12px;color:var(--ct-muted);margin-top:5px}
+#clear-together .ct-note {background:#f5f7f7;border-radius:16px;padding:14px 16px;font-size:13px;margin:18px 0;color:var(--ct-ink)}
+#clear-together .ct-note-label {display:block;font-size:11px;color:var(--ct-muted);margin-bottom:4px}
+#clear-together .ct-proof {border-radius:18px;background:#eef2f3;padding:20px;display:grid;place-items:center;margin:12px 0 20px}
+#clear-together .ct-receipt {width:min(230px,100%);background:#fff;padding:18px 20px;box-shadow:0 5px 10px #2544590a;border-radius:4px;text-align:center;transform:rotate(-2deg);font-size:11px;color:#556570}
+#clear-together .ct-receipt strong {font-size:13px;font-weight:500;display:block;color:#334a58;margin:4px 0 2px}
+#clear-together .ct-receipt .ct-dash {border-top:1px dashed #d4dde1;margin:12px 0}
+#clear-together .ct-receipt-row {display:flex;justify-content:space-between;gap:12px;text-align:left;font-variant-numeric:tabular-nums}
+#clear-together .ct-receipt-total {font-size:15px;color:#334a58;font-weight:500}
+#clear-together .ct-timeline {display:flex;gap:10px;font-size:12px;margin-bottom:15px;align-items:center;color:var(--ct-muted)}
+#clear-together .ct-timeline-dot {width:9px;height:9px;background:var(--ct-blue);border-radius:50%;flex-shrink:0}
+#clear-together .ct-timeline-dot.paid {background:var(--ct-green)}
+#clear-together .ct-timeline strong {display:block;color:var(--ct-ink);font-weight:500}
+#clear-together .ct-slip {width:100%;max-width:250px;background:#fff;border-radius:16px;text-align:center;padding:20px;box-shadow:0 3px 12px #25445909}
+#clear-together .ct-slip-check {background:var(--ct-mint);color:var(--ct-green);border-radius:50%;width:37px;height:37px;display:grid;place-items:center;margin:0 auto 8px}
+#clear-together .ct-slip strong {display:block;font-size:15px;font-weight:500}
+#clear-together .ct-slip .ct-slip-amount {font-size:25px;margin:8px 0;color:var(--ct-ink);font-weight:500;font-variant-numeric:tabular-nums}
+#clear-together .ct-slip small {font-size:11px;color:var(--ct-muted)}
+#clear-together .ct-field {margin-bottom:17px}
+#clear-together .ct-field label {display:block;font-size:12px;margin-bottom:7px;font-weight:500}
+#clear-together .ct-field input,#clear-together .ct-field textarea {width:100%;border:1px solid #dce5e9;border-radius:13px;background:#fff;padding:12px 13px;font-size:16px;color:var(--ct-ink);resize:vertical}
+#clear-together .ct-field textarea {min-height:87px}
+#clear-together .ct-upload {width:100%;min-height:132px;border:1px dashed #a9c5d8;border-radius:18px;background:#f1f7fe;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--ct-blue);font-size:13px;margin-bottom:18px}
+#clear-together .ct-upload svg {width:26px;height:26px}
+#clear-together .ct-upload small {font-size:11px;color:var(--ct-muted)}
+#clear-together .ct-upload.attached {background:var(--ct-mint);border-color:#95c3ae;color:var(--ct-green)}
+#clear-together .ct-form-hint {font-size:11px;text-align:center;color:var(--ct-muted);margin-top:12px}
+#clear-together .ct-toast {background:var(--ct-mint);color:var(--ct-green);font-size:12px;padding:11px 14px;border-radius:13px;margin-bottom:13px;display:flex;gap:7px;align-items:center}
+#clear-together .ct-toast svg {width:15px;height:15px}
+#clear-together .ct-box .ct-content {padding:0 22px 24px}
+#clear-together .ct-box .ct-hero {background:var(--ct-paper);padding:3px 0 16px;border-radius:0;margin-bottom:0}
+#clear-together .ct-box .ct-hero:after {display:none}
+#clear-together .ct-box .ct-hero-label {font-size:12px;color:var(--ct-muted)}
+#clear-together .ct-box .ct-amount {font-size:39px}
+#clear-together .ct-box .ct-hero-bottom {background:var(--ct-sky);border-radius:14px;padding:10px 12px;margin-top:12px;color:var(--ct-blue)}
+#clear-together .ct-box .ct-mini-pill {padding:0;background:transparent}
+#clear-together .ct-box .ct-paid-summary {padding:8px 2px 16px}
+#clear-together .ct-box .ct-list-top {margin-top:23px}
+#clear-together .ct-box .ct-filter {border:0;gap:8px;margin-bottom:13px}
+#clear-together .ct-box .ct-filter button {border:0;border-radius:20px;padding:7px 12px;min-height:36px;background:#f2f5f6}
+#clear-together .ct-box .ct-filter button[aria-selected=true] {background:var(--ct-sky)}
+#clear-together .ct-box .ct-bill {border:1px solid var(--ct-line);border-radius:18px;padding:13px 12px;align-items:flex-start;margin-bottom:10px;background:#fff}
+#clear-together .ct-box .ct-thumb {width:48px;height:60px;border-radius:10px}
+#clear-together .ct-box .ct-bill-note {margin-top:7px}
+#clear-together .ct-box .ct-bill-price {margin:0 0 8px}
+@media(max-width:390px) {
+ #clear-together .ct-stage {padding:14px 0 20px;min-height:900px}
+ #clear-together .ct-app {border-radius:24px}
+ #clear-together .ct-head {padding:21px 18px 17px}
+ #clear-together .ct-content,#clear-together .ct-box .ct-content {padding:0 18px 22px}
+ #clear-together .ct-hero {padding:20px 18px}
+ #clear-together .ct-brand {font-size:18px}
+ #clear-together .ct-bill {gap:9px}
+ #clear-together .ct-box .ct-bill {padding:12px 10px;gap:8px}
+ #clear-together .ct-box .ct-thumb {width:35px;height:50px}
+ #clear-together .ct-bill-name {font-size:12px}
+ #clear-together .ct-bill-price {font-size:13px}
+ #clear-together .ct-filter {gap:19px}
+}
+</style>
+<div id="clear-together" aria-label="แอปเคลียร์กัน — mockup ฟ้าพาสเทล">
+ <div class="viz-carousel viz-dotted-background" aria-label="รูปแบบแอปเคลียร์กัน" data-previous-label="แบบก่อนหน้า" data-next-label="แบบถัดไป">
+  <section class="ct-stage" data-variant="สมุดบิล" aria-label="สมุดบิล">
+   <div class="ct-preview"><span>มุมมองตัวอย่าง</span><div class="ct-role" aria-label="มุมมองผู้ใช้งาน"><button type="button" class="cursor-interaction" data-role="claimant" aria-pressed="true">คนเบิก</button><button type="button" class="cursor-interaction" data-role="payer" aria-pressed="false">คนจ่าย</button></div></div>
+   <div class="ct-app" data-app="ledger" aria-label="เคลียร์กัน แบบสมุดบิล"><div class="ct-head"><div class="ct-brand"><span class="ct-logo"><i data-lucide="receipt-text" aria-hidden="true"></i></span>เคลียร์กัน</div><div class="ct-avatars" aria-label="ฟีมกับกงสี"><span class="ct-avatar">ฟ</span><span class="ct-avatar">ก</span></div></div><div class="ct-content" data-content></div></div>
+  </section>
+  <section class="ct-stage" data-variant="กล่องบิล" aria-label="กล่องบิล" hidden>
+   <div class="ct-preview"><span>มุมมองตัวอย่าง</span><div class="ct-role" aria-label="มุมมองผู้ใช้งาน"><button type="button" class="cursor-interaction" data-role="claimant" aria-pressed="true">คนเบิก</button><button type="button" class="cursor-interaction" data-role="payer" aria-pressed="false">คนจ่าย</button></div></div>
+   <div class="ct-app ct-box" data-app="inbox" aria-label="เคลียร์กัน แบบกล่องบิล"><div class="ct-head"><div class="ct-brand"><span class="ct-logo"><i data-lucide="files" aria-hidden="true"></i></span>เคลียร์กัน</div><div class="ct-avatars" aria-label="ฟีมกับกงสี"><span class="ct-avatar">ฟ</span><span class="ct-avatar">ก</span></div></div><div class="ct-content" data-content></div></div>
+  </section>
+ </div>
+</div>
+<script>
+(() => {
+ const root=document.getElementById('clear-together');
+ const mockBills=[
+  {id:'fuel',name:'ค่าน้ำมัน',amount:1250,note:'เติมรถไปซื้อของเข้าบ้าน',date:'2 ต.ค.',time:'09:20',paid:false},
+  {id:'grocery',name:'ของเข้าบ้าน',amount:840,note:'น้ำดื่มและของใช้ส่วนกลาง',date:'1 ต.ค.',time:'18:45',paid:false},
+  {id:'delivery',name:'ค่าส่งของ',amount:120,note:'ส่งเอกสารให้กงสี',date:'1 ต.ค.',time:'11:30',paid:false},
+  {id:'repair',name:'ค่าซ่อมไฟ',amount:1800,note:'เปลี่ยนปลั๊กกับซ่อมไฟหน้าบ้าน',date:'30 ก.ย.',time:'15:10',paid:true,paymentNote:'โอนค่าช่างให้ครบแล้วนะ',paidDate:'1 ต.ค. · 10:15'}
+ ];
+ const saved=window.openai?.widgetState?.privateContent;
+ const palette={blue:'#3675a5',peach:'#ffdcc8',radius:24};
+ const models={};
+ const money=n=>new Intl.NumberFormat('th-TH',{maximumFractionDigits:0}).format(n);
+ const safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const icon=name=>`<i data-lucide="${name}" aria-hidden="true"></i>`;
+ const status=b=>`<span class="ct-status ${b.paid?'paid':''}">${icon(b.paid?'check':'clock-3')}${b.paid?'จ่ายแล้ว':'รอจ่าย'}</span>`;
+ const thumb=b=>`<span class="ct-thumb ${b.paid?'mint':''}"><span class="ct-mini-receipt"><span></span><span></span><span></span><span></span></span></span>`;
+ function save(){
+  const state={};Object.entries(models).forEach(([k,m])=>{state[k]={role:m.role,filter:m.filter,bills:m.bills,screen:m.screen,selected:m.selected,attached:m.attached,draft:m.draft||{},toast:m.toast};});
+  window.openai?.setWidgetState?.({modelContent:{mockup:'เคลียร์กัน',palette:'ฟ้าพาสเทล + มิ้นต์ + พีช',views:Object.fromEntries(Object.entries(models).map(([k,m])=>[k,m.role]))},privateContent:state})?.catch(()=>{});
+ }
+ function refreshIcons(){if(globalThis.lucide)lucide.createIcons({attrs:{width:18,height:18}});}
+ function sampleReceipt(b){return `<div class="ct-proof"><div class="ct-receipt"><span>ตัวอย่างบิล</span><strong>${safe(b.name)}</strong><span>${b.date} 2569</span><div class="ct-dash"></div><div class="ct-receipt-row"><span>ค่าใช้จ่าย</span><span>${money(b.amount)}.00</span></div><div class="ct-dash"></div><div class="ct-receipt-row ct-receipt-total"><span>รวม</span><span>${money(b.amount)}.00</span></div><div class="ct-dash"></div><span>ขอบคุณที่ใช้บริการ</span></div></div>`;}
+ function sampleSlip(b){return `<div class="ct-proof" style="background:var(--ct-mint)"><div class="ct-slip"><div class="ct-slip-check">${icon('check')}</div><strong>โอนสำเร็จ</strong><div class="ct-slip-amount">${money(b.amount)}.00 บาท</div><small>กงสี → ฟีม · บัญชี •••• 4821<br>ตัวอย่างสลิปโอน</small></div></div>`;}
+ function overview(m){
+  const pending=m.bills.filter(b=>!b.paid),paid=m.bills.filter(b=>b.paid);
+  const visible=m.bills.filter(b=>m.filter==='all'||(m.filter==='pending'?!b.paid:b.paid));
+  const payer=m.role==='payer';
+  return `${m.toast?`<div class="ct-toast" role="status">${icon('check-circle-2')}${safe(m.toast)}</div>`:''}
+   <p class="ct-hello">${payer?'กงสี · คนจ่าย':'ฟีม · คนเบิก'} <span style="float:right">2 ตุลาคม 2569</span></p>
+   <div class="ct-hero"><div class="ct-hero-label">${payer?'ยอดที่ต้องจ่ายให้ฟีม':'ยอดรอรับจากกงสี'}</div><div class="ct-amount">${money(pending.reduce((s,b)=>s+b.amount,0))}<small>บาท</small></div><div class="ct-hero-bottom"><span class="ct-mini-pill">${pending.length} รายการรอจ่าย</span><span>ทุกบิลอยู่ตรงนี้</span></div></div>
+   <div class="ct-paid-summary"><span>เคลียร์กันแล้ว ${paid.length} รายการ</span><strong>${money(paid.reduce((s,b)=>s+b.amount,0))} บาท</strong></div>
+   ${payer?'':`<button class="ct-button full cursor-interaction" type="button" data-action="new">${icon('plus')}ส่งบิลใหม่</button>`}
+   <div class="ct-list-top"><div class="ct-list-title">${payer?'บิลจากฟีม':'บิลของฉัน'}<span>${m.bills.length} รายการ</span></div>${icon('arrow-down-wide-narrow')}</div>
+   <div class="ct-filter" role="tablist" aria-label="สถานะบิล">${[['all','ทั้งหมด'],['pending','รอจ่าย'],['paid','จ่ายแล้ว']].map(([v,l])=>`<button type="button" role="tab" class="cursor-interaction" aria-selected="${m.filter===v}" data-filter="${v}">${l}</button>`).join('')}</div>
+   <div aria-live="polite">${visible.length?visible.map(b=>`<button type="button" class="ct-bill cursor-interaction" data-bill="${safe(b.id)}" aria-label="${safe(b.name)} ${money(b.amount)} บาท ${b.paid?'จ่ายแล้ว':'รอจ่าย'}">${thumb(b)}<span class="ct-bill-main"><span class="ct-bill-name" style="display:block">${safe(b.name)}</span><span class="ct-bill-note">${b.date} · รูปบิล 1 ใบ</span></span><span class="ct-bill-right"><span class="ct-bill-price" style="display:block">${money(b.amount)} บาท</span>${status(b)}</span></button>`).join(''):'<div class="ct-empty">ยังไม่มีรายการในหมวดนี้</div>'}</div>
+   <div class="ct-foot">${icon('link-2')}คุณกับกงสี เห็นรายการเดียวกัน</div>`;
+ }
+ function detail(m){
+  const b=m.bills.find(b=>b.id===m.selected);if(!b){m.screen='overview';return overview(m);}
+  return `<button type="button" class="ct-back cursor-interaction" data-action="back">${icon('chevron-left')}กลับไปรายการ</button>
+   ${status(b)}<div class="ct-page-title" style="margin:12px 0 0">${safe(b.name)}</div><div class="ct-detail-amount">${money(b.amount)} บาท</div><div class="ct-meta">ส่งโดยฟีม · ${b.date} ${b.time}</div>
+   <div class="ct-note"><span class="ct-note-label">โน้ตจากคนเบิก</span>${safe(b.note)}</div>${sampleReceipt(b)}
+   <div class="ct-timeline"><span class="ct-timeline-dot"></span><div><strong>ส่งบิลแล้ว</strong>${b.date} · ${b.time}</div></div>
+   ${b.paid?`<div class="ct-timeline"><span class="ct-timeline-dot paid"></span><div><strong>กงสีจ่ายแล้ว</strong>${b.paidDate||'2 ต.ค. · เมื่อสักครู่'}</div></div><div class="ct-note"><span class="ct-note-label">โน้ตจากคนจ่าย</span>${safe(b.paymentNote||'โอนครบแล้วนะ')}</div>${sampleSlip(b)}`:m.role==='payer'?`<button type="button" class="ct-button blue full cursor-interaction" data-action="pay">${icon('paperclip')}แนบสลิปและบันทึกว่าจ่ายแล้ว</button>`:`<div class="ct-note" style="background:var(--ct-sky);text-align:center">${icon('clock-3')} รอกงสีแนบสลิปเพื่อปิดรายการ</div>`}`;
+ }
+ function newForm(m){return `<button type="button" class="ct-back cursor-interaction" data-action="back">${icon('chevron-left')}กลับไปรายการ</button><h2 class="ct-page-title">ส่งบิลใหม่</h2><form data-form="claim"><button type="button" class="ct-upload ${m.attached?'attached':''} cursor-interaction" data-action="attach">${icon(m.attached?'check-circle-2':'camera')}<span>${m.attached?'แนบรูปบิลตัวอย่างแล้ว':'เพิ่มรูปบิล'}</span><small>${m.attached?'รูปบิล 1 ใบ':'ถ่ายรูป หรือเลือกจากคลังภาพ'}</small></button><div class="ct-field"><label>รายการค่าใช้จ่าย<input name="name" required maxlength="70" placeholder="เช่น ค่าน้ำมัน" value="${safe(m.draft?.name||'')}"></label></div><div class="ct-field"><label>ยอดที่ขอเบิก (บาท)<input name="amount" type="number" min="1" max="999999" step="1" required inputmode="numeric" placeholder="0" value="${safe(m.draft?.amount||'')}"></label></div><div class="ct-field"><label>โน้ต<textarea name="note" required maxlength="300" placeholder="บอกอีกฝ่ายว่าค่าใช้จ่ายนี้คืออะไร">${safe(m.draft?.note||'')}</textarea></label></div><button type="button" data-action="submit" class="ct-button blue full cursor-interaction" ${m.attached?'':'disabled'}>${icon('send')}ส่งให้กงสี</button><p class="ct-form-hint">ข้อมูลตัวอย่างสำหรับลองหน้าจอ</p></form>`;}
+ function payForm(m){const b=m.bills.find(b=>b.id===m.selected);return `<button type="button" class="ct-back cursor-interaction" data-action="detail">${icon('chevron-left')}กลับไปดูบิล</button><h2 class="ct-page-title">บันทึกการจ่าย</h2><div class="ct-hero"><div class="ct-hero-label">${safe(b.name)}</div><div class="ct-amount">${money(b.amount)}<small>บาท</small></div><div class="ct-meta">จ่ายเต็มจำนวนให้ฟีม</div></div><form data-form="payment"><button type="button" class="ct-upload ${m.attached?'attached':''} cursor-interaction" data-action="attach">${icon(m.attached?'check-circle-2':'image-plus')}<span>${m.attached?'แนบสลิปตัวอย่างแล้ว':'เพิ่มสลิปโอนเงิน'}</span><small>${m.attached?'หลักฐานการโอน 1 ใบ':'เลือกภาพสลิปจากมือถือ'}</small></button><div class="ct-field"><label>โน้ตถึงฟีม<textarea name="note" maxlength="300" placeholder="เช่น โอนครบแล้วนะ">${safe(m.draft?.note||'')}</textarea></label></div><button type="button" data-action="submit" class="ct-button blue full cursor-interaction" ${m.attached?'':'disabled'}>${icon('check')}บันทึกว่าจ่ายแล้ว</button><p class="ct-form-hint">ข้อมูลตัวอย่างสำหรับลองหน้าจอ</p></form>`;}
+ function submit(m,f){
+  if(!m.attached||!f.reportValidity())return;
+  const data=Object.fromEntries(new FormData(f).entries());
+  if(f.dataset.form==='claim'){
+   m.bills.unshift({id:'new-'+Date.now(),name:data.name.trim(),amount:Number(data.amount),note:data.note.trim(),date:'2 ต.ค.',time:'เมื่อสักครู่',paid:false});m.toast='ส่งบิลให้กงสีแล้ว';m.filter='all';
+  }else{const b=m.bills.find(b=>b.id===m.selected);b.paid=true;b.paymentNote=data.note.trim()||'โอนครบแล้วนะ';b.paidDate='2 ต.ค. · เมื่อสักครู่';m.toast='แนบสลิปแล้ว ปิดรายการเรียบร้อย';m.filter='all';}
+  m.screen='overview';m.attached=false;render(m);save();
+ }
+ function render(m){
+  m.content.innerHTML=m.screen==='detail'?detail(m):m.screen==='new'?newForm(m):m.screen==='pay'?payForm(m):overview(m);
+  m.stage.querySelectorAll('[data-role]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.role===m.role)));
+  refreshIcons();
+ }
+ root.querySelectorAll('[data-app]').forEach(app=>{
+  const key=app.dataset.app,prior=saved?.[key];
+  const m={key,app,stage:app.closest('.ct-stage'),content:app.querySelector('[data-content]'),bills:prior?.bills?.length?prior.bills:structuredClone(mockBills),role:prior?.role==='payer'?'payer':'claimant',filter:['all','pending','paid'].includes(prior?.filter)?prior.filter:'all',screen:['overview','detail','new','pay'].includes(prior?.screen)?prior.screen:'overview',selected:prior?.selected||'fuel',attached:Boolean(prior?.attached),draft:prior?.draft||{},toast:prior?.toast||''};
+  models[key]=m;
+  m.stage.addEventListener('click',e=>{
+   const button=e.target.closest('button');if(!button)return;
+   if(button.dataset.action==='submit'){submit(m,m.content.querySelector('form'));return;}
+   if(button.dataset.role){m.role=button.dataset.role;m.screen='overview';m.toast='';}
+   else if(button.dataset.filter){m.filter=button.dataset.filter;m.toast='';}
+   else if(button.dataset.bill){m.selected=button.dataset.bill;m.screen='detail';m.toast='';}
+   else if(button.dataset.action==='back'){m.screen='overview';m.toast='';}
+   else if(button.dataset.action==='new'){m.screen='new';m.attached=false;m.draft={};}
+   else if(button.dataset.action==='pay'){m.screen='pay';m.attached=false;m.draft={};}
+   else if(button.dataset.action==='detail'){m.screen='detail';}
+   else if(button.dataset.action==='attach'){const form=m.content.querySelector('form');m.draft=Object.fromEntries(new FormData(form).entries());m.attached=true;}
+   else return;
+   render(m);save();
+  });
+  m.content.addEventListener('submit',e=>{e.preventDefault();submit(m,e.target);});
+  render(m);
+ });
+ function style(){root.style.setProperty('--ct-blue',palette.blue);root.style.setProperty('--ct-peach',palette.peach);root.style.setProperty('--ct-radius',palette.radius+'px');}
+ style();
+ if(globalThis.Tweak){const t=new Tweak({container:root,onChange:style});t.addColorPicker(palette,'blue',{label:'ฟ้าสำหรับปุ่มหลัก',reference:'--ct-blue'});t.addColorPicker(palette,'peach',{label:'พีชสำหรับส่งบิล',reference:'--ct-peach'});t.addSlider(palette,'radius',{label:'ความโค้งของแผงยอด',min:12,max:30,unit:'px',reference:'--ct-radius'});}
+ window.addEventListener('openai:set_globals',e=>{const state=e.detail?.globals?.widgetState?.privateContent;if(!state)return;Object.entries(models).forEach(([key,m])=>{const p=state[key];if(!p)return;m.role=p.role==='payer'?'payer':'claimant';m.filter=['all','pending','paid'].includes(p.filter)?p.filter:'all';if(Array.isArray(p.bills)&&p.bills.length)m.bills=p.bills;m.screen=['overview','detail','new','pay'].includes(p.screen)?p.screen:'overview';m.selected=p.selected||'fuel';m.attached=Boolean(p.attached);m.draft=p.draft||{};m.toast=p.toast||'';render(m);});});
+})();
+</script>

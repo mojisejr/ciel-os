@@ -1,0 +1,4 @@
+# A bare `bun test` at the HQ root runs HQ's own tests only. Child repositories under
+# checkouts/ are not HQ content; their tests run in their own checkout and pull request.
+[test]
+root = "test"

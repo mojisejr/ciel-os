@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T103719_mumate_handoff_before_clear_identity_hardening_first
+type: closeout
+recorded_at: 2026-10-02T10:37:19+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-member-identity-hardening-001
+  lane: single
+  objective: >-
+    Hand MuMate over before the owner clears this session. Three MuMate
+    workstreams are live; the next session starts with the new identity
+    hardening (slice 1 authorized, nothing built yet), while the cutover waits
+    and the Render quiet window runs. This record is the cold-session entry
+    for all MuMate work.
+  scope:
+    - State and next steps of mumate-member-identity-hardening-001, mumate-vercel-to-do-001 and mumate-be-retirement-001 as of 2026-10-02 10:37.
+  out_of_scope:
+    - Other workstreams in attention.
+
+outcome:
+  status: recorded
+  slice: none
+  state:
+    - "PRODUCTION ON VERCEL, normal (08:46): fe main b4633c5 then bfcef7a (#868 merged by the team ~10:00), works without BE; bazi pdf-dev 04bc24a."
+    - "mumate-member-identity-hardening-001 (opened 10:36, plan 0.1, slice 1 authorized on staging): a member's user_id works as a key today (finding 20261002T102627). Fix first (signed httpOnly member cookie verified by the #391 fallback; ~30 raw-cookie routes and the client-user_id routes onto resolveSessionUserId + 409 mismatch; unused/v1 routes 410; bazi member routes require x-mumate-client-secret), then the support ID (full UUID + copy in settings). Worktree /Users/non/ghq/github.com/mojisejr/mootech-fe-support-id on branch feat/member-support-id at bfcef7a, npm ci done, NO code yet. Do not show the ID to members before the fix."
+    - "mumate-vercel-to-do-001: everything for the cutover is ready and verified (20261001T121153, 20261001T124635); proposed Wed 2026-10-07 02:00 (20261002T090651) but now behind the hardening if the owner agrees; D7 still needs the promo/merge-rate answers and the go. Hosts run fe c10e91e / bazi 49e22f2 - rebuild from the chosen SHAs before the cutover."
+    - "mumate-be-retirement-001: Render mootech-be suspended 2026-10-02 08:15 (agent via the owner's Render key in the pm2 monitor's .env.local; the Render MCP has no suspend); local pm2 mootech-monitor removed; quiet window to 2026-10-09; delete and step 6 after the cutover holds."
+    - "Wake reports a conflict: the hardening and the cutover workstreams share mootech-fe, bazi-sft-dataset and mumate-infra; owner confirmation is required before parallel execution (same as open question 1)."
+  for_a_cold_session:
+    read_first:
+      - "this record"
+      - "workstreams/mumate-member-identity-hardening-001/PLAN.md"
+      - "memory/events/2026/10/02/20261002T102627_mumate_member_identity_forgeable_cookie_finding.yaml"
+      - "memory/events/2026/10/02/20261002T103629_mumate_member_identity_hardening_opened_slice1_authorized.yaml"
+      - "memory/events/2026/10/02/20261002T090651_mumate_handoff_cutover_plan_next_week_after_render_suspend.yaml (cutover plan)"
+    ask_the_owner_first:
+      - "Order: hardening first, cutover moved later (agent recommends) - this also settles the wake conflict."
+      - "Who tells เอ็ม privately (agent recommends the owner, before the PR opens)."
+      - "D7 for the cutover: MUMATE100 promo over? team merge rate low? (the team merged #868 this morning)."
+    working_rules_learned:
+      - "Use `type: closeout` (not checkpoint) for mid-work records; never pipe bun run check through tail before a commit - read its exit code."
+      - "FE: run npm run build locally before every staging image; verify-architecture is red on main for teammate files so pushes need --no-verify (owner pushes if the harness refuses); new specs go into vitest.config.mts include by hand."
+      - "Probes against production use random UUIDs or the owner's own account only; keep the hole's details out of public channels and PR text."
+
+evidence:
+  plan: workstreams/mumate-member-identity-hardening-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "58fad30"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main bfcef7a; worktree feat/member-support-id clean at bfcef7a"
+    bazi-sft-dataset: "origin/pdf-dev 04bc24a"
+    mumate-infra: "main fb94491 on both hosts; PR 39 draft"
+    render: "mootech-be suspended; dac2-pilot untouched"
+
+unresolved:
+  - "HQ hq/20261001 carries this session's records unpushed (be-retirement decision and suspend, cutover handoff, finding, hardening decision, this record); the owner pushes."
+  - "Omise dashboard check for a webhook to mootech-be.onrender.com (owner, not blocking)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In a fresh session: Wake, read the files above, ask the owner the three
+    questions, then build slice 1 step 1 (signed member cookie + resolver,
+    tests first) in the existing worktree.
+  acceptance_check:
+    - A cold session can state the hole, the fix order, where the code lives, what waits on the owner, and the cutover and Render states from this record alone.

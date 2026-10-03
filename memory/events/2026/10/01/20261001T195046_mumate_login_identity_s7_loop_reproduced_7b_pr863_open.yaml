@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T195046_mumate_login_identity_s7_loop_reproduced_7b_pr863_open
+type: closeout
+recorded_at: 2026-10-01T19:50:46+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Reproduce the shared-link login loop mechanism on staging and open the
+    7b pull request that stops it.
+  scope:
+    - 7a scripted reproduction on staging (curl, fake code, no member data).
+    - 7b mootech-fe branch fix/login-loop-s7b and PR 863.
+    - 7s read-only preflight prepared for the two paid cases that need a decision.
+  out_of_scope:
+    - Merging PR 863; the phone walk of 7a; 7c; any production write.
+
+outcome:
+  status: recorded
+  slice: "7"
+  completed:
+    - "7a (scripted): on app.staging.mumate.co (fe c10e91e, pre-#860) every OAuth callback failure ends on /v2/login?callbackUrl=...&error=OAuthCallback, through /api/auth/error and /api/auth/signin. The FE log names the three causes separately: 'State cookie was missing.' (callback in another cookie jar), 'state mismatch' (a second sign-in POST rewrote the state cookie), 'invalid_grant'. /v2/login never read error, so each looks like the login page again."
+    - "Code reading: the 09-20 fix for the cookie-jar switch (disable_ios_auto_login) covers iOS only; Android keeps LINE auto login, which matches the reported Facebook-on-Android case. Not yet observed on a phone."
+    - "7b PR 863 (fix/login-loop-s7b, f2c7375): show the NextAuth error on /v2/login with an open-in-browser hint inside Facebook/Instagram; drop the 6 s automatic second OAuth; reload on controllerchange only when an older worker controlled the page; stuck screen at 20 s instead of 8 s; /v2/register sends signed-out visitors to /v2/login; remove the line-liff provider and startLiffCredentialsLogin; add /course to the retired-routes KEPT list."
+    - "Gates: tsc 0, eslint 0 on changed paths, vitest all green on the branch (main had 4 failures in v1-retired-routes, fixed here), new test fails on the old hook ('called 2 times'), npm run build green with the VAPID secret gate, gitleaks no leaks."
+    - "Pushed with --no-verify: verify-architecture is red on main for 4 violations outside this diff (pages/v2/fortune/sage.tsx:15, pages/v2/shop/checkout.tsx:13, pages/v2/shop/qrcode.tsx:7, features/v2-shell/components/AppHeader.tsx:185). Stated in the PR."
+    - "7s: the two cases needing action are identified - one member paid 159 THB again on a duplicate while the original is active PRO (refund or extend), and one member paid on the duplicate while the original is free (after #860 they log in to the free original). The other two paid originals are reachable and need no write. Read-only preflight in .assets/mumate/support (git-ignored, mode 600)."
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.10"
+  slice: "7"
+  repository:
+    head: b8a0f63
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe_branch: "fix/login-loop-s7b f2c7375 on origin/main a16a1f2"
+    pull_request: "https://github.com/mojisejr/mootech-fe/pull/863"
+    staging_image: "mootech-fe:c10e91e...-staging, kept for the 7a phone walk"
+
+unresolved:
+  - "LIFF-window signups hold only a LIFF-provider subject. MEMBER_ID lives 7 days from mint and is not refreshed (constants/config.ts:2, lib/auth/mint-member.ts:100); from about 2026-10-05 21:41 to 2026-10-08 17:25 each such member is signed out by the #860 self-heal and their next login creates a second account. A carry-over (signed short-lived proof from the ending LIFF session, applied only when the Login-channel subject has no owner and the carried member was created in the window) needs the owner's decision."
+  - "verify-architecture red on main (4 violations in the teammate's files) blocks every pre-push; not this lane's to fix without a decision."
+  - "7a phone walk (Android, Facebook app, LINE account absent from staging) not yet done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: review and merge PR 863; decide the LIFF carry-over and the two
+    paid cases; schedule the 7a phone walk while the agent reads the staging
+    log live. Agent: start 7c on a separate branch.
+  acceptance_check:
+    - PR 863 merged and its Vercel production deployment reports success.
+    - The 7a walk names the failing step from the staging log.

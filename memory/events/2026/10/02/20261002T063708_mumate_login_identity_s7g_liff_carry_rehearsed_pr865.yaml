@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T063708_mumate_login_identity_s7g_liff_carry_rehearsed_pr865
+type: closeout
+recorded_at: 2026-10-02T06:37:08+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Record owner decision 37 (the LIFF carry-over) and its build and staging
+    rehearsal: members who first signed up through LIFF get their own account
+    back on their next LINE login instead of a new empty one.
+  scope:
+    - Owner decision 37 and phase 7g of slice 7.
+    - mootech-fe branch feat/liff-carry-over-s7g (c4358a4, 6138560), draft PR 865, staging image 6138560...-staging.
+    - Staging-only rehearsal on mumate-2 with a staged member and session tokens signed with staging's own secret.
+  out_of_scope:
+    - Merging PR 865; production; the owner's phone check.
+
+outcome:
+  status: recorded
+  slice: "7"
+  completed:
+    - "Owner decision 37 (2026-10-02): build the carry-over now ('ใบส่งต่อ ผมคิดว่าควรทำเลย'), after asking what it affects; impact stated before building - who is carried (window signups whose browser still holds a LIFF-era session), who is untouched (members whose Login-channel identity already has an owner, Google, post-window signups), the two-LINE-rows exception, the same-browser 30-minute wrong-person risk, and that it is temporary until 2026-10-31; the owner asked to rehearse on staging first."
+    - "Design: an HMAC-signed httpOnly cookie (30 min, path /api/auth) issued only from the signed NextAuth session when the LIFF subject has one owner created in the window with one LINE row; register-login attaches a Login-channel subject with no owner to that account inside the locked transaction, otherwise fails open; identity-status does not ask; the self-heal ends LIFF-era sessions even with a MEMBER_ID, requesting the carry first."
+    - "The first staging image failed to build (node:crypto reached the client bundle through the self-heal); split into liff-carry-shared.ts; local npm run build green before the second push."
+    - "Gates on 6138560: tsc 0; eslint 0 errors; vitest 294 files / 3593 tests pass; new tests C1-C5 and S1-S4 (2 of 3 S tests fail against main); npm run build green with the VAPID gate; verify-architecture only the 4 violations already on main; gitleaks clean."
+    - "Staging rehearsal 06:36 (headless Chromium, LINE user agent, real client, server and staging DB). Phase 1 LIFF-era session + MEMBER_ID: carry issued, MEMBER_ID cleared, signed out. Phase 2 Login-channel session: identity-status, register-login-fe, MEMBER_ID = the original member, carry cleared; member has 2 LINE rows; 0 new members. Server log '[liff-carry] issued' and 'attached'. Negative control without a carry: /v2/welcome-back, no member created."
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.10"
+  slice: "7"
+  repository:
+    head: aaaf10b
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe_branch: "feat/liff-carry-over-s7g 6138560"
+    pull_request: "https://github.com/mojisejr/mootech-fe/pull/865 (draft)"
+    staging_fe: "6138560...-staging"
+  staging_state: "the owner's walk-C staging member is staged as a LIFF-window signup (create_at and its LINE subject changed; originals saved mode 600 in .assets/mumate/staging-s7/carry-backup.txt) and now also holds the owner's Login-channel subject; the owner's first staging account's LINE row is still parked"
+
+unresolved:
+  - "The owner's phone check on staging and the merge of PR 865 are the owner's; needed before about 2026-10-05 21:41."
+  - "Members whose LIFF-era session is already gone are not carried; they meet the question and support."
+  - "PLAN.md does not yet carry phase 7g or decision 37 in its text; add with the slice 7 closeout."
+  - "Staging restore after the walks: carry-backup.txt and restore-owner-line.sql."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner opens staging inside LINE and confirms he lands on his walk-C
+    account; then marks PR 865 ready and merges; the agent checks the
+    production deployment and watches '[liff-carry]' lines in Vercel logs.
+  acceptance_check:
+    - Wake shows this record for mumate-login-identity-001 and no validation error.

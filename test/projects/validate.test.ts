@@ -1,4 +1,5 @@
-import { join, resolve } from "node:path";
+import { readdirSync } from "node:fs";
+import { join, relative, resolve, sep } from "node:path";
 
 import { expect, test } from "bun:test";
 
@@ -6,26 +7,23 @@ import { validateProjectDirectory } from "../../src/projects/validate.ts";
 
 const fixtureDirectory = (name: string): string => join(import.meta.dir, "../fixtures/projects", name);
 
+// The registry is projects/ itself, so this test holds no second copy of it: a hand-written list
+// went stale on three of the last four registrations (a827400, ba59b5e, 6ba6ddb). It asserts that
+// every project directory carries exactly one valid project.yaml and nothing else is picked up.
+// Paths are compared relative and with "/" so the test reads the same on Windows.
 test("validates the committed project registry", async () => {
-  const result = await validateProjectDirectory(resolve(import.meta.dir, "../../projects"));
+  const projectsDirectory = resolve(import.meta.dir, "../../projects");
+  const result = await validateProjectDirectory(projectsDirectory);
+
+  const projectDirectories = readdirSync(projectsDirectory, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort();
+  const found = result.files.map((file) => relative(projectsDirectory, file).split(sep).join("/"));
 
   expect(result.errors).toEqual([]);
-  expect(result.files).toEqual([
-    expect.stringContaining("projects/bazi-sft-dataset/project.yaml"),
-    expect.stringContaining("projects/ciel-mini-template/project.yaml"),
-    expect.stringContaining("projects/ciel-os/project.yaml"),
-    expect.stringContaining("projects/cu12-e2e-lab/project.yaml"),
-    expect.stringContaining("projects/cu12-simulator/project.yaml"),
-    expect.stringContaining("projects/dac2-durian-smart-account/project.yaml"),
-    expect.stringContaining("projects/mbti-planner-pilot/project.yaml"),
-    expect.stringContaining("projects/mootech-be/project.yaml"),
-    expect.stringContaining("projects/mootech-fe/project.yaml"),
-    expect.stringContaining("projects/mumate-infra/project.yaml"),
-    expect.stringContaining("projects/orchard-decision-lab/project.yaml"),
-    expect.stringContaining("projects/pilot-task-ledger/project.yaml"),
-    expect.stringContaining("projects/pilot-task-report/project.yaml"),
-    expect.stringContaining("projects/smc-v2/project.yaml")
-  ]);
+  expect(projectDirectories.length).toBeGreaterThan(0);
+  expect(found).toEqual(projectDirectories.map((name) => `${name}/project.yaml`));
 });
 
 test("accepts a declared local-only Git project identity", async () => {

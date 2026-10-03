@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T074629_mumate_promo_popup_auth_opened_slice1_authorized
+type: decision
+recorded_at: 2026-10-03T07:46:29+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-promo-popup-auth-001
+  lane: single
+  objective: >-
+    Open the workstream and authorize slice 1 of plan 0.1: the check-in
+    promo popup opens only for a signed-in member who has not checked in
+    today.
+  scope:
+    - mootech-fe topic branch, PromoPopup.tsx and a new test, draft PR, Vercel preview check.
+    - After the owner's merge, a staging build and release of the merge SHA.
+  out_of_scope:
+    - Login and identity code, the check-in screen, the wallet API, the popup image.
+
+outcome:
+  status: decided
+  slice: "1"
+  parallelism: approved
+  decision: >-
+    The owner reported the popup showing to visitors who are not signed in
+    and asked for it to show only to signed-in users. After the agent's
+    research the owner asked to combine both parts in one slice ("เราทำ 1 2
+    ทีเดียวเลยได้หรือเปล่า"), then said to open the workstream, confirmed no
+    other work is running in mootech-fe now, and that the change goes to
+    production on Vercel after the merge with staging updated too.
+  owner_decisions:
+    - "Show the popup only to a signed-in user."
+    - "Also hide it from a member who has already checked in today, in the same slice."
+    - "No other work is running in mootech-fe now; this lane may run beside the active workstreams that list mootech-fe."
+    - "After the merge: production on Vercel, then staging updated to the same SHA."
+  agent_decisions:
+    - "If the wallet request fails the popup opens as today (the worst case is the current behaviour)."
+  authorizes:
+    - Slice 1 of plan 0.1 as written, including the staging build and release of the merged SHA.
+  does_not_authorize:
+    - The merge itself (the owner merges), any change outside PromoPopup and its test.
+
+evidence:
+  plan: workstreams/mumate-promo-popup-auth-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "e83da37"
+    branch: hq/20261001
+    working_tree: this-decision-and-plan-0.1
+  application:
+    mootech-fe: "origin/main fb1f037"
+
+unresolved:
+  - "Whether /api/qi-wallet limits the history it returns is unverified; today's check-in would be the newest row."
+  - "The staging release must not run while mumate-alert-messages-001 slice 1 is stopping fe on mumate-2."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 1 on a mootech-fe topic branch, test first; open a draft PR
+    and check the Vercel preview.
+  acceptance_check:
+    - Slice 1 DoD in the plan.

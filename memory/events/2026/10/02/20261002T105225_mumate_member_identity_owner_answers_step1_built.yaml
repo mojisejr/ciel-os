@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T105225_mumate_member_identity_owner_answers_step1_built
+type: closeout
+recorded_at: 2026-10-02T10:52:25+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-member-identity-hardening-001
+  lane: single
+  objective: >-
+    Record the owner's answers to the three open questions from the
+    10:37 handoff, and the slice 1 step 1 checkpoint (signed member cookie
+    and resolver) built locally on feat/member-support-id.
+  scope:
+    - Owner answers on order, who tells เอ็ม, and D7 of the cutover.
+    - mootech-fe worktree ../mootech-fe-support-id commit 0e43819 (local, not pushed).
+  out_of_scope:
+    - Steps 2-4 of slice 1, staging, production, the cutover itself.
+
+outcome:
+  status: recorded
+  slice: "1"
+  owner_answers:
+    - "Order: hardening first; the DigitalOcean cutover moves after the hardening is live on production and has settled about two days - likely the week of 2026-10-12 (agent's recommendation, chosen). This settles the wake conflict between this workstream and mumate-vercel-to-do-001: they do not run in parallel."
+    - "เอ็ม: the owner tells him privately, before the PR opens (agent's recommendation, chosen). The agent does not open the FE PR until the owner says he has been told."
+    - "D7: MUMATE100 promo is NOT over (no end date given). Team merge rate: not slowing (4-11 merges a day on fe main 09-26..10-02); the owner will agree a freeze with the team when the cutover date is set rather than wait for it to slow (agent's recommendation, chosen)."
+  step_1_built:
+    - "lib/auth/member-seal.ts: httpOnly HMAC-signed member cookie (__Secure-mumate.member on production builds), key derived from NEXTAUTH_SECRET with its own label (no new env), 30 days, refreshed past half life."
+    - "Issued by register-login-fe on a successful login and by resolveSessionUserId whenever a signed session resolves, so members who keep a session get it without signing in again."
+    - "#391 fallback (no NextAuth session) now needs a valid seal AND cookie-mumate-id naming the same member, then the user row; a client-side logout (which clears only cookie-mumate-id) still ends it."
+    - "/api/auth/member-check + useUnsealedMemberCheck (mounted in IdentitySelfHeal): with cookie-mumate-id but no session, one GET; only a definite 401 clears MEMBER_* so the member signs in once; 204/404/409/5xx/network keep everything."
+    - "Not yet changed: the ~30 routes that read cookie-mumate-id directly and the client-user_id routes (step 2), bazi (step 3), the support ID (step 4). The hole stays open on those routes until step 2."
+
+evidence:
+  plan: workstreams/mumate-member-identity-hardening-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "73595c7"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe: "feat/member-support-id 0e43819 on bfcef7a (local, not pushed)"
+  checks:
+    - "vitest full suite 296 files / 3626 passed / 0 failed (baseline 3592 passed before this step)."
+    - "Mutants: 11 of 12 guards in member-seal/resolve-user and 5 of 5 in member-check go red when removed; the one that stays green removes a redundant early return already covered by the cookie-equals-seal comparison."
+    - "npm run build (next build) exit 0 at 0e43819."
+    - "tsc 0, eslint 0 on touched files, gitleaks over origin/main..0e43819 0, verify-architecture output identical to main (red on main for teammate files, no new violation)."
+
+unresolved:
+  - "Steps 2-4 of slice 1 remain; the forged raw-cookie and client user_id routes are still open until step 2."
+  - "MUMATE100 end date unknown; needed before the cutover date is fixed."
+  - "HQ hq/20261001 carries this session's records unpushed; the owner pushes."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Slice 1 step 2: move the raw-cookie and client-user_id routes onto
+    resolveSessionUserId with the 409 mismatch, scope /api/user and
+    member-with-friend/detail to the caller, 410 for unused and v1-only
+    routes; tests per route first.
+  acceptance_check:
+    - Slice 1 DoD in the plan.

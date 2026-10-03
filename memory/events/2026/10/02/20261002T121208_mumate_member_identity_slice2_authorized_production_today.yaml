@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T121208_mumate_member_identity_slice2_authorized_production_today
+type: decision
+recorded_at: 2026-10-02T12:12:08+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-member-identity-hardening-001
+  lane: single
+  objective: >-
+    Authorize slice 2 of plan 0.1: take the hardening and the support ID to
+    production today, in the agreed order, with the agent verifying each step.
+  scope:
+    - Hash comparison of BAZI_CLIENT_ID_SECRET on the two Vercel production projects (values never printed, temp files deleted).
+    - Owner merges mootech-fe PR 873, agent verifies production; owner merges bazi-sft-dataset PR 47, agent verifies.
+    - Probes with random UUIDs or the owner's own account only.
+  out_of_scope:
+    - Reading another member's data; the DigitalOcean cutover; pushing HQ.
+
+outcome:
+  status: decided
+  slice: "2"
+  decision: >-
+    Asked 2026-10-02 12:10 whether to go to production today (agent
+    recommended daytime while the team is around, staging walked) and
+    whether the agent may compare the two Vercel secrets by hash (read-only,
+    values never printed). Owner: "ไปเลยวันนี้ (แนะนำ)" and "ให้ผมเช็กด้วย hash
+    (แนะนำ)".
+  owner_decisions:
+    - "Slice 2 today: (1) secrets match on both Vercel projects, (2) owner merges fe#873 and the agent verifies, owner logs in on the phone, (3) owner merges bazi#47 and the agent verifies. Vercel Instant Rollback if anything breaks."
+    - "The agent may pull the two production values into temp files to compare sha256, without printing them, deleting the files at once."
+  authorizes:
+    - Slice 2 of plan 0.1 as written, plus the hash comparison above.
+  does_not_authorize:
+    - The agent merging PRs or changing Vercel env; reading other members' data; pushing HQ.
+
+evidence:
+  plan: workstreams/mumate-member-identity-hardening-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "e383e4f"
+    branch: hq/20261001
+    working_tree: this-decision-only
+  application:
+    mootech-fe: "PR 873 head 3b227ad, ready, mergeable"
+    bazi-sft-dataset: "PR 47 head 1c0076d, ready, mergeable"
+    vercel: "BAZI_CLIENT_ID_SECRET exists on production of both projects (added ~2 days ago); equality unverified at this record"
+
+unresolved:
+  - "Whether the two Vercel values are equal (next step)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Compare the two values by hash; if equal, ask the owner to merge fe#873.
+  acceptance_check:
+    - Slice 2 in the plan.

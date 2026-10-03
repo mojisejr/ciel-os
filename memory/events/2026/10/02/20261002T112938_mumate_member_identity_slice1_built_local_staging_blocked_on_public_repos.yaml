@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T112938_mumate_member_identity_slice1_built_local_staging_blocked_on_public_repos
+type: closeout
+recorded_at: 2026-10-02T11:29:38+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-member-identity-hardening-001
+  lane: single
+  objective: >-
+    Checkpoint: slice 1 steps 1-4 are built and green on local branches in
+    both repos; nothing is pushed. Staging needs the branches or images on
+    GitHub, and mootech-fe, bazi-sft-dataset and ciel-os are public
+    repositories, so the way to staging waits on the owner.
+  scope:
+    - mootech-fe feat/member-support-id (worktree ../mootech-fe-support-id), local only.
+    - bazi-sft-dataset feat/member-client-secret (worktree ../bazi-sft-dataset-member-secret, from origin/pdf-dev 04bc24a), local only.
+  out_of_scope:
+    - Staging release, PRs, production.
+
+outcome:
+  status: recorded
+  slice: "1"
+  built:
+    - "Step 1 (fe 0e43819): member seal cookie and resolver; register-login-fe and verified sessions issue it."
+    - "Step 2 (fe dfdeb54, bcc9b92, ed9e648): member routes resolve the caller from the session or the seal; client-named ids are refused with the existing 409 identity answer; v1-only routes answer 410; a once-per-load member check clears a stale MEMBER_ID so the member signs in once or the self-heal re-mints."
+    - "Step 3 (fe 0225b14, bazi 4471054): every FE call to bazi carries the client secret (baziFetch); bazi member routes require it, fail closed in production without it; anonymous card/chat use unchanged."
+    - "Step 4 (fe f908f7f): settings shows ID สมาชิก (full user_id from the /api/user row) with a copy button and a LINE fallback."
+  blocked_on:
+    - "Public repositories: pushing either branch publishes the fix while production on Vercel is still open. Owner decides the route to staging."
+    - "The agent's GitHub token has no write:packages, so it cannot push staging images to GHCR itself."
+
+evidence:
+  plan: workstreams/mumate-member-identity-hardening-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "6b40b7c"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe: "feat/member-support-id f908f7f (6 commits on origin/main bfcef7a), not pushed"
+    bazi-sft-dataset: "feat/member-client-secret 4471054 (1 commit on origin/pdf-dev 04bc24a), not pushed"
+  checks:
+    - "mootech-fe: vitest 300 files / 3829 passed / 0 failed; tsc 0; eslint 0 on touched files; npm run build 0 at f908f7f; gitleaks 0 over origin/main..f908f7f; verify-architecture output identical to main."
+    - "bazi: tests/member-client-secret.test.ts 117 passed; full vitest 9 failed / 1547 passed, the same 9 fail on clean origin/pdf-dev (pre-existing); tsc 0; eslint 0 on touched files; next build 0; gitleaks 0."
+    - "Mutation: every guard added in steps 1-4 was removed one at a time and its test went red; the survivors were equivalent mutants and were killed by added cases or explained in the test headers."
+    - "One full FE run showed 1 failure that two reruns did not reproduce (flaky, not identified)."
+
+unresolved:
+  - "ciel-os is public: the 10:26 finding and this round's records are on unpushed hq/20261001. Pushing HQ before slice 2 is live on production would publish the details. Owner holds the HQ push."
+  - "Production order for slice 2: same BAZI_CLIENT_ID_SECRET on Vercel FE and bazi (production), redeploy FE, then merge/deploy bazi; bazi fails closed without it."
+  - "bazi's own pages that call member routes from the browser with an id (/mvp test page, the louise-hay page's QI path) stop working for member ids; members use mootech-fe and are not affected."
+  - "Separate privacy item, not changed: bazi /api/stats is open and lists chat users' ids and recent louise-hay questions; several bazi internal tools (dataset, reading sessions, newdata-reading llm) are unauthenticated."
+  - "Production members with a cookie but no session and no seal sign in once; members whose cookie names another account are re-minted automatically."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner chooses the route to staging (push branches now, or keep the code
+    off GitHub until merge with images built outside the public repos); then
+    build and release staging and hand the owner the phone walk.
+  acceptance_check:
+    - Slice 1 DoD in the plan.

@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T105130_mumate_owner_env_answers_and_control_room_audit
+type: closeout
+recorded_at: 2026-10-01T10:51:30+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the owner's answers on the production env names that were waiting on
+    เอ็ม, the ANALYTICS_USER_ID_KEY fill, and a read-only audit of the whole
+    mumate-infra control room against production on mumate-prod-1.
+  scope:
+    - prod-fill.env (local), mumate-infra main 2a72d63 and draft PR 39 (read only), mumate-prod-1 (read only).
+  out_of_scope:
+    - Slice 6 itself; any host, DNS, Vercel or repository change.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Live check this session, before 10:51: production on Vercel and normal (/api/health 200 platform vercel, /v2 /v2/login /what-if 200, no maintenance page, latest production deployments Ready); DNS CNAME to Vercel, TTL 3600; bin/hosts.sh status green on both hosts, compare shows only intended differences."
+    - "Owner: GLASS_BOX_KEY, OPS_DASHBOARD_KEY and OPS_ADMINS are not needed yet - no confirmation from เอ็ม required; runbook 06 step 1 keeps taking them from staging."
+    - "Owner: ANALYTICS_USER_ID_KEY was set by the owner (not เอ็ม). Both hosts carry the staging value (generated fresh for the shadow on 2026-09-20), which differs from the owner's .assets/mumate/.env-ga.md (2026-09-16, the day the owner set it on Vercel Production; Vercel returns it empty as sensitive). The agent filled prod-fill.env from .env-ga.md (64 hex, sha prefix a1d0016605; file stays 600). env-from-vercel.sh applies --from-staging before --fill-file, so runbook 06 step 1 must drop --from-staging ANALYTICS_USER_ID_KEY or GA4 user ids restart at the cutover."
+    - "RELEASE_ACTORS = mojisejr (the owner presses production releases, as runbook 06 says); release.yml comment naming เอ็ม is wording only."
+    - "mumate-prod-1 today: CRON_SECRET non-empty in env/fe.env and env/bazi.env, bin/cron-check.sh exit 0 (counts only, no values)."
+  audit:
+    blocks_cutover:
+      - "Draft PR 39 title and its cron.tsv comment say 'runbook 06 step 4'; the cron move is step 3 (step 4 is DNS). Fix to step 3 and rebase on main."
+      - "Runbook 06 step 3: add a pre-check (CRON_SECRET counted in fe.env and bazi.env, cron-check exit 0) before the owner disables Vercel crons, and verify the five timers with systemctl is-active instead of counting list-timers lines; cron-install.sh leaves a timer off without failing when either is missing."
+    fix_before_cutover:
+      - "Runbook 06 flip-back step 3: after reverting PR 39, git pull on mumate-prod-1 and cron-install.sh, or a later cron-install turns the timers back on."
+      - "Runbook 00 (owner, phone) names only mumate-2 and app.staging; needs production first (bazichart.mumate.co, mumate-prod-1), the env prefix as the urgency signal, and the 'mumate host log silence' rule name."
+      - "Runbook 01 deploy examples use BE_TAG and omit --profile full (deploy.sh then recreates neither fe nor bazi yet reports ok); no production section (release button only; rollback.sh allowed)."
+      - "Runbook 05 says backups move to the production host in slice 5; they stay on mumate-2, so a staging backup alarm concerns the production DB."
+      - "Runbook 02 arena and bin/fe-recovery-prove.sh assume 'shadow' and have no MUMATE_ENV guard; on mumate-prod-1 they would point live users at a snapshot or take fe off its network."
+      - "Runbook 04 first-response LogQL and ssh examples are mumate-2 only; ACME note says DO DNS (it is Namecheap); Better Stack has no bazichart.mumate.co monitor."
+      - "env-from-vercel.sh rewrites the whole env file: a re-run after the cutover drops QSTASH_TOKEN and resets MAINTENANCE_MODE unless --set is passed; needs a warning."
+      - "03-new-host and .env.example default to mumate-2/staging and BE_TAG; no production rebuild example."
+      - "Grafana dashboard CPU/RAM/Disk legends do not carry {{host}}."
+    after:
+      - "README and grafana README counts and host lists, 'shadow' and 'mumate-1' wording, systemd timer descriptions, BE leftovers in env examples."
+    correct:
+      - "rollback.sh defaults to --profile full; alert/health-notify/cron-call take env and host from .env; hosts.tsv, log-silence and synthetic checks include production; step 1 flags exist; the five flip-back timer names exist and match PR 39."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "124cc92"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mumate-infra: "main 2a72d63; PR 39 head c5728ed (draft)"
+    host: "mumate-prod-1: fe c10e91e, bazi 49e22f2 healthy, MAINTENANCE_MODE on, no cron timers, infra abfb499"
+
+unresolved:
+  - "Still missing for the cutover: QSTASH_CURRENT_SIGNING_KEY, QSTASH_NEXT_SIGNING_KEY, prod-qstash-token.env (owner via เอ็ม); bazi SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY question; LINE webhook/LIFF endpoints of channel 2011679472."
+  - "Unverified, owner to check: Better Stack monitor for bazichart.mumate.co, DigitalOcean alert policies covering mumate-prod-1, root password for the mumate-prod-1 Recovery Console (emergency door 1)."
+  - "mumate-prod-1 holds env/bazi.env.bak-20261001T000901Z from the slice-5 fix (secret copy; delete by filename after the cutover)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decides whether the agent opens one mumate-infra docs/guard PR with the
+    blocks-cutover and fix-before-cutover items (and fixes PR 39's step label)
+    before the slice-6 go; QStash keys and D7 still wait on the owner.
+  acceptance_check:
+    - Wake validates this event; prod-fill.env ANALYTICS_USER_ID_KEY hash prefix is a1d0016605.

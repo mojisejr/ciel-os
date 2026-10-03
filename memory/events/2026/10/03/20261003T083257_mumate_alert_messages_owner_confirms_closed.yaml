@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T083257_mumate_alert_messages_owner_confirms_closed
+type: closeout
+recorded_at: 2026-10-03T08:32:57+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-alert-messages-001
+  lane: single
+  objective: >-
+    Record the owner's confirmation that the workstream is done, the last
+    open item of slice 2's acceptance.
+  scope:
+    - The owner's word after reading the delivery report.
+  out_of_scope:
+    - Any further change.
+
+outcome:
+  status: recorded
+  slice: none
+  state:
+    - "Owner, after the delivery report: 'ผมคิดว่าน่าจะ เรียบร้อยปิด workstream ได้เลยป่ะครับ ถ้าได้ ปิดเลยครับผม'. The final delivery is the slice-2 closeout (ready-for-owner-merge); per README the plan is not edited to journal completion - wake reports it complete once HQ reaches origin/main (HQ push is held by the owner)."
+    - "The channel renames and the phone notification setting are the owner's own actions and do not keep the workstream open; wording changes after reading the samples are a new small item."
+
+evidence:
+  plan: workstreams/mumate-alert-messages-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: "92a07f4"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mumate-infra: "main 31b9f7c"
+
+unresolved:
+  - "Owner: rename the two Discord channels (ต้องดู / ข้อมูล) and set ต้องดู notifications to all messages on the phone, if not yet done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Nothing in this workstream.
+  acceptance_check:
+    - The slice-2 closeout and this confirmation are on HQ.

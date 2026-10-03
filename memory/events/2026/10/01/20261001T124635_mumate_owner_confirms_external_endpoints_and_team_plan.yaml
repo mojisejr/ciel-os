@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T124635_mumate_owner_confirms_external_endpoints_and_team_plan
+type: closeout
+recorded_at: 2026-10-01T12:46:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the owner's answers to the nine team items before the cutover
+    (external endpoints, QStash identity, migrations, DNS, review, freeze,
+    release after the move).
+  scope:
+    - Owner answers 2026-10-01 to the agent's team-confirmation table.
+  out_of_scope:
+    - Slice 6 itself; D7 and the go remain open.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "1 bazi SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY: not used - absent on Vercel bazi production means unused; stay absent on DO (env-from-vercel already leaves absent names out)."
+    - "2 LINE: every endpoint in the console (webhook, LIFF) points at bazichart.mumate.co (owner) - follows the DNS flip."
+    - "3 Beam production webhook points at bazichart.mumate.co (owner set it)."
+    - "4 QStash values from เอ็ม are the same set Vercel production uses (owner)."
+    - "5 No pending DB migration for the cutover SHAs; schema mostly settled (owner)."
+    - "6 DNS (TTL drop and the record change): the team, told by the owner on the day the move is set."
+    - "7 Step-5 review: the owner tries it himself and asks the team to try at the window (they will be free then)."
+    - "8 Freeze: the owner announces it once the actual cutover time is fixed."
+    - "9 Release after the move: for now the owner and agent handle it - when the team merges, we build and release staging, then the owner presses production; the team is not changed over yet."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "49bdff9"
+    branch: hq/20261001
+    working_tree: this-record-only
+
+unresolved:
+  - "Open before slice 6: D7 and the owner's go (slice-6 decision, recording WHATIF_KEY and GITHUB_TOKEN accepted empty); window; LINE OA notice; team told about DNS, review and freeze; TTL 300 at least 24 h before; production images of the chosen SHAs; Better Stack staging monitor confirmed and api/bazi.staging deleted."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Wait for D7 and the owner's go; then the slice-6 decision and runbook 06
+    from the pre-day list (TTL first).
+  acceptance_check:
+    - The nine team items are answered in this record; none blocks the go.

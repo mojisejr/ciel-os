@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T050348_mumate_login_identity_s7_7a_walked_7b_live
+type: closeout
+recorded_at: 2026-10-02T05:03:48+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close phases 7a and 7b: the owner walked the shared-link login on a real
+    Android phone inside the Facebook app on staging, before and after the
+    fix, and merged PR 863, now live on production.
+  scope:
+    - 7a phone walks on staging, with the agent reading Caddy and the FE log live.
+    - 7b PR 863 merged by the owner and deployed by Vercel.
+  out_of_scope:
+    - 7c, 7d, 7s; the LIFF carry-over decision.
+
+outcome:
+  status: recorded
+  slice: "7"
+  completed:
+    - "Staging set-up (staging DB only, pgstaging/mumate_staging; FE and bazi both on it; LINE Login channel the same as production): the owner asked for his account to be a new member. His LINE user_provider row was parked (provider LINE_PARKED_S7), one row, with park / renew / restore scripts kept mode 600 in .assets/mumate/staging-s7."
+    - "Walk A, staging fe c10e91e (pre-fix), 2026-10-02 04:48: Android 16 (Galaxy Z Flip), Facebook in-app WebView, /invite/MUMATE190 -> LINE sign-in 04:48:31 -> callback 04:48:55 in the same WebView -> asked, answered 'never used' -> new member minted 04:49:13, birth date saved, referral redeemed. No loop. LINE did not switch to the LINE app; it asked for the LINE email and password and then a verification code shown in the LINE app."
+    - "Walk B, staging fe f2c7375 (PR 863, released through mumate-infra release run 36931519791), 04:57: same phone and path, tapped quickly. Sign-in 04:57:54, callback 04:57:57 (LINE single sign-on from walk A), asked, new member minted 04:58:06, onboarding complete 04:58:33. No OAuth error in the log."
+    - "The reported loop was not reproduced on this device in either walk. The cookie-jar switch did not occur here. The remaining causes are timing-dependent (service-worker first-visit reload, the 6 s second OAuth on a slow response), and 7b removes both; any other failure now shows a message on /v2/login instead of a silent return."
+    - "Before the merge the agent checked mootech-fe: no commit on main after a16a1f2, no new branch or PR from the teammate, production still a16a1f2; PR 863 MERGEABLE/CLEAN."
+    - "PR 863 merged by the owner as 21d0dc1; Vercel production deployment 6796247644 success at 2026-10-02T05:03:38+07:00. Production /api/auth/providers lists line, google, facebook, twitter - no line-liff."
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.10"
+  slice: "7"
+  repository:
+    head: e1524d8
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe_main: "21d0dc1 (merge of PR 863, f2c7375)"
+    production_deployment: "6796247644 success"
+    staging_fe: "f2c7375...-staging"
+  dod_7:
+    G1: "partly - the mechanism is shown on staging (OAuthCallback to a silent /v2/login); the reporter's exact trigger was not observed on the owner's phone"
+    G2: "met on one Android/Facebook device, before and after 7b"
+    G3: "met by 7b (shown on /v2/login), covered by scripts/login-loop-s7b.test.ts"
+    G6: "met for 7b"
+
+unresolved:
+  - "Inside the Facebook in-app browser LINE login asks for email, password and an in-app verification code - a drop-off, not a loop. 7c moves members to the external browser before OAuth; whether Chrome on Android then gives one-tap LINE login must be walked."
+  - "LIFF carry-over decision (window signups lose their account as MEMBER_ID expires from about 2026-10-05 21:41)."
+  - "Paid cases 7s: refund or extend for the member who paid again; remap for the member whose payment sits on the duplicate."
+  - "Staging side issues seen in walk logs, not this lane's: GET /api/referral 500 and GET /api/auth/link/connections 404 on the account page of a member with no login identity left."
+  - "verify-architecture red on main for four violations in the teammate's files."
+  - "The owner's staging LINE row is still parked for 7c walks; restore-owner-line.sql gives it back."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Start 7c on a new mootech-fe branch: leave in-app browsers (Facebook,
+    Instagram, Messenger, LINE) before OAuth, replace LIFF share and
+    openWindow, and remove LiffBoot and @line/liff; then walk it on staging.
+  acceptance_check:
+    - Wake shows this record as the latest for mumate-login-identity-001 and no validation error.

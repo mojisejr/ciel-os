@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T081635_mumate_be_retirement_render_suspended_quiet_window_open
+type: closeout
+recorded_at: 2026-10-02T08:16:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-be-retirement-001
+  lane: single
+  objective: >-
+    Carry out slice 4 steps 4-5 as decided at 20261002T081242 (the owner then
+    said "คุณจัดการได้เลย แล้วรายงาน"): retire the pm2 monitor's BE watch and
+    suspend Render mootech-be, then open the seven-day quiet window (P3).
+  scope:
+    - Local pm2 process mootech-monitor; Render service srv-d8nc4j8k1i2s73d7e030; read-only verification of Vercel production and dac2-pilot.
+  out_of_scope:
+    - Step 6 (delete, archive, DDL copy, host clean-up, credential rotation); Vercel env; dac2-pilot.
+
+outcome:
+  status: recorded
+  slice: "4"
+  completed:
+    - "pm2: the monitor's BE target is hard-coded (scripts/monitor/config.ts) together with Render metrics of the BE service, so dropping only BE meant editing the retired repository. Its other target, bazichart.mumate.co, is already watched by the Grafana synthetic mumate-fe-production (Singapore + Tokyo, 3 min) and the Better Stack production monitor - R5's precondition. The agent removed the whole process with the README's own stop command (pm2 delete mootech-monitor && pm2 save) at 08:14; arra-oracle-v3 and maw untouched. Restore: cd /Users/non/dev/opilot/projects/mootech-be && pm2 start scripts/monitor/ecosystem.config.cjs && pm2 save."
+    - "Render: the MCP has no suspend tool and RENDER_API_KEY in the teammate's env file is empty; the owner's Render key in the monitor's .env.local (SERVER_MONITOR_RENDER_API_KEY, never printed) was used for POST /v1/services/srv-d8nc4j8k1i2s73d7e030/suspend -> 202 at 08:15:59; service reads suspended, suspenders [user], plan standard. Rollback: Render -> mootech-be -> Resume (or POST .../resume)."
+    - "Verified 08:16: https://mootech-be.onrender.com/ 503 (suspended); bazichart.mumate.co /api/health 200 db ok sha b4633c5 platform vercel, /v2 /v2/login /what-if 200, /api/auth/providers facebook google line twitter (unchanged); dac2-pilot not_suspended, 200."
+  quiet_window: "2026-10-02 08:16 to 2026-10-09 08:16 (P3): no non-monitor request should reach Render (it cannot while suspended) and no FE error names BE; the cutover may fall inside it."
+
+evidence:
+  plan: workstreams/mumate-be-retirement-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  repository:
+    head: "f32165f"
+    branch: hq/20261001
+    working_tree: this-record-only
+  checkpoints:
+    - memory/events/2026/10/02/20261002T081242_mumate_be_retirement_r7_suspend_render_authorized.yaml
+
+unresolved:
+  - "Omise: not checked by the agent (dashboard only). Render showed only monitor-rate 200 traffic since 2026-09-27, so no live webhook used BE; the owner confirms in the Omise dashboard that no endpoint targets mootech-be.onrender.com (1 minute, not blocking - the suspend is reversible)."
+  - "Render mootech-be still has autoDeploy on commit to main; harmless while suspended and archived later in step 6."
+  - "Step 6 after the DigitalOcean cutover holds (from 2026-10-12): delete Render mootech-be, copy consent/balance DDL into mootech-fe/lib/db, archive mootech-be, remove be from both DO hosts and env/be.env with its copies, rotate BE-only credentials; then the Render workspace plan."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Watch the quiet window to 2026-10-09; continue the cutover preparation
+    (mumate-vercel-to-do-001); step 6 after the cutover holds, each step
+    confirmed by the owner.
+  acceptance_check:
+    - On 2026-10-09 Render mootech-be is still suspended and no FE log or alert named BE during the window.

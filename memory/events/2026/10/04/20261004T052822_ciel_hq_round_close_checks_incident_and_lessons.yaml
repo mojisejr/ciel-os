@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261004T052822_ciel_hq_round_close_checks_incident_and_lessons
+type: closeout
+recorded_at: 2026-10-04T05:28:22+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-hq-round-20261001
+  lane: single
+  objective: >-
+    Keep the experience of closing the hq/20261001 round: a smooth round
+    turned rough at the very end, when HQ's own check was run for the first
+    time in the round and the agent's diagnosis wrote a child project's
+    database into HQ. Recorded at the owner's request so it is remembered.
+    No workstream by the owner's choice.
+  scope:
+    - What happened between 2026-10-04 05:05 and 05:27, why, what changed in HQ, and the lessons.
+
+outcome:
+  status: recorded
+  slice: none
+  owner_statement: "ผมคิดว่าเราควร closeout เก็บประสบการณ์เหตุการตรงนี้เอาไว้ด้วยครับเราจะได้จำได้ ว่าเคยเกิดอะไรขึ้นครับ ก่อนเราจะปิด hq session นี้"
+  what_happened:
+    - "05:05 - preparing the round PR, bun run check failed 43/1 (load average 2.9, so a real assertion, not a timeout)."
+    - "05:05 - to find the failing test the agent ran a bare `bun test` at the HQ root. Bun discovered 28 test files in five child checkouts (orchard-decision-lab 20, pilot-task-ledger 3, pilot-task-report 3, clear-together 1, mbti-planner-pilot 1) and ran them with HQ as the working folder. orchard-decision-lab defaults ORCHARD_LAB_DB_PATH to ./data/orchard-decision-lab.sqlite, so it created HQ/data/orchard-decision-lab.sqlite (16 KB, empty, new - nothing copied or moved). HQ did not ignore data/, so it showed as untracked."
+    - "The failing test was test/projects/validate.test.ts: a hand-written list of projects/*/project.yaml. 6ba6ddb (clear-together lane, Codex, 2026-10-02 19:55) registered projects/clear-together without adding it. Red for about 33 hours; no lane saw it because every lane checked HQ with wake only, and wake validates the registry but runs no tests. Third time in four registrations (a827400 and ba59b5e on 09-29, repaired in 45083d3; a02ddfa on 09-19 remembered the line)."
+    - "05:06 - the agent added the missing line (9a3e41c) and pushed hq/20261001; the owner stopped the PR creation and asked where data/ came from."
+    - "Owner's questions that set the direction: closing HQ should check HQ only, children finish in their own PRs; does the registry test break when HQ is cloned to another machine or Windows; ignore output comprehensively; do it in this PR."
+    - "Findings on those questions: the test reads projects/ (committed in HQ), not checkouts/, so a clone without checkouts stays green; adding or removing a registration turns it red until the hand list is edited; it compares 'projects/x/project.yaml' against paths built with node:path join, which on Windows use backslashes, so it would fail there (inferred - HQ bun run check has never been run on Windows; ciel-windows-portability-001 is paused before start)."
+  completed:
+    - "data/orchard-decision-lab.sqlite deleted by filename and data/ removed; HQ clean; checkouts/orchard-decision-lab and checkouts/clear-together unchanged; no other stray file in HQ including ignored ones."
+    - "e63ce24: bunfig.toml sets the test root to test/ (a bare bun test now runs HQ's 44 tests only and creates nothing); validate.test.ts asserts every directory in projects/ has exactly one valid project.yaml, compared as relative '/' paths (proven: a folder without project.yaml fails; adding or removing a registration passes untouched); root-anchored .gitignore for data/, imports/, .local/, tmp/, build and test-report folders, sqlite/db/log files (git ls-files -ci empty; memory/, test/, docs/ not ignored)."
+    - "bun run check 44 pass / 0 fail; wake validationErrors []."
+  lessons:
+    - "A check that only runs at the end of a round finds the round's breakage at the end. Wake is the only HQ check every session runs; anything wake does not run (bun run check) can stay red for days. A lane that writes to projects/, test/ or src/ runs bun run check before it reports done."
+    - "Run the narrowest command that answers the question. Diagnosing one failing HQ test needed `bun test test/`; the bare form executed five other projects' code in HQ's folder. Never run a child project's tests or scripts from the HQ root."
+    - "Code that writes relative to the current folder (orchard ./data and ./imports, clear-together .local/files) writes wherever it is started. Child projects are run from their own checkout."
+    - "A second hand-written copy of committed truth goes stale; derive it from the source instead (projects/ is the registry). Same principle as AGENTS.md: state each thing once."
+    - "Portability is proven, not assumed: path comparisons with '/' against join() output pass on macOS and fail on Windows. Compare relative paths normalised to '/'."
+    - "The owner's instinct to stop and ask 'where did this come from' caught an agent side effect before it was committed to a public repository. Agents report side effects first, unasked."
+    - "Same round, same agent, earlier: a commit hash was reported from recall (f7b3fc4, never existed) and a SHA was written into pull_request.base; both needed superseding events. Hashes come from git output in the same step."
+
+evidence:
+  repository:
+    head: "e63ce24"
+    branch: hq/20261001
+    working_tree: this-record-only
+  commits:
+    registry_line_added: 9a3e41c
+    hq_checks_kept_inside_hq: e63ce24
+    clear_together_registration: 6ba6ddb
+    previous_round_same_fix: 45083d3
+
+unresolved:
+  - "HQ bun run check has never run on Windows; other tests may still assume '/' paths. Proven when ciel-windows-portability-001 resumes."
+  - "Child projects still default to cwd-relative paths (orchard ./data, ./imports; clear-together .local/files); HQ is now protected, the children are unchanged and are their own repositories' concern."
+  - "e63ce24 and this record are local until the owner's go to push and open the round PR."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    On the owner's go, push hq/20261001 and open the round PR with this
+    incident and e63ce24 in its description.
+  acceptance_check:
+    - The round PR head contains e63ce24 and this record; bun run check green at that head.

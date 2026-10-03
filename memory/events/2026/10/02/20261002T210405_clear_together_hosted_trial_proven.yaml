@@ -1,0 +1,87 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T210405_clear_together_hosted_trial_proven
+type: closeout
+recorded_at: 2026-10-02T21:04:05+07:00
+recorded_by:
+  agent: codex
+workstream:
+  id: clear-together-pwa-001
+  lane: single
+  objective: Deliver an HTTPS trial for two-way private reimbursement.
+  scope:
+    - Slice 3 hosted proof on existing Vercel Pro and standalone Neon Free; physical phone and real pilot remain owner-dependent.
+outcome:
+  status: recorded
+  completed:
+    - Created standalone Neon Free project with one default branch, 0.25 CU compute and default five-minute scale-to-zero; applied all three migrations.
+    - Configured two generated trial accounts with disabled public signup and owner-controlled credentials outside Git.
+    - Published the Thai pastel PWA at the production domain and connected private GitHub main for owner-merged deployments.
+    - Proved two browser sessions, receipt uploads, directional balances, grouped payment and retry, private image reads, reversal history, logout and cache privacy over HTTPS.
+    - Repeated hosted login/upload/payment/reversal after credential rotation and storage replacement; cancelled four synthetic pending claims without deleting history, leaving both balances zero.
+    - Backed up cloud metadata and all six private images with checksums; local backup/restore and nonempty-target refusal passed.
+    - Fixed deployment source packaging to export committed Git files only; final deployment used no prior build cache and its source inventory excludes local setup, env and backup files.
+  not_completed:
+    - Physical-phone installation, real receipt readability, owner acceptance, real pilot and owner merge are not proven.
+    - Retired Blob store deletion requires interactive owner confirmation after Vercel CLI refused the automated deletion.
+evidence:
+  plan: workstreams/clear-together-pwa-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: 8fa16c015ba0d87df0965a8a17739acb7f076351
+    branch: hq/20261001
+  child_repository:
+    canonical_remote: github.com/mojisejr/clear-together
+    branch: codex/two-way-reimbursements
+    implementation_head: 81664f5eab4d979c9468fcc33eb990f4d4a25ce2
+  pull_request:
+    number: 1
+    url: https://github.com/mojisejr/clear-together/pull/1
+    observed_head: 81664f5eab4d979c9468fcc33eb990f4d4a25ce2
+    state_at_recording: draft
+  delivery_record: docs/delivery/20261002T210405_clear_together_hosted_trial_proven.yaml
+  provider_resources:
+    trial_url: https://clear-together.vercel.app
+    vercel_team: nons-projects-2ee1d9ee
+    vercel_project: prj_1sxXKUm2kO6GazvkU7DFdHoaZxrS
+    deployment: dpl_5EJSxBNRHiLKbojsErZv6oigduBP
+    source_revision: 81664f5eab4d979c9468fcc33eb990f4d4a25ce2
+    git_production_branch: main
+    neon_org: org-autumn-feather-44217443
+    neon_plan: free
+    neon_project: divine-salad-16673788
+    neon_branch: br-proud-sun-b3kf6heo
+    neon_branch_count: 1
+    neon_region: aws-ap-southeast-1
+    private_blob_store: store_9HubB0VhFSs4OgjN
+    blob_region: sin1
+    retired_blob_store: store_MdF0i5xcCuVBJVmm
+    secrets_environment: Production only; DB, auth and independent file token marked sensitive.
+  checks:
+    types_and_build: TypeScript and production build passed after explicit file-token changes.
+    local_e2e: Four tests passed in 15.3 seconds, including two-user flow, security/concurrency, backup/restore, mobile design/accessibility/cache.
+    first_hosted_e2e: Eight checks passed over HTTPS with two independent sessions.
+    replacement_hosted_e2e: Rotated login, all migrated private images, new receipt/slip payment and reversal, zero synthetic balances, logout/cache and no page errors passed.
+    source_inventory: Provider file tree contains no .local, .next-test, .env.local or trial credential file; build log confirms previous cache skipped.
+    anonymous_access: Home and manifest 200; ledger and image 401; design route 404.
+    cloud_backup: Completed after rotation and replacement store, including six private files with SHA-256 checksums.
+    repository_visibility: GitHub authenticated read confirms private repository.
+  review_artifacts:
+    - docs/delivery/hosted-inbox.png
+    - docs/delivery/hosted-payment-history.png
+  setup_correction:
+    cause: Initial Vercel CLI deployment uploaded ignored local setup files in private deployment source because .gitignore did not exclude them from that upload.
+    removed_deployment: dpl_3kNgAWJ18R7DGZmN1vRVEYHSaXQg
+    removal_proof: Provider deployment read returned 404 after removal.
+    changes: Clean Git archive export plus .vercelignore, fresh build, Neon role password/auth secret/two account passwords rotated, old sessions revoked, independent private file credential and replacement store with copied checksum-verified images.
+    remaining: Old store/token remain until owner deletes it; provider retention of removed source is unverified. No owner bills existed during setup.
+    deletion_rejection: Vercel CLI dangerous_operation_requires_user; permanent store deletion cannot run non-interactively and requires the owner to review and confirm.
+unresolved:
+  - Owner must review and confirm deletion of retired synthetic Blob store; agent did not bypass the CLI rejection.
+  - Retention of removed deployment source and historical provider cache is unverified; active DB/auth/account credentials were rotated and the app no longer uses the old Blob token.
+  - Physical-phone PWA installation and readability of real compressed receipts remain untested; automated mobile viewports are not that proof.
+  - Owner controls acceptance, final account names/passwords, real bills, retention, pilot and merge. Slice 4 is not delivered.
+  - Vercel Pro shares metered usage with other projects; no new plan/add-on or billing change was made and zero additional usage charges are not guaranteed.
+  - Provider quota/policies may change; application caps are not a team-wide spending cap.
+next_action:
+  action: Owner tries the URL with private local trial credentials, confirms the phone/PWA flow, deletes the retired synthetic store interactively, and reviews PR 1 before deciding to merge and start the real pilot.

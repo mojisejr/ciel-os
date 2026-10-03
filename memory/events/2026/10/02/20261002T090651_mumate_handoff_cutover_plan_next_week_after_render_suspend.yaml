@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T090651_mumate_handoff_cutover_plan_next_week_after_render_suspend
+type: closeout
+recorded_at: 2026-10-02T09:06:51+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the 2026-10-02 morning review of the cutover after the login lane
+    closed and Render was suspended, and the proposed timeline for next week.
+    This record replaces 20261001T121153 as the cold-session entry for MuMate
+    work (read that one too for the full ready state).
+  scope:
+    - Changes since 20261001T121153, D7 status, the proposed cutover week, the owner's new low-traffic window.
+  out_of_scope:
+    - Running any cutover step; the slice-6 decision (needs the owner's go).
+
+outcome:
+  status: recorded
+  slice: none
+  state:
+    - "PRODUCTION STILL ON VERCEL (08:46): fe main b4633c5 (login lane PRs 863-865), /api/health 200 db ok, /, /v2, /v2/login, /what-if, /chinese-calendar, /fortune-stick, /matching 200; providers facebook google line twitter. Works without BE (Render suspended 08:15, see mumate-be-retirement-001 20261002T081635)."
+    - "mumate-prod-1 still on fe c10e91e / bazi 49e22f2 (healthy, maintenance on, no cron). mumate-2 runs a login-lane branch build fe 6138560-staging + bazi 49e22f2-staging. bazi pdf-dev now 04bc24a (no migration - owner). Both hosts need the chosen main/pdf-dev SHAs built and released before the cutover."
+    - "Env check against FE main b4633c5: no new env name in code since c10e91e. 19 names exist on Vercel production but not in env/fe.env.example; each is build-time (in container-build.yml), compose-set, comment-only (removed from code), defaulted in code (NEXT_PUBLIC_LIFF_ID falls back to the channel's LIFF id), or Vercel-only: /launch (LAUNCH_KEY, LAUNCH_DEPLOY_HOOK_URL, VERCEL_TOKEN - เอ็ม's Vercel redeploy console) fails closed on DO, replaced by the release button. dev-login stays off (NODE_ENV=production)."
+    - "D7: slice 5 done; observations closed; R7 handled - Render suspended this week (2026-10-02), delete after the cutover, so R7 is not in the cutover week; production calm - login code deployed 2026-10-02 07:19, let it settle; MUMATE100 promo over and team merge rate - not yet answered by the owner; go - not given."
+    - "Owner 2026-10-02: low traffic is 02:00-07:00 (runbook 06 says 02-06); the cutover is planned within next week (2026-10-05 to 10-11)."
+  proposed_timeline:
+    - "Mon 10-05: owner go -> slice-6 decision; agent builds and releases staging from latest fe main and bazi pdf-dev; walk on staging (login changed a lot since slice 5: LINE, Google, LINE in-app, chat, push); LINE OA notice and team told (date, freeze, DNS person, reviewers); TTL 300 before 22:00."
+    - "Tue 10-06: owner builds and releases production of the same SHAs; agent verifies, dry-runs step 1, rebases PR 39, checks both hosts."
+    - "Wed 10-07 02:00: runbook 06 steps 0-7 (~1 h, gate ~03:00); agent watches to 07:00. Thu 10-08: TTL back to 3600 after 24 h, clean .bak files, closeout."
+    - "Fri 10-09 to Sun 10-11 02:00: spare nights if Wednesday flips back. After: Render step 6 (be-retirement), backup move, Vercel retirement (D10), and a cost workstream (owner's idea; agent proposed it for after the cutover holds)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "e12ad8b"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe: "main b4633c5 (Vercel production)"
+    bazi-sft-dataset: "pdf-dev 04bc24a; hosts run 49e22f2"
+    mumate-infra: "main fb94491 on both hosts; PR 39 draft MERGEABLE"
+    render: "mootech-be suspended 2026-10-02 08:15; dac2-pilot untouched"
+
+unresolved:
+  - "Owner to answer: MUMATE100 promo over and team merge rate low (D7); the date (agent recommends Wed 2026-10-07 02:00)."
+  - "Owner: Omise dashboard check that no webhook targets mootech-be.onrender.com (not blocking)."
+  - "Optional: runbook 06 window text 02-06 -> 02-07 to match the owner's reading (cosmetic)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In a fresh session: Wake, read this record, 20261001T121153 and
+    runbooks/06-cutover.md; get the owner's D7 answers and go; then the
+    slice-6 decision and the Monday steps of the proposed timeline.
+  acceptance_check:
+    - A cold session can state where production runs, that BE is suspended, what is behind on the hosts, what D7 still needs, and the proposed date from this record.

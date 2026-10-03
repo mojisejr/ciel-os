@@ -1,0 +1,99 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T193631_mumate_login_identity_plan_0_10_slice7_authorized
+type: decision
+recorded_at: 2026-10-01T19:36:31+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Authorize plan revision 0.10 slice 7: reproduce the shared-link login loop
+    on staging, stop it, remove LIFF, take members out of in-app browsers
+    before OAuth, design the LINE-to-external session hand-off, and close the
+    paid members touched by the LIFF identity split.
+  scope:
+    - Plan revision 0.10, phases 7a-7f and 7s, DoD 7 (G1-G8), owner decisions 32-36.
+    - mootech-fe topic branches for 7b and 7c, up to pull requests ready for the owner's review.
+    - Staging only on the mumate-2 host - reading Caddy and container logs, staging image builds and deploys of this lane's branches.
+    - Read-only production measurements; per-case support SQL prepared for the owner.
+  out_of_scope:
+    - Merging any pull request; any production env, deployment or database write without the owner's per-case approval.
+    - 7d implementation (its storage needs a separate owner approval).
+    - LINE Developers Console changes, which belong to the channel holders.
+
+outcome:
+  status: decided
+  parallelism: approved   # mootech-fe is shared with mumate-vercel-to-do-001 and mootech-ga4-instrumentation-001, neither editing FE login code; own branches only; owner: "slice 7 ... ทำเลย"
+  slice: "7"
+  decision: >-
+    On 2026-10-01 the owner asked what the shared-link login loop really is,
+    whether LINE login is LIFF or NextAuth, and how to move every login to
+    the external browser. Four read-only research agents mapped the code, the
+    change history, LINE and Google platform rules, and the database. The
+    production measurement was run read-only at the owner's explicit request.
+    The owner then answered: fix the paid members ("ต้องแก้ 1 แน่ๆ"); leave the
+    unpaid duplicates ("ผมคิดเหมือนคุน"); LIFF can go because MuMate already
+    uses NextAuth; follow the agent's lean - stop the loop, then hand the
+    session out of LINE ("แก้ loop แล้วไป 2"); run slice 7 now if safe; and
+    reproduce on staging to find the real cause ("ไปจำลอง สถานการณ์ให้ผมใน
+    staging ... เพื่อหาสาเหตุที่แท้จริง").
+  owner_decisions: "32-36, as written in PLAN.md revision 0.10"
+  authorizes:
+    - 7a reproduction on staging with the owner or a teammate on a phone, and the agent's scripted simulation.
+    - 7b and 7c through mootech-fe pull requests marked ready for the owner's review.
+    - Staging images built from this lane's branches and deployed to mumate-2 for 7e.
+    - 7d design and threat model.
+    - 7s read-only preflights and guarded SQL with stored inverses, for the owner to approve and run.
+  does_not_authorize:
+    - Merging any pull request; accepting the staging walk; any production write.
+    - Any refund or subscription extension, which is the owner's per-case call.
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.10"
+  slice: "7"
+  execution_phase: "7"
+  repository:
+    head: "b1fe72a"
+    branch: hq/20261001
+    working_tree: this-decision-and-plan-0.10
+  application:
+    mootech-fe_main: "a16a1f2 (#862), Vercel production deployment success 2026-10-01T10:55:56Z"
+    liff_login_removed: "c111096 (#860), production 2026-10-01T10:26:31Z"
+    self_heal_route_fix: "2a707c0 (#861), production 2026-10-01T10:52:50Z"
+    staging: "app.staging.mumate.co on mumate-2 runs fe c10e91e (pre-#860), per 20261001T121153"
+  measurement:
+    file: ".assets/mumate/impact-20261001.sql (git-ignored), output impact-20261001-out.txt; begin read only ... rollback"
+    read_at: "2026-10-01T19:27:41+07:00"
+    window: "2026-09-28 21:41:55 to 2026-10-01 17:25:09 Bangkok"
+    new_line_accounts_in_window: 82
+    strong_duplicate_candidates: 12
+    name_only_candidates: 20
+    no_candidate: 50
+    active_paid_members_with_duplicate: 3
+    paid_again_on_duplicate: 1
+    paid_on_duplicate_original_free: 1
+    window_accounts_with_approved_payment: "11 (1,749 THB), 7 LINE"
+    members_with_two_line_rows: 1
+    line_subject_on_two_members: 0
+  supersedes_in_part:
+    - "memory/events/2026/09/29/20260929T123622_mumate_login_identity_s6_final_closeout_observation_ended.yaml - the owner's same-provider confirmation, and with it the reading of the one name match as a coincidence"
+
+unresolved:
+  - "The loop's real cause is not yet observed; 7a exists to observe it."
+  - "Which window accounts hold only a LIFF-provider subject cannot be told from the database; they surface as second accounts on their next login."
+  - "Per paid case: refund or extend for the member who paid again; direction of the remap for the member whose payment sits on the duplicate."
+  - "mootech-fe login files were changed today by the teammate (#860, #861); the owner said to proceed."
+  - "ops_audit_log anon SELECT without RLS (20261001T170748) remains separate and unverified."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Prepare 7a: confirm log access on mumate-2, pick a staging invite link,
+    and run the scripted cookie-jar simulation; meet the owner for the phone
+    walk. In parallel, open the 7b branch from origin/main.
+  acceptance_check:
+    - Wake reports mumate-login-identity-001 at revision 0.10 with this decision as its latest record and no validation error.

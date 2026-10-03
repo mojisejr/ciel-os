@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T102627_mumate_member_identity_forgeable_cookie_finding
+type: closeout
+recorded_at: 2026-10-02T10:26:27+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: support-exception
+  objective: >-
+    Record a serious finding made while aligning the owner's "member support
+    ID" idea (show each member their user_id with a copy button so support can
+    look them up in /ops/users): today a member's user_id works as a key to
+    that member's data and actions. Recorded under the identity lane because
+    the cause is the member-identity cookie; no workstream is opened yet.
+  scope:
+    - Read-only code review of mootech-fe origin/main bfcef7a and bazi-sft-dataset origin/pdf-dev 04bc24a; probes with random UUIDs only (no member data read).
+  out_of_scope:
+    - Any fix, any production change, any read of a real member's data.
+
+outcome:
+  status: recorded
+  slice: none
+  owner_alignment:
+    - "Support ID: settings shows the full user_id with a copy button; team pastes it into /ops/users (exact UUID match already works - lib/ops/users.ts); no short code, no diagnostic export, no auto-attach to the LINE button (later). No extra protection layer on settings."
+    - "Owner condition: close the hole first, without breaking any member's use; build on staging, owner tests, ship before the server move."
+  findings:
+    - "GET /api/user?user_id= has no identity check (pages/api/user.ts:55): returns the full user row (name, email, tel, dob, birth time, place) plus payment. Probe with a random UUID on production answered 400 'User not found' (not 401)."
+    - "Same pattern (client-supplied user_id, no check): member-with-friend GET/DELETE, member-with-friend/detail (friend birth data by row id, no identity at all), quota (unused; probe 200 unauthenticated), log-activity, log-survey, log-save-image, chinese-calendar diary/month (v1 callers unreachable)."
+    - "About 30 v2 routes take identity from the raw cookie-mumate-id, which is set client-side and not httpOnly (lib/v2/resolve-user.ts comments, constants/cookie-key.ts): account delete (pages/api/v2/account/delete.ts:15), PDPA export, profile/avatar/display-name/consent, Qi spend/earn/wallet/coupon/referral, destiny/chat/fortune, manifest. Routes using resolveSessionUserId inherit the same weakness through its #391 fallback (resolve-user.ts: no NextAuth session -> trust cookie-mumate-id if it is a UUID of an existing user)."
+    - "Member user_ids already reach other members: member-with-friend GET returns member_id (the friend's user_id) for member friends (pages/api/member-with-friend/index.ts ~line 110)."
+    - "bazi engine on Vercel (bazi-sft-dataset.vercel.app) answers member routes by anonId with no caller authentication: /api/qi/wallet with a random anonId returned 200 (read-only getWallet, no row created). x-mumate-client-secret is used only to trust the client IP for rate limits (src/lib/rate-limit.ts:93-100). On DigitalOcean bazi has no public hostname (D3); the Vercel bazi project stays public while it is kept."
+    - "NextAuth session carries providerId/provider only; user_id comes from user_provider (resolve-user.ts:98-103). A strict helper without the fallback exists (resolveSignedSessionUserId) and is used only by auth/liff-carry. Known cookie/session mismatch handling: memberCookieMismatch -> 409 'identity', already understood by clients (useCompatibilityResult.ts:232, work-compare-call.ts:79)."
+  assessment: >-
+    Serious under OWNER.md (privacy breach and actions as another member):
+    anyone holding a member's user_id can read that member's personal data
+    and, by setting one cookie, act as them on most v2 routes. Not known to be
+    exploited. Showing the user_id in settings must wait for the fix.
+
+evidence:
+  repository:
+    head: "d02f35d"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main bfcef7a (read-only); worktree ../mootech-fe-support-id on branch feat/member-support-id, no changes"
+    bazi-sft-dataset: "origin/pdf-dev 04bc24a (read-only)"
+
+unresolved:
+  - "Owner decision needed: open a workstream for member-identity hardening, its fix design (agent's proposal: an httpOnly HMAC-signed member cookie that the #391 fallback must verify; move query/cookie routes onto the session helper + mismatch 409; retire unused/v1 routes with 410; require the client secret on bazi member routes), its order against the cutover, and who tells เอ็ม."
+  - "Keep this out of public channels until fixed; PR descriptions describe the change without a recipe."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decides the workstream, design and order; until then no code
+    change and the support ID is not shown to members.
+  acceptance_check:
+    - The owner's decision is recorded as a decision event before any fix starts.

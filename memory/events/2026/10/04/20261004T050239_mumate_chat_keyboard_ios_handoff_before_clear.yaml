@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261004T050239_mumate_chat_keyboard_ios_handoff_before_clear
+type: closeout
+recorded_at: 2026-10-04T05:02:39+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-chat-keyboard-ios-001
+  lane: single
+  objective: >-
+    Handoff before the owner clears the session: the only open item from
+    this session is closing this workstream after members' use.
+  scope:
+    - Session state of 2026-10-03; no change to code or hosts.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Session of 2026-10-03 delivered: mumate-promo-popup-auth-001 (PR 874, completed); this workstream's fix (PR 875, live, open for observation); menu label ร้านค้า → แพ็กเกจ (PR 876, closed, no workstream); staging and local checkouts synced to fe 05090a2 / bazi 4a43450 after a team member's PR 877 and bazi pdf-dev merges (closed, no workstream)."
+    - "All touched checkouts clean: mootech-fe main 05090a2, mumate-infra main 31b9f7c, bazi-testenv pdf-dev 4a43450, bazi-sft-dataset detached 4a43450."
+
+evidence:
+  plan: workstreams/mumate-chat-keyboard-ios-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: "db16080"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main 05090a2 on Vercel production and staging"
+    bazi-sft-dataset: "origin/pdf-dev 4a43450 on Vercel production and staging"
+
+unresolved:
+  - "This workstream closes when the owner reports no chat sliding or white band from members' use; if one is reported, collect screenshot, device, app (Safari / LINE / installed) and iOS version; rollback is reverting PR 875."
+  - "HQ standing branch hq/20261001 is ahead of origin/main and unpushed; the round push and merge are the owner's."
+  - "verify-architecture is red on mootech-fe main in four files (sage.tsx, checkout.tsx, qrcode.tsx, AppHeader.tsx); every push bypasses the pre-push gate; deferred."
+  - "A team staging sign-off for mumate-vercel-to-do-001 must name fe 05090a2 / bazi 4a43450, and staging must be rebuilt after any further production merge."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    On the owner's word that members' use was clean, record the final
+    closeout (status ready-for-owner-merge, slice 1, evidence.delivery
+    target_branch main / topic_branch hq/20261001) and set the plan State to
+    completed.
+  acceptance_check:
+    - Wake reports mumate-chat-keyboard-ios-001 completed after the HQ round merges.

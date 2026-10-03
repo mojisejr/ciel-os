@@ -12,3 +12,30 @@ projects.local.yaml
 !/checkouts/.gitkeep
 !/checkouts/README.md
 .assets
+
+# Output that a child project, test runner or build tool writes into whatever folder it is run
+# from. HQ tracks none of these; anchored to the root so nothing under memory/, test/ or docs/
+# can be hidden by accident. (2026-10-04: a child test run from here wrote data/*.sqlite.)
+/data/
+/imports/
+/.local/
+/tmp/
+/temp/
+/dist/
+/build/
+/out/
+/target/
+/.next/
+/.turbo/
+/.vercel/
+/.cache/
+/test-results/
+/playwright-report/
+/blob-report/
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+*.db
+*.log

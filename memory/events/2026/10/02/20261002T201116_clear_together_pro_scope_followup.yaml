@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T201116_clear_together_pro_scope_followup
+type: closeout
+recorded_at: 2026-10-02T20:11:16+07:00
+recorded_by:
+  agent: codex
+workstream:
+  id: clear-together-pwa-001
+  lane: single
+  objective: Assess the owner-requested use of the existing Pro team for a trial URL.
+  scope:
+    - Read-only inspection of current provider plans and deployment prerequisites.
+outcome:
+  status: recorded
+  completed:
+    - Owner explicitly requested continuing on the existing Pro plan and providing a trial URL.
+    - Verified the accessible Vercel team is active Pro and its Neon marketplace installation is Launch with installation-level billing.
+    - Established that Vercel Spend Management can pause several minutes after a spend threshold and does not guarantee the prior absolute zero-extra-cost constraint.
+    - Requested clarification of the Pro usage-cost boundary and access to a separate Neon Free account or organization.
+  not_completed:
+    - No project, deployment, Blob store, Neon resource, extra database branch, billing change, or application code change was made in this checkpoint.
+evidence:
+  plan: workstreams/clear-together-pwa-001/PLAN.md
+  plan_revision: "0.3"
+  repository:
+    head: 55b44a943c1f85045bcd5120c28ace435b094147
+    branch: hq/20261001
+  owner_instruction: "ผมใช้ proplan อยู่ตอนนี้ คุนทำต่อให้จบหน่อย แล้วส่ง url มาให้ลองเลย"
+  external_observations:
+    vercel_team: nons-projects-2ee1d9ee
+    vercel_plan: pro
+    neon_installation_plan: launch_v3
+    neon_billing_scope: installation
+    standalone_neon_auth: No authenticated Neon CLI profile or API-key environment variable was available; Console showed a login screen.
+  sources:
+    - https://vercel.com/docs/spend-management
+    - https://vercel.com/docs/vercel-blob/usage-and-pricing
+    - Authenticated Vercel CLI integration installations response, filtered to plan and billing scope.
+unresolved:
+  - Existing instruction requires absolutely zero extra charges; the new request authorizes Pro use but does not explicitly resolve metered-overage risk. Clarification is pending.
+  - Existing paid Neon installation cannot be treated as Free or downgraded without regard for other resources; a verified separate Free target is still needed.
+  - Hosted upload/auth/private reads, phone install, owner accounts, pilot acceptance, and owner merge remain unproved.
+  - Provider quotas and policies cannot be guaranteed permanently; no paid fallback or automatic upgrade is authorized.
+next_action:
+  action: Resolve the Pro usage-cost constraint and obtain verified Neon Free access, then revise the deployment plan and guard narrowly before creating resources and proving the hosted flow.

@@ -1,0 +1,79 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T072009_mumate_login_identity_s7_final_closeout
+type: closeout
+recorded_at: 2026-10-02T07:20:09+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Close slice 7: the shared-link login loop is stopped, logins leave in-app
+    browsers before OAuth, LIFF is off the login path, LIFF-window signups are
+    carried to their own account, and the paid cases are closed or handed to
+    the team.
+  scope:
+    - Phases 7a, 7b, 7c, 7g and 7s; owner decisions 32-38 in PLAN.md revision 0.10.
+  out_of_scope:
+    - 7d (session hand-off from LINE's in-app browser to the external browser) - not built.
+    - The P1 refund, the iPhone walk and the rich menu - deferred by owner decision 38.
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "7"
+  dod:
+    - "G1 partly met: the loop mechanism is shown on staging (every OAuth callback failure ended on a silent /v2/login?error=OAuthCallback; FE log names 'State cookie was missing', 'state mismatch', 'invalid_grant'); the reporter's exact trigger was not reproduced on the owner's Android phone, so the timing causes (first-visit service-worker reload, the 6 s second OAuth) were removed rather than observed."
+    - "G2 met on Android: Facebook app -> Chrome -> one-tap LINE login in 2 s, invite code carried and redeemed (walk C); inside LINE, LINE logs in in 1 s."
+    - "G3 met: an OAuth failure is shown on /v2/login (PR 863)."
+    - "G4 met for login and page load: no line-liff provider, no LiffBoot; the LIFF SDK stays only on demand for openWindow and shareTargetPicker inside the LIFF browser while the rich menu uses LIFF URLs."
+    - "G5 met on Android and inside LINE (Google sent out); iOS not walked (deferred, decision 38)."
+    - "G6 met for PRs 863, 864, 865: tsc 0, eslint 0 errors, full vitest green, npm run build green with the VAPID gate, gitleaks clean, verify-architecture without new violations."
+    - "G7 met: the owner walked every phase on his phone on staging (walks A, B, C, LINE in-app, carry check)."
+    - "G8: P2 closed by an owner-approved one-row remap; P1 (a 159 THB double payment) handed to the team (decision 38)."
+  completed:
+    - "Production: PR 863 (21d0dc1, deployed 2026-10-02 05:03), PR 864 (a5f6f5f, 06:10), PR 865 (b4633c5, deployment 6798204054 success 07:19). /api/auth/providers lists line, google, facebook, twitter."
+    - "Duplicate accounts: new ones stopped (#860 and the removed line-liff provider); members parked on a duplicate are returned to their real account when PR 865 ends their LIFF-era session; LIFF-window signups are carried to their own account; the existing duplicate rows stay, by decision 33."
+    - "A five-minute production log stream right after the PR 865 deployment (07:20, quiet hour) held one line: no '[liff-carry]' event yet and no error. Effectiveness has to be measured from the database."
+    - "Staging restored for the owner: his first staging account has its LINE row back; the walk-C test member keeps only a stand-in LIFF subject (staging orphan)."
+    - "Lessons: (1) run npm run build locally before every staging image - the first 7g image failed on node:crypto reaching the client bundle; (2) a scripted browser's cookie view filters by URL path - the first rehearsal misreported the carry cookie; (3) verify-architecture is red on main for 4 teammate violations, so every push needs --no-verify until fixed; (4) the harness refused a production write and even trivial commands after it until the owner approved the specific write in his own words."
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.10"
+  slice: "7"
+  repository:
+    head: 2280c77
+    branch: hq/20261001
+    working_tree: this-closeout-and-plan-decisions-37-38
+  application:
+    mootech-fe_main: "b4633c5"
+    pull_requests: ["mootech-fe#863", "mootech-fe#864", "mootech-fe#865"]
+  checkpoints:
+    - memory/events/2026/10/01/20261001T193631_mumate_login_identity_plan_0_10_slice7_authorized.yaml
+    - memory/events/2026/10/01/20261001T195046_mumate_login_identity_s7_loop_reproduced_7b_pr863_open.yaml
+    - memory/events/2026/10/02/20261002T050348_mumate_login_identity_s7_7a_walked_7b_live.yaml
+    - memory/events/2026/10/02/20261002T052748_mumate_login_identity_s7c_walk_c_android_facebook_to_chrome.yaml
+    - memory/events/2026/10/02/20261002T061704_mumate_login_identity_s7c_live_and_p2_remapped.yaml
+    - memory/events/2026/10/02/20261002T063708_mumate_login_identity_s7g_liff_carry_rehearsed_pr865.yaml
+
+unresolved:
+  - "Measure the carry-over on production after 2026-10-04 (read-only): '[liff-carry] attached' counts are not retained by Vercel, so count LIFF-window accounts that gained a second LINE row, and new LINE accounts created after 2026-10-02 07:19 whose name/picture match a window account."
+  - "P1: refund (or extend) the 159 THB duplicate PRO payment - owner and team (decision 38)."
+  - "iPhone walk of the Facebook -> Safari escape (x-safari-https:// unconfirmed; manual fallback shown) - deferred (decision 38)."
+  - "Rich menu still opens LIFF URLs under the LIFF channel's provider; moving it to plain URLs lets lib/line/liff.ts and @line/liff be removed - team (decision 38)."
+  - "7d not built: a member who logs in inside LINE must log in again in the external browser to install the PWA; on iPhone that is LINE's email/password screen."
+  - "Carried and remapped members hold two live LINE identities, outside the one-per-provider rule; the unlink action is not a one-row rollback."
+  - "Remove the carry-over code after 2026-10-31."
+  - "verify-architecture red on main: pages/v2/fortune/sage.tsx:15, pages/v2/shop/checkout.tsx:13, pages/v2/shop/qrcode.tsx:7, features/v2-shell/components/AppHeader.tsx:185 (teammate's files)."
+  - "ops_audit_log anon SELECT without RLS (20261001T170748) remains unverified and separate."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner pushes and merges the HQ round branch hq/20261001. Next session:
+    the read-only carry-over measurement after 2026-10-04, then whatever the
+    owner brings back from the team on P1, iPhone and the rich menu.
+  acceptance_check:
+    - Wake shows this closeout as the latest record for mumate-login-identity-001 and no validation error.

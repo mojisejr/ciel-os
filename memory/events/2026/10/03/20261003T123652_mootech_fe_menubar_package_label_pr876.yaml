@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T123652_mootech_fe_menubar_package_label_pr876
+type: closeout
+recorded_at: 2026-10-03T12:36:52+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-menubar-package-label
+  lane: single
+  objective: >-
+    Record a one-line copy change the owner asked for without a workstream:
+    the v2 bottom-bar tab ร้านค้า becomes แพ็กเกจ (mootech-fe PR 876).
+  scope:
+    - features/v2-shell/components/Menubar.tsx label and the menu-state.ts comment that lists the tabs.
+
+outcome:
+  status: recorded
+  slice: none
+  decision: >-
+    Owner, 2026-10-03: "เปลี่ยนจากคำว่าร้านค้า ไปเป็น คำว่า แพคเกจ ... ไม่ต้องเปิด
+    workstream อะไร ทำ push pr แล้ว closeout ธรรมดาๆ พอครับ แล้วก็ build staging
+    ให้ตรง". No plan by the owner's choice.
+  agent_decisions:
+    - "Spelling แพ็กเกจ (Royal Institute form, already used on the shop and result screens) rather than the owner's typed แพคเกจ; flagged to the owner."
+  completed:
+    - "Branch fix/menubar-package-label 9f7410c pushed; draft PR 876 opened."
+  verification:
+    - "npm test 3850 passed, 211 skipped; lint 0 errors; tsc clean; npm run build success; no test asserts the old label."
+
+evidence:
+  repository:
+    head: "a08be9f"
+    branch: hq/20261001
+    working_tree: this-record-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261001
+  pull_request:
+    repository: github.com/mojisejr/mootech-fe
+    number: 876
+    url: https://github.com/mojisejr/mootech-fe/pull/876
+    base: main
+    head_sha: 9f7410c26b171a0148936094afad8873b04858c4
+    base_sha: a6a3f4ea2efabccefda38bedf34ca9e89284f69b
+
+unresolved:
+  - "After the owner's merge: Vercel production on the merge SHA, staging built and released to it."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner merges PR 876; the agent confirms production and releases staging
+    to the merge SHA.
+  acceptance_check:
+    - Production and staging /api/health report the merge SHA.

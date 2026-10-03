@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T191854_mumate_cron_visibility_slice2_authorized_agent_merges
+type: decision
+recorded_at: 2026-10-02T19:18:54+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-cron-visibility-001
+  lane: single
+  objective: >-
+    Authorize slice 2 of plan 0.1 and record the owner's answers that let the
+    agent finish the workstream alone.
+  scope:
+    - Merge of the mumate-infra cron-visibility PR, mumate-prod-1 pull + cron-install + Alloy restart, PR 39 rebase, mumate-2 back to main, Grafana writes with the owner's service-account token.
+  out_of_scope:
+    - Turning any production timer on (runbook 06 step 3), the cutover and its slice-6 go.
+
+outcome:
+  status: decided
+  slice: "2"
+  decision: >-
+    The owner confirmed the parallel run with mumate-vercel-to-do-001 ("ยืนยัน
+    ให้ทำได้ครับ") and asked the agent to finish both slices and close the
+    workstream if nothing needs the owner's call ("ถ้า ทั้ง 2 slice คุนจัดการทั้งหมด
+    ได้ เองเลยคุนจัดการให้จบเลยครับแล้ว ปิด workstream ไปเลย"). Asked up front,
+    the owner chose: the agent uses the Grafana service-account token (the owner pointed to
+    .assets/mumate/grafana/.env); the agent merges the mumate-infra PR itself
+    after the staging proof (the owner clicks if the harness refuses); the
+    agent may touch mumate-prod-1 for slice 2, including the PR 39 rebase.
+  owner_decisions:
+    - "Parallel execution with mumate-vercel-to-do-001 on mumate-infra is confirmed; this lands before the cutover and PR 39 is rebased on it."
+    - "Grafana Cloud writes by the agent with the owner's service-account token."
+    - "The agent merges the cron-visibility PR in mumate-infra (private)."
+    - "The agent runs slice 2 on mumate-prod-1; every timer stays off there until runbook 06 step 3."
+  authorizes:
+    - Slice 2 of plan 0.1 as written, and the merge of the slice-1 PR.
+  does_not_authorize:
+    - Merging PR 39, enabling any production timer, any change to Vercel or DNS.
+
+evidence:
+  plan: workstreams/mumate-cron-visibility-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "08cfab0"
+    branch: hq/20261001
+    working_tree: this-decision-and-the-slice-1-closeout
+  application:
+    mumate-infra: "feat/cron-visibility 3d98e10"
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Merge the PR, run slice 2 on mumate-prod-1, rebase PR 39, return mumate-2
+    to main, close the workstream.
+  acceptance_check:
+    - Slice 2 in the plan.

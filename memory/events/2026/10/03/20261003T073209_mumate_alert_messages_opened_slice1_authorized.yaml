@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T073209_mumate_alert_messages_opened_slice1_authorized
+type: decision
+recorded_at: 2026-10-03T07:32:09+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-alert-messages-001
+  lane: single
+  objective: >-
+    Open the workstream and authorize slice 1 of plan 0.1: the two Discord
+    alert channels reorganised by urgency (ต้องดู / ข้อมูล) with messages that
+    say what happened, whether customers are affected and what the owner does.
+  scope:
+    - mumate-infra branch, alert.sh and its callers, Grafana contact points, policy, template and rule annotations, mumate-2.
+  out_of_scope:
+    - mumate-prod-1's alert.env (slice 2), the mootech-fe /ops login ping, Asserts rules.
+
+outcome:
+  status: decided
+  slice: "1"
+  decision: >-
+    The owner asked for more human-readable Discord alerts in both channels
+    and agreed to a new workstream. Syncup: round 1 (8 questions) and round 2
+    (7 questions) matched the agent's leans 15 of 15, with one addition (Q4:
+    readable, not cluttered). The owner confirmed the shared understanding and
+    said "ขึ้นแผนแล้วถ้าไม่มีอะไรต้องเคาะแล้ว คุนลุยได้เลยครับ".
+  owner_decisions:
+    - "Reader is the owner; plain Thai for a non-technical reader."
+    - "Staging no longer pages the phone."
+    - "Channels by urgency: the current Grafana channel becomes ต้องดู (production problems and their recoveries), the current host channel becomes ข้อมูล (staging and successes); no new channel or webhook."
+    - "Success messages stay, one line each, readable and not cluttered."
+    - "Every ต้องดู message answers what/where/when (Bangkok), customer impact, and what the owner does - never 'the agent will look'."
+    - "Thai first."
+    - "The mootech-fe /ops login ping is out of scope."
+    - "Production host alerts reach the phone through the owner's Discord notification setting for ต้องดู."
+    - "ต้องดู = coloured card; ข้อมูล = one line; production repeats every 30 min, staging never repeats."
+    - "Done before the cutover night; the team's staging findings come first."
+  authorizes:
+    - Slice 1 of plan 0.1 as written; the agent proceeds to slice 2 and merges the PR when nothing needs the owner's call (owner's go above).
+  does_not_authorize:
+    - Paging the owner's phone for a test, printing a webhook URL anywhere, changing what is detected.
+
+evidence:
+  plan: workstreams/mumate-alert-messages-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "78ed9d5"
+    branch: hq/20261001
+    working_tree: this-decision-and-plan-0.1
+  application:
+    mumate-infra: "main 182f3e9"
+
+unresolved:
+  - "Owner actions at the end: rename the two channels, set ต้องดู notifications to all messages on the phone, read the samples."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 1 in a mumate-infra branch, tests first; prove it on mumate-2.
+  acceptance_check:
+    - Slice 1 DoD in the plan.

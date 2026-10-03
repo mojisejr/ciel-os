@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T191257_clear_together_syncup_closeout
+type: closeout
+recorded_at: 2026-10-02T19:12:57+07:00
+recorded_by:
+  agent: codex
+workstream:
+  id: clear-together-pwa-001
+  lane: single
+  objective: Preserve the owner-confirmed personal reimbursement scope and zero-cost constraint.
+  scope:
+    - Close the plan 0.2 alignment update within the opening-artifacts slice.
+  out_of_scope:
+    - Application implementation and external resource provisioning.
+outcome:
+  status: recorded
+  completed:
+    - Committed plan 0.2, updated design brief, and the owner decision for two-way claims, grouped full payment, correction history, and free-only operation.
+    - Verified current provider documentation on Hobby and Neon Free quota exhaustion behavior.
+    - Wake validation and Git diff checks passed before committing the scoped update.
+  not_completed:
+    - No private application repository, provider resource, credential, or deployment has been created.
+    - Actual provider account plans and write permissions have not been checked by provisioning.
+evidence:
+  plan: workstreams/clear-together-pwa-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: c0778ca724b0d332224714bc800de0174f372970
+    branch: hq/20261001
+  checks:
+    - bun run wake reported no validation errors and authorized revision 0.2 slice 1.
+    - git diff --cached --check passed.
+unresolved:
+  - Vercel scope and Neon account must be confirmed as Hobby and Free before provisioning; marketplace plan mapping remains unknown.
+  - Quota exhaustion may pause database or image access; no automatic upgrade or paid fallback is authorized.
+  - Account recovery inputs, image caps, retention, and backup procedures remain implementation work within the agreed free-only limit.
+  - App name and main layout are provisional; two unrelated existing ledger warnings remain unchanged.
+next_action:
+  action: >-
+    Present the shared scope and plan 0.2. On owner instruction to start slice 2,
+    record that authorization and create the private application repository,
+    then prove the two-way flow using local isolated test data.
+  acceptance_check:
+    - No paid plan, trial, paid add-on, extra Neon branch, or secret enters the implementation setup.
+    - Application work follows an owner decision for the current plan revision and slice 2.

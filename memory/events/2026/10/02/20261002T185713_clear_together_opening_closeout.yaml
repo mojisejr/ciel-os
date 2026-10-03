@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T185713_clear_together_opening_closeout
+type: closeout
+recorded_at: 2026-10-02T18:57:13+07:00
+recorded_by:
+  agent: codex
+workstream:
+  id: clear-together-pwa-001
+  lane: single
+  objective: Preserve a reconstructable brief and design reference for the two-party reimbursement PWA.
+  scope:
+    - Close the opening-artifacts slice only.
+  out_of_scope:
+    - Application implementation or external writes.
+outcome:
+  status: recorded
+  completed:
+    - Committed plan revision 0.1, opening decision, design brief, and the unchanged accepted mockup source.
+    - Wake recognized the active idle workstream and authorization for slice 1 with no validation errors.
+    - Git diff checks passed; the mockup copy matched its original source byte for byte.
+  not_completed:
+    - No application repository, auth accounts, database, Blob store, or deployment was created.
+    - Later slices remain planned and require owner authorization at their boundaries.
+evidence:
+  plan: workstreams/clear-together-pwa-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 355a270ca71be5d52c271c5e1da18a06f3b61212
+    branch: hq/20261001
+  checks:
+    - bun run wake reported validationErrors as an empty list.
+    - git diff --cached --check passed before the opening-artifacts commit.
+    - git diff --no-index on the original and committed mockup source returned no difference.
+unresolved:
+  - Product name and main layout are provisional; confirm full-payment-per-claim and correction behavior before implementation.
+  - Account provisioning and recovery, provider plan eligibility and spending, resource creation permission, quota, retention, and backup are unresolved.
+  - Wake cannot establish approval or external rules beyond recorded repository decisions.
+  - Two pre-existing unrelated delivery-status warnings remain in the ledger; this opening did not alter those records.
+next_action:
+  action: >-
+    Present plan 0.1 for owner review. When the owner authorizes slice 2,
+    confirm its v1 boundaries and create/register the child application repository;
+    obtain provider authorization before creating any remote test resources.
+  acceptance_check:
+    - A later implementation decision names the current plan revision and slice 2 before application work begins.
+    - External resource creation uses owner-approved scope and plan, with no secrets committed.

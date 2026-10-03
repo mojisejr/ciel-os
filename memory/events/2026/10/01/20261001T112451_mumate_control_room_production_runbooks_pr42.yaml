@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261001T112451_mumate_control_room_production_runbooks_pr42
+type: closeout
+recorded_at: 2026-10-01T11:24:51+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Make the whole mumate-infra control room match production on mumate-prod-1
+    before the cutover, as the owner authorized on 2026-10-01 ("แก้ไขคู่มือให้ตรง
+    100% แล้ว แก้ป้าย PR39 ได้เลย ให้คุณแน่ใจว่าจะไม่พลาดตอนเราย้ายจริง").
+  scope:
+    - mumate-infra runbooks 00-06, READMEs, env examples, Grafana README and dashboard, release.yml comments, three script guards with tests (PR 42); PR 39 label and rebase.
+  out_of_scope:
+    - Slice 6 itself; any host, DNS, Vercel, Grafana UI or Better Stack change.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "mumate-infra PR 42 (draft -> ready, branch docs/production-runbooks, ef9bd45): every runbook and README production-first; runbook 06 step 1 drops --from-staging ANALYTICS_USER_ID_KEY, adds QSTASH_URL to the pre-day list, splits step 3 into 3a pre-check / 3b Vercel off / 3c merge 39 / 3d install / 3e is-active / 3f journal with a way back, flip-back pulls the 39 revert onto the host; pre-day adds the prod-1 root password, Better Stack, infra main on both hosts, accepted-empty names."
+    - "Guards with tests, each proven red without its guard: deploy.sh refuses FE_TAG/BAZI_TAG without --profile full; fe-recovery-prove.sh refuses MUMATE_ENV=production; arena.sh up on production needs --production (runbook 02 path B only). env-from-vercel.sh warns it rewrites the whole file. .env.example: no MUMATE_ENV/MUMATE_HOST default, retired BE values compose requires."
+    - "Tests 13/13, compose config, caddy validate staging+production, bash -n, release.yml parse - all green; pre-push hook passed."
+    - "Runbook 06 commands exercised read-only for real: both step-1 env-from-vercel --dry-run (fe takes ANALYTICS_USER_ID_KEY from --fill-file; EMPTY = WHATIF_KEY QSTASH_CURRENT_SIGNING_KEY QSTASH_NEXT_SIGNING_KEY QSTASH_URL GITHUB_TOKEN; bazi EMPTY 0); 3a on mumate-prod-1 (env/fe.env:1 env/bazi.env:1 cron-check=0); 3e loop (six inactive); container names."
+    - "PR 39 rebased on main 2a72d63 (no conflict), commit and title now 'merge only at runbook 06 step 3c', cron.tsv comment step 3, description step references and flip-back note fixed; force-pushed with lease c5728ed -> 0f745c3; still draft, MERGEABLE; cron.test.sh passes."
+    - "DigitalOcean read: the three alert policies (CPU, RAM, disk) are bound to tag mumate and both droplets carry it - production is covered; no owner action."
+  found:
+    - "Vercel production returns QSTASH_URL empty (sensitive). @upstash/qstash falls back to https://qstash.upstash.io when it is unset; if the account's QStash region differs, push publishing fails on DO. Needed from the owner/เอ็ม with the signing keys."
+    - "WHATIF_KEY empty on DO = /what-if is the maintenance page for everyone including testers (campaign closed); GITHUB_TOKEN empty = ops dashboard activity panel shows not configured. Owner to accept empty or supply."
+    - "The slice-5 record (20261001T054140) says the owner stated the staging ANALYTICS_USER_ID_KEY is the production value; today's hash comparison shows it is not, and the owner's own file is now the source."
+    - "DigitalOcean 'Reset root password' power-cycles the droplet, so prod-1's password should be set before the cutover; after it, set it through emergency door 3 (ssh root@host, passwd) without a reboot."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.3"
+  slice: none
+  repository:
+    head: "5cec3fc"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mumate-infra: "main 2a72d63; PR 42 docs/production-runbooks ef9bd45; PR 39 cutover/cron-on-production 0f745c3 (draft)"
+    host: "mumate-prod-1 unchanged (read-only checks only): fe c10e91e, bazi 49e22f2, MAINTENANCE_MODE on, no cron timers"
+
+unresolved:
+  - "Owner: review and merge PR 42; then the agent pulls main on mumate-2 and mumate-prod-1 (pre-day item); the owner re-imports dashboard-mumate-ops.json in Grafana for the host legends (optional)."
+  - "Owner: QSTASH_CURRENT_SIGNING_KEY, QSTASH_NEXT_SIGNING_KEY, QSTASH_URL into prod-fill.env and prod-qstash-token.env (via เอ็ม); accept WHATIF_KEY/GITHUB_TOKEN empty or supply them."
+  - "Owner: set the mumate-prod-1 root password (DO reset power-cycles it - fine today, no traffic); Better Stack monitors per runbook 04 §6 (production + staging, delete api.staging/bazi.staging)."
+  - "systemd timer Descriptions still say (staging)/(none) - cosmetic, deliberately not changed the day before a cutover."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner reviews and merges mumate-infra PR 42, sets the prod-1 root password
+    and the Better Stack monitors with the agent, and brings the QStash values;
+    the cutover still waits for D7 and the owner's go.
+  acceptance_check:
+    - PR 42 merged and bin/hosts.sh compare shows infra.commit equal to origin/main on both hosts.

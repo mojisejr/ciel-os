@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T200008_clear_together_slice2_local_proof
+type: closeout
+recorded_at: 2026-10-02T20:00:08+07:00
+recorded_by:
+  agent: codex
+workstream:
+  id: clear-together-pwa-001
+  lane: single
+  objective: Prove the two-way private reimbursement flow locally before free-only deployment.
+  scope:
+    - Slice 2 application implementation and synthetic local proof.
+    - Private repository and reviewable application pull request.
+  out_of_scope:
+    - Paid or trial provisioning, extra Neon branches, owner-unreviewed merge, or real-data pilot.
+outcome:
+  status: recorded
+  completed:
+    - Implemented two-member login with disabled signup and server authorization on private reads and writes.
+    - Implemented receipt compression and preview, directional balances, pending edits/cancellation, grouped full payment, idempotent retry, and whole-payment reversal with preserved evidence.
+    - Implemented Thai pastel mobile UI and a PWA that caches only a public offline page.
+    - Proved owner account operations, synthetic metadata/image backup and restore, and free-only deployment refusal on the current Pro scope.
+    - Opened private application draft PR 1 for phase closeout preparation.
+  not_completed:
+    - Hosted preview, Neon and Blob provisioning, phone installation proof, owner accounts, real bills, pilot acceptance, and owner merge.
+evidence:
+  plan: workstreams/clear-together-pwa-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: 6ba6ddb551cc5b9c50a90efaaa1b0591aced1246
+    branch: hq/20261001
+  child_repository:
+    canonical_remote: github.com/mojisejr/clear-together
+    branch: codex/two-way-reimbursements
+    implementation_head: e4e73cfd96107bea6b024cc98c470a9dc3bd9bf2
+  pull_request:
+    number: 1
+    url: https://github.com/mojisejr/clear-together/pull/1
+    observed_head: e4e73cfd96107bea6b024cc98c470a9dc3bd9bf2
+    state_at_recording: draft
+  delivery_record: docs/delivery/20261002T200008_clear_together_slice2_local_proof.yaml
+  checks:
+    playwright: Four tests passed with two browser sessions and real synthetic image uploads.
+    payment_proof: Combined payment, retry, competing payment, reversal, reload, and preserved receipts/slips passed.
+    authorization_proof: Anonymous reads denied; signup, cross-origin mutation, wrong payer, stale update, oversized and invalid files rejected.
+    recovery_proof: Backup and restore matched metadata and image bytes; nonempty restore target refused.
+    interface_proof: Zero serious/critical axe findings; widths 320/390/736 did not overflow; design tokens and public-only service-worker cache checked.
+    build: Production build and TypeScript checks passed.
+    design: DESIGN.md strict validation passed.
+    production_smoke: Home, manifest, and icon returned 200; showcase returned 404; anonymous ledger returned 401.
+    build_privacy: Client chunks excluded the actual server secret; build trace files excluded ignored local data and environment files.
+    cost_guard: Current authenticated team billing is Pro; deployment guard refused it. No Neon or Blob resource was created.
+  operations: clear-together/docs/OPERATIONS.md in the child repository.
+unresolved:
+  - CLI has no verified accessible Hobby deployment scope; owner was asked to prepare one. The existing Pro team was not changed.
+  - Actual Neon Free plan limits, one-branch state, private Blob access, cloud callbacks, HTTPS flow, and quota stop behavior still require provider proof in slice 3.
+  - Local synthetic proof does not establish physical-phone readability, installation, cloud behavior, or owner acceptance.
+  - Owner-controlled real credentials, recovery delivery, pilot bills, and final brand/domain remain unconfirmed.
+  - Application file/storage caps can stop uploads; provider policies are not guaranteed permanently. No paid fallback or automatic upgrade is authorized.
+  - Wake cannot establish human review or external rules beyond recorded repository evidence; owner review remains required before merge and real-data pilot.
+  - Two preexisting unrelated Wake warnings about mootech-ga4 and mumate-be-retirement closeout status remain unchanged.
+next_action:
+  action: Verify an owner-prepared Hobby scope, then execute slice 3 with Neon Free on one branch and private Blob; present HTTPS/phone proof before real-data pilot.
+  acceptance_check:
+    - Confirm actual free plans and stop-at-quota behavior before provisioning or deployment.
+    - Commit this phase closeout copy to the application PR head, verify ancestry, and prepare the PR for owner review without merging.

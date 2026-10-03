@@ -1,0 +1,85 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T211510_clear_together_merged_delivery_closed
+type: closeout
+recorded_at: 2026-10-02T21:15:10+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: clear-together-pwa-001
+  lane: single
+  objective: Close the owner-accepted application delivery after merge; defer physical-phone and real-bill use.
+  scope:
+    - Final slice 4 of plan revision 0.5; post-merge verification and CIEL HQ closure, with no further application changes or provider provisioning.
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Owner merged the private application PR 1; fetched main contains its reviewed delivery closeout and implementation without rewriting history.
+    - Child checkout returned to clean main equal to origin/main at 1858cc41fe9f69ea7a799972086b5262a3a3a54a.
+    - Confirmed no open PR references the fully merged topic branch; removed that local branch after the remote branch was already deleted.
+    - Production Git deployment is READY from the owner's merge commit on main; post-merge HTTPS, manifest, anonymous protection, both account logins, ledger reads and logout checks passed.
+    - Verified standalone Neon remains Free with one branch; the application continues to use the replacement private image store.
+    - Owner explicitly closed the delivery scope and deferred real use; plan revision 0.5 records that boundary and marks this workstream completed.
+  deferred:
+    - Physical-phone PWA installation, real compressed-receipt readability, account customization and real-data pilot acceptance.
+    - Owner-confirmed deletion of the retired synthetic private Blob store.
+  integration_boundary: Application delivery is merged and closed. This HQ closeout is committed on the shared standing branch; HQ origin/main integration remains part of the owner's round merge, not an unperformed application merge.
+evidence:
+  plan: workstreams/clear-together-pwa-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "4"
+  repository:
+    head: 8113ca86ae4d14473c38a37476c0f7d7d299ba69
+    branch: hq/20261001
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261001
+  owner_decision: memory/events/2026/10/02/20261002T211316_clear_together_delivery_only_closure_authorized.yaml
+  owner_statement: ปิดงานส่งมอบ เลื่อนการลองใช้งานจริงไว้ภายหลัง
+  previous_hosted_proof: memory/events/2026/10/02/20261002T210405_clear_together_hosted_trial_proven.yaml
+  child_repository:
+    canonical_remote: github.com/mojisejr/clear-together
+    branch: main
+    head: 1858cc41fe9f69ea7a799972086b5262a3a3a54a
+    fetched_origin_main: 1858cc41fe9f69ea7a799972086b5262a3a3a54a
+    working_tree: clean
+    local_topic_branch: removed after ancestry and open-PR checks
+    merged_closeout: docs/delivery/20261002T210405_clear_together_hosted_trial_proven.yaml
+  pull_request:
+    number: 1
+    url: https://github.com/mojisejr/clear-together/pull/1
+    state: MERGED
+    merged_at: 2026-10-02T14:08:10Z
+    merge_commit: 1858cc41fe9f69ea7a799972086b5262a3a3a54a
+    reviewed_head: 2de95fae1344c8be3324aceb53e2ee218d5660a2
+  deployment:
+    url: https://clear-together.vercel.app
+    id: dpl_CuDZ9KrHFxpfx6zxn7xtRbf4Er4r
+    target: production
+    ready_state: READY
+    git_ref: main
+    git_commit: 1858cc41fe9f69ea7a799972086b5262a3a3a54a
+  providers:
+    neon_org: org-autumn-feather-44217443
+    neon_project: divine-salad-16673788
+    neon_plan: free
+    neon_branch_count: 1
+    neon_branch: br-proud-sun-b3kf6heo
+    active_private_blob: store_9HubB0VhFSs4OgjN
+    retired_private_blob: store_MdF0i5xcCuVBJVmm
+    retired_store_observation: Authenticated provider read still finds the private store.
+  checks:
+    post_merge_smoke: Passed HTTPS home/manifest, ledger 401 anonymously, design 404, both logins and authenticated no-store ledger reads, logout then ledger 401; no bill mutations.
+    child_git: Clean main equals fetched origin/main; reviewed closeout exists there; local topic branch fully merged and removed.
+    prior_proof: Four local E2E tests and two hosted proof rounds, cloud backup with checksums and local restore proof are documented in the merged delivery record.
+    hq_validation: Wake at session start had no validation errors; final checkpoint validates the new decision and closeout without changing unrelated workstreams.
+  local_credentials_boundary: Existing generated credentials and admin environment remain in ignored owner-controlled files, never copied into this record.
+unresolved:
+  - Owner deferred physical-phone installation and real-bill pilot; neither is reported as passed or supplied with invented evidence.
+  - Retired store and its token remain until owner deletes it interactively. Vercel CLI previously rejected automated deletion as dangerous_operation_requires_user; agent did not bypass that rejection. Instructions are in merged docs/OPERATIONS.md.
+  - Removed first-deployment source and historical provider-cache retention are unverified. Active DB/auth/account credentials were rotated and the application uses an independent replacement file token, as recorded in the previous closeout.
+  - Final account names/passwords, real bills, receipt readability and retention remain owner-controlled after delivery.
+  - Vercel Pro remains metered across shared team usage; Neon stays Free with one branch. No zero-additional-charge guarantee or provider-policy permanence is asserted.
+  - HQ shared standing branch has not been merged to origin/main. This workstream's records are locally committed and await the owner's round integration; no shared branch was switched or deleted.
+next_action:
+  action: No further application implementation is scheduled in this closed delivery. Owner tries real use later, completes the interactive retired-store cleanup and personal account setup before real bills, and integrates the HQ round at the owner's chosen time.

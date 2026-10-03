@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T103629_mumate_member_identity_hardening_opened_slice1_authorized
+type: decision
+recorded_at: 2026-10-02T10:36:29+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-member-identity-hardening-001
+  lane: single
+  objective: >-
+    Open the workstream and authorize slice 1 of plan 0.1: close the
+    member-identity hole (signed member cookie, routes onto the session
+    helper, bazi client secret) without breaking any member's use, then add
+    the member support ID with a copy button in settings - on staging only.
+  scope:
+    - mootech-fe branch feat/member-support-id (worktree ../mootech-fe-support-id), bazi-sft-dataset branch from pdf-dev, tests, local build, staging images and the staging release button, the owner's staging walk.
+  out_of_scope:
+    - Production (slice 2, after the owner's merge), the cutover, any read of another member's data, auto-attach of the ID to the LINE button.
+
+outcome:
+  status: decided
+  slice: "1"
+  decision: >-
+    Syncup on the owner's support-ID idea (2026-10-02): round 1 the agent's
+    leans matched about 1.5 of 6 (the owner wanted just the user_id with a
+    copy button; build before the server move); round 2 matched 5 of 5. The
+    agent then found the hole (20261002T102627) and proposed fixing it first.
+    The owner: Q8 "ปิดก่อนเลยอันนี้สำคัญ แต่อย่าให้กระทบการใช้งาน";
+    Q12 "คุณดำเนินการได้เลย แล้วขึ้น staging ให้เรียบร้อย เดี๋ยวผมเชคทดสอบบน
+    staging เสร็จแล้วเราขึ้น prod กัน"; on the order "จัดการเรื่องที่คุณเจอก่อน
+    แล้วค่อยกลับมาทำเรื่อง support" (confirmed by the agent); then asked the
+    agent to open the workstream and prepare for a session clear.
+  owner_decisions:
+    - "Open mumate-member-identity-hardening-001 with plan 0.1."
+    - "Fix the hole before members see their ID; the support ID ships in the same staging round, after the fix."
+    - "Settings shows the full user_id with a copy button; no extra protection layer; no short code, no diagnostic export, no auto-attach to the LINE button for now."
+    - "Staging first; the owner tests; production after."
+  authorizes:
+    - Slice 1 of plan 0.1 as written (staging only).
+  does_not_authorize:
+    - Merging, production deploys, probes against real members' data, publishing details of the hole.
+  open_owner_questions:
+    - "Order against the DigitalOcean cutover (agent: hardening first; cutover later in the week of 2026-10-05 or the week after)."
+    - "Who tells เอ็ม, privately (agent: the owner, before the PR opens)."
+
+evidence:
+  plan: workstreams/mumate-member-identity-hardening-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "c422fa2"
+    branch: hq/20261001
+    working_tree: this-decision-and-plan-0.1
+  application:
+    mootech-fe: "origin/main bfcef7a; worktree ../mootech-fe-support-id branch feat/member-support-id at bfcef7a, npm ci done, no changes"
+    bazi-sft-dataset: "origin/pdf-dev 04bc24a"
+
+unresolved:
+  - "The two open owner questions above."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In a fresh session: Wake, read this decision, the plan and the finding;
+    ask the two open questions; then build slice 1 step 1 (signed member
+    cookie and resolver) with tests first.
+  acceptance_check:
+    - Slice 1 DoD in the plan.

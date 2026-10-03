@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261002T191204_clear_together_personal_free_only_scope
+type: decision
+recorded_at: 2026-10-02T19:12:04+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: clear-together-pwa-001
+  lane: single
+  objective: A transparent private reimbursement app for the owner and their partner, with zero paid usage.
+  scope:
+    - Update the durable brief in slice 1 to plan revision 0.2 from the owner syncup answers.
+    - Preserve four delivery slices and the original accepted mockup.
+  out_of_scope:
+    - Starting slice 2 application implementation or provisioning resources in this decision.
+    - Paid plans, trials, overages, automatic upgrades, or extra Neon branches.
+outcome:
+  status: decided
+  completed:
+    - Owner confirmed private personal use by two partners, both able to submit claims to the other.
+    - Owner accepted one transfer slip for multiple fully paid claims when it simplifies use, with no partial payments in v1.
+    - Owner accepted editing or cancelling pending claims and reversing paid entries with a reason and retained history.
+    - Owner required free-only services, readable compression before upload, and no additional Neon branches.
+    - Prior owner instruction requested no public registration and owner-controlled account management, allowing a private repository.
+  implementation_interpretation:
+    - Roles belong to each claim, balances stay separate by direction, and there is no automatic netting.
+    - A grouped payment is reversed as a whole to keep the shared slip and claim totals consistent.
+    - Quota exhaustion stops operations instead of triggering paid usage; actual account plans must be verified before provisioning.
+evidence:
+  plan: workstreams/clear-together-pwa-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  authorization:
+    observed_directly_by_this_session: true
+    owner_budget_instruction: "เน้นฟรี และไม่มีเงินแบบเบี้ยหัวแตกเกิดขึ้น 100%"
+    owner_roles_instruction: "เบิกจ่ายกันได้สองทาง"
+  repository:
+    head: 26c8f96e07fe730e017c341423918c48ad38793a
+    branch: hq/20261001
+  provider_sources:
+    checked_on: 2026-10-02
+    vercel_blob: https://vercel.com/docs/vercel-blob/usage-and-pricing
+    vercel_hobby: https://vercel.com/docs/plans/hobby
+    neon_free_faq: https://github.com/neondatabase/website/blob/main/content/faqs/free-plan-limits-and-quotas.md
+unresolved:
+  - Actual Vercel scope and Neon account plan, resource creation permission, and marketplace plan mapping remain unverified.
+  - Image limits, storage cap, retention, and backup procedures must be proven during implementation within the free-only boundary.
+  - Account identifiers and recovery inputs must be supplied through owner-controlled secret handling, never repository records.
+  - App name and main layout remain provisional; provider policy may change and must be rechecked before provisioning.
+next_action:
+  action: Validate and commit plan 0.2, present the shared scope, and wait for owner authorization to begin slice 2.
+  acceptance_check:
+    - Wake recognizes plan revision 0.2 and the scoped decision with no validation errors.
+    - No app, remote resource, account secret, paid service, or additional Neon branch is created.

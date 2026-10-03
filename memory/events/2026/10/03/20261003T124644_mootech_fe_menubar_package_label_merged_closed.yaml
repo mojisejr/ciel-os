@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T124644_mootech_fe_menubar_package_label_merged_closed
+type: closeout
+recorded_at: 2026-10-03T12:46:44+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-fe-menubar-package-label
+  lane: single
+  objective: >-
+    Close the menu label change: PR 876 merged, production and staging on the
+    merge SHA. No workstream by the owner's choice.
+  scope:
+    - Post-merge verification, staging build and release, child checkout cleanup.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Owner merged mootech-fe PR 876 at 2026-10-03T05:40:06Z; merge commit 9daf8186ad32d1f65a733f8dc1d165f03c4b9cbb. Menubar.tsx on main carries label แพ็กเกจ."
+    - "Vercel production deployment success; bazichart.mumate.co/api/health ok, db ok, sha 9daf818."
+    - "Staging built (container-build run 37100679078) and released (release run 37100840707, fe 9daf818, bazi 6c9b014); app.staging.mumate.co/api/health ok, sha 9daf818."
+    - "mootech-fe checkout on clean main = origin/main 9daf818; branch merged, no open PR, remote gone, local deleted."
+    - "Owner closed this change: \"ส่วนเรื่องเปลี่ยนชื่อน่าจะปิดได้เลย\"."
+
+evidence:
+  repository:
+    head: "d0c6939"
+    branch: hq/20261001
+    working_tree: this-record-and-the-chat-record
+  pull_request:
+    repository: github.com/mojisejr/mootech-fe
+    number: 876
+    url: https://github.com/mojisejr/mootech-fe/pull/876
+    base: main
+    state: MERGED
+    merge_commit: 9daf8186ad32d1f65a733f8dc1d165f03c4b9cbb
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: None; closed.
+  acceptance_check:
+    - None.
