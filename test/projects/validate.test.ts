@@ -14,6 +14,7 @@ test("validates the committed project registry", async () => {
     expect.stringContaining("projects/bazi-sft-dataset/project.yaml"),
     expect.stringContaining("projects/ciel-mini-template/project.yaml"),
     expect.stringContaining("projects/ciel-os/project.yaml"),
+    expect.stringContaining("projects/clear-together/project.yaml"),
     expect.stringContaining("projects/cu12-e2e-lab/project.yaml"),
     expect.stringContaining("projects/cu12-simulator/project.yaml"),
     expect.stringContaining("projects/dac2-durian-smart-account/project.yaml"),
