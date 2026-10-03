@@ -1,7 +1,7 @@
 # MuMate — the check-in promo popup shows only to a signed-in member who has not checked in today
 
 **Workstream:** `mumate-promo-popup-auth-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.1
 **Execution phase:** none
