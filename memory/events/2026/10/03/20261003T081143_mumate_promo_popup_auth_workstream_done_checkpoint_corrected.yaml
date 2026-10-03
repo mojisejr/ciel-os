@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T081143_mumate_promo_popup_auth_workstream_done_checkpoint_corrected
+type: closeout
+recorded_at: 2026-10-03T08:11:43+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-promo-popup-auth-001
+  lane: single
+  objective: >-
+    Close slice 1 and the workstream: PR 874 merged, live on Vercel
+    production, staging released to the same SHA, owner checked production.
+    Supersedes evt_20261003T081121_mumate_promo_popup_auth_merged_production_staging_workstream_done,
+    whose checkpoint named a revision (f7b3fc4) that does not exist; the
+    earlier restated closeout is be9ab75. Content is otherwise the same.
+  scope:
+    - Post-merge verification, staging build and release, child checkout cleanup, plan state completed.
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  completed:
+    - "Owner merged mootech-fe PR 874 at 2026-10-03T01:02:21Z; merge commit 9695d274b2524d810e38f25e2f225a326e42dec2."
+    - "Vercel production deployment for 9695d27 success; bazichart.mumate.co/api/health status ok, db ok, sha 9695d27, platform vercel."
+    - "Owner checked production with an account that checked in today, and in incognito signed out: no popup in either."
+    - "Staging image built (container-build run 37084669283, target staging, push) and released (mumate-infra release run 37085021425, env staging, fe 9695d27, bazi 6c9b014 unchanged = production). app.staging.mumate.co/api/health ok, db ok, sha 9695d27, platform container, env staging; /v2 200. Released after the owner confirmed mumate-alert-messages-001 was not testing on mumate-2."
+    - "mootech-fe checkout back on clean main = origin/main 9695d27; topic branch fully merged, no open PR, remote branch already gone, local branch deleted."
+    - "Plan 0.1 marked completed; the owner said to close the workstream."
+  owner_statement: "บน prod ผมเชคแล้วครับ ทั้งใน incognito ด้วย ไม่เจอ pop up ครับ หลังจากทำตามที่บอก ปิด workstream ได้ครับ"
+  not_verified:
+    - "A signed-in member who has not checked in today seeing the popup on a deployed build; covered by the spec only."
+
+evidence:
+  plan: workstreams/mumate-promo-popup-auth-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "1bea566"
+    branch: hq/20261001
+    working_tree: this-closeout-and-plan-state
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261001
+  pull_request:
+    repository: github.com/mojisejr/mootech-fe
+    number: 874
+    url: https://github.com/mojisejr/mootech-fe/pull/874
+    base: main
+    state: MERGED
+    merge_commit: 9695d274b2524d810e38f25e2f225a326e42dec2
+    reviewed_head_sha: f9271c0f1249a2e1188da7384a9c250f0cb8f937
+  application:
+    mootech-fe: "origin/main 9695d27 (Vercel production; staging image 9695d27-staging)"
+    bazi-sft-dataset: "origin/pdf-dev 6c9b014 (unchanged on both)"
+
+unresolved:
+  - "verify-architecture is red on mootech-fe main in four files outside this lane (pages/v2/fortune/sage.tsx, pages/v2/shop/checkout.tsx, pages/v2/shop/qrcode.tsx, features/v2-shell/components/AppHeader.tsx), so pushes bypass the pre-push gate; deferred. Workaround: run lint, test and build locally before a --no-verify push."
+  - "mumate-vercel-to-do-001: staging now matches production at fe 9695d27 / bazi 6c9b014; a team sign-off must name these SHAs."
+  - "HQ records for this lane are committed on hq/20261001 and await the owner's round push and merge."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None for this workstream. The owner integrates the HQ round at his chosen time.
+  acceptance_check:
+    - Wake reports mumate-promo-popup-auth-001 completed once hq/20261001 reaches origin/main.
