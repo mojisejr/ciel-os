@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T103259_mumate_chat_keyboard_ios_branch_on_staging_for_owner_check
+type: closeout
+recorded_at: 2026-10-03T10:32:59+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-chat-keyboard-ios-001
+  lane: single
+  objective: >-
+    Checkpoint: slice 1 built, tested and released to staging from its
+    branch, waiting for the owner's check on his own device before a PR.
+  scope:
+    - mootech-fe branch fix/chat-keyboard-ios at 61c7be8, staging build and release.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "ChatScreen root pinned to the visual viewport (position fixed, top = offsetTop, height = visualViewport.height, both divided by the text-size zoom; 100dvh before the first measurement). Composer input 16px. Page canvas #F6ECF0 while the chat is mounted, restored on leave. Logic in features/v2-chat/visible-area.ts."
+    - "Zoom measured in real Chromium and WebKit 26.5 (playwright, 393x852): the old height-only code covered 767 px at zoom 0.9 and 1065 px at 1.25; with the division the box covers top to bottom at 1, 0.9, 1.1 and 1.25."
+  verification:
+    - "scripts/chat-visible-area.test.tsx: 11 cases; against the old ChatScreen 7 fail with assertion errors (4 arithmetic cases pass), all 11 pass after."
+    - "npm test 302 files passed, 22 skipped; 3850 passed, 211 skipped (skipped counts equal to the PR 874 run). Lint 0 errors; tsc clean; verify-architecture adds no new violation; npm run build success."
+    - "Staging: container-build run 37093251055 (61c7be8, target staging) success; release run 37093495342 success; app.staging.mumate.co/api/health ok, db ok, sha 61c7be8, env staging; /v2/chat 200."
+  not_verified:
+    - "No real keyboard in any automated check; the iOS pan is covered by faked viewport numbers only. The owner's device check on staging is the real proof."
+
+evidence:
+  plan: workstreams/mumate-chat-keyboard-ios-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: "c7fdaff"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe: "branch fix/chat-keyboard-ios 61c7be81b0ff7cde8c9ab727ab24e9c03af1ad24 (pushed), base main 9695d27"
+    staging: "mumate-2 fe 61c7be8-staging, bazi 6c9b014-staging"
+    production: "Vercel fe 9695d27 (unchanged)"
+
+unresolved:
+  - "Staging does not match production until the merge and the following staging release; the team's staging sign-off waits."
+  - "iOS 26 standalone under-reports the viewport height (WebKit bug 301108); a small bottom band there may remain."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner checks the chat on staging on his iPhone; on his word, open the
+    PR, close out on it, the owner merges, then staging goes to the merge SHA.
+  acceptance_check:
+    - Slice 1 DoD in the plan.
