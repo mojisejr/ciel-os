@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T154947_mumate_staging_synced_fe_05090a2_bazi_4a43450_closed
+type: closeout
+recorded_at: 2026-10-03T15:49:47+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-staging-sync
+  lane: single
+  objective: >-
+    Bring staging and the local checkouts level with production after merges
+    by a team member; closed, no workstream by the owner's choice.
+  scope:
+    - Staging build and release of fe 05090a2 and bazi 4a43450; local mootech-fe, bazi-sft-dataset, bazi-testenv and mumate-infra fast-forwarded.
+
+outcome:
+  status: recorded
+  slice: none
+  decision: >-
+    Owner, 2026-10-03: "เหมือนว่าเพื่อนผมจะ merged เพิ่ม เราสามารถ sync แล้ว deploy
+    on staging ได้หรือเปล่า แล้ว closeout ปิด ไม่ต้องเปิด workstream" and "แล้ว sync
+    on local ด้วยจะได้เท่ากันทั้งหมด".
+  completed:
+    - "New since fe 9daf818 / bazi 6c9b014: mootech-fe 05090a2 (PR 877, chat persona history and copy; ChatScreen copy only, the keyboard fix from PR 875 is intact); bazi pdf-dev 88edb25 and 4a43450 (persona endings; tarot book 2)."
+    - "Production already serves them: bazichart.mumate.co/api/health sha 05090a2 (Vercel); bazi Vercel production deployment for 4a43450 success."
+    - "Staging images: mootech-fe container-build run 37110668482 (05090a2) and bazi-sft-dataset container-build run 37110670310 (4a43450), both target staging, success. Release run 37110886005 success: fe running 05090a2…-staging /health.sha 05090a2d21c5, bazi running 4a43450…-staging /health.sha 4a4345077b47, both healthy, caddy ok, alloy ready. app.staging.mumate.co/api/health sha 05090a2. bazi.staging.mumate.co did not answer from this machine; the release's own check is the evidence for bazi."
+    - "Local: mootech-fe main = origin/main 05090a2; mumate-infra main = origin/main 31b9f7c; mootech-be main = origin/main; bazi-testenv worktree (holds pdf-dev) fast-forwarded 5a501b2 → 4a43450; bazi-sft-dataset main checkout moved from detached 60c05f0 to detached 4a43450 (pdf-dev lives in the bazi-testenv worktree). All clean."
+
+evidence:
+  repository:
+    head: "191288a"
+    branch: hq/20261001
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main 05090a2d21c576eb2cf956daaba59d2a56d79763 (Vercel production; staging 05090a2-staging)"
+    bazi-sft-dataset: "origin/pdf-dev 4a4345077b479a6b498626a244bd63847e81717f (Vercel production; staging 4a43450-staging)"
+
+unresolved:
+  - "mumate-vercel-to-do-001: staging matches production at fe 05090a2 / bazi 4a43450; a team sign-off must name these SHAs."
+  - "projects.local.yaml binds bazi-sft-dataset to the main checkout, which stays detached because pdf-dev is held by the bazi-testenv worktree; Wake reports its branch as null."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: None; closed.
+  acceptance_check:
+    - None.
