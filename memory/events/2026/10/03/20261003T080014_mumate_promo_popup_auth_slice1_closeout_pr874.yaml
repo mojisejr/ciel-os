@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261003T080014_mumate_promo_popup_auth_slice1_closeout_pr874
+type: closeout
+recorded_at: 2026-10-03T08:00:14+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-promo-popup-auth-001
+  lane: single
+  objective: >-
+    Offer slice 1 for the owner's merge: the check-in promo popup opens only
+    for a signed-in member who has not checked in today (mootech-fe PR 874).
+  scope:
+    - PromoPopup.tsx, its new spec and its registration in vitest.config.mts.
+
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  slice: "1"
+  completed:
+    - "PromoPopup opens only on useCurrentUser() 'authed' (waits through 'loading', never 'anon'), re-checks when status or path changes, reads /api/qi-wallet once and stays closed when checkedInToday is true; a failed read opens it as before. Excluded paths, once per session, the 7-day hide, the delay and the link are unchanged."
+    - "Re-check on path change is the one addition beyond the owner's wording: /v2/login moves a signed-in member to /v2 with router.replace, so a mount-only check would never see them."
+  verification:
+    - "scripts/promo-popup-members-only.test.tsx: 10 cases, 6 red against the old component, 10 green after."
+    - "npm test: 301 files passed, 22 skipped; 3839 tests passed, 211 skipped (skipped count not compared with main). npm run lint 0 errors; tsc --noEmit clean; npm run build success with the VAPID gate passing."
+    - "Vercel preview of f9271c0 built (check pass). Owner opened it signed out: no popup."
+  not_verified:
+    - "Signed-in cases on a deployed build: LINE login does not work on preview URLs (owner). The checked-in-today case is checked on production right after the merge; the not-yet-checked-in case is covered by the spec only."
+
+evidence:
+  plan: workstreams/mumate-promo-popup-auth-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "f5b7688"
+    branch: hq/20261001
+    working_tree: this-closeout-only
+  pull_request:
+    repository: github.com/mojisejr/mootech-fe
+    number: 874
+    url: https://github.com/mojisejr/mootech-fe/pull/874
+    head: f9271c0f1249a2e1188da7384a9c250f0cb8f937
+    base: main fb1f03701d0c3f3c0d5af57cfe0b2e37b15d6adc
+  push: "Pushed by the owner with --no-verify: verify-architecture already fails on main in four files this PR does not touch (pages/v2/fortune/sage.tsx, pages/v2/shop/checkout.tsx, pages/v2/shop/qrcode.tsx, features/v2-shell/components/AppHeader.tsx); lint and test run locally and green."
+
+unresolved:
+  - "verify-architecture is red on mootech-fe main (four files above, since about 2026-09-29), so every push bypasses the pre-push gate; deferred, not part of this lane. Workaround: run lint, test and build locally before pushing with --no-verify."
+  - "After the merge: Vercel production serves the merge SHA, the owner checks a checked-in account sees no popup, and staging is built and released to that SHA. The release waits until mumate-alert-messages-001 is not stopping fe on mumate-2."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner reviews and merges PR 874; the agent confirms production, then
+    builds and releases staging to the merge SHA.
+  acceptance_check:
+    - Production and staging /api/health report the merge SHA; signed-out /v2 shows no popup on both.
