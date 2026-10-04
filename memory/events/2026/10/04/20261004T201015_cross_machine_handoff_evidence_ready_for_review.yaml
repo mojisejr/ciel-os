@@ -1,0 +1,102 @@
+schema_version: ciel.event.v0.1
+id: evt_20261004T201015_cross_machine_handoff_evidence_ready_for_review
+type: closeout
+recorded_at: "2026-10-04T20:10:15+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: ciel-cross-machine-handoff-001
+  lane: single
+  objective: Deliver retained evidence and close the owner-withdrawn exploratory scope.
+  scope:
+    - Plan revision 0.2 slice 1; evidence archive, comparable runner, closure decision, and PR delivery for owner review.
+  out_of_scope:
+    - Live contract/code changes, original proof completion, SMC or portability closure, installs, merge, cleanup, or checkout movement.
+outcome:
+  status: ready-for-owner-merge
+  result: >-
+    Evidence delivery is offered for owner review. Revision 0.2 ends the
+    current experiment at its measured partial result and preserves the six
+    original events and revision 0.1 plan in Git history. EVIDENCE.md explains
+    original local-only artifacts; FIXTURE_REPLAY.py permits comparable
+    standard-library/Git replay. The offer/receipt proposal was never adopted.
+  completion_boundary: >-
+    This is the final delivery of the revised evidence-closure scope, not
+    completion of revision 0.1 slices 2 or 3, actual Mac–Windows handoff,
+    fresh-agent behavior, source exclusion, deployed-rule rollback, or SMC
+    readiness. Owner merge, synchronization, and cleanup are still pending.
+evidence:
+  plan: workstreams/ciel-cross-machine-handoff-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  decision: memory/events/2026/10/04/20261004T193944_cross_machine_handoff_evidence_closure_authorized.yaml
+  repository:
+    head: 6e6b54aa52b55d0b61c706469fd51e00a525d82d
+    branch: docs/cross-machine-handoff-plan
+  delivery:
+    target_branch: main
+    topic_branch: docs/cross-machine-handoff-plan
+  pull_request:
+    number: 80
+    url: https://github.com/mojisejr/ciel-os/pull/80
+    base: main
+    head: docs/cross-machine-handoff-plan
+    observed_draft_head: 6e6b54aa52b55d0b61c706469fd51e00a525d82d
+  execution:
+    os: windows
+    locality: local
+    role: prepare and publish the evidence delivery
+  supporting_artifacts:
+    - workstreams/ciel-cross-machine-handoff-001/EVIDENCE.md
+    - workstreams/ciel-cross-machine-handoff-001/FIXTURE_REPLAY.py
+  windows_candidate_checks:
+    revision: 6e6b54aa52b55d0b61c706469fd51e00a525d82d
+    results:
+      - Comparable runner passed with new local fixture hashes.
+      - Focused PyYAML fields/unique IDs/references, replay syntax, and six original event blob immutability checks passed.
+      - Bounded sensitive-pattern scan and git diff --check passed; no fixture repositories or long transcripts were staged.
+      - Existing lifecycle source functions passed modeled Git-state checks; this was not full Wake or an actual merge proof.
+    limitation: Windows Wake still fails on missing yaml under Bun 1.2.4; Windows bun run check did not run.
+  mac_candidate_verification:
+    revision: 6e6b54aa52b55d0b61c706469fd51e00a525d82d
+    provenance: reported host evidence from the Mac verifier using an isolated detached checkout; not executed by this Windows process
+    runtime: Bun 1.3.2
+    results:
+      - bun run check passed typecheck and 44 tests, zero failures, 199 expectations at the candidate head.
+      - bun run wake with ignored local bindings to actual Mac children reported validationErrors empty, reconciliation expected-evolution, and revision 0.2 slice 1 authorized before this closeout.
+      - Comparable runner passed on darwin for its eight mechanical scenarios; new fixture hashes, not historical replay or product proof.
+      - git diff --check against f0ae0ad passed; six original event diffs against 7d38658 were empty.
+      - Plan, closure decision, evidence guide, and runner review reported no in-scope correction.
+    warnings_retained:
+      - mootech_ga4_slice3_parked_until_day7
+      - mumate_be_retirement_render_suspended_quiet_window_open
+    boundary: >-
+      This verification covers the candidate revision only. The final closeout
+      was not present then; final-head event/Wake verification is a subsequent
+      Mac action. Main Mac checkout was reported clean and unchanged; temporary
+      dependencies/bindings/results were not committed.
+  remote_observation:
+    fact: GitHub draft head and fetched topic ref both equalled the candidate revision before this closeout.
+    ci: No CI checks or statuses reported for the candidate head; no hosted CI pass claimed.
+  lifecycle:
+    mechanism: Existing ready-for-owner-merge plus revision 0.2 last slice 1; no new status or source change.
+    after_owner_merge: Fetch and synchronize each checkout; clean current main with permitted topic-ref cleanup derives completed and is excluded from attention.
+    caveat: Merged-needs-sync is excluded but does not mean sync finished; merged-needs-cleanup may remain attention until README cleanup gates pass.
+unresolved:
+  - Owner review/merge, final-head Mac verification, both checkout syncs, and allowed topic cleanup remain pending; prefer a merge commit to retain referenced historical revisions.
+  - Original scripts/results/transcripts and fixture objects remain ignored/local-only. Git retains semantic records and comparable replay, not exact old artifact reconstruction.
+  - Supported Windows Bun/dependencies, Wake/check, child bindings/assets, and product readiness remain separate pending work.
+  - Actual cross-machine handoff, agent edit behavior, competing writers, unrelated HQ integration, and deployed-rule rollback were not proved; no lock or automatic event gate exists.
+  - Mac Wake retained two pre-existing warnings above; no unrelated workstream or source was changed to silence them.
+  - Human approval, review, and external rules outside repository-established records remain unknown; this PR's publication scope is recorded by the owner decision.
+next_action:
+  action: >-
+    Commit and push this closeout, verify its containment on the actual PR
+    head, update the review description, and offer owner review. Mac then
+    verifies final head. Only after owner merge perform synchronization and
+    README-gated cleanup. Future experiment scope requires a new owner decision.
+  acceptance_check:
+    - Final PR head contains this closeout and is ready for owner review, not merged by the agent.
+    - Final closeout and candidate verification are distinguished by revision; original partial proof is not relabeled complete.
+    - SMC and portability retain their independent pending scope.
