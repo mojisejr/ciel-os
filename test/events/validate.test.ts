@@ -1,4 +1,4 @@
-import { join, resolve } from "node:path";
+import { isAbsolute, join, resolve } from "node:path";
 
 import { expect, test } from "bun:test";
 
@@ -11,7 +11,7 @@ test("validates the repository event records and reports their paths", async () 
 
   expect(result.errors).toEqual([]);
   expect(result.files.length).toBeGreaterThanOrEqual(11);
-  expect(result.files.every((path) => path.startsWith("/"))).toBe(true);
+  expect(result.files.every((path) => isAbsolute(path))).toBe(true);
 });
 
 test("reports a missing common field with the fixture path", async () => {
