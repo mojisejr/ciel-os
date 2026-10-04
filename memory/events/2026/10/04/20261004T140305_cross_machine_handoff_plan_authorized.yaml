@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20261004T140305_cross_machine_handoff_plan_authorized
+type: decision
+recorded_at: "2026-10-04T14:03:05+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: ciel-cross-machine-handoff-001
+  lane: single
+  objective: Prepare a bounded plan for truthful Git-backed transfer between local Windows and Mac checkouts.
+  scope:
+    - Open this workstream and prepare a detailed plan, scenarios, DoD, and evidence-preserving rollback.
+  out_of_scope:
+    - Implementation, shared operating-contract changes, product work, and external writes.
+outcome:
+  status: decided
+  decision: >-
+    The owner explicitly asked to open the workstream and write the plan after
+    aligning on explicit source handoff, truthful transfer of all work states,
+    and a receiving-agent edit gate when the checkpoint is missing.
+    This authorizes planning only; proposed mechanisms still require review.
+  owner_report: Mac work is currently idle; this is not agent verification of that machine.
+  authorizes:
+    - Plan revision 0.1 slice 1 only.
+  does_not_authorize:
+    - Slices 2 or 3, remote publication, changes to OWNER.md, or a new product slice.
+    - Superseding the earlier Windows branch/publication restrictions.
+evidence:
+  plan: workstreams/ciel-cross-machine-handoff-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: f0ae0adbf9cb5335d01d82459b41c3493c30fb46
+    branch: docs/cross-machine-handoff-plan
+  execution:
+    os: windows
+    locality: local
+  related_plan: workstreams/ciel-windows-portability-001/PLAN.md
+  prior_windows_decision: memory/events/2026/09/28/20260928T163545_windows_portability_phase2_authorized.yaml
+unresolved:
+  - Supported Bun and dependencies are unavailable; Windows Wake/check proof has not passed.
+  - The real pilot project and compatible publication route require owner decisions.
+  - Another machine's liveness or unpublished state is not observable from local Git.
+next_action:
+  action: Complete the local slice 1 plan and closeout, then present them for owner review.
+  acceptance_check:
+    - Plan contains minimal candidate changes, ordered transfer, recovery, scenarios, DoD, and rollback.
+    - No future implementation or remote action is represented as authorized.
