@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20261004T150014_cross_machine_handoff_fixture_start_authorized
+type: decision
+recorded_at: "2026-10-04T15:00:14+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: ciel-cross-machine-handoff-001
+  lane: single
+  objective: Begin the reviewed handoff plan incrementally with local disposable Git fixtures.
+  scope:
+    - Start slice 2 with a local-only experiment transferring an unfinished child commit and a failed-check closeout between independent fixture clones.
+  out_of_scope:
+    - Live operating-contract edits or adoption, external publication, actual Mac execution, and production child work.
+outcome:
+  status: decided
+  decision: >-
+    After reviewing the plan and discussing the existing event types, the
+    owner asked to start and proceed step by step. Begin the local fixture
+    proof under revision 0.1 slice 2; stop at a reviewable evidence checkpoint
+    before changing the live shared contract.
+  authority_boundary: >-
+    The local bare-remote route applies only to disposable fixtures. Production
+    publication restrictions and shared-file quietness remain unresolved gates
+    for later actions, not permissions inferred from this start request.
+evidence:
+  plan: workstreams/ciel-cross-machine-handoff-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: b0cc906979039b41acade269931499ca38400a35
+    branch: docs/cross-machine-handoff-plan
+  execution:
+    os: windows
+    locality: local
+unresolved:
+  - Windows Wake and supported Bun checks remain unavailable as recorded in the planning closeout.
+  - Production publication route, real pilot selection, and Mac proof remain pending.
+  - A local fixture proof cannot establish agent behavior, remote-machine liveness, or distributed exclusion.
+next_action:
+  action: Run the bounded first fixture experiment, record its actual result and limitations, and review the next step with the owner.
+  acceptance_check:
+    - Receiver can read the unmerged fixture offer and access its exact child revision while retaining the source's failed result.
+    - No production contract or child project is changed.
