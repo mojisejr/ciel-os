@@ -1,0 +1,83 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T052948_windows_backend_cache_reuse_verified
+type: closeout
+recorded_at: '2026-10-05T05:29:48+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: ciel-windows-portability-001
+  lane: single
+  objective: Record the observed Windows backend cache-reuse result after the owner reported Norton restores.
+  scope:
+  - Retry the previously failing store test and the targeted backend suite sequentially without cleaning
+    the existing cache; append the observed result to PR 81.
+  out_of_scope:
+  - Security-setting changes/verdicts, product changes, owner installation/activation/walkthrough, hardware,
+    and portability/slice 11 completion.
+outcome:
+  status: windows-backend-cache-reuse-recorded
+  result: store --lib passed seven tests. The targeted backend suite passed 58 tests twice sequentially
+    using the existing target directory, without cache cleaning or source changes. The previously observed
+    alias failure did not recur in these runs.
+  completion_boundary: This proves the tested backend cache reuse in the current environment; it does
+    not identify the exact Norton detection/exclusion, certify file safety or a false positive, or finish
+    portability Phase 2 or SMC slice 11.
+evidence:
+  plan: workstreams/ciel-windows-portability-001/PLAN.md
+  plan_revision: '0.1'
+  previous_closeout: memory/events/2026/10/05/20261005T051812_windows_readiness_partial_closeout.yaml
+  repository:
+    head: ef42be2aa4c23fe9b347d4b0852ec124f13b5adb
+    branch: fix/windows-path-readiness
+  pull_request:
+    number: 81
+    url: https://github.com/mojisejr/ciel-os/pull/81
+    base: main
+    head: fix/windows-path-readiness
+    observed_draft_head: ef42be2aa4c23fe9b347d4b0852ec124f13b5adb
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  owner_report:
+    action: The owner reported selecting Norton Create exception & restore file for some items believed
+      related to the build failures.
+    boundary: This is an owner-reported action. Exact detection names, file list, times and exclusion
+      scope have not been supplied or independently read by this Windows process.
+  checks:
+  - order: 1
+    command: cargo test --locked -p store --lib
+    passed: 7
+    failed: 0
+  - order: 2
+    command: cargo test --locked -p workflow -p store -p license -p ops -p api -p cu12 -p cabinet
+    passed: 58
+    failed: 0
+  - order: 3
+    command: cargo test --locked -p workflow -p store -p license -p ops -p api -p cu12 -p cabinet
+    passed: 58
+    failed: 0
+  cache_boundary: All commands used the same existing target sequentially. No cargo clean, cache quarantine
+    or security-setting changes were performed between the owner report and these test runs.
+  working_tree_observation: HQ and both child working trees were clean before creating this new event;
+    neither child source nor locks changed.
+  manual_environment_script: D:/dev/tools/Activate-Smc.ps1
+  source_boundary: Child revisions and setup are unchanged from the previous closeout; refer to that record.
+    HQ and both child working trees were clean before this new event.
+  local_logs: .local/windows-readiness/store-after-owner-restore.log; backend-after-owner-restore.log;
+    backend-after-owner-restore-repeat.log. These logs are local-only.
+unresolved:
+- Exact Norton detection/restored-file/exclusion details remain unknown to this agent; no false-positive
+  or file-safety verdict is made.
+- Owner review/merge and post-merge synchronization remain pending. GUI/MSI installation, activation,
+  owner walkthrough, hardware and fresh-agent portability/slice 11 proof remain outside this checkpoint.
+- Other limitations, portfolio attention, historical warnings, npm audit findings and authority unknowns
+  remain as recorded in the previous closeout. Its failed observations remain immutable; only current
+  backend/store cache reuse is newly proved.
+next_action:
+  action: Commit and push this new record to PR 81, verify containment on its head, update the review
+    description, and return it for owner review without merging. The owner can then review the actual
+    Norton exception scope and decide the next portability/SMC acceptance slice.
+  acceptance_check:
+  - Final PR head contains both immutable historical partial closeout and this follow-up observation.
+  - Current tests pass without cache cleanup while the earlier failed evidence remains traceable.

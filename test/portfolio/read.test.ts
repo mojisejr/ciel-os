@@ -267,6 +267,28 @@ async function initializeWorkspace(root: string): Promise<void> {
   git(root, ["commit", "-m", "workspace fixture"]);
 }
 
+test("reads native plan paths and rejects an id that differs from the containing directory", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-native path-"));
+  try {
+    await initializeWorkspace(root);
+    await addPlan(root, "matching-id", "active", ["missing-project"]);
+    await addPlan(root, "wrong-directory", "active", ["missing-project"]);
+    const mismatchedPath = join(root, "workstreams", "wrong-directory", "PLAN.md");
+    await writeFile(mismatchedPath, plan("different-id", "active", ["missing-project"]));
+
+    const report = await readPortfolioWakeReport(root);
+    expect(report.validationErrors).toEqual([
+      { path: mismatchedPath, message: "workstream id must match its directory name" }
+    ]);
+    expect(report.workstreams.map((workstream) => workstream.id)).toEqual(["matching-id"]);
+    expect(report.attention).toEqual([
+      expect.objectContaining({ workstreamId: "matching-id", state: "unavailable" })
+    ]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test("derives attention from plans, verified local projects, and per-lane checkpoints", async () => {
   const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
   try {
