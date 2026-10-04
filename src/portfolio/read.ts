@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { join, relative, resolve } from "node:path";
+import { basename, dirname, join, relative, resolve, sep } from "node:path";
 
 import { parseDocument } from "yaml";
 
@@ -60,6 +60,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+// Repository references use Git's separator; absolute filesystem paths stay native.
+function repositoryReference(repositoryPath: string, path: string): string {
+  return relative(repositoryPath, path).split(sep).join("/");
+}
+
 function readString(record: Record<string, unknown>, key: string): string | null {
   const value = record[key];
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
@@ -117,7 +122,7 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
   const executionPhase = readPlanField(text, "Execution phase");
   const executionState = readPlanField(text, "Execution state");
   const parallelism = readPlanField(text, "Parallelism");
-  const directoryId = path.split("/").at(-2) ?? "";
+  const directoryId = basename(dirname(path));
 
   if (declaredId === null) {
     errors.push({ path, message: "missing required plan field: Workstream" });
@@ -579,7 +584,7 @@ function deriveCloseoutWarnings(
 
       if (!carriesDeliveryStatus && matchesTerminalScope(event, workstream)) {
         warnings.push({
-          path: relative(repositoryPath, event.path),
+          path: repositoryReference(repositoryPath, event.path),
           message: `outcome.status ${String(status)} is not a status the delivery machinery acts on, and this closeout is otherwise scoped to finish ${workstream.id}; record a closeout saying one of ${deliveryStatuses.join(", ")} rather than editing this one`
         });
       }
@@ -635,7 +640,7 @@ async function deriveTerminalLifecycle(
     return null;
   }
 
-  const eventPath = relative(repositoryPath, event.path);
+  const eventPath = repositoryReference(repositoryPath, event.path);
   const eventCommit = await runGit(repositoryPath, ["log", "-1", "--format=%H", "--", eventPath]);
   if (eventCommit.exitCode !== 0 || eventCommit.stdout.trim().length === 0) {
     return {
@@ -785,7 +790,7 @@ async function readLatestRecord(repositoryPath: string, events: WorkstreamEvent[
   if (event === undefined) {
     return null;
   }
-  const eventPath = relative(repositoryPath, event.path);
+  const eventPath = repositoryReference(repositoryPath, event.path);
   const nextAction = isRecord(event.value.next_action) ? readString(event.value.next_action, "action") : null;
   return {
     eventPath,
@@ -893,10 +898,10 @@ async function deriveLifecycle(
           : `No owner decision authorizes plan revision ${workstream.planRevision} phase ${workstream.executionPhase}.`
       ];
       if (unread !== null) {
-        clauses.push(`A decision at ${relative(repositoryPath, unread.event.path)} is recorded for this workstream but authorizes nothing: ${unread.unmet.join("; ")}. Record a corrected decision beside it rather than editing it.`);
+        clauses.push(`A decision at ${repositoryReference(repositoryPath, unread.event.path)} is recorded for this workstream but authorizes nothing: ${unread.unmet.join("; ")}. Record a corrected decision beside it rather than editing it.`);
       }
       if (dangling !== null) {
-        clauses.push(`A closeout at ${relative(repositoryPath, dangling.path)} is worded as a delivery of this workstream but names no slice, so it does not finish a plan that declares ${workstream.declaredSlices.join(", ")}; either the plan revision or that closeout is out of date.`);
+        clauses.push(`A closeout at ${repositoryReference(repositoryPath, dangling.path)} is worded as a delivery of this workstream but names no slice, so it does not finish a plan that declares ${workstream.declaredSlices.join(", ")}; either the plan revision or that closeout is out of date.`);
       }
       workstream.lifecycle = {
         decisionEventPath: null,
