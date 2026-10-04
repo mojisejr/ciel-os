@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261004T193944_cross_machine_handoff_evidence_closure_authorized
+type: decision
+recorded_at: "2026-10-04T19:39:44+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: ciel-cross-machine-handoff-001
+  lane: single
+  objective: Retain the experiment and close its current scope without claiming the original proof completed.
+  scope:
+    - Revision 0.2 slice 1; plan/events, two supporting files, and owner-reviewed PR delivery.
+  out_of_scope:
+    - Further handoff experiments, live contract/code changes, SMC or portability closure, installs, merge, cleanup, or checkout movement in this delivery.
+outcome:
+  status: decided
+  decision: >-
+    The owner chose to retain evidence, return to the base, and stop this
+    experiment. Authorize Windows publication through a PR for owner review
+    and later merge/synchronization. Withdraw revision 0.1's unfinished
+    continuation scope; its partial evidence remains historical. A new owner
+    decision is required for future work.
+  completion_boundary: >-
+    Closure does not mean revision 0.1 slices 2 or 3 passed, that a transfer
+    contract was adopted, or that SMC/Windows is ready.
+  supersedes_continuation:
+    - memory/events/2026/10/04/20261004T140305_cross_machine_handoff_plan_authorized.yaml
+    - memory/events/2026/10/04/20261004T150014_cross_machine_handoff_fixture_start_authorized.yaml
+  publication_authority: Push only this HQ topic and prepare its draft then ready-for-review PR; owner merge remains required.
+evidence:
+  plan: workstreams/ciel-cross-machine-handoff-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: 7d386587c0960af98154ceabd4617839e74e038d
+    branch: docs/cross-machine-handoff-plan
+  execution:
+    os: windows
+    locality: local
+  preceding_checkpoint: memory/events/2026/10/04/20261004T154954_cross_machine_handoff_receipt_and_stale_probes.yaml
+unresolved:
+  - Exact old artifacts remain ignored/local-only; publish comparable replay and explain the limit.
+  - Windows Bun/dependencies and Wake/check remain unavailable; offered Mac exact-head verification is pending.
+  - Readiness, actual cross-machine handoff, agent behavior, competing writers, and rollback remain unproved.
+  - Merge, checkout synchronization, and cleanup are subsequent owner-gated work.
+next_action:
+  action: Publish a draft PR, obtain exact-head verification, and push its final closeout before owner review.
+  acceptance_check:
+    - Final closeout names revision 0.2 slice 1 and a recognized delivery status.
+    - Old events remain unchanged and no unrelated workstream closes.
