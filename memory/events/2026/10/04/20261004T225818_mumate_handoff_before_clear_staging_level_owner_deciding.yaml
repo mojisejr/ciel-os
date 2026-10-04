@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261004T225818_mumate_handoff_before_clear_staging_level_owner_deciding
+type: closeout
+recorded_at: 2026-10-04T22:58:18+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Hand MuMate and the HQ round over before the owner clears this session.
+    The owner has not chosen the next work; the next session wakes and stands
+    by. This record is the cold-session entry for MuMate and replaces
+    20261002T130617 as the starting point; read that one only for background.
+  scope:
+    - State of the four open items the owner named on 2026-10-04 and the HQ branch.
+  out_of_scope:
+    - Other workstreams in attention; Wake reports them.
+
+outcome:
+  status: recorded
+  slice: none
+  state:
+    - "HQ: hq/20261004 was empty and fully merged (ciel-os#79) and was deleted with git branch -d at the owner's word; hq/20261005 opened from main 1d433d6 (after Codex's ciel-os#80) and carries 457a875 (staging sync record) and this record, both unpushed; the push is the owner's."
+    - "Staging = production at fe 976fae8 / bazi 48e4328 since 2026-10-04 15:52Z (20261004T225337). Local mootech-fe main, bazi-testenv pdf-dev and the detached bazi-sft-dataset checkout are at the same SHAs."
+    - "mumate-chat-keyboard-ios-001: waiting for the owner's word on members' use; next_action of 20261004T050239 stands (its topic_branch hq/20261001 is the round that merged as ciel-os#79)."
+    - "mumate-be-retirement-001: Render suspended; quiet window to 2026-10-09 08:16; the owner's Omise dashboard check is still open; step 6 after the cutover holds."
+  owner_decisions_open:
+    - "Cutover week. On 2026-10-04 the owner said 2026-10-05 to 10-11, matching 20261002T090651; 20261002T130617 had recorded 'likely the week of 2026-10-12'. Confirm before planning. The 090651 timeline needs the go on Monday 10-05 for a Wednesday 10-07 02:00 window."
+    - "D7 not met: MUMATE100 end date unknown; team merge rate not low (fe 05090a2 PR 877 on 10-03 and 976fae8 PR 878 on 10-04; bazi pdf-dev 88edb25, 4a43450 and 48e4328 on 10-03); no go; slice 6 not authorized; no team staging sign-off recorded."
+    - "Staging storage: the owner recalls a separate Supabase bucket; 20260927T115819 recorded friend-photo uploads landing in the real bucket. The agent proposes comparing only bucket name and storage host between staging and production, no secret values, before the team tests manifest photo upload."
+  cleanup_offered:
+    - "Codex leftovers from ciel-os#80: local branch pr-80-review (merged, remote gone) and ignored .local/pr80-review/; delete by name on the owner's word."
+    - "bazi-testenv pdf-dev has no upstream, so git pull refuses; use git merge --ff-only origin/pdf-dev, or set the upstream if the owner wants."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: none
+  repository:
+    head: "457a875"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main 976fae8 (Vercel production and staging)"
+    bazi-sft-dataset: "origin/pdf-dev 48e4328 (Vercel production and staging)"
+    mumate-infra: "main 31b9f7c; PR 39 draft"
+    production_hosts: "mumate-prod-1 still fe c10e91e / bazi 49e22f2, rebuilt from the frozen SHAs before the cutover"
+
+unresolved:
+  - "Before the cutover: runbook 06 update for D8 rev 0.4, PR 39 rebase, both hosts rebuilt from frozen SHAs, BAZI_CLIENT_ID_SECRET equality on mumate-prod-1 unchecked."
+  - "Held by the owner since 20261002T205825: bazi /api/stats; bazi-alerts duplicate send (owner said next round)."
+  - "verify-architecture red on mootech-fe main in four files; deferred."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In a fresh session: Wake, read OWNER.md and this record, give the owner the
+    open items in priority order, and stand by for his choice. Before any
+    staging claim, re-fetch and compare origin/main and origin/pdf-dev with
+    976fae8 / 48e4328.
+  acceptance_check:
+    - A cold session can state where staging and production stand, what the cutover waits on, and which decisions are the owner's, from this record alone.
