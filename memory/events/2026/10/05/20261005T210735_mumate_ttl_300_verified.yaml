@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T210735_mumate_ttl_300_verified
+type: closeout
+recorded_at: 2026-10-05T21:07:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record that the team's DNS person lowered the TTL of bazichart.mumate.co
+    to 300 and the agent verified it, closing that runbook 06 pre-day item for
+    the Friday 2026-10-09 02:00 window. This record is the cold-session entry
+    for MuMate until the next one.
+  scope:
+    - TTL verification only.
+  out_of_scope:
+    - Any other change.
+
+outcome:
+  status: recorded
+  slice: "6"
+  state:
+    - "dig at this record: dns1 and dns2.registrar-servers.com answer bazichart.mumate.co 300 IN CNAME 0cd13b56dff0754c.vercel-dns-016.com. (value unchanged); 1.1.1.1 and 8.8.8.8 also return TTL 300."
+    - "bazichart.mumate.co/api/health status ok, db ok, sha 976fae8, platform vercel - production unaffected."
+    - "Pre-day items still open: mumate-infra PR 48 (runbook date row, open); Thursday 2026-10-08 production build and release (owner) and its verification (agent); user notice and Better Stack (owner); how the owner reaches the DNS person abroad and their Namecheap sign-in from the US."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "2f167d7"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    dns: "bazichart.mumate.co CNAME Vercel TTL 300 (Namecheap authoritative and public resolvers)"
+    mootech-fe: "origin/main 976fae8"
+    bazi-sft-dataset: "origin/pdf-dev 48e4328"
+    mumate-infra: "main dd7e462 on both hosts; PR 48 open; PR 39 draft"
+
+unresolved:
+  - "TTL back to 3600 after 24 h stable following the gate (runbook 06 step 7)."
+  - "HQ hq/20261005 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    After the owner merges PR 48, pull main on both hosts; on Thursday
+    2026-10-08 verify the owner's production build and release of fe 976fae8 /
+    bazi 48e4328; Friday 02:00 run runbook 06 with the owner.
+  acceptance_check:
+    - By Thursday evening mumate-prod-1 runs fe 976fae8 / bazi 48e4328 healthy in maintenance and both hosts carry the corrected runbook.
