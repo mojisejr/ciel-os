@@ -1,0 +1,134 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T065600_smc_windows_gui_tests_and_door_indicator_fix
+type: closeout
+recorded_at: '2026-10-06T06:56:00+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Continue Windows installed-app simulator acceptance through agent UI testing.
+outcome:
+  status: gui-checkpoint-awaiting-owner-authentication-and-msi-retest
+  result: Owner explicitly authorized agent Computer Use testing and continued local work.
+    Installed-app restart, reconnect, audit filtering and automatic backup checks passed.
+    An open loaded door incorrectly retained the green closed-lock icon; a two-line UI
+    fix passed candidate GUI tests and a new EXE/MSI build. The replacement MSI is not
+    installed. Step 11.4 and slice 11 remain incomplete; no final delivery is claimed.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.8'
+  step: '11.4'
+  repository:
+    head: 3fa57ad74954669d62284a0aa1cd7ec5f8f52923
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    locality: local
+  prior_checkpoint: memory/events/2026/10/06/20261006T053900_smc_installed_synthetic_load_completed.yaml
+  project:
+    id: smc-v2
+    head: 23e7781af3faa8f58b51e9e7a200a35b8089b527
+    branch: feat/windows-license-issuer
+    change: crates/ui/src/home.rs shows the existing Thai door-open label when a Loaded
+      slot has door_closed=false; HN and loaded state remain visible. No schema,
+      authentication or license-policy change. DESIGN.md was not edited.
+  simulator:
+    head: 1a3b97cfe1aeb57db7afc2128820d250fc0a39ef
+    mode: Local TCP simulator only; synthetic HN WINTEST001, slot 1.
+  installed_app:
+    path: D:\Smart Medication Cart\smc.exe
+    sha256: 8F166D5C1381BCE579665F1D485FEA5D445529B125FFC761845E6046713E2983
+    version_boundary: This is the previous installed artifact, not the UI-fixed candidate.
+    restart: Normal close and registered-app reopen retained license, admin1 and Loaded
+      WINTEST001, reconnected automatically and used C:\ProgramData\SMC.
+    permissions: Read-only process-token query on the earlier installed-app restart
+      reported TokenElevation=false; startup wrote logs and a daily database backup.
+    disconnect: Simulator UI unplug produced the red disconnected banner and disabled
+      load/dispense controls. Plug-in reconnected without manual repair; HN stayed loaded.
+    loaded_door_restart: Opening only door 1 and restarting retained Loaded WINTEST001.
+      Hook FE 0F and a simulated reconciled audit row agreed that its door was open.
+      The green lock on the home card disagreed, establishing the UI failure.
+    audit: Native UI showed six marked simulator records; HN filtering showed five
+      WINTEST001 records at that observation, matching read-only SQLite counts.
+    layout: Normal and maximized windows displayed Thai home/audit content readably.
+      Actual Windows DPI and alternate DPI settings were not measured or changed.
+  candidate_retest:
+    launch: Opened the EXE through its observed File Explorer application item;
+      returned window identity confirmed the retained candidate path.
+    result: Loaded WINTEST001 displayed red ประตูเปิด with door 1 open. Normal close
+      and reopen while leaving that door open retained the HN and correct open label.
+      Closing only door 1 returned the green lock without clearing the loaded HN.
+    proof_directory: D:\smc-owner\testing\gui-20261006
+    proof_files:
+    - restart-door1-open.jpg
+    - audit-hn-filter.jpg
+    - fixed-door1-open.jpg
+    - fixed-restart-door1-open.jpg
+    - fixed-door1-closed.jpg
+    - final-installed-restored.jpg
+    - final-simulator.png
+    proof_boundary: Native observations also have adjacent accessibility text files.
+      These are machine-local synthetic-test artifacts, not committed or independently
+      replicated evidence. Owner was away; candidate results are agent observations.
+  checks:
+  - cargo fmt --all --check passed.
+  - cargo clippy --locked -p ui --target wasm32-unknown-unknown -- -D warnings passed.
+  - git diff --check passed before the source checkpoint.
+  - Locked x86_64-pc-windows-msvc Tauri MSI build with the existing local config passed.
+  artifacts:
+    directory: D:\dev\tools\artifacts\smc-v2\step11.4-door-indicator-20261006
+    exe:
+      name: smc.exe
+      sha256: AC6C14B91E7C18ECE910385C611D66802A51F89C2E6EC8D2E07C734634ED831A
+    msi:
+      name: Smart Medication Cart_0.1.0_x64_en-US.msi
+      sha256: BDE72222A4028B9C5BE1CC116144E9AA5007169EBC183E88192510E5735C3377
+    boundary: Built and retained locally from the UI-fix checkpoint; replacement
+      installation, payload inspection and installed-MSI fix acceptance are not proved.
+  final_read_only_probes:
+    database: SQLite mode=ro/query_only quick_check=ok; slot 1 Loaded WINTEST001,
+      admin1 retained. Only synthetic slot/audit fields and user name/role were queried;
+      no PIN or PIN hash was read. Audit now has two door-open reconciliation rows.
+    automatic_backup: C:\ProgramData\SMC\backups\smc-backup-20261005-235429.sqlite
+      has quick_check=ok, Loaded WINTEST001, one user and a license setting.
+      This proves the automatic backup, not manual backup or restore acceptance.
+    simulator: GET state reports FF 0F, twelve closed hooks, board up, no faults and
+      a connected client after restoring the installed app normally.
+    handback: Fixed candidate closed normally; original installed app is open again
+      with Loaded WINTEST001. No patient data, live hardware or signing key was used.
+unresolved:
+- Owner authentication is still needed for dispense/clear, wrong PIN, unknown HN,
+  pending-transition restart, CSV, manual backup and diagnostics. Computer Use's
+  bundled guidance forbids automating user authentication dialogs. No bypass,
+  PIN reset or substitute account was attempted.
+- Replacement MSI installation needs action-time owner confirmation under the
+  Computer Use installation rule; it was not performed while the owner was away.
+- Loaded-door restart is proved; restart during a pending load/dispense is not.
+  Owner-observed full-cycle DoD, DPI setting and scanner availability remain open.
+- Earlier Computer Use initialization failure no longer blocked this run, but its
+  root cause is unproved. Explicit-path launch selected the registered installed
+  app; a process-path launch timed out. File Explorer safely launched the candidate.
+  An additional smc-named process has no readable path or targetable window; its
+  cause is unknown and it was not killed or used as product evidence.
+- Off-machine encrypted signing-key backup remains owner-deferred with no transfer;
+  same-disk recovery is not disk-loss protection. Old-key activation rollback and
+  Mac-key retrieval remain owner-waived and untested under revision 0.8.
+- CIEL Windows Phase 2 still requires its separate proof after step 11.4 and before
+  final 11.5 delivery. Real CU12, COM/RS485, scanner and production-key governance
+  are outside this simulator proof.
+- Prior build-cache LNK1104, old-running-EXE AccessDenied, WiX decompile warnings,
+  Norton exclusion details, five npm audit findings and gateway port-race limits
+  remain as previously recorded. The new build also reports outdated Browserslist
+  data; no unrelated dependency or security-setting change was made.
+- Prior disposable encrypted-fixture cleanup was rejected by automatic approval
+  review with reason blocked by policy; no retry or workaround deletion was made.
+  HQ and child checkpoints remain local only; no push, PR or remote sync was performed.
+next_action:
+  action: Owner returns, reviews the candidate fix proof and authorizes replacement
+    MSI installation at action time. Then walk the owner through PIN entry locally,
+    resume installed-app dispense/clear and remaining step 11.4 cases together.
+  acceptance_check:
+  - Installed executable matches the fixed artifact and repeats open/closed door UI proof.
+  - Owner observes one full load/dispense/clear cycle and remaining mandatory cases;
+    recorded pass/fail evidence precedes separate CIEL Phase 2 and final delivery.
