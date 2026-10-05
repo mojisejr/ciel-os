@@ -1,0 +1,86 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T174219_smc_lane_consolidation_checkpoint
+type: closeout
+recorded_at: '2026-10-05T17:42:19+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Record the actual single-lane planning checkpoint before Windows license implementation.
+  scope:
+  - Revision 0.7 scope consolidation and truthful handoff; retain delivered slices 1-10.
+  out_of_scope:
+  - Implementation, key generation/recovery, new activation, MSI/GUI owner acceptance, production and hardware.
+outcome:
+  status: scope-consolidated-checkpoint
+  result: The owner-only issuer, new development-key recovery, matching builds, first Windows
+    owner walkthrough and final evidence are now sequential steps 11.1-11.5 of this plan. The
+    separate license-planning lane is retired. Wake no longer reports an overlap between them.
+  completion_boundary: This is a checkpoint closeout, not the final delivery of slice 11 or the
+    whole SMC lane. No evidence.slice is supplied. SMC remains active and idle with actual Windows
+    acceptance still unfinished. Product implementation has not begun in this consolidation task.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.7'
+  repository:
+    head: a99ed10db6eb59acde3b901908fc0ee000584296
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  decision: memory/events/2026/10/05/20261005T173923_smc_windows_scope_consolidation_confirmed.yaml
+  retired_lane_closeout: memory/events/2026/10/05/20261005T174218_smc_separate_license_plan_retired.yaml
+  prior_lane_evidence:
+  - memory/events/2026/09/30/20260930T113643_smc_v2_app_slice10_merged.yaml
+  - memory/events/2026/09/30/20260930T121101_cu12_sprint005_slice3_walked_ready_for_owner_merge.yaml
+  - memory/events/2026/09/30/20260930T122020_smc_v2_app_lane_handoff_before_windows_and_hardware.yaml
+  - memory/events/2026/09/30/20260930T122048_smc_v2_app_handoff_attribution_corrected.yaml
+  - memory/events/2026/10/05/20261005T052948_windows_backend_cache_reuse_verified.yaml
+  checks:
+  - command: bun run check
+    bun_version: 1.3.2
+    typecheck: passed
+    passed: 45
+    failed: 0
+    assertions: 202
+  - command: bun run wake
+    validation_errors: 0
+    historical_warnings: 2
+    scope_conflicts_for_these_lanes: 0
+    receiving_state: active
+    retired_state: completed
+    execution_authority: Revision 0.7 implementation needs its own requested execution decision;
+      the historical revision 0.6 slice 10 decision is retained but does not authorize this revision.
+  - check: structural comparison against local Git
+    result: Slices 1-10 unchanged; eleven declared slice identifiers; five transferred steps;
+      DoD and original MSI activation/load-dispense boundary preserved.
+  - command: git diff --cached --check
+    result: passed for the plans and consolidation decisions
+  child_observation: Both child repositories remain clean; source, keys and runtime data were not changed.
+  portfolio_attention:
+    active: [ciel-owner-operating-contract-001, smc-v2-app-001]
+    paused: [ciel-windows-portability-001, dac2-guided-inputs-001, mootech-fe-beam-gateway-001,
+      mumate-be-decoupling-001, orchard-decision-lab-001]
+    unavailable: [ciel-mini-template-001, mootech-ga4-instrumentation-001,
+      mumate-be-retirement-001, mumate-vercel-to-do-001]
+  publication: Consolidation is local on the existing topic branch. No push, PR or remote merge
+    was performed, and Mac synchronization is not claimed.
+unresolved:
+- Owner-only issuer work, Windows key/recovery, matching new-key builds and installed-MSI walkthrough remain
+  to be executed. Old key/issued-license/deployment availability and protected backup choices are unknown.
+- CIEL Windows portability Phase 2 remains paused and unproved. Its historical gate must be resolved
+  with actual proof or an explicit owner scope decision before final Windows acceptance is claimed.
+- Real CU12 behavior/door-label order, physical scanner and production signing key before first sale
+  remain separate limits. Simulator tests cannot establish real-hardware readiness.
+- Prior exact Norton restore/exclusion details, npm build-tool audit findings and recorded gateway
+  parallel-test port race remain, as do other unavailable bindings and the two historical status warnings.
+- Human/external approvals are unknown beyond the explicit local consolidation/retirement direction.
+  No committed event was amended; the prior overlap and planning observations remain historical facts.
+next_action:
+  action: Present this checkpoint, then continue at revision 0.7 step 11.1 when the owner requests
+    execution. Record that bounded decision before changing product code; do not reactivate the retired lane.
+  acceptance_check:
+  - Owner sees one active SMC lane and the complete remaining sequence, with no false completion claim.
+  - Final delivery for slice 11 is recorded only after its mandatory DoD and owner walkthrough pass.
