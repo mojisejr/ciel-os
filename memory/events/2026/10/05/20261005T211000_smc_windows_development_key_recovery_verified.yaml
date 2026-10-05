@@ -1,0 +1,119 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T211000_smc_windows_development_key_recovery_verified
+type: closeout
+recorded_at: '2026-10-05T21:10:00+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Verify the actual owner development-key backup and same-Windows recovery.
+  scope:
+  - Step 11.2 actual backup evidence, restored public identity, ACLs and synthetic signatures.
+  out_of_scope:
+  - Passphrase access, off-machine upload, step 11.3 builds or activation, push, PR and merge.
+outcome:
+  status: step-11.2-recovery-verified
+  result: The owner reports completing the local backup/recovery procedure and retaining the
+    passphrase. Agent independently checked the actual encrypted backup exists, original and
+    restored keys have the recorded full public key, both synthetic licenses verify, and the
+    checked folders/files permit only the current owner and SYSTEM. Step 11.2 has same-Windows
+    recovery evidence; it does not establish off-machine recovery or app activation.
+  completion_boundary: Intermediate substep checkpoint, not final slice-11 delivery. The
+    embedded key is unchanged, the workstream remains active, and execution stops before 11.3.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.7'
+  step: '11.2'
+  prior_checkpoint: memory/events/2026/10/05/20261005T200000_smc_windows_key_created_owner_backup_pending.yaml
+  repository:
+    head: 37e1a101a47ddb973b764c651759b69ed6127d3b
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  child_repository:
+    head: 71e8d36c4925ae1ae151dbb71634f54b5e313b2e
+    branch: feat/windows-license-issuer
+    clean: true
+    changes_this_checkpoint: None; only HQ append-only evidence was added.
+  owner_observation:
+    statement: Owner reports the procedure is complete and the passphrase is retained.
+    boundary: Owner assertion, not agent observation of secret entry or password-manager storage.
+      No passphrase was requested, read or recorded by the agent.
+  public_receipt:
+    path: 'D:\smc-owner\recovery-proof\restore-20261005T140624-4e0b7623\proof.json'
+    observed_at: '2026-10-05T14:06:28.3096965+00:00'
+    schema: smc.key-recovery-proof.v1
+    boundary: Inspected as a local procedure receipt, then verified against actual files and
+      issuer results. The agent did not observe the owner's terminal execution directly.
+  development_key:
+    original_location: 'D:\smc-owner\keys\smc-dev-signing.key'
+    restored_location: 'D:\smc-owner\recovery-proof\restore-20261005T140624-4e0b7623\smc-dev-signing.key'
+    public_key: 7331407964c7776edcdadc890fa70f081515fa8e10c1a4be3bb802ca4180ad45
+    fingerprint: eb817c0c
+    matches_current_embedded: false
+    check: key-info on both actual keys returned the exact recorded full public key and fingerprint.
+    privacy: Only public identity and filesystem metadata were inspected; no private contents
+      or private-key hash were displayed or recorded.
+  encrypted_backup:
+    path: 'D:\smc-owner\backups\smc-dev-signing.key.age'
+    exists: true
+    byte_length: 247
+    boundary: Actual owner-procedure backup and restored-key evidence; no new decryption was
+      attempted by the agent and no secret was collected. Backup remains on the same disk.
+  recovery_process:
+    local_procedure: 'D:\smc-owner\finish-backup.ps1'
+    tracked_wrapper: checkouts/smc-v2/scripts/license-key-backup.ps1
+    observation: Procedure source starts decryption in a separate PowerShell process with only
+      the encrypted input and a fresh restored output path. No original key path, Mac key or
+      copied cache is supplied to that restore invocation. The original key was used earlier
+      for encryption and its pre-existing license witness; the agent's later public-identity
+      comparison reads both keys through key-info.
+    boundary: Source inspection plus receipt and owner completion report, not a captured
+      process trace of the owner run. Same Windows host only.
+  permissions:
+    observation: Agent checked the owner root, keys/backups/recovery-proof directories and
+      fresh restore directory have protected ACLs. Those directories and both key files plus
+      backup each have exactly two distinct FullControl allow rules, current owner and SYSTEM.
+      Checked paths have no reparse-point attribute.
+    boundary: Configured ACLs do not protect against programs running as the owner or privileged administrators.
+  signature_checks:
+    original_license: 'D:\smc-owner\recovery-proof\original-key-synthetic.lic'
+    restored_license: 'D:\smc-owner\recovery-proof\restore-20261005T140624-4e0b7623\restored-key-synthetic.lic'
+    result: Agent inspect commands passed for both actual licenses against the recorded full
+      public key. Both identify Synthetic recovery test, synthetic machine K7Q2-M4XZ-9PXD,
+      issue date 2026-10-05 and lifetime. Receipt/source record restored-key issuance.
+    boundary: No owner-machine license or application activation is established by synthetic signatures.
+  issuer:
+    path: 'D:\dev\tools\build-smc-v2\release\smc-license.exe'
+    source: d1e9bc19ac9a11b68d253326c6a027a8ec843b92
+    sha256: 511A9A47996C4F6DCB112C49DBC24E762D3D5BEC42CA702595355F370F3BA273
+    check: Actual executable SHA-256 matched the earlier recorded hash before key-info and inspect.
+  tracked_boundary: No SMC source or package was changed this checkpoint. Prior changed-path
+    secret checks remain in the linked checkpoint. This event contains only public identity,
+    executable hash and owner-controlled location references, never secret material.
+  publication: HQ and child checkpoints remain local; no push, PR, upload or Mac execution occurred.
+unresolved:
+- Off-machine backup destination is unspecified. Same-disk recovery does not establish
+  survival of disk/Windows-machine failure or recovery on another physical computer.
+- Step 11.3 matching builds, packaged-secret checks and activation rollback are unperformed;
+  new public key still differs from embedded old key. Old Mac signing-key availability remains
+  unknown. Owner reports no released SMC v2 or active users; that is not Git-derived proof.
+- Synthetic fixture cleanup remains rejected by automatic approval review with blocked by
+  policy. Test artifacts remain restricted outside repos at the prior checkpoint's named
+  fixture location; no further deletion method was attempted this checkpoint.
+- Carry forward prior limits recorded in the linked checkpoint, including normal-cache LNK1104 with
+  passing separate-target workaround, paused CIEL Windows Phase 2 final-acceptance gate,
+  unknown Norton details, unassessed npm build-tool findings, historical gateway test race,
+  scanner and real CU12/door-label proof, separate production-key governance and two historical
+  event-status warnings. This key-recovery proof resolves none of those unrelated items.
+next_action:
+  action: Present the verified step-11.2 checkpoint. On the owner's next sequential go,
+    start step 11.3 by preserving and identifying old artifacts and rollback limitations,
+    then bind app and issuer to the new public key and build matching outputs. Select an
+    off-machine backup destination separately; keep publication deferred as instructed.
+  acceptance_check:
+  - Do not claim off-machine protection, activation rollback or final slice-11 delivery from this checkpoint.
+  - Preserve private keys, backups, retained builds and append-only failure history.
