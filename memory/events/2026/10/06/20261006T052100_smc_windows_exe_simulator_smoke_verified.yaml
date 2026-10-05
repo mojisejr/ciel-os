@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T052100_smc_windows_exe_simulator_smoke_verified
+type: closeout
+recorded_at: '2026-10-06T05:21:00+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Verify isolated EXE simulator selection before installed-MSI acceptance.
+outcome:
+  status: exe-simulator-smoke-verified-awaiting-msi-installation
+  result: Owner reports the simulator banner and all twelve slots are visible. Read-only
+    DB probe confirms port tcp:127.0.0.1:5012 and a switched-to-simulator audit row for admin1
+    marked simulated. Simulator GET state reports a connected client, closed hooks, physics
+    on, board up and no queued faults; app logs show repeated Get Status request/response.
+    The EXE smoke stage has these observations. Full workflow is reserved for the installed MSI.
+  boundary: No load/dispense/clear, MSI installation/activation or ProgramData write behavior
+    is proved here. Banner/grid are owner observations, connection/persistence are agent checks.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.8'
+  step: '11.4'
+  repository:
+    head: 4b15dd95688c3c2e5dd15819525f11d0d99cb3a8
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  prior_checkpoint: memory/events/2026/10/06/20261006T051700_smc_windows_exe_activation_verified.yaml
+  data_directory: 'D:\smc-owner\testing\windows-smoke-20261006'
+  owner_observation: Simulator banner is correct and twelve slots are visible.
+  database_probe: SQLite mode=ro/query_only read port and the latest audit fields only;
+    switched-to-simulator, admin1, simulated=1, note tcp:127.0.0.1:5012. No PIN/hash or HN was queried.
+  wire_observation: Log tail contains recurring Get Status TX 02 00 00 80 00 00 03 85
+    and RX 02 00 00 80 10 02 03 A5 FF 0F.
+  simulator_observation: GET state at 127.0.0.1:5013 shows connected=true, hooks FF 0F,
+    board up, physics enabled at 550 ms, no faults and latest command status.
+  installation_preparation:
+    installer: 'D:\dev\tools\artifacts\smc-v2\step11.3-new-20261005T215700\Smart Medication Cart_0.1.0_x64_en-US.msi'
+    sha256: 4d28d745934125aef4bfeb590008d95a21a96289b8820085ee3638fe05c82cf1
+    check: Installer hash matches the build checkpoint. C:\ProgramData\SMC exists and its
+      immediate directory enumeration is empty. No exact Smart Medication Cart DisplayName
+      was found in the inspected HKCU, HKLM or HKLM WOW6432Node uninstall roots.
+    boundary: Registry/directory observations only, not universal proof of no previous installation.
+unresolved:
+- Owner MSI installation, default ProgramData activation/admin setup, workflow cycles,
+  restart/reconnect and CSV/backup/diagnostics remain. Isolated EXE data stays separate.
+- Actual MSI UI behavior remains to observe after earlier DARK1059 decompile warnings.
+- Off-machine key backup deferred, old-key activation rollback waived/untested, Phase 2
+  after 11.4, scanner/hardware/production and prior cache/Norton/npm/gateway/status-warning/
+  approval-blocked-fixture limits remain as recorded in the build checkpoint.
+next_action:
+  action: Have the owner close only the SMC EXE normally while leaving the simulator running,
+    clear SMC development overrides only in that PowerShell process, and open the verified
+    MSI interactively with an installation log. Report the installation outcome before
+    launching the installed app; do not copy the EXE smoke DB over ProgramData.
+  acceptance_check:
+  - Installed application path, default data directory and actual permissions must be observed separately.
