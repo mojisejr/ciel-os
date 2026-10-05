@@ -3,7 +3,7 @@
 **Workstream:** `smc-v2-app-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.7
+**Plan revision:** 0.8
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -189,6 +189,17 @@ now run sequentially as steps 11.1-11.5. The separate plan is retired with
 its history retained, rather than keeping two active scopes on `smc-v2`.
 This decision changes the plan and records the checkpoint; it does not
 claim a Windows pass or start code, credential, installation or hardware work.
+
+Revision 0.8 (owner, 2026-10-05) moves forward with the new Windows
+development key without requiring old-key activation rollback or Mac key
+retrieval. The owner reports SMC v2 has never been released and has no
+active users. Old artifacts/history are retained, but waived activation
+rollback is recorded as untested, not passed. Off-machine encrypted backup
+is deferred until the owner selects a destination; same-Windows recovery
+remains the step-11.2 proof. CIEL Windows Phase 2 stays a mandatory gate,
+scheduled after step 11.4 and before final delivery in 11.5. This revision
+authorizes the next bounded step 11.3; it does not claim any new build,
+activation, backup transfer or Phase 2 result.
 
 ### 1. The wire — a CU12 gateway proven against the simulator
 
@@ -512,20 +523,23 @@ load/dispense acceptance. Intermediate closeouts identify the substep in
   Keep it and owner-controlled encrypted backups outside all repositories.
   Track public keys/fingerprints only; never key contents, key hashes,
   backup passwords or secrets in code, logs, events or delivered packages.
-- Preserve old keys/builds/licenses and establish any deployed-user impact
-  before replacing a distribution. Production key governance is separate.
-  Keep offline expiry/grace and existing-medication dispensing policy intact.
+- Preserve existing keys/builds/licenses and history. The owner confirms no
+  SMC v2 release or active users; record that as an owner statement. Revision
+  0.8 removes old-key activation rollback and Mac key retrieval from this
+  delivery's DoD. It does not establish that old builds are revoked or that
+  activation rollback passed. Production key governance remains separate;
+  keep offline expiry/grace and existing-medication dispensing policy intact.
 - Test with synthetic HNs and isolated data. No existing patient data or
   live installation is overwritten. Record owner and agent observations
   separately. Failures receive later records, not rewritten history.
 - `ciel-windows-portability-001` remains a separate paused CIEL recovery proof.
   Its old ordering dependency is retained: readiness fixes/builds do not
-  satisfy fresh-session Phase 2 DoD. Before claiming final slice 11 acceptance,
-  resolve that gate through actual Phase 2 evidence or an explicit owner
-  scope decision; do not silently infer it from SMC tests.
-- Next implementation is step 11.1 when requested. Consolidating this plan
-  does not manufacture an execution decision, key-access choice or owner
-  observation for later steps.
+  satisfy fresh-session Phase 2 DoD. Revision 0.8 schedules actual Phase 2
+  proof after step 11.4 and before final delivery in 11.5. Do not silently
+  infer that proof from SMC tests or treat scheduling as an observed pass.
+- Owner decisions authorize bounded substeps. Revision 0.8 authorizes the
+  next step 11.3 with the new key; it does not authorize off-machine transfer,
+  production release or remote publication.
 
 #### 11.1 Make the existing owner issuer safe and convenient on Windows
 
@@ -577,8 +591,12 @@ Definition of done:
   Restoring into another location on this Windows machine is not proof that a
   different physical computer has been tested.
 - Secret scanning of changed tracked paths/package contents finds no private key.
+- Off-machine backup is deferred under revision 0.8. Record the unselected
+  destination and absence of any transfer/other-computer recovery honestly;
+  neither is a step-11.2 or slice-11 delivery gate in this revision. Same-disk
+  backup is not proof of survival of this disk or computer failing.
 
-#### 11.3 Bind SMC builds to the new key and prove rollback
+#### 11.3 Bind SMC builds to the new key and verify matching outputs
 
 Deliverables:
 
@@ -588,8 +606,9 @@ Deliverables:
   public-key fingerprint and artifact SHA-256 references.
 - Issue a development test license for this Windows machine and verify it with the
   embedded key. Keep the file local, outside tracked evidence.
-- Write and exercise rollback using a retained old artifact and isolated test data;
-  source rollback is a normal Git revert, not a history rewrite or key deletion.
+- Preserve identified old artifacts before rebuilding. Record old-key activation
+  rollback as owner-waived and untested. Source rollback, if later needed, uses
+  a normal Git revert; do not rewrite history or delete keys.
 
 Definition of done:
 
@@ -598,8 +617,9 @@ Definition of done:
 - The issuer/application public keys match. Packaged outputs contain no private key.
 - Old-key licenses are explicitly identified as incompatible with the new-key build;
   retained old builds are not claimed to have been revoked by changing source.
-- Rollback result is observed. If the old signing key/license is unavailable,
-  record that limitation and resolve it before claiming activation rollback passed.
+- No old-key activation rollback pass is claimed. Its waiver is linked to the
+  revision-0.8 owner decision; old signing-key availability need not be resolved
+  or a Mac accessed to complete this step.
 
 #### 11.4 First owner-observed Windows SMC and simulator acceptance
 
@@ -638,8 +658,8 @@ Definition of done:
 Deliverables:
 
 - Final closeout linking reviewed child source/builds, key recovery proof without
-  secrets, owner observations, rollback evidence and remaining limits.
-- Record final Windows acceptance in this workstream, naming revision 0.7 and
+  secrets, owner observations, the explicit rollback waiver and remaining limits.
+- Record final Windows acceptance in this workstream, naming revision 0.8 and
   slice 11 only after every mandatory step passes. Do not treat consolidation
   itself as the final delivery.
 - A bounded proposed next step for real CU12: identify board/adapter/Windows driver,
@@ -650,6 +670,9 @@ Definition of done:
 
 - All mandatory prior step criteria have evidence; final delivery offers owner
   review through the normal PR/closeout procedure. No agent merges a remote PR.
+- CIEL Windows Phase 2 has actual evidence from its separate proof after 11.4;
+  the deferred off-machine backup and waived old-key activation rollback remain
+  explicit limitations rather than inferred passes.
 - Fresh sessions can locate the source, license procedure and recovery instructions
   without secrets or session locators. Key recovery still requires owner access to
   the protected backup; cloning Git alone cannot recreate a private key.
@@ -659,22 +682,23 @@ Definition of done:
 
 #### Remaining limitations and rollback
 
-The old key's availability, any issued/deployed licenses, owner backup method,
-physical scanner and hardware availability are unknown. Resolve them at their
-affected step without blocking unrelated issuer work. Real CU12 door behavior
-and door-label order remain for the later hardware proof. Production keygen
-before the first sale remains outside this development-key proof.
+Old Mac signing-key availability remains unknown, but is outside the revision-0.8
+delivery requirement. The owner reports no SMC v2 release or active users.
+Same-Windows age backup/recovery is proved by the step-11.2 checkpoint; off-machine
+backup is explicitly deferred with no destination or transfer yet selected.
+Physical scanner/hardware availability, real CU12 door behavior and door-label
+order remain for the affected later proof. Production keygen before the first
+sale remains outside this development-key proof.
 
 Exact Norton restore/exclusion details, the reported five high npm build-tool
 audit findings and the recorded gateway parallel-test port race remain
 unresolved. A bounded relevant failure is investigated; no blanket security
 exclusion, automatic dependency upgrade or cleanup is part of consolidation.
 
-Preserve the old artifacts for rollback with separate test data. A source
-revert preserves history and does not revoke licenses accepted by already
-released binaries. Report a failed new-key test and its later recovery in
-separate append-only events. Do not claim old-key activation rollback if no
-old key/license is available to perform it.
+Preserve old artifacts and history. A source revert does not revoke licenses
+accepted by existing binaries. Report a failed new-key test and its later
+recovery in separate append-only events. Old-key activation rollback is
+owner-waived and untested in revision 0.8; no substitute proof is claimed.
 ## Boundaries and delivery
 
 - No real hardware, no USB-to-RS485, no electrical claims, no medical-device
