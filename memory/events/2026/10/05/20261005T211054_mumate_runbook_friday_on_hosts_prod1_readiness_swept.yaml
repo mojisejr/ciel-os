@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T211054_mumate_runbook_friday_on_hosts_prod1_readiness_swept
+type: closeout
+recorded_at: 2026-10-05T21:10:54+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record mumate-infra PR 48 merged and on both hosts, and a read-only
+    readiness sweep of mumate-prod-1 for the Friday 2026-10-09 02:00 window.
+    This record is the cold-session entry for MuMate until the next one.
+  scope:
+    - PR 48 cleanup and host pull; read-only checks on mumate-prod-1.
+  out_of_scope:
+    - Any env, container, timer, package or reboot change.
+
+outcome:
+  status: recorded
+  slice: "6"
+  state:
+    - "mumate-infra PR 48 merged by the owner (f269d73); local branch docs/runbook-06-friday deleted with -d; laptop, mumate-2 and mumate-prod-1 on main f269d73 (git pull --ff-only, docs-only)."
+    - "mumate-prod-1 ops-status: fe c10e91e and bazi 49e22f2 healthy, caddy ok, alloy ready, disk 9 %, mem 906/3915 MB; no reboot required; 0 security upgrades pending; uptime 4 days."
+    - "mumate-prod-1 env (counts only): fe has NEXTAUTH_URL, NEXTAUTH_SECRET, MAINTENANCE_MODE='on', MAINTENANCE_BYPASS_KEY, CRON_SECRET, BEAM_API_KEY; fe and bazi both have BAZI_CLIENT_ID_SECRET with sha256 prefix 7e7ee82d3ca3, the same as the step-1 sources; QSTASH_TOKEN absent by design (step 1 adds it)."
+    - "Caddy: caddy/sites/production.caddy serves bazichart.mumate.co with the :80 redirect; static maintenance page present; no certificate yet, as expected before the DNS change (first issuance cannot be rehearsed)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "1912145"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mumate-infra: "main f269d73 on laptop, mumate-2 and mumate-prod-1; PR 39 draft"
+    production_hosts: "mumate-prod-1 fe c10e91e / bazi 49e22f2, maintenance on, no cron timers"
+    dns: "TTL 300"
+
+unresolved:
+  - "Production build and release of fe 976fae8 / bazi 48e4328 (owner); the agent proposes doing it as early as Tuesday 2026-10-06 rather than Thursday, so the new images run in maintenance for days before the window."
+  - "After that release: agent smoke on mumate-prod-1 over the tailnet and runbook 06 step 3a pre-check (cron-check reads the new image)."
+  - "Owner: user notice, Better Stack, contact plan with the DNS person abroad."
+  - "HQ hq/20261005 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the owner presses container-build target=production and release
+    env=production, verify deploy-history, hosts.sh compare, health and a
+    tailnet smoke on mumate-prod-1, and run the step 3a pre-check.
+  acceptance_check:
+    - mumate-prod-1 runs fe 976fae8 / bazi 48e4328 healthy in maintenance before Thursday evening.
