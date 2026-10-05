@@ -1,0 +1,146 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T220400_smc_new_key_windows_builds_verified
+type: closeout
+recorded_at: '2026-10-05T22:04:00+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Deliver matching new-key Windows development app, issuer and MSI for owner acceptance.
+  scope:
+  - Step 11.3 under revision 0.8, including bounded alternate-output build and package checks.
+  out_of_scope:
+  - Old-key activation rollback, Mac access, off-machine backup, running-app closure/data changes,
+    owner installation/GUI acceptance, CIEL Phase 2, hardware, production, push, PR and merge.
+outcome:
+  status: step-11.3-builds-verified
+  result: Shared public key was changed to the recovered new development key. Formatting,
+    all 15 license tests and warnings-denied license lint passed. Explicit Windows-target
+    release builds produced matching issuer, application and MSI after the native-output
+    build failed against an existing running executable. The actual Windows test license
+    verifies with the new issuer's default embedded key. MSI payload carries the same new
+    public key and matches the built app apart from its three bundle-marker bytes. Changed
+    source and extracted package/binary checks found no private-key material.
+  completion_boundary: Step 11.3 evidence, not final slice-11 delivery. Old-key activation
+    rollback is owner-waived and untested; GUI/installed-MSI activation and owner workflow
+    acceptance remain for 11.4. Same-disk key backup is still owner-deferred for off-machine transfer.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.8'
+  step: '11.3'
+  decision: memory/events/2026/10/05/20261005T214900_smc_new_key_forward_scope_decided.yaml
+  failed_attempt: memory/events/2026/10/05/20261005T215408_smc_new_key_build_old_executable_in_use.yaml
+  recovery_checkpoint: memory/events/2026/10/05/20261005T211000_smc_windows_development_key_recovery_verified.yaml
+  repository:
+    head: 69b4e4d7fc71b760cd59dc3379114ffa48c64520
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  child_repository:
+    head: 2d7c791004a8a959700b5d1155549376235cd60c
+    branch: feat/windows-license-issuer
+    clean_after_build: true
+    changed_paths: [crates/license/src/pubkey.rs, crates/license/RECOVERY.md]
+    boundary: Only public-key binding/documentation changed; license format, expiry/grace,
+      clock guard, medication policy, frontend, dependencies and migrations were unchanged.
+  public_identity:
+    public_key: 7331407964c7776edcdadc890fa70f081515fa8e10c1a4be3bb802ca4180ad45
+    fingerprint: eb817c0c
+    check: Both newly built issuers' key-info returned matches_embedded true. Build-output app,
+      MSI-extracted app and explicit-target issuer contain the expected public-key literal and
+      no old public-key literal. Application and issuer use the same reviewed shared constant.
+    privacy: No private-key bytes/hash or passphrase were recorded or used as scan input.
+  checks:
+  - command: cargo fmt --check
+    result: Passed.
+  - command: cargo test --locked -p license
+    result: Seven core and eight issuer integration tests passed on the separate proof target,
+      covering wrong-machine/foreign/tampered licenses, expiry/grace/clock rollback, argument
+      validation, key mismatch, exclusive output and the Windows issuer menu.
+  - command: cargo clippy --locked -p license --all-targets -- -D warnings
+    result: Passed on the separate proof target.
+  - command: cargo build --locked --release --target x86_64-pc-windows-msvc -p license --bin smc-license
+    result: Passed.
+  - command: cargo tauri build --target x86_64-pc-windows-msvc --bundles msi --config D:/dev/tools/windows-bundle-local.json -- --locked
+    result: Trunk release frontend, release native app and MSI bundling passed. Uses the
+      existing manually activated pinned tools and an ordinary explicit-target output directory.
+    boundary: Alternate output avoided the running native-output smc.exe. No old process was
+      stopped or security setting changed; the first failed build path is not claimed repaired.
+  actual_license:
+    path: 'D:\smc-owner\licenses\windows-dev-new-key-20261005.lic'
+    customer: Owner Windows development test
+    duration: lifetime
+    check: Machine code came from this Windows issuer. Issue and inspect with no public-key
+      override passed. Explicit-target issuer also verified the same file. Inspect with the
+      retained old public key was rejected as expected; no old private key was accessed.
+    permissions: File has exactly current-owner and SYSTEM access rules in a protected owner folder.
+    boundary: Development test license for owner Windows, not GUI activation or production authorization.
+  artifacts:
+    source: 2d7c791004a8a959700b5d1155549376235cd60c
+    target: x86_64-pc-windows-msvc
+    manifest: 'D:\dev\tools\artifacts\smc-v2\step11.3-new-20261005T215700\manifest.json'
+    directory: 'D:\dev\tools\artifacts\smc-v2\step11.3-new-20261005T215700'
+    application:
+      name: smc.exe
+      sha256: c902ce96ce94ffa9d7c98d93f924c892a010eaaa1704008b5051d1448805aa77
+    issuer:
+      name: smc-license.exe
+      sha256: f3c1b4a2a3add1d95bc30a7dba23e9435fba5666c1db2d2d12d6a6efff56d867
+    installer:
+      name: Smart Medication Cart_0.1.0_x64_en-US.msi
+      sha256: 4d28d745934125aef4bfeb590008d95a21a96289b8820085ee3638fe05c82cf1
+    extracted_packaged_application:
+      name: packaged-smc.exe
+      sha256: 8f166d5c1381bce579665f1d485fea5d445529b125ffc761845e6046713e2983
+    retention: New artifact copies match their output/extraction hashes. Old copies and their
+      manifest remain at the prior failed-attempt checkpoint's named directory.
+  package_inspection:
+    method: WiX dark.exe decompile/export, without installation or execution of the installer.
+    file_table: One installed file, smc.exe; exported Binary/Icon streams are installer UI resources.
+    byte_comparison: Initial exact hash comparison failed. Byte comparison found only three
+      differences at offsets 13393232-13393234, UNK versus MSI within Tauri's bundle-type marker.
+      SHA-256 matches the build-output app after normalizing that marker only in memory.
+      Neither actual executable was edited; separate hashes are retained for each.
+    source_support:
+    - 'Local pinned tauri-utils-2.9.3/src/platform.rs defines the UNK marker and MSI mapping.'
+    - https://github.com/tauri-apps/tauri/blob/dev/crates/tauri-bundler/src/bundle.rs
+    source_boundary: Official upstream source explains bundle patching; actual local bytes,
+      pinned dependency source and CLI help/logs support this artifact observation. Upstream
+      dev source is not a pinned-source attestation of the installed CLI.
+    scan: Changed tracked paths contain only the expected public-key literal and no private-key
+      header. App/issuer/extracted app contain no owner key path, key filename or private-key
+      header. Other 64-hex literals were identified as the bundled SQLite source identifier
+      against local sqlite3.c, or core formatting zero padding; none remain unclassified.
+      All exported payload files have no private-key header, key/license/backup extension or
+      standalone 64-hex key-shaped payload. Owner private bytes were not read for scanning.
+    boundary: Mechanical/source-and-inventory checks, not an assertion that arbitrary secret
+      encodings are universally detectable. No key or backup input is part of the app build.
+    warning: dark.exe reported seven DARK1059 missing installer UI-table relationships and
+      potentially incomplete decompiled UI. This did not prevent file/payload extraction;
+      actual installation UI remains untested and is part of owner step 11.4.
+  publication: Local commits/artifacts only; no push, PR, external backup copy, Mac action or merge.
+unresolved:
+- Owner EXE smoke test, installed-MSI activation, admin/bootstrap, load/dispense/clear,
+  restart/reconnect, audit/CSV/backup/diagnostics and actual ProgramData permissions await 11.4.
+- Old native-output smc.exe was observed running. Before the owner tries the new GUI,
+  close the old app normally and use isolated synthetic data. Agent did not stop it.
+- Installer UI decompile warnings do not prove installation failure or success; observe the
+  actual MSI flow in 11.4. Its new-key payload and binary-marker difference were checked.
+- Off-machine backup remains explicitly owner-deferred with no destination/copy/other-computer
+  proof. Old-key activation rollback is owner-waived and untested, not a technical pass.
+- CIEL Windows Phase 2 actual proof remains required after 11.4 and before 11.5 final delivery.
+- Scanner/real CU12/door-label proof, production key governance, old cache LNK1104 unknown
+  cause with passing workaround, Norton details, npm build-tool findings, gateway race,
+  two historical status warnings and approval-blocked synthetic fixture cleanup remain deferred.
+next_action:
+  action: Present this step-11.3 local checkpoint, then prepare and walk the step-11.4 owner
+    EXE/MSI checklist using these retained new artifacts, the local machine-bound test license,
+    isolated synthetic data and simulator TCP endpoint 127.0.0.1:5012. Close the old GUI
+    normally before starting the new one. Keep later Phase 2, backup deferral and publication
+    timing explicit; do not claim final delivery before owner acceptance.
+  acceptance_check:
+  - Owner observations identify the actual retained artifact and data-directory permissions used.
+  - Failed/native build history is retained; alternate build success does not overwrite that history.
