@@ -1,0 +1,93 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T183209_smc_step11_2_recovery_preparation_checkpoint
+type: closeout
+recorded_at: '2026-10-05T18:32:09+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Preserve local checkpoints and prepare the owner key-recovery procedure.
+  scope:
+  - Step 11.2 preparation and owner prerequisite alignment only.
+  out_of_scope:
+  - Operational key creation, encrypted backup or restore execution, public-key replacement,
+    installation, later steps, push, PR creation and remote merge.
+outcome:
+  status: recovery-preparation-local-checkpoint
+  result: The SMC licensing README now links a generic recovery checklist covering protected
+    folders, portable encrypted backup, restoration into a separate location, public-key equality
+    and synthetic-license verification. This is documentation of the required proof, not proof
+    that a key or backup exists. The owner publication deferral is recorded in a new decision.
+  completion_boundary: Step 11.2 and slice 11 are unfinished. No evidence.slice is provided.
+    Storage/protection choices and existing-license status await owner information. The lane stays
+    active and idle at this local preparation checkpoint.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.7'
+  step: '11.2'
+  decision: memory/events/2026/10/05/20261005T182943_smc_local_checkpoints_and_step11_2_preparation_decided.yaml
+  repository:
+    head: a05fcc2f92043c9054402d87301536caec8fc200
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  child_repository:
+    project: smc-v2
+    head: 533bc687c16cb642bd3074c16ace26719765a0f4
+    branch: feat/windows-license-issuer
+    clean: true
+    changed_paths: [crates/license/README.md, crates/license/RECOVERY.md]
+    source_boundary: Documentation only since step-11.1 source d1e9bc19ac9a11b68d253326c6a027a8ec843b92.
+  checks:
+  - command: git diff --cached --check
+    result: passed for the child documentation before commit
+  - check: Changed documentation secret-like literal scan
+    result: No 64-character hex literal or private-key header found. No key file was generated,
+      read, copied, backed up or restored; no Rust source or dependency changed.
+  - check: Operator checklist review
+    result: Owner choices are explicitly pending. Same-machine restore is distinguished from
+      replacement-computer proof. Full public keys are compared; private-key hashes/passwords
+      are excluded. Original keys/builds are retained and app activation stays in later steps.
+  prior_passed_checks: memory/events/2026/10/05/20261005T181708_smc_owner_issuer_step11_1_local_checkpoint.yaml
+  wake_before_preparation:
+    validation_errors: 0
+    historical_warnings: 2
+    hq_clean: true
+    hq_branch_pushed: false
+  retained_artifact_observation: The existing Windows smc.exe and MSI remain at their prior
+    local build paths. Only file metadata was observed; activation and source/artifact matching
+    were not re-proved or changed in this preparation.
+  assistance:
+    boundary: Optional post-Wake official documentation research, not CIEL authority or an
+      owner selection. Host inventory did not find 7z, age, gpg or openssl on the current PATH,
+      or 7-Zip at the checked default Program Files path. No tool was downloaded or installed.
+    sources:
+    - https://www.7-zip.org/7z.html
+    - https://github.com/FiloSottile/age
+    result: Official documentation describes 7z password encryption and age passphrase
+      encryption with Windows/macOS distribution. Tool, location and owner access choices
+      remain open; no cryptographic implementation is added to CIEL or SMC.
+  publication: No push, PR creation or remote merge occurred. Both project and HQ checkpoints
+    remain local under the owner's explicit instruction to publish when the workstream finishes.
+unresolved:
+- Owner-confirmed key folder and encrypted-backup destination/protection method are still
+  required before key creation. Existing issued/deployed-license status may stay unknown
+  during this independent recovery proof, but must be resolved before changing a distribution.
+- No operational key, encrypted backup, ACL proof or recovery/issuance proof exists from this
+  preparation. A local checkpoint and checklist alone do not satisfy step 11.2 DoD.
+- All limits in the step-11.1 checkpoint remain, including normal-cache LNK1104, portability
+  Phase 2, prior Norton detail, npm build-tool audit, gateway race, scanner/hardware and the
+  two historical event-status warnings. Other paused/unavailable workstreams are unchanged.
+- Local checkpoints are not remotely recoverable or available on Mac until the later owner-directed push.
+next_action:
+  action: Obtain the pending owner storage/protection answers and record the concrete choices,
+    then create/protect only the new development key and execute encrypted-backup restoration
+    for step 11.2. Carry any prior-license unknown into step 11.3 rather than blocking creation
+    of a separate new key. Continue local commits and defer push/PR.
+  acceptance_check:
+  - Key and restored key produce synthetic licenses verified by the same new public key.
+  - Recovery observations and failures are recorded without private contents, hashes or passwords.
+  - Stop at step 11.2 after its proof; do not claim installed-app or final slice-11 acceptance.

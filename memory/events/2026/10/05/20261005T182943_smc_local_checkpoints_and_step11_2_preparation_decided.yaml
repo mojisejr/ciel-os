@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T182943_smc_local_checkpoints_and_step11_2_preparation_decided
+type: decision
+recorded_at: '2026-10-05T18:29:43+07:00'
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Continue sequential local checkpoints and prepare Windows key recovery without publishing.
+  scope:
+  - Keep HQ and SMC source/evidence committed locally through this workstream;
+    prepare the next step 11.2 and resolve its owner-controlled prerequisites.
+  out_of_scope:
+  - Push, PR creation or remote merge before the owner-directed workstream delivery;
+    operational key generation before confirmed storage/backup choices; later steps.
+outcome:
+  status: decided
+  decision: The owner explicitly instructed leaving both CIEL and the project as local
+    checkpoint commits and deferring push until this workstream finishes, then continuing work.
+    This replaces the earlier publication direction before any push or PR command was executed.
+  authority_boundary: The timing exception applies to this SMC workstream, not a permanent
+    change to AGENTS.md or OWNER.md. Plan acceptance criteria and owner merge authority remain.
+    Step 11.2 preparation is authorized; real key creation and recovery require the plan's
+    owner-confirmed storage locations and backup protection method first.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.7'
+  slice: '11'
+  step: '11.2'
+  repository:
+    head: a05fcc2f92043c9054402d87301536caec8fc200
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  child_repository:
+    head: d1e9bc19ac9a11b68d253326c6a027a8ec843b92
+    branch: feat/windows-license-issuer
+    clean: true
+    upstream: none
+  previous_checkpoint: memory/events/2026/10/05/20261005T181708_smc_owner_issuer_step11_1_local_checkpoint.yaml
+  wake:
+    validation_errors: 0
+    historical_warnings: 2
+    hq_clean: true
+    hq_branch_pushed: false
+    hq_unpushed_commits: 5
+  publication_observation: No push, PR creation or remote merge command was executed during
+    the interrupted publication turn. Both previously reported commits remain local.
+unresolved:
+- Step 11.2 key and encrypted-backup locations, protection method and existing-license
+  availability await owner information. No new operational key or backup exists from this work.
+- Step 11.1 cache relink limitation and the previous checkpoint's portability, audit,
+  simulator-race, scanner/hardware and historical-warning limits remain deferred.
+- Local Git checkpoints are recoverable from this disk; no remote or Mac availability is claimed.
+next_action:
+  action: Prepare the generic key/recovery operator checklist and commit local progress;
+    obtain owner-confirmed key and backup locations, protection method and existing-license
+    status, then execute only step 11.2 with those choices. Keep both branches local.
+  acceptance_check:
+  - No secret enters repository files, evidence or responses; no push/PR occurs at this checkpoint.
+  - Do not mark step 11.2 complete until encrypted-backup restoration and synthetic-license proof pass.
