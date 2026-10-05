@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T194400_mumate_team_signed_off_staging_freeze_on_ttl_pending
+type: closeout
+recorded_at: 2026-10-05T19:44:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the team's answers the owner brought back on 2026-10-05 evening
+    (MUMATE100, freeze, staging sign-off, user notice) and what still stands
+    between now and the Wednesday 2026-10-07 02:00 window. This record is the
+    cold-session entry for MuMate until the next one.
+  scope:
+    - Owner's report of the team's answers; agent's check of the signed-off SHAs and the DNS TTL.
+  out_of_scope:
+    - Any host, Vercel, DNS or provider change.
+
+outcome:
+  status: recorded
+  slice: "6"
+  owner_reported:
+    - "MUMATE100 has no end date set, so it does not end in or near the window; it keeps working after the move (data in the same Supabase)."
+    - "Freeze is in force now (told to the team on 2026-10-05, earlier than the proposed Tuesday 09:00): no change to mootech-fe or bazi until the move succeeds."
+    - "Team staging sign-off: the team tested staging and raised nothing - 'works normally, like production'. Edge cases are taken case by case after the move; the owner's bar for slice 6 is the main features working and the site running smoothly."
+    - "User notice: the owner tells the team tomorrow (2026-10-06)."
+  agent_verified:
+    - "The sign-off covers fe 976fae8 / bazi 48e4328: fetched at this record, origin/main and origin/pdf-dev are those SHAs; mumate-2 .env FE_TAG 976fae8...-staging, BAZI_TAG 48e4328...-staging; app.staging.mumate.co/api/health status ok, db ok, sha 976fae8, env staging. These are the SHAs to build for production."
+    - "DNS TTL is still 3600 (dig @dns1.registrar-servers.com at this record). It must read 300 before Tuesday 2026-10-06 02:00 for a 5-minute flip-back on Wednesday."
+  plan_assessment:
+    - "No plan revision needed. D7's two open conditions are accepted by the owner in 20261005T071802; MUMATE100 is now known to have no end date. Slice 6 DoD asks for the team's staging sign-off with its SHAs - recorded here. The owner's 'main features OK, smooth site' bar matches step 5 of runbook 06 as written."
+    - "No other workstream changes. mumate-be-retirement-001: quiet window to 2026-10-09 08:16 and step 6 after the cutover stand; the Omise dashboard check stays open and does not block. mumate-chat-keyboard-ios-001 still waits on the owner's word."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "53daad6"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main 976fae8 (signed off on staging)"
+    bazi-sft-dataset: "origin/pdf-dev 48e4328 (signed off on staging)"
+    mumate-infra: "main dd7e462 on both hosts; PR 39 draft 5a5c0ac MERGEABLE"
+    dns: "bazichart.mumate.co CNAME Vercel TTL 3600"
+
+unresolved:
+  - "TTL 300 by the team's DNS person before Tuesday 02:00; the DNS person is not yet named in any record."
+  - "Tuesday: owner presses container-build target=production (fe 976fae8, bazi 48e4328) and release env=production; agent verifies deploy-history ok, hosts.sh compare, health on mumate-prod-1 with maintenance still on."
+  - "Owner: user notice via the team (2026-10-06); Better Stack staging monitor confirm and api/bazi.staging deletion."
+  - "HQ hq/20261005 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Verify TTL 300 with dig once the DNS person reports it; on Tuesday verify
+    the owner's production build and release of fe 976fae8 / bazi 48e4328;
+    Wednesday 02:00 run runbook 06 steps 0-7 with the owner.
+  acceptance_check:
+    - Before Tuesday evening: TTL reads 300 and mumate-prod-1 runs fe 976fae8 / bazi 48e4328 healthy in maintenance.
