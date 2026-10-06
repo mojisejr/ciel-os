@@ -1,0 +1,146 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T054542_smc_three_lock_bench_final_delivery
+type: closeout
+recorded_at: '2026-10-07T05:45:42+07:00'
+recorded_by: {agent: codex}
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Deliver the owner-accepted three-lock development bench checkpoint.
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  result: Channels 1-3 complete normal load and selective dispense/clear on
+    the unchanged installed SMC. HW3A001/HW3A002/HW3A003 coexist Loaded,
+    then clear in order 2, 1, 3 without losing other records. The owner reports
+    closure each time and normal behavior when asked about physical selection
+    and other-lock non-movement across the full dispense sequence. Final UI
+    and read-only database show all three Empty with no HN; fresh status is
+    07 00. Exactly six attempt-1 unlock transmissions select 1, 2, 3, 2, 1, 3;
+    no additional actuation occurs for clear. Audit 79-99 is real-marked.
+    The final revision-0.4 bundle reuses earlier one-lock refusal/restart/USB
+    proof and the simulator approximation, preserving their limited scope.
+    Both deliveries are pushed as draft PRs. This event is prepared for
+    committing/pushing to the actual HQ PR head before readiness verification.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.4'
+  slice: '4'
+  repository:
+    head: c16f4c2b5b5ed844c828ae51f8cd290cffcc0632
+    branch: codex/smc-hardware-slice1-proof
+  execution: {os: windows, locality: local}
+  authority:
+  - memory/events/2026/10/07/20261007T052434_smc_three_lock_bench_scope_authorized.yaml
+  - memory/events/2026/10/07/20261007T053503_smc_three_record_dispense_authorized.yaml
+  - Owner directs continued testing and previously authorizes push/PR at workstream end.
+  bundle: workstreams/smc-v2-hardware-001/CLOSEOUT.md
+  prior_proofs:
+  - memory/events/2026/10/06/20261006T192412_smc_hardware_slice1_checkpoint_closed.yaml
+  - memory/events/2026/10/06/20261006T195021_smc_hardware_one_lock_workflow_verified.yaml
+  - memory/events/2026/10/06/20261006T204901_smc_recovery_a_pass_b_interrupted.yaml
+  - memory/events/2026/10/06/20261006T205701_smc_one_lock_recovery_verified.yaml
+  - memory/events/2026/10/07/20261007T050105_smc_simulator_approximate_timing_verified.yaml
+  - memory/events/2026/10/07/20261007T053503_smc_three_lock_mapping_verified.yaml
+  physical_reports: Owner answers slot-2 closure at the correct channel,
+    slot-1 closure at channel 1, and slot-3 closure with everything normal
+    when asked to confirm the overall 2-1-3 sequence. These reports remain
+    separate from ACKs, decoded status and application state evidence.
+  reports:
+  - 'D:\smc-owner\testing\hardware-20261007\three-lock-loaded-proof.json'
+  - 'D:\smc-owner\testing\hardware-20261007\three-lock-after-clear2.json'
+  - 'D:\smc-owner\testing\hardware-20261007\three-lock-after-clear1.json'
+  - 'D:\smc-owner\testing\hardware-20261007\three-lock-final-proof.json'
+  - 'D:\smc-owner\testing\hardware-20261007\final-verification.json'
+  final_proof_sha256: d60582dac23f1783c5a13cce3c95a93602182f6115b06bbbf663308c88c72a96
+  final_screenshot: 'D:\smc-owner\testing\hardware-20261007\three-lock-final-empty.jpg'
+  protocol:
+    source_log: 'C:\ProgramData\SMC\logs\smc.log.2026-10-06'
+    window_from: '2026-10-06T22:30:57Z'
+    selected_channels: [1, 2, 3, 2, 1, 3]
+    unlock_transmissions: 6
+    acknowledgements: 6
+    attempt: 1
+    changed_masks: ['07 00', '06 00', '07 00', '05 00', '07 00', '03 00', '07 00', '05 00', '07 00', '06 00', '07 00', '03 00', '07 00']
+    final_status_at: '2026-10-06T22:42:32.596374Z'
+    invalid_complete_frames: 0
+  audit:
+    database: 'C:\ProgramData\SMC\smc.sqlite'
+    new_rows: '79-99'
+    simulated: false
+    real_rows: 85
+    retained_simulator_rows: 14
+    interrupted_history: Original B and force-cleared audit 60 remain retained; actor/cause unknown.
+  app:
+    path: 'D:\Smart Medication Cart\smc.exe'
+    exe_sha256: 93653856b308914c4a6e405cf06e4af08a937665f3ca2f1234587c500146d50e
+    integrated_source: d2a6cc6ea23e202bb2356622ec2e288fb0f4c685
+    serial: COM4 at 19200 8N1
+    final_state: Three tested slots Empty, HN null, connected, no pending dialog.
+    source_change: None; current app main is clean.
+  simulator:
+    head: ac4be286aefa77b7e7b914bb969236817db8dee4
+    default_ms: 50
+    checks: Earlier 44 applicable Windows tests, formatting/build and independent
+      release clients of both binaries passed; macOS PTY targets ran zero tests.
+    retained_console: 'D:\dev\ciel-os\checkouts\cu12-simulator\target\release\cu12-console.exe'
+    console_sha256: 654a4575d27525ae670040aa70a15b232cb52721cdceac3911388a9d7ce9c648
+    verification: Retained console hash matches the previously tested release.
+    artifact_gap: Prior copied console and raw release EXEs are absent; cause
+      unknown. Exclusive copy restoration returned PermissionError. No security
+      or permission change, alternative copy or raw rebuild was attempted.
+    rollback: Existing console/runtime inputs restore 550 ms; both runtime
+      paths were tested. Source revert ac4be286 on a topic branch is available
+      but unperformed. Keep prior decisions and append any future failed result.
+  pull_requests:
+    hq:
+      number: 83
+      url: https://github.com/mojisejr/ciel-os/pull/83
+      observed_head: c16f4c2b5b5ed844c828ae51f8cd290cffcc0632
+      observed_state: open-draft
+    simulator:
+      number: 8
+      url: https://github.com/mojisejr/cu12-simulator/pull/8
+      observed_head: ac4be286aefa77b7e7b914bb969236817db8dee4
+      observed_state: open-draft
+  method: Authorized normal installed-app Computer Use and owner physical
+    handoffs; logs and database read-only. Checks reconcile recorded targeted
+    commands, bit transitions, intermediate slots and audit. No direct serial
+    writer, database edit, history deletion or patient data is involved.
+unresolved:
+- Channels 4-12 remain unconnected/unverified; recovery is proved on one lock,
+  not simultaneous multi-slot recovery. Earlier refusal non-movement has
+  no separate owner physical report. Scanner/Enter, intended scaling/maximized
+  screens and fresh real-data exports remain explicitly deferred.
+- Actual supply output/current, lock rating, board revision, verified pinout
+  and matching PDF/manual remain owner-accepted unknowns. Owner reports CU12
+  12V DC; successful operation is not electrical certification.
+- Fifty milliseconds is provisional command-to-modeled-hook delay, not exact
+  mechanical time, electrical pulse width, complete RS485 parity or every
+  board variant. Poll sampling explains differing first-observed reply times;
+  original manual 500/550 ms ambiguity and unavailable PDF remain.
+- Artifact disappearance and copy PermissionError remain unresolved. Use the
+  retained hash-matching console; prior raw-client result is historical proof,
+  not current raw-artifact availability. No security weakening is justified.
+- Off-machine encrypted signing-key backup awaits owner destination; same-disk
+  restore does not protect against disk loss. Old-key activation rollback stays
+  waived/untested; production signing/distribution acceptance remains separate.
+- Existing launch/cache, hidden-process, Norton/dependency, WiX and rejected
+  fixture-cleanup limits remain in the prior simulator closeout; safe workarounds
+  are used. No unrelated repair or deletion occurs.
+- >-
+  Portfolio attention outside this lane is unchanged: owner operating contract
+  active; Windows portability, DAC2, beam gateway, BE decoupling and orchard
+  paused; mini-template, GA4, BE retirement and Vercel-to-DO bindings unavailable.
+  Wake retains the two earlier ignored-status warnings and the unknown human
+  approval/review boundary. This event does not close those workstreams.
+- No PR is merged and no production or complete twelve-lock acceptance is claimed.
+next_action:
+  action: Commit and push this final closeout to HQ draft PR 83, fetch and prove
+    its commit is an ancestor of the observed PR head, link it from simulator
+    PR 8 and finalize both descriptions, then mark ready for owner review.
+    Owner reviews/merges both before independent clean-main synchronization.
+    No further physical actuation is needed for this checkpoint.
+  acceptance_check:
+  - Closeout is present on verified HQ PR head; simulator PR head matches ac4be286.
+  - Owner can review evidence, failures, limits and runtime/source rollback together.
+  - Later development uses simulator regression and targeted hardware retests when affected behavior changes.
