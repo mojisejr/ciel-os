@@ -3,9 +3,9 @@
 **Workstream:** `smc-v2-hardware-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** 4
-**Execution state:** idle
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner authority
@@ -39,7 +39,7 @@ merely to bypass the temporary same-project overlap that Wake reports before mer
 | Project ID | Role | Local binding |
 |---|---|---|
 | `smc-v2` | installed application, existing serial transport and narrow fixes if proved necessary | `checkouts/smc-v2` |
-| `cu12-simulator` | regression reference for any necessary app fix | `checkouts/cu12-simulator` |
+| `cu12-simulator` | regression reference and owner-authorized approximate hook timing | `checkouts/cu12-simulator` |
 | `ciel-os` | plan, decisions and append-only proof | `.` |
 
 ## Starting evidence and transfer
@@ -167,6 +167,17 @@ and reconnect. Close the physical door normally and finish the pending operation
 Check that the app never silently clears the slot, treats an ACK as closure or
 opens an unrelated door. Capture physical observations plus UI, audit and logs.
 
+On 2026-10-07 the owner accepts an approximate simulator timing setting rather
+than a new precision hardware measurement. Within slice 4, use a provisional
+50 ms delay from handling an accepted Unlock to the simulated hook opening,
+shared by both binaries and the existing runtime control. This is an agent-
+selected development setting, not a measured mechanical time, a CU12 electrical
+pulse setting or a claim about every board. Retain explicit slower timing via
+the existing environment/control inputs and tester-controlled closure. Check
+normal opening, refusal/no-pop, closure and reconnect with simulator tests.
+Record the sampling limitation and rollback to 550 ms. No new hardware command,
+installed SMC change or precision measurement is part of this adjustment.
+
 Definition of done:
 
 - Loaded/pending state survives restart and remains consistent with the actual
@@ -178,6 +189,9 @@ Definition of done:
 - Produce one final bench checkpoint naming equipment/configuration/build and
   unresolved limits. Offer normal owner-reviewed PR delivery if source changes
   were needed; no agent merge or production-readiness claim.
+- The provisional simulator timing is consistent across entry points, has
+  regression evidence and an explicit 550 ms fallback. Its closeout preserves
+  hardware/scanner/scaling/export gaps; it does not finish the full bench plan.
 
 ## Work kept separate and priority rationale
 
