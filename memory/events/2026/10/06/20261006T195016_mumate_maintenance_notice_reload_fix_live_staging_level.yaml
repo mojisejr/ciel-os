@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T195016_mumate_maintenance_notice_reload_fix_live_staging_level
+type: closeout
+recorded_at: 2026-10-06T19:50:16+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-maintenance-notice-001
+  lane: single
+  objective: >-
+    Record the defect the owner found on his phone (the notice flashed and
+    vanished), its fix in mootech-fe PR 885, and production and staging level
+    at the fix. This record is the cold-session entry for MuMate until the
+    next one.
+  scope:
+    - PR 885, production check, staging build and release, local sync.
+  out_of_scope:
+    - The team's sign-off (waits for the owner's freeze call); production images for mumate-prod-1.
+
+outcome:
+  status: recorded
+  slice: "2"
+  defect:
+    - "Owner, on his phone after PR 883 went live: the notice showed briefly, the page seemed to reload, and it was gone."
+    - "Cause (from code; matches the report, not reproduced on a device by the agent): sw.ts uses skipWaiting + clientsClaim; pages/_app.tsx reloads once on controllerchange when an old service worker controlled the page, which happens a few seconds after the first visit following every deploy. PromoPopup wrote its once-per-session key when the notice opened, and sessionStorage survives the reload, so it did not open again. Every returning visitor hits this once per deploy."
+  fix:
+    - "PR 885 (c859aaa, merged by the owner as 83ed2f1, 2026-10-06 12:43:52Z): the notice's session key is written in close() (X, backdrop, image tap), not on open; 'รับทราบ' unchanged. The Qi check-in promo still writes on open (same flaw, out of scope; it returns after 2026-10-09 04:00)."
+    - "Proof: the new test 'a reload before the visitor touches it ... shows it again' failed on the old component (1 failed, 13 passed) and passes on the new one; popup suites 24 passed; npm test 304 files passed, 22 skipped, 3866 tests passed; tsc exit 0; npm run lint exit 0 (0 errors, 134 pre-existing warnings); npm run build exit 0 with the VAPID check; gitleaks no leaks. The owner pushed with --no-verify (verify-architecture red on the same 4 pre-existing main violations)."
+  state:
+    - "Vercel production /api/health sha 83ed2f1."
+    - "Staging: container-build target=staging mootech-fe run 37465466176 (83ed2f1) success; release env=staging run 37466019816 success; deploy-history 2026-10-06T12:49:51Z staging/mumate-2 ok FE_TAG=83ed2f1...-staging BAZI_TAG=40e8ebf...-staging; app.staging.mumate.co/api/health status ok sha 83ed2f1 env staging; fe and bazi healthy."
+    - "bazi-sft-dataset pdf-dev unchanged at 40e8ebf. Local mootech-fe main 83ed2f1; both notice topic branches deleted locally (-d) and gone from the remote."
+    - "Seen, not touched: remote branch origin/fix/maintenance-gate-and-line-share (7bd92ea, เอ็ม, 2026-09-23) is not in main. The gate on main was rehearsed on staging 2026-10-01 (runbook 06 rehearsal: /v2 shows the maintenance page with MAINTENANCE_MODE on), so this stale branch is not needed for the cutover."
+    - "The owner checks on the same phone that after the deploy reload the notice comes back and stays until closed."
+
+evidence:
+  plan: workstreams/mumate-maintenance-notice-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "17d1b9e"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main 83ed2f1 (Vercel production and staging)"
+    bazi-sft-dataset: "origin/pdf-dev 40e8ebf (Vercel production and staging)"
+    staging_release: "run 37466019816"
+
+unresolved:
+  - "Owner's phone check of the fix."
+  - "Freeze call (owner), then the team's sign-off naming the SHAs current then, then this workstream's final closeout."
+  - "Production build and release for mumate-prod-1 by Thursday 2026-10-08 evening (mumate-vercel-to-do-001)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Keep staging level with each production merge until the owner calls the
+    freeze; then ask the team to sign off the SHAs and close this workstream.
+  acceptance_check:
+    - Staging serves the SHAs Vercel production serves at every check, and the sign-off names them.
