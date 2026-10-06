@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T192952_smc_hardware_slot1_test_authorized
+type: decision
+recorded_at: '2026-10-06T19:29:52+07:00'
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Begin the owner-observed single-lock opening and closing proof.
+outcome:
+  status: decided
+  decision: Owner explicitly requests proceeding to slice 2. Execute the
+    revision-0.2 single physical lock-1 test on the existing COM4 bench using
+    the normal installed app and named synthetic HN HWTEST001. Submit one
+    load/unlock request, record ACK/status/UI separately from owner physical
+    observation, and let the owner close the lock normally.
+  authority_boundary: Only physical lock 1 is connected. Do not issue all-door
+    or unconnected-slot commands. No power/wiring change, driver install,
+    production release or claim that all twelve doors passed is authorized.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.2'
+  slice: '2'
+  repository:
+    head: 08415ebdbbda66b52bc597f4ecb49530b7844eef
+    branch: codex/smc-hardware-slice1-proof
+  execution:
+    os: windows
+    locality: local
+  owner_request: Owner says to proceed to slice 2.
+  previous_checkpoint: memory/events/2026/10/06/20261006T192412_smc_hardware_slice1_checkpoint_closed.yaml
+  accepted_inventory_gaps: memory/events/2026/10/06/20261006T192158_smc_hardware_slice1_inventory_gaps_accepted.yaml
+  pre_test_read: Existing app log at 19:29:51 reports successful status 01 00.
+    Read-only database query finds slot 1 empty, no HN and latest audit id 33.
+  app_source: d2a6cc6ea23e202bb2356622ec2e288fb0f4c685
+unresolved:
+- Owner physical opening/closing and corresponding UI/status transitions have
+  not yet been observed in this test. ACK alone will not establish door movement.
+- Physical channels 2-12 are not connected and cannot satisfy full mapping DoD.
+- Previously accepted supply/lock-rating and documentation gaps remain unknown;
+  later workflow, scanner/scaling, recovery and simulator parity remain unproved.
+next_action:
+  action: Refresh the actual SMC Home screen, enter synthetic HWTEST001 through
+    its normal load dialog, submit once, then collect the owner's observed
+    physical opening before asking the owner to close the lock and comparing status.
+  acceptance_check:
+  - One request names logical slot 1; no other slot or all-lock selector is used.
+  - Owner movement reports and measured app/protocol observations remain separate.
+  - Stop on mismatch or unknown submission outcome; reobserve rather than repeating unlock blindly.
