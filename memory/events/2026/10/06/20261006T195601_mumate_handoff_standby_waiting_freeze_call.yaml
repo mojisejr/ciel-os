@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T195601_mumate_handoff_standby_waiting_freeze_call
+type: closeout
+recorded_at: 2026-10-06T19:56:01+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Stand the cutover lane by after the maintenance notice closed and runbook
+    06 reached both hosts; the owner gives the next steps from the freeze call
+    on. This record is the cold-session entry for MuMate; read
+    20261006T185301 (window) and 20261006T195256 (notice done) with it.
+  scope:
+    - State before the freeze call.
+  out_of_scope:
+    - Any step from the freeze on, until the owner says so.
+
+outcome:
+  status: recorded
+  slice: "6"
+  state:
+    - "Window Friday 2026-10-09 04:00-10:00 Thai time. mumate-infra PR 49 merged by the owner (68cf7dd); laptop, mumate-2 and mumate-prod-1 on 68cf7dd (git pull --ff-only, docs-only); local branch deleted with -d; the remote branch docs/runbook-06-0400 still exists (remote deletes have been refused before; left for the owner)."
+    - "At 19:56: Vercel production and staging both fe 83ed2f1 / bazi 40e8ebf (origin/main and origin/pdf-dev); TTL 300; mumate-prod-1 still fe c10e91e / bazi 49e22f2 in maintenance, no cron timers."
+    - "The in-app notice runs on production until 2026-10-09 04:00 (mumate-maintenance-notice-001 completed)."
+    - "Owner 2026-10-06 19:5x: 'เดี๋ยวเรื่อง ตั้งแต่ข้อ 2 เป็นต้นไป ผมบอกคุนอีกครั้งครับ ... standby รอก่อคับ'."
+  remaining_in_order:
+    - "2. Owner calls the freeze."
+    - "3. Agent re-fetches, levels staging with production, sends the team the sign-off request naming the SHAs; the team signs off."
+    - "4. Owner presses container-build target=production push=true for mootech-fe and bazi-sft-dataset and release env=production; agent verifies deploy-history, hosts.sh compare, a tailnet smoke and runbook 06 step 3a - by Thursday 2026-10-08 evening."
+    - "5. Thursday night: agent re-runs the step 1 dry-run and checks both hosts."
+    - "6. Owner: Better Stack staging monitor confirm, api/bazi.staging monitors deleted."
+    - "7. Owner and the DNS person: contact plan for the night, Namecheap sign-in from the United States."
+    - "8. Friday 04:00: runbook 06 steps 0-7."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "8174117"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main 83ed2f1 (Vercel production and staging)"
+    bazi-sft-dataset: "origin/pdf-dev 40e8ebf (Vercel production and staging)"
+    mumate-infra: "main 68cf7dd on laptop and both hosts; PR 39 draft 5a5c0ac"
+    dns: "TTL 300"
+
+unresolved:
+  - "HQ hq/20261005 carries 23 unpushed commits including other lanes' (ciel-os-template-001, Windows); the push is the owner's, ideally before Thursday night."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Stand by. On the owner's freeze call, start at step 3 above; before that,
+    only re-level staging if the owner asks after a new production merge.
+  acceptance_check:
+    - Before Thursday 2026-10-08 evening mumate-prod-1 runs the signed-off SHAs healthy in maintenance.
