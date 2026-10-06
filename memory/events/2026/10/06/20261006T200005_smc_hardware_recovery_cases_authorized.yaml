@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T200005_smc_hardware_recovery_cases_authorized
+type: decision
+recorded_at: '2026-10-06T20:00:05+07:00'
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Execute coordinated one-lock restart and communication recovery cases.
+outcome:
+  status: decided
+  decision: After reading the two-round brief, the owner explicitly asks to
+    start. Authorize revision 0.2 slice 4 on existing CU12/COM4 lock 1 only.
+    Round A loads synthetic HWREC001 with one normal command; the owner holds
+    the released lock open while the agent closes and reopens the app normally,
+    then closes it on the agent's cue. Round B dispenses that fixture with one
+    normal command; the owner holds it open, removes computer-side USB on cue,
+    closes the lock while communication is absent, then reconnects USB on cue.
+    The agent verifies retained state, recovered status and normal final clear.
+  authority_boundary: Wait for owner physical observations at each handoff.
+    No mains interruption, wiring or power change, other-slot command, blind
+    unlock retry, source change or remote publication follows from this decision.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.2'
+  slice: '4'
+  repository:
+    head: b795afe9e65201bfb125a6b00bceda9f789e6a49
+    branch: codex/smc-hardware-slice1-proof
+  execution:
+    os: windows
+    locality: local
+  starting_checkpoint: memory/events/2026/10/06/20261006T195021_smc_hardware_one_lock_workflow_verified.yaml
+  starting_fixture: Read-only SQLite query finds slot 1 Empty with HN null and latest audit id 40.
+  owner_request: Owner asks to proceed after the detailed synchronized recovery brief.
+unresolved:
+- Recovery cases are authorized but not yet executed; success is not inferred.
+- Mapping for unconnected physical slots 2-12, scanner/scaling, accepted inventory
+  gaps and simulator timing/fidelity remain as recorded in the starting checkpoint.
+next_action:
+  action: Refresh actual SMC state, submit one HWREC001 load for slot 1,
+    and collect owner physical opening with the lock held open before normal
+    app restart. Continue the briefed handoffs only after each observation.
+  acceptance_check:
+  - No second successful unlock is submitted while an open operation is pending.
+  - Owner physical evidence stays distinct from UI, persisted state and serial evidence.
