@@ -1,0 +1,75 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T090224_smc_simulator_closure_bundle_prepared
+type: closeout
+recorded_at: '2026-10-06T09:02:24+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Prepare the owner-requested simulator closeout, timeline and limitation bundle.
+outcome:
+  status: simulator-closure-bundle-prepared-scope-confirmation-pending
+  result: Owner requests closing the workstream and preserving important findings
+    and workarounds. CLOSEOUT.md consolidates timeline, actual DoD, retained
+    artifact locations, limitations and next actions from repository evidence.
+    Simulator functionality is verified, but revision 0.8 has unmet final-delivery
+    gates. A concrete revision-0.9 checkpoint-closure proposal was presented for
+    owner selection instead of silently treating those gates as passed or waived.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.8'
+  step: '11.5 preparation'
+  repository:
+    head: 42f1a1a3f21596232a598de9137b53405af691a3
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    locality: local
+  bundle: workstreams/smc-v2-app-001/CLOSEOUT.md
+  prior_checkpoint: memory/events/2026/10/06/20261006T084529_smc_installed_full_cycle_and_exports_verified.yaml
+  source:
+    smc_head: 23e7781af3faa8f58b51e9e7a200a35b8089b527
+    simulator_head: 1a3b97cfe1aeb57db7afc2128820d250fc0a39ef
+  verification:
+    references: All twelve explicitly named event references in the bundle exist;
+      seven named Git commit references exist in their respective local repositories.
+    artifacts: Rechecked installed EXE and fixed MSI SHA-256 against the prior
+      installed proof. No private key or passphrase was inspected.
+    wake: No validation errors; current head is a traceable descendant of the
+      prior event checkpoint. Two unrelated historical status warnings remain.
+    product_boundary: No new product code, GUI tests, build, installation, remote
+      operation or hardware action in this documentation checkpoint.
+  proposed_scope:
+    revision: '0.9'
+    status: Awaiting owner selection; not an authorized plan revision yet.
+    meaning: Deliver tested simulator evidence and stop the remaining revision-0.8
+      acceptance scope with its unperformed work explicit. Keep CIEL Windows
+      Phase 2 in its existing separate workstream. Owner-cycle/DPI/scanner gaps
+      remain evidence limits, not passes. Slices 1-10 and prior events remain intact.
+  publication: Local checkpoint only. Plan remains revision 0.8; no final slice
+    delivery, push, PR, merge or completed-workstream state is claimed.
+unresolved:
+- Owner selection is pending between proposed simulator checkpoint closure and
+  completing all original revision-0.8 final-delivery gates. A request to close
+  does not establish an observed Phase 2 pass or personal observation of the cycle.
+- Owner-observed full-cycle criterion and intended OS scaling are incomplete;
+  physical scanner availability remains unknown. Phase 2 has no independent
+  fresh-session recovery proof and its workstream is paused.
+- All simulator-proof limitations and workarounds are carried in CLOSEOUT.md,
+  including hardware, production, local-only artifacts, deferred off-machine
+  backup, waived old-key rollback, tooling/security unknowns and rejected cleanup.
+- >-
+  Other Wake attention remains unchanged: owner-operating-contract active;
+  Windows portability, DAC2 guided inputs, beam gateway, BE decoupling and orchard
+  paused; mini-template, GA4, BE retirement and Vercel-to-DO unavailable because
+  referenced project bindings are missing. No broader status resolution is claimed.
+next_action:
+  action: Obtain the owner's selection on the concrete closure proposal. If
+    checkpoint closure is chosen, revise the plan narrowly, append the exact
+    owner decision and final delivery, validate and checkpoint before ordinary
+    publication. Otherwise retain revision 0.8 and complete its outstanding gates.
+  acceptance_check:
+  - Original evidence and unmet criteria are never relabeled as passes.
+  - Final delivery names the exact owner-approved plan revision and final slice.
+  - Remote publication and owner merge are separately verified rather than inferred.
