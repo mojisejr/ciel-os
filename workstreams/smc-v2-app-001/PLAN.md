@@ -3,7 +3,7 @@
 **Workstream:** `smc-v2-app-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.8
+**Plan revision:** 0.9
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -200,6 +200,19 @@ remains the step-11.2 proof. CIEL Windows Phase 2 stays a mandatory gate,
 scheduled after step 11.4 and before final delivery in 11.5. This revision
 authorizes the next bounded step 11.3; it does not claim any new build,
 activation, backup transfer or Phase 2 result.
+
+Revision 0.9 (owner, 2026-10-06: close the simulator checkpoint first and
+prioritize real hardware) accepts the prepared checkpoint-closure proposal.
+Slice 11 now delivers the tested Windows simulator evidence and its explicit
+limits. It stops the unperformed revision-0.8 final-acceptance requirements;
+it does not claim revision 0.8 passed in full. CIEL Windows Phase 2 remains
+in its own paused workstream and is no longer this delivery's gate. Live
+owner-cycle observation, intended DPI, scanner, physical labels, transport
+and real-door behavior move together into `smc-v2-hardware-001` as new
+hardware proof; they are not retroactive simulator passes. Off-machine
+backup stays deferred, old-key activation rollback stays waived and untested,
+and production readiness stays outside this checkpoint. Slices 1-10 are unchanged.
+The prior plan is preserved at HQ `799a5ab24a121f008de7036dd36ce3279a45ac4a`.
 
 ### 1. The wire — a CU12 gateway proven against the simulator
 
@@ -496,9 +509,10 @@ English and on the port macOS gives to AirPlay.
 
 Revision 0.7 keeps this as the last declared slice. Its five sequential
 steps replace the separate Windows-license proposal; they are substeps,
-not new portfolio slice identifiers. Final delivery requires all mandatory
-DoD below, including the original installed-MSI owner activation and
-load/dispense acceptance. Intermediate closeouts identify the substep in
+not new portfolio slice identifiers. Revision 0.9 closes the tested evidence
+checkpoint under the criteria below. Original owner-observed full-cycle
+and CIEL Phase 2 gates are explicitly stopped in this scope, not passed.
+Intermediate closeouts identify the substep in
 `evidence.step` and do not use a final delivery status for slice 11.
 
 #### Current evidence and execution boundary
@@ -533,13 +547,14 @@ load/dispense acceptance. Intermediate closeouts identify the substep in
   live installation is overwritten. Record owner and agent observations
   separately. Failures receive later records, not rewritten history.
 - `ciel-windows-portability-001` remains a separate paused CIEL recovery proof.
-  Its old ordering dependency is retained: readiness fixes/builds do not
-  satisfy fresh-session Phase 2 DoD. Revision 0.8 schedules actual Phase 2
-  proof after step 11.4 and before final delivery in 11.5. Do not silently
-  infer that proof from SMC tests or treat scheduling as an observed pass.
-- Owner decisions authorize bounded substeps. Revision 0.8 authorizes the
-  next step 11.3 with the new key; it does not authorize off-machine transfer,
-  production release or remote publication.
+  Readiness fixes/builds do not satisfy fresh-session Phase 2 DoD. Revision
+  0.9 removes its ordering dependency from this simulator checkpoint only.
+  Do not infer a Phase 2 pass or resume that workstream automatically.
+- Owner decisions authorize bounded scope. Revision 0.9 authorizes evidence
+  closure and planning the receiving hardware workstream, not electrical
+  setup, unconfirmed hardware commands, off-machine transfer or production
+  release. The owner's recorded end-of-workstream publication timing applies;
+  remote merge still requires owner review.
 
 #### 11.1 Make the existing owner issuer safe and convenient on Windows
 
@@ -621,7 +636,7 @@ Definition of done:
   revision-0.8 owner decision; old signing-key availability need not be resolved
   or a Mac accessed to complete this step.
 
-#### 11.4 First owner-observed Windows SMC and simulator acceptance
+#### 11.4 Installed Windows simulator evidence checkpoint
 
 Deliverables:
 
@@ -642,8 +657,12 @@ Deliverables:
 
 Definition of done:
 
-- The owner observes installed-MSI activation and one complete load/dispense/clear
-  cycle on Windows against TCP simulator; logs and displayed state agree.
+- Link installed-MSI activation and complete load/dispense/clear evidence against
+  TCP simulator; logs and displayed state agree. Distinguish the owner's initial
+  observations from the agent-authorized cycle, restart, refusal and export tests.
+- Preserve the unfulfilled original owner-observed full-cycle criterion and
+  unconfirmed intended OS scaling explicitly. Receiving hardware acceptance
+  supplies its own later observations, not a retroactive simulator pass.
 - Restart/reconnect do not silently clear the loaded or pending slot. Expected
   refusals do not unlock an unrelated door.
 - Record pass, fail, fixed-and-retested, unavailable and untested honestly. Any
@@ -653,26 +672,33 @@ Definition of done:
 - Missing physical scanner is a visible limitation. COM/RS485 and real CU12 are
   still untested, regardless of simulator results.
 
-#### 11.5 Deliver evidence and prepare the real-hardware starting point
+#### 11.5 Deliver simulator checkpoint and hand off remaining proof
 
 Deliverables:
 
 - Final closeout linking reviewed child source/builds, key recovery proof without
   secrets, owner observations, the explicit rollback waiver and remaining limits.
-- Record final Windows acceptance in this workstream, naming revision 0.8 and
-  slice 11 only after every mandatory step passes. Do not treat consolidation
-  itself as the final delivery.
+- Record final checkpoint delivery naming revision 0.9 and slice 11, linking the
+  owner closure decision, CLOSEOUT.md and source/build/test evidence. State which
+  original revision-0.8 requirements were stopped unperformed; no full original
+  acceptance claim or hardware pass is part of this delivery.
 - A bounded proposed next step for real CU12: identify board/adapter/Windows driver,
   confirm wiring and transport configuration with owner-supplied hardware evidence,
   and define a no-patient bench test plus stop conditions in its own later plan.
 
 Definition of done:
 
-- All mandatory prior step criteria have evidence; final delivery offers owner
-  review through the normal PR/closeout procedure. No agent merges a remote PR.
-- CIEL Windows Phase 2 has actual evidence from its separate proof after 11.4;
-  the deferred off-machine backup and waived old-key activation rollback remain
-  explicit limitations rather than inferred passes.
+- Steps 11.1-11.3 and the revised step-11.4 checkpoint have linked evidence. The
+  consolidated bundle preserves failures, fixes/retests, workarounds, local-only
+  artifacts and unknowns. Final delivery offers owner review through the normal
+  PR/closeout procedure. No agent merges a remote PR.
+- CIEL Windows Phase 2 remains unperformed in its existing separate workstream;
+  deferred off-machine backup and waived old-key activation rollback remain
+  explicit limitations. These are not inferred passes or hardware blockers.
+- `smc-v2-hardware-001` receives owner-observed real load/dispense/clear, intended
+  Windows scaling, scanner if available, board/adapter/driver/wiring inventory,
+  COM/RS485, physical labels and status/open/close/reconnect/restart proof. Planning
+  the receiving workstream does not authorize unconfirmed electrical execution.
 - Fresh sessions can locate the source, license procedure and recovery instructions
   without secrets or session locators. Key recovery still requires owner access to
   the protected backup; cloning Git alone cannot recreate a private key.

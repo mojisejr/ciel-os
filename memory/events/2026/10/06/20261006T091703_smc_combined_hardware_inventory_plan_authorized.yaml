@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T091703_smc_combined_hardware_inventory_plan_authorized
+type: decision
+recorded_at: '2026-10-06T09:17:03+07:00'
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Plan one sequential actual-hardware proof and collect the required equipment facts.
+outcome:
+  status: decided
+  decision: Owner explicitly prioritizes testing real hardware after the simulator
+    checkpoint and requests combining compatible remaining proof. Plan 0.1 puts
+    actual transport/door mapping, owner workflow, intended DPI, scanner and
+    restart/reconnect acceptance into one sequential lane. Slice 1 inventory and
+    read-only preparation are authorized now; later physical execution depends
+    on verified equipment/setup and owner participation.
+  authority_boundary: This is not authority to energize unknown equipment,
+    guess wiring, install an unverified driver or issue an unconfirmed physical
+    unlock. No new account, key, backend, repo or production release is authorized.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.1'
+  slice: '1'
+  repository:
+    head: 799a5ab24a121f008de7036dd36ce3279a45ac4a
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    locality: local
+  transfer_decision: memory/events/2026/10/06/20261006T091702_smc_simulator_checkpoint_closure_decided.yaml
+  starting_source: 23e7781af3faa8f58b51e9e7a200a35b8089b527
+  priority: Equipment and read-only status first; physical mapping second; combined
+    owner cycle/DPI/scanner third; actual restart/reconnect fourth. Separate CIEL
+    recovery and off-machine key backup do not block the confirmed hardware bench.
+unresolved:
+- Board/cabinet model and revision, adapter/driver, COM, power/wiring evidence,
+  safe bench access and scanner availability are unknown pending owner inventory.
+- No hardware has been connected, inspected or actuated by this planning turn.
+  Existing installed simulator success is not physical/electrical evidence.
+- CIEL Windows Phase 2, off-machine backup, old-key rollback waiver and production
+  governance keep their existing independent boundaries.
+next_action:
+  action: Obtain the owner's equipment/connection inventory, verify actual
+    prerequisites and build identity, then prepare the read-only status proof
+    with the owner. Do not issue an unlock while setup facts remain unknown.
+  acceptance_check:
+  - Actual equipment/configuration facts are backed by owner evidence and matching documentation.
+  - Initial physical positions agree with read-only app status before any actuation.

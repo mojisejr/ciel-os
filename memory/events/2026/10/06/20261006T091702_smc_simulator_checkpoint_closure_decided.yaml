@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T091702_smc_simulator_checkpoint_closure_decided
+type: decision
+recorded_at: '2026-10-06T09:17:02+07:00'
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Close the tested simulator evidence checkpoint and transfer remaining physical proof.
+outcome:
+  status: decided
+  decision: After receiving the revision-0.9 closure proposal and the unmet
+    revision-0.8 gate explanation, the owner explicitly selects simulator
+    checkpoint closure first. Owner prioritizes actual hardware next and requests
+    combining the remaining proof that can be exercised together. Revision 0.9
+    closes the evidence scope, not a fully passed revision-0.8 acceptance claim.
+  authority_boundary: The owner authorizes this narrow plan revision and slice-11
+    final evidence delivery. Original owner-cycle/DPI/scanner gaps and CIEL Phase 2
+    remain unperformed. The earlier end-of-workstream publication timing now
+    applies; owner review/remote merge remain separate, with no hardware actuation,
+    production release, off-machine key transfer or credential change authorized
+    merely by checkpoint closure.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.9'
+  slice: '11'
+  repository:
+    head: 799a5ab24a121f008de7036dd36ce3279a45ac4a
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    locality: local
+  proposal: workstreams/smc-v2-app-001/CLOSEOUT.md
+  prior_plan_revision: '0.8'
+  prior_plan_head: 799a5ab24a121f008de7036dd36ce3279a45ac4a
+  prior_checkpoint: memory/events/2026/10/06/20261006T090224_smc_simulator_closure_bundle_prepared.yaml
+  publication_timing: memory/events/2026/10/05/20261005T182943_smc_local_checkpoints_and_step11_2_preparation_decided.yaml
+  receiving_plan: workstreams/smc-v2-hardware-001/PLAN.md
+unresolved:
+- Closing the evidence scope does not establish real CU12, COM/RS485, scanner,
+  intended OS scaling or a complete owner-observed physical cycle. Those receive
+  new evidence in the combined hardware plan, not retroactive simulator passes.
+- CIEL Windows Phase 2 remains paused in its existing separate workstream; this
+  decision removes its SMC checkpoint gate without recording a recovery-proof pass.
+- Deferred off-machine key backup, waived untested old-key rollback, production
+  governance and local-only artifact/tooling limits remain in CLOSEOUT.md.
+next_action:
+  action: Complete normal final-evidence delivery for revision 0.9 slice 11,
+    publish the checked source/evidence at the owner's recorded end-of-workstream
+    timing and offer owner review. Prepare only the hardware inventory slice next.
+  acceptance_check:
+  - Final closeout and PR heads contain the exact approved revision and slice.
+  - Preserve failed, fixed, unavailable and untested evidence without rewriting old events.
+  - No remote merge or hardware pass is inferred from owner checkpoint closure.

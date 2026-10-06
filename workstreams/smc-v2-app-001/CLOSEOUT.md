@@ -1,7 +1,10 @@
-# SMC Windows simulator checkpoint — evidence and closure proposal
+# SMC Windows simulator checkpoint — closeout and hardware handoff
 
 Prepared on 2026-10-06 from repository records and local Git.
-Current approved plan: revision 0.8. This document does not amend that plan.
+Owner approved checkpoint closure on 2026-10-06 under plan revision 0.9.
+This closes the tested evidence scope; original revision-0.8 gaps below remain
+unperformed. Remote delivery/merge are established by the final event and Git,
+not inferred from this document.
 
 ## Result and boundary
 
@@ -44,7 +47,7 @@ and Git, rather than being copied into a second history.
 | 11.3 Matching build | New public key in issuer/app, license rejection cases, release outputs/MSI and package inspection passed | Old-key activation rollback owner-waived and untested; development key only |
 | 11.4 Installed simulator functionality | Load, dispense, clear, wrong PIN, unknown HN, loaded/pending restart, disconnect/reconnect, audit/CSV, automatic/manual backup and diagnostics have evidence; door-display bug fixed and retested installed | Owner-observed full-cycle criterion not fully met; app DPI 96 measured, intended OS scaling unconfirmed; physical scanner availability unknown and input untested |
 | CIEL Windows Phase 2 | Existing Windows Wake/check observations are partial evidence only | Required independent clean-clone/fresh-session proof remains unperformed; its own workstream remains paused |
-| 11.5 Final delivery | This evidence bundle and proposed next hardware test are prepared | Revision 0.8 cannot be reported fully passed; closure scope requires owner decision; publication/PR/merge are not yet completed |
+| 11.5 Final delivery | Owner chose revision-0.9 simulator checkpoint closure; this bundle and the receiving hardware plan preserve the actual evidence | Revision 0.8 did not pass in full; remote delivery/merge require their own final event and Git evidence |
 
 ## Problems, limitations and proven workarounds
 
@@ -86,10 +89,10 @@ Fixed MSI SHA-256:
 Both were checked again locally while preparing this bundle. The standalone
 candidate and installed EXE have different bundle markers as recorded above.
 
-## Closure proposal for owner decision
+## Owner-approved closure scope
 
-Proposed revision 0.9 would close this workstream at the tested simulator evidence
-checkpoint. Completion would mean delivery of that evidence and explicit stopping
+Revision 0.9 closes this workstream at the tested simulator evidence
+checkpoint. Completion means delivery of that evidence and explicit stopping
 of the unperformed acceptance requirements from revision 0.8, not a verdict that
 revision 0.8 passed in full.
 
@@ -99,24 +102,26 @@ Slices 1–10 and their records remain unchanged. Slice 11 would finish with:
    agent observations.
 2. Retain failures, fix/retest evidence, known workarounds and untested limits.
 3. Record CIEL Windows Phase 2, full live owner-cycle observation, intended DPI,
-   scanner and hardware as unperformed; Phase 2 remains in its existing workstream,
-   rather than blocking SMC simulator checkpoint closure under the new revision.
+   scanner and hardware as unperformed. Phase 2 remains in its existing workstream;
+   the combined hardware proof is `smc-v2-hardware-001`. Neither retroactively
+   satisfies the original simulator owner's observation criterion.
 4. Prepare ordinary owner-reviewed publication. A local final closeout is not
    evidence that a remote PR is pushed, reviewed or merged.
 5. Preserve prior plan revision through Git and append-only decisions; no old
    event is amended or converted to a pass.
 
-This proposal needs owner confirmation because approved revision 0.8 explicitly
-makes Phase 2 a final-delivery gate. The request to close prompted the proposal;
-it is not recorded here as confirmation that the owner knowingly removed that gate.
+The owner explicitly selected this proposal after the unmet revision-0.8 gates
+were explained: close the simulator checkpoint first and prioritize hardware,
+combining proof that can be done together. No historical event was amended.
 
 ## Next executable actions
 
-1. Decide between checkpoint closure (revision 0.9 proposal above) and completing
-   all remaining revision-0.8 gates before final closeout.
-2. If checkpoint closure is chosen, record the exact decision and final delivery;
-   finish ordinary publication/PR handling at the owner's chosen timing. Owner
-   merge and repository synchronization remain separately evidenced steps.
+1. Complete final checkpoint delivery and ordinary publication/PR handling under
+   the owner's end-of-workstream timing. Owner merge and repository synchronization
+   remain separately evidenced steps.
+2. Begin `smc-v2-hardware-001` slice 1 by obtaining the actual equipment inventory
+   and verified connection configuration. Its one sequential lane combines real
+   transport, door labels, owner-observed cycle, DPI/scanner and recovery testing.
 3. Continue CIEL Windows Phase 2 separately when explicitly resumed: canonical
    clean clones, relative bindings, fresh-context reconstruction, Windows checks
    and CU12 TCP tests. Do not infer this proof from the current chat or simulator UI.
@@ -128,5 +133,19 @@ it is not recorded here as confirmation that the owner knowingly removed that ga
    disagreement between physical and displayed state, or unsafe power behavior.
    Passing TCP simulator tests does not supply electrical or hardware evidence.
 
-No hardware execution, production release, off-machine key transfer, credential
-change, publication or remote merge is performed by preparing this document.
+## Remaining priorities
+
+| Priority | Work | Where / acceptance |
+|---|---|---|
+| P0 — before any hardware unlock | Actual CU12, adapter, power/wiring evidence, Windows driver/COM and read-only status | Hardware slice 1; exact configuration is known and stable status is observed |
+| P1 — main line | One door first, then sequential physical labels/status for all twelve | Hardware slice 2; selected physical door and observed bit agree |
+| P1 — same hardware session | Owner-observed load/dispense/clear, actual Windows scaling, scanner when present and matching audit | Hardware slice 3; complete real cycle witnessed, no patient data |
+| P1 — after happy path | Pending restart, disconnect/reconnect and correct persistence | Hardware slice 4; no silent clearing or unintended opening |
+| P2 — separate continuity proof | CIEL Windows Phase 2 | Existing paused workstream; fresh clone/session evidence, not a hardware prerequisite |
+| P2 — before relying on recovery beyond this disk | Off-machine encrypted key backup | Owner chooses destination; verify a restore independently of original key/disk |
+| Before first external release | Production key/issuance governance and distribution acceptance | Owner decision still needed; this development checkpoint is not release approval |
+| P3 — only if useful or blocking | Launch/cache/tooling/security findings and rejected fixture cleanup | Existing limitations; keep safe workarounds, do not expand hardware scope into tooling repair |
+
+Hardware execution, production release, off-machine key transfer and credential
+changes do not follow merely from this document. Publication and owner merge
+retain the normal separate evidence boundaries.
