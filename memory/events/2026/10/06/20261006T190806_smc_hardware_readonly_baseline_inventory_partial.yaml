@@ -1,0 +1,123 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T190806_smc_hardware_readonly_baseline_inventory_partial
+type: closeout
+recorded_at: '2026-10-06T19:08:06+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Establish the real COM4 read-only baseline and preserve missing equipment facts before actuation.
+outcome:
+  status: hardware-readonly-baseline-verified-inventory-partial
+  result: Installed SMC remains connected to serial COM4. A two-minute existing-log
+    sample contains 59 checksum-valid successful status responses, all with hook
+    mask 01 00, and no CU12 warning or error in that window. Slot 1 is empty in
+    the UI and database. A consistent pre-test database backup passed integrity
+    checking. The owner confirms the one-lock empty bench setup and presence,
+    but reports not knowing the supply rating. Slice 1 remains incomplete;
+    no physical unlock, recovery test or hardware-versus-simulator equivalence
+    test was performed in this checkpoint.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.1'
+  slice: '1'
+  repository:
+    head: f35eaf49cf79bbedf662259b86d822b21dd3e84f
+    branch: codex/smc-hardware-slice1-proof
+  execution:
+    os: windows
+    locality: local
+  authority:
+    decision: memory/events/2026/10/06/20261006T091703_smc_combined_hardware_inventory_plan_authorized.yaml
+    owner_request: Owner says hardware is set up and requests starting according to the plan.
+  owner_report:
+    scope: CU12 on COM4 with only physical lock 1 connected; lock 1 is closed,
+      empty and available for a no-patient bench test with the owner present.
+    interpretation: The owner's yes answers the setup confirmation. It does
+      not identify adapter model, board revision, supply rating or wiring.
+    supply_rating: Owner explicitly answers that the rating is not known.
+  application:
+    source: d2a6cc6ea23e202bb2356622ec2e288fb0f4c685
+    installed_source: 23e7781af3faa8f58b51e9e7a200a35b8089b527
+    installed_exe: 'D:\Smart Medication Cart\smc.exe'
+    sha256: 93653856B308914C4A6E405CF06E4AF08A937665F3CA2F1234587C500146D50E
+    screenshot: 'D:\smc-owner\testing\hardware-20261006\slice1-readonly-home-190806.jpg'
+    data: 'C:\ProgramData\SMC\smc.sqlite'
+    state: Slot 1 is empty with no HN; audit remains 14 simulator rows and 19 real-marked rows, latest id 33.
+  serial:
+    port: COM4
+    windows_device: USB Serial Port (COM4), present and status OK.
+    driver_provider: FTDI
+    driver_version: 2.12.36.20
+    driver_inf: oem84.inf
+    driver_signed: true
+    identity_boundary: These Windows driver facts do not establish the physical adapter's model or RS485 wiring.
+    endpoint: serial COM4 at 19200 8N1
+    log: 'C:\ProgramData\SMC\logs\smc.log.2026-10-06'
+    report: 'D:\smc-owner\testing\hardware-20261006\readonly-status-120730Z.json'
+    window_start: '2026-10-06T12:05:30.743669+00:00'
+    window_end: '2026-10-06T12:07:30.743669+00:00'
+    status_responses: 59
+    invalid_complete_frames: 0
+    distinct_hook_masks: ['01 00']
+    latest_response: '02 00 00 80 10 02 03 98 01 00'
+    faults_in_window: 0
+    decoding_source: checkouts/smc-v2/crates/cu12/src/protocol.rs
+    boundary: Reassembled and checked bytes already written by the app.
+      No second serial connection was opened and no command was issued.
+      Bit 1 means engaged under the existing decoder; physical closure is
+      separately owner-reported. Unconnected inputs do not prove doors 2-12.
+  backup:
+    path: 'D:\smc-owner\testing\hardware-20261006\pretest-20261006-190646.sqlite'
+    report: 'D:\smc-owner\testing\hardware-20261006\pretest-20261006-190646.json'
+    sha256: ac6db4c82aa4749b5deca5ec084dc9c724a22d4d27b270c49e44a72766be6917
+    integrity_check: ok
+    audit_rows: 33
+    method: SQLite backup API from a query-only read-only source connection, with an exclusive new destination.
+    boundary: Full database retained only in the owner-controlled local proof folder; not redacted or transmitted.
+  previous_owner_trial:
+    audit_ids: [27, 28, 29, 30, 31, 32, 33]
+    time: '2026-10-06T14:29:31+07:00 through 2026-10-06T14:30:04+07:00'
+    observed: Real-marked slot-1 load, door-opened, load-completed, dispense,
+      door-opened, dispense-completed and cleared records remain present.
+    boundary: Prior UI/log observations are recorded evidence, not a new
+      agent-operated trial or a specific owner confirmation of both physical cycles.
+  simulator_return:
+    prior_endpoint: tcp 127.0.0.1:5012
+    boundary: Previous simulator endpoint is reconstructable from retained logs
+      and closeout. No transport change or return rehearsal occurred here.
+  manual:
+    reference: checkouts/cu12-simulator/docs/protocol-evidence.md
+    expected_asset: '.assets/cu12-simulator/reference/CU12 Protocol and Introduction-12.08.2022.pdf'
+    availability: Expected PDF is absent on this machine; existing protocol notes were read, not a matching hardware wiring manual.
+  start_gate: After fresh fetch, HQ main f35eaf49 and SMC main d2a6cc6 are clean
+    and match origin/main. HQ then opens the bounded topic branch above;
+    application source remains unchanged on main. Publication waits for owner timing.
+  wake: No validation errors, two historical status warnings; hardware slice 1
+    is authorized and the preceding simulator lifecycle is completed.
+unresolved:
+- Supply voltage/current, board revision, physical adapter model, matching wiring/pinout
+  and scanner inventory remain unknown. Do not infer them from successful polling.
+- Slice 1 inventory and setup checks are incomplete. No new physical unlock is
+  performed while supply/wiring remain unknown; owner setup confirmation does
+  not silently waive the approved plan's prerequisite.
+- Twelve physical-door mapping, observed real full cycle, intended Windows scaling,
+  scanner, pending restart and owner-controlled disconnect/reconnect remain unperformed.
+- Hardware-versus-simulator parity has not been proved. Existing simulator notes
+  retain 500/550 ms timing ambiguity and fault/actuator model boundaries.
+- CIEL Windows Phase 2 remains paused; off-machine encrypted key backup remains
+  deferred; old-key activation rollback remains owner-waived and untested;
+  production issuance/distribution acceptance remains separate.
+- >-
+  Other Wake attention remains unchanged: owner contract active; Windows portability,
+  DAC2, beam gateway, BE decoupling and orchard paused; mini-template, GA4,
+  BE retirement and Vercel-to-DO unavailable due to missing referenced local bindings.
+next_action:
+  action: Obtain readable supply/board/adapter labels and matching wiring evidence
+    from the owner. Complete slice 1 setup checks before one bounded slot-1
+    unlock observed by the owner; keep physical observations separate from ACK/UI/log.
+  acceptance_check:
+  - Unknown equipment facts are supplied or remain explicitly unresolved; no electrical rating is guessed.
+  - Setup matches the identified equipment, backup is retained and the owner can observe physical lock 1.
+  - No slice-1 completion, physical test pass or simulator fidelity claim follows from this read-only checkpoint.
