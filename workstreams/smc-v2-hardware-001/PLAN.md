@@ -22,6 +22,11 @@ authorized now. Physical setup and command execution require known equipment,
 verified wiring/power/configuration and owner participation at the bench.
 Unknown equipment details are reported, not filled with simulator assumptions.
 
+Equipment inventory may proceed while the simulator delivery awaits owner review.
+Before tracked product changes, merge/synchronize the preceding delivery and pass
+the existing per-repository clean-main gate. Do not authorize parallel app work
+merely to bypass the temporary same-project overlap that Wake reports before merge.
+
 ## Project links
 
 | Project ID | Role | Local binding |
