@@ -1,0 +1,132 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T181708_smc_owner_issuer_step11_1_local_checkpoint
+type: closeout
+recorded_at: '2026-10-05T18:17:08+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Deliver the local owner issuer CLI and Windows guided menu checkpoint.
+  scope:
+  - Revision 0.7 step 11.1 only, with disposable keys, synthetic customers and local checks.
+  out_of_scope:
+  - Operational owner keys, backup credentials, embedded public-key replacement, installed MSI,
+    simulator acceptance, production, hardware and external publication.
+outcome:
+  status: step11-1-local-checkpoint
+  result: The existing Rust issuer rejects ambiguous or invalid inputs, checks the signing key
+    against the intended public key and verifies the signed payload before reporting delivery.
+    Key and license files use exclusive creation. The PowerShell menu shares CLI validation,
+    previews issuance, requires explicit confirmation and provides inspect, machine and separate
+    key-setup actions. Documentation and real CLI/menu integration checks are committed locally.
+  completion_boundary: This is an intermediate checkpoint with no evidence.slice, not final
+    delivery of slice 11. The SMC lane remains active and idle. Steps 11.2-11.5, owner GUI/MSI
+    observations and the portability acceptance gate have not been completed.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.7'
+  step: '11.1'
+  decision: memory/events/2026/10/05/20261005T174850_smc_owner_issuer_step11_1_authorized.yaml
+  previous_checkpoint: memory/events/2026/10/05/20261005T174219_smc_lane_consolidation_checkpoint.yaml
+  repository:
+    head: 6f1e6cefadc9b0f14f7a3989efc1d0a89df592ea
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  child_repository:
+    project: smc-v2
+    base: f2e023adf8b05eb23644540a25d7537346be26b5
+    head: d1e9bc19ac9a11b68d253326c6a027a8ec843b92
+    branch: feat/windows-license-issuer
+    clean: true
+    start_gate: The child was clean on main; git pull --ff-only origin main freshly fetched
+      main and both printed revisions matched the base before the topic branch was created.
+    changed_paths:
+    - crates/license/src/bin/smc-license.rs
+    - crates/license/tests/issuer.rs
+    - scripts/license-menu.ps1
+    - crates/license/README.md
+  checks:
+  - command: cargo test --locked -p license
+    rust_version: 1.88.0
+    target_directory: 'D:\dev\tools\build-smc-issuer-proof'
+    passed: 15
+    failed: 0
+    coverage: Seven existing licensing tests and eight CLI integration tests. Windows tests run
+      actual PowerShell 5.1.26100.9444 from an unrelated folder, with spaces in key, output and
+      executable paths, Thai customer text, literal quotes/backslashes and shell characters.
+      They check preview/cancel, issue/inspect, separate key setup, machine display, wrong/missing
+      keys, malformed inputs, duration bounds, existing destinations and competing writers.
+    secret_boundary: Only disposable keys were generated in uniquely created temporary folders
+      outside repositories. Tests check key contents are absent from process outputs and remove
+      only their own folders. No owner key was generated or read.
+  - command: cargo fmt --all -- --check
+    result: passed
+  - command: cargo clippy --locked -p license --all-targets -- -D warnings
+    result: passed for final source and tests
+  - command: cargo check --locked -p license --all-targets --target x86_64-pc-windows-msvc
+    result: passed for final source and tests
+  - command: cargo build --locked --release -p license --bin smc-license
+    result: passed; release --help smoke check also passed
+  - command: git diff --cached --check
+    result: passed before the child commit
+  - check: Changed-path review and secret-like literal scan
+    result: No 64-character hex literal or private-key header found in the four changed paths.
+      No embedded key, licensing library policy, application, simulator or dependency file changed.
+  - command: bun run check
+    bun_version: 1.3.2
+    typecheck: passed
+    passed: 45
+    failed: 0
+    assertions: 202
+  - command: bun run wake
+    validation_errors: 0
+    historical_warnings: 2
+    reconciliation: expected-evolution
+    observation_boundary: Read before this checkpoint was added; the current decision authorized
+      revision 0.7 slice 11 with its explicit step-11.1 restriction. The SMC child was clean.
+  build_artifact:
+    path: 'D:\dev\tools\build-smc-v2\release\smc-license.exe'
+    sha256: 511A9A47996C4F6DCB112C49DBC24E762D3D5BEC42CA702595355F370F3BA273
+    boundary: Local issuer only; no application or MSI was rebuilt, installed or activated.
+  observed_failure:
+    command: cargo test --locked -p license
+    path: 'D:\dev\tools\build-smc-v2\debug\deps\issuer-073a5e7a51992b66.exe'
+    result: Two attempts to relink the existing test executable failed with LNK1104 after an
+      earlier 14-test run passed. The final 15-test suite passed in a separate target directory.
+    cause: Unknown; no antivirus configuration, exclusion, restore or cache deletion was performed.
+  simulator_repository:
+    head: 1a3b97cfe1aeb57db7afc2128820d250fc0a39ef
+    branch: main
+    boundary: No source change or new owner acceptance observation in this step.
+  portfolio_attention:
+    active: [ciel-owner-operating-contract-001, smc-v2-app-001]
+    paused: [ciel-windows-portability-001, dac2-guided-inputs-001, mootech-fe-beam-gateway-001,
+      mumate-be-decoupling-001, orchard-decision-lab-001]
+    unavailable: [ciel-mini-template-001, mootech-ga4-instrumentation-001,
+      mumate-be-retirement-001, mumate-vercel-to-do-001]
+  publication: Child commit and HQ records remain local; no push, PR or remote merge was performed.
+    No Mac synchronization is claimed. The owner has not observed this menu interactively yet.
+unresolved:
+- The existing test executable cannot currently be relinked in the normal cache; cause unknown.
+  The separate target directory is a scoped workaround, not proof the normal cache is repaired.
+- Steps 11.2-11.5 remain. Owner-controlled key/backup locations and encryption method, old key
+  availability and any existing issued/deployed licenses require owner information at step 11.2.
+- CIEL Windows portability Phase 2 remains paused and unproved. Resolve its historical gate by
+  actual proof or an explicit owner scope decision before final Windows acceptance is claimed.
+- Prior exact Norton restore/exclusion details, npm build-tool audit findings and gateway parallel
+  test port race remain deferred. Physical scanner, real CU12/door-label order and production key
+  governance remain unproved. Two historical event-status warnings and unavailable bindings remain.
+- External publication/review/merge authority is not established by this local step decision.
+  Signing-key recovery, app activation rollback and installed-MSI simulator acceptance are untested.
+next_action:
+  action: Review the local step-11.1 commit and checkpoint, obtain owner authority for remote
+    publication through draft PRs, and finish the PR closeout/head proof when publication is approved.
+    Before step 11.2, ask for protected key/backup locations, encryption method and existing-license
+    availability. Do not generate an operational key or advance later steps on the current decision.
+  acceptance_check:
+  - Owner can review the concrete issuer/menu change and its pass/failure evidence before publication.
+  - Remote delivery is claimed only after push and PR-head verification; final slice 11 remains open.

@@ -1,0 +1,128 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T092059_smc_simulator_checkpoint_final_delivery
+type: closeout
+recorded_at: '2026-10-06T09:20:59+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Deliver the owner-approved Windows simulator checkpoint and transfer remaining physical proof.
+outcome:
+  status: ready-for-owner-merge
+  result: Revision 0.9 slice 11 delivers the Windows simulator evidence checkpoint.
+    Issuer, same-machine encrypted key recovery, matching new-key builds and
+    installed synthetic GUI tests have linked proof. The owner explicitly chose
+    this bounded closure after the unperformed original gates were explained.
+    Slices 1-10 retain their history. Remaining physical proof is consolidated
+    in one sequential hardware plan; no hardware pass or fully passed revision-0.8
+    verdict is claimed. Both actual PRs were created as drafts for final-evidence
+    publication and owner review; neither is merged.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.9'
+  slice: '11'
+  repository:
+    head: ee205552654a51c6e345263be237686888ee9e86
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    locality: local
+  delivery:
+    target_branch: main
+    topic_branch: docs/smc-windows-license-plan
+  pull_request:
+    number: 82
+    url: https://github.com/mojisejr/ciel-os/pull/82
+    base: main
+    head: docs/smc-windows-license-plan
+    observed_head: ee205552654a51c6e345263be237686888ee9e86
+    draft_at_observation: true
+  application:
+    project: smc-v2
+    head: 23e7781af3faa8f58b51e9e7a200a35b8089b527
+    branch: feat/windows-license-issuer
+    pull_request: https://github.com/mojisejr/smc-v2/pull/11
+    observed_pr_head: 23e7781af3faa8f58b51e9e7a200a35b8089b527
+    draft_at_observation: true
+    changes: Existing issuer CLI hardening and Windows menu, explicit protected
+      age backup/recovery procedure, embedded development public-key change and
+      the minimal Loaded-door UI indicator fix. No hardware source change.
+  simulator:
+    head: 1a3b97cfe1aeb57db7afc2128820d250fc0a39ef
+    changes_this_delivery: None.
+  owner_decision: memory/events/2026/10/06/20261006T091702_smc_simulator_checkpoint_closure_decided.yaml
+  bundle: workstreams/smc-v2-app-001/CLOSEOUT.md
+  receiving_plan: workstreams/smc-v2-hardware-001/PLAN.md
+  receiving_authority: memory/events/2026/10/06/20261006T091703_smc_combined_hardware_inventory_plan_authorized.yaml
+  proof_checkpoints:
+    issuer: memory/events/2026/10/05/20261005T181708_smc_owner_issuer_step11_1_local_checkpoint.yaml
+    key_recovery: memory/events/2026/10/05/20261005T211000_smc_windows_development_key_recovery_verified.yaml
+    matching_builds: memory/events/2026/10/05/20261005T220400_smc_new_key_windows_builds_verified.yaml
+    failure_and_fix: memory/events/2026/10/06/20261006T065600_smc_windows_gui_tests_and_door_indicator_fix.yaml
+    replacement_installation: memory/events/2026/10/06/20261006T072156_smc_replacement_installed_fix_retested.yaml
+    installed_full_cycle: memory/events/2026/10/06/20261006T084529_smc_installed_full_cycle_and_exports_verified.yaml
+  retained_artifacts:
+    installed_executable: D:\Smart Medication Cart\smc.exe
+    installed_sha256: 93653856B308914C4A6E405CF06E4AF08A937665F3CA2F1234587C500146D50E
+    fixed_msi_directory: D:\dev\tools\artifacts\smc-v2\step11.4-door-indicator-20261006
+    fixed_msi_sha256: BDE72222A4028B9C5BE1CC116144E9AA5007169EBC183E88192510E5735C3377
+    gui_exports: D:\smc-owner\testing\gui-20261006
+    data: C:\ProgramData\SMC
+    boundary: Artifacts/keys/licenses remain owner-controlled and local outside
+      Git. Publication carries source and semantic evidence, not private inputs
+      or a claim that Git recreates every ignored artifact.
+  checks:
+    prior_product_checks: Linked checkpoints record fifteen license/issuer checks,
+      formatting/lint, locked app/issuer/MSI builds, same-machine key recovery,
+      installed activation/load/dispense/clear, refusals, pending restart,
+      disconnect/reconnect, audit/CSV and backup/diagnostics. They were not rerun
+      during this documentation-only closure.
+    closure_checks: Revision 0.9 and receiving plan parse; named event/Git
+      references exist; current installed/fixed-MSI hashes match; changed-path
+      credential/session-locator patterns and diff whitespace checks pass.
+    wake: No validation errors. Two unrelated historical status warnings remain.
+    current_remote_check:
+      application: GitHub check job reports SUCCESS on application PR 11 at source head 23e7781.
+      source: https://github.com/mojisejr/smc-v2/actions/runs/37403616851/job/112076136098
+      hq: No remote checks are reported on HQ PR 82; local Wake/reference/diff checks supply this documentation validation.
+    publication: Canonical main has no new commits ahead of either topic branch
+      at fetch. HQ and application branches pushed; actual draft PR heads match
+      the observed local revisions above. Commit/push this final event to HQ PR
+      82, verify containment there, then update descriptions and mark ready.
+unresolved:
+- Real CU12, adapter/driver/COM, wiring/power, physical label mapping, live owner
+  full cycle, intended Windows scaling and scanner remain unproved. Receiving
+  hardware slices 1-4 combine this work. Equipment inventory is pending owner
+  information; no unlock is authorized on an unknown setup.
+- Original revision-0.8 owner-observed full simulator cycle and CIEL Phase 2
+  gates were stopped unperformed in this checkpoint scope, not passed. Hardware
+  observation will be new proof. CIEL Windows portability Phase 2 remains paused
+  separately and needs clean-clone/fresh-session evidence when explicitly resumed.
+- Off-machine encrypted key backup remains owner-deferred with no destination,
+  transfer or other-computer recovery proof. Same-disk backup does not prove
+  survival of disk loss. Old-key activation rollback remains owner-waived and
+  untested; existing old binaries are not revoked by changing the public key.
+- Production key/issuance governance and distribution acceptance remain before
+  first external release. The current development checkpoint authorizes neither.
+- CLOSEOUT.md preserves launch/cache workarounds, unknown hidden process,
+  Norton/security/dependency findings, historical gateway test race, WiX warnings,
+  local-only proof files and approval-rejected fixture cleanup. No unrelated
+  repair, security weakening or successful deletion is claimed.
+- Owner review/merge and subsequent fetched clean-main synchronization remain
+  outstanding for both repositories; prepared delivery is not a merged lifecycle.
+- >-
+  Other Wake attention remains unchanged: owner-operating-contract active;
+  Windows portability, DAC2 guided inputs, beam gateway, BE decoupling and orchard
+  paused; mini-template, GA4, BE retirement and Vercel-to-DO unavailable due to
+  missing referenced local bindings. Those states are not resolved by SMC closure.
+next_action:
+  action: Offer both verified ready-for-review PRs for owner merge while collecting
+    the actual hardware inventory for smc-v2-hardware-001 slice 1. Read status
+    only after the build/setup are confirmed with the owner; advance physical
+    actuation only when the bench prerequisites are proved. After any owner merge,
+    fetch and pass each repository's clean-main gate before tracked product work.
+  acceptance_check:
+  - HQ PR head contains this final event and application PR head matches its recorded source.
+  - Both PRs are offered for owner review without an agent merge or source-readiness overclaim.
+  - Hardware setup/configuration and initial physical status are evidenced before unlock.

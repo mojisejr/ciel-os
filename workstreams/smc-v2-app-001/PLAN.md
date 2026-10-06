@@ -3,7 +3,7 @@
 **Workstream:** `smc-v2-app-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.6
+**Plan revision:** 0.9
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -92,6 +92,7 @@ owner decided:
 | Project ID | Role | Local binding |
 |---|---|---|
 | `smc-v2` | the application: Cargo workspace, Tauri shell, Leptos UI, license issuer, `DESIGN.md` | `checkouts/smc-v2` |
+| `cu12-simulator` | independent TCP simulator and console for Windows acceptance | `checkouts/cu12-simulator` |
 | `ciel-os` | this plan and its events | `.` |
 
 `smc-v2` is seeded locally at `36d6e61` and registered local-only; the owner
@@ -179,6 +180,39 @@ already has that simulator entry (`crates/ui/src/admin.rs`, since slice
 4), and there is no default port: the setting stays empty until saved.
 The agent had read only the serial-port half of the list. Slice 10
 therefore renames and re-points the existing entry rather than adding one.
+
+Revision 0.7 (owner, 2026-10-05: "รวมเลยครับ") consolidates the newly
+opened `smc-windows-license-001` proposal into this workstream's remaining
+slice 11. Slices 1-10 and their numbering are unchanged. The owner-only
+Windows issuer, development-key recovery, matching builds and Windows walk
+now run sequentially as steps 11.1-11.5. The separate plan is retired with
+its history retained, rather than keeping two active scopes on `smc-v2`.
+This decision changes the plan and records the checkpoint; it does not
+claim a Windows pass or start code, credential, installation or hardware work.
+
+Revision 0.8 (owner, 2026-10-05) moves forward with the new Windows
+development key without requiring old-key activation rollback or Mac key
+retrieval. The owner reports SMC v2 has never been released and has no
+active users. Old artifacts/history are retained, but waived activation
+rollback is recorded as untested, not passed. Off-machine encrypted backup
+is deferred until the owner selects a destination; same-Windows recovery
+remains the step-11.2 proof. CIEL Windows Phase 2 stays a mandatory gate,
+scheduled after step 11.4 and before final delivery in 11.5. This revision
+authorizes the next bounded step 11.3; it does not claim any new build,
+activation, backup transfer or Phase 2 result.
+
+Revision 0.9 (owner, 2026-10-06: close the simulator checkpoint first and
+prioritize real hardware) accepts the prepared checkpoint-closure proposal.
+Slice 11 now delivers the tested Windows simulator evidence and its explicit
+limits. It stops the unperformed revision-0.8 final-acceptance requirements;
+it does not claim revision 0.8 passed in full. CIEL Windows Phase 2 remains
+in its own paused workstream and is no longer this delivery's gate. Live
+owner-cycle observation, intended DPI, scanner, physical labels, transport
+and real-door behavior move together into `smc-v2-hardware-001` as new
+hardware proof; they are not retroactive simulator passes. Off-machine
+backup stays deferred, old-key activation rollback stays waived and untested,
+and production readiness stays outside this checkpoint. Slices 1-10 are unchanged.
+The prior plan is preserved at HQ `799a5ab24a121f008de7036dd36ce3279a45ac4a`.
 
 ### 1. The wire — a CU12 gateway proven against the simulator
 
@@ -471,24 +505,226 @@ English and on the port macOS gives to AirPlay.
 - `cargo fmt --check`, `cargo test`, `cargo clippy --all-targets -- -D
   warnings`, the `ui` wasm clippy, and `scripts/check-windows.sh` pass.
 
-### 11. Windows — build and prove on the owner's Windows machine
+### 11. Windows — owner licensing, recovery and simulator acceptance
 
-What this slice meets, and nothing else: MSVC and the SQLite C build, COM
-with a real adapter (configurable, unproven against hardware), MachineGuid,
-`%ProgramData%` permissions, WebView2 and fonts, the `.msi`, window state,
-the simulator built on Windows, DPI.
+Revision 0.7 keeps this as the last declared slice. Its five sequential
+steps replace the separate Windows-license proposal; they are substeps,
+not new portfolio slice identifiers. Revision 0.9 closes the tested evidence
+checkpoint under the criteria below. Original owner-observed full-cycle
+and CIEL Phase 2 gates are explicitly stopped in this scope, not passed.
+Intermediate closeouts identify the substep in
+`evidence.step` and do not use a final delivery status for slice 11.
 
-**Deliverable**
+#### Current evidence and execution boundary
 
-- `.msi` from the Tauri bundler; the simulator built on Windows in TCP mode
-  (its PTY is macOS-only); the COM transport configurable but unproven.
+- The September 30 merge/handoff records establish delivery of slices 1-10
+  at `smc-v2` `f2e023a`. The subsequent console walk
+  `memory/events/2026/09/30/20260930T121101_cu12_sprint005_slice3_walked_ready_for_owner_merge.yaml`
+  records the missing dispense and exported CSV, closing those earlier gaps.
+- Windows readiness evidence is
+  `memory/events/2026/10/05/20261005T051812_windows_readiness_partial_closeout.yaml`
+  plus `memory/events/2026/10/05/20261005T052948_windows_backend_cache_reuse_verified.yaml`.
+  Builds and backend checks passed; MSI/GUI activation and owner Windows
+  acceptance remain unproved. The failed cache observations stay immutable.
+- Current child baselines are `smc-v2` `f2e023adf8b05eb23644540a25d7537346be26b5`
+  and CU12 `1a3b97cfe1aeb57db7afc2128820d250fc0a39ef`. The console endpoint is
+  `tcp:127.0.0.1:5012`; physical closure is simulated by the tester.
+- Owner issuer work stays in `smc-v2`, using its existing license core.
+  A small PowerShell menu invokes the CLI; validation/signing has one
+  implementation. No third product repo, GUI, account system, cloud or daemon
+  is introduced. The menu is opened explicitly, with no global hook/autostart.
+- Create a new development key once, not per license or issuer machine.
+  Keep it and owner-controlled encrypted backups outside all repositories.
+  Track public keys/fingerprints only; never key contents, key hashes,
+  backup passwords or secrets in code, logs, events or delivered packages.
+- Preserve existing keys/builds/licenses and history. The owner confirms no
+  SMC v2 release or active users; record that as an owner statement. Revision
+  0.8 removes old-key activation rollback and Mac key retrieval from this
+  delivery's DoD. It does not establish that old builds are revoked or that
+  activation rollback passed. Production key governance remains separate;
+  keep offline expiry/grace and existing-medication dispensing policy intact.
+- Test with synthetic HNs and isolated data. No existing patient data or
+  live installation is overwritten. Record owner and agent observations
+  separately. Failures receive later records, not rewritten history.
+- `ciel-windows-portability-001` remains a separate paused CIEL recovery proof.
+  Readiness fixes/builds do not satisfy fresh-session Phase 2 DoD. Revision
+  0.9 removes its ordering dependency from this simulator checkpoint only.
+  Do not infer a Phase 2 pass or resume that workstream automatically.
+- Owner decisions authorize bounded scope. Revision 0.9 authorizes evidence
+  closure and planning the receiving hardware workstream, not electrical
+  setup, unconfirmed hardware commands, off-machine transfer or production
+  release. The owner's recorded end-of-workstream publication timing applies;
+  remote merge still requires owner review.
 
-**Acceptance**
+#### 11.1 Make the existing owner issuer safe and convenient on Windows
 
-- The owner installs the `.msi`, activates with a key issued by the CLI,
-  and completes one load → dispense cycle against the simulator over TCP on
-  Windows; recorded as owner observation. Real CU12 remains out of scope.
+Deliverables:
 
+- Harden CLI argument handling: normalized valid machine codes, nonempty customer,
+  exactly one positive supported duration or explicit lifetime, and clear errors.
+- Create key/output files without silently replacing existing files. Use exclusive
+  file creation rather than a separate existence check followed by overwriting.
+- Validate an issued license against the intended public key before reporting
+  successful delivery; expose the public-key fingerprint for key/build matching.
+- Add a small guided PowerShell menu for issue, inspect and machine-code display,
+  with a preview of customer, machine, expiry and selected key before signing.
+  Key creation has its own explicitly selected setup action. Do not add a GUI,
+  autostart, global hook, account system or persistent service.
+- Document ordinary issuance and exact build/test commands in the child repo.
+
+Definition of done:
+
+- CLI integration checks use disposable keys and exercise invalid arguments,
+  missing/wrong keys, existing destinations and issue/inspect round trips.
+- A failed operation leaves an existing key/license untouched and emits no secret.
+- The Windows menu works from a directory unrelated to the checkout, preserves
+  paths containing spaces and passes values safely to the CLI.
+- Relevant Rust formatting, tests and lint checks pass. Signing/verification is
+  still performed by `crates/license`; the wrapper does not implement it again.
+
+#### 11.2 Create the owner's Windows development key and prove recovery
+
+Prerequisites: step 11.1 evidence; owner-confirmed key storage/backup locations and
+backup protection method. If any existing user depends on the old development
+build, preserve that distribution and agree its migration before changing it.
+
+Deliverables:
+
+- Generate one new development signing key in an owner-controlled location outside
+  all repositories, with restricted Windows file permissions.
+- Keep the old key/artifacts intact. Store only the new public key/fingerprint in
+  tracked artifacts; no private-key contents, hashes or password are recorded.
+- Make an owner-controlled encrypted backup and write a concise recovery procedure.
+- Restore from that backup into a separate controlled location, issue a synthetic
+  license using the restored key, and verify against the original new public key.
+
+Definition of done:
+
+- Original and restored keys produce licenses verified by the same public key.
+- The recovery run uses no original key path, Mac key, chat memory or copied cache.
+- Record which recovery steps were agent-observed and which were owner-observed.
+  Restoring into another location on this Windows machine is not proof that a
+  different physical computer has been tested.
+- Secret scanning of changed tracked paths/package contents finds no private key.
+- Off-machine backup is deferred under revision 0.8. Record the unselected
+  destination and absence of any transfer/other-computer recovery honestly;
+  neither is a step-11.2 or slice-11 delivery gate in this revision. Same-disk
+  backup is not proof of survival of this disk or computer failing.
+
+#### 11.3 Bind SMC builds to the new key and verify matching outputs
+
+Deliverables:
+
+- Update SMC's embedded development public key and build both application and issuer
+  from the same reviewed source. Keep the licensing format and policy unchanged.
+- Produce Windows application/issuer binaries and an MSI, with Git revision,
+  public-key fingerprint and artifact SHA-256 references.
+- Issue a development test license for this Windows machine and verify it with the
+  embedded key. Keep the file local, outside tracked evidence.
+- Preserve identified old artifacts before rebuilding. Record old-key activation
+  rollback as owner-waived and untested. Source rollback, if later needed, uses
+  a normal Git revert; do not rewrite history or delete keys.
+
+Definition of done:
+
+- New-key valid licenses verify; foreign-signing-key, wrong-machine and tampered
+  licenses are rejected. Expiry/grace and clock-rollback policies remain tested.
+- The issuer/application public keys match. Packaged outputs contain no private key.
+- Old-key licenses are explicitly identified as incompatible with the new-key build;
+  retained old builds are not claimed to have been revoked by changing source.
+- No old-key activation rollback pass is claimed. Its waiver is linked to the
+  revision-0.8 owner decision; old signing-key availability need not be resolved
+  or a Mac accessed to complete this step.
+
+#### 11.4 Installed Windows simulator evidence checkpoint
+
+Deliverables:
+
+- An owner checklist with expected results, matching artifact revisions/hashes and
+  isolated synthetic data. Begin with the executable smoke test, then install the
+  matching MSI and exercise its installed application under the intended Windows
+  data-directory permissions without touching an existing live installation.
+- Activate with the new machine-bound license, bootstrap the admin and select
+  Simulator (test). Observe 12 slots, the connected line and simulator banner.
+- Load one synthetic HN, observe automatic door opening, close it in the console,
+  restart SMC with simulator running and verify persisted slot/admin/license/logs.
+- Dispense the HN, close the door, answer the remaining-medication question to clear
+  it, and compare the resulting state with the user-facing audit/simulator marks.
+- Exercise wrong PIN, unknown HN, disconnect/reconnect, and restart with a door
+  open while leaving simulator running. Check Thai text, dialogs, window behavior
+  and the owner's DPI setting; exercise CSV, backup and diagnostics on synthetic
+  data. Scanner input is tested only if the actual scanner is available.
+
+Definition of done:
+
+- Link installed-MSI activation and complete load/dispense/clear evidence against
+  TCP simulator; logs and displayed state agree. Distinguish the owner's initial
+  observations from the agent-authorized cycle, restart, refusal and export tests.
+- Preserve the unfulfilled original owner-observed full-cycle criterion and
+  unconfirmed intended OS scaling explicitly. Receiving hardware acceptance
+  supplies its own later observations, not a retroactive simulator pass.
+- Restart/reconnect do not silently clear the loaded or pending slot. Expected
+  refusals do not unlock an unrelated door.
+- Record pass, fail, fixed-and-retested, unavailable and untested honestly. Any
+  failure required by these criteria is fixed narrowly and re-observed.
+- Record actual ProgramData/override paths and permissions used; an isolated
+  executable run alone does not prove the default installed behavior.
+- Missing physical scanner is a visible limitation. COM/RS485 and real CU12 are
+  still untested, regardless of simulator results.
+
+#### 11.5 Deliver simulator checkpoint and hand off remaining proof
+
+Deliverables:
+
+- Final closeout linking reviewed child source/builds, key recovery proof without
+  secrets, owner observations, the explicit rollback waiver and remaining limits.
+- Record final checkpoint delivery naming revision 0.9 and slice 11, linking the
+  owner closure decision, CLOSEOUT.md and source/build/test evidence. State which
+  original revision-0.8 requirements were stopped unperformed; no full original
+  acceptance claim or hardware pass is part of this delivery.
+- A bounded proposed next step for real CU12: identify board/adapter/Windows driver,
+  confirm wiring and transport configuration with owner-supplied hardware evidence,
+  and define a no-patient bench test plus stop conditions in its own later plan.
+
+Definition of done:
+
+- Steps 11.1-11.3 and the revised step-11.4 checkpoint have linked evidence. The
+  consolidated bundle preserves failures, fixes/retests, workarounds, local-only
+  artifacts and unknowns. Final delivery offers owner review through the normal
+  PR/closeout procedure. No agent merges a remote PR.
+- CIEL Windows Phase 2 remains unperformed in its existing separate workstream;
+  deferred off-machine backup and waived old-key activation rollback remain
+  explicit limitations. These are not inferred passes or hardware blockers.
+- `smc-v2-hardware-001` receives owner-observed real load/dispense/clear, intended
+  Windows scaling, scanner if available, board/adapter/driver/wiring inventory,
+  COM/RS485, physical labels and status/open/close/reconnect/restart proof. Planning
+  the receiving workstream does not authorize unconfirmed electrical execution.
+- Fresh sessions can locate the source, license procedure and recovery instructions
+  without secrets or session locators. Key recovery still requires owner access to
+  the protected backup; cloning Git alone cannot recreate a private key.
+- Real-hardware readiness means a documented next test can be started once its
+  equipment/scope are confirmed; it is not a hardware, electrical, medical-device,
+  compliance or production-readiness verdict.
+
+#### Remaining limitations and rollback
+
+Old Mac signing-key availability remains unknown, but is outside the revision-0.8
+delivery requirement. The owner reports no SMC v2 release or active users.
+Same-Windows age backup/recovery is proved by the step-11.2 checkpoint; off-machine
+backup is explicitly deferred with no destination or transfer yet selected.
+Physical scanner/hardware availability, real CU12 door behavior and door-label
+order remain for the affected later proof. Production keygen before the first
+sale remains outside this development-key proof.
+
+Exact Norton restore/exclusion details, the reported five high npm build-tool
+audit findings and the recorded gateway parallel-test port race remain
+unresolved. A bounded relevant failure is investigated; no blanket security
+exclusion, automatic dependency upgrade or cleanup is part of consolidation.
+
+Preserve old artifacts and history. A source revert does not revoke licenses
+accepted by existing binaries. Report a failed new-key test and its later
+recovery in separate append-only events. Old-key activation rollback is
+owner-waived and untested in revision 0.8; no substitute proof is claimed.
 ## Boundaries and delivery
 
 - No real hardware, no USB-to-RS485, no electrical claims, no medical-device

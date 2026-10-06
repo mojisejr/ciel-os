@@ -1,0 +1,143 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T200000_smc_windows_key_created_owner_backup_pending
+type: closeout
+recorded_at: '2026-10-05T20:00:00+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Create the protected development key and prepare owner-entered encrypted backup/recovery.
+  scope:
+  - Step 11.2 key creation, standard age tool, protected backup wrapper and disposable-data checks.
+  out_of_scope:
+  - Owner passphrase disclosure, unselected off-machine upload, embedded public-key change,
+    application/MSI rebuild or activation, later steps, production, push, PR and merge.
+outcome:
+  status: key-created-owner-backup-pending
+  result: One new owner development signing key was generated outside repositories after
+    protected ACLs were set and verified. Its original-key synthetic license verifies. The age
+    portable tool, Windows binary-stream backup wrapper and local owner-run procedure are ready.
+    A disposable synthetic operator run completed encrypt, separate-process restore, public-key
+    comparison and both original/restored synthetic signatures. Actual owner backup awaits local
+    passphrase entry; no real backup or restored owner key exists from this checkpoint.
+  completion_boundary: This is an intermediate checkpoint with evidence.step only, not final
+    slice-11 delivery. Step 11.2 is unfinished; the lane is active and idle awaiting owner input.
+    Disposable-key checks do not substitute for the owner's actual encrypted-backup proof.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.7'
+  step: '11.2'
+  decision: memory/events/2026/10/05/20261005T193456_smc_windows_key_storage_and_age_execution_authorized.yaml
+  repository:
+    head: 5edec10c80436c1ed21fee53eda896e73f769124
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  child_repository:
+    head: 71e8d36c4925ae1ae151dbb71634f54b5e313b2e
+    branch: feat/windows-license-issuer
+    clean: true
+    changed_paths: [scripts/license-key-backup.ps1, crates/license/RECOVERY.md, crates/license/README.md]
+    boundary: No licensing-library policy, embedded public key, application or dependency changed.
+  development_key:
+    owner_location: 'D:\smc-owner\keys\smc-dev-signing.key'
+    generated_at: '2026-10-05T19:38:58+07:00'
+    public_key: 7331407964c7776edcdadc890fa70f081515fa8e10c1a4be3bb802ca4180ad45
+    fingerprint: eb817c0c
+    matches_current_embedded: false
+    privacy: No private contents or private-key hash were displayed, copied into Git or recorded.
+  permissions:
+    folders: ['D:\smc-owner', 'D:\smc-owner\keys', 'D:\smc-owner\backups', 'D:\smc-owner\recovery-proof']
+    observation: Agent set and verified protected folder ACLs before key creation, with exactly
+      current-owner and SYSTEM full-control allow rules. The generated file inherited those two
+      rules. This observes configured ACLs, not protection from programs running as the owner
+      or privileged administrative access.
+    git_boundary: git -C D:\smc-owner rev-parse --show-toplevel did not find a repository;
+      the selected storage root's existing ancestor had no reparse-point attribute.
+  issuer:
+    path: 'D:\dev\tools\build-smc-v2\release\smc-license.exe'
+    source: d1e9bc19ac9a11b68d253326c6a027a8ec843b92
+    sha256: 511A9A47996C4F6DCB112C49DBC24E762D3D5BEC42CA702595355F370F3BA273
+    boundary: Rechecked this binary hash before key generation; hash is of the executable,
+      never of a private key. Existing application/MSI artifacts were not altered.
+  age:
+    version: v1.3.2
+    path: 'D:\dev\tools\age\v1.3.2\bin\age\age.exe'
+    source: https://github.com/FiloSottile/age/releases/tag/v1.3.2
+    archive: age-v1.3.2-windows-amd64.zip
+    archive_sha256: f48d8f8f9ebe903ab5027ed067652f2cc1db94bc206976430133b905dcd8e8c7
+    observation: Download matched the official GitHub release-asset digest before extraction
+      and execution; age --version returned v1.3.2. No independent Sigsum verification was
+      performed. Portable files only; no global launcher or PATH/registry integration added.
+  original_key_witness:
+    path: 'D:\smc-owner\recovery-proof\original-key-synthetic.lic'
+    check: Issued with the new key and explicit new public key, then inspect verified its
+      signature. Customer and machine are synthetic, lifetime for comparison across UTC days.
+    boundary: This witness was created before recovery. It is not an app activation or owner-machine license.
+  checks:
+  - check: age encrypt/decrypt binary round trip
+    result: Passed on nonsecret UTF-8/Thai/NUL fixture data and paths containing spaces;
+      decrypted bytes matched and resulting file had the two restricted ACL rules.
+  - check: Failure and output preservation
+    result: Wrong disposable passphrase returned failure and no final output; existing cipher
+      and plaintext destinations were refused unchanged; unprotected folders and Git repository
+      storage were refused before handling output. A destination created while age awaited
+      confirmation survived the final move race unchanged, with no success reported.
+  - check: Synthetic complete owner procedure
+    result: A temporary instance of the local operator procedure used a disposable signing key
+      and nonsecret test passphrase. Encrypt, separate-process decrypt with no original-key
+      argument, full public-key comparison, restored-key issuance and original/restored signature
+      inspection passed. Agent independently inspected the resulting synthetic license/receipt.
+    boundary: Actual owner passphrase was never requested, supplied or collected. These checks
+      use synthetic material. Final syntax/diff review also covered the added pre-publication
+      partial-file ACL check; the real owner flow remains to execute.
+  - check: PowerShell syntax and changed-path review
+    result: Both scripts parsed without syntax errors. Tracked changed paths contain no
+      64-character hex literal or private-key header; actual public key exists only in owner
+      local procedure and this public evidence. No SMC package was generated in this step.
+  - command: git diff --cached --check
+    result: Passed before the child commit.
+  operator_action:
+    local_script: 'D:\smc-owner\finish-backup.ps1'
+    behavior: Owner runs this in PowerShell 7 and enters a nonempty retained passphrase in age
+      prompts. It preserves any existing backup and restores into a new protected folder, verifies
+      the restored public key against the recorded key, issues/verifies synthetic licenses and
+      writes a public proof.json. Decryption is a separate process taking only encrypted input
+      and fresh output. The script never creates another signing key or collects a passphrase.
+    proof_boundary: The script's receipt is evidence to inspect, not an agent certification or
+      proof that the owner retained the passphrase or copied backup off-machine.
+  actual_backup:
+    intended_path: 'D:\smc-owner\backups\smc-dev-signing.key.age'
+    exists_at_checkpoint: false
+    restored_owner_key_exists: false
+  cleanup:
+    fixture: 'D:\dev\tools\temp\smc age proof acc4120104134b9290cda6b111d0973f'
+    result: Automatic approval review rejected both a bounded recursive fixture cleanup command
+      and a bounded file-by-file nonrecursive alternative, stating only blocked by policy.
+      Neither cleanup command executed. Synthetic fixture files remain; no owner key is in them.
+    boundary: Do not substitute an unapproved deletion method or claim disposable data was removed.
+  publication: HQ and SMC remain local topic-branch checkpoints; no push, PR, remote merge,
+    off-machine upload or Mac execution occurred.
+unresolved:
+- Owner must enter and retain the real backup passphrase locally. Real encrypted backup,
+  restored-key equality and signatures remain unproved until that run is independently checked.
+- Off-machine backup destination is still unspecified. Same-Windows restoration will not prove
+  a different physical computer or survival of this disk failing.
+- Synthetic fixture cleanup is blocked by automatic approval review; controlled test artifacts
+  remain at the named temporary location. They are not the new owner key or a distributed license.
+- New public key does not yet match the current app/issuer embedded key. Step 11.3 builds and
+  activation rollback remain, including old private-key availability. Owner confirms no SMC v2
+  release or active users; that statement removes active-user migration, not the rollback proof.
+- Normal-cache LNK1104, portability Phase 2, prior Norton detail, npm build-tool audit, gateway
+  test race, scanner/real hardware and historical event-status warnings remain deferred.
+next_action:
+  action: Have the owner run the prepared local PowerShell procedure, enter/retain the passphrase
+    without sending it to chat, then inspect the real public receipt, restored-key public info,
+    ACLs and both synthetic licenses. Record actual observations before finishing step 11.2.
+    Select the off-machine destination separately; keep local commits and stop before step 11.3.
+  acceptance_check:
+  - Actual original/restored keys verify licenses against the same recorded new public key.
+  - Owner confirms passphrase retention; no secret is recorded. Missing off-machine/physical proof stays explicit.

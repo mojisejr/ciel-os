@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T193456_smc_windows_key_storage_and_age_execution_authorized
+type: decision
+recorded_at: '2026-10-05T19:34:56+07:00'
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Execute the next bounded development-key storage and recovery step locally.
+  scope:
+  - Step 11.2, using the proposed Windows key folder outside repositories and age passphrase backup.
+  out_of_scope:
+  - Unspecified off-machine upload, later-step public-key replacement/build activation,
+    production release, deletion of old assets, push, PR and remote merge.
+outcome:
+  status: decided
+  decision: After reading the storage recommendation the owner accepted it and instructed
+    starting. Adopt the proposed local key and backup paths and age passphrase protection;
+    prepare protected folders, the standard portable age tool and recovery procedure, and
+    generate one development key. Passphrase entry remains local owner input, never chat.
+  boundary: Cloud versus Mac and the exact off-machine destination were not specified by
+    this acceptance. Do not select an account or upload. A backup on this Windows disk and
+    restoration here cannot be claimed as off-machine or replacement-computer proof.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.7'
+  slice: '11'
+  step: '11.2'
+  repository:
+    head: 5edec10c80436c1ed21fee53eda896e73f769124
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  selected_local_locations:
+    key: 'D:\smc-owner\keys\smc-dev-signing.key'
+    encrypted_backup: 'D:\smc-owner\backups\smc-dev-signing.key.age'
+    access_material: Owner-entered passphrase, retained under owner control outside Git and chat.
+  previous_decision: memory/events/2026/10/05/20261005T185053_smc_unreleased_build_and_fresh_key_confirmed.yaml
+  previous_checkpoint: memory/events/2026/10/05/20261005T183209_smc_step11_2_recovery_preparation_checkpoint.yaml
+unresolved:
+- Owner passphrase entry/retention and the encrypted-backup/restoration proof remain to execute.
+- Off-machine backup destination is unspecified. No copy/upload or Mac proof is authorized or claimed.
+- Previous rollback, cache, portability, audit, scanner/hardware and historical-warning limits remain.
+next_action:
+  action: Set and verify restricted permissions before key generation, obtain the pinned age
+    portable tool from its official release, prepare and test the recovery procedure using
+    disposable data, and have the owner enter the passphrase locally for the real backup.
+    Verify restored-key issuance before claiming step 11.2 complete. Keep checkpoint commits local.
+  acceptance_check:
+  - No private-key bytes, hashes or passphrase enter repository files, events or responses.
+  - Original/restored public keys match and synthetic licenses verify against that public key.

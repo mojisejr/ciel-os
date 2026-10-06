@@ -1,0 +1,88 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T215408_smc_new_key_build_old_executable_in_use
+type: closeout
+recorded_at: '2026-10-05T21:54:08+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Record the first matching-app build failure and its bounded workaround.
+  scope:
+  - Step 11.3 source binding, license tests, old-artifact preservation and local build observation.
+  out_of_scope:
+  - Closing the owner's running app, data changes, protection changes, cache cleanup,
+    old-key rollback, off-machine copy, installation, remote publication and production.
+outcome:
+  status: new-key-build-attempt-recorded
+  result: Shared embedded development public key was updated and committed. All 15 license
+    tests, formatting and license lint passed; the release issuer matches the new key and
+    issued/verified a local Windows-machine test license. Tauri's first app build failed when
+    Cargo could not remove the existing release smc.exe, reporting Access is denied. Read-only
+    process inspection found that exact executable running. Agent left it running and selected
+    an explicit Windows target output directory for the next build attempt.
+  boundary: The native-output app/MSI build failed. No app activation, final step-11.3 pass
+    or installed-MSI acceptance is claimed. A running executable is observed; this does not
+    resolve earlier cache failures or establish their cause.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.8'
+  step: '11.3'
+  decision: memory/events/2026/10/05/20261005T214900_smc_new_key_forward_scope_decided.yaml
+  repository:
+    head: 69b4e4d7fc71b760cd59dc3379114ffa48c64520
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  child_repository:
+    head: 2d7c791004a8a959700b5d1155549376235cd60c
+    branch: feat/windows-license-issuer
+    changed_paths: [crates/license/src/pubkey.rs, crates/license/RECOVERY.md]
+  retained_artifacts:
+    directory: 'D:\dev\tools\artifacts\smc-v2\step11.3-old-20261005T215100'
+    manifest: 'D:\dev\tools\artifacts\smc-v2\step11.3-old-20261005T215100\manifest.json'
+    check: Copies of prior smc.exe, smc-license.exe and MSI were made before rebuilding;
+      each retained copy matched its original SHA-256. Original MSI matched the earlier
+      recorded f2456aeb738d306fd3cd7b04ce0b9cf03e5fe425d3ce1293f42bdcd8ad316b9b.
+    boundary: Artifact retention, not an old-key activation rollback test.
+  checks:
+  - command: cargo fmt --check
+    result: Passed.
+  - command: cargo test --locked -p license
+    result: Seven core tests and eight issuer integration tests passed, including foreign
+      signatures, tampering, wrong machine, expiry/grace/clock rollback and exclusive files.
+    target: 'D:\dev\tools\build-smc-issuer-proof'
+  - command: cargo clippy --locked -p license --all-targets -- -D warnings
+    result: Passed on the proof target.
+  - check: Changed tracked paths
+    result: Only the expected public-key 64-hex literal was found; no private-key header.
+  - check: Native release issuer and actual Windows test license
+    result: Release issuer key-info matched the new public key and matches_embedded was true;
+      issue and inspect without a public-key override passed with fingerprint eb817c0c.
+    local_license: 'D:\smc-owner\licenses\windows-dev-new-key-20261005.lic'
+    boundary: Owner-machine license signing/signature verification, not GUI activation.
+  build_failure:
+    command: cargo tauri build --bundles msi --config D:/dev/tools/windows-bundle-local.json -- --locked
+    path: 'D:\dev\tools\build-smc-v2\release\smc.exe'
+    observed_error: Cargo failed to remove the existing executable with Access is denied, os error 5.
+    process_observation: Get-Process found smc running from that exact release executable path.
+    action_boundary: No process was stopped, running-app data accessed, protection disabled or output deleted by the agent.
+  workaround:
+    command: cargo tauri build --target x86_64-pc-windows-msvc --bundles msi --config D:/dev/tools/windows-bundle-local.json -- --locked
+    intent: Use the ordinary explicit-target output directory under the existing target root,
+      separate from the running native-output smc.exe. Build the issuer for that target too.
+    status: Started; app/MSI outcome remains pending at this record.
+unresolved:
+- Explicit-target app/MSI build and package checks remain pending; no final step-11.3 delivery yet.
+- Owner-machine test license has not been activated in the GUI or installed MSI.
+- Off-machine backup stays owner-deferred and old-key activation rollback owner-waived and untested.
+- CIEL Phase 2 after 11.4, scanner/hardware, production key governance and linked prior
+  cache/Norton/npm/gateway/historical-warning/approval-blocked-fixture limits remain.
+next_action:
+  action: Complete the explicit-target build, inspect the resulting MSI payload and artifact
+    references, and verify its issuer against the owner key. Record the actual result in a
+    later append-only checkpoint without rewriting this failed attempt. Stop before 11.4.
+  acceptance_check:
+  - Existing running app and its data remain untouched; a successful alternate build is not a claim that the failed path was repaired.

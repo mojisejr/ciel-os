@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T053400_smc_installed_activation_and_simulator_verified
+type: closeout
+recorded_at: '2026-10-06T05:34:00+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Verify installed-app activation and readiness for the synthetic load cycle.
+outcome:
+  status: installed-activation-verified-awaiting-load-cycle
+  result: Owner reports completing the activation instruction. Read-only default DB probe
+    confirms the stored license matches the prepared same-machine license; startup log
+    reports license installed with state Valid. The agent also observes admin1 with admin
+    role and simulator selection in the installed app's DB. Simulator reports connected,
+    twelve closed hooks, board up and no faults; app log shows recurring status responses.
+  boundary: Admin setup and simulator connection are agent observations, not additional
+    owner GUI confirmations. Full workflow and ordinary-launch permissions remain unproved.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.8'
+  step: '11.4'
+  repository:
+    head: 97c17a7c6205bae4bd5f8c74f7aa5ceae4e2c31d
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    locality: local
+  prior_checkpoint: memory/events/2026/10/06/20261006T052900_smc_windows_msi_installation_verified.yaml
+  application_path: 'D:\Smart Medication Cart\smc.exe'
+  database_path: 'C:\ProgramData\SMC\smc.sqlite'
+  database_probe: SQLite mode=ro/query_only; whitespace-normalized license equals the prepared
+    file, users contains admin1 with admin role, port is tcp:127.0.0.1:5012, and the latest
+    audit action is switched-to-simulator for admin1 with simulated=1. No PIN/hash queried.
+  log_observation: License Valid at 2026-10-05T22:31:35.118363Z and first admin created at
+    2026-10-05T22:31:45.350171Z. Repeated status RX reports FF 0F closed hooks.
+  simulator_probe: GET http://127.0.0.1:5013/api/state reports connected client, board up,
+    hooks FF 0F, physics enabled at 550 ms and no faults. No simulator mutation in this checkpoint.
+unresolved:
+- Load/dispense/clear, persistence, wrong PIN/unknown HN, reconnect/open-door restart,
+  GUI/DPI, export/backup/diagnostics and ordinary-launch default-directory permissions
+  remain under step 11.4. Installed GUI banner/grid still need current owner observation.
+- Prior checkpoint limitations remain, including off-machine backup deferred, old-key
+  rollback waived/untested, required Phase 2, scanner/hardware/production, historical
+  build/security/status warnings and approval-blocked fixture cleanup.
+next_action:
+  action: Guide owner to select empty slot 1, enter synthetic HN WINTEST001 and their local
+    PIN, submit load and report the dialog and simulator door opening before closing the hook.
+  acceptance_check:
+  - Only slot 1 opens and the installed app shows the expected pending load state.

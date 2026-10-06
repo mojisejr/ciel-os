@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T173923_smc_windows_scope_consolidation_confirmed
+type: decision
+recorded_at: '2026-10-05T17:39:23+07:00'
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Consolidate the owner-only Windows license proposal into the existing SMC lane.
+  scope:
+  - Revise the remaining slice 11 to steps 11.1-11.5, preserve slices 1-10 and retire the separate proposal.
+  - Prepare factual closeout checkpoints without claiming Windows acceptance or product completion.
+  out_of_scope:
+  - Product implementation, private-key creation/access, MSI installation, remote writes and hardware.
+outcome:
+  status: scope-consolidation-confirmed
+  decision: The owner explicitly instructed combining the workstreams and recording closeout according
+    to what actually happened. The receiving SMC lane remains active; the separate planning lane is
+    retired after transferring its unfinished work. They will not run as parallel product scopes.
+  authority_boundary: This deliberately non-execution status approves the local plan consolidation.
+    It does not authorize slice 11 implementation, credentials or external publication. Requesting a
+    truthful closeout is not evidence that Windows acceptance or hardware work has passed.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.7'
+  slice: '11'
+  repository:
+    head: a04f63cf854393c1f72e83b46dd8a421f547042c
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  transferred_from:
+    plan: workstreams/smc-windows-license-001/PLAN.md
+    plan_revision: '0.1'
+    historical_revision: edb397003a03741f0d648be6ad829aff63323f64
+  mapping:
+    owner_issuer: '11.1'
+    development_key_and_recovery: '11.2'
+    builds_and_rollback: '11.3'
+    owner_windows_walkthrough: '11.4'
+    final_evidence_and_hardware_starting_point: '11.5'
+  owner_request: The owner explicitly said to combine the plans and close out according to the facts.
+    No session/chat locator is retained.
+unresolved:
+- Actual Windows owner acceptance, key setup/recovery and production/hardware proof remain unfinished.
+- Old key/deployment availability, protected backup choices, physical scanner and hardware remain unknown.
+- The separate paused CIEL Windows portability Phase 2 gate remains; product tests do not satisfy it.
+- Existing security/audit, gateway test-race and other portfolio limitations remain in the receiving plan.
+next_action:
+  action: Validate the consolidated plan, append factual closeouts for both scopes and present the
+    single remaining product lane. Step 11.1 is next when execution is requested.
+  acceptance_check:
+  - Wake lists no overlapping active product scopes for these two workstreams.
+  - The SMC workstream is still active, with eleven declared slices and no claimed final Windows delivery.

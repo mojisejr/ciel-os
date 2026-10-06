@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T144047_smc_windows_license_workstream_opened
+type: decision
+recorded_at: '2026-10-05T14:40:47+07:00'
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: smc-windows-license-001
+  lane: single
+  objective: Open an owner-only Windows license workstream including first SMC/simulator acceptance.
+  scope:
+  - Prepare a five-slice plan using the existing two product repositories and shared license core.
+  - Record the owner choice to issue licenses personally from Windows and defer team/control-room expansion.
+  out_of_scope:
+  - Implementation, key creation/replacement, installation, remote publication, production and real hardware.
+outcome:
+  status: plan-opening-confirmed
+  decision: The owner chose personal issuance from this Windows machine with recoverability, accepted
+    the two-repository direction and requested a workstream plan that includes first Windows SMC and
+    simulator testing before a separate hardware proof. Team issuance and a control room are deferred.
+  authority_boundary: This status intentionally records plan opening rather than authorizing an
+    execution slice. The owner requested the plan in this turn; no credential, installation or future
+    slice execution is recorded as approved or completed.
+evidence:
+  plan: workstreams/smc-windows-license-001/PLAN.md
+  plan_revision: '0.1'
+  repository:
+    head: d4391537f79d366ee634deec31df5d049d80e9e0
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  owner_request: The owner asked to open the workstream, explain each slice and include first
+    SMC-v2/simulator testing. No chat/session locator is retained.
+  application:
+    project: smc-v2
+    head: f2e023adf8b05eb23644540a25d7537346be26b5
+  simulator:
+    project: cu12-simulator
+    head: 1a3b97cfe1aeb57db7afc2128820d250fc0a39ef
+  prior_windows_evidence:
+  - memory/events/2026/10/05/20261005T051812_windows_readiness_partial_closeout.yaml
+  - memory/events/2026/10/05/20261005T052948_windows_backend_cache_reuse_verified.yaml
+unresolved:
+- Old development-key availability and any externally deployed old builds/licenses are unknown.
+- Protected key/backup locations and backup method remain owner choices for the key setup slice.
+- Owner MSI/GUI walkthrough, scanner and hardware remain unproved; simulator success cannot prove hardware.
+- Windows portability remains a separate paused proof; prior security/audit limits are carried in the plan.
+next_action:
+  action: Validate and present this local plan with a planning closeout; slice 1 is the next implementation
+    step when requested by the owner. Do not generate keys or begin hardware work in the opening task.
+  acceptance_check:
+  - Wake identifies the new workstream, its three existing project links and five declared slices.
+  - Plan distinguishes actual starting evidence, future DoD, secret recovery and real-hardware boundaries.

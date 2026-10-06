@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T214900_smc_new_key_forward_scope_decided
+type: decision
+recorded_at: '2026-10-05T21:49:00+07:00'
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Move forward with the new Windows development key and record remaining proof boundaries.
+  scope:
+  - Revise slice-11 DoD and start bounded step 11.3 matching app/issuer/MSI and license checks.
+  out_of_scope:
+  - Old Mac key access, off-machine backup transfer, deletion of retained artifacts, production,
+    installed-MSI owner acceptance, push, PR and merge.
+outcome:
+  status: decided
+  decision: Owner declines the old-key rollback path and directs proceeding with the new
+    license on Windows, where most SMC work will take place. Remove old-key activation rollback
+    and Mac key retrieval from required DoD. Keep existing artifacts/history and explicitly
+    record old-key activation rollback as waived and untested, never passed. Owner defers
+    choosing and making an off-machine backup; record no transfer or physical recovery proof.
+    Owner accepts actual CIEL Windows Phase 2 proof after step 11.4 and before 11.5 final closeout.
+  boundary: This closes the old-key rollback requirement by owner scope decision, not by
+    technical proof. Backup deferral does not make same-disk storage resilient to disk failure.
+    Phase 2 remains required; scheduling it is not completion. Step 11.3 may now proceed locally.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.8'
+  slice: '11'
+  step: '11.3'
+  repository:
+    head: b90a2cbcd86b65d296ded87dad75f354d662db88
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  owner_choices:
+    old_key_activation_rollback: Waived; no return to Mac for this proof, proceed with the new Windows key.
+    off_machine_backup: Deferred by owner; destination undecided and no transfer requested.
+    portability_phase_2: Keep actual proof after owner Windows acceptance in 11.4 and before 11.5.
+  key_recovery_checkpoint: memory/events/2026/10/05/20261005T211000_smc_windows_development_key_recovery_verified.yaml
+  unreleased_owner_statement: memory/events/2026/10/05/20261005T185053_smc_unreleased_build_and_fresh_key_confirmed.yaml
+  child_repository:
+    head: 71e8d36c4925ae1ae151dbb71634f54b5e313b2e
+    branch: feat/windows-license-issuer
+    clean_before_execution: true
+  change_boundary: Only the plan and this new decision are changed at authorization checkpoint.
+    No private-key contents/hashes/passphrase, host session locator, or external write is involved.
+unresolved:
+- Matching new-key app/issuer/MSI, owner-machine test license and negative license checks remain to execute.
+- Off-machine encrypted backup is owner-deferred. Same-Windows recovery does not prove recovery after disk failure.
+- Old Mac signing-key availability and old-key activation rollback remain unproved, now outside required DoD.
+- Actual Windows owner acceptance, CIEL Phase 2, scanner/real hardware and separate production-key governance remain.
+- Carry forward cache workaround and unknown cause, Norton details, npm build-tool findings,
+  gateway race, historical status warnings and approval-blocked synthetic fixture cleanup from the linked checkpoint.
+next_action:
+  action: Commit the revision-0.8 scope decision locally, preserve existing identifiable build
+    artifacts, bind the shared license public key to the recovered new key, and build/test matching
+    Windows app/issuer/MSI with artifact references and no private key in packages. Stop at the
+    step-11.3 checkpoint before owner installation/acceptance. Keep publication deferred.
+  acceptance_check:
+  - Waived or deferred work is stated as untested/not done, rather than passed or silently omitted.
+  - No old artifact/key deletion, Mac access, transfer, production action or remote publication occurs.
