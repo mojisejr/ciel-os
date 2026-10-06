@@ -3,7 +3,7 @@
 **Workstream:** `smc-v2-hardware-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -17,10 +17,17 @@ parallel feature/acceptance workstreams.
 
 Use the existing installed Windows application to prove actual communication,
 physical door identity and status, an owner-observed load/dispense/clear cycle,
-scanner/UI operation and recovery. Planning and equipment inventory are
-authorized now. Physical setup and command execution require known equipment,
-verified wiring/power/configuration and owner participation at the bench.
-Unknown equipment details are reported, not filled with simulator assumptions.
+scanner/UI operation and recovery. The owner performs physical setup and
+participates in command tests at the bench. Unknown equipment details are
+reported, not filled with simulator assumptions.
+
+On 2026-10-06 the owner explicitly closes slice 1 at the observed communication
+and backup checkpoint, accepting missing inventory information for later
+completion. Revision 0.2 removes the missing-label/documentation gate for this
+existing, already powered owner-assembled bench only. This is not electrical
+verification. Later physical commands use the normal app, one identified lock
+at a time, with owner participation. This closure does not itself issue a
+command or authorize a new power supply, wiring change or broader cabinet test.
 
 Equipment inventory may proceed while the simulator delivery awaits owner review.
 Before tracked product changes, merge/synchronize the preceding delivery and pass
@@ -47,9 +54,17 @@ merely to bypass the temporary same-project overlap that Wake reports before mer
 - Original simulator owner-full-cycle observation and intended OS scaling were
   incomplete. Scanner availability and real CU12/COM/RS485 behavior were unknown.
   This plan creates new physical evidence; it does not retroactively pass them.
-- Board model/revision, adapter, driver, COM, power supply, wiring, cabinet
-  access and scanner availability are currently unknown. No wiring, voltage,
-  baud setting or safe physical actuation is inferred from a product name.
+- The owner identifies CU12, adapter, wires and lock as supplied by the factory;
+  the adapter has no model name. Only physical lock 1 is connected. The owner
+  reports that CU12 uses 12V DC, but supplies the power source independently.
+  Actual supply output/current and lock voltage remain unknown; the suggestion
+  that lock voltage is the same is not a measured or confirmed rating.
+- COM4, signed FTDI driver 2.12.36.20, the installed build, empty slot 1,
+  backup and repeated successful status reads are evidenced by
+  `memory/events/2026/10/06/20261006T190806_smc_hardware_readonly_baseline_inventory_partial.yaml`.
+  Owner-reported factory wiring provenance is not a verified pinout.
+  Board revision, matching PDF/manual and scanner inventory remain unknown.
+  Revision 0.2 preserves these gaps rather than converting them to passes.
 - No patient data. Use named synthetic HNs in a test cabinet the owner confirms
   may be actuated. Confirm any existing application contents before changing
   transport; preserve local data/backup and known-good simulator configuration.
@@ -65,9 +80,11 @@ merely to bypass the temporary same-project overlap that Wake reports before mer
   change credentials, rewire or energize unknown hardware automatically.
 - Do not unplug live mains or deliberately corrupt files. Recovery scenarios use
   normal app close/reopen and owner-controlled safe communication interruption.
-- Stop affected actuation on unknown wiring/power, wrong door opening, physical
-  versus displayed disagreement or unexpected movement. Record the failed attempt
-  before any bounded correction/retest. Do not repeat unlock blindly.
+- The owner-accepted inventory gaps in the existing bench above do not block
+  slice-1 closure. For new or changed equipment/wiring/power, establish setup
+  before actuation. Stop on wrong door opening, physical versus displayed
+  disagreement or unexpected movement. Record the failed attempt before any
+  bounded correction/retest. Do not repeat unlock blindly.
 - Fix only a reproduced defect necessary for this proof. Apply relevant checks
   and simulator regression, produce a matching replacement if needed, then repeat
   the failed physical case. Working tooling workarounds remain deferred.
@@ -76,26 +93,31 @@ merely to bypass the temporary same-project overlap that Wake reports before mer
 
 ## Sequential slices and priorities
 
-### 1. P0 — inventory, safe setup and read-only communication
+### 1. P0 — communication baseline and owner-accepted partial inventory
 
-Collect actual board/cabinet model and revision, adapter model/driver, supply
-specification and wiring/pinout evidence, physical access, scanner inventory
-and Windows COM assignment. Verify configuration from the matching equipment
-documentation and existing app source. The owner performs physical setup.
-Record the selected build, data location, pre-test backup and previous port.
-Use the app's normal Admin port selection once the configuration is confirmed;
-read status before any unlock.
+Record known board/adapter/wiring provenance, physical access and Windows COM
+assignment, preserving unknown supply/lock ratings, board revision, pinout,
+manual and scanner details for later completion. The owner accepts that partial
+inventory on the existing bench. Record the selected build, data location,
+pre-test backup and previous port, and observe the app's existing status reads.
+No port change or unlock is required to close this slice. Missing inventory is
+not electrical certification and is not a simulator-fidelity pass.
 
 Definition of done:
 
-- Equipment and approved setup are identified with source references. Missing
-  prerequisites are explicit; no invented wiring/voltage/COM or simulator default.
+- Known equipment/setup facts have owner or local source references. Missing
+  inventory remains explicit, with owner acceptance of checkpoint closure;
+  no wiring, voltage, model or simulator default is invented.
 - Windows sees the intended adapter/COM and the app connects using the verified
-  configuration, without the simulator banner. Query/status traffic is recorded.
+  serial configuration, without the simulator banner. Query/status traffic is recorded.
 - With the owner reporting actual initial door positions, repeated status agrees
   and no actuation was needed to establish communication.
-- Pre-test synthetic-data boundary, backup and return-to-simulator procedure
-  are recorded. Any serial-only fault is investigated narrowly before slice 2.
+- Pre-test synthetic-data boundary, consistent backup and previous simulator
+  endpoint are recorded. A return rehearsal is not claimed. Any reproduced
+  serial-only fault is investigated narrowly before slice 2.
+
+Closure is the revision-0.2 checkpoint with the owner's accepted information
+gaps, not full completion of revision 0.1's electrical/documentation gates.
 
 ### 2. P1 — one physical door, then the twelve-door mapping
 
