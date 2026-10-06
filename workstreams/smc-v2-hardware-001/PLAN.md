@@ -3,8 +3,8 @@
 **Workstream:** `smc-v2-hardware-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
-**Execution phase:** 4
+**Plan revision:** 0.4
+**Execution phase:** 2
 **Execution state:** idle
 **Parallelism:** none
 
@@ -20,6 +20,18 @@ physical door identity and status, an owner-observed load/dispense/clear cycle,
 scanner/UI operation and recovery. The owner performs physical setup and
 participates in command tests at the bench. Unknown equipment details are
 reported, not filled with simulator assumptions.
+
+On 2026-10-07 the owner has only three physical locks and agrees to a
+three-lock bench checkpoint instead of requiring all twelve. The owner then
+reports installing the three locks and asks to start. Verify their actual
+channel numbers and closed/empty physical state before actuation; installation
+alone does not establish these facts. Prove independent selection, status and
+coexisting synthetic records for those three channels. The other nine channels
+remain untested. Scanner, intended scaling/maximized acceptance and fresh
+real-data exports may be deferred as explicit final checkpoint limitations,
+not passed cases. The existing one-lock restart/USB proof and simulator timing
+proof remain valid within their recorded scope; repeat only if a new failure
+requires it. Final delivery remains a three-lock development bench proof.
 
 On 2026-10-06 the owner explicitly closes slice 1 at the observed communication
 and backup checkpoint, accepting missing inventory information for later
@@ -119,12 +131,14 @@ Definition of done:
 Closure is the revision-0.2 checkpoint with the owner's accepted information
 gaps, not full completion of revision 0.1's electrical/documentation gates.
 
-### 2. P1 — one physical door, then the twelve-door mapping
+### 2. P1 — mapping the three available physical locks
 
 With the owner present and an identified empty test door, issue one normal app
 unlock. Observe actual opening, the corresponding status bit and displayed state;
 the owner closes it and observes the return. Only after that one-door proof,
-check the other doors sequentially. No all-door unlock is part of this slice.
+check the other two available locks sequentially. Record the owner's actual
+channel numbers; do not silently assume 1, 2 and 3. No all-door unlock is part
+of this slice. Re-read healthy status for the installed three-lock setup first.
 
 Definition of done:
 
@@ -133,8 +147,9 @@ Definition of done:
 - Opening/closing produces matching UI and status changes within the app's
   supported polling behavior; actual pop-open behavior is measured rather than
   assumed from the simulator.
-- Logical slots 1–12 map to actual cabinet labels and status bits. A mismatch
-  stops further actuation until resolved; no order is guessed from past recollection.
+- The three selected logical slots map to their actual physical labels and
+  status bits. Other connected locks remain unchanged during each operation.
+  A mismatch stops further actuation; other channels remain unverified.
 - Evidence identifies owner physical observations and agent UI/log observations.
 
 ### 3. P1 — combined owner workflow, scanner and screen acceptance
@@ -151,11 +166,16 @@ Definition of done:
 
 - Owner witnesses physical load, dispense and clear; correct door movement,
   stored state, display, operator/HN/slot and audit agree throughout.
+- Keep different synthetic HNs loaded in all three tested channels, then
+  dispense/clear one at a time in a deliberate selection order. Each operation
+  affects only its intended physical channel and record; the other records
+  and physical locks stay unchanged. Finish with the tested channels Empty.
 - Hardware audit rows have simulated=false and are distinguishable from retained
   simulator history. No patient data is used or exported.
 - Intended Windows scaling is recorded and relevant controls/Thai text remain
   usable. Scanner HN/Enter behavior is proved if present; absence is a visible
-  limitation rather than an inferred pass.
+  limitation rather than an inferred pass. Under the owner-accepted three-lock
+  checkpoint, unperformed scanner/scaling cases are recorded as deferred.
 - Refusal cases leave every door and loaded state unchanged. Output checks and
   any skipped repetition have their actual scope recorded.
 
@@ -192,6 +212,10 @@ Definition of done:
 - The provisional simulator timing is consistent across entry points, has
   regression evidence and an explicit 550 ms fallback. Its closeout preserves
   hardware/scanner/scaling/export gaps; it does not finish the full bench plan.
+- Final acceptance is for the three identified tested channels, healthy
+  independent records and the existing scoped recovery proof. All untested
+  channels, deferred scanner/scaling/exports and accepted inventory gaps remain
+  in the final closeout; do not claim complete twelve-lock or release acceptance.
 
 ## Work kept separate and priority rationale
 
