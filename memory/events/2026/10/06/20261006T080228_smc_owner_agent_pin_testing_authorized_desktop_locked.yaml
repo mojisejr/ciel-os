@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T080228_smc_owner_agent_pin_testing_authorized_desktop_locked
+type: closeout
+recorded_at: '2026-10-06T08:02:28+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Continue owner-authorized local synthetic acceptance including app authentication.
+outcome:
+  status: owner-authorized-pin-testing-awaiting-windows-unlock
+  result: Owner is away and explicitly supplied test-app credential alternatives,
+    authorizing agent entry to continue testing. No credential values are retained.
+    Before any input, window activation failed; a refreshed window capture showed
+    the Windows lock screen. App input stopped. No wrong-PIN, successful-login,
+    dispense or clear pass is claimed from this attempt.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.8'
+  step: '11.4'
+  repository:
+    head: 66744a8b0ea797bd4dbc1ae464eb19235928c74d
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    locality: local
+  prior_checkpoint: memory/events/2026/10/06/20261006T072156_smc_replacement_installed_fix_retested.yaml
+  authority_boundary: Direct owner instruction authorizes entering the supplied
+    existing test-app credentials into installed local SMC with synthetic HNs.
+    It overrides the optional skill's app-authentication handoff for this request;
+    it does not authorize credential changes, Windows unlock, security bypass,
+    production operation, publication or waiving the plan's remaining evidence.
+  observation: SMC remains in the native window inventory. Refreshing its returned
+    handle produced an accessibility tree of the still-open dispense entry screen,
+    but the screenshot showed the Windows time/date lock screen. A read-only
+    process inventory also reported LockApp. Stale/background accessibility text
+    was not used as evidence that the app could receive input.
+  simulator: Read-only GET state reports board up, no faults, connected client and
+    FF 0F with all twelve hooks closed. No simulator mutation in this attempt.
+  database: SQLite mode=ro/query_only reports Loaded WINTEST001 in slot 1; latest
+    synthetic records are reconciliation events, not a new dispense or clear.
+    No PIN/hash, license content or private signing key was queried or printed.
+  input_boundary: Only target discovery, one activation attempt and refreshed
+    observation occurred. No keyboard/mouse action on the lock screen or credential
+    entry was attempted. No Windows unlock credential was supplied or requested.
+unresolved:
+- Windows desktop must be unlocked through the owner's normal Windows access
+  before Computer Use app tests can continue. Agent authorization for SMC PIN
+  entry remains; no renewed app-authentication permission is needed in this session.
+- Credential values are not retained in repository records. A future disposable
+  session without owner-supplied credentials cannot reconstruct them from Git.
+- Step 11.4's remaining full cycle, refusal, pending-state restart, CSV/manual
+  backup/diagnostics and owner-observation/DPI/scanner criteria remain open.
+- Required separate CIEL Windows Phase 2, deferred off-machine key backup, waived
+  old-key rollback, untested hardware and historical tooling/security/cleanup
+  unknowns remain as referenced in the prior GUI checkpoints.
+next_action:
+  action: Once the owner unlocks Windows normally and confirms availability, refresh
+    the installed SMC window and continue the bounded synthetic UI tests using the
+    already authorized app credentials. Do not retain credential values in evidence.
+  acceptance_check:
+  - A fresh screenshot shows the actual SMC work surface before any app input.
+  - Refusal and full-cycle results are observed and recorded; agent testing is not
+    mislabeled as owner-observed acceptance or final workstream delivery.
