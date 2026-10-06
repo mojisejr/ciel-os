@@ -97,9 +97,10 @@ DoD:
 - Production and staging serve the same fe SHA, recorded with the release run.
 - The team's sign-off names that SHA; this is the sign-off slice 6 of
   `mumate-vercel-to-do-001` builds production from.
-- The expiry is checked during the cutover review (runbook 06 step 5: no
-  notice after 04:00, Qi popup back for a member) and recorded in the
-  cutover closeout.
+- The workstream closes here (owner, 2026-10-06): the notice ends by itself
+  and is proven by the fixed-clock tests, so nothing waits for Friday. Seeing
+  it gone after 04:00 on the new server belongs to the cutover review
+  (runbook 06 step 5) and its closeout, not to this workstream.
 
 ## Boundaries
 
