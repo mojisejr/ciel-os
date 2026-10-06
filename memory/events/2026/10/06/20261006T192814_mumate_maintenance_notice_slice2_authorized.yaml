@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T192814_mumate_maintenance_notice_slice2_authorized
+type: decision
+recorded_at: 2026-10-06T19:28:14+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-maintenance-notice-001
+  lane: single
+  objective: >-
+    Authorize slice 2 of plan 0.1 after the owner merged mootech-fe PR 883:
+    production verified, staging built and released to the production SHAs,
+    the team's sign-off collected.
+  scope:
+    - Verify Vercel production serves the merge SHA and the notice image.
+    - container-build target=staging push=true for mootech-fe and bazi-sft-dataset; release env=staging in mumate-infra.
+    - Clean up the merged topic branch locally.
+  out_of_scope:
+    - Production images for mumate-prod-1 (mumate-vercel-to-do-001).
+
+outcome:
+  status: decided
+  slice: "2"
+  parallelism: approved
+  decision: >-
+    Owner, after the preview check: "merged แล้วครับ ถ้าไม่ม่ีอะไรผิดพลาด
+    และไม่ต้องเคาะ คุนทำ slice 2 ได้เลย". The owner had approved running this
+    lane beside mumate-vercel-to-do-001 and mumate-be-retirement-001 in
+    20261006T190358; this decision carries that approval in the field Wake
+    reads.
+  owner_decisions:
+    - "Slice 2 as written; the owner picked the shape-following shadow and a 60 % backdrop for the notice after seeing the preview (c50f30b)."
+  authorizes:
+    - Slice 2 of plan 0.1 as written.
+  does_not_authorize:
+    - Production images or release for mumate-prod-1.
+
+evidence:
+  plan: workstreams/mumate-maintenance-notice-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "1f7d355"
+    branch: hq/20261005
+    working_tree: this-decision-only
+  application:
+    mootech-fe: "origin/main 9e6faa2 (merge of PR 883, 2026-10-06 12:27:14Z; head c50f30b)"
+    bazi-sft-dataset: "origin/pdf-dev 40e8ebf (เอ็ม, 2026-10-06 19:26 +07:00: career season-end hidden stems, 2 files, no env or migration) - moved after the sign-off of 48e4328"
+
+unresolved:
+  - "bazi 40e8ebf landed during the freeze; staging is built with it so staging matches Vercel production, and the team's sign-off must name it."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Verify production, build and release staging at fe 9e6faa2 / bazi
+    40e8ebf, and hand the owner the sign-off request for the team.
+  acceptance_check:
+    - Slice 2 DoD in the plan.
