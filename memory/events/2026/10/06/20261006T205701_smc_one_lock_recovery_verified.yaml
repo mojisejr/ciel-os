@@ -1,0 +1,131 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T205701_smc_one_lock_recovery_verified
+type: closeout
+recorded_at: '2026-10-06T20:57:01+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Prove coordinated restart and USB recovery on the existing one-lock bench.
+outcome:
+  status: one-lock-recovery-verified-final-scope-acceptance-pending
+  result: Round A with HWREC001 survives normal app close/reopen while the
+    physical lock is held open, restores its waiting dialog without unlock
+    replay, and becomes Loaded after owner closure. Original round B remains
+    interrupted with force-cleared audit id 60, not a pass. For the authorized
+    B retry, the agent restores only inactive Empty slot 1 through normal
+    Admin controls and prepares HWREC002 by one normal load with owner-observed
+    release and closure. One subsequent dispense opens lock 1. The owner holds
+    it open, removes computer-side USB, closes it while USB is removed, then
+    reinserts USB on the agreed cues. Disconnected UI disables actuation and
+    persisted Open HWREC002 remains pending with no completion or clear. COM4
+    automatically reopens and fresh status reports hook 1 closed; the normal
+    dispense completion and final clear return active slot 1 to Empty. The
+    retry window has exactly two unlock transmissions, preparation and
+    dispense, both attempt 1; no unlock is replayed during reconnection.
+    These one-lock recovery cases pass. This is an ongoing-work checkpoint
+    naming no final delivery slice, because wider plan acceptance is unresolved.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.2'
+  repository:
+    head: 31d386ade79544b7832150f0e15711f65cef5b39
+    branch: codex/smc-hardware-slice1-proof
+  execution: {os: windows, locality: local}
+  authority: memory/events/2026/10/06/20261006T204901_smc_recovery_b_retry_authorized.yaml
+  round_a_and_interruption: memory/events/2026/10/06/20261006T204901_smc_recovery_a_pass_b_interrupted.yaml
+  equipment:
+    owner_report: Existing factory CU12, unnamed factory USB-RS485 adapter,
+      factory wiring and one physical lock on channel 1; owner-procured supply.
+    serial: COM4 at 19200 8N1
+    supply_boundary: Owner reports CU12 uses 12V DC; actual supply output/current and lock rating remain unknown.
+  app:
+    path: 'D:\Smart Medication Cart\smc.exe'
+    exe_sha256: 93653856b308914c4a6e405cf06e4af08a937665f3ca2f1234587c500146d50e
+    source: 23e7781af3faa8f58b51e9e7a200a35b8089b527
+    integrated_source: d2a6cc6ea23e202bb2356622ec2e288fb0f4c685
+    final_state: Active Empty slot 1, HN null, COM4 connected, no pending dialog.
+    screenshots:
+    - 'D:\smc-owner\testing\hardware-20261006\slice4-B2-loaded.jpg'
+    - 'D:\smc-owner\testing\hardware-20261006\slice4-B2-dispense-open.jpg'
+    - 'D:\smc-owner\testing\hardware-20261006\slice4-B2-offline-open.jpg'
+    - 'D:\smc-owner\testing\hardware-20261006\slice4-B2-closed-offline.jpg'
+    - 'D:\smc-owner\testing\hardware-20261006\slice4-B2-reconnected-more.jpg'
+    - 'D:\smc-owner\testing\hardware-20261006\slice4-B2-cleared-home.jpg'
+  reports:
+  - 'D:\smc-owner\testing\hardware-20261006\slice4-B2-preparation.json'
+  - 'D:\smc-owner\testing\hardware-20261006\slice4-B2-usb-removed.json'
+  - 'D:\smc-owner\testing\hardware-20261006\slice4-B2-closed-offline.json'
+  - 'D:\smc-owner\testing\hardware-20261006\slice4-B2-reconnected.json'
+  - 'D:\smc-owner\testing\hardware-20261006\slice4-B2-final-proof.json'
+  owner_observations: The owner separately confirms preparation release/closure,
+    dispense release held open, USB removed while still open, physical closure
+    with USB still removed, and USB reinserted with the lock closed.
+  protocol:
+    source_log: 'C:\ProgramData\SMC\logs\smc.log.2026-10-06'
+    retry_window_from: '2026-10-06T20:49:01+07:00'
+    unlock_transmissions: 2
+    preparation_tx_at: '2026-10-06T20:51:50.867600+07:00'
+    dispense_tx_at: '2026-10-06T20:53:10.542735+07:00'
+    request: '02 00 00 81 00 00 03 86'
+    attempt: 1
+    wire_lock: 0
+    dispense_ack_at: '2026-10-06T20:53:10.569704+07:00'
+    dispense_open_status_at: '2026-10-06T20:53:10.585774+07:00'
+    transport_lost_at: '2026-10-06T20:53:42.197085+07:00'
+    transport_reopened_at: '2026-10-06T20:55:32.774562+07:00'
+    recovered_closed_status_at: '2026-10-06T20:55:32.792700+07:00'
+    recovered_closed_status: '02 00 00 80 10 02 03 98 01 00'
+    invalid_complete_frames: 0
+    interruption_note: Access-is-denied and unavailable-port transport errors
+      accompany deliberate USB removal. The existing gateway reopens COM4;
+      no Windows permission or security setting is changed.
+  audit:
+    database: 'C:\ProgramData\SMC\smc.sqlite'
+    rows:
+    - {id: 61, action: load-requested, simulated: false}
+    - {id: 62, action: door-opened, simulated: false}
+    - {id: 63, action: load-completed, simulated: false}
+    - {id: 64, action: dispense-requested, simulated: false}
+    - {id: 65, action: door-opened, simulated: false}
+    - {id: 66, action: door-left-open, simulated: false}
+    - {id: 67, action: dispense-completed, simulated: false}
+    - {id: 68, action: cleared, simulated: false}
+    real_rows: 54
+    retained_simulator_rows: 14
+    interruption_history: Force-cleared id 60 and the original HWREC001 records remain retained.
+  method: Installed-app Computer Use, owner physical handoffs and read-only
+    existing logs/SQLite. Actual test credential values/hashes are not recorded.
+    App source and installed EXE remain unchanged; no source tests are repeated.
+unresolved:
+- Final full-plan acceptance is not claimed. Physical mapping for channels
+  2-12 remains unperformed because only lock 1 is connected. Scanner HN/Enter
+  and intended Windows scaling/maximized acceptance remain unproved.
+- Missing actual supply output/current, lock rating, board revision, verified
+  pinout and matching manual/PDF remain owner-accepted inventory gaps, not
+  electrical verification. No new equipment, power or wiring change occurs.
+- Timing remains an observation problem to resolve before changing simulator
+  behavior. Retry preparation observes hook opening about 555 ms after TX,
+  while dispense observes it about 43 ms after TX. Earlier observations include
+  similar variation. Sampling cadence and hardware behavior must be separated;
+  no fixed mechanical travel time or full simulator parity is established.
+- Offline UI retains the last observed Open state together with an explicit
+  disconnected banner; owner-reported physical closure becomes verified by
+  the app only after fresh communication. No current open-state truth is
+  inferred from the disconnected display alone.
+- This checkpoint checks recovery and real audit, not new CSV/backup/diagnostics
+  exports. Prior simulator export proof is not converted into hardware export proof.
+- CIEL Windows Phase 2 remains paused; off-machine key backup awaits owner
+  destination, old-key activation rollback remains waived/untested, production
+  signing/distribution acceptance remains separate, and other portfolio attention
+  is unchanged. No push, PR or remote merge occurs.
+next_action:
+  action: Present the one-lock recovery proof and remaining full-plan limits
+    for owner alignment. Prioritize a like-for-like hardware/simulator timing
+    analysis before any calibration edit; establish acceptance or later testing
+    for missing full mapping, scanner/scaling and fresh real-data exports before
+    final workstream delivery. Keep the bench connected with closed Empty slot 1.
+  acceptance_check:
+  - The interrupted B attempt remains a separate incomplete record; the successful retry does not erase it.
+  - No further actuation or simulator change is silently issued from this checkpoint.
