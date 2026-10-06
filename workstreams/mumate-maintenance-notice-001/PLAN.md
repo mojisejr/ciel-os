@@ -1,7 +1,7 @@
 # MuMate — an in-app notice for the server move that ends by itself
 
 **Workstream:** `mumate-maintenance-notice-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.1
 **Execution phase:** none
@@ -95,8 +95,11 @@ DoD:
 
 DoD:
 - Production and staging serve the same fe SHA, recorded with the release run.
-- The team's sign-off names that SHA; this is the sign-off slice 6 of
-  `mumate-vercel-to-do-001` builds production from.
+- ~~The team's sign-off names that SHA~~ Moved by the owner on 2026-10-06
+  ("เรา closeout ปิด workstream นี้ได้เลยหรือเปล่า แล้วกลับไป lane ย้าย server"):
+  the team's sign-off certifies the SHAs frozen for the move, not this notice,
+  and the team is still merging; it is collected in `mumate-vercel-to-do-001`
+  slice 6 after the owner calls the freeze.
 - The workstream closes here (owner, 2026-10-06): the notice ends by itself
   and is proven by the fixed-clock tests, so nothing waits for Friday. Seeing
   it gone after 04:00 on the new server belongs to the cutover review

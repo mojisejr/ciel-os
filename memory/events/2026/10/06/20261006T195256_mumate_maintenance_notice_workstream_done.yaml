@@ -1,0 +1,69 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T195256_mumate_maintenance_notice_workstream_done
+type: closeout
+recorded_at: 2026-10-06T19:52:56+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-maintenance-notice-001
+  lane: single
+  objective: >-
+    Close slice 2 and the workstream: the in-app maintenance notice is live on
+    Vercel production and staging, the reload defect is fixed, the owner
+    checked it on his phone and told the team. The team's SHA sign-off moves
+    to mumate-vercel-to-do-001 slice 6 by the owner's word.
+  scope:
+    - Final state of PRs 883 and 885, production, staging, checkouts, plan state completed.
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "2"
+  completed:
+    - "mootech-fe PR 883 (notice, head c50f30bf6eb9300f5275fe2819af71f92257389b) merged by the owner as 9e6faa215f19863654f68f9b5011df5eb9866351 at 2026-10-06T12:27:14Z; PR 885 (survives the service-worker reload, head c859aaafce42962acf0f95d80ee11fd6079dcb77) merged as 83ed2f10a6649874a32dfbfcec9c02220a2b5b52 at 2026-10-06T12:43:52Z."
+    - "Vercel production serves 83ed2f1; the notice image answers 200 on bazichart.mumate.co."
+    - "Staging released to the production SHAs (fe 83ed2f1, bazi 40e8ebf; release run 37466019816), healthy (20261006T195016)."
+    - "Owner on his phone: the notice comes back after the deploy reload and stays until closed; the owner told the team about the announcement."
+    - "mootech-fe checkout on clean main 83ed2f1; both topic branches deleted locally and gone from the remote."
+    - "Plan 0.1 marked completed; slice 2's sign-off line moved to mumate-vercel-to-do-001 with the owner's words."
+  owner_statement: "ทุกอย่างโอเคละครับบนมือถือ แจ้งทีมเรื่องประกาศไปเรียบร้อย เรา closeout ปิด workstream นี้ได้เลยหรือเปล่า แล้วกลับไป lane ย้าย server ได้เลยมั๊ญ"
+  not_verified:
+    - "The end time on a deployed build: the notice stopping at 2026-10-09 04:00 +07:00 is proven by the fixed-clock tests; seeing it gone on the new server is part of the cutover review (runbook 06 step 5)."
+
+evidence:
+  plan: workstreams/mumate-maintenance-notice-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "16d46b5"
+    branch: hq/20261005
+    working_tree: this-closeout-and-plan-state
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261005
+  pull_request:
+    repository: github.com/mojisejr/mootech-fe
+    number: 885
+    url: https://github.com/mojisejr/mootech-fe/pull/885
+    base: main
+    state: MERGED
+    merge_commit: 83ed2f10a6649874a32dfbfcec9c02220a2b5b52
+    reviewed_head_sha: c859aaafce42962acf0f95d80ee11fd6079dcb77
+  application:
+    mootech-fe: "origin/main 83ed2f1 (Vercel production and staging; includes PR 883 9e6faa2 and เอ็ม's #884 e27a4a0)"
+    bazi-sft-dataset: "origin/pdf-dev 40e8ebf (Vercel production and staging)"
+
+unresolved:
+  - "mumate-vercel-to-do-001: after the owner calls the freeze, the team signs off the SHAs current then on staging; production images for mumate-prod-1 are built from them by Thursday 2026-10-08 evening."
+  - "The Qi check-in promo still marks itself shown on open, so a deploy reload can hide it too; out of this scope, a candidate after the move."
+  - "verify-architecture red on mootech-fe main (4 pre-existing violations) stays deferred; pushes bypass it after local lint, test and build."
+  - "HQ records for this lane are on hq/20261005 and await the owner's round push and merge."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None for this workstream. MuMate continues in mumate-vercel-to-do-001
+    slice 6 from this record and 20261006T185301.
+  acceptance_check:
+    - Wake reports mumate-maintenance-notice-001 completed once hq/20261005 reaches origin/main.
