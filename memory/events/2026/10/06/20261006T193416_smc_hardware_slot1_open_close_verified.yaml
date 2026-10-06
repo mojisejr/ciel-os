@@ -1,0 +1,97 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T193416_smc_hardware_slot1_open_close_verified
+type: closeout
+recorded_at: '2026-10-06T19:34:16+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Prove one owner-observed physical lock-1 opening and closing on COM4.
+outcome:
+  status: slot-1-mapping-verified-twelve-slot-proof-pending
+  result: One normal app load/unlock submission names logical slot 1 with
+    synthetic HWTEST001. Exactly one logged unlock transmission at attempt 1
+    receives a successful ACK. Status changes 01 00 to 00 00 and back to 01 00.
+    The owner explicitly reports that the physical lock released and was then
+    closed. UI and database progress from empty through open to loaded, with
+    three new real-marked audit rows. The slot-1 case passes; full slice-2
+    mapping for physical slots 2-12 remains unperformed because those locks
+    are not connected. No additional unlock or data clearing is performed.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.2'
+  slice: '2'
+  repository:
+    head: 6ef8efe6e073d08271d7a64f3691ddeeaa5e1eab
+    branch: codex/smc-hardware-slice1-proof
+  execution:
+    os: windows
+    locality: local
+  authority: memory/events/2026/10/06/20261006T192952_smc_hardware_slot1_test_authorized.yaml
+  owner_observation: Owner answers that lock 1 physically released and was closed.
+  app:
+    path: 'D:\Smart Medication Cart\smc.exe'
+    source: 23e7781af3faa8f58b51e9e7a200a35b8089b527
+    integrated_source: d2a6cc6ea23e202bb2356622ec2e288fb0f4c685
+    port: COM4
+    synthetic_hn: HWTEST001
+    final_state: Slot 1 Loaded, green closed-lock icon, HWTEST001 retained;
+      dispense button enabled. This is a synthetic workflow fixture, not real medicine.
+    open_screenshot: 'D:\smc-owner\testing\hardware-20261006\slice2-slot1-open.jpg'
+    closed_screenshot: 'D:\smc-owner\testing\hardware-20261006\slice2-slot1-closed-loaded.jpg'
+  protocol:
+    source_log: 'C:\ProgramData\SMC\logs\smc.log.2026-10-06'
+    report: 'D:\smc-owner\testing\hardware-20261006\slice2-slot1-command-observed.json'
+    request_at: '2026-10-06T19:32:17.642823+07:00'
+    request: '02 00 00 81 00 00 03 86'
+    unlock_transmissions: 1
+    attempt: 1
+    wire_lock: 0
+    logical_slot: 1
+    ack_at: '2026-10-06T19:32:17.670122+07:00'
+    ack: '02 00 00 81 10 00 03 96'
+    first_open_status_at: '2026-10-06T19:32:17.686151+07:00'
+    first_open_status: '02 00 00 80 10 02 03 97 00 00'
+    closed_status_at: '2026-10-06T19:32:29.807445+07:00'
+    closed_status: '02 00 00 80 10 02 03 98 01 00'
+    faults_in_report_window: 0
+    timing_boundary: First unlocked hook status is observed about 43 ms after
+      TX and 16 ms after ACK. This is one app-log sample and bounds hook-status
+      observation, not a measured mechanical travel time or a general board timing rule.
+  audit:
+    database: 'C:\ProgramData\SMC\smc.sqlite'
+    rows:
+    - id: 34
+      action: load-requested
+      simulated: false
+    - id: 35
+      action: door-opened
+      simulated: false
+    - id: 36
+      action: load-completed
+      simulated: false
+    final_slot: Slot 1 is loaded with the named synthetic HN; prior history is retained.
+  method: Computer Use on the observed installed app window and read-only
+    existing logs/database. Prior owner authorization covers test-app credential
+    entry; no credential values, hashes or screenshots of raw credentials are recorded.
+unresolved:
+- Full physical twelve-door mapping remains unproved. An owner choice is pending
+  between preparing other channels now and retaining that gap while continuing
+  workflow/recovery on the one-lock bench. No ordering or scope change is inferred.
+- Simulator parity remains unproved. Its documented default door-physics delay
+  is 550 ms with a retained 500 ms manual ambiguity; this single hardware trace
+  shows early hook-status clearing. Compare like-for-like tests before changing
+  the simulator or claiming calibrated physical timing.
+- Accepted inventory gaps, scanner/scaling, full real dispense/clear and restart/
+  reconnect cases remain unresolved. CIEL Phase 2, off-machine key backup,
+  waived old-key rollback, production boundaries and other portfolio attention
+  remain as recorded in the preceding checkpoints.
+next_action:
+  action: Resolve the owner's test-order choice for unconnected channels 2-12.
+    Preserve the closed HWTEST001 Loaded fixture for the next authorized case.
+    Refresh actual UI/status before any further command and keep physical
+    observation distinct from protocol and audit evidence.
+  acceptance_check:
+  - Slot-1 success does not close full twelve-slot mapping or assert simulator fidelity.
+  - The owner controls physical setup and the next test scope; no further unlock is silently issued.
