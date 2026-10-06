@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T053503_smc_three_lock_mapping_verified
+type: closeout
+recorded_at: '2026-10-07T05:35:03+07:00'
+recorded_by: {agent: codex}
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Prove selected-channel opening/closure on the three available locks.
+outcome:
+  status: three-lock-mapping-verified
+  result: Normal app loads HW3A001, HW3A002 and HW3A003 into slots 1, 2
+    and 3 sequentially. Exactly three attempt-1 unlock transmissions select
+    wire locks 0, 1 and 2. Fresh status changes only the selected connected
+    hook each time, returning to 07 00 after closure. The owner reports closure
+    for each and no abnormality when asked to confirm correct opening and
+    other-lock non-movement across all three. Audit 79-87 records three real
+    load-requested/opened/completed sequences. All three synthetic records
+    coexist as Loaded; this proves mapping/loading, not selective dispensing.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.4'
+  slice: '2'
+  repository:
+    head: a40e599c231594ca1607949af9a6597d0de54c6b
+    branch: codex/smc-hardware-slice1-proof
+  execution: {os: windows, locality: local}
+  authority: memory/events/2026/10/07/20261007T053057_smc_three_channels_physical_baseline_confirmed.yaml
+  report: 'D:\smc-owner\testing\hardware-20261007\three-lock-loaded-proof.json'
+  screenshots:
+  - 'D:\smc-owner\testing\hardware-20261007\three-lock-slot2-open.jpg'
+  - 'D:\smc-owner\testing\hardware-20261007\three-lock-slot3-open.jpg'
+  - 'D:\smc-owner\testing\hardware-20261007\three-lock-loaded-home.jpg'
+  protocol:
+    source_log: 'C:\ProgramData\SMC\logs\smc.log.2026-10-06'
+    window_from: '2026-10-06T22:30:57Z'
+    tx_slots: [1, 2, 3]
+    status_masks: ['07 00', '06 00', '07 00', '05 00', '07 00', '03 00', '07 00']
+    invalid_complete_frames: 0
+  audit:
+    mapping_rows: [79, 80, 81, 82, 83, 84, 85, 86, 87]
+    simulated: false
+    real_rows: 73
+    retained_simulator_rows: 14
+    startup_reconciliation: Rows 69-78 reconcile logical state after setup;
+      they are not extra unlocks or physical proof of disconnected channels.
+  observation_boundary: Owner physical reports, app UI and decoded serial/SQLite
+    are separate sources. One channel-1 capture showed foreground Codex and
+    was not saved or used as SMC screenshot proof; its AX and wire evidence remain.
+unresolved:
+- Selected dispense/clear while other channels hold records is next, not passed here.
+- Channels 4-12 are unconnected and unverified. Scanner/scaling/exports,
+  equipment inventory gaps and approximate simulator timing remain explicit limits.
+- Previous audit, including interrupted B, is preserved. No source/build/data
+  reset, driver change, push, PR or merge occurs.
+next_action:
+  action: Proceed to the authorized healthy multi-record flow in slice 3,
+    dispensing/clearing slot 2 then 1 then 3 and checking retained other records
+    plus each owner physical closure before the next command.
+  acceptance_check:
+  - Final state is Empty for the three tested slots, with matching real audit and no unrelated actuation.
