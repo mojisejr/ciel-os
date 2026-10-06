@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T193442_mumate_maintenance_notice_live_staging_level_freeze_pending
+type: closeout
+recorded_at: 2026-10-06T19:34:42+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-maintenance-notice-001
+  lane: single
+  objective: >-
+    Record the notice live on Vercel production and staging level with it,
+    and that the team's sign-off waits because เอ็ม is still merging; the
+    owner will say when the freeze starts. This record is the cold-session
+    entry for MuMate until the next one.
+  scope:
+    - Slice 2 steps 1-3 done; step 4 (sign-off) pending the freeze.
+  out_of_scope:
+    - Production images for mumate-prod-1.
+
+outcome:
+  status: recorded
+  slice: "2"
+  state:
+    - "PR 883 merged by the owner: 9e6faa2 (2026-10-06 12:27:14Z). เอ็ม merged after it: mootech-fe e27a4a0 (#884, destiny element count, 1 file, 19:28) and bazi-sft-dataset 40e8ebf (career season-end hidden stems, 2 files, 19:26); neither adds env or migrations."
+    - "Vercel production at 19:32: /api/health sha e27a4a0; /images/v2/popup/maintenance-20261009.png 200, 451948 bytes."
+    - "Staging: container-build target=staging push=true - mootech-fe run 37463537745 (e27a4a0) success, bazi-sft-dataset run 37463542689 (40e8ebf) success; release env=staging run 37464061603 success; deploy-history 2026-10-06T12:34:02Z staging/mumate-2 ok FE_TAG=e27a4a0...-staging BAZI_TAG=40e8ebf...-staging; ops-status fe and bazi healthy; app.staging.mumate.co/api/health sha e27a4a0 env staging; the notice image 200 on staging."
+    - "Local checkouts synced: mootech-fe main e27a4a0 (topic branch deleted with -d; the remote branch is gone), bazi-testenv pdf-dev 40e8ebf (ff-only), bazi-sft-dataset detached at 40e8ebf."
+    - "Owner 19:3x: 'เอ็มยังทำอยู่สินะ งั้นเดี๋ยวคุน sync ลงมาด้วยนะ เดี่ยวผมจะบอกคุนเองว่า freeze เมื่อไหร่'. Until then staging follows each production merge; the team signs off the SHAs current at the freeze."
+  effect_on_cutover:
+    - "The 2026-10-05 sign-off of fe 976fae8 / bazi 48e4328 no longer names what production runs. mumate-vercel-to-do-001 builds mumate-prod-1 from the SHAs the team signs off after the freeze, which must still happen before Thursday 2026-10-08 evening for the Friday 04:00 window."
+
+evidence:
+  plan: workstreams/mumate-maintenance-notice-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "ed7368c"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main e27a4a0 (Vercel production and staging)"
+    bazi-sft-dataset: "origin/pdf-dev 40e8ebf (Vercel production and staging)"
+    staging_release: "run 37464061603"
+
+unresolved:
+  - "Freeze time (owner); then the team's staging sign-off naming the SHAs; then this workstream's final closeout."
+  - "Production build and release for mumate-prod-1 from the signed-off SHAs by Thursday evening (mumate-vercel-to-do-001)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Each time mootech-fe main or bazi pdf-dev moves before the freeze: fetch,
+    build and release staging to the new SHAs, sync the local checkouts. When
+    the owner calls the freeze: ask the team for the sign-off naming the
+    SHAs, then close this workstream.
+  acceptance_check:
+    - Staging serves the SHAs Vercel production serves at every check, and the sign-off names them.
