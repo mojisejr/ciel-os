@@ -1,0 +1,80 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T144640_smc_windows_license_plan_prepared
+type: closeout
+recorded_at: '2026-10-05T14:46:40+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-windows-license-001
+  lane: single
+  objective: Deliver the local owner-only Windows license and simulator acceptance plan.
+  scope:
+  - Plan revision 0.1 and its opening record, five slices, DoD, recovery, rollback and hardware boundary.
+  out_of_scope:
+  - Slice execution, credentials, application/simulator source changes, MSI installation and remote writes.
+outcome:
+  status: plan-prepared-local-review
+  result: The new workstream plan and owner-direction record are committed locally. The supported
+    Bun 1.3.2 check passed typecheck and all 45 tests. Wake identifies five slices and available
+    bindings for the three existing projects, with no validation errors.
+  completion_boundary: This closes the planning task only. No evidence.slice is supplied because
+    no implementation slice or final workstream delivery was completed. No new key, activation,
+    MSI/GUI walkthrough, production readiness or hardware result is claimed.
+evidence:
+  plan: workstreams/smc-windows-license-001/PLAN.md
+  plan_revision: '0.1'
+  opening_record: memory/events/2026/10/05/20261005T144047_smc_windows_license_workstream_opened.yaml
+  repository:
+    head: edb397003a03741f0d648be6ad829aff63323f64
+    branch: docs/smc-windows-license-plan
+    fetched_main: d4391537f79d366ee634deec31df5d049d80e9e0
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  checks:
+  - command: bun run check
+    bun_version: 1.3.2
+    typecheck: passed
+    passed: 45
+    failed: 0
+    assertions: 202
+  - command: bun run wake
+    validation_errors: 0
+    workstream: smc-windows-license-001
+    declared_slices: ['1', '2', '3', '4', '5']
+    project_bindings: All three project identities match local Git.
+    overlap: The active smc-v2-app-001 and new plan share smc-v2. Wake requires owner-confirmed
+      ordering before execution; both lanes are idle, and no parallel execution was performed.
+  - command: git diff --cached --check
+    result: passed for plan and opening record
+  initial_check_boundary: An initial check also passed under ambient Bun 1.2.4, outside the committed
+    supported range. It was not used as the acceptance result; check was repeated under explicit 1.3.2.
+  child_observation: Both child working trees were clean. No child source, key or data was changed
+    by this planning task.
+  portfolio_attention:
+    active: [ciel-owner-operating-contract-001]
+    conflict: [smc-v2-app-001, smc-windows-license-001]
+    paused: [ciel-windows-portability-001, dac2-guided-inputs-001, mootech-fe-beam-gateway-001,
+      mumate-be-decoupling-001, orchard-decision-lab-001]
+    unavailable: [ciel-mini-template-001, mootech-ga4-instrumentation-001,
+      mumate-be-retirement-001, mumate-vercel-to-do-001]
+  publication: Local commits only; this plan has not been pushed, merged or attached to a new PR.
+unresolved:
+- Owner-confirmed ordering of the overlapping SMC plans is pending. A question was presented to
+  pause the older plan while this one runs, or retain both idle. No response is assumed.
+- Old key/issued-license/deployment availability and protected key/backup method remain unknown;
+  resolve them before the affected credential/key-transition steps.
+- SMC Windows owner acceptance, scanner and real hardware remain unproved. CIEL portability remains
+  separate and paused; no previous workstream was changed by opening this one.
+- Prior exact Norton restore/exclusion details, npm build-tool audit findings, unavailable bindings,
+  and the two historical GA4/BE-retirement status warnings remain; no historical event was amended.
+- Human approval/review and external rules remain unknown except for the specific owner direction
+  recorded here. Local plan creation is not remote-publication or future-slice approval.
+next_action:
+  action: Present the five-slice plan to the owner. Incorporate the owner's ordering answer before
+    executing the first implementation slice; obtain remote-publication authority before pushing
+    this local plan if publication is requested.
+  acceptance_check:
+  - Owner can review the exact local plan and its checkpoint without relying on chat history.
+  - Subsequent key and walkthrough claims have actual evidence rather than being inferred from this plan.

@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T071115_smc_previous_windows_installation_removed
+type: closeout
+recorded_at: '2026-10-06T07:11:15+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Remove the previous installed Windows SMC before replacement acceptance.
+outcome:
+  status: previous-installation-removed-awaiting-replacement
+  result: Owner explicitly requested uninstalling the unused SMC version. Registry
+    inventory found one installed Smart Medication Cart 0.1.0 at D:\Smart Medication
+    Cart. Its normal close and Windows Installer removal succeeded. No SMC install
+    remains registered, and the database, license, admin and synthetic loaded HN
+    remain intact. Replacement MSI installation has not been performed.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.8'
+  step: '11.4'
+  repository:
+    head: d89981be5ce390d2a7b44e3601b397c0612bd916
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    locality: local
+  prior_checkpoint: memory/events/2026/10/06/20261006T065600_smc_windows_gui_tests_and_door_indicator_fix.yaml
+  removed_product:
+    name: Smart Medication Cart
+    version: 0.1.0
+    product_code: '{19980D24-9F83-4AB8-8C74-1BEAED491F00}'
+    installed_path: D:\Smart Medication Cart\smc.exe
+    prior_exe_sha256: 8F166D5C1381BCE579665F1D485FEA5D445529B125FFC761845E6046713E2983
+    method: Registered Windows Installer product removal, passive mode, no restart.
+    exit_code: 0
+    log: D:\smc-owner\testing\msi-uninstall-old-20261006.log
+    log_result: Removal completed successfully; removal status and MainEngineThread return 0.
+  verification:
+    inventory: HKLM native/WOW6432Node and HKCU uninstall inventories have no remaining
+      matching Smart Medication Cart/SMC product. The old executable and installation
+      directory no longer exist; no SMC window remains after normal closure.
+    data: C:\ProgramData\SMC\smc.sqlite has the same SHA-256 before and after removal;
+      backup and log directories remain. Read-only SQLite quick_check=ok, slot 1 is
+      Loaded WINTEST001, admin1 remains, license setting exists and audit count is 7.
+      No PIN, PIN hash, license content or private signing key was queried or printed.
+    before_probe: D:\smc-owner\testing\gui-20261006\uninstall-before.json
+    retained_artifacts: The previous step11.3 MSI and the step11.4 UI-fixed MSI remain
+      in their owner-local artifact directories. No retained build was deleted.
+  replacement:
+    source_head: 23e7781af3faa8f58b51e9e7a200a35b8089b527
+    msi_path: D:\dev\tools\artifacts\smc-v2\step11.4-door-indicator-20261006\Smart Medication Cart_0.1.0_x64_en-US.msi
+    sha256: BDE72222A4028B9C5BE1CC116144E9AA5007169EBC183E88192510E5735C3377
+unresolved:
+- SMC is currently uninstalled. The UI-fixed replacement MSI still needs installation
+  and installed-app retesting; an uninstall pass does not complete step 11.4.
+- Owner authentication, full dispense/clear, pending-transition restart, CSV/manual
+  backup/diagnostics, DPI and scanner limits remain as recorded in the prior checkpoint.
+- Deferred off-machine key backup, waived old-key rollback, required CIEL Windows
+  Phase 2, untested real hardware and prior tooling/build/security/cleanup unknowns
+  remain unchanged; the prior checkpoint is the full unresolved reference.
+- HQ and SMC source checkpoints remain local only; no push, PR or remote sync occurred.
+next_action:
+  action: Install the retained UI-fixed MSI at the intended Windows location with owner
+    participation for installation confirmation and any Windows security prompt. Verify
+    installed executable hash, preserved license/admin/HN and simulator reconnection,
+    then resume the owner-assisted step 11.4 acceptance cases.
+  acceptance_check:
+  - Replacement installed executable matches the retained candidate and preserves default data.
+  - Record installed fix retest and remaining owner-observed cases before advancing the plan.

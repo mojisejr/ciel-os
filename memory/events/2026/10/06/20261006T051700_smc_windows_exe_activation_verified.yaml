@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T051700_smc_windows_exe_activation_verified
+type: closeout
+recorded_at: '2026-10-06T05:17:00+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Verify owner EXE activation and prepare a closed-door simulator baseline.
+outcome:
+  status: exe-activation-verified-awaiting-simulator-selection
+  result: Owner reports the app accepted the lifetime license. Agent observes license
+    installed with state Valid in the log and, through a read-only SQLite connection, the
+    persisted license exactly matches the prepared Windows test file after whitespace
+    normalization. Logs and the read-only user query also show admin1 with role admin;
+    owner did not separately report that bootstrap action. Simulator door 5 was initially
+    open; agent closed all simulated hooks as setup before app connection.
+  boundary: Isolated EXE activation/persistence only. No MSI activation, full workflow,
+    backup restoration, visual quality pass or final slice delivery is established.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.8'
+  step: '11.4'
+  repository:
+    head: e96f4ea1691488a24f7e0032bb480476f7117274
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  prior_checkpoint: memory/events/2026/10/06/20261006T051152_smc_windows_exe_launch_observed.yaml
+  data_directory: 'D:\smc-owner\testing\windows-smoke-20261006'
+  license_file: 'D:\smc-owner\licenses\windows-dev-new-key-20261005.lic'
+  owner_observation: Lifetime license accepted in the app.
+  log_observation: license installed state Valid at 2026-10-05T22:14:33.416082Z;
+    first admin created user admin1 at 2026-10-05T22:14:53.553787Z.
+  database_probe: SQLite mode=ro with query_only enabled; persisted license matched the
+    prepared file and users query returned admin1/admin. No PIN, PIN hash, raw license text
+    or database mutation was requested or displayed by the probe.
+  simulator_setup:
+    source: Existing local cu12-console process and documented control API at 127.0.0.1:5013.
+    before: GET state returned hooks EF 0F with door 5 open, physics on at 550 ms,
+      board up, no faults and no connected client.
+    action: Agent POST hook lock=all state=locked as isolated simulator test setup.
+    after: All twelve hooks read locked. This is agent preparation, not an owner workflow closure observation.
+unresolved:
+- Owner simulator selection, load/dispense/clear, restart/reconnect, exports/backup/diagnostics,
+  installed-MSI activation and actual data-directory permission acceptance remain.
+- Off-machine key backup deferred, old-key activation rollback waived/untested, CIEL Phase 2
+  after 11.4, scanner/hardware/production and prior cache/installer/Norton/npm/gateway/status
+  warning/approval-blocked-fixture limits remain as in the linked build checkpoint.
+next_action:
+  action: Guide the owner through Admin, connection tab, Simulator selection and save;
+    inspect the saved endpoint, simulator client and audit after the owner reports the result.
+  acceptance_check:
+  - No load/dispense is inferred from baseline setup, and EXE results do not substitute for installed-MSI results.

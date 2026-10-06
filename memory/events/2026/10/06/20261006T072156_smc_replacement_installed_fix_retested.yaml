@@ -1,0 +1,102 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T072156_smc_replacement_installed_fix_retested
+type: closeout
+recorded_at: '2026-10-06T07:21:56+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Retest the door indicator fix in the owner-installed replacement MSI.
+outcome:
+  status: installed-fix-retested-awaiting-owner-pin-cases
+  result: Owner reports installing at the previous location and authorizes further
+    testing. Local installed bytes match the retained UI-fixed candidate after
+    accounting for MSI's three bundle-marker bytes. Installed-app open/closed door
+    display, loaded-door restart, disconnect/reconnect and automatic backup checks
+    passed. The owner-assisted authentication cases and step 11.4 remain incomplete.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.8'
+  step: '11.4'
+  repository:
+    head: dbcf028ecc21a2a1bbf9a2bea3d6d3bb9edb37f9
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    locality: local
+  prior_checkpoint: memory/events/2026/10/06/20261006T071115_smc_previous_windows_installation_removed.yaml
+  installation:
+    owner_observation: Installed at the same location as the previous version.
+    registry_product_code: '{88FCB95A-4FAE-4539-A3CE-B0AF46395560}'
+    registry_version: 0.1.0
+    path: D:\Smart Medication Cart\smc.exe
+    installed_sha256: 93653856B308914C4A6E405CF06E4AF08A937665F3CA2F1234587C500146D50E
+    source_head: 23e7781af3faa8f58b51e9e7a200a35b8089b527
+    comparison: Installed and retained candidate EXEs have equal length and exactly
+      three byte differences at offsets 13393456-13393458, UNK versus MSI in the
+      __TAURI_BUNDLE_TYPE_VAR_ marker. Normalizing only those bytes in memory gives
+      the retained candidate's SHA-256 AC6C14B91E7C18ECE910385C611D66802A51F89C2E6EC8D2E07C734634ED831A.
+      Neither file was edited. Exact raw EXE hashes are deliberately distinct.
+    source_support: Local pinned tauri-utils-2.9.3/src/platform.rs lines 349 and 359
+      define the UNK marker and MSI mapping.
+    installer_boundary: Owner performed installation. Agent verifies registration,
+      installed bytes and behavior; no new installer UI/log observation is claimed.
+  agent_ui_tests:
+    startup: Opened installed EXE through its observed File Explorer application item.
+      Returned window identity confirms the installed path. No activation/bootstrap
+      prompt appeared; WINTEST001 remains loaded and all twelve slots are displayed.
+    loaded_door: Only simulator door 1 was opened. Installed UI showed red ประตูเปิด
+      beside Loaded WINTEST001; closing it returned the green lock without clearing HN.
+    restart: Normal close and reopen while door 1 remained open retained loaded HN,
+      reconnected automatically and still displayed the red open-door label. Hook
+      FE 0F and simulated audit reconciliation agreed with the displayed state.
+    disconnect: Simulator unplug caused the red disconnected banner and disabled
+      dispense/load controls. Plug-in restored connection and controls without
+      restarting the app; loaded HN remained. No unrelated door was opened.
+    handoff: Door 1 closed again. The connected installed app's dispense entry screen
+      was opened for the owner; both HN and PIN fields were empty at observation.
+      Agent did not type or submit authentication data.
+    proofs: D:\smc-owner\testing\gui-20261006
+    proof_files:
+    - installed-fixed-door1-open.jpg
+    - installed-fixed-restart-open.jpg
+    - installed-fixed-door1-closed.jpg
+    - installed-fixed-disconnected.jpg
+    - installed-fixed-reconnected.jpg
+    - reinstalled-simulator-ready.png
+    boundary: Native proofs have adjacent accessibility text files. These are local
+      synthetic-test artifacts outside Git; they are not replicated evidence.
+  runtime_probes:
+    privilege: Read-only process TokenElevation=false on the reopened installed app.
+    window_dpi: GetDpiForWindow reports 96. This measures the app window's DPI,
+      not an independent observation of the owner's OS scaling preference.
+    data_directory: Startup log smc.log.2026-10-06 records C:\ProgramData\SMC,
+      store open, simulator service start, connection and daily backup at 00:18:35Z.
+    database: Read-only SQLite quick_check=ok; Loaded WINTEST001 and admin1 persist,
+      license setting exists. No PIN, PIN hash or license content was read or printed.
+    automatic_backup: C:\ProgramData\SMC\backups\smc-backup-20261006-001835.sqlite
+      has quick_check=ok, Loaded WINTEST001, one user and license setting present.
+      Manual backup, restore and diagnostics are not inferred from this proof.
+  publication: Local evidence only; no source changes, push, PR or remote sync in this step.
+unresolved:
+- Owner was asked to enter WINTEST001 with an incorrect PIN once and leave the
+  result visible. Wrong-PIN refusal is not yet observed; the agent cannot automate
+  authentication dialogs under Computer Use guidance. No credential bypass was used.
+- Full dispense/close/clear, unknown HN, pending-transition restart, CSV/manual
+  backup/diagnostics and owner DPI/scanner observations remain required in step 11.4.
+  Loaded-door restart is not pending-transition restart proof.
+- Registered-app launch timed out again after reinstall; File Explorer safely
+  opened the intended installed EXE. Prior hidden smc process/runtime-launch unknowns
+  remain deferred, not product failures or proven root causes.
+- The prior GUI checkpoint retains the full unresolved reference for deferred
+  off-machine key backup, waived old-key rollback, required CIEL Windows Phase 2,
+  untested real hardware and historical build/security/cleanup limits.
+next_action:
+  action: Observe the owner's one incorrect-PIN attempt, verify refusal and all
+    unrelated doors closed, then guide unknown-HN and real synthetic dispense/clear
+    cases with owner-entered authentication. Keep records honest and step 11.4 open
+    until all mandatory owner-observed cases are complete.
+  acceptance_check:
+  - Wrong PIN and unknown HN do not unlock any door or clear Loaded WINTEST001.
+  - Complete cycle and pending-state restart receive their own actual observations.

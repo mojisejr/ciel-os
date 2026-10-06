@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T050900_smc_windows_owner_walkthrough_authorized
+type: decision
+recorded_at: '2026-10-06T05:09:00+07:00'
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Walk the owner through Windows acceptance one observable action at a time.
+  scope:
+  - Step 11.4 EXE smoke test followed by installed-MSI and simulator acceptance with synthetic data.
+  out_of_scope:
+  - Live patient data, key regeneration, production, off-machine backup, old-key activation
+    rollback, CIEL Phase 2 execution, push, PR and merge.
+outcome:
+  status: decided
+  decision: Owner requests a step-by-step walkthrough, performing the GUI actions and then
+    having the agent inspect evidence before proceeding together. Authorize step 11.4 under
+    revision 0.8, starting with the retained EXE and a fresh isolated data directory.
+  boundary: No owner GUI result or installed-MSI acceptance is established by this decision.
+    Do not skip observations or treat agent preparation as owner acceptance.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.8'
+  slice: '11'
+  step: '11.4'
+  repository:
+    head: 7ff7223483677dc2cc870e16ab1647246398c3ce
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    architecture: x86_64
+    locality: local
+  build_checkpoint: memory/events/2026/10/05/20261005T220400_smc_new_key_windows_builds_verified.yaml
+  first_action:
+    executable: 'D:\dev\tools\artifacts\smc-v2\step11.3-new-20261005T215700\smc.exe'
+    data_directory: 'D:\smc-owner\testing\windows-smoke-20261006'
+    preparation: Agent rechecked retained EXE and issuer hashes against the build checkpoint,
+      verified the test license with the issuer and its machine code, and created an empty
+      isolated data directory. No SMC process was found during the preparation check.
+    expected_owner_observation: Fresh data opens the Thai activation screen with this Windows
+      machine code; no blank window, immediate exit or unexpected error.
+    boundary: Owner starts the GUI manually. Endpoint override is empty for initial launch;
+      choose simulator through Admin later to observe the actual port-selection flow.
+unresolved:
+- Actual GUI launch/activation and all subsequent step-11.4 DoD remain unobserved.
+- Same-disk key backup remains owner-deferred for off-machine transfer; old-key activation rollback is waived and untested.
+- CIEL Phase 2 stays after 11.4 and before final closeout; scanner/hardware, production,
+  prior cache/Norton/npm/gateway/historical-warning limits and approval-blocked fixture cleanup remain.
+next_action:
+  action: Have the owner start the retained EXE with the named isolated data directory and
+    report activation-screen appearance and machine code. Inspect generated process/files/logs
+    before guiding license import, admin setup, simulator workflows and later MSI acceptance.
+  acceptance_check:
+  - Owner observation and agent filesystem/log evidence are distinguished; neither is inferred from the other.

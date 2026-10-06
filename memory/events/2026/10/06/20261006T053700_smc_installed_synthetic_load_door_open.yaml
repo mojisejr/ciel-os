@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T053700_smc_installed_synthetic_load_door_open
+type: closeout
+recorded_at: '2026-10-06T05:37:00+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-app-001
+  lane: single
+  objective: Observe installed-app synthetic load before owner closes the simulated door.
+outcome:
+  status: synthetic-load-door-open-awaiting-owner-closure
+  result: Owner reports completing the slot-1 load instruction. Read-only default DB
+    shows slot 1 Open with purpose Load and synthetic HN WINTEST001. Audit records
+    load-requested and door-opened for admin1, slot 1, simulated=1. Simulator reports
+    only hook 1 open; hooks 2 through 12 remain closed. Load is pending, not completed.
+evidence:
+  plan: workstreams/smc-v2-app-001/PLAN.md
+  plan_revision: '0.8'
+  step: '11.4'
+  repository:
+    head: 470d251
+    branch: docs/smc-windows-license-plan
+  execution:
+    os: windows
+    locality: local
+  prior_checkpoint: memory/events/2026/10/06/20261006T053400_smc_installed_activation_and_simulator_verified.yaml
+  database_probe: SQLite mode=ro/query_only on C:\ProgramData\SMC\smc.sqlite;
+    slot state and synthetic-HN audit fields only, no PIN/hash queried.
+  simulator_probe: GET http://127.0.0.1:5013/api/state reports hooks FE 0F,
+    connected client, board up, physics enabled at 550 ms and no faults.
+  wire_observation: Installed app log receives status hook bytes FE 0F.
+  boundary: Agent did not close a hook or modify the DB. Owner reports completion
+    without separately describing dialog text; GUI appearance is not inferred from DB state.
+unresolved:
+- Door closure and Loaded persistence are pending; remaining step 11.4 acceptance
+  and all prior-checkpoint limitations remain, including ordinary-launch permission
+  proof, deferred off-machine backup, waived old-key rollback, Phase 2 and hardware limits.
+next_action:
+  action: Owner clicks only the open channel 1 tile in the simulator console to close
+    it, then observes the SMC result without dispensing yet. Agent checks Loaded and audit.
+  acceptance_check:
+  - Hook 1 closes, slot 1 becomes Loaded with WINTEST001 and other hooks stay closed.
