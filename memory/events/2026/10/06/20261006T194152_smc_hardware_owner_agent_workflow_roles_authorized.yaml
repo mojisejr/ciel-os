@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T194152_smc_hardware_owner_agent_workflow_roles_authorized
+type: decision
+recorded_at: '2026-10-06T19:41:52+07:00'
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Continue the one-lock workflow with the owner controlling hardware and the agent controlling the app.
+outcome:
+  status: decided
+  decision: After the proposal to gather timing alongside workflow/recovery,
+    the owner assigns physical hardware control to themself and application
+    control to the agent. Continue revision 0.2 slice 3 on the existing lock-1
+    bench with HWTEST001. Test refusal cases without movement, then one normal
+    dispense request, owner-observed release/closure and normal clear. Collect
+    ACK/status timing as observations, without changing simulator code.
+  authority_boundary: Preserve unperformed mapping for slots 2-12 and current
+    inventory gaps. No rewiring, new power source, all-door command, production
+    release or claim that the complete cabinet is proved follows. Recovery
+    coordination and any simulator calibration retain their own explicit case scope.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.2'
+  slice: '3'
+  repository:
+    head: b94fa642c67ac9ff65478f036ae3c1b4ae1bdbf3
+    branch: codex/smc-hardware-slice1-proof
+  execution:
+    os: windows
+    locality: local
+  owner_request: Owner says they will control the hardware while the agent controls the app.
+  starting_proof: memory/events/2026/10/06/20261006T193416_smc_hardware_slot1_open_close_verified.yaml
+  fixture: Read-only database query finds slot 1 Loaded with HWTEST001 and latest audit id 36.
+  scope_boundary: Advancing the one-lock workflow does not close the unperformed twelve-slot mapping requirement.
+unresolved:
+- Twelve-slot mapping, intended scaling/scanner, recovery and simulator parity remain unproved.
+- Accepted equipment inventory gaps remain unknown and do not become an electrical pass.
+- No new dispense command has yet been submitted by this authorization record.
+next_action:
+  action: Inspect the installed app, test wrong-credential/unknown-HN refusal
+    without an unlock, then submit one normal HWTEST001 dispense request and
+    collect owner physical release/closure before clearing normally.
+  acceptance_check:
+  - Refusals preserve the loaded fixture and produce no unlock request.
+  - Owner physical movement and agent app/protocol observations remain separate.
+  - No additional successful unlock is issued while awaiting owner closure.

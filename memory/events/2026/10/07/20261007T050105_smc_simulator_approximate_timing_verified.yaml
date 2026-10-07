@@ -1,0 +1,110 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T050105_smc_simulator_approximate_timing_verified
+type: closeout
+recorded_at: '2026-10-07T05:01:05+07:00'
+recorded_by: {agent: codex}
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Checkpoint the provisional simulator timing with its evidence and limits.
+outcome:
+  status: simulator-approximation-verified-full-bench-acceptance-pending
+  result: Both simulator entry points and runtime physics now share a 50 ms
+    default hook-opening delay from handling an accepted Unlock. This is the
+    agent-selected development approximation authorized by the owner, not an
+    exact hardware calibration. Closure stays tester-controlled. Windows
+    regression tests and independent clients of both optimized binaries pass
+    normal opening, retained opening across disconnect/reconnect, manual
+    closure, targeted no-pop/refusal and the previous 550 ms runtime fallback.
+    A new console EXE is prepared outside Git. Existing installed SMC and real
+    hardware are not controlled or changed. No further physical observations,
+    application full-cycle rerun or whole-workstream acceptance are claimed.
+    This checkpoint intentionally names no final delivery slice.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.3'
+  authority: memory/events/2026/10/07/20261007T045737_smc_simulator_approximate_timing_authorized.yaml
+  repository:
+    head: d9842238f8291635f728f38263d36cb6a42dcd56
+    branch: codex/smc-hardware-slice1-proof
+  execution: {os: windows, locality: local}
+  hardware_checkpoint: memory/events/2026/10/06/20261006T205701_smc_one_lock_recovery_verified.yaml
+  simulator:
+    previous_head: 1a3b97cfe1aeb57db7afc2128820d250fc0a39ef
+    head: ac4be286aefa77b7e7b914bb969236817db8dee4
+    branch: codex/approximate-hook-timing
+    main_gate: Before edits, clean local main and fetched origin/main both
+      equal 1a3b97cfe1aeb57db7afc2128820d250fc0a39ef.
+    source: checkouts/cu12-simulator/src/switches.rs
+    model_document: checkouts/cu12-simulator/docs/protocol-evidence.md
+    delay_ms: 50
+    closure: Tester input only; no automatic close or dependence on conversational delay.
+  checks:
+  - cargo fmt --check passed.
+  - cargo test --locked passed all 44 tests applicable to Windows; macOS PTY targets ran zero tests.
+  - cargo build --release --locked --bins passed for both entry points.
+  - Independent loopback clients of the two release binaries verify default
+    50 ms, opening only simulated hook 1, retained open state, unplugged EOF,
+    reconnect with one unlock in the monitored window, tester closure,
+    one-shot no-pop, ASK 0x11 refusal without opening, a 550 ms fallback
+    that still opens, and final restoration to 50 ms with all hooks closed.
+  - git diff --check passed; product checkpoint working tree is clean.
+  reports:
+  - 'D:\smc-owner\testing\simulator-timing-20261007\release-proof.json'
+  delivery:
+    path: 'D:\smc-owner\testing\simulator-timing-20261007\cu12-console-windows-x64.exe'
+    sha256: 654a4575d27525ae670040aa70a15b232cb52721cdceac3911388a9d7ce9c648
+    note: New build, not replacement of an older shortcut or previously copied binary.
+  headless_release_sha256: 8bae5c378870975471d85e2194ea2f4253df84bda2d89da18a45ce09db5ba681
+  analysis: Existing hardware reply-receipt observations near 43 and 555 ms
+    must not be treated as exact mechanical durations. The app reads on
+    transition entry and waits 500 ms after each read; an earlier closed
+    sample can defer detection until the next sample. Fifty milliseconds
+    is a selected prompt model setting, not an average, measured rating or
+    fit of every real trace. The simulator starts its timer during command
+    handling, before sending ACK, and does not simulate electrical pulse width.
+  rollback:
+    runtime: Set 550 in the existing console control or POST
+      /api/physics?on=1&unlock_ms=550. The headless binary also supports
+      CU12_SIM_PHYSICS=door with CU12_SIM_UNLOCK_MS=550. Both runtime
+      fallback paths were exercised against the release binaries.
+    persistence: Runtime console settings reset to 50 ms on restart.
+    source: Revert simulator commit ac4be286aefa77b7e7b914bb969236817db8dee4
+      on a topic branch, rebuild and use normal owner-reviewed delivery;
+      retain this decision/proof and append any failed outcome rather than
+      deleting or rewriting it. This source revert has not been performed.
+unresolved:
+- This approximation does not reproduce every real first-read outcome or
+  RS485 round-trip timing. Exact mechanics, electrical pulse duration and
+  board/lock variants remain unknown. The original PDF is unavailable here;
+  recorded 500/550 ms manual ambiguity remains, not a new vendor claim.
+- Only physical channel 1 has proof. Channels 2-12 mapping, scanner HN/Enter
+  and intended Windows scaling/maximized acceptance remain unperformed.
+- Actual power-source output/current, lock rating, board revision, verified
+  pinout and matching manual remain owner-accepted inventory gaps, not
+  electrical verification. No equipment, power or wiring change was made.
+- No fresh real-data CSV/backup/diagnostics export or installed SMC full-cycle
+  rerun was done here. Original interrupted recovery B and force-cleared
+  audit id 60 remain retained; the successful retry does not erase them.
+- Offline UI shows the last observed hook together with disconnected status;
+  physical closure is known to the app only after fresh communication.
+- Old simulator copies keep their old default. Use the new delivered EXE;
+  no existing shortcut, installed application, COM4 configuration or data was changed.
+- macOS PTY tests and source rollback were not run. Off-machine signing-key
+  backup awaits owner destination; old-key activation rollback remains waived
+  and untested; production signing/distribution remain separate owner decisions.
+- Local commits only, no push, PR or merge. Other Wake attention remains
+  unchanged, including active owner contract, paused Windows/DAC2/beam gateway/
+  BE decoupling/orchard lanes and unavailable mini-template/GA4/BE retirement/
+  Vercel-to-DO bindings. SMC simulator delivery remains merged-needs-sync in
+  HQ while this hardware topic branch has not returned to integrated main.
+next_action:
+  action: Present this completed timing checkpoint. Continue in the same
+    hardware workstream by establishing availability or owner acceptance of
+    remaining channels 2-12, scanner/scaling and fresh hardware exports before
+    its final bench delivery. Use the new console EXE for subsequent simulator
+    development; precision timing is deferred unless a reproduced app defect
+    requires it. Keep publication until the owner chooses workstream delivery.
+  acceptance_check:
+  - A future failure appends its actual observations and chosen fallback; no historical proof is rewritten.
+  - Whole-workstream closure requires explicit treatment of remaining bench limits.

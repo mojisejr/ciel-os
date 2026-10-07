@@ -1,0 +1,41 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T052547_smc_three_lock_preparation_checkpoint
+type: closeout
+recorded_at: '2026-10-07T05:25:47+07:00'
+recorded_by: {agent: codex}
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Preserve preparation before the owner-coordinated three-lock test.
+outcome:
+  status: three-lock-prepared-awaiting-physical-baseline
+  result: Revision 0.4 records the owner's three-lock bench scope. The agent
+    opens the unchanged installed SMC normally, reads its disconnected COM4
+    state, verifies retained synthetic audit and Empty slot 1, and prepares a
+    consistent local backup with integrity ok. No unlock is issued. The owner
+    has been asked for actual channel numbers, closed/empty state and presence,
+    and to check USB connection/power because Windows enumerates no COM port.
+    This preparation checkpoint does not claim a three-lock pass or delivery.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.4'
+  repository:
+    head: 2ba461778fae322bd5532aa57e3d1f27c8d087d2
+    branch: codex/smc-hardware-slice1-proof
+  execution: {os: windows, locality: local}
+  authority_and_baseline: memory/events/2026/10/07/20261007T052434_smc_three_lock_bench_scope_authorized.yaml
+  report: 'D:\smc-owner\testing\hardware-20261007\three-lock-baseline-20261007-052434.json'
+  validation: Wake after scope commit reports no validation errors.
+unresolved:
+- Actual connected channel numbers, physical closed/empty state and owner
+  observation are pending. COM4 is currently not responding; cause unknown.
+- Other channels, scanner/scaling and fresh hardware exports remain deferred
+  limits. Equipment information gaps and simulator approximation are retained.
+- No real actuation, driver/settings change, source change, push, PR or merge
+  occurred in this preparation. Prior audit and interrupted B history remain.
+next_action:
+  action: Resume after owner channel/state and USB/power replies. Verify fresh
+    healthy communication, brief the first selected-channel test, then issue
+    one normal app command and wait for actual owner release/closure evidence.
+  acceptance_check:
+  - Disconnected or unidentified channels are never actuated from this checkpoint.

@@ -1,0 +1,113 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T195021_smc_hardware_one_lock_workflow_verified
+type: closeout
+recorded_at: '2026-10-06T19:50:21+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Prove refusal and normal dispense/clear on the existing one-lock bench.
+outcome:
+  status: one-lock-workflow-verified-full-slice-acceptance-pending
+  result: The installed app refuses a wrong test credential and unknown
+    synthetic HN HWUNKNOWN001. Before the positive case, the database still
+    has Loaded HWTEST001 and latest audit id 36. Exactly one unlock transmission
+    occurs after authorization, for the subsequent valid HWTEST001 dispense.
+    The owner reports that lock 1 physically released and was closed. The app
+    observes closure and the agent chooses the normal no-more-medicine clear
+    option. Slot 1 ends Empty with no HN. Four new real-marked audit entries
+    preserve requested, opened, completed and cleared history. No app or simulator
+    source changes, additional unlock, transport change or remote publication occurs.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.2'
+  slice: '3'
+  repository:
+    head: 1b6047648f5a931d1d1a61bc58752b26cf8f2312
+    branch: codex/smc-hardware-slice1-proof
+  execution:
+    os: windows
+    locality: local
+  authority: memory/events/2026/10/06/20261006T194152_smc_hardware_owner_agent_workflow_roles_authorized.yaml
+  load_proof: memory/events/2026/10/06/20261006T193416_smc_hardware_slot1_open_close_verified.yaml
+  owner_observation: The owner answers that the dispense lock physically released and was closed.
+  app:
+    path: 'D:\Smart Medication Cart\smc.exe'
+    source: 23e7781af3faa8f58b51e9e7a200a35b8089b527
+    integrated_source: d2a6cc6ea23e202bb2356622ec2e288fb0f4c685
+    port: COM4
+    synthetic_hn: HWTEST001
+    final_state: Slot 1 Empty, HN null, no pending dialog; hardware connection remains COM4.
+    screenshots:
+    - 'D:\smc-owner\testing\hardware-20261006\slice3-wrong-pin.jpg'
+    - 'D:\smc-owner\testing\hardware-20261006\slice3-unknown-hn.jpg'
+    - 'D:\smc-owner\testing\hardware-20261006\slice3-dispense-closed.jpg'
+    - 'D:\smc-owner\testing\hardware-20261006\slice3-cleared-home.jpg'
+  protocol:
+    source_log: 'C:\ProgramData\SMC\logs\smc.log.2026-10-06'
+    report: 'D:\smc-owner\testing\hardware-20261006\slice3-workflow-observed.json'
+    window_from: '2026-10-06T19:41:52+07:00'
+    unlock_transmissions: 1
+    request_at: '2026-10-06T19:48:26.909691+07:00'
+    request: '02 00 00 81 00 00 03 86'
+    attempt: 1
+    wire_lock: 0
+    logical_slot: 1
+    ack_at: '2026-10-06T19:48:26.932079+07:00'
+    ack: '02 00 00 81 10 00 03 96'
+    first_open_status_at: '2026-10-06T19:48:26.948090+07:00'
+    first_open_status: '02 00 00 80 10 02 03 97 00 00'
+    closed_status_at: '2026-10-06T19:48:46.445748+07:00'
+    closed_status: '02 00 00 80 10 02 03 98 01 00'
+    tx_to_ack_ms: 22.388
+    tx_to_first_open_hook_ms: 38.399
+    ack_to_first_open_hook_ms: 16.011
+    invalid_complete_frames: 0
+    faults_in_report_window: 0
+    boundary: App-log observations of hook status, not a mechanical travel
+      measurement. Physical channels 2-12 are unconnected; mask 00 00 does not
+      prove twelve actual doors opened. No unlock TX occurs for either refusal.
+  audit:
+    database: 'C:\ProgramData\SMC\smc.sqlite'
+    rows:
+    - {id: 37, action: dispense-requested, simulated: false}
+    - {id: 38, action: door-opened, simulated: false}
+    - {id: 39, action: dispense-completed, simulated: false}
+    - {id: 40, action: cleared, simulated: false}
+    real_rows: 26
+    retained_simulator_rows: 14
+  method: Computer Use on observed SMC controls, normal authorized test-app
+    credential entry, and read-only app logs/SQLite. No credential values or
+    hashes are recorded. Full database backups remain outside Git.
+  capture_limit: slice3-dispense-observed.jpg captured foreground Codex rather
+    than SMC and is excluded from app screenshot evidence. SMC accessibility,
+    serial/audit evidence and the later closed screenshot remain separate sources.
+unresolved:
+- Full physical mapping for slots 2-12 remains unperformed. Only lock 1 is connected.
+- Refusal cases have UI, unchanged database and no-unlock protocol proof; there
+  is no separate owner report about physical non-movement during those cases.
+- Scanner availability, scanner HN/Enter and intended Windows scaling/maximized
+  screen acceptance remain unproved; this checkpoint does not close all slice-3 DoD.
+- The two healthy hardware samples show first open hook status about 38 and
+  43 ms after TX and about 16 ms after ACK. Simulator default 550 ms and the
+  recorded 500 ms manual ambiguity require a like-for-like timing proposal;
+  these observations do not authorize code changes or establish full fidelity.
+- Restart with pending state and safe owner-controlled communication disconnect/
+  reconnect remain unperformed. Further actuation requires coordinated case scope.
+- Accepted inventory gaps remain unknown, including actual supply output/current,
+  lock rating, board revision, verified pinout and matching manual/PDF. Existing
+  owner acceptance applies; no electrical or complete-cabinet pass is claimed.
+- CIEL Windows Phase 2 remains paused, off-machine key backup awaits owner
+  destination, old-key rollback remains waived/untested, and production release
+  governance remains separate. Other portfolio attention is unchanged from Wake.
+next_action:
+  action: Coordinate revision-0.2 slice 4 with the owner at the bench. Start
+    from closed Empty slot 1, name the new synthetic pending fixture and the
+    single-command case, then test normal restart and owner-controlled USB/serial
+    communication interruption without changing mains or wiring. Preserve
+    pending data and verify physical closure, reconnect and final real audit.
+  acceptance_check:
+  - This local checkpoint leaves the plan active and execution idle; no push or PR is performed.
+  - No further unlock occurs before the next physical case is coordinated.
+  - Missing full mapping, scanner/scaling and inventory are retained as limitations.

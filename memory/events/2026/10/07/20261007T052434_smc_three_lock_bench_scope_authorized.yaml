@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T052434_smc_three_lock_bench_scope_authorized
+type: decision
+recorded_at: '2026-10-07T05:24:34+07:00'
+recorded_by: {human: owner, agent: codex}
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Prove the three available locks as the final development bench scope.
+outcome:
+  status: decided
+  decision: The owner proposes using the three locks available rather than
+    waiting for twelve, then agrees to the three-lock bench proposal, reports
+    installing three slots and asks to begin. Revision 0.4 slice 2 verifies
+    actual selected channels sequentially with owner physical observations.
+    Channel numbers and closed/empty state must be established before commands.
+    The subsequent healthy workflow will verify three coexisting synthetic
+    records and selective dispense/clear. Existing scoped recovery and timing
+    proof need no automatic repeat. Untested channels and deferred scanner,
+    scaling and fresh hardware exports remain limitations, not passes.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.4'
+  slice: '2'
+  repository:
+    head: f8f4969747094371cf51ecb45f09b8eb14aa1020
+    branch: codex/smc-hardware-slice1-proof
+  execution: {os: windows, locality: local}
+  preceding_checkpoint: memory/events/2026/10/07/20261007T050105_smc_simulator_approximate_timing_verified.yaml
+  owner_report: Three locks installed; exact channel numbers and initial
+    physical state are pending the requested owner reply.
+  preparation:
+    installed_app_sha256: 93653856b308914c4a6e405cf06e4af08a937665f3ca2f1234587c500146d50e
+    observed_ui: Existing app was not running; agent launches it normally.
+      Home shows COM4 not responding with disabled actuation controls.
+    observed_ports: Windows SerialPort enumeration returns no COM ports.
+    database: Empty persisted slot 1; real audit count 54 through id 68,
+      retained simulator count 14. No new synthetic workflow was started.
+    report: 'D:\smc-owner\testing\hardware-20261007\three-lock-baseline-20261007-052434.json'
+    backup: 'D:\smc-owner\testing\hardware-20261007\pre-three-lock-20261007-052434.sqlite'
+    backup_sha256: 10d1ce3c1f5b4bac556aa1ac6c94f545f25d4d3a10b26a067caaf0fa2557b77b
+    backup_integrity: ok
+unresolved:
+- Communication is not yet healthy. The owner was asked to check computer-side
+  USB-RS485 and CU12 power; do not assume the cause or change drivers/settings.
+- Physical channel numbers, initial closed/empty state and owner presence
+  remain unconfirmed. No real unlock command has been issued in this preparation.
+- Existing supply/lock ratings, board revision, pinout/manual and approximate
+  simulator timing limits remain. Three locks cannot prove the other channels.
+- No new equipment/power/wiring change, push, PR, merge or full-workstream closeout
+  is authorized by this preparation. The owner controls physical setup.
+next_action:
+  action: Receive actual channel numbers and owner initial-state observation,
+    restore normal communication, observe fresh status, then brief and perform
+    one selected-channel operation at a time with owner closure reports.
+  acceptance_check:
+  - Do not click an unlock until physical identity and healthy communication agree.
+  - Preserve existing audit history and backup; never infer an untested channel pass.
