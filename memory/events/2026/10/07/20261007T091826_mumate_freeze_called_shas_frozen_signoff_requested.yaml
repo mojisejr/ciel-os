@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T091826_mumate_freeze_called_shas_frozen_signoff_requested
+type: closeout
+recorded_at: 2026-10-07T09:18:26+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the team's freeze, the SHAs frozen for the Friday 2026-10-09
+    04:00-10:00 cutover, and the sign-off request sent through the owner.
+    This record is the cold-session entry for MuMate until the next one.
+  scope:
+    - Step 3 of 20261006T195601 - freeze, staging level, sign-off request.
+  out_of_scope:
+    - Production images (step 4, the owner presses).
+
+outcome:
+  status: recorded
+  slice: "6"
+  state:
+    - "Owner 2026-10-07 morning: 'ทีมสั่ง freeze ละครับ'."
+    - "Frozen SHAs, fetched 09:17: mootech-fe origin/main 83ed2f1 and bazi-sft-dataset origin/pdf-dev 40e8ebf; nothing merged since 2026-10-06 19:44. Vercel production /api/health sha 83ed2f1; staging /api/health sha 83ed2f1, ops-status fe 83ed2f1-staging and bazi 40e8ebf-staging healthy - staging already level, no rebuild."
+    - "Checked in passing for the parallel Supabase lane (20261007T050953): the 09:03 backup ran - mumate-2 journal 02:05:24Z pg/mumate-2-20261007T020346Z.sql.gz 157911068 bytes and the 💾 PRODUCTION alert sent; ops-status backup age 0h. The Data API is off since about 04:51 (owner); mootech-fe, bazi-sft-dataset and mumate-infra use Supabase Storage only, and all hosts stayed healthy, so the cutover is unaffected."
+    - "mumate-prod-1 still fe c10e91e / bazi 49e22f2, healthy, maintenance on. TTL 300."
+    - "Sign-off request handed to the owner for the team: test app.staging.mumate.co and reply naming fe 83ed2f1 / bazi 40e8ebf."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "424cc4e"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main 83ed2f1 (frozen; Vercel production and staging)"
+    bazi-sft-dataset: "origin/pdf-dev 40e8ebf (frozen; Vercel production and staging)"
+    mumate-infra: "main 68cf7dd on laptop and both hosts"
+    dns: "TTL 300"
+
+unresolved:
+  - "Team sign-off naming fe 83ed2f1 / bazi 40e8ebf."
+  - "Step 4: owner presses container-build target=production push=true (both repos) and release env=production with those SHAs; agent verifies - by Thursday 2026-10-08 evening."
+  - "Steps 5-8 of 20261006T195601 unchanged."
+  - "HQ hq/20261005 unpushed (27 commits with this record, several lanes); the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the team signs off: record it, then the owner presses the production
+    build and release; agent verifies deploy-history, hosts.sh compare, a
+    tailnet smoke and runbook 06 step 3a.
+  acceptance_check:
+    - The sign-off names fe 83ed2f1 / bazi 40e8ebf and they still are origin/main and origin/pdf-dev when production is built.
