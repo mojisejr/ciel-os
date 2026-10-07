@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T112246_ref_office_workstream_opened
+type: decision
+recorded_at: 2026-10-07T11:22:46+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: ref-office-001
+  lane: single
+  objective: >-
+    Run an APA 7 bibliography service on Fastwork where an agent-operated
+    office repository does the work and the owner handles the customer chat
+    and reviews only the entries the checker flags.
+  scope:
+    - Open plan revision 0.1 with the owner's syncup decisions and gates G0-G4.
+    - Authorize slice 1 only, the opening records in HQ.
+  out_of_scope:
+    - Creating the public ref-office repository, tools, or any external write.
+    - Submitting the Fastwork listing.
+outcome:
+  status: decided
+  decision: >-
+    After a syncup round and a cost and income review, the owner said go at G0
+    and asked to open the workstream and walk through every slice before
+    authorizing slice 2. This authorizes the opening records only.
+  completed:
+    - Recorded the office model, product, prices, scope lines, gates, and dogfood requirement.
+  not_completed:
+    - No repository, tool, test set, or listing submission was made.
+evidence:
+  plan: workstreams/ref-office-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  authorization:
+    observed_directly_by_this_session: true
+    owner_instruction: "โอเค ผมว่าผมพร้อมแล้วคับ เปิด workstream กันครับ"
+  research:
+    - Fastwork public search API pulled 2026-10-07; seller terms version 7 read the same day.
+    - Draft listing text and a 16:9 banner kept in the ignored .assets/ref-office folder.
+  repository:
+    head: a945d420cf107cee91422df3170f94d8a704d92a
+    branch: hq/20261005
+unresolved:
+  - Fastwork base commission rate and the cumulative threshold for the typing category are unknown.
+  - How far Thai sources such as ThaiJO and TCI can be verified automatically is unknown.
+  - Measuring tokens per job under the subscription plan has no settled method yet.
+  - Income ranges rest on three sellers' public review history and an unverified exchange rate.
+next_action:
+  action: Commit the opening records, then walk the owner through slices 2-6 and wait for go on slice 2.
+  acceptance_check:
+    - Wake recognizes ref-office-001 and this decision for plan 0.1 slice 1 without validation errors.
+    - Only this workstream's files are committed on the standing branch.
