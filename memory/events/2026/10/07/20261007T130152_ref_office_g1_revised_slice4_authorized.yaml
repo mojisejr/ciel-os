@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T130152_ref_office_g1_revised_slice4_authorized
+type: decision
+recorded_at: 2026-10-07T13:01:52+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: ref-office-001
+  lane: single
+  objective: >-
+    Let the listing go to Fastwork review now and learn from real customers,
+    while a short dogfood runs during the review.
+  scope:
+    - Plan revision 0.2 with G1 revised as recorded in PLAN.md.
+    - Slice 4 under revision 0.2, a dogfood of 3-5 public documents.
+  out_of_scope:
+    - Submitting the listing, which is the owner's own action.
+outcome:
+  status: decided
+  decision: >-
+    The owner agreed that G1 runs alongside the listing review: dogfood 3-5
+    real public documents, measure tokens and owner time on the first three
+    real orders, and edit three listing passages (institution guides, Word
+    files, prices matching packages) before submitting. He asked for the full
+    edited text and told the agent to continue with the rest.
+evidence:
+  plan: workstreams/ref-office-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "4"
+  authorization:
+    observed_directly_by_this_session: true
+    owner_instruction: "ขอข้อความที่ต้องแก้ไข เต็มๆ หน่อย เดี๋ยวผมไปแก้ นอกนั้นคุนทำต่อได้เลยครับ"
+  findings_behind_the_change:
+    - Text extracted from a public Thai journal PDF lost sara am and gained spaces inside words.
+    - The listing price section disagreed with the package prices.
+  repository:
+    head: 656de5a383b8171262bab8f022d8ee29a4f63f17
+    branch: hq/20261005
+unresolved:
+  - How long Fastwork takes to review a listing is unknown.
+  - Whether customers mostly send Word files is an unverified assumption.
+next_action:
+  action: Run the 3-5 document dogfood in ref-office and report findings; owner edits and submits the listing.
+  acceptance_check:
+    - Each dogfood document runs through extract, parse, and build; every defect found becomes a test.
