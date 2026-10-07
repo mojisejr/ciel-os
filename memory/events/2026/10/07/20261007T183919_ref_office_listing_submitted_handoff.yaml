@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T183919_ref_office_listing_submitted_handoff
+type: closeout
+recorded_at: 2026-10-07T18:39:19+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: ref-office-001
+  lane: single
+  objective: >-
+    Hand the workstream to the next session with the listing submitted to
+    Fastwork and the office ready for its first real order.
+  scope:
+    - Slice 5 progress (listing submitted, approval pending) and a session handoff before the owner clears context.
+  out_of_scope:
+    - Moving the final listing text and banner into the repository, saved replies, and the Fastwork runbook (rest of slice 5).
+outcome:
+  status: slice-5-listing-submitted-awaiting-approval
+  completed:
+    - Owner merged ref-office PR 3 (main 1e07921); local main matches origin/main and bun test passes, 71 tests.
+    - Owner submitted the Fastwork listing with the edited description, three packages, and the banner.
+    - Dogfood jobs moved out of jobs/ into the ignored dogfood/private/jobs/, so bun run jobs shows no open jobs.
+  not_completed:
+    - Fastwork has not approved the listing yet.
+    - Final listing text, banner, and caption still live only in the ignored .assets/ref-office/ of HQ; slice 5 moves them into the repository.
+  lessons:
+    - Tests written from rules passed while three real documents still broke the office nine times; dogfood on real input belongs before launch, not after.
+    - A flag policy that sends every unverifiable entry to the owner fails on the first real list; flag only what the owner can decide.
+    - Extracted Thai text from PDFs is unreliable (sara am lost, spaces inside words); ask for Word files and read PDFs as images.
+    - Crossref's public pool rate-limits; a failed call must never be read or cached as "not found".
+    - The harness blocks agent pushes to main in other repositories; seeding an empty repository needs the owner's push.
+evidence:
+  plan: workstreams/ref-office-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "5"
+  repository:
+    head: 9fe4b6531285098b229e1a29ad2fada74e477b5a
+    branch: hq/20261005
+  child_repository:
+    canonical_remote: github.com/mojisejr/ref-office
+    main_head: 1e07921
+  owner_report: "ส่งแล้วครับ"
+unresolved:
+  - Fastwork approval time and outcome are unknown.
+  - Owner minutes and tokens per job are unmeasured until the first three real orders (G1, plan 0.2).
+  - Questions only the customer can answer still reach the owner as flags; routing is undecided.
+  - The HQ standing branch hq/20261005 is unpushed; pushing and merging it belong to the owner.
+next_action:
+  action: When Fastwork approves, record slice 5 done after moving listing text, banner, and saved replies into ref-office; when the first order arrives, run it with the owner as slice 6 and measure owner minutes and tokens.
+  acceptance_check:
+    - Listing approval confirmed by the owner and recorded.
+    - First real order delivered through runbook 00 with owner time and token use written down.
