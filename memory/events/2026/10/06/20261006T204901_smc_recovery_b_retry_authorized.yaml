@@ -1,0 +1,38 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T204901_smc_recovery_b_retry_authorized
+type: decision
+recorded_at: '2026-10-06T20:49:01+07:00'
+recorded_by: {human: owner, agent: codex}
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Retry the interrupted USB recovery case on the existing lock-1 bench.
+outcome:
+  status: decided
+  decision: After proposing B again, the owner reports USB reinserted and
+    explicitly asks the agent to continue control. Reuse revision 0.2 slice 4
+    and the existing two-role physical handoffs. Restore only inactive Empty
+    slot 1 using the normal Admin control, prepare synthetic HWREC002 by one
+    normal load and owner closure, then issue one dispense and repeat the
+    coordinated USB removal, closure while disconnected, reconnect and normal
+    final clear. Do not repeat the already proved round-A restart.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.2'
+  slice: '4'
+  repository:
+    head: 3aadd612ca2fe58a2af41e88c4e67767bb543bac
+    branch: codex/smc-hardware-slice1-proof
+  execution: {os: windows, locality: local}
+  interrupted_case: memory/events/2026/10/06/20261006T204901_smc_recovery_a_pass_b_interrupted.yaml
+  baseline: Connected COM4; read-only SQLite Empty slot 1 and latest audit 60;
+    actual app marks slot 1 inactive. Owner last reports lock physically closed.
+unresolved:
+- The retry is authorized but not yet performed. Stop if new physical movement
+  or mismatching state occurs; do not assume a successful outcome.
+- Accepted equipment and unperformed full-cabinet/scanner/scaling limits remain unchanged.
+next_action:
+  action: Restore only slot 1 to active, prepare HWREC002, and collect physical
+    release and closure before starting its dispense/USB recovery case.
+  acceptance_check:
+  - Each hardware step waits for its owner observation; no other slot, power or wiring change occurs.

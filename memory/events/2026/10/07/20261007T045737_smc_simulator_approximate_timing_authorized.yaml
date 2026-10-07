@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T045737_smc_simulator_approximate_timing_authorized
+type: decision
+recorded_at: '2026-10-07T04:57:37+07:00'
+recorded_by: {human: owner, agent: codex}
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Use an approximate simulator hook delay and record its limits.
+outcome:
+  status: decided
+  decision: The owner explicitly authorizes estimating and setting simulator
+    timing now, then recording findings and limitations in a closeout. Revise
+    the existing slice 4 instead of opening another workstream. The agent selects
+    50 ms as a provisional development delay, not a measured physical time.
+    Share the default across existing entry points, retain runtime overrides
+    and tester closure, and verify opening/refusal/recovery with simulator tests.
+    Do not actuate real hardware or alter the installed application in this task.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.3'
+  slice: '4'
+  repository:
+    head: 415ab7edfa56341f59796e0da81c309756d393b3
+    branch: codex/smc-hardware-slice1-proof
+  execution: {os: windows, locality: local}
+  hardware_checkpoint: memory/events/2026/10/06/20261006T205701_smc_one_lock_recovery_verified.yaml
+  local_source: checkouts/smc-v2/crates/cu12/src/poller.rs
+  rationale: Existing app transition polling waits 500 ms after each read.
+    Successful channel-1 traces include first-open observations near 38-43 ms
+    after command transmission and near 555 ms when an earlier read was closed.
+    These are sampled observations, not exact mechanical transition times.
+    A prompt 50 ms model is an owner-authorized approximation; no averaging of
+    these observations establishes a physical duration.
+unresolved:
+- Exact mechanical timing and the meaning of the recorded manual's 500/550 ms
+  unlocking-time values remain unknown; the original PDF is unavailable here.
+- Only lock 1 has physical proof; full mapping, scanner/scaling, fresh hardware
+  exports and accepted equipment information gaps remain unchanged.
+- This decision permits local commits only under the owner's standing direction;
+  no push, PR, remote merge or full-workstream closure is authorized here.
+next_action:
+  action: Change and test the shared simulator default, preserve a 550 ms fallback,
+    and append a scoped closeout with actual results and remaining limits.
+  acceptance_check:
+  - Both simulator binaries use the same provisional delay; normal closure remains tester-controlled.
+  - No COM4 traffic or installed-app data change is introduced by simulator verification.

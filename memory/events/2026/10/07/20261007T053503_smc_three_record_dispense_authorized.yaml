@@ -1,0 +1,35 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T053503_smc_three_record_dispense_authorized
+type: decision
+recorded_at: '2026-10-07T05:35:03+07:00'
+recorded_by: {human: owner, agent: codex}
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Prove selective dispense/clear with three coexisting synthetic records.
+outcome:
+  status: decided
+  decision: Execute the healthy multi-record flow included in the owner's
+    accepted three-lock bench proposal and instruction to begin. Following
+    successful mapping/loading and owner closure/no-abnormality report, continue
+    revision 0.4 slice 3 using normal dispense and clear in order HW3A002,
+    HW3A001, HW3A003. Only one unlock at a time with owner physical observation
+    and closure; verify the other records/locks remain unchanged between cases.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.4'
+  slice: '3'
+  repository:
+    head: a40e599c231594ca1607949af9a6597d0de54c6b
+    branch: codex/smc-hardware-slice1-proof
+  execution: {os: windows, locality: local}
+  scope_authority: memory/events/2026/10/07/20261007T052434_smc_three_lock_bench_scope_authorized.yaml
+  loading_proof: memory/events/2026/10/07/20261007T053503_smc_three_lock_mapping_verified.yaml
+unresolved:
+- Dispense/clear is authorized but unperformed. Keep all previous limits;
+  do not issue extra unlocks, repeat recovery or test unconnected channels.
+next_action:
+  action: Select HW3A002 through normal dispense controls, observe channel 2,
+    and retain HW3A001/HW3A003 until their own later cases.
+  acceptance_check:
+  - A mismatched physical/status outcome stops further commands and is recorded before any retry.

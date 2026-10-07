@@ -1,0 +1,86 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T200444_smc_hardware_restart_restored_awaiting_closure
+type: closeout
+recorded_at: '2026-10-06T20:04:44+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Record the restored pending operation while awaiting physical closure.
+outcome:
+  status: restart-restored-owner-closure-pending
+  result: One normal load command for synthetic HWREC001 opens slot 1.
+    The owner explicitly reports physical opening and holds it open. The agent
+    closes SMC through its window Close control and launches the installed app
+    again. The new app window restores HWREC001 and the load wait dialog with
+    COM4 connected and the open-door warning. Persisted slot 1 remains Open.
+    The complete report window contains only the original unlock transmission,
+    with no unlock replay after restart. The owner has been told that the lock
+    may now be closed; the closure reply is still pending at this checkpoint.
+    No round-B dispense or USB interruption has begun. This event is a record
+    about ongoing work and deliberately names no delivery slice.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.2'
+  repository:
+    head: 6de64bdfeef6df9010fdeaeea67584d1e3ef35f2
+    branch: codex/smc-hardware-slice1-proof
+  execution:
+    os: windows
+    locality: local
+  authority: memory/events/2026/10/06/20261006T200005_smc_hardware_recovery_cases_authorized.yaml
+  app:
+    path: 'D:\Smart Medication Cart\smc.exe'
+    integrated_source: d2a6cc6ea23e202bb2356622ec2e288fb0f4c685
+    port: COM4
+    final_observation: Open HWREC001, restored load wait dialog and open-door warning; USB remains connected.
+    screenshots:
+    - 'D:\smc-owner\testing\hardware-20261006\slice4-A-open-before-close-valid.jpg'
+    - 'D:\smc-owner\testing\hardware-20261006\slice4-A-reopened-pending.jpg'
+  owner_observation: The owner confirms physical opening with the lock held open before restart.
+  reports:
+  - 'D:\smc-owner\testing\hardware-20261006\slice4-A-before-restart.json'
+  - 'D:\smc-owner\testing\hardware-20261006\slice4-A-reopened-pending.json'
+  - 'D:\smc-owner\testing\hardware-20261006\slice4-A-timing.json'
+  protocol:
+    request_at: '2026-10-06T20:01:21.220691+07:00'
+    request: '02 00 00 81 00 00 03 86'
+    unlock_transmissions: 1
+    attempt: 1
+    ack_at: '2026-10-06T20:01:21.232395+07:00'
+    first_open_status_at: '2026-10-06T20:01:21.775343+07:00'
+    first_open_status: '02 00 00 80 10 02 03 97 00 00'
+  audit:
+    database: 'C:\ProgramData\SMC\smc.sqlite'
+    load_requested_id: 41
+    door_opened_id: 42
+    door_left_open_id: 43
+    reconciled_ids: 44-55
+    scope: Restart logs reconciliation for all twelve logical slots; these
+      are state observations, not twelve unlock commands or physical mapping proof.
+    simulated: false
+    last_id: 55
+    slot1: Open HWREC001 at the checkpoint read; load completion is not yet recorded.
+  capture_limit: slice4-A-load-open.jpg shows Windows task overview rather
+    than an isolated SMC surface and is excluded from app screenshot evidence.
+unresolved:
+- Round A still needs owner closure and matching Loaded state/audit. Keep the
+  existing pending HWREC001 operation; do not repeat the load or unlock request.
+- Round B dispense and owner-controlled USB disconnect/close/reconnect remain unperformed.
+- This additional hardware sample observes first open hook about 555 ms after
+  TX and 543 ms after ACK, differing from earlier 38-43 ms after TX samples.
+  Timing variability and observation cadence must be explained before choosing
+  a simulator delay; no fixed mechanical duration or parity is established.
+- Physical slots 2-12, scanner/scaling and accepted equipment inventory gaps
+  remain unproved as recorded in the prior checkpoint. CIEL Windows Phase 2,
+  off-machine key backup, waived old-key rollback and production boundaries
+  remain unchanged; no source edit, push or PR occurs.
+next_action:
+  action: Await the owner's physical closure reply, refresh real app status
+    and read-only persisted state, and verify HWREC001 becomes Loaded without
+    another unlock. Then execute already authorized round B with explicit
+    physical handoffs for opening, USB removal, closure and USB reconnection.
+  acceptance_check:
+  - A missing closure reply is not interpreted as physical closure or approval to skip a handoff.
+  - Continue the current pending fixture; no successful unlock is replayed during resumption.

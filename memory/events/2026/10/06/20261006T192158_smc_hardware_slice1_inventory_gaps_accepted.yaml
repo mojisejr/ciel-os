@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T192158_smc_hardware_slice1_inventory_gaps_accepted
+type: decision
+recorded_at: '2026-10-06T19:21:58+07:00'
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Close the read-only communication slice with explicit owner-accepted inventory gaps.
+outcome:
+  status: decided
+  decision: Owner explicitly requests closing slice 1 with missing information
+    recorded truthfully and supplied later. Adopt revision 0.2 slice 1 at the
+    communication/backup checkpoint. Missing electrical labels and documents
+    are no longer its completion gate for the existing owner-assembled bench;
+    they remain unknown and are not a verified electrical setup or hardware pass.
+  authority_boundary: Closure does not issue an unlock. Physical test commands
+    retain one identified lock at a time and owner observation. No rewiring,
+    replacement supply, unverified driver, all-door command, production release,
+    external publication or completion of later slices follows from this decision.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.2'
+  slice: '1'
+  repository:
+    head: d9d353554e130b99483e9f2a9cb75dfaecf6951a
+    branch: codex/smc-hardware-slice1-proof
+  execution:
+    os: windows
+    locality: local
+  superseded_authority: memory/events/2026/10/06/20261006T091703_smc_combined_hardware_inventory_plan_authorized.yaml
+  baseline: memory/events/2026/10/06/20261006T190806_smc_hardware_readonly_baseline_inventory_partial.yaml
+  owner_facts:
+    factory_components: Owner reports CU12, adapter, wiring and physical lock are factory-supplied; adapter has no model name.
+    supply_provenance: Owner independently procured the power source.
+    cu12_rating: Owner reports CU12 uses 12V DC; this is not a measurement of the independently supplied output.
+    lock_rating: Owner thinks it may match CU12; actual rating remains unknown.
+    setup: Existing powered COM4 bench, only physical lock 1 connected, closed and empty; owner confirms no patient data and availability to observe.
+  owner_request: Owner says the missing information need not be confirmed now,
+    asks to close truthfully with no information recorded, and will supply it later.
+unresolved:
+- Actual supply output/current, lock electrical rating, board revision and matching
+  wiring/pinout documentation remain unknown; owner factory provenance is not vendor certification.
+- Physical mapping for twelve doors, detailed observed workflow, scanner/scaling,
+  recovery and hardware-versus-simulator parity remain unproved.
+- CIEL Windows Phase 2, off-machine key backup, waived old-key rollback and
+  production governance retain their previous independent boundaries.
+next_action:
+  action: Record the revision-0.2 slice-1 checkpoint, then describe the bounded
+    slot-1 opening/closing test with the owner. Establish the next physical-case
+    authority and current bench state before issuing its single normal app command.
+  acceptance_check:
+  - Missing information stays unknown; no old event is rewritten or relabeled as an electrical pass.
+  - No new power or wiring operation is inferred from closing this inventory checkpoint.

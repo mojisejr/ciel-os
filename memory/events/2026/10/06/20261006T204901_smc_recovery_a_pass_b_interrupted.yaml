@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T204901_smc_recovery_a_pass_b_interrupted
+type: closeout
+recorded_at: '2026-10-06T20:49:01+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Preserve the completed restart case and interrupted USB case before a retry.
+outcome:
+  status: restart-case-verified-usb-case-interrupted
+  result: The owner reports closure after normal app restart. HWREC001 becomes
+    Loaded with load-completed audit id 56, completing round A. Round B sends
+    one normal dispense command and the owner reports physical release held
+    open, then USB removal. Read-only evidence and later Computer Use show
+    disconnected COM4, disabled actuation controls and retained Open HWREC001.
+    Computer Use twice reports physical Escape interruption and the agent
+    stops each turn. The owner reports a mistaken press, proposes repeating B,
+    and reports the lock closed while USB remains removed. Read-only SQLite
+    finds force-cleared audit id 60 and Empty slot 1, without a normal
+    dispense-completed entry. After owner-reported USB reinsertion, the app
+    reconnects to COM4 but slot 1 remains inactive. Round B is interrupted and
+    is not a successful communication-recovery proof. No actor or cause for
+    force-clearing is inferred from the audit action alone.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.2'
+  repository:
+    head: 3aadd612ca2fe58a2af41e88c4e67767bb543bac
+    branch: codex/smc-hardware-slice1-proof
+  execution: {os: windows, locality: local}
+  authority: memory/events/2026/10/06/20261006T200005_smc_hardware_recovery_cases_authorized.yaml
+  previous_checkpoint: memory/events/2026/10/06/20261006T200444_smc_hardware_restart_restored_awaiting_closure.yaml
+  reports:
+  - 'D:\smc-owner\testing\hardware-20261006\slice4-B-open-before-usb.json'
+  - 'D:\smc-owner\testing\hardware-20261006\slice4-B-usb-removed.json'
+  screenshots:
+  - 'D:\smc-owner\testing\hardware-20261006\slice4-B-dispense-open.jpg'
+  - 'D:\smc-owner\testing\hardware-20261006\slice4-B-offline-wait.jpg'
+  audit:
+    rows:
+    - {id: 56, action: load-completed, simulated: false}
+    - {id: 57, action: dispense-requested, simulated: false}
+    - {id: 58, action: door-opened, simulated: false}
+    - {id: 59, action: door-left-open, simulated: false}
+    - {id: 60, action: force-cleared, simulated: false}
+    final_state: Slot 1 Empty, HN null, inactive in the connected app.
+  owner_observation: Owner reports physical closure, then USB reinsertion and explicitly resumes agent control.
+unresolved:
+- Round B normal completion after reconnect is unproved. Interrupted evidence
+  remains valid for its limited observations and is not rewritten as a pass.
+- Full mapping, scanner/scaling, equipment inventory gaps and simulator timing
+  remain as recorded in the prior checkpoints; no source change or publication occurs.
+next_action:
+  action: Perform the owner's requested bounded B retry after restoring only
+    inactive Empty slot 1 through the normal Admin UI. Prepare a separate
+    synthetic fixture and preserve the original force-clear history.
+  acceptance_check:
+  - No old event or audit row is overwritten and no interrupted command is replayed blindly.

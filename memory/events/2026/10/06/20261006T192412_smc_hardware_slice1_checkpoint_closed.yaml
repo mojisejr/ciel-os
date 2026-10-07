@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T192412_smc_hardware_slice1_checkpoint_closed
+type: closeout
+recorded_at: '2026-10-06T19:24:12+07:00'
+recorded_by:
+  agent: codex
+workstream:
+  id: smc-v2-hardware-001
+  lane: single
+  objective: Close slice 1 at its owner-accepted communication and backup checkpoint.
+outcome:
+  status: slice-1-closed-with-owner-accepted-inventory-gaps
+  result: Slice 1 closes under revision 0.2 using the recorded real COM4 baseline,
+    installed-build identity, empty slot 1, owner-confirmed bench access and
+    consistent pre-test backup. Factory provenance and the independently
+    procured supply are owner reports. Missing supply/lock ratings, board
+    revision and wiring documents remain unknown for later completion.
+    Revision 0.1's electrical/documentation requirements did not pass in full;
+    the owner explicitly changed the closure scope. No new command or physical
+    test is performed by this closeout, and slices 2-4 remain uncompleted.
+evidence:
+  plan: workstreams/smc-v2-hardware-001/PLAN.md
+  plan_revision: '0.2'
+  slice: '1'
+  repository:
+    head: 5c0c44be1cb01bbe0d301c1c3cf0c1fd5d55a234
+    branch: codex/smc-hardware-slice1-proof
+  execution:
+    os: windows
+    locality: local
+  authority: memory/events/2026/10/06/20261006T192158_smc_hardware_slice1_inventory_gaps_accepted.yaml
+  baseline: memory/events/2026/10/06/20261006T190806_smc_hardware_readonly_baseline_inventory_partial.yaml
+  validation: Wake accepts revision 0.2 and its exact slice-1 decision with no
+    validation errors. Two historical warnings are unchanged. Staged diff check
+    passed; no application source, key, license, supply or wiring was changed.
+  information_boundary: Owner-reported CU12 12V DC is not a measured supply
+    output or confirmed lock rating. Factory-supplied wires are not a verified
+    pinout. The return-to-simulator endpoint is recorded, not rehearsed.
+unresolved:
+- Actual supply output/current, lock rating, board revision, matching manual/pinout
+  and scanner inventory remain unknown and may be supplied later. The owner
+  accepts these information gaps on the existing powered bench only.
+- Only one physical lock is connected. Slot-1 mapping and observed opening/closing
+  are the next test; twelve-door mapping, owner workflow, scaling/scanner,
+  recovery and simulator parity are not passed by slice-1 closure.
+- Independent CIEL recovery, off-machine key backup, waived old-key rollback,
+  production boundaries and other Wake attention remain as referenced in the baseline event.
+next_action:
+  action: Prepare slice 2's single slot-1 opening/closing test using the normal
+    application and synthetic data, with the owner observing actual movement.
+    Establish case authority and refresh the current COM4/empty-slot baseline
+    before submitting one command. Compare physical observation, ACK, status
+    and UI separately; stop on a disagreement and do not repeat unlock blindly.
+  acceptance_check:
+  - The owner can observe the identified lock and close it normally after the one test.
+  - Missing inventory is not repeatedly required as an information gate for this unchanged bench.
+  - Unconnected slots and unperformed cases remain unproved; this checkpoint is not final workstream delivery.
