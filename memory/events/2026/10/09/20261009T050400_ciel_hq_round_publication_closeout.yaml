@@ -1,0 +1,87 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T050400_ciel_hq_round_publication_closeout
+type: closeout
+recorded_at: 2026-10-09T05:04:00+07:00
+recorded_by:
+  agent: codex
+
+workstream:
+  id: ciel-hq-round-20261005
+  lane: single
+  objective: >-
+    Publish the owner-selected hq/20261005 round for review, preserving
+    project evidence and unfinished work. This is a round checkpoint,
+    not a new execution plan or a delivery slice for its constituent lanes.
+  scope:
+    - Push the existing Mac standing branch, prepare draft PR 84 and this checkpoint, verify its published head, and present it for owner merge.
+  out_of_scope:
+    - Owner merge, production changes, child-project implementation, and publication of Windows sensor work.
+
+outcome:
+  status: recorded
+  owner_statement: >-
+    The owner confirmed both locations were quiet, authorized all the
+    proposed publication steps, and said they would merge each step and report back.
+  state:
+    - The Mac round was pushed and draft PR 84 was opened against main at the observed candidate head below. The checkout was clean before this record.
+    - The round carries plans, project registration and semantic records, including the Praneet brief and mockup in the public HQ repository; CIEL CLI source and shared operating instructions are unchanged by this round.
+    - MuMate cutover, maintenance closure, chat acceptance and outstanding operational follow-ups are recorded; Clear Together expenses has recorded owner acceptance. Ref Office launch and Praneet accepted design retain their own next evidence and authority gates.
+    - Windows reported its clean sensor planning branch still has 15 local commits outside fetched main and has held publication. Those commits are not in this PR.
+  not_done:
+    - This record does not claim a merged PR, synchronized main, completed sensor work, closed observation window, or completion of every HQ workstream.
+
+evidence:
+  repository:
+    head: 580531b8e609302a8b82fb9944a9fb82f88f2f38
+    branch: hq/20261005
+    working_tree: this-record-only
+    fetched_base: a9a5fe1336ebc98a8d35814dc59d3a315cf1cf68
+  pull_request:
+    number: 84
+    url: https://github.com/mojisejr/ciel-os/pull/84
+    base: main
+    head_branch: hq/20261005
+    observed_head: 580531b8e609302a8b82fb9944a9fb82f88f2f38
+    observed_state: draft
+  checks:
+    hq_check: Typecheck succeeded; 45 tests passed, 0 failed, 202 assertions in 15.70 seconds at the candidate head with this record present. The earlier check at b846e0f1d7814d17d129d1acc751bbee05ea9413 also passed.
+    wake: Candidate head with this record present has no validation errors and retains the two existing ignored-status warnings.
+    diff_check: Passed at the candidate head against fetched origin/main.
+  windows_report:
+    client: codex
+    branch: codex/smc-environment-plan
+    head: cffc77a0f53a515746fe4a6c6ecccf617e820df3
+    fetched_main: a9a5fe1336ebc98a8d35814dc59d3a315cf1cf68
+    status: Worker reported clean checkout and 15 unpublished commits; this is remote-worker evidence, not a Mac-local Wake observation.
+  semantic_sources:
+    mumate_cutover: memory/events/2026/10/09/20261009T044129_mumate_cutover_gate_opened_on_digitalocean.yaml
+    mumate_observation: memory/events/2026/10/09/20261009T044823_mumate_handoff_after_cutover_24h_watch_lessons.yaml
+    mumate_ops_followup: memory/events/2026/10/09/20261009T045935_mumate_team_account_deleted_via_ops_key_mismatch_found.yaml
+    ref_office: memory/events/2026/10/07/20261007T185510_ref_office_slice5_closeout.yaml
+    clear_together: memory/events/2026/10/08/20261008T192004_clear_together_expenses_owner_accepted_closed.yaml
+    praneet: memory/events/2026/10/08/20261008T213100_praneet_nursery_slice2_design_accepted.yaml
+    os_template: memory/events/2026/10/05/20261005T213217_ciel_os_template_opened.yaml
+    owner_contract: memory/events/2026/10/08/20261008T121647_shared_context_alignment_review_deferred.yaml
+
+unresolved:
+  - Owner review and merge remain pending. Synchronization follows the actual merge; Git establishes it without a duplicate merge-memory event.
+  - MuMate's 24-hour observation, later cleanup, production ops-key decision and staging-account copy remain as recorded in their source events. This publication authorizes none of those operational actions.
+  - Wake reports overlap on mootech-fe and bazi-sft-dataset for mumate-be-retirement-001 and mumate-vercel-to-do-001; confirm execution ownership before parallel work.
+  - Praneet's plan is revision 0.3 but its execution decision names revision 0.2. A matching owner decision is required before its next implementation; domain, batch-count and Neon-limit unknowns remain in its source record.
+  - Ref Office still needs real-order evidence, including owner minutes and tokens; publishing HQ does not prove those outcomes. Clear Together's deferred cleanup and pilot limits remain in its acceptance record.
+  - Active attention remains for ciel-mini-template-001, ciel-os-template-001, ciel-owner-operating-contract-001 and mootech-ga4-instrumentation-001. Their plans and latest records retain the next actions; template shared-source work and owner-contract review remain deferred, not implemented here.
+  - Paused attention remains for ciel-windows-portability-001, dac2-guided-inputs-001, mootech-fe-beam-gateway-001, mumate-be-decoupling-001 and orchard-decision-lab-001. This round does not resume them.
+  - Windows smc-environment-sensor-001 revision 0.3 has slices 5-6 pending and its local publication gate remains. Preserve its 15 unique HQ commits when bringing merged main into that branch; do not reset it to main or claim its currentness from Mac state.
+  - Wake retains ignored-status warnings for the GA4 2026-09-16 and BE-retirement 2026-10-02 closeouts. Committed events are unchanged; their warnings do not become final deliveries through this round checkpoint.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them. The owner's publication request supplies authority for this round only.
+
+next_action:
+  action: >-
+    Validate and commit this record, push it to PR 84, fetch and verify the
+    closeout commit is on its observed head, finalize the review description,
+    then mark ready. The owner reviews and merges using a merge commit.
+    After confirmation, independently synchronize Mac main and bring fetched
+    main into the Windows sensor branch while preserving its local work;
+    the next Mac HQ write opens the next standing branch.
+  acceptance_check:
+    - PR 84 head contains this checkpoint and the round; HQ checks pass and the owner can review the remaining limits before merge.
