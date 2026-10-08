@@ -1,0 +1,30 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T124701_clear_together_expenses_slice3_implementation_authorized
+type: decision
+recorded_at: 2026-10-08T12:47:01+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: clear-together-expenses-001
+  lane: single
+  objective: Implement the confirmed shared-expense plan continuously through a ready-for-review PR.
+  scope:
+    - Slice 3 implementation and local verification, with owner review/merge at final PR.
+outcome:
+  status: decided
+  decision: Owner authorized continuing slices 2–5 without repeated checkpoints requiring input; local proof gates remain, and delivery is a PR the owner merges. Production rollout is not authorized by this instruction.
+evidence:
+  plan: workstreams/clear-together-expenses-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: e148138a96fcf12507d7b5c4d4c36d4793f875aa
+    branch: hq/20261005
+  owner_statement: ผมว่าถ้างานไม่ใหญ่ และไม่มีอะไรต้องเคาะ คุนลุยยาวเลย เจอกัน PR
+unresolved:
+  - Owner merge and production migration/deployment remain pending explicit rollout authorization.
+  - Prior retired-store cleanup, provider retention and physical-phone acceptance remain unverified.
+  - Neon stays Free with one branch; existing Vercel Pro remains metered.
+next_action:
+  action: Execute the planned slices with local UI/API/backup proof and prepare one reviewed PR without merging it.

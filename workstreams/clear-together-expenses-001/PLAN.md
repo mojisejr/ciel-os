@@ -4,8 +4,8 @@
 **State:** active
 **Execution lane:** single
 **Plan revision:** 0.1
-**Execution phase:** 1
-**Execution state:** idle
+**Execution phase:** 2
+**Execution state:** executing
 **Parallelism:** none
 
 ## Goal and owner agreement
@@ -99,6 +99,8 @@ HQ ใช้ standing branch ปัจจุบันและ stage เฉพ�
 | 5 | backup/restore ครบและส่ง PR/วิธีใช้งานที่ตรวจได้ | executor เดิม | child PR + HQ | slice 4 review | 1–2 ชม. |
 | R5 หนัก | owner merge และอนุญาต rollout; ตรวจ migration/production read | owner + executor ตรวจหลัง merge | PR/deployment | slice 5 proof | 0.5–1 ชม. |
 
+เจ้าของอนุญาตให้ทำ slice 2–5 ต่อเนื่องถึง PR แล้ว; executor ตรวจแต่ละ checkpoint ในเครื่อง
+owner review เป็นการตรวจ PR ส่งมอบครั้งสุดท้าย ส่วน production rollout ยังรอคำอนุญาตแยก
 ผู้ตรวจในตารางเป็นหน้าที่ตรวจ ไม่ใช่ทีม/บัญชีอื่นที่ถูกสร้างหรือ dispatch แล้ว
 อาจส่งงานทั้งชุดผ่านหนึ่ง PR ตามลำดับ slices โดยตรวจแต่ละ checkpoint ก่อนขยายต่อ
 
@@ -193,7 +195,7 @@ DESIGN.md, docs/delivery/*, HQ workstream closeout
 
 ## Unresolved and next action
 
-- แผนนี้ยังไม่อนุญาต implementation slice 2–5 หรือ production migration/deploy; owner ต้องตรวจแล้วสั่งเริ่ม
+- เจ้าของอนุญาต implementation slice 2–5 ต่อเนื่องถึง PR; production migration/deploy ยังไม่อนุญาต
 - live provider plan/branch count, credentials และ deployment currentness ยังไม่ได้ตรวจรอบใหม่; ตรวจเมื่อ rollout
 - เจ้าของรายงานว่าได้ลองแอปเดิมแล้วตอบโจทย์; ไม่อนุมานว่า phone install/real-pilot criteria เก่าครบทุกข้อ
 - Retired private Blob store/token และ provider source-retention จาก closeout เดิมยังไม่ยืนยันว่าถูกจัดการแล้ว
@@ -201,4 +203,4 @@ DESIGN.md, docs/delivery/*, HQ workstream closeout
 - ไม่เพิ่มเงินเข้า งบ/แจ้งเตือน ใช้ AI แยกประเภท หรือเชื่อมธนาคารในรอบนี้; รายจ่ายร่วมกันขึ้นกับข้อมูลที่ทั้งคู่จด
 - ไม่แก้ OWNER.md/AGENTS.md หรือสร้าง global skill/agent infrastructure จากการวางแผนนี้
 
-**Next action:** owner ตรวจแผน slice 2–5 แล้วอนุญาตเริ่ม implementation; เริ่มตั้งชื่อก่อนจดรายจ่าย
+**Next action:** ทำ slice 2–5 ตาม proof gates แล้วส่ง PR พร้อมตรวจให้เจ้าของ merge; เริ่มตั้งชื่อก่อนจดรายจ่าย
