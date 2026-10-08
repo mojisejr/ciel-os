@@ -1,0 +1,33 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T132446_clear_together_production_migration_authorized
+type: decision
+recorded_at: 2026-10-08T13:24:46+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: clear-together-expenses-001
+  lane: single
+  objective: Prepare the existing production database for owner merge of application PR 2.
+  scope:
+    - Verify existing providers and database target, make a complete owner-controlled backup, apply reviewed additive migration 003 and verify retained records.
+outcome:
+  status: decided
+  decision: Owner asked the agent to perform the production backup and migration while away from home, following the immediately preceding explanation of these two steps. Owner still merges PR 2; no direct application deployment, new resource, plan change, branch creation or data reset is authorized here.
+evidence:
+  plan: workstreams/clear-together-expenses-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "5"
+  repository:
+    head: d4b269ddcae46d7d47561a609c5cc046c9fd3f45
+    branch: hq/20261005
+  owner_statement: คุนทำให้ผมได้หรือเปล่า ผมอยู่นอกบ้าน
+  proposed_action: Backup production database/private images, apply 003_shared_expenses.sql, then notify owner to merge PR 2.
+  reviewed_application_head: b47146b91f914e190eb932be455ecb6c46855ed1
+  pull_request: https://github.com/mojisejr/clear-together/pull/2
+unresolved:
+  - Owner merge, subsequent Git-triggered deployment and physical-phone acceptance remain pending.
+  - Existing Vercel Pro is metered; no additional service, subscription or Neon branch is permitted.
+  - Retired store/token cleanup and historical provider source retention remain unverified.
+next_action:
+  action: Verify provider identities and the existing direct admin connection, complete backup with checksums, then apply reviewed migration and verify preservation before offering the PR for owner merge.
