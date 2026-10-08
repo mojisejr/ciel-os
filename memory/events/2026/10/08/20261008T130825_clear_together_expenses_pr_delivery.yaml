@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T130825_clear_together_expenses_pr_delivery
+type: closeout
+recorded_at: 2026-10-08T13:08:25+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: clear-together-expenses-001
+  lane: single
+  objective: Deliver shared expenses and self-managed display names for the two existing members through owner-reviewed PR.
+  scope:
+    - Final slice 5 of plan 0.1; slices 2–4 implemented and locally verified continuously under the owner's recorded authorization.
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Implemented a separate shared-expense feature with two required entry fields, optional category, backdate and explicit on-behalf-of attribution.
+    - Implemented own display-name updates using Better Auth without changing user IDs, login IDs, existing claims or reimbursement totals.
+    - Added recorder-only edit/cancel, retained before/after history, idempotent create and optimistic version checks.
+    - Added Thai-date daily/monthly totals, category/literal search, pagination and full-filter aggregation excluding cancelled amounts.
+    - Extended backup/restore for new tables and legacy snapshots; prepared a real-data rollout guard and migration/backup/rollback handoff.
+    - Full local suite passed 9 tests; typecheck, production build, formatting, diff check and committed-source packaging passed.
+  delivery_boundary: Implementation is offered in application PR 2. Owner review/merge, production backup/migration/deployment and actual-phone acceptance remain pending; no production data was mutated and no provider resource or plan was changed.
+evidence:
+  plan: workstreams/clear-together-expenses-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "5"
+  repository:
+    head: eef82dcc442daf00fdcaf3f83f8ce1251b1fc64e
+    branch: hq/20261005
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261005
+  authorization:
+    - memory/events/2026/10/08/20261008T124701_clear_together_expenses_slice2_implementation_authorized.yaml
+    - memory/events/2026/10/08/20261008T124701_clear_together_expenses_slice3_implementation_authorized.yaml
+    - memory/events/2026/10/08/20261008T124701_clear_together_expenses_slice4_implementation_authorized.yaml
+    - memory/events/2026/10/08/20261008T124701_clear_together_expenses_slice5_implementation_authorized.yaml
+  child_repository:
+    canonical_remote: github.com/mojisejr/clear-together
+    branch: codex/shared-expenses
+    implementation_head: 7228053fb414d96971a91d3e07347f00d1f6fd8a
+    base_main: 1858cc41fe9f69ea7a799972086b5262a3a3a54a
+    proof_contract_commit: bc22e5d
+    proof_document: docs/delivery/shared-expenses-proof.md
+    closeout_copy: docs/delivery/20261008T130825_clear_together_expenses_pr_delivery.yaml
+  pull_request:
+    number: 2
+    url: https://github.com/mojisejr/clear-together/pull/2
+    observed_state: OPEN
+    observed_draft: true
+    observed_head: 7228053fb414d96971a91d3e07347f00d1f6fd8a
+    procedure: Commit and push this closeout copy, fetch and prove ancestry against the PR head, update the six-section description, then mark ready for owner review.
+  checks:
+    baseline: Four existing local Playwright tests passed before implementation.
+    full_suite: bun run test passed all 9 local tests in 22.8 seconds, including two actual browser sessions, bills regression, synthetic receipt/slip bytes and the new expense flows.
+    hard_gates: bun run typecheck, bun run build, Prettier check and git diff --check passed on the implementation source.
+    money_and_dates: Local proofs cover Thai midnight/year/month boundaries, leap day and rejected invalid/future dates, 55 entries over two pages, literal wildcard search and cancelled exclusion.
+    backup: New records/history/IDs/names and event sequence restore; legacy v1 shape accepts an empty target; nonempty target refuses; backup before migration 003 and additive migration preserve existing accounts.
+    permissions: Local anonymous, bad Origin, spoofed recorder/profile payload and foreign edits denied; repeated create returns one ID and conflicting versions allow one update.
+    mobile_and_privacy: 320/390/736px and expanded 320px options have no horizontal overflow or axe critical/serious violations; no-store, stale-total error and offline-only cache checks passed; synthetic screenshots visually inspected.
+    deployment_packaging: Clean Git export at implementation head contained 95 paths and excluded ignored owner data, private env files and runtime directories; temporary export removed without deployment.
+    rollout_guard: Local checks cover owner-approval flag, database target, matching migration checksum and endpoint/branch match; provider reads are deferred to authorized rollout.
+  proof_lanes:
+    hard_gate: Closed locally.
+    api_truth: Closed in isolated local PostgreSQL; production Pending.
+    eye_truth: Closed in local Chromium through UI actions, axe and reviewed screenshots.
+    device_truth: Pending owner physical-phone exercise after rollout.
+  scope_detail: lib/expense-input.ts isolates input/date validation; scripts/rollout-preflight.ts isolates the planned rollout checks. These are necessary local implementation modules, with no added dependency, service or CIEL infrastructure.
+unresolved:
+  - Owner has not merged application PR 2 or authorized production migration/deployment. Stop writes briefly, verify current providers/env targets, take a complete backup and apply additive migration 003 before a Git-triggered deployment can run.
+  - Current live Neon Free/one-branch status, Vercel scope, production sensitive env targets and hosted behavior have not been rechecked this round; rollout must verify them. Existing Vercel Pro remains metered and there is no zero-charge guarantee.
+  - Physical-phone PWA acceptance for the new feature remains owner-controlled; local browser results do not prove it.
+  - Prior retired private Blob store/token deletion and historical removed-source retention remain unverified; this feature adds no image store and does not authorize destructive cleanup.
+  - HQ records are committed on the shared standing branch only. HQ origin/main integration remains the owner's round decision, separate from application PR merge.
+next_action:
+  action: Owner reviews application PR 2 and its closeout. Upon explicit rollout authorization, verify provider/env targets, complete a pre-migration backup and additive migration, then owner merges; verify the resulting hosted deployment and owner phone exercise before recording workstream completion.
