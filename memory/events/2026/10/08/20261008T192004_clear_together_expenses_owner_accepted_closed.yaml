@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T192004_clear_together_expenses_owner_accepted_closed
+type: closeout
+recorded_at: 2026-10-08T19:20:04+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: clear-together-expenses-001
+  lane: single
+  objective: Close the owner-accepted shared-expenses and display-name delivery after production rollout and owner trial.
+  scope:
+    - Final slice 5 of plan revision 0.2; owner acceptance, completed plan and append-only HQ records only.
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Owner reports successful display-name update and expense recording and explicitly authorizes closure; the pending owner-trial criterion is accepted on that report.
+    - Plan revision 0.2 marks the workstream completed with its original feature scope and explicit owner acceptance provenance.
+    - Confirmed application PR 2 remains merged and child clean main equals freshly fetched origin/main; application has no open PR or issue.
+    - Preserved prior local test, backup/migration and exact-commit production-rollout proofs by reference rather than repeating tests or mutating live records.
+  integration_boundary: Application delivery is merged and owner-accepted. This final HQ record is ready for the owner's shared-round integration; no shared HQ merge, push or branch cleanup is claimed or performed.
+evidence:
+  plan: workstreams/clear-together-expenses-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "5"
+  repository:
+    head: 6d0adb057902d02bfd63faeb0d45cc8d6e6c8016
+    branch: hq/20261005
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261005
+  owner_decision: memory/events/2026/10/08/20261008T191918_clear_together_expenses_acceptance_closure_authorized.yaml
+  owner_statement: ผมลองตั้งชื่อละใช้งานได้ครับ และลองบันทึกแล้วครับโอเคเลย ปิดได้เลยครับถ้าไม่มีอะไรแล้ว
+  acceptance_provenance: Owner-reported successful trial, not an independent observation of the owner's device or a claim that every production edge case was exercised.
+  implementation_proof: checkouts/clear-together/docs/delivery/shared-expenses-proof.md
+  test_delivery: memory/events/2026/10/08/20261008T130825_clear_together_expenses_pr_delivery.yaml
+  production_preparation: memory/events/2026/10/08/20261008T133042_clear_together_production_migration_prepared.yaml
+  production_rollout: memory/events/2026/10/08/20261008T172644_clear_together_expenses_production_rollout_verified.yaml
+  child_repository:
+    canonical_remote: github.com/mojisejr/clear-together
+    branch: main
+    head: 7aeb829d6d7637fee2cadeddbdca7857e433cba4
+    fetched_origin_main: 7aeb829d6d7637fee2cadeddbdca7857e433cba4
+    working_tree: clean
+    local_topic_branch: Already removed after full ancestry and open-PR checks in the rollout checkpoint.
+  pull_request:
+    number: 2
+    url: https://github.com/mojisejr/clear-together/pull/2
+    state: MERGED
+    merged_at: 2026-10-08T10:24:39Z
+    merge_commit: 7aeb829d6d7637fee2cadeddbdca7857e433cba4
+  deployment:
+    url: https://clear-together.vercel.app
+    id: dpl_Hb5UKB9JgLgK33HmuqBkpXX1mcQU
+    target: production
+    ready_state: READY
+    git_commit: 7aeb829d6d7637fee2cadeddbdca7857e433cba4
+    observation: Verified in the preceding rollout checkpoint; this closure did not invoke another deployment.
+  closeout_scope:
+    review: Owner already supplied successful trial and closure approval; no repeated acceptance question.
+    vault_steps: N/A; this is a CIEL workstream closure, not an Oracle vault session. Global-board scans, other-vault writes, PSI handoff/retro/evals, messages and direct main pushes are outside the repository contract and requested scope.
+    retained_context: This append-only record and referenced decision preserve the acceptance, proof boundaries and remaining maintenance without creating another memory store.
+unresolved:
+  - Backup remains local-only in the owner-controlled .local/backups directory; no off-device copy was created.
+  - Retired private Blob store/token cleanup and historical removed-deployment source retention remain unverified maintenance outside this accepted feature delivery.
+  - Vercel Secrets were not read back or changed; earlier scope and admin endpoint checks do not expose runtime values. The historical trial productionDataPresent flag was never used to bypass real-data guards.
+  - Earlier preparation verified Neon Free with one branch. Existing Vercel Pro is metered; closure makes no zero-charge or permanent-provider-policy guarantee.
+  - This trial acceptance does not reopen or invent proof for the old workstream's deferred PWA-installation and real-bill pilot criteria.
+  - HQ standing-branch integration remains the owner's separate round; other sessions' files and workstreams are not closed by this event.
+next_action:
+  action: No further implementation is scheduled for this owner-accepted workstream. Owner continues using the app, retains the local backup and integrates the HQ round at the chosen time; address retired-store maintenance separately when authorized.
