@@ -4,30 +4,34 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
 <style>
 /* Layout: Apple-style product pages for a nursery. One quiet column per screen,
-   huge type, field photography first, the lot's numbers set like a spec sheet.
-   Palette comes from the owner's portrait: olive ground, shirt green, straw hat. */
+   huge type, field photography first, the lot's numbers set like a spec sheet. */
+/* Palette: durian leaf (glossy green top, copper underside) in late-afternoon sun.
+   Warm white ground, soft gold light, deep leaf green for actions. */
 :root{
-  --paper:#f7f7f2; --surface:#ffffff; --ink:#1b2013; --muted:#566049;
-  --olive:#3b4824; --leaf:#557a26; --straw:#d4bc6e; --line:#e2e5d8;
-  --grow-bg:#f4ecd0; --grow-ink:#664f0e; --ready-bg:#e2edd2; --ready-ink:#2c4610;
-  --chart-band:#d9e6c4; --stick:#e9d48f; --bag:#2a2b27; --soil:#6b5a43;
-  --leaf-a:#4f7a22; --leaf-b:#8a6a2a;
+  --paper:#fbfaf6; --surface:#ffffff; --ink:#1f2a1c; --muted:#646b5a;
+  --olive:#2f4a2e; --leaf:#46703f; --straw:#e6c56f; --line:#ece9e0;
+  --glow:rgba(238,196,104,.22); --shadow:0 1px 2px rgba(40,46,30,.04),0 10px 30px rgba(40,46,30,.07);
+  --grow-bg:#f8efd6; --grow-ink:#77570f; --ready-bg:#e5eee0; --ready-ink:#2b4f2c;
+  --chart-band:#e2ebd9; --stick:#ead79b; --bag:#3b3b35; --soil:#8b7b62;
+  --leaf-a:#4f7d45; --leaf-b:#b8874c;
   --display:"Anuphan","IBM Plex Sans Thai","Noto Sans Thai",system-ui,sans-serif;
   --body:"IBM Plex Sans Thai","Noto Sans Thai",system-ui,sans-serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --paper:#11140c; --surface:#181d11; --ink:#eef1e3; --muted:#a9b298;
-  --olive:#cbd9a6; --leaf:#9cc45a; --straw:#d4bc6e; --line:#2b3221;
-  --grow-bg:#3a3215; --grow-ink:#f1da8c; --ready-bg:#22341a; --ready-ink:#c2e394;
-  --chart-band:#2f4220; --stick:#bfa45a; --bag:#0b0c0a; --soil:#4d4130;
-  --leaf-a:#79a83c; --leaf-b:#b08a3d; color-scheme:dark}}
+  --paper:#10140f; --surface:#171c15; --ink:#f1efe6; --muted:#aeb3a3;
+  --olive:#d7e4cc; --leaf:#a6c98f; --straw:#e2c070; --line:#262d22;
+  --glow:rgba(226,192,112,.10); --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.25);
+  --grow-bg:#3a321a; --grow-ink:#f0d898; --ready-bg:#1f3320; --ready-ink:#c4e2ad;
+  --chart-band:#26361f; --stick:#bca462; --bag:#0c0d0b; --soil:#5a4c39;
+  --leaf-a:#7aa86b; --leaf-b:#c49656; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --paper:#11140c; --surface:#181d11; --ink:#eef1e3; --muted:#a9b298;
-  --olive:#cbd9a6; --leaf:#9cc45a; --straw:#d4bc6e; --line:#2b3221;
-  --grow-bg:#3a3215; --grow-ink:#f1da8c; --ready-bg:#22341a; --ready-ink:#c2e394;
-  --chart-band:#2f4220; --stick:#bfa45a; --bag:#0b0c0a; --soil:#4d4130;
-  --leaf-a:#79a83c; --leaf-b:#b08a3d; color-scheme:dark}
+  --paper:#10140f; --surface:#171c15; --ink:#f1efe6; --muted:#aeb3a3;
+  --olive:#d7e4cc; --leaf:#a6c98f; --straw:#e2c070; --line:#262d22;
+  --glow:rgba(226,192,112,.10); --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.25);
+  --grow-bg:#3a321a; --grow-ink:#f0d898; --ready-bg:#1f3320; --ready-ink:#c4e2ad;
+  --chart-band:#26361f; --stick:#bca462; --bag:#0c0d0b; --soil:#5a4c39;
+  --leaf-a:#7aa86b; --leaf-b:#c49656; color-scheme:dark}
 
 *{box-sizing:border-box}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65;padding-inline:16px;padding-block:0 48px}
@@ -54,8 +58,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .shop-head nav{margin-left:auto;font-size:14px;color:var(--muted);display:flex;gap:16px}
 
 /* hero */
-.hero{text-align:left;padding-block:36px 24px;display:grid;gap:14px}
-.hero h1{font-size:clamp(34px,7vw,64px);font-weight:700;letter-spacing:-.01em}
+.hero{text-align:left;padding-block:44px 28px;display:grid;gap:16px;background:radial-gradient(60% 80% at 85% 0%,var(--glow),transparent 70%);margin-inline:-16px;padding-inline:16px;border-radius:0 0 28px 28px}
+.hero h1{font-size:clamp(34px,7vw,64px);font-weight:600;letter-spacing:-.015em}
 .hero p{font-size:clamp(17px,2.4vw,21px);color:var(--muted);max-width:34em}
 .facts{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:15px;color:var(--muted)}
 .facts b{color:var(--ink);font-weight:600}
@@ -71,12 +75,13 @@ button,input,select,textarea{font:inherit;color:inherit}
     radial-gradient(circle at 50% 50%,var(--leaf-a) 0 22%,transparent 24%) 0 0/22px 20px,
     radial-gradient(circle at 50% 50%,var(--bag) 0 44%,transparent 46%) 0 0/22px 20px,
     linear-gradient(var(--soil),var(--soil))}
-.field .tag{position:absolute;left:12px;bottom:12px;background:rgba(17,20,12,.72);color:#f3f4ea;font-size:13px;padding:4px 10px;border-radius:999px}
+.field .tag{position:absolute;left:12px;bottom:12px;background:rgba(31,42,28,.62);backdrop-filter:blur(6px);color:#f3f4ea;font-size:13px;padding:4px 10px;border-radius:999px}
 
 /* lot cards */
-.section-title{font-size:clamp(24px,4vw,34px);font-weight:700;padding-block:44px 16px}
+.section-title{font-size:clamp(24px,4vw,34px);font-weight:600;letter-spacing:-.01em;padding-block:44px 16px}
 .lots{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
-.lot{background:var(--surface);border-radius:22px;overflow:hidden;display:grid;cursor:pointer;border:1px solid var(--line);text-align:left;padding:0}
+.lot{background:var(--surface);border-radius:24px;overflow:hidden;display:grid;cursor:pointer;border:0;box-shadow:var(--shadow);text-align:left;padding:0;transition:transform .25s ease}
+.lot:hover{transform:translateY(-2px)}
 .lot .field{border-radius:0;aspect-ratio:4/3}
 .lot .body{padding:16px 18px 18px;display:grid;gap:8px}
 .lot .code{font-family:var(--display);font-size:22px;font-weight:700}
@@ -96,10 +101,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 .step h3{font-size:20px}
 .step p{color:var(--muted);font-size:15px}
 .ship{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:20px}
-.ship div{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 18px}
+.ship div{background:var(--surface);border:0;box-shadow:var(--shadow);border-radius:18px;padding:16px 18px}
 .ship b{font-family:var(--display);font-size:18px;display:block}
 .ship span{color:var(--muted);font-size:15px}
-.cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:999px;background:var(--olive);color:var(--paper);font-weight:600;border:0;cursor:pointer;text-decoration:none}
+.cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;background:var(--olive);color:var(--paper);font-weight:500;letter-spacing:.01em;border:0;cursor:pointer;text-decoration:none}
 .cta.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
 .since{display:flex;gap:16px;align-items:center;padding-block:44px 0;border-top:1px solid var(--line);margin-top:44px}
 .since img{width:72px;height:72px;border-radius:50%;background:var(--olive)}
@@ -109,10 +114,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* lot page */
 .back{background:none;border:0;color:var(--leaf);cursor:pointer;padding:16px 0 0;font-size:15px}
 .lot-hero{display:grid;gap:10px;padding-block:20px 22px}
-.lot-hero h1{font-size:clamp(38px,8vw,72px);font-weight:700}
+.lot-hero h1{font-size:clamp(38px,8vw,72px);font-weight:600;letter-spacing:-.015em}
 .lot-hero .lede{font-size:clamp(17px,2.4vw,21px);color:var(--muted)}
 .cover{display:grid;grid-template-columns:2fr 1fr;gap:12px}
-.cover .stickshot{border-radius:22px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;position:relative;overflow:hidden;min-height:180px}
+.cover .stickshot{border-radius:22px;background:var(--surface);border:0;box-shadow:var(--shadow);display:grid;place-items:center;position:relative;overflow:hidden;min-height:180px}
 .cover .stickshot canvas{width:100%;height:100%}
 .cover .stickshot .tag{position:absolute;left:10px;bottom:10px;font-size:12px;background:rgba(17,20,12,.72);color:#f3f4ea;padding:3px 9px;border-radius:999px}
 @media (max-width:560px){.cover{grid-template-columns:1fr 1fr}.cover .field{grid-column:1/-1}}
@@ -121,10 +126,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 .big-stats .v{font-family:var(--display);font-size:clamp(30px,5vw,44px);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
 .big-stats .k{color:var(--muted);font-size:14px}
 .price{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
-.price div{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 18px;display:grid;gap:2px}
+.price div{background:var(--surface);border:0;box-shadow:var(--shadow);border-radius:18px;padding:16px 18px;display:grid;gap:2px}
 .price .v{font-family:var(--display);font-size:32px;font-weight:700;font-variant-numeric:tabular-nums}
 .price .k{color:var(--muted);font-size:14px}
-.viewer{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:16px;display:grid;gap:10px}
+.viewer{background:var(--surface);border:0;box-shadow:var(--shadow);border-radius:22px;padding:16px;display:grid;gap:10px}
 .viewer canvas{width:100%;height:380px;touch-action:pan-y;cursor:grab;display:block}
 .viewer .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px}
@@ -153,7 +158,9 @@ button,input,select,textarea{font:inherit;color:inherit}
 .q{display:grid;gap:10px}
 .q > label,.q > .lab{font-family:var(--display);font-size:18px;font-weight:600}
 .chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.chips.four{grid-template-columns:repeat(5,1fr)}
+.custom-h{display:grid;grid-template-columns:1fr auto 1fr auto;gap:8px;align-items:end}
+.custom-h label{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.custom-h span{padding-bottom:14px;color:var(--muted)}
 .chip{min-height:56px;border-radius:14px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;font-size:16px;font-variant-numeric:tabular-nums}
 .chip small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
 .chip[aria-pressed="true"]{background:var(--olive);color:var(--paper);border-color:var(--olive)}
@@ -176,7 +183,7 @@ textarea.field-in{min-height:80px;padding:12px 14px;font-size:16px}
 .save .cta{width:100%;min-height:56px;font-size:18px}
 .saved{color:var(--ready-ink);background:var(--ready-bg);border-radius:12px;padding:10px 14px;font-size:15px}
 .olist{display:grid;gap:12px;padding-block:8px}
-.orow{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px;display:grid;gap:10px}
+.orow{background:var(--surface);border:0;box-shadow:var(--shadow);border-radius:18px;padding:14px 16px;display:grid;gap:10px}
 .orow .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .orow .top b{font-family:var(--display);font-size:20px}
 .orow .meta{font-size:14px;color:var(--muted)}
@@ -316,12 +323,19 @@ textarea.field-in{min-height:80px;padding:12px 14px;font-size:16px}
         <button type="button" class="chip" aria-pressed="false">70-C<small>6 ต.ค. 69</small></button>
       </div></div>
     <div class="q"><span class="lab" id="lH">ความสูงส่วนใหญ่ (ซม.)</span>
-      <div class="chips four" role="group" aria-labelledby="lH" data-group="h">
+      <div class="chips" role="group" aria-labelledby="lH" data-group="h">
         <button type="button" class="chip" aria-pressed="false">&lt;30</button>
         <button type="button" class="chip" aria-pressed="true">30–40</button>
         <button type="button" class="chip" aria-pressed="false">40–50</button>
         <button type="button" class="chip" aria-pressed="false">50–60</button>
         <button type="button" class="chip" aria-pressed="false">60+</button>
+        <button type="button" class="chip" aria-pressed="false" data-custom>กำหนดเอง</button>
+      </div>
+      <div class="custom-h" id="customH" hidden>
+        <label for="hMin">ต่ำสุด<input id="hMin" class="field-in" inputmode="numeric" placeholder="34"></label>
+        <span aria-hidden="true">–</span>
+        <label for="hMax">สูงสุด<input id="hMax" class="field-in" inputmode="numeric" placeholder="46"></label>
+        <span class="unit">ซม.</span>
       </div></div>
     <div class="q"><label for="up">ยอดกระโดง ประมาณ</label>
       <div class="slider"><input id="up" type="range" min="0" max="100" step="10" value="60">
@@ -387,7 +401,8 @@ textarea.field-in{min-height:80px;padding:12px 14px;font-size:16px}
 
   document.querySelectorAll("[data-group]").forEach(function(g){
     g.addEventListener("click",function(e){var c=e.target.closest(".chip");if(!c)return;
-      g.querySelectorAll(".chip").forEach(function(x){x.setAttribute("aria-pressed",x===c)})});
+      g.querySelectorAll(".chip").forEach(function(x){x.setAttribute("aria-pressed",x===c)});
+      if(g.dataset.group==="h"){var box=document.getElementById("customH");box.hidden=!c.hasAttribute("data-custom");if(!box.hidden)document.getElementById("hMin").focus()}});
   });
   var up=document.getElementById("up");
   up.addEventListener("input",function(){document.getElementById("upV").textContent=up.value+"%";document.getElementById("sideV").textContent=(100-up.value)+"%"});
