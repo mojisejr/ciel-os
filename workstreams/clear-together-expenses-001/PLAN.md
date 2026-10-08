@@ -31,12 +31,12 @@
 คำยืนยันนี้อนุญาตเปิด workstream และเตรียมแผน ไม่ถือเป็นคำสั่งเริ่ม implementation
 หรืออนุญาต migration/deployment กับข้อมูลจริงโดยอัตโนมัติ
 
-## Projects and verified starting evidence
+## Project links
 
 | Project | Role | Local binding |
 |---|---|---|
-| ciel-os | แผน decision และ closeout | . |
-| clear-together | private PWA ที่เจ้าของใช้อยู่ | checkouts/clear-together |
+| `ciel-os` | แผน decision และ closeout | . |
+| `clear-together` | private PWA ที่เจ้าของใช้อยู่ | checkouts/clear-together |
 
 - งานเดิม `clear-together-pwa-001` completed revision 0.5; ไม่เปิดหรือแก้แผนเก่านั้น
 - Child main clean และตรง fetched origin/main ที่ `1858cc41fe9f69ea7a799972086b5262a3a3a54a`
