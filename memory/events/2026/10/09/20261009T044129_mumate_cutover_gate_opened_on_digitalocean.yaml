@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T044129_mumate_cutover_gate_opened_on_digitalocean
+type: closeout
+recorded_at: 2026-10-09T04:41:29+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Close slice 6: bazichart.mumate.co moved from Vercel to mumate-prod-1
+    behind the maintenance gate, the owner reviewed it on the real domain and
+    opened the gate. This record is the cold-session entry for MuMate; slice
+    7 (observation, Vercel retirement) is next and needs its own decision.
+  scope:
+    - Runbook 06 steps 0-6 on 2026-10-09, with times.
+  out_of_scope:
+    - Slice 7; Vercel retirement; be-retirement step 6.
+
+outcome:
+  status: recorded
+  slice: "6"
+  timeline:
+    - "03:50 step 0 (agent): GitHub fe 83ed2f1 / bazi 40e8ebf / infra 68cf7dd; Vercel ok; DNS CNAME Vercel TTL 300; prod-1 fe and bazi healthy env production, MAINTENANCE_MODE on, QSTASH_TOKEN 1, CRON_SECRET fe 1 / bazi 1, six timers inactive; PR 39 MERGEABLE."
+    - "~03:53-03:55 step 2 (owner): Vercel mootech-fe MAINTENANCE_MODE -> on, Redeploy. 03:55 agent: /v2 and / on the real domain show the maintenance page; /api/health and /api/auth/providers 200. Step 1 had been done on 2026-10-07 (20261007T114914)."
+    - "03:55 step 3a (agent) again: CRON_SECRET fe 1 / bazi 1, cron-check=0. Owner disabled Cron Jobs on Vercel mootech-fe and bazi-sft-dataset (owner-reported) and merged mumate-infra PR 39 (95df107). 03:57 agent: prod-1 git pull 95df107, cron-install: push-reminders, manifest-morning, reconcile-payment, qi-quota-reset, account-purge active; bazi-alerts inactive. 03:58 and 03:59 push-reminders and manifest-morning 200 on prod-1."
+    - "Step 4: the DNS person (in the United States) replaced CNAME bazichart with A 209.38.56.234 TTL 5 min in Namecheap; the first try was not saved (registrar still CNAME at 04:04), the agent gave step-by-step instructions, the owner sent the screenshot at 04:18. 04:18:41 dns1.registrar-servers.com, 1.1.1.1 and 8.8.8.8 answer 209.38.56.234. 04:18:50 caddy restarted; 04:18:55 Let's Encrypt certificate obtained (http-01, 5 validations), expires 2027-01-06. 04:19 https /api/health 200 platform container env production; maintenance still on."
+    - "Grafana showed 443 errors briefly around the DNS change: probes resolved to prod-1 before the certificate existed (and for seconds the name had no record). Expected by runbook 06 (first issuance cannot be rehearsed); no user impact behind the maintenance page; 200 since 04:18:55."
+    - "Step 5 (owner, via bypass): /api/health container; bypass works; the existing session carried over (same NEXTAUTH_SECRET, /api/auth/session and /api/user on prod-1); real purchase QI_60 by PromptPay - /api/v2/payment/promptpay on prod-1, Beam webhook from 35.247.170.25 to /api/v2/payment/webhook-beam answered 200, success page and Qi granted; chat answered (/api/chat/bazi on prod-1); the maintenance notice gone and the Qi check-in popup back. Agent: no 5xx in 20 minutes, no bazi errors, cron 200 every minute; .env probe paths return the app's maintenance page or 404, no secrets."
+    - "04:41 step 6: owner 'เปิด gate !'. Agent set MAINTENANCE_MODE='off' in prod-1 env/fe.env and recreated fe. /v2 200 without cookie, no maintenance text (34780 bytes); / 307 to /v2; health ok container production, fe 83ed2f1, bazi 40e8ebf."
+  deferred_by_owner:
+    - "LINE in-app login through the real rich menu: checked after the gate (owner's choice, no LIFF URL change needed)."
+    - "Refund of the D9 test purchase in Beam: later."
+    - "Fortune page and profile photo upload: not tried in the review; same fe -> bazi path as chat and the same Supabase Storage as before."
+  dod_check:
+    - "Public hostname serves fe 83ed2f1 / bazi 40e8ebf from DigitalOcean: yes."
+    - "Each job one runner: five timers on prod-1; Vercel crons disabled in both projects (owner-reported, not read back by the agent); bazi-alerts off on both."
+    - "Team staging sign-off with SHAs (20261007T112835) and the owner's review: recorded."
+    - "Owner opened the gate: yes, 04:41."
+    - "Flip-back path usable: Vercel kept in maintenance on 83ed2f1; DNS person reachable; PR 39 revertible."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "f6ed9b3"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "83ed2f1 on mumate-prod-1 (production), staging; Vercel in maintenance"
+    bazi-sft-dataset: "40e8ebf on mumate-prod-1 and staging"
+    mumate-infra: "main 95df107 on prod-1 (PR 39 merged); staging still 68cf7dd"
+    dns: "bazichart.mumate.co A 209.38.56.234 TTL 300"
+
+unresolved:
+  - "Agent watches to 10:00 (the announced end)."
+  - "LINE in-app login, fortune page, photo upload (owner, after the gate); Beam refund (owner)."
+  - "TTL back to 3600 after 24 h stable (DNS person); delete env/*.env.bak-* on prod-1 by name after stable; staging pull of 95df107."
+  - "Vercel stays in maintenance as the flip-back target until the owner retires it (D10); slice 7 needs its own decision."
+  - "mumate-be-retirement-001 step 6 (Render delete) waits for the owner after the cutover holds."
+  - "HQ hq/20261005 unpushed (many lanes); the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Watch prod-1 to 10:00 (health, 5xx, cron, payments, Grafana); record the
+    observation; then the owner decides slice 7.
+  acceptance_check:
+    - No 5xx burst, cron 200, health ok through 10:00.
