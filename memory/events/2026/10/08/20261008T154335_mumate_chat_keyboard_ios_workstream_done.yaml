@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T154335_mumate_chat_keyboard_ios_workstream_done
+type: closeout
+recorded_at: 2026-10-08T15:43:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-chat-keyboard-ios-001
+  lane: single
+  objective: >-
+    Close slice 1 and the workstream: the owner reports members' chat use is
+    normal on production, with no sliding and no white band above the
+    keyboard.
+  scope:
+    - Owner observation of production use; plan state completed. No code or host change.
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  completed:
+    - "PR 875 (merge a6a3f4ea2efabccefda38bedf34ca9e89284f69b) is still contained in mootech-fe origin/main 83ed2f1 as last fetched 2026-10-07 09:17; no revert of it on main."
+    - "Owner reports the chat works normally on production and the white screen no longer appears."
+    - "Plan 0.1 marked completed; the owner said to close the workstream."
+  owner_statement: "ผลคือ chat ใช้ได้ปกติแล้วครับ ไม่มีหน้าขาวขึ้นแล้ว ปิด workstream ได้เลย"
+  not_verified:
+    - "Per-device coverage (iPhone Safari, LINE, installed PWA, text sizes, Android/Samsung) was not reported case by case; the closing rests on the owner's summary of members' use."
+    - "Production health and remote state were not re-read for this record."
+
+evidence:
+  plan: workstreams/mumate-chat-keyboard-ios-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "379d180"
+    branch: hq/20261005
+    working_tree: this-closeout-and-plan-state
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261005
+  pull_request:
+    repository: github.com/mojisejr/mootech-fe
+    number: 875
+    url: https://github.com/mojisejr/mootech-fe/pull/875
+    base: main
+    state: MERGED
+    merge_commit: a6a3f4ea2efabccefda38bedf34ca9e89284f69b
+  application:
+    mootech-fe: "origin/main 83ed2f1 (contains PR 875 merge a6a3f4e)"
+
+unresolved:
+  - "iOS 26 standalone under-reports the viewport height (WebKit bug 301108); a small bottom band there may remain. Rollback if a device regresses: revert PR 875."
+  - "HQ records for this lane are committed on hq/20261005 and await the owner's round push and merge."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None for this workstream. The owner integrates the HQ round at his chosen time.
+  acceptance_check:
+    - Wake reports mumate-chat-keyboard-ios-001 completed once hq/20261005 reaches origin/main.
