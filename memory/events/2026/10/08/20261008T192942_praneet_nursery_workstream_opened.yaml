@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T192942_praneet_nursery_workstream_opened
+type: decision
+recorded_at: 2026-10-08T19:29:42+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Open the online lot-based wholesale workstream for the Praneet durian
+    seedling nursery after a four-round syncup.
+  scope:
+    - Open a new CIEL workstream and plan; HQ files only.
+outcome:
+  status: decided
+  decision: >-
+    The owner confirmed the syncup and said to start now. This authorizes
+    opening and planning slice 1 only. Creating repositories, LINE accounts,
+    paid services or production deployments needs the owner's go on the
+    slice that names them.
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 7685b776ed9529215373319aeb6a631019663c33
+    branch: hq/20261005
+  owner_goal: >-
+    Transform a 30-year nursery that waited for walk-in customers into an
+    online wholesale business selling 100+ tree lots by roll pallet or hired
+    truck, differentiated by a public timeline of each lot.
+  owner_statements:
+    - "Q3 (round 1): ลูกค้าเป้าหมาย คือคนที่ซื้อไปขายต่อ ... น่าจะมี ระบบที่บอกได้ว่า เรามี กี่ lot ตอนนี้ แต่ละ lot ลงปลูกไปเมื่อไหร่ แล้ว update status ให้ ลูกค้าเห็น และ วัดขนาด ให้ลูกค้า ทราบ อยู่เสมอ ๆ"
+    - "Q10 (round 1): ผม focus แค่สองอย่าง คือ rollpallet กับ รถคอก เท่านั้น"
+    - "R4-Q2: หลังบ้านที่ให้ผม update สิ่งต่างๆ และ ให้คุนเข้าถึง สิ่งต่างๆ แทนผม ... เก็บข้อมูล ดึงข้อมูล มาวิเคราะห์กับผมได้"
+    - "R4-Q3: เริ่มเลย"
+  syncup_prediction_check: >-
+    Agent predictions matched 2 of 10, then 4 of 9, then 5 of 8, then 1 of 3
+    with partial matches each round. Wrong guesses re-walked: buyer segment
+    (resellers, not growers), staffing (owner and agent, not the
+    mother-in-law), ad budget (free first, at most 1,000 THB a month),
+    booking (not now), sequencing against MuMate (separate business, start
+    now), back office (needed from the start, not after the first sale).
+  research_basis: >-
+    Web research on 2026-10-08 summarized under Starting evidence in the
+    plan, labelled as not CIEL Wake facts.
+unresolved:
+  - Hosting (DigitalOcean or Vercel), repository names and visibility are decided at the start of slice 2.
+  - Domestic licensing for selling grafted durian seedlings and any nursery certification are unconfirmed with the Department of Agriculture.
+  - Bag weight and trees per roll pallet and per truck are unmeasured.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Commit the plan and this decision, record the slice 1 closeout, and
+    present the six slices for owner review before slice 2.
+  acceptance_check:
+    - Wake lists praneet-nursery-001 with plan revision 0.1 and no new validation error.
