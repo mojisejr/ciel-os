@@ -72,6 +72,8 @@
 - ใช้ Neon Free project เดิม หนึ่ง branch และ Vercel Pro scope เดิม; ไม่เพิ่มบริการ แพ็กเกจ หรือ billing
   ไม่ทดสอบ/reset ข้อมูลบน production และไม่สร้าง Neon preview branch
 - ทดสอบ migration/flow/restore ใน local Postgres; preview ไม่เชื่อม DB ข้อมูลจริง
+- scripts/deploy.ts ปัจจุบันเป็น trial guard ที่บังคับ productionDataPresent=false; ห้ามปลอมค่าเพื่อ deploy ทับข้อมูลจริง
+  slice 5 ต้องมีเส้นทาง rollout ที่ตรวจ owner authorization และรักษา provider/source guards เดิม
 - ก่อน deploy ตรวจ plan/branch count/provider scope อีกครั้งและ backup จริงก่อน additive migration
   Vercel Pro มี metered usage ร่วมทีม; เพดานในแอปไม่รับประกันค่าเพิ่มศูนย์
 - เจ้าของ review/merge PR เอง; ใช้ draft PR จน closeout อยู่บน head และพิสูจน์แล้ว
@@ -171,7 +173,7 @@ app/globals.css, tests/expenses.spec.ts, tests/expense-totals.spec.ts (ถ้า
 
 **Value:** เจ้าของตรวจ PR และเริ่มใช้รายจ่ายได้ พร้อมวิธีดูแลและกู้คืนทั้งรายจ่ายกับบิล
 
-**Candidate paths:** scripts/backup.ts, scripts/restore.ts, tests/expenses.spec.ts,
+**Candidate paths:** scripts/backup.ts, scripts/restore.ts, scripts/deploy.ts, scripts/package-deployment.ts, tests/expenses.spec.ts,
 tests/ledger.spec.ts (regression/reset isolation เมื่อจำเป็น), docs/OPERATIONS.md, README.md,
 DESIGN.md, docs/delivery/*, HQ workstream closeout
 
