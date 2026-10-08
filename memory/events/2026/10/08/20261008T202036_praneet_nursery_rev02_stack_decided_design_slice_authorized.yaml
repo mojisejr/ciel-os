@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T202036_praneet_nursery_rev02_stack_decided_design_slice_authorized
+type: decision
+recorded_at: 2026-10-08T20:20:36+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record the owner's stack decision as plan revision 0.2 and authorize the
+    new design slice before any repository or code exists.
+  scope:
+    - Plan revision 0.2 in HQ; design conversation and an HTML mockup kept in the workstream folder.
+outcome:
+  status: decided
+  decision: >-
+    Revision 0.2 adopts the stack in the plan (one Next.js app on the
+    existing Vercel Pro team with /ops back office, Neon Free, public Vercel
+    Blob for lot photos, Better Auth username and password, no AI API,
+    private praneet-web and praneet-office repositories, vercel.app until the
+    owner decides a domain). It inserts slice 2, design to an owner-accepted
+    mockup, and authorizes that slice only. Slices 3-7 are the former 2-6;
+    creating repositories still needs the owner's go on slice 3.
+  owner_statements:
+    - "การบันทึกข้อมูลอ่ะ ผมว่าเราทำ เป็นระบบหลังบ้านก็ได้ครับ บน vercel ตัวเดียวกับ ระบบหน้าบ้านนั่นแหละ คล้ายๆ กับ ops ของระบบ mumate ... ใช้ fullstack nextjs นั่นแหละดีสุด เรา vercel pro อยู่แล้วด้วย คือผมจะไม่ใช้ AI api เลย"
+    - "ผมว่าตามนี้ โอเคนะ ต้อง update workstream หรือเปล่า ? ผมคิดว่า แผนยังไม่ เสร็จเพราะยังไม่ได้คุยเรื่อง design เลย"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: eee266561d21f826b7d5910cc5c4901244d2775b
+    branch: hq/20261005
+  sources:
+    - "Owner's Sheet export .assets/preneet/ (git-ignored), read 2026-10-08; summarized in the plan without worker or customer names."
+    - "Gemini Spark prompts in .assets/orchard-decision/from-gemini-spark (git-ignored), read 2026-10-08."
+    - checkouts/clear-together/README.md and DESIGN.md as the reference stack and design-contract pattern.
+unresolved:
+  - Neon Free plan limits for an additional project are not yet re-verified.
+  - The shop domain is undecided; it is the owner's money decision before the board is shared.
+  - The 11 September bagging batch count is to be counted by the owner.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Run the design syncup with the owner, then build the HTML mockup and
+    brief in workstreams/praneet-nursery-001/design/ for owner acceptance.
+  acceptance_check:
+    - The owner accepts the mockup in his own words, recorded in the slice 2 closeout.
