@@ -1,0 +1,95 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T213217_ciel_os_template_opened
+type: decision
+recorded_at: 2026-10-05T21:32:17+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-os-template-001
+  lane: single
+  objective: >-
+    Separate CIEL's engine from the owner's working HQ as a clean, private
+    template repository, ciel-os-template, that carries everything this HQ has
+    except its memory.
+  scope:
+    - Open the workstream at plan revision 0.1 and authorize slice 1.
+    - Record the owner's answers on visibility, OWNER.md, free teaching, and
+      ciel-os staying public.
+  out_of_scope:
+    - Any change to src/, test/, or a child repository in this decision.
+    - Any GitHub action, including creating the template repository.
+    - Changing the license of ciel-mini-template.
+
+outcome:
+  status: decided
+  completed:
+    - >-
+      The owner said to open a workstream for the template so the record shows
+      when and how the split was made.
+    - >-
+      ciel-os-template is private for now; the owner will use it alone first.
+    - >-
+      The template carries no memory. OWNER.md is kept with the owner's rules
+      while he is the only user; its public form is decided later.
+    - >-
+      ciel-os stays public and remains the owner's HQ. The owner was told that
+      on the Free plan a private repository loses the "main requires pull
+      requests" ruleset; that is one reason it stays public.
+    - >-
+      Improvements land in ciel-os first and are then synced to the template,
+      which is not edited directly. The owner named the repository
+      ciel-os-template.
+    - >-
+      License intent, for whenever a template goes public: no selling the
+      template and no paid courses; free teaching is allowed; software built
+      with it, including the template files inside that project, may be used
+      commercially.
+  not_completed:
+    - >-
+      No engine change, template repository, project identity, or GitHub state
+      exists yet. Slice 1 waits for its start condition in the plan.
+
+evidence:
+  plan: workstreams/ciel-os-template-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  authorization:
+    observed_directly_by_this_session: true
+    summary: >-
+      In this session the owner answered the four open questions and asked for
+      a workstream so the template work is recorded like any other job.
+  trial_export: >-
+    A scratch export of engine files with no memory showed Wake exiting 1 on an
+    empty memory/events and 3 of 45 tests failing on this HQ's live records.
+    The export was not kept.
+  repository:
+    head: 85eaf9c47767e4a513d788b8bebb6d959a1065d2
+    branch: hq/20261005
+    working_tree: plan-and-decision-only
+
+unresolved:
+  - >-
+    Slice 1 edits shared HQ files while the MuMate lane is live on this
+    standing branch; it waits until no other lane is live and the 2026-10-09
+    cutover has its closeout.
+  - >-
+    The private template has no server-side main guard on the Free plan; its
+    PR discipline rests on the contract alone.
+  - >-
+    The ciel-mini-template license does not yet say that software built with
+    it may be used commercially; changing it needs a decision in
+    ciel-mini-template-001.
+  - >-
+    A legal review of the license wording has not been done.
+
+next_action:
+  action: >-
+    When no other HQ lane is live and the MuMate cutover is closed, execute
+    slice 1 in ciel-os: let an empty workspace wake cleanly and make the tests
+    independent of this HQ's records.
+  acceptance_check:
+    - Wake reports ciel-os-template-001 at plan revision 0.1 with slice 1
+      authorized.
+    - bun run wake exits 0 on an engine-only export with no memory.

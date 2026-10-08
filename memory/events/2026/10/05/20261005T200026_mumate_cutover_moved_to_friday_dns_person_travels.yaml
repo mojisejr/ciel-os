@@ -1,0 +1,69 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T200026_mumate_cutover_moved_to_friday_dns_person_travels
+type: decision
+recorded_at: 2026-10-05T20:00:26+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Move the slice-6 cutover window from Wednesday 2026-10-07 02:00 to Friday
+    2026-10-09 02:00 because the team's DNS person travels to the United
+    States; this replaces the window in 20261005T071802, which otherwise
+    stands.
+  scope:
+    - The window, the spare nights, the freeze end, the production build day and the user notice date.
+  out_of_scope:
+    - Anything else in slice 6; runbook 06 steps are unchanged.
+
+outcome:
+  status: decided
+  slice: "6"
+  decision: >-
+    2026-10-05 evening the owner reported: "DNS person ต้องเดินทางไป อเมริกา
+    และจะถึง โรงแรมที่ อเมริกา ตอน ตี 5 ของวันพฤหัส, ดังนั้นเราเลยสรุปกันว่าจะไปย้าย
+    server กันวันศุกร์ครับ อันนี้ confirm มาแล้วครับผม", then asked to update
+    everything tied to the date and record the decision.
+  owner_decisions:
+    - "Cutover window Friday 2026-10-09 02:00 Thai time (02:00-07:00), read with the same convention as 'Wednesday' (the night of Thursday into Friday); about 21 h after the DNS person reaches the hotel (05:00 Thursday, as the owner reported), which is Thursday daytime in the United States. The owner corrects this record if another night was meant."
+    - "Everything else in 20261005T071802 stands: slice 6 go, D7's MUMATE100 and merge-rate conditions accepted by the owner (MUMATE100 has no end date, 20261005T194400), WHATIF_KEY and GITHUB_TOKEN empty."
+  follows_from_the_date:
+    - "Spare nights: Saturday 2026-10-10 and Sunday 2026-10-11 02:00."
+    - "Freeze runs until the gate opens on Friday; the team's staging sign-off of fe 976fae8 / bazi 48e4328 stays valid while the freeze holds."
+    - "Production build and release (owner) on Thursday 2026-10-08 instead of Tuesday."
+    - "User notice names Friday 2026-10-09 02:00-07:00."
+    - "mumate-be-retirement-001's quiet window ends 2026-10-09 08:16 and allows the cutover inside it (20261002T081635); the new window is still inside it."
+  agent_recommendation_open:
+    - "TTL 300 now, while the DNS person is still in Thailand, rather than Thursday; any time before about 01:00 Friday is technically enough. TTL read 3600 at this record."
+    - "Agree how the owner reaches the DNS person abroad at 02:00 Thai time (LINE call) and that Namecheap sign-in works from the new country; a second person with Namecheap access as backup is the owner's choice (the earlier decision kept flip-back with one person)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "e7931fb"
+    branch: hq/20261005
+    working_tree: this-decision-only
+  application:
+    mootech-fe: "origin/main 976fae8 (signed off on staging)"
+    bazi-sft-dataset: "origin/pdf-dev 48e4328 (signed off on staging)"
+    mumate-infra: "main dd7e462 on both hosts; runbook 06 'this round' row still says Wednesday 2026-10-07 until the follow-up PR merges"
+    dns: "bazichart.mumate.co CNAME Vercel TTL 3600"
+
+unresolved:
+  - "TTL 300 by the DNS person (recommended today)."
+  - "mumate-infra PR for runbook 06's date row; owner merges, agent pulls on both hosts."
+  - "Owner tells the team: freeze extended to Friday; user notice date Friday 2026-10-09 02:00-07:00."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Open the runbook date PR; verify TTL 300 when reported; on Thursday
+    2026-10-08 verify the owner's production build and release of fe 976fae8 /
+    bazi 48e4328; Friday 02:00 run runbook 06 with the owner.
+  acceptance_check:
+    - By Thursday evening TTL reads 300, both hosts carry the corrected runbook, and mumate-prod-1 runs fe 976fae8 / bazi 48e4328 healthy in maintenance.

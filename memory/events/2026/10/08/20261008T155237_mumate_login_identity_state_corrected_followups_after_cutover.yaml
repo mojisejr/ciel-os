@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T155237_mumate_login_identity_state_corrected_followups_after_cutover
+type: closeout
+recorded_at: 2026-10-08T15:52:37+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-login-identity-001
+  lane: single
+  objective: >-
+    Bring this lane's latest record in line with what happened: the owner
+    decision asked for by the 2026-10-02 forgeable-cookie finding was made and
+    delivered in its own workstream, and this lane's own leftovers wait for
+    one batch after the DigitalOcean cutover.
+  scope:
+    - Record correction from repository events only; no code, host or data change.
+
+outcome:
+  status: recorded
+  slice: none
+  corrections:
+    - "The next action of evt_20261002T102627_mumate_member_identity_forgeable_cookie_finding (owner decides the workstream, design and order; no code change until then) is no longer open. The owner opened mumate-member-identity-hardening-001 (evt_20261002T103629_mumate_member_identity_hardening_opened_slice1_authorized) and its slice 2 went live on production the same day (evt_20261002T122409_mumate_member_identity_slice2_closeout_live_on_production: mootech-fe PR 873 merge fb1f037, bazi-sft-dataset PR 47). The member support ID shipped there, after the fix."
+    - "This lane's own delivery is complete: its last declared slice 7 closed in evt_20261002T072009_mumate_login_identity_s7_final_closeout, which has reached origin/main."
+  owner_decision: >-
+    MuMate follow-ups that are not urgent wait until the cutover
+    (mumate-vercel-to-do-001) has succeeded, and are then taken together as
+    one batch.
+  owner_statement: "เรื่องที่เกี่ยวกับ mumate เดี๋ยวเรามาทำกันหลังจาก cutover สำเร็จแล้วละกันครับ มีหลายอย่างที่ต้องทำหลังจากนั้นเดี๋ยวเราทำรวมกันเลยถ้าไม่ด่วนนะครับ"
+  local_cleanup:
+    - "Worktrees ../mootech-fe-support-id and ../bazi-sft-dataset-member-secret, which the hardening slice 2 closeout listed as removable, were removed with their fully merged local branches. Remote branches were not touched."
+
+evidence:
+  plan: workstreams/mumate-login-identity-001/PLAN.md
+  plan_revision: "0.10"
+  slice: none
+  repository:
+    head: "7c47ac3"
+    branch: hq/20261005
+    working_tree: this-record-only
+
+unresolved:
+  - "Post-cutover batch, from the slice 7 closeout: read-only production measurement of the LIFF carry-over (the owner runs production reads); remove the carry-over code after 2026-10-31; 7d (installing the PWA after logging in inside LINE) not built."
+  - "Post-cutover batch, owner decision: bazi /api/stats is open and lists chat users' ids and recent questions, and several bazi internal tools are unauthenticated (hardening slice 2 closeout). Keep it out of public channels until fixed."
+  - "With the team, not the agent: P1 refund of the 159 THB duplicate PRO payment; iPhone walk of the Facebook to Safari escape; moving the rich menu off LIFF URLs."
+  - "Carried and remapped members hold two live LINE identities, outside the one-per-provider rule."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Nothing before the cutover. After mumate-vercel-to-do-001 records a
+    successful cutover, take the open items above together with the other
+    MuMate follow-ups as one batch, starting with the owner's decision on
+    bazi /api/stats.
+  acceptance_check:
+    - Wake shows this record as the latest for mumate-login-identity-001 with no validation error.

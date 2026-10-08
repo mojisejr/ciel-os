@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T093517_mumate_runbook06_merged_hosts_pulled_waiting_team
+type: closeout
+recorded_at: 2026-10-05T09:35:17+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record that the owner merged mumate-infra PR 47 (runbook 06 for D8 rev
+    0.4), the agent's cleanup and host pull after it, and that the cutover
+    now waits on the team's answers. Read with 20261005T071936; this record
+    is the cold-session entry for MuMate until the next one.
+  scope:
+    - PR 47 merge, local branch cleanup, git pull on both hosts, PR 39 re-check.
+  out_of_scope:
+    - Any env, container, timer, Vercel or DNS change.
+
+outcome:
+  status: recorded
+  slice: "6"
+  state:
+    - "mumate-infra PR 47 merged by the owner: main dd7e462 (merge of 85698fc). Remote branch deleted by GitHub; local branch docs/runbook-06-owner-window deleted with git branch -d after the laptop checkout returned to clean main dd7e462."
+    - "Both hosts: git pull --ff-only in /opt/mumate -> dd7e462, one file changed (runbooks/06-cutover.md); no cron-install or container recreate needed for a docs-only change. hosts.sh compare: infra.commit dd7e462 on mumate-2 and mumate-prod-1 (pre-day item done)."
+    - "PR 39 (5a5c0ac) merged onto dd7e462 in a temporary worktree: no conflict, scripts/cron.test.sh all passed, worktree removed; GitHub reports MERGEABLE, still draft until step 3c."
+    - "Waiting on the owner bringing the team's answers: DNS person, TTL 300 before Tuesday 02:00, freeze from Tuesday 09:00, staging sign-off naming fe 976fae8 / bazi 48e4328 by Tuesday 18:00, MUMATE100 end date."
+  observed_not_touched:
+    - "mumate-prod-1 /opt/mumate untracked env/alert.env.bak-20261003T010546Z and env/bazi.env.bak-20261001T000901Z (secrets; runbook 06 step 7 deletes env/*.env.bak-* by name after the cutover is stable). mumate-2 untracked .arena-baseline*.txt and .staging-restore.err, pre-existing."
+    - "Laptop mumate-infra local branch docs/production-runbooks is fully merged into origin/main (PR 42); left for the owner's word."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "57a818d"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mumate-infra: "main dd7e462 on laptop, mumate-2 and mumate-prod-1; PR 39 draft 5a5c0ac MERGEABLE"
+    mootech-fe: "origin/main 976fae8"
+    bazi-sft-dataset: "origin/pdf-dev 48e4328"
+
+unresolved:
+  - "Owner: LINE OA notice; Better Stack staging monitor confirm and api/bazi.staging deletion; Tuesday production build and release after sign-off."
+  - "HQ hq/20261005 unpushed (457a875, ee781f7, 733c0d0, af90fe4, 57a818d and this record); the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the owner returns with the team's answers: dig the TTL until 300,
+    re-fetch fe main and bazi pdf-dev against the sign-off SHAs, and on
+    Tuesday verify the owner's production build and release.
+  acceptance_check:
+    - Every runbook 06 pre-day item is checked by Tuesday evening.

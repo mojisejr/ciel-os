@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T190358_mumate_maintenance_notice_slice1_authorized
+type: decision
+recorded_at: 2026-10-06T19:03:58+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-maintenance-notice-001
+  lane: single
+  objective: >-
+    Authorize slice 1 of plan 0.1: the in-app maintenance notice in
+    mootech-fe, tested, on a PR preview; and record the owner's answers that
+    shape both slices.
+  scope:
+    - PromoPopup.tsx, the existing popup test, a new test, the vitest include list, one image.
+  out_of_scope:
+    - Merging (the owner's), the staging release and sign-off (slice 2), any popup system.
+
+outcome:
+  status: decided
+  slice: "1"
+  decision: >-
+    The agent laid out the plan and six questions on 2026-10-06 evening. The
+    owner answered: "1. ให้ทุกคนเห็นประกาศตามที่คุนบอกรวมทั้งยังไม่ login ด้วย
+    2. โอเค เอาตามนั้น 3. ใช้คำนี้แหละ 4. ผมเป็นคน merge ... 5. ได้รันมาเลย ...
+    ทำเสร็จ เชคให้เรียบร้อยว่า ทำงานได้ ตามเป้า แล้วก็ปิด workstream นี้ไปเลย
+    6. go. เลยถ้าไม่ติดอะไรครับ และไม่มีคำถามอะไรอีก".
+  owner_decisions:
+    - "Every visitor of an eligible /v2 path sees the notice, signed in or not."
+    - "The notice ends at 2026-10-09 04:00 +07:00, the window start."
+    - "The button under the image reads 'รับทราบ'."
+    - "The owner merges; the owner and the agent run this lane end to end unless something changes."
+    - "Parallel running with mumate-vercel-to-do-001 and mumate-be-retirement-001 on mootech-fe is approved; neither changes mootech-fe code now."
+    - "The workstream closes once implemented and verified working; it does not wait for Friday. Plan 0.1 slice 2 DoD says so (edited before this decision, same revision, no slice had been authorized)."
+    - "The 4 merges of 2026-10-06 (mootech-fe 879-882) are taken as allowed by the owner; the notice is the last merge before the freeze locks."
+  authorizes:
+    - Slice 1 of plan 0.1 as written.
+  does_not_authorize:
+    - The agent merging the PR; the staging release before the merge.
+
+evidence:
+  plan: workstreams/mumate-maintenance-notice-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "e52728b"
+    branch: hq/20261005
+    working_tree: plan-edit-and-this-decision
+  application:
+    mootech-fe: "origin/main 3e558ad (local main fast-forwarded to it 2026-10-06)"
+
+unresolved:
+  - "mootech-fe is public; if the agent's push is refused, the owner pushes the branch."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Branch from mootech-fe main 3e558ad, implement and test the notice, open
+    a draft PR, and ask the owner to look at the Vercel preview on a phone.
+  acceptance_check:
+    - Slice 1 DoD in the plan.

@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T114914_mumate_preday_a_to_d_done_prod1_ready
+type: closeout
+recorded_at: 2026-10-07T11:49:14+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record pre-day items A-D done by the agent on the owner's word
+    (20261007T113927): mumate-prod-1 runs the signed-off SHAs with the fresh
+    production env, smoked, step 3a passed, and the Friday run sheet exists.
+    This record is the cold-session entry for MuMate until the next one.
+  scope:
+    - A production build and release; B runbook 06 step 1; C smoke and step 3a; D Friday card.
+  out_of_scope:
+    - Vercel, DNS, cron timers, the gate.
+
+outcome:
+  status: recorded
+  slice: "6"
+  a_build_release:
+    - "Frozen SHAs re-checked on GitHub before building: main 83ed2f1, pdf-dev 40e8ebf."
+    - "container-build target=production push=true: mootech-fe run 37572550491 (83ed2f1) success, bazi-sft-dataset run 37572553772 (40e8ebf) success."
+    - "release env=production run 37572888224 success; deploy-history 2026-10-07T04:45:09Z production/mumate-prod-1 ok FE_TAG=83ed2f10a6649874a32dfbfcec9c02220a2b5b52 BAZI_TAG=40e8ebf7db0e574b3352c2a745ab04a3b110f04e (before: c10e91e / 49e22f2, 2026-10-01T00:11:16Z ok)."
+  b_step1_env:
+    - "mumate-infra 68cf7dd. fe: 29 names from Vercel, 13 from --fill/--fill-file (incl. QSTASH_CURRENT/NEXT_SIGNING_KEY, QSTASH_URL, BAZI_CLIENT_ID_SECRET, ANALYTICS_USER_ID_KEY), DB_POOL_MAX=5 and MAINTENANCE_MODE=on set; EMPTY only WHATIF_KEY and GITHUB_TOKEN (accepted); 44 names written (600). bazi: 2 from Vercel, 7 filled; EMPTY 0; 9 names written (600)."
+    - "QSTASH_TOKEN appended from prod-qstash-token.env; fe and bazi recreated. Pass criteria: fe and bazi healthy at 83ed2f1 / 40e8ebf; /api/health env production, platform container, db ok; QSTASH_TOKEN 1, MAINTENANCE_MODE on 1, CRON_SECRET env/fe.env:1 env/bazi.env:1; BAZI_CLIENT_ID_SECRET sha256 prefix 7e7ee82d3ca3 in both. env/ holds 4 *.env.bak-* files with secrets, to delete by name after the cutover is stable (runbook 06 step 7)."
+  c_smoke_3a:
+    - "Smoke on the host (127.0.0.1:3000, bypass key read on the host, never printed): /v2 without cookie 200 and the maintenance page; /v2 with the bypass cookie 200, app page (34768 bytes, no maintenance text); /api/auth/providers line google facebook twitter; /api/bazi/mascot/甲子 returned the real mascot (fe -> bazi with the client secret works); /v2/chat with bypass 200."
+    - "Step 3a: CRON_SECRET fe 1 / bazi 1; bin/cron-check.sh exit 0 against the new images (fe and bazi cron.tsv match /app/vercel.json, 3 jobs each); all six mumate-cron timers inactive. PR 39 (5a5c0ac) merged onto main 68cf7dd in a temporary worktree without conflict, scripts/cron.test.sh all passed; GitHub MERGEABLE, still draft."
+    - "Public: 209.38.56.234 :80 answers 308 for bazichart.mumate.co; :443 has no certificate yet (expected); :22 closed (20261007T112835)."
+  d_friday_card:
+    - "Run sheet published privately for the owner: https://claude.ai/artifact/CSERf7J9D8Hca3Sd3z1gns - before-start (03:45), steps 2-6 with who does what, the flip-back card and its triggers. No secrets in it. Vercel mootech-fe Production already has MAINTENANCE_MODE (17 days) and MAINTENANCE_BYPASS_KEY, so step 2 is Edit -> on -> Redeploy."
+  friday_now:
+    - "Step 0 check (agent), 2 Vercel maintenance (owner), 3 cron swap (owner disables Vercel crons, merges PR 39; agent installs), 4 DNS (DNS person) and certificate (agent), 5 owner review, 6 gate. Step 1 is done; Friday only re-checks it."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "a7f77e3"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main 83ed2f1 (frozen; Vercel production, staging, mumate-prod-1)"
+    bazi-sft-dataset: "origin/pdf-dev 40e8ebf (frozen; Vercel production, staging, mumate-prod-1)"
+    mumate-infra: "main 68cf7dd on all three; PR 39 draft MERGEABLE"
+    dns: "TTL 300"
+
+unresolved:
+  - "Owner, before Friday: Better Stack staging monitor confirm and api/bazi.staging deletion; contact plan with the DNS person and a Namecheap sign-in from the United States."
+  - "Agent, Thursday evening: SHAs, TTL, both hosts, step 1 dry-run names compared with today's."
+  - "If anyone changes Vercel env before Friday, prod-1 does not get it; the freeze covers env, and Thursday's dry-run compares names only."
+  - "HQ hq/20261005 unpushed (several lanes); the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Thursday evening final check; Friday 03:45 step 0, then the run sheet with
+    the owner.
+  acceptance_check:
+    - At 03:45 Friday step 0 shows the frozen SHAs, prod-1 healthy in maintenance with the step 1 env, timers off, TTL 300.

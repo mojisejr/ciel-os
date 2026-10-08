@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T044823_mumate_handoff_after_cutover_24h_watch_lessons
+type: closeout
+recorded_at: 2026-10-09T04:48:23+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Hand MuMate over after the cutover: the owner watches 24 hours and comes
+    back on a problem or for the cleanup. Records the post-gate check, what is
+    left, and the lessons of the round. This record is the cold-session entry
+    for MuMate; read 20261009T044129 (slice 6 closeout) with it.
+  scope:
+    - State after the gate, the cleanup list, lessons.
+  out_of_scope:
+    - Slice 7 and any cleanup action (each on the owner's word).
+
+outcome:
+  status: recorded
+  slice: "6"
+  state:
+    - "Owner after the gate: LINE in-app login checked and fine; the Beam refund later; watch 24 hours, then meet again for problems or for the cleanup."
+    - "04:48 check: bazichart.mumate.co /api/health ok, db ok, platform container; last 15 minutes on prod-1: 552 requests, 0 with status 5xx; every cron run 200; no Beam webhook since the test purchase."
+  cleanup_when_owner_returns:
+    - "DNS person: TTL of bazichart.mumate.co back to 60 min (3600) after 24 h stable (about Saturday 2026-10-10 05:00)."
+    - "Agent: delete the 4 env/*.env.bak-* files on mumate-prod-1 by name (they hold secrets); pull mumate-infra 95df107 on mumate-2 and run cron-install --dry-run before the real one."
+    - "Owner: refund the QI_60 test purchase in Beam."
+    - "Owner decides slice 7 (observation, then Vercel retirement project by project, D10), mumate-be-retirement-001 step 6 (Render delete, quiet window ended 2026-10-09 08:16), the backup move off mumate-2, and the deferred post-cutover batches (login-identity follow-ups, Supabase per-app roles and key rotation, Qi popup reload flaw)."
+    - "Remote branch docs/runbook-06-0400 in mumate-infra still exists (agent remote deletes refused before)."
+  lessons:
+    - "Move every step that does not touch users to the days before: building and releasing production and placing the env on 2026-10-07 left five steps for the night, and the night took 50 minutes."
+    - "A freeze is called, not assumed: the team kept merging after the first sign-off (fe 879-884, bazi 40e8ebf); staging followed each production merge and the sign-off waited for the owner's freeze call."
+    - "Anything shown before a move must end by itself, because the same SHA runs on both platforms; and a popup must count 'shown' when the user closes it - the service worker reloads the page once after every deploy (pages/_app.tsx controllerchange)."
+    - "Give the DNS person click-by-click steps ahead and verify at the registrar: the first change was not saved and only the authoritative dig showed it; the owner's screenshot then matched."
+    - "A brief 443 error at the DNS switch is the price of first certificate issuance, which cannot be rehearsed; restart Caddy right after the switch (certificate in 5 s here)."
+    - "Recorded windows drift: 02:00-07:00 Wednesday became 04:00-10:00 Friday through travel and the team's design; check every date-bearing artifact (runbook row, popup end time, notices) against the newest decision."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "6ef1ed3"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "83ed2f1 on mumate-prod-1 (serving bazichart.mumate.co)"
+    bazi-sft-dataset: "40e8ebf on mumate-prod-1"
+    mumate-infra: "95df107 on prod-1, 68cf7dd on mumate-2"
+    vercel: "mootech-fe in maintenance, crons disabled in both projects (owner-reported); flip-back target"
+
+unresolved:
+  - "HQ hq/20261005 unpushed (many lanes); the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    On a problem: Wake, read this record and 20261009T044129, check prod-1
+    (ops-status, caddy 5xx, cron journal) and use the flip-back card if the
+    owner decides. For the cleanup: walk the list above item by item on the
+    owner's word, then put slice 7 to him.
+  acceptance_check:
+    - A cold session can state where MuMate runs, how to go back, and what cleanup waits, from this record.

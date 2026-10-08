@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T123720_clear_together_expenses_planning_closeout
+type: closeout
+recorded_at: 2026-10-08T12:37:20+07:00
+recorded_by:
+  agent: codex
+workstream:
+  id: clear-together-expenses-001
+  lane: single
+  objective: Preserve the owner-confirmed shared-expense scope and an executable CIEL plan.
+  scope:
+    - Slice 1 local planning only; no application or production changes.
+outcome:
+  status: recorded
+  completed:
+    - Finished syncup with owner confirmation of two-field expense recording, optional category/backdating/on-behalf-of, own-entry edits/cancellation, shared history and self-managed display names.
+    - Opened a new workstream independent of completed clear-together-pwa-001.
+    - Prepared five vertical slices with candidate paths, acceptance criteria, tests, review roles, sequencing and approximate effort.
+    - Included backup/restore coverage for new records and compatibility with old snapshots, live-data rollout safeguards and preservation of reimbursement balances.
+    - Corrected the plan's project-link heading/table syntax to the existing CIEL reader contract and verified it is visible to Wake with no validation errors.
+  not_completed:
+    - Implementation slices 2–5, application PR, migrations, new UI, live rollout and owner acceptance are not started or claimed complete.
+evidence:
+  plan: workstreams/clear-together-expenses-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: f3f293914c622440a82be5bbedcf1bcc65a300e3
+    branch: hq/20261005
+  opening_decision: memory/events/2026/10/08/20261008T123545_clear_together_expenses_workstream_opened.yaml
+  child_repository:
+    canonical_remote: github.com/mojisejr/clear-together
+    branch: main
+    head: 1858cc41fe9f69ea7a799972086b5262a3a3a54a
+    fetched_origin_main: 1858cc41fe9f69ea7a799972086b5262a3a3a54a
+    working_tree: clean
+  checks:
+    wake: New workstream is active, idle, bound to ciel-os and clear-together, with five declared slices and a decision authorizing opening slice 1; no validation errors.
+    diff: git diff --check passed; only this workstream plan and new append-only records changed.
+    existing_workstream: clear-together-pwa-001 remains completed at plan revision 0.5 and its files were not changed.
+    source_verification: Existing auth name update, stable member identity, bill queries, migration checksum, backup/restore allowlists and isolated local test setup were inspected before writing candidate paths.
+    prior_warnings: Two existing unrelated closeout-status warnings remain; no CIEL reader or unrelated workstream was edited.
+unresolved:
+  - Owner must review the prepared implementation slices and authorize starting slice 2; this opening decision only covers slice 1.
+  - Provider Free plan/one-branch configuration and live deployment need re-verification before rollout; no new branch/service/subscription is planned.
+  - Old retired Blob store/token cleanup and removed provider-source retention remain unverified and are carried from the original delivery.
+  - Owner's favorable use report does not itself prove every deferred physical-phone/pilot criterion.
+  - Existing Pro usage remains metered and shared with other projects; no zero-additional-charge guarantee is asserted.
+  - This local HQ planning record remains on the shared standing branch for the owner's round integration; it is not an application PR or production change.
+next_action:
+  action: Present the five-slice plan for owner review. On an explicit instruction to start, record authorization for implementation, pass the child clean-main gate, and begin slice 2 self-managed display names.

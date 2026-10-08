@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T112413_ref_office_opening_closeout
+type: closeout
+recorded_at: 2026-10-07T11:24:13+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: ref-office-001
+  lane: single
+  objective: >-
+    Open the ref-office workstream so a later session can read the goal,
+    the owner's syncup decisions, the gates, and the slice order from HQ.
+  scope:
+    - Plan revision 0.1 and its opening decision, committed on the standing branch.
+  out_of_scope:
+    - Repository creation, tools, tests, and the Fastwork listing.
+outcome:
+  status: slice-1-opening-recorded
+  completed:
+    - Plan 0.1 declares six slices with DoD for each and the workstream-final DoD in slice 6.
+    - Opening decision committed in 6069293 with Wake reading it and no validation errors.
+  not_completed:
+    - Slice 2 is not authorized; nothing outside HQ was created.
+evidence:
+  plan: workstreams/ref-office-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  checks:
+    - git diff --cached --check passed before commit.
+    - bun run wake listed ref-office-001 with declared slices 1-6 and an empty validationErrors list.
+  repository:
+    head: 60692939a7148b9360a9a0b2e8b2850d78757dac
+    branch: hq/20261005
+unresolved:
+  - Fastwork base commission rate and the cumulative threshold for the typing category are unknown.
+  - How far Thai sources such as ThaiJO and TCI can be verified automatically is unknown.
+  - Measuring tokens per job under the subscription plan has no settled method yet.
+  - The standing branch is unpushed; pushing and merging belong to the owner.
+next_action:
+  action: Owner says go on slice 2; then create the public mojisejr/ref-office repository, clone it to checkouts/ref-office, and register the project.
+  acceptance_check:
+    - A decision event authorizes plan 0.1 slice 2 before any external write.

@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T213100_praneet_nursery_slice2_design_accepted
+type: closeout
+recorded_at: 2026-10-08T21:31:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Close slice 2 - the owner accepts the mockup, and the brief turns it into checkable criteria.
+  scope:
+    - Design syncup, HTML mockup in three versions, design brief, and plan revision 0.3; HQ files only.
+outcome:
+  status: slice-complete
+  slice: "2"
+  completed:
+    - "Design syncup in two rounds. Agent guesses matched 4 of 9, then 2 of 5. Corrected: logo is the owner's illustrated portrait (the same image as Takai), owner name 'หนวด', shop since B.E. 2535; culled trees are not shown because the shop culls at every sale; style is apple.com in a farmer's version with premium positioning; after-sales is case by case until real sales; 3D is per sample tree beside a metre stick."
+    - "mockup.html covers the shop page, lot page with a rotatable sample tree, measurement form and back office. Version 2 added a custom height range and the softer durian-leaf and sunlight palette the owner asked for. Version 3 removed the boxed edge of the sunlight glow the owner pointed out."
+    - "BRIEF.md records the owner's acceptance conditions as checkable criteria: mobile first, responsive at 360-1440 px, works in the LINE in-app browser on Android and iPhone, 3D usable on phones with a file budget and fallbacks, AA contrast, 44/56 px targets, no customer or worker names."
+    - "Plan revision 0.3 makes the brief part of the DoD for slices 3 and 4."
+  owner_statement: "เยี่ยมเอาตามนี้ และอย่าลืมนะ มันต้อง mobile first นะ และต้อง responsive ทุกหน้าจอ ด้วย และ 3D ต้องใช้ใน โทรศัพท์ได้ด้วยนะ และดูเรื่อง line build in browser ด้วยนะ"
+  not_verified:
+    - "The mockup's rotating tree is drawn by code; real 3D or 360-degree capture of a sample tree is untested."
+    - "Behaviour in the LINE in-app browser and passkeys inside LINE are not yet tested; they are criteria for slices 3 and 4."
+    - "Prices, heights and shape ratios in the mockup are placeholders; bagging dates and the 700 and 5,600 bag counts match the owner's records."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  artifacts:
+    - workstreams/praneet-nursery-001/design/mockup.html
+    - workstreams/praneet-nursery-001/design/BRIEF.md
+  published_preview: "Private Claude artifact (owner-only link), version 3"
+  repository:
+    head: "e859cc80e522b8b78ccea284a27631b4c9a6346b"
+    branch: hq/20261005
+    working_tree: this-closeout-plan-and-brief
+unresolved:
+  - "ciel-os is a public repository; pushing hq/20261005 publishes this plan, the market research and the mockup. The plan contains no customer or worker names. The owner decides before pushing."
+  - "The shop domain is undecided; it is the owner's money decision before the board is shared (slice 4)."
+  - "Neon Free plan limits for an additional project are not yet re-verified."
+  - "The 11 September bagging batch count is to be counted by the owner."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    On the owner's go for slice 3, record the slice 3 decision against plan
+    revision 0.3, create the private praneet-web and praneet-office
+    repositories, and start the lot database and measurement form under the
+    brief.
+  acceptance_check:
+    - A slice 3 decision names plan revision 0.3 slice 3 before any repository is created.

@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T123735_ref_office_slice3_authorized
+type: decision
+recorded_at: 2026-10-07T12:37:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: ref-office-001
+  lane: single
+  objective: >-
+    Build the pipeline that turns a customer file into a delivery package and
+    a checker that refuses to release anything it is unsure of.
+  scope:
+    - Extraction, CSL-JSON validation, Crossref verification, APA 7 and Thai rendering, docx and pdf output.
+    - In-text cross-check, change report, provenance guard, field-code detection, and a golden set.
+  out_of_scope:
+    - Dogfood on real documents and the G1 report (slice 4).
+    - The Fastwork listing and any customer file.
+outcome:
+  status: decided
+  decision: >-
+    The owner merged ref-office PR 1, closing slice 2, and said go on slice 3.
+evidence:
+  plan: workstreams/ref-office-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  authorization:
+    observed_directly_by_this_session: true
+    owner_instruction: "merged เรียบร้อยแล้วครับ, go slice 3 ได้เลย"
+  child_repository:
+    canonical_remote: github.com/mojisejr/ref-office
+    main_head: 6076c803ea1f0b1b8424d0c062175f01d19ece5e
+  repository:
+    head: fcb5bf0346bf0ce5760ef596690430b3909bfea7
+    branch: hq/20261005
+unresolved:
+  - LibreOffice is not installed; PDF output depends on building a Docker image.
+  - Thai sources cannot be verified against Crossref; they stay flagged for owner review.
+next_action:
+  action: Build slice 3 on a ref-office topic branch and present a sample PDF to the owner.
+  acceptance_check:
+    - Slice 3 DoD in plan 0.1 is met and evidenced in a closeout referencing the PR.

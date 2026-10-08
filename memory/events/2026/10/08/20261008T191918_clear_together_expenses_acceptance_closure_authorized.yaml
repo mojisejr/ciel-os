@@ -1,0 +1,37 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T191918_clear_together_expenses_acceptance_closure_authorized
+type: decision
+recorded_at: 2026-10-08T19:19:18+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: clear-together-expenses-001
+  lane: single
+  objective: Accept the delivered display-name and shared-expense flows and close the workstream after owner trial.
+  scope:
+    - Plan revision 0.2 final slice 5 acceptance and HQ closure only; no further application or provider changes.
+outcome:
+  status: decided
+  decision: Owner reports successful display-name change and expense recording, accepts the remaining trial criterion and explicitly authorizes workstream closure. Plan revision 0.2 marks this owner-accepted delivery completed without changing feature scope.
+evidence:
+  plan: workstreams/clear-together-expenses-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "5"
+  repository:
+    head: 36dc9a67b91816ef8ed8b995289c8e91a4752355
+    branch: hq/20261005
+  owner_statement: ผมลองตั้งชื่อละใช้งานได้ครับ และลองบันทึกแล้วครับโอเคเลย ปิดได้เลยครับถ้าไม่มีอะไรแล้ว
+  acceptance_provenance: Owner report in response to the pending phone-trial acceptance; agent did not observe or operate the owner's device.
+  previous_rollout: memory/events/2026/10/08/20261008T172644_clear_together_expenses_production_rollout_verified.yaml
+  child_merge:
+    pull_request: https://github.com/mojisejr/clear-together/pull/2
+    state: MERGED
+    commit: 7aeb829d6d7637fee2cadeddbdca7857e433cba4
+    child_main: Clean and equal to freshly fetched origin/main; no open application PR or issue.
+unresolved:
+  - The owner trial proves the two reported flows; no claim of independently observed device, extended pilot or every production edge case is made.
+  - Local-only backup, retired-store/token cleanup and historical removed-source retention remain outside the accepted feature delivery.
+  - HQ standing-branch integration remains the owner's separate round; no merge or push of shared HQ is authorized by this workstream closure.
+next_action:
+  action: Commit this owner decision and the bounded plan revision, record final slice 5 closeout with existing proof references, and verify CIEL reports the plan completed.

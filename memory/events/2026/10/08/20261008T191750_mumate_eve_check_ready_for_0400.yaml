@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T191750_mumate_eve_check_ready_for_0400
+type: closeout
+recorded_at: 2026-10-08T19:17:50+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the Thursday evening check before the Friday 2026-10-09 04:00
+    window and the owner's request for a detailed review of who does and
+    reports what. This record is the cold-session entry for MuMate until the
+    window starts.
+  scope:
+    - Item F of 20261007T112835.
+  out_of_scope:
+    - Any change.
+
+outcome:
+  status: recorded
+  slice: "6"
+  state:
+    - "At 19:16-19:17: GitHub mootech-fe main 83ed2f1, bazi pdf-dev 40e8ebf, mumate-infra main 68cf7dd - unchanged since the sign-off. Vercel production /api/health sha 83ed2f1 platform vercel; staging sha 83ed2f1 platform container. DNS CNAME to Vercel, TTL 300."
+    - "mumate-prod-1: fe 83ed2f1 and bazi 40e8ebf healthy, caddy ok, MAINTENANCE_MODE 'on', QSTASH_TOKEN 1, all six mumate-cron timers inactive, infra 68cf7dd, up 7 days."
+    - "Step 1 dry-run names match 2026-10-07: fe 29 from Vercel, EMPTY only WHATIF_KEY and GITHUB_TOKEN, 44 lines; bazi 2 from Vercel, EMPTY 0, 9 lines. Names only - a value changed on Vercel since 2026-10-07 would not show; the freeze covers env."
+    - "Other lanes since 2026-10-07 touching MuMate: 7c47ac3 (chat-keyboard-ios completed), 7fe126b (login-identity follow-ups after the cutover); neither changes the cutover."
+    - "Owner asked whether Vercel maintenance turns on by itself: it does not. Only the in-app notice ends by itself at 04:00; MAINTENANCE_MODE on Vercel is the owner's step 2 (Edit -> on -> Redeploy)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "4ce3d2d"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "83ed2f1 (Vercel production, staging, mumate-prod-1)"
+    bazi-sft-dataset: "40e8ebf (Vercel production, staging, mumate-prod-1)"
+    mumate-infra: "68cf7dd on all three; PR 39 draft"
+    dns: "TTL 300"
+
+unresolved:
+  - "HQ hq/20261005 is 55 commits ahead of origin/main and unpushed (several lanes); the push is the owner's."
+  - "Better Stack staging monitor and the DNS person's Namecheap sign-in from the United States are not recorded as done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Friday 03:45: the owner says start; the agent runs step 0 and then the
+    run sheet (https://claude.ai/artifact/CSERf7J9D8Hca3Sd3z1gns) with the
+    owner and the DNS person.
+  acceptance_check:
+    - Step 0 at 03:45 matches this record.

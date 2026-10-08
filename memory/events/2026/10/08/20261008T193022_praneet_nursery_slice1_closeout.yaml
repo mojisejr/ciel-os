@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T193022_praneet_nursery_slice1_closeout
+type: closeout
+recorded_at: 2026-10-08T19:30:22+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Close slice 1 - the workstream is open and its plan is readable from the repository.
+  scope:
+    - HQ plan and opening decision only; no repository, account or external resource created.
+outcome:
+  status: slice-complete
+  slice: "1"
+  completed:
+    - "PLAN.md revision 0.1 records the syncup agreement, starting evidence (web research labelled as not Wake facts), invariants and six slices."
+    - "Wake lists praneet-nursery-001 active with slices 1-6 and project ciel-os; the two validation warnings shown are pre-existing (GA4 and BE retirement)."
+  not_completed:
+    - "Slices 2-6 are not started; no repository, LINE account, hosting or data exists yet."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "d22cb81e958fdff41da5e537dffe822e34a57f18"
+    branch: hq/20261005
+    working_tree: this-closeout-only
+unresolved:
+  - Hosting (DigitalOcean or Vercel), repository names and visibility are decided at the start of slice 2.
+  - Domestic licensing for selling grafted durian seedlings and any nursery certification are unconfirmed with the Department of Agriculture.
+  - Bag weight and trees per roll pallet and per truck are unmeasured.
+  - HQ hq/20261005 is unpushed; pushing it is the owner's.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Owner reviews the six slices. On the owner's go for slice 2, propose
+    hosting, database, image storage, repository names and visibility with
+    costs; after the owner decides, record the slice 2 decision and create the
+    repositories.
+  acceptance_check:
+    - A slice 2 decision event names plan revision 0.1 slice 2 before any repository is created.

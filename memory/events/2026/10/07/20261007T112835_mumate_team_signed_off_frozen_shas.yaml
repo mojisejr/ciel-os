@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T112835_mumate_team_signed_off_frozen_shas
+type: closeout
+recorded_at: 2026-10-07T11:28:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the team's staging sign-off of the frozen SHAs and the pre-day
+    checks that go with it, before the production build. This record is the
+    cold-session entry for MuMate until the next one.
+  scope:
+    - Sign-off, SHA check, public reachability of mumate-prod-1.
+  out_of_scope:
+    - The production build and release (owner, next).
+
+outcome:
+  status: recorded
+  slice: "6"
+  state:
+    - "Owner 2026-10-07 late morning: 'ทีมลองและตอบมาแล้วครับว่าพร้อม ลุยได้เลย นั่นหมายความว่า sign off แล้วครับ'. The team tested staging after the freeze; the agent ties the sign-off to fe 83ed2f1 / bazi 40e8ebf because those were the only SHAs on staging since 2026-10-06 19:50 (release run 37466019816) and still are: at 11:26 GitHub main 83ed2f1, pdf-dev 40e8ebf, app.staging /api/health sha 83ed2f1."
+    - "mumate-prod-1 from the internet (209.38.56.234): :80 with Host bazichart.mumate.co answers 308 to https (Caddy production site; an ACME HTTP-01 request is served by Caddy before the redirect when a challenge is active); :443 has no certificate yet (expected before the DNS change); port 22 closed."
+    - "Owner asked for a walk-through that leaves Friday as few and as safe steps as possible, with the easiest way back."
+  plan_until_friday:
+    - "Today: owner runs the production build and release (gh commands given 2026-10-07); agent verifies, smokes over the tailnet and runs runbook 06 step 3a. Agent proposes running runbook 06 step 1 (fresh env from Vercel, QSTASH_TOKEN, maintenance on) today rather than on Friday, so Friday starts at step 2; needs the owner's word."
+    - "Thursday: owner settles Better Stack and the contact plan with the DNS person (and a Namecheap sign-in from the United States); agent's final evening check (SHAs, TTL, hosts, step 1 dry-run names)."
+    - "Friday 04:00: steps 2 (Vercel maintenance), 3 (cron swap), 4 (DNS + certificate), 5 (owner review), 6 (gate)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "9d3c7f0"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main 83ed2f1 (signed off)"
+    bazi-sft-dataset: "origin/pdf-dev 40e8ebf (signed off)"
+    mumate-infra: "main 68cf7dd on both hosts; PR 39 draft"
+    dns: "TTL 300"
+
+unresolved:
+  - "Production build and release of the signed-off SHAs (owner) and their verification (agent)."
+  - "Owner's word on running step 1 today."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    After the owner's release: verify deploy-history, hosts.sh compare,
+    health and a tailnet smoke on mumate-prod-1, and run step 3a.
+  acceptance_check:
+    - mumate-prod-1 runs fe 83ed2f1 / bazi 40e8ebf healthy in maintenance.

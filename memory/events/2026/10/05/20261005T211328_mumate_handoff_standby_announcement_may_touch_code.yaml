@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T211328_mumate_handoff_standby_announcement_may_touch_code
+type: closeout
+recorded_at: 2026-10-05T21:13:28+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Stand the lane by until the owner returns with the team's announcement
+    plan (expected 2026-10-06), and record why the production build waits for
+    it. This record is the cold-session entry for MuMate; read
+    20261005T200026 (window), 20261005T194400 (sign-off) and 20261005T211054
+    (prod-1 readiness) with it.
+  scope:
+    - The open dependency between the user announcement and the production build.
+  out_of_scope:
+    - Any change; the window itself.
+
+outcome:
+  status: recorded
+  slice: "6"
+  state:
+    - "Window Friday 2026-10-09 02:00 Thai time; TTL 300 verified; runbook 06 dated on both hosts (infra f269d73); team signed off fe 976fae8 / bazi 48e4328; freeze in force; prod-1 ready except the new images."
+    - "The owner is deciding the user announcement with the team (2026-10-06). Channels outside the app (LINE OA, Facebook, IG) need no code. An in-app banner or popup would change mootech-fe (PromoPopup.tsx / PromoCarousel.tsx hold their content in code), which breaks the freeze and the signed-off SHA."
+    - "So the production build waits for the announcement decision. No code: the owner presses container-build target=production (fe 976fae8, bazi 48e4328) and release env=production as early as Tuesday. Code: the team merges and names the new SHA; the agent builds and releases staging; the team re-checks and signs off that SHA; then the owner builds production from it - before Thursday evening."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "fa97847"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main 976fae8 (signed off)"
+    bazi-sft-dataset: "origin/pdf-dev 48e4328 (signed off)"
+    mumate-infra: "main f269d73 on laptop and both hosts; PR 39 draft"
+    production_hosts: "mumate-prod-1 fe c10e91e / bazi 49e22f2, maintenance on"
+    dns: "TTL 300"
+
+unresolved:
+  - "Announcement channel decision (owner and team, 2026-10-06); Better Stack (owner); contact plan with the DNS person abroad (owner)."
+  - "HQ hq/20261005 unpushed (12 commits with this record); the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Stand by. When the owner returns: fetch fe main and bazi pdf-dev; if they
+    still read 976fae8 / 48e4328 and no in-app announcement is planned, verify
+    the owner's production build and release (deploy-history, hosts.sh
+    compare, tailnet smoke, step 3a pre-check); if a new SHA was merged,
+    build and release staging first and get the team's sign-off on it.
+  acceptance_check:
+    - Before Thursday evening mumate-prod-1 runs the signed-off SHAs healthy in maintenance.

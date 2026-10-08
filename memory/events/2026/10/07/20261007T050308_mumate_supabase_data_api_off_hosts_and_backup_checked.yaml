@@ -1,0 +1,90 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T050308_mumate_supabase_data_api_off_hosts_and_backup_checked
+type: closeout
+recorded_at: 2026-10-07T05:03:08+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-supabase-db-audit
+  lane: single
+  objective: >-
+    Record the second layer of yesterday's fix: the owner turned the Supabase
+    Data API off, and the agent checked that neither the apps, the two
+    DigitalOcean hosts nor the nightly backup were harmed by it or by the
+    schema-public revoke and RLS of 2026-10-06.
+  scope:
+    - Impact research before the switch, the owner's switch, and checks after it.
+  out_of_scope:
+    - Opening a workstream; the remaining findings of the previous record.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - >-
+      IMPACT RESEARCH, before the switch. No repository on this machine calls
+      the Data API against MuMate: mootech-fe, bazi-sft-dataset, mootech-be
+      and mumate-infra use supabase-js for Storage only, with no Edge
+      Functions; L-vault, o and opilot call the Data API but on tables of
+      other projects. One past use was found: bongbing-oracle's notes record
+      a production backfill of member_subscription on 2026-08-26 sent as an
+      HTTP POST with the service-role key, so turning the Data API off also
+      closes that ad-hoc route to production data, which the revoke did not
+      (service_role keeps its grants). A local hook refuses any command that
+      names the production project ref, so that search was made without it.
+    - >-
+      SWITCH. Before about 04:51 +07:00 the owner turned the Data API off in
+      the dashboard, ran the audit again, checked the app, uploaded an image
+      to confirm Storage, and told the team that production is no longer
+      changed with the service-role key over HTTP.
+    - >-
+      NOT PROVEN FROM OUTSIDE, by the owner's choice. The 04:51 audit still
+      lists two PostgREST connections. The owner's browser check without a key
+      returned "No API key found", which the gateway answers before any
+      routing and so does not tell on from off; the agent proposed a check
+      with the anon key, and the owner declined it as unnecessary because he
+      switched it off by hand.
+    - >-
+      CHECKS AFTER. Audit 21:51Z: public 189 tables, 189 with RLS, none
+      reachable by the API roles. Vercel production and app.staging health
+      200 with db ok. On the owner's words "คุนเข้าไปอ่านได้เลย", ops-status
+      over the tailnet: mumate-prod-1 fe and bazi healthy (db-probing health),
+      disk 9%; mumate-2 fe and bazi healthy, last backup 2026-10-06 02:01Z.
+      mumate-infra (origin/main 68cf7dd) has no use of the Data API or of the
+      revoked roles; staging, pgtmp and arena restores connect as the
+      container's superuser, which RLS does not restrict.
+    - >-
+      BACKUP MECHANISM PROVEN. As mumate_backup through env/backup.env on
+      mumate-2, with row_security off as pg_dump sets it, counts of user,
+      user_provider, member_payment and book_order returned without error
+      (bypassrls true). The first real dump after the change is the timer run
+      at 2026-10-07 02:03Z (09:03 +07:00).
+  observed_in_passing:
+    - "mumate-prod-1 runs fe c10e91e / bazi 49e22f2 while Vercel production and staging run fe 83ed2f1 / bazi 40e8ebf; production images for that host belong to the cutover lane (runbook 06), not to this record."
+
+evidence:
+  repository:
+    head: "dec82a2"
+    branch: hq/20261005
+    working_tree: this-record-only
+  previous_record: memory/events/2026/10/06/20261006T210406_mumate_supabase_api_exposure_closed_audit_recorded.yaml
+  application:
+    production_change: "Supabase Data API turned off in the dashboard by the owner, 2026-10-07 before 04:51 +07:00"
+    mumate-infra: "origin/main 68cf7dd on both hosts (read only)"
+
+unresolved:
+  - "The 09:03 +07:00 backup on 2026-10-07 is the first real dump after RLS; a 💾 in Discord closes it, a 🚨 is an incident."
+  - "Whether the Data API answers from outside is unproven, by the owner's decision; PostgREST still holds connections to the database."
+  - "All other items of the previous record stand: per-app roles and rotation of the postgres password and the anon and service-role keys after the 2026-10-09 cutover, real-data copies, personal files in public buckets, plaintext sensitive columns, no migration ledger, no idle-in-transaction timeout, testenv/env/bazi.env unchecked."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Confirm the 09:03 backup, then draft a workstream plan that moves
+    Supabase into mumate-infra, slice 1 being the read-only audit as a nightly
+    job on mumate-2 that alerts Discord when a public table loses RLS or an
+    API role gains a privilege; the owner decides whether to open it.
+  acceptance_check:
+    - Wake reports no validation error with this event as the newest record.

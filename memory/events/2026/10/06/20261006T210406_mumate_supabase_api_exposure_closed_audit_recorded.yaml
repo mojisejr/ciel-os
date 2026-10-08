@@ -1,0 +1,113 @@
+schema_version: ciel.event.v0.1
+id: evt_20261006T210406_mumate_supabase_api_exposure_closed_audit_recorded
+type: closeout
+recorded_at: 2026-10-06T21:04:06+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-supabase-db-audit
+  lane: single
+  objective: >-
+    Research MuMate's production Supabase database, security first, at the
+    owner's request ("research prod database ทั้งหมด รวมถึงด้านความปลอดภัย"),
+    and record what was found and the one fix applied the same evening. No
+    workstream was opened; the owner will continue with Supabase and infra
+    work in the next session.
+  scope:
+    - Code survey of mootech-fe, mootech-be, bazi-sft-dataset and mumate-infra for how they reach the database and Storage.
+    - A read-only catalog audit of production, run by the owner.
+    - Closing the database's public API access to schema public, run by the owner.
+  out_of_scope:
+    - Every other finding below; each waits for an owner decision or a workstream.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - >-
+      ACCESS. The agent's own read of production (ssh to mumate-2 with
+      env/backup.env) was refused by the harness as a production read, as
+      recorded before; it was not retried. The agent wrote a read-only audit
+      (catalog, settings and statistics only, no member row contents) and a
+      wrapper that runs it as mumate_backup on mumate-2; the owner ran it at
+      13:49Z and again at 14:01Z. The Supabase CLI on this machine is not
+      logged in, so dashboard-only settings were read by the owner.
+    - >-
+      FINDING, NOW CLOSED. Before the fix, 174 of 189 tables in schema public
+      had row level security off while Supabase's API roles anon and
+      authenticated held full table privileges on them, the members' tables
+      among them, and default privileges granted the same on every new table
+      postgres created. The Data API (PostgREST) was running. No code in the
+      four repositories calls the Data API or supabase-js table queries; their
+      supabase-js use is Storage with the service-role key, and Supabase Auth
+      has 0 users.
+    - >-
+      EXPOSURE CHECK. The owner read the dashboard API logs filtered to the
+      Data API path and reported 0 rows. The first screenshot covered the last
+      60 minutes; the range of the final check was not confirmed to the agent.
+      Logs reach back about 7 days at most, so earlier access cannot be ruled
+      out either way.
+    - >-
+      FIX, owner-run in the SQL editor between the two audits (20:49-21:01 +07:00), from a file the
+      agent prepared and first proved on a throwaway local Postgres (owner role
+      still reads and writes; anon denied; a new table not granted): revoke all
+      privileges of anon and authenticated on public tables, sequences and
+      functions; revoke the same from postgres's default privileges in public;
+      enable (not force) RLS on every public table, with no policies. The
+      in-transaction check returned 0 tables without RLS and 0 readable by the
+      API roles.
+    - >-
+      VERIFIED. The 14:01Z audit shows public 189 tables, 189 with RLS; no
+      public table in the exposure list; postgres's default privileges in
+      public no longer name anon or authenticated. The apps connect as
+      postgres, the table owner, which non-forced RLS does not restrict, and
+      mumate_backup has BYPASSRLS. The owner then opened member-data pages on
+      bazichart.mumate.co and reported them normal.
+  measured_facts:
+    - "Postgres 17.6, database 403 MB, max_connections 60, about 18 backends at audit time; all 250 public objects owned by postgres."
+    - "No pg_cron, no realtime publication, 0 vault secrets, 0 Supabase Auth users; seven Storage buckets, all public, mootech holding 13,710 objects (about 7.1 GB)."
+    - "idle_in_transaction_session_timeout and idle_session_timeout are 0 (none); the database-wide statement_timeout was not measured, because the audit set its own."
+    - "No migration ledger exists for schema public; only Supabase's own auth, realtime and storage ledgers."
+    - "The heaviest statement by total time ran 37,716 calls at a 345 ms mean; its text is hidden from mumate_backup."
+
+evidence:
+  repository:
+    head: "23a46fa"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    production_change: "Supabase project mumate-prod: API-role privileges revoked and RLS enabled on schema public, owner-run 2026-10-06 between 13:49Z and 14:01Z"
+    mootech-fe: "c859aaa (read only)"
+    mootech-be: "0705378 (read only)"
+    bazi-sft-dataset: "40e8ebf (read only)"
+    mumate-infra: "9a230ab (read only)"
+  local_material: >-
+    The audit SQL, its wrapper, both results and the fix SQL are in the
+    gitignored .assets/mumate/db-audit-2026-10-06/ on the owner's machine, not
+    in this repository. The results hold catalog data and counts, no member
+    rows and no secrets.
+
+unresolved:
+  - "Data API not yet disabled in the dashboard. It is the second layer: tables that supabase_admin creates in public still default-grant the API roles, and the agent cannot change that role's defaults."
+  - "Every app connects as postgres (owner, BYPASSRLS, CREATEROLE), and Vercel preview uses the production database. Per-app roles and a postgres password rotation fit after the Friday 2026-10-09 cutover, when app env lives in one place. Rotate the anon and service-role keys at the same time."
+  - "Copies of real member data outside production: a 1.4 GB full dump and prod env backups under mootech-fe/testenv on the owner's laptop (gitignored), and a non-anonymised staging copy on mumate-2. Deleting or anonymising them is the owner's call."
+  - "Personal files (payment slips, profile and friend photos) sit in public Storage buckets; moving them to a private bucket with signed URLs needs a plan."
+  - "Plaintext sensitive columns (otp.code, legacy provider tokens in user_provider.id_token), and next-auth copies provider tokens into the browser-readable session."
+  - "No migration ledger, and three repositories write one schema with two migration systems."
+  - "No idle-in-transaction timeout; the pooler's 15 back connections are shared by fe (up to 15) and bazi (10 per process, fixed)."
+  - "mootech-fe tracks testenv/env/bazi.env in a public repository; the agent's read of it was refused, so whether it holds real values is unchecked (owner to look)."
+  - "This record sits in a public repository. It names a weakness that is closed and gives no method; the owner decides whether and when it is pushed."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Next session (owner: Supabase and infra): the owner disables the Data API
+    and reruns the audit (PostgREST should leave the connection list); then
+    agree a workstream that moves Supabase into mumate-infra - roles and
+    grants as reviewed SQL, one migration ledger, and the audit as a nightly
+    job on mumate-2 that alerts Discord when a public table loses RLS or an
+    API role gains a privilege - and order the unresolved items above.
+  acceptance_check:
+    - Wake reports no validation error with this event as the newest record.

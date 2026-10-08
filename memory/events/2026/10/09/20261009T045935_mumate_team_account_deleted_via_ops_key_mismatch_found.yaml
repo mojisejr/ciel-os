@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T045935_mumate_team_account_deleted_via_ops_key_mismatch_found
+type: closeout
+recorded_at: 2026-10-09T04:59:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record a team member's account deleted on production at the team's
+    request, through the /ops delete button, and the /ops key mismatch the
+    cutover introduced. ciel-os is public, so the account is named by an
+    8-character id prefix only.
+  scope:
+    - The deletion path and its evidence; the ops key finding.
+  out_of_scope:
+    - Changing env on mumate-prod-1 (needs the owner's word).
+
+outcome:
+  status: recorded
+  slice: "6"
+  state:
+    - "2026-10-09 ~04:50 +07:00 the owner asked to check and delete user 77e9a98b-… for a team member. The agent proposed the /ops 'ลบบัญชี' button (lib/ops/delete-user.ts, เอ็ม 2026-09-20: deletes user_provider, member_subscription and user rows for that user_id, so the next login mints a new user; engine data and payment rows stay, orphaned) over a direct database write, so the owner could confirm the person on screen first. The in-app deletion (/api/v2/account/delete, 30-day pending, keeps the login mapping) does not make a new user and was not used."
+    - "The owner could not log in to /ops with the key he knew. Cause: Vercel production has its own OPS_DASHBOARD_KEY and GLASS_BOX_KEY (vercel env ls, names only); runbook 06 step 1 took both from staging by the 2026-10-01 decision ('not used yet'), so prod-1's /ops key equals staging's (sha256 prefix b611a4af013d on both). The agent saved prod-1's value, unprinted, to .assets/mumate/ops-dashboard-key.production.env (600, gitignored) at the owner's request."
+    - "The owner logged in with it and deleted the account. Evidence on mumate-prod-1: Caddy log DELETE /api/ops/users status 200 (the ops delete API); the owner reported the deletion done. The agent did not read the database."
+  not_done:
+    - "Staging (pgstaging restored from the 2026-10-02 backup) still holds a copy of this account; delete it in app.staging.mumate.co/ops too if the team wants it gone there."
+  owner_decision_open:
+    - "Agent recommends replacing prod-1's OPS_DASHBOARD_KEY and GLASS_BOX_KEY with the Vercel production values: the team's known key works again, and the staging key stops opening production /ops. One value at a time per runbook 01, then recreate fe (~10 s, Caddy serves the maintenance page meanwhile)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "b846e0f"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "83ed2f1 on mumate-prod-1"
+
+unresolved:
+  - "The ops key decision above (owner)."
+  - "Staging copy of the account."
+  - "HQ hq/20261005 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    On the owner's word, copy the two Vercel values onto prod-1 one at a time
+    and recreate fe; otherwise nothing.
+  acceptance_check:
+    - The team's known /ops key logs in on bazichart.mumate.co/ops and the staging key does not.

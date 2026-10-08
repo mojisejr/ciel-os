@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T113927_mumate_owner_authorizes_agent_prod_build_release_step1_today
+type: closeout
+recorded_at: 2026-10-07T11:39:27+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the owner's word that the agent itself runs the pre-day items A-D
+    today, including the production build and release that the 2026-10-01
+    default left to the owner, and runbook 06 step 1 ahead of Friday.
+  scope:
+    - A-D as the owner wrote them.
+  out_of_scope:
+    - Vercel, DNS, cron on either platform, the gate.
+
+outcome:
+  status: recorded
+  slice: "6"
+  owner_statement: "อนุญาตให้ทำ A–D: build image production และ release fe 83ed2f1 / bazi 40e8ebf ขึ้น mumate-prod-1, ใส่ env สดจาก Vercel ตามขั้น 1 ของ runbook 06 (คง maintenance เปิดไว้), smoke test, เช็ก cron 3a และทำการ์ดวันศุกร์"
+  owner_question_answered:
+    - "Owner: 'ระบบจะยังใช้ได้จนถึงตี 4 ของวันศุกร์ ถูกต้องใช่หรือเปล่า'. Agent: yes - users reach Vercel through the unchanged DNS until the Friday window; A-D touch only mumate-prod-1, which serves nobody and stays in maintenance; the in-app notice is the only user-visible change and ends by itself at 04:00."
+  effect:
+    - "This occasion only: the agent presses container-build target=production and release env=production for the signed-off SHAs. The 2026-10-01 default (production builds and releases are the owner's) otherwise stands."
+    - "Runbook 06 step 1 moves from Friday to today; Friday starts at step 2 after a check that step 1's results still hold."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "5dbaf96"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main 83ed2f1 (signed off)"
+    bazi-sft-dataset: "origin/pdf-dev 40e8ebf (signed off)"
+
+unresolved:
+  - "A-D results, recorded as they complete."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Re-check the frozen SHAs, build and release production, place step 1 env,
+    smoke, step 3a, and write the Friday card.
+  acceptance_check:
+    - mumate-prod-1 runs fe 83ed2f1 / bazi 40e8ebf with the fresh env, healthy, in maintenance.

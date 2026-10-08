@@ -1,0 +1,528 @@
+<title>ปราณีต พันธุ์ไม้</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+/* Layout: Apple-style product pages for a nursery. One quiet column per screen,
+   huge type, field photography first, the lot's numbers set like a spec sheet. */
+/* Palette: durian leaf (glossy green top, copper underside) in late-afternoon sun.
+   Warm white ground, soft gold light, deep leaf green for actions. */
+:root{
+  --paper:#fbfaf6; --surface:#ffffff; --ink:#1f2a1c; --muted:#646b5a;
+  --olive:#2f4a2e; --leaf:#46703f; --straw:#e6c56f; --line:#ece9e0;
+  --glow:rgba(238,196,104,.22); --shadow:0 1px 2px rgba(40,46,30,.04),0 10px 30px rgba(40,46,30,.07);
+  --grow-bg:#f8efd6; --grow-ink:#77570f; --ready-bg:#e5eee0; --ready-ink:#2b4f2c;
+  --chart-band:#e2ebd9; --stick:#ead79b; --bag:#3b3b35; --soil:#8b7b62;
+  --leaf-a:#4f7d45; --leaf-b:#b8874c;
+  --display:"Anuphan","IBM Plex Sans Thai","Noto Sans Thai",system-ui,sans-serif;
+  --body:"IBM Plex Sans Thai","Noto Sans Thai",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#10140f; --surface:#171c15; --ink:#f1efe6; --muted:#aeb3a3;
+  --olive:#d7e4cc; --leaf:#a6c98f; --straw:#e2c070; --line:#262d22;
+  --glow:rgba(226,192,112,.10); --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.25);
+  --grow-bg:#3a321a; --grow-ink:#f0d898; --ready-bg:#1f3320; --ready-ink:#c4e2ad;
+  --chart-band:#26361f; --stick:#bca462; --bag:#0c0d0b; --soil:#5a4c39;
+  --leaf-a:#7aa86b; --leaf-b:#c49656; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#10140f; --surface:#171c15; --ink:#f1efe6; --muted:#aeb3a3;
+  --olive:#d7e4cc; --leaf:#a6c98f; --straw:#e2c070; --line:#262d22;
+  --glow:rgba(226,192,112,.10); --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.25);
+  --grow-bg:#3a321a; --grow-ink:#f0d898; --ready-bg:#1f3320; --ready-ink:#c4e2ad;
+  --chart-band:#26361f; --stick:#bca462; --bag:#0c0d0b; --soil:#5a4c39;
+  --leaf-a:#7aa86b; --leaf-b:#c49656; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:radial-gradient(75% 560px at 82% 0%,var(--glow),transparent 72%) no-repeat,var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65;padding-inline:16px;padding-block:0 48px}
+h1,h2,h3{font-family:var(--display);line-height:1.2;text-wrap:balance;margin:0}
+p{margin:0}
+.num{font-variant-numeric:tabular-nums}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--leaf);outline-offset:2px}
+
+/* mockup chrome */
+.mock-bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--paper) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin-inline:-16px;padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mock-bar .label{font-size:13px;color:var(--muted);margin-right:4px}
+.tab{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-size:14px;cursor:pointer;min-height:36px}
+.tab[aria-selected="true"]{background:var(--olive);color:var(--paper);border-color:var(--olive)}
+.note{font-size:13px;color:var(--muted);border:1px dashed var(--line);border-radius:10px;padding:8px 12px;margin-top:12px}
+.screen{max-width:980px;margin:0 auto}
+.screen.narrow{max-width:460px}
+
+/* shop header */
+.shop-head{display:flex;align-items:center;gap:12px;padding-block:18px 8px}
+.shop-head img{width:52px;height:52px;border-radius:50%;background:var(--olive);object-fit:cover}
+.shop-head .eyebrow{font-size:13px;letter-spacing:.04em;color:var(--muted)}
+.shop-head .name{font-family:var(--display);font-size:20px;font-weight:700;line-height:1.2}
+.shop-head nav{margin-left:auto;font-size:14px;color:var(--muted);display:flex;gap:16px}
+
+/* hero */
+.hero{text-align:left;padding-block:44px 28px;display:grid;gap:16px}
+.hero h1{font-size:clamp(34px,7vw,64px);font-weight:600;letter-spacing:-.015em}
+.hero p{font-size:clamp(17px,2.4vw,21px);color:var(--muted);max-width:34em}
+.facts{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:15px;color:var(--muted)}
+.facts b{color:var(--ink);font-weight:600}
+
+/* field photo placeholder: rows of bagged seedlings seen from above */
+.field{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:16/9;max-width:100%;
+  background:
+    radial-gradient(circle at 50% 50%,var(--leaf-a) 0 34%,transparent 36%) 0 0/28px 26px,
+    radial-gradient(circle at 50% 50%,var(--bag) 0 44%,transparent 46%) 0 0/28px 26px,
+    linear-gradient(var(--soil),var(--soil));}
+.field.b{background-size:24px 22px,24px 22px,auto}
+.field.c{background:
+    radial-gradient(circle at 50% 50%,var(--leaf-a) 0 22%,transparent 24%) 0 0/22px 20px,
+    radial-gradient(circle at 50% 50%,var(--bag) 0 44%,transparent 46%) 0 0/22px 20px,
+    linear-gradient(var(--soil),var(--soil))}
+.field .tag{position:absolute;left:12px;bottom:12px;background:rgba(31,42,28,.62);backdrop-filter:blur(6px);color:#f3f4ea;font-size:13px;padding:4px 10px;border-radius:999px}
+
+/* lot cards */
+.section-title{font-size:clamp(24px,4vw,34px);font-weight:600;letter-spacing:-.01em;padding-block:44px 16px}
+.lots{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.lot{background:var(--surface);border-radius:24px;overflow:hidden;display:grid;cursor:pointer;border:0;box-shadow:var(--shadow);text-align:left;padding:0;transition:transform .25s ease}
+.lot:hover{transform:translateY(-2px)}
+.lot .field{border-radius:0;aspect-ratio:4/3}
+.lot .body{padding:16px 18px 18px;display:grid;gap:8px}
+.lot .code{font-family:var(--display);font-size:22px;font-weight:700}
+.lot .sub{font-size:14px;color:var(--muted)}
+.lot dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:4px 0 0;font-size:15px}
+.lot dt{color:var(--muted)}
+.lot dd{margin:0;font-variant-numeric:tabular-nums}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;border-radius:999px;padding:3px 10px;width:max-content}
+.pill.grow{background:var(--grow-bg);color:var(--grow-ink)}
+.pill.ready{background:var(--ready-bg);color:var(--ready-ink)}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+
+/* how to order */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.step{display:grid;gap:6px}
+.step .n{font-family:var(--display);font-size:15px;color:var(--leaf);font-weight:700}
+.step h3{font-size:20px}
+.step p{color:var(--muted);font-size:15px}
+.ship{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:20px}
+.ship div{background:var(--surface);border:0;box-shadow:var(--shadow);border-radius:18px;padding:16px 18px}
+.ship b{font-family:var(--display);font-size:18px;display:block}
+.ship span{color:var(--muted);font-size:15px}
+.cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;background:var(--olive);color:var(--paper);font-weight:500;letter-spacing:.01em;border:0;cursor:pointer;text-decoration:none}
+.cta.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.since{display:flex;gap:16px;align-items:center;padding-block:44px 0;border-top:1px solid var(--line);margin-top:44px}
+.since img{width:72px;height:72px;border-radius:50%;background:var(--olive)}
+.since p{color:var(--muted);font-size:15px}
+.since b{color:var(--ink)}
+
+/* lot page */
+.back{background:none;border:0;color:var(--leaf);cursor:pointer;padding:16px 0 0;font-size:15px}
+.lot-hero{display:grid;gap:10px;padding-block:20px 22px}
+.lot-hero h1{font-size:clamp(38px,8vw,72px);font-weight:600;letter-spacing:-.015em}
+.lot-hero .lede{font-size:clamp(17px,2.4vw,21px);color:var(--muted)}
+.cover{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+.cover .stickshot{border-radius:22px;background:var(--surface);border:0;box-shadow:var(--shadow);display:grid;place-items:center;position:relative;overflow:hidden;min-height:180px}
+.cover .stickshot canvas{width:100%;height:100%}
+.cover .stickshot .tag{position:absolute;left:10px;bottom:10px;font-size:12px;background:rgba(17,20,12,.72);color:#f3f4ea;padding:3px 9px;border-radius:999px}
+@media (max-width:560px){.cover{grid-template-columns:1fr 1fr}.cover .field{grid-column:1/-1}}
+.big-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;padding-block:28px}
+.big-stats div{display:grid;gap:2px}
+.big-stats .v{font-family:var(--display);font-size:clamp(30px,5vw,44px);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.big-stats .k{color:var(--muted);font-size:14px}
+.price{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.price div{background:var(--surface);border:0;box-shadow:var(--shadow);border-radius:18px;padding:16px 18px;display:grid;gap:2px}
+.price .v{font-family:var(--display);font-size:32px;font-weight:700;font-variant-numeric:tabular-nums}
+.price .k{color:var(--muted);font-size:14px}
+.viewer{background:var(--surface);border:0;box-shadow:var(--shadow);border-radius:22px;padding:16px;display:grid;gap:10px}
+.viewer canvas{width:100%;height:380px;touch-action:pan-y;cursor:grab;display:block}
+.viewer .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{border:0;background:none;border-radius:999px;padding:6px 14px;cursor:pointer;min-height:36px;font-size:14px}
+.seg button[aria-pressed="true"]{background:var(--olive);color:var(--paper)}
+.chart-wrap{overflow-x:auto}
+.chart-wrap svg{display:block;min-width:520px;width:100%;height:auto}
+.timeline{display:grid;gap:0}
+.round{display:grid;grid-template-columns:96px 1fr;gap:16px;padding-block:16px;border-top:1px solid var(--line)}
+.round .when{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.round .what{display:grid;gap:8px;min-width:0}
+.round .what b{font-family:var(--display);font-size:18px}
+.thumbs{display:flex;gap:8px;overflow-x:auto}
+.thumbs .field{width:120px;flex:0 0 120px;aspect-ratio:4/3;border-radius:12px}
+.spec{display:grid;grid-template-columns:minmax(120px,200px) 1fr;border-top:1px solid var(--line)}
+.spec dt,.spec dd{padding:14px 0;border-bottom:1px solid var(--line);margin:0}
+.spec dt{color:var(--muted)}
+.spec dd{font-weight:500}
+
+/* ops */
+.ops-head{display:flex;align-items:center;gap:10px;padding-block:16px 6px}
+.ops-head img{width:36px;height:36px;border-radius:50%;background:var(--olive)}
+.ops-head b{font-family:var(--display);font-size:18px}
+.ops-head span{margin-left:auto;font-size:13px;color:var(--muted)}
+.form{display:grid;gap:22px;padding-block:12px}
+.q{display:grid;gap:10px}
+.q > label,.q > .lab{font-family:var(--display);font-size:18px;font-weight:600}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.custom-h{display:grid;grid-template-columns:1fr auto 1fr auto;gap:8px;align-items:end}
+.custom-h label{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.custom-h span{padding-bottom:14px;color:var(--muted)}
+.chip{min-height:56px;border-radius:14px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;font-size:16px;font-variant-numeric:tabular-nums}
+.chip small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--olive);color:var(--paper);border-color:var(--olive)}
+.chip[aria-pressed="true"] small{color:var(--paper)}
+.slider{display:grid;gap:4px}
+.slider input{width:100%;height:44px;accent-color:var(--leaf)}
+.slider .lr{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.slider .lr b{color:var(--ink);font-size:18px}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.shot{position:relative;border:2px dashed var(--line);border-radius:16px;min-height:120px;display:grid;place-items:center;text-align:center;padding:10px;cursor:pointer;background:var(--surface);overflow:hidden}
+.shot input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.shot b{font-size:15px}
+.shot span{font-size:12px;color:var(--muted)}
+.shot.wide{grid-column:1/-1;min-height:84px}
+.req{color:var(--grow-ink);font-size:12px;font-weight:600}
+.field-in{min-height:52px;border-radius:14px;border:1px solid var(--line);background:var(--surface);padding:0 14px;font-size:18px;width:100%;font-variant-numeric:tabular-nums}
+textarea.field-in{min-height:80px;padding:12px 14px;font-size:16px}
+.save{position:sticky;bottom:0;padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));background:var(--paper)}
+.save .cta{width:100%;min-height:56px;font-size:18px}
+.saved{color:var(--ready-ink);background:var(--ready-bg);border-radius:12px;padding:10px 14px;font-size:15px}
+.olist{display:grid;gap:12px;padding-block:8px}
+.orow{background:var(--surface);border:0;box-shadow:var(--shadow);border-radius:18px;padding:14px 16px;display:grid;gap:10px}
+.orow .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.orow .top b{font-family:var(--display);font-size:20px}
+.orow .meta{font-size:14px;color:var(--muted)}
+.orow .warn{font-size:13px;color:var(--grow-ink)}
+.orow .prices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.orow .prices label{font-size:13px;color:var(--muted);display:grid;gap:4px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:10px}
+.switch button{min-height:44px;border-radius:999px;border:1px solid var(--line);background:var(--surface);padding:0 16px;cursor:pointer;font-weight:600}
+.switch button[aria-pressed="true"]{background:var(--ready-bg);color:var(--ready-ink);border-color:transparent}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+
+<div class="mock-bar" role="tablist" aria-label="หน้าจอใน mockup">
+  <span class="label">mockup ·</span>
+  <button class="tab" role="tab" data-go="home" aria-selected="true">หน้าร้าน</button>
+  <button class="tab" role="tab" data-go="lot" aria-selected="false">หน้า lot</button>
+  <button class="tab" role="tab" data-go="record" aria-selected="false">บันทึกผลวัด</button>
+  <button class="tab" role="tab" data-go="ops" aria-selected="false">หลังบ้าน</button>
+</div>
+
+<!-- ===== หน้าร้าน ===== -->
+<section class="screen" id="home" data-screen>
+  <header class="shop-head">
+    <img src="__MASCOT__" alt="หนวด เจ้าของร้าน">
+    <div><div class="eyebrow">ร้านตาหนวด · จันทบุรี</div><div class="name">ปราณีต พันธุ์ไม้</div></div>
+    <nav aria-label="เมนู"><span>lot ทั้งหมด</span><span>สั่งยังไง</span></nav>
+  </header>
+
+  <div class="hero">
+    <h1>หมอนทองเสียบยอด<br>รุ่นขายปี 70</h1>
+    <p>ดูแปลงจริง ความสูงจริง ทุกรอบที่วัด ก่อนตัดสินใจสั่ง ขายเป็นชุด 100 ต้นขึ้นไป คัดต้นให้ทุกครั้งก่อนส่ง</p>
+    <div class="facts"><span><b class="num">3</b> lot ในแปลง</span><span>ส่ง <b>roll pallet</b> หรือ <b>รถคอก</b></span><span>เปิดร้านตั้งแต่ <b class="num">2535</b></span></div>
+  </div>
+
+  <div class="field"><span class="tag">รูปทั้งแปลงจริงจะอยู่ตรงนี้ · อัปเดตทุกรอบวัด</span></div>
+
+  <h2 class="section-title">lot ในแปลงตอนนี้</h2>
+  <div class="lots" id="lotCards"></div>
+
+  <h2 class="section-title">สั่งยังไง</h2>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><h3>เลือก lot และจำนวน</h3><p>ขั้นต่ำ 100 ต้น เลือกยอดกระโดงหรือยอดข้างได้</p></div>
+    <div class="step"><span class="n">2</span><h3>ทัก LINE หนวด</h3><p>พิมพ์รหัส lot มาเลย เช่น "70-A กระโดง 300"</p></div>
+    <div class="step"><span class="n">3</span><h3>คัดต้นแล้วส่ง</h3><p>คัดทุกต้นก่อนขึ้นรถ ส่งตามวิธีที่ตกลงกัน</p></div>
+  </div>
+  <div class="ship">
+    <div><b>roll pallet ไปรษณีย์</b><span class="num">ประมาณ 1,700 บาท ต่อ 100 ต้น · ถึงใน 2–3 วัน</span></div>
+    <div><b>รถคอก เหมาคัน</b><span>ทักขอราคาตามระยะทาง เหมาะกับหลักพันต้นขึ้นไป</span></div>
+  </div>
+  <p style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap">
+    <span class="cta">ทัก LINE หนวด</span>
+    <a class="cta ghost" href="https://www.google.com/maps/place/%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%93%E0%B8%B5%E0%B8%95+(%E0%B9%80%E0%B8%88%E0%B9%8A%E0%B8%9F%E0%B8%B1%E0%B8%81)+%E0%B8%9E%E0%B8%B1%E0%B8%99%E0%B8%98%E0%B8%B8%E0%B9%8C%E0%B9%84%E0%B8%A1%E0%B9%89/@12.5529547,102.155561,17z" target="_blank" rel="noopener">ดูร้านบน Google Maps</a>
+  </p>
+
+  <div class="since">
+    <img src="__MASCOT__" alt="">
+    <p><b>ปราณีต พันธุ์ไม้ ตั้งแต่ พ.ศ. 2535</b><br>วันนี้ดูแลโดยหนวด ทุก lot วัดและถ่ายรูปจากแปลงจริงที่จันทบุรี</p>
+  </div>
+  <p class="note">ตัวอย่างทั้งหมดในหน้านี้: ราคา ความสูง และสัดส่วนทรงเป็นตัวเลขสมมติ ยังไม่ได้วัดจริง วันลงถุงตรงกับบันทึกจริง ปุ่ม LINE จะใช้ได้เมื่อเปิด LINE OA ใน slice 5</p>
+</section>
+
+<!-- ===== หน้า lot ===== -->
+<section class="screen" id="lot" data-screen hidden>
+  <button class="back" data-go="home">‹ lot ทั้งหมด</button>
+  <div class="lot-hero">
+    <span class="pill grow">กำลังโต · คาดว่าพร้อมขาย มี.ค. 70</span>
+    <h1>70-A</h1>
+    <p class="lede">หมอนทองเสียบยอด · ลงถุง 18 ส.ค. 69 · รุ่นขายปี 70</p>
+  </div>
+
+  <div class="cover">
+    <div class="field"><span class="tag">รูปทั้งแปลง · รอบวัด 8 ต.ค. 69</span></div>
+    <div class="stickshot"><canvas id="stickThumb" width="300" height="360" aria-label="รูปไม้เมตรเทียบความสูง"></canvas><span class="tag">ไม้เมตร · thumbnail</span></div>
+  </div>
+
+  <div class="big-stats">
+    <div><span class="v">1.7</span><span class="k">เดือน นับจากวันลงถุง</span></div>
+    <div><span class="v">30–40</span><span class="k">ซม. ความสูงรอบล่าสุด</span></div>
+    <div><span class="v">60%</span><span class="k">ยอดกระโดง โดยประมาณ</span></div>
+    <div><span class="v">~470</span><span class="k">ต้นในแปลง</span></div>
+  </div>
+
+  <h2 class="section-title" style="padding-top:8px">หมุนดูทรงต้นตัวอย่าง</h2>
+  <div class="viewer">
+    <canvas id="tree3d" width="900" height="760" aria-label="ภาพจำลองต้นตัวอย่าง ลากเพื่อหมุน"></canvas>
+    <div class="row">
+      <div class="seg" role="group" aria-label="ทรงต้น">
+        <button aria-pressed="true" data-shape="up">ยอดกระโดง</button>
+        <button aria-pressed="false" data-shape="side">ยอดข้าง</button>
+      </div>
+      <span style="font-size:14px;color:var(--muted)">ลากซ้ายขวาเพื่อหมุน · ไม้เมตรตั้งข้างต้น</span>
+    </div>
+    <p class="note" style="margin:0">ภาพจำลองสำหรับ mockup ของจริงจะเป็นภาพ 3D หรือภาพหมุน 360° จากต้นตัวอย่างหนึ่งต้นที่ถ่ายรอบต้นข้างไม้เมตร</p>
+  </div>
+
+  <h2 class="section-title">ราคา ต่อต้น</h2>
+  <div class="price">
+    <div><span class="k">ยอดกระโดง · 100 ต้นขึ้นไป</span><span class="v">65 บาท</span></div>
+    <div><span class="k">ยอดข้าง · 100 ต้นขึ้นไป</span><span class="v">50 บาท</span></div>
+  </div>
+  <p style="color:var(--muted);font-size:15px;margin-top:10px">ค่าส่งแยกตามจริง: roll pallet ประมาณ 1,700 บาท ต่อ 100 ต้น หรือรถคอกตามระยะทาง</p>
+
+  <h2 class="section-title">ความสูงตามเวลา</h2>
+  <div class="chart-wrap"><svg id="chart" viewBox="0 0 640 300" role="img" aria-label="กราฟความสูงของ 70-A"></svg></div>
+
+  <h2 class="section-title">ทุกรอบที่วัด</h2>
+  <div class="timeline">
+    <div class="round"><div class="when">8 ต.ค. 69<br>อายุ 51 วัน</div><div class="what"><b>สูง 30–40 ซม. · กระโดง ~60%</b><div class="thumbs"><div class="field"></div><div class="field b"></div><div class="field"></div></div></div></div>
+    <div class="round"><div class="when">11 ก.ย. 69<br>อายุ 24 วัน</div><div class="what"><b>สูง 26–34 ซม. · ถอดเชือกที่รอยต่อแล้ว</b><div class="thumbs"><div class="field b"></div><div class="field"></div></div></div></div>
+    <div class="round"><div class="when">18 ส.ค. 69<br>วันลงถุง</div><div class="what"><b>ลงถุงเบอร์ 9 · 700 ถุง</b><div class="thumbs"><div class="field c"></div></div></div></div>
+  </div>
+
+  <h2 class="section-title">สเปกต้น</h2>
+  <dl class="spec">
+    <dt>พันธุ์</dt><dd>หมอนทอง เสียบยอด</dd>
+    <dt>ถุง</dt><dd>เบอร์ 9 · 4.5 × 12 นิ้ว</dd>
+    <dt>วัสดุปลูก</dt><dd>ดินผสมแกลบ</dd>
+    <dt>อายุ</dt><dd>นับจากวันลงถุง 18 ส.ค. 69</dd>
+    <dt>ความสูง</dt><dd>30–40 ซม. (รอบ 8 ต.ค. 69)</dd>
+    <dt>ทรง</dt><dd>ยอดกระโดง ~60% · ยอดข้าง ~40%</dd>
+    <dt>การคัด</dt><dd>คัดต้นทุกครั้งก่อนส่ง</dd>
+    <dt>ขั้นต่ำ</dt><dd>100 ต้น</dd>
+    <dt>การส่ง</dt><dd>roll pallet ไปรษณีย์ หรือรถคอก</dd>
+  </dl>
+  <p style="margin-top:28px"><span class="cta">ทัก LINE หนวด · 70-A</span></p>
+  <p class="note">ตัวเลขความสูงและราคาเป็นตัวอย่าง วันลงถุงและจำนวน 700 ถุงตรงกับบันทึกจริง</p>
+</section>
+
+<!-- ===== บันทึกผลวัด ===== -->
+<section class="screen narrow" id="record" data-screen hidden>
+  <div class="ops-head"><img src="__MASCOT__" alt=""><b>บันทึกผลวัด</b><span>หลังบ้าน · หนวด</span></div>
+  <form class="form" id="recForm" novalidate>
+    <div class="q"><span class="lab" id="lLot">lot</span>
+      <div class="chips" role="group" aria-labelledby="lLot" data-group="lot">
+        <button type="button" class="chip" aria-pressed="true">70-A<small>18 ส.ค. 69</small></button>
+        <button type="button" class="chip" aria-pressed="false">70-B<small>11 ก.ย. 69</small></button>
+        <button type="button" class="chip" aria-pressed="false">70-C<small>6 ต.ค. 69</small></button>
+      </div></div>
+    <div class="q"><span class="lab" id="lH">ความสูงส่วนใหญ่ (ซม.)</span>
+      <div class="chips" role="group" aria-labelledby="lH" data-group="h">
+        <button type="button" class="chip" aria-pressed="false">&lt;30</button>
+        <button type="button" class="chip" aria-pressed="true">30–40</button>
+        <button type="button" class="chip" aria-pressed="false">40–50</button>
+        <button type="button" class="chip" aria-pressed="false">50–60</button>
+        <button type="button" class="chip" aria-pressed="false">60+</button>
+        <button type="button" class="chip" aria-pressed="false" data-custom>กำหนดเอง</button>
+      </div>
+      <div class="custom-h" id="customH" hidden>
+        <label for="hMin">ต่ำสุด<input id="hMin" class="field-in" inputmode="numeric" placeholder="34"></label>
+        <span aria-hidden="true">–</span>
+        <label for="hMax">สูงสุด<input id="hMax" class="field-in" inputmode="numeric" placeholder="46"></label>
+        <span class="unit">ซม.</span>
+      </div></div>
+    <div class="q"><label for="up">ยอดกระโดง ประมาณ</label>
+      <div class="slider"><input id="up" type="range" min="0" max="100" step="10" value="60">
+        <div class="lr"><span>ยอดข้าง <b id="sideV">40%</b></span><span>กระโดง <b id="upV">60%</b></span></div></div></div>
+    <div class="q"><span class="lab">รูป</span>
+      <div class="photos">
+        <label class="shot"><input id="ph1" type="file" accept="image/*" capture="environment"><span><b>รูปทั้งแปลง</b><br><span class="req">ต้องมี</span></span></label>
+        <label class="shot"><input id="ph2" type="file" accept="image/*" capture="environment"><span><b>รูปไม้เมตร</b><br><span class="req">ต้องมี · ใช้เป็นภาพปก</span></span></label>
+        <label class="shot wide"><input id="ph3" type="file" accept="image/*" multiple><span><b>+ เพิ่มรูปมุมอื่น</b><br><span>ไม่บังคับ</span></span></label>
+        <label class="shot wide"><input id="ph4" type="file" accept="image/*" multiple><span><b>ต้นตัวอย่างหมุนดู</b><br><span>ถ่ายเดินรอบต้นข้างไม้เมตร 24–36 รูป · ไม่บังคับ</span></span></label>
+      </div></div>
+    <div class="q"><label for="left">จำนวนในแปลง ประมาณ (ไม่บังคับ)</label><input id="left" class="field-in" inputmode="numeric" placeholder="470"></div>
+    <div class="q"><label for="memo">บันทึกสั้น ๆ (ไม่บังคับ)</label><textarea id="memo" class="field-in" placeholder="เช่น ใบชุดใหม่ออกแล้ว"></textarea></div>
+    <div id="savedMsg" class="saved" hidden>บันทึกรอบวัด 70-A แล้ว (ตัวอย่างใน mockup ยังไม่ได้ส่งข้อมูลจริง)</div>
+    <div class="save"><button class="cta" type="submit">บันทึกรอบวัด</button></div>
+  </form>
+</section>
+
+<!-- ===== หลังบ้าน ===== -->
+<section class="screen narrow" id="ops" data-screen hidden>
+  <div class="ops-head"><img src="__MASCOT__" alt=""><b>lot ทั้งหมด</b><span>หลังบ้าน · หนวด</span></div>
+  <div class="olist" id="opsList"></div>
+  <p class="note">สถานะ "พร้อมขาย" เปลี่ยนได้โดยหนวดคนเดียว ระบบไม่เปลี่ยนเอง ราคาที่ตั้งตรงนี้ขึ้นหน้า lot ทันที</p>
+</section>
+
+<script>
+(function(){
+  var LOTS=[
+    {code:"70-A",bag:"18 ส.ค. 69",age:"1.7 เดือน",h:"30–40 ซม.",up:60,count:"~470",field:"",src:"ต้นที่เหลือจากรอบถอนขาย 18 ส.ค.",last:"8 ต.ค. 69",stale:false,ready:false,pu:65,ps:50},
+    {code:"70-B",bag:"11 ก.ย. 69",age:"0.9 เดือน",h:"25–35 ซม.",up:50,count:"รอนับ",field:"b",src:"Lot 1 ซ่อมครั้งที่ 1",last:"11 ก.ย. 69",stale:true,ready:false,pu:65,ps:50},
+    {code:"70-C",bag:"6–7 ต.ค. 69",age:"2 วัน",h:"20–30 ซม.",up:50,count:"5,600",field:"c",src:"Lot 2/70 (4 ตู้) + Lot 1 ซ่อมรอบ 2",last:"7 ต.ค. 69",stale:false,ready:false,pu:65,ps:50}
+  ];
+  var cards=document.getElementById("lotCards");
+  LOTS.forEach(function(l){
+    var b=document.createElement("button");b.className="lot";b.type="button";b.dataset.go="lot";
+    b.innerHTML='<div class="field '+l.field+'"></div><div class="body"><span class="pill grow">กำลังโต</span><span class="code">'+l.code+'</span><span class="sub">ลงถุง '+l.bag+' · อายุ '+l.age+'</span><dl><dt>ความสูง</dt><dd>'+l.h+'</dd><dt>กระโดง</dt><dd>~'+l.up+'%</dd><dt>ในแปลง</dt><dd>'+l.count+' ต้น</dd></dl></div>';
+    cards.appendChild(b);
+  });
+  var ops=document.getElementById("opsList");
+  LOTS.forEach(function(l,i){
+    var d=document.createElement("div");d.className="orow";
+    d.innerHTML='<div class="top"><b>'+l.code+'</b><span class="pill grow" id="st'+i+'">กำลังโต</span></div>'+
+      '<div class="meta">ลงถุง '+l.bag+' · '+l.count+' ต้น · วัดล่าสุด '+l.last+'<br>มาจาก '+l.src+'</div>'+
+      (l.stale?'<div class="warn">ไม่ได้วัดมาเกิน 3 สัปดาห์</div>':'')+
+      '<div class="prices"><label>กระโดง (บาท)<input class="field-in" id="pu'+i+'" inputmode="numeric" value="'+l.pu+'"></label><label>ข้าง (บาท)<input class="field-in" id="ps'+i+'" inputmode="numeric" value="'+l.ps+'"></label></div>'+
+      '<div class="switch"><span>ประกาศพร้อมขาย</span><button type="button" aria-pressed="false" data-i="'+i+'">ยังไม่พร้อม</button></div>';
+    ops.appendChild(d);
+  });
+  ops.addEventListener("click",function(e){
+    var t=e.target.closest(".switch button");if(!t)return;
+    var on=t.getAttribute("aria-pressed")!=="true";t.setAttribute("aria-pressed",on);t.textContent=on?"พร้อมขาย":"ยังไม่พร้อม";
+    var st=document.getElementById("st"+t.dataset.i);st.className="pill "+(on?"ready":"grow");st.textContent=on?"พร้อมขาย":"กำลังโต";
+  });
+
+  function show(id){
+    document.querySelectorAll("[data-screen]").forEach(function(s){s.hidden=s.id!==id});
+    document.querySelectorAll(".tab").forEach(function(t){t.setAttribute("aria-selected",t.dataset.go===id)});
+    window.scrollTo(0,0);
+    if(id==="lot"){drawTree();drawThumb()}
+  }
+  document.addEventListener("click",function(e){var g=e.target.closest("[data-go]");if(g)show(g.dataset.go)});
+  var h=(location.hash||"").slice(1);if(["home","lot","record","ops"].indexOf(h)>=0)show(h);
+
+  document.querySelectorAll("[data-group]").forEach(function(g){
+    g.addEventListener("click",function(e){var c=e.target.closest(".chip");if(!c)return;
+      g.querySelectorAll(".chip").forEach(function(x){x.setAttribute("aria-pressed",x===c)});
+      if(g.dataset.group==="h"){var box=document.getElementById("customH");box.hidden=!c.hasAttribute("data-custom");if(!box.hidden)document.getElementById("hMin").focus()}});
+  });
+  var up=document.getElementById("up");
+  up.addEventListener("input",function(){document.getElementById("upV").textContent=up.value+"%";document.getElementById("sideV").textContent=(100-up.value)+"%"});
+  ["ph1","ph2"].forEach(function(id){
+    document.getElementById(id).addEventListener("change",function(e){
+      var f=e.target.files&&e.target.files[0];if(!f)return;
+      var r=new FileReader();r.onload=function(){var lab=e.target.parentElement,img=lab.querySelector("img")||document.createElement("img");img.src=r.result;img.alt="";lab.appendChild(img)};r.readAsDataURL(f);
+    });
+  });
+  document.getElementById("recForm").addEventListener("submit",function(e){e.preventDefault();document.getElementById("savedMsg").hidden=false});
+
+  function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+
+  /* height chart: band = range, line = middle, dashed = 50 cm ready line */
+  (function chart(){
+    var svg=document.getElementById("chart");
+    var W=640,H=300,L=48,R=20,T=20,B=40;
+    var days=[0,24,51], lo=[22,26,30], hi=[30,34,40];
+    var maxD=200, maxH=60;
+    function x(d){return L+(W-L-R)*d/maxD} function y(v){return T+(H-T-B)*(1-v/maxH)}
+    var s='';
+    [0,10,20,30,40,50,60].forEach(function(v){s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="var(--line)" stroke-width="1"/><text x="'+(L-8)+'" y="'+(y(v)+4)+'" text-anchor="end" font-size="12" fill="var(--muted)">'+v+'</text>'});
+    [[0,"ส.ค. 69"],[44,"ต.ค. 69"],[105,"ธ.ค. 69"],[165,"ก.พ. 70"],[200,"มี.ค. 70"]].forEach(function(m){s+='<text x="'+x(m[0])+'" y="'+(H-14)+'" text-anchor="middle" font-size="12" fill="var(--muted)">'+m[1]+'</text>'});
+    s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(50)+'" y2="'+y(50)+'" stroke="var(--leaf)" stroke-width="1.5" stroke-dasharray="6 5"/>';
+    s+='<text x="'+(W-R)+'" y="'+(y(50)-8)+'" text-anchor="end" font-size="12" fill="var(--leaf)">เกณฑ์พร้อมขาย 50 ซม.</text>';
+    var band='M'+days.map(function(d,i){return x(d)+','+y(hi[i])}).join(' L')+' L'+days.slice().reverse().map(function(d,i){var j=days.length-1-i;return x(d)+','+y(lo[j])}).join(' L')+' Z';
+    s+='<path d="'+band+'" fill="var(--chart-band)"/>';
+    s+='<polyline fill="none" stroke="var(--olive)" stroke-width="2.5" points="'+days.map(function(d,i){return x(d)+','+y((lo[i]+hi[i])/2)}).join(' ')+'"/>';
+    days.forEach(function(d,i){var last=i===days.length-1;s+='<circle cx="'+x(d)+'" cy="'+y((lo[i]+hi[i])/2)+'" r="'+(last?6:4)+'" fill="'+(last?'var(--leaf)':'var(--olive)')+'"/>'});
+    s+='<text x="'+(x(51)+10)+'" y="'+(y(35)+4)+'" font-size="12" fill="var(--ink)">35 ซม.</text>';
+    svg.innerHTML=s;
+  })();
+
+  /* 3D seedling: points in cm, y up from soil surface; orthographic turntable */
+  var shape="up", angle=0.6, dragging=false, lastX=0, raf=0;
+  var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function seeded(n){var s=n;return function(){s=(s*9301+49297)%233280;return s/233280}}
+  function buildTree(kind){
+    var r=seeded(kind==="up"?7:13), leaves=[], stem=[];
+    if(kind==="up"){
+      stem=[[0,0,0],[0,36,0]];
+      [10,17,24,30,35].forEach(function(hgt,t){
+        var n=t===4?3:4;
+        for(var k=0;k<n;k++){var a=k*2*Math.PI/n+t*0.7+r()*0.3;var len=(t===4?6:11-t*0.8)+r()*2;
+          leaves.push({b:[0,hgt,0],d:[Math.cos(a),-0.12+r()*0.1+(t===4?0.6:0),Math.sin(a)],len:len,w:len*0.22})}
+      });
+    }else{
+      var tip=[16,24,4]; stem=[[0,0,0],[3,10,1],[9,18,2],tip];
+      for(var i=0;i<9;i++){var t=0.25+i*0.09,p=[tip[0]*t,tip[1]*t,tip[2]*t];var a=(i%2?1:-1)*1.3+r()*0.6+0.4;
+        var len=10+r()*3;leaves.push({b:p,d:[Math.cos(a)*0.7+0.5,-0.15+r()*0.1,Math.sin(a)],len:len,w:len*0.22})}
+      leaves.push({b:tip,d:[0.6,0.5,0.1],len:6,w:1.4});
+    }
+    return {stem:stem,leaves:leaves};
+  }
+  var trees={up:buildTree("up"),side:buildTree("side")};
+  function norm(v){var m=Math.hypot(v[0],v[1],v[2])||1;return [v[0]/m,v[1]/m,v[2]/m]}
+  function drawTree(){
+    var c=document.getElementById("tree3d");if(!c||c.offsetParent===null)return;
+    var dpr=Math.min(window.devicePixelRatio||1,2),cw=c.clientWidth,ch=c.clientHeight;
+    if(c.width!==Math.round(cw*dpr)){c.width=Math.round(cw*dpr);c.height=Math.round(ch*dpr)}
+    var g=c.getContext("2d");g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,cw,ch);
+    var scale=Math.min(ch/62,cw/70), ox=cw*0.52, oy=ch-26-14*scale*0.35;
+    function P(p){var ca=Math.cos(angle),sa=Math.sin(angle);var x=p[0]*ca+p[2]*sa,z=-p[0]*sa+p[2]*ca;var k=1+z/180;return [ox+x*scale*k,oy-p[1]*scale*k,z]}
+    // meter stick, fixed beside the tree
+    var sx=ox-24*scale, top=oy-55*scale;
+    g.fillStyle=css("--stick");g.fillRect(sx-5,top,10,oy-top+6);
+    g.fillStyle=css("--ink");g.font="12px "+css("--body");g.textAlign="right";
+    for(var cm=0;cm<=55;cm+=5){var yy=oy-cm*scale;g.fillRect(sx-5,yy,cm%10?6:10,1.5);if(cm%10===0)g.fillText(cm+"",sx-9,yy+4)}
+    // bag
+    g.fillStyle=css("--bag");g.beginPath();g.moveTo(ox-7*scale,oy);g.lineTo(ox+7*scale,oy);g.lineTo(ox+6.2*scale,oy+12*scale*0.35+14);g.lineTo(ox-6.2*scale,oy+12*scale*0.35+14);g.closePath();g.fill();
+    g.fillStyle=css("--soil");g.beginPath();g.ellipse(ox,oy,7*scale,1.6*scale,0,0,Math.PI*2);g.fill();
+    var t=trees[shape], items=[];
+    t.leaves.forEach(function(L){
+      var d=norm(L.d), s=norm([-d[2],0,d[0]]), pts=[];
+      for(var i=0;i<=10;i++){var u=i/10,w=L.w*Math.sin(Math.PI*u)*(u<0.5?1:1-((u-0.5)*0.6));pts.push([L.b[0]+d[0]*L.len*u+s[0]*w,L.b[1]+d[1]*L.len*u,L.b[2]+d[2]*L.len*u+s[2]*w])}
+      for(var j=10;j>=0;j--){var u2=j/10,w2=L.w*Math.sin(Math.PI*u2)*(u2<0.5?1:1-((u2-0.5)*0.6));pts.push([L.b[0]+d[0]*L.len*u2-s[0]*w2,L.b[1]+d[1]*L.len*u2,L.b[2]+d[2]*L.len*u2-s[2]*w2])}
+      var pr=pts.map(P),z=pr.reduce(function(a,p){return a+p[2]},0)/pr.length;
+      var nx=d[1]*s[2]-d[2]*s[1], nz=d[0]*s[1]-d[1]*s[0];
+      var facing=(-nx*Math.sin(angle)+nz*Math.cos(angle));
+      items.push({z:z,pr:pr,under:facing<-0.15});
+    });
+    // stem drawn at its average depth
+    var sp=t.stem.map(P);
+    items.push({z:sp.reduce(function(a,p){return a+p[2]},0)/sp.length-0.01,stem:sp});
+    items.sort(function(a,b){return a.z-b.z});
+    var leafA=css("--leaf-a"),leafB=css("--leaf-b");
+    items.forEach(function(it){
+      if(it.stem){g.strokeStyle=css("--soil");g.lineWidth=Math.max(3,scale*0.55);g.lineCap="round";g.beginPath();it.stem.forEach(function(p,i){i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1])});g.stroke();return}
+      g.fillStyle=it.under?leafB:leafA;g.globalAlpha=0.78+Math.max(-0.2,Math.min(0.2,it.z/60));
+      g.beginPath();it.pr.forEach(function(p,i){i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1])});g.closePath();g.fill();g.globalAlpha=1;
+    });
+    g.textAlign="left";g.fillStyle=css("--muted");g.font="13px "+css("--body");
+    g.fillText(shape==="up"?"ยอดกระโดง: ลำต้นตั้งตรง ใบออกเป็นชั้น":"ยอดข้าง: ลำต้นเอียง แตกใบไปด้านข้าง",12,22);
+    g.fillText("ใต้ใบสีทองแดง เหมือนใบทุเรียนจริง",12,42);
+  }
+  function drawThumb(){
+    var c=document.getElementById("stickThumb");if(!c||c.offsetParent===null)return;
+    var g=c.getContext("2d"),w=c.width,h=c.height;g.clearRect(0,0,w,h);
+    var base=h-40,sc=(h-70)/50;
+    g.fillStyle=css("--stick");g.fillRect(60,base-50*sc,14,50*sc);
+    g.fillStyle=css("--ink");g.font="14px "+css("--body");g.textAlign="right";
+    for(var cm=0;cm<=50;cm+=10){var y=base-cm*sc;g.fillRect(60,y,14,2);g.fillText(cm+"",54,y+5)}
+    g.fillStyle=css("--bag");g.fillRect(130,base,90,34);
+    g.strokeStyle=css("--soil");g.lineWidth=5;g.beginPath();g.moveTo(175,base);g.lineTo(175,base-35*sc);g.stroke();
+    g.fillStyle=css("--leaf-a");
+    [[12,1],[18,-1],[24,1],[30,-1],[35,0]].forEach(function(l){g.beginPath();g.ellipse(175+l[1]*24,base-l[0]*sc,l[1]?26:12,7,l[1]*-0.25,0,Math.PI*2);g.fill()});
+    g.strokeStyle=css("--leaf");g.setLineDash([5,4]);g.lineWidth=1.5;g.beginPath();g.moveTo(74,base-35*sc);g.lineTo(200,base-35*sc);g.stroke();g.setLineDash([]);
+    g.fillStyle=css("--ink");g.textAlign="left";g.fillText("35 ซม.",205,base-35*sc+5);
+  }
+  var cv=document.getElementById("tree3d");
+  cv.addEventListener("pointerdown",function(e){dragging=true;lastX=e.clientX;cv.setPointerCapture(e.pointerId)});
+  cv.addEventListener("pointermove",function(e){if(!dragging)return;angle+=(e.clientX-lastX)*0.012;lastX=e.clientX;drawTree()});
+  cv.addEventListener("pointerup",function(){dragging=false});
+  cv.addEventListener("pointercancel",function(){dragging=false});
+  document.querySelectorAll("[data-shape]").forEach(function(b){b.addEventListener("click",function(){
+    shape=b.dataset.shape;document.querySelectorAll("[data-shape]").forEach(function(x){x.setAttribute("aria-pressed",x===b)});drawTree()})});
+  function spin(){if(!dragging&&!document.hidden){angle+=0.004;drawTree()}raf=requestAnimationFrame(spin)}
+  if(!reduce)raf=requestAnimationFrame(spin);
+  window.addEventListener("resize",function(){drawTree();drawThumb()});
+  if(window.matchMedia)matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){drawTree();drawThumb()});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){drawTree();drawThumb()});
+})();
+</script>

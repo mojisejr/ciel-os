@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T123545_clear_together_expenses_workstream_opened
+type: decision
+recorded_at: 2026-10-08T12:35:45+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: clear-together-expenses-001
+  lane: single
+  objective: Align and plan shared expense recording and self-managed display names in the existing private PWA.
+  scope:
+    - Open a new CIEL workstream and plan; preserve the completed reimbursement workstream.
+outcome:
+  status: decided
+  decision: Owner confirmed the complete syncup scope and authorized opening/planning slice 1. Implementation and production rollout require subsequent owner instruction.
+evidence:
+  plan: workstreams/clear-together-expenses-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: d2211b9a6ef83afcba0559efa5ee07c0b43e54de
+    branch: hq/20261005
+  owner_goal: Both partners control money better by seeing shared spending and who recorded it, with only amount and description required.
+  owner_confirmations:
+    - Shared-expense feature is separate from reimbursement bills and debt balances.
+    - Work/personal category is optional; today defaults automatically with retrospective date selection available.
+    - Either can record for the other, with an optional “จดแทน [ชื่ออีกคน]” choice and visible recorded-by/on-behalf-of names.
+    - Only the recorder edits/cancels their own entries; both can inspect history.
+    - Each can set their own display name while retaining the existing login and stable account identity.
+    - Final shared-understanding summary, including the on-behalf-of selector, was accepted with “เอาตามนี้”.
+  syncup_prediction_check: Date and edit permissions accepted as proposed; recording-on-behalf accepted with an explicit label/selector refinement, then confirmed in the next round.
+  child_repository:
+    canonical_remote: github.com/mojisejr/clear-together
+    branch: main
+    head: 1858cc41fe9f69ea7a799972086b5262a3a3a54a
+    fetched_origin_main: 1858cc41fe9f69ea7a799972086b5262a3a3a54a
+    working_tree: clean
+  local_sources:
+    - checkouts/clear-together/migrations/000_auth.sql
+    - checkouts/clear-together/migrations/001_ledger.sql
+    - checkouts/clear-together/lib/ledger.ts
+    - checkouts/clear-together/lib/client.ts
+    - checkouts/clear-together/scripts/backup.ts
+    - checkouts/clear-together/scripts/restore.ts
+    - checkouts/clear-together/DESIGN.md
+  skills_boundary: Syncup used for alignment and frame for vertical slices/proof. CIEL repository contract determines the canonical PLAN.md and event location; no alternate global Oracle state or GitHub issue workflow was adopted.
+unresolved:
+  - Owner must review the proposed implementation slices before work begins; no application changes or production writes are authorized by this planning decision.
+  - Current live provider plan/branch count and account configuration need re-verification before rollout; no new Neon branch or service is proposed.
+  - Prior retired Blob store/token cleanup and removed provider source retention remain unverified; the new workstream does not close those items.
+  - Owner reports satisfactory use of the original app; physical-phone installation and real-data acceptance are not inferred from that general report.
+  - Vercel Pro remains metered; no new plan/add-on or team billing change is authorized.
+next_action:
+  action: Commit and validate the local workstream plan and planning closeout, present its slices for owner review, and wait for an instruction to start implementation.

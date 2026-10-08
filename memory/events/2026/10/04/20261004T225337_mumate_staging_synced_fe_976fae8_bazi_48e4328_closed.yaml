@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261004T225337_mumate_staging_synced_fe_976fae8_bazi_48e4328_closed
+type: closeout
+recorded_at: 2026-10-04T22:53:37+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-staging-sync
+  lane: single
+  objective: >-
+    Bring staging and the local checkouts level with production after further
+    merges by a team member; closed, no workstream, as on 2026-10-03.
+  scope:
+    - Staging build and release of fe 976fae8 and bazi 48e4328; local mootech-fe, bazi-testenv and bazi-sft-dataset moved to the same SHAs.
+
+outcome:
+  status: recorded
+  slice: none
+  decision: >-
+    Owner, 2026-10-04: "ตอนนี้ staging ว่างครับ ... คุนเริ่ม การ sync + deploy
+    ได้เลยครับ" after reviewing the step list.
+  completed:
+    - "New since fe 05090a2 / bazi 4a43450: mootech-fe 976fae8 (PR 878, manifest photo crop before upload and a re-adjust button; two components, no package, migration or env change); bazi pdf-dev 48e4328 (tarot sinsae book in English, used when lang is en; runtime change is the sinsaeEn field and passing lang; the env names in the commit belong to the offline translate script, not src/)."
+    - "Production already served both: bazichart.mumate.co/api/health sha 976fae8 (Vercel); the GitHub deployment record for bazi 48e4328 shows Production success at 2026-10-03T10:13:33Z."
+    - "Local: mootech-fe main fast-forwarded 05090a2 -> 976fae8; bazi-testenv pdf-dev fast-forwarded 4a43450 -> 48e4328 with merge --ff-only origin/pdf-dev (pdf-dev there has no upstream, so git pull refused; no config changed); bazi-sft-dataset main checkout detached at 48e4328; mumate-infra already at origin/main 31b9f7c. All clean."
+    - "Staging images: mootech-fe container-build run 37214318679 and bazi-sft-dataset container-build run 37214321140, target staging, push, both success with headSha equal to the pinned SHAs."
+    - "Release run 37214610206 (mumate-infra, env staging) success: fe running 976fae8…-staging /health.sha 976fae85286c, bazi running 48e4328…-staging /health.sha 48e4328fd0d2, both healthy; caddy ok, alloy ready, be retired (BE_SCALE=0), disk 26%."
+  verification:
+    - "app.staging.mumate.co/api/health: status ok, db ok, sha 976fae8, platform container, env staging."
+    - "/v2, /v2/login, /what-if, /maintenance 200; / 307 to /v2; providers facebook google line twitter; /api/user with a random UUID and no session 401."
+  owner_supplied:
+    - "The owner recalls that staging stores uploaded images in a separate Supabase bucket, not production's. Not verified by the agent; it differs from 20260927T115819, which records that a friend-photo upload on staging wrote to the real Supabase Storage bucket during the arena setup."
+
+evidence:
+  repository:
+    head: "1d433d6"
+    branch: hq/20261005
+    working_tree: this-record-only
+  application:
+    mootech-fe: "origin/main 976fae85286cc0ffdadec0813237bfb43cf6ed64 (Vercel production; staging 976fae8-staging)"
+    bazi-sft-dataset: "origin/pdf-dev 48e4328fd0d2b14ca387c20146cba234eb3a3bfe (Vercel production; staging 48e4328-staging)"
+
+unresolved:
+  - "mumate-vercel-to-do-001: staging matches production at fe 976fae8 / bazi 48e4328; a team sign-off must name these SHAs, and staging is rebuilt after any further production merge."
+  - "Which Supabase storage staging uploads go to (manifest photos included) is the owner's recollection, unverified."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: None; closed.
+  acceptance_check:
+    - None.

@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T131533_ref_office_flag_policy_narrowed
+type: decision
+recorded_at: 2026-10-07T13:15:33+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: ref-office-001
+  lane: single
+  objective: >-
+    Keep owner review per job inside the G1 time target by flagging only
+    entries the owner can actually decide on.
+  scope:
+    - Thai entries and journal articles Crossref does not hold become format-only and are listed in the customer's report.
+    - Flags remain for agent doubt, a missing or mismatched DOI, data disagreeing with a record, and failed Crossref calls.
+  out_of_scope:
+    - Routing customer questions (missing publisher, thesis level) straight to the customer report; revisit after real orders.
+outcome:
+  status: recorded
+  decision: >-
+    Dogfood on a real ThaiJO list flagged 25 of 31 entries under the opening
+    policy. The owner accepted the agent's proposal to flag only concrete
+    doubts and disagreements; on the same list this leaves 9 flags, each with
+    a specific question, and 0 on the synthetic student chapter.
+evidence:
+  plan: workstreams/ref-office-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "4"
+  authorization:
+    observed_directly_by_this_session: true
+    owner_instruction: "เปลี่ยนตามคุน ครับ"
+  trade_off_stated_to_owner: >-
+    A Thai entry the agent mis-parses without noticing reaches the customer
+    unreviewed; the provenance guard and the report's unchecked-entries list
+    remain as the safeguards.
+  repository:
+    head: a2c3e1ecd0c02fcf07a9d823014a84a0424be358
+    branch: hq/20261005
+unresolved:
+  - Owner time per job under the new policy is estimated, not measured; the first three real orders measure it.
+next_action:
+  action: Finish the third dogfood document, write the G1 dogfood report, and open the ref-office PR.
+  acceptance_check:
+    - Every defect found in dogfood has a test, and the report lists findings per document.

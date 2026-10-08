@@ -1,0 +1,41 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T112916_ref_office_slice2_authorized
+type: decision
+recorded_at: 2026-10-07T11:29:16+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: ref-office-001
+  lane: single
+  objective: >-
+    Build the office skeleton: the public ref-office repository with its
+    license, runbooks, knowledge, and an ignored jobs area.
+  scope:
+    - Create the public GitHub repository mojisejr/ref-office and clone it to checkouts/ref-office.
+    - Register the project in HQ and bind it locally.
+    - Write README, LICENSE, .gitignore, runbooks 00-02, knowledge files, and the jobs template and listing.
+  out_of_scope:
+    - Pipeline tools, checker, golden set, and dogfood (slices 3 and 4).
+    - Submitting the Fastwork listing or handling any customer file.
+outcome:
+  status: decided
+  decision: >-
+    After the slice-by-slice walkthrough the owner said go on slice 2,
+    which includes creating the public repository named in plan 0.1.
+evidence:
+  plan: workstreams/ref-office-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  authorization:
+    observed_directly_by_this_session: true
+    owner_instruction: "งั้นถ้าพร้อมแล้วเรา go กันได้เลยครับ slice 2"
+  repository:
+    head: fe55e0ffe143e9052171275a7a90580a5f809f55
+    branch: hq/20261005
+unresolved:
+  - Whether the harness permits this session to create the GitHub repository is not yet observed.
+next_action:
+  action: Create mojisejr/ref-office as a public repository, seed main once, then build the skeleton on a topic branch with a draft PR.
+  acceptance_check:
+    - Slice 2 DoD in plan 0.1 is met and evidenced in a closeout that references the draft PR.

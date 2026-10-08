@@ -1,7 +1,7 @@
 # MuMate — v2 chat stays filled and on screen when the iPhone keyboard opens
 
 **Workstream:** `mumate-chat-keyboard-ios-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.1
 **Execution phase:** none

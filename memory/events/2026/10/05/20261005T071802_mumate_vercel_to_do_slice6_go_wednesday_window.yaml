@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20261005T071802_mumate_vercel_to_do_slice6_go_wednesday_window
+type: decision
+recorded_at: 2026-10-05T07:18:02+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Authorize slice 6 of plan 0.4: the maintenance-gated cutover of
+    bazichart.mumate.co from Vercel to mumate-prod-1, window Wednesday
+    2026-10-07 02:00, prepared on Monday and Tuesday.
+  scope:
+    - Pre-day list of mumate-infra runbooks/06-cutover.md, including the runbook update for D8 rev 0.4.
+    - Day-of steps 0-7 and the flip-back, each step's provider action pressed by the owner or the team's DNS person as the runbook says.
+  out_of_scope:
+    - Slice 7 (observation, Vercel retirement); be-retirement step 6; deleting anything.
+
+outcome:
+  status: decided
+  slice: "6"
+  decision: >-
+    2026-10-05 morning the owner said the move is this Wednesday and asked how
+    ready it is and what the team must be told. The agent answered about 75 %
+    ready (DO side about 90 %, gates and people not started), listed D7's two
+    open conditions (MUMATE100 end date unknown, team merge rate not low) as
+    the owner's to accept, and proposed the Mon/Tue/Wed timeline. Owner:
+    "เราควรจะจัดการส่วนของเราให้เรียบร้อยครับ go กันเลย ถ้าไม่มีอะไรต้องเคาะแล้วครับ".
+  owner_decisions:
+    - "Go for slice 6, window Wednesday 2026-10-07 02:00 (02:00-07:00 low traffic, owner 2026-10-02); spare nights Fri 10-09 to Sun 10-11 02:00."
+    - "D7: the owner goes without the MUMATE100 end date and with the team's merge rate as it is; both are accepted by this go, not met. The other D7 conditions are met per 20261002T090651 (slice 5 done, observations closed, R7 not this week)."
+    - "WHATIF_KEY and GITHUB_TOKEN stay empty on production (accepted 2026-10-01, recorded here as runbook 06 asks)."
+  proposed_by_agent_not_yet_confirmed:
+    - "Freeze from Tuesday 2026-10-06 09:00 until the gate opens; team staging sign-off naming the SHAs by Tuesday 18:00; production images built and released Tuesday evening."
+    - "Name of the team's DNS person: the owner gets it from the team."
+  authorizes:
+    - Slice 6 of plan 0.4 as written, through mumate-infra runbooks/06-cutover.md.
+  does_not_authorize:
+    - The agent merging PRs, pushing HQ, changing Vercel, Namecheap, Beam or QStash settings, or sending the user or team announcements; those stay with the owner or the team as the runbook names.
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "6"
+  repository:
+    head: "733c0d0"
+    branch: hq/20261005
+    working_tree: this-decision-only
+  application:
+    mootech-fe: "origin/main 976fae8 (fetched 2026-10-05; Vercel production and staging)"
+    bazi-sft-dataset: "origin/pdf-dev 48e4328 (fetched 2026-10-05; Vercel production and staging)"
+    mumate-infra: "main 31b9f7c on both hosts; PR 39 head 5a5c0ac"
+    production_hosts: "mumate-prod-1 fe c10e91e / bazi 49e22f2, maintenance on, no cron timers"
+    dns: "bazichart.mumate.co CNAME to Vercel, TTL 3600 (dig 2026-10-05 morning, before this record)"
+
+unresolved:
+  - "TTL 3600 -> 300 by the team before Tuesday 2026-10-06 02:00 (T-24 h)."
+  - "Team staging sign-off naming the SHAs; freeze announcement; LINE OA notice to users; DNS person named."
+  - "Production images of the frozen SHAs built and released by the owner."
+  - "Better Stack staging monitor and api/bazi.staging deletion still owner-unconfirmed (since 2026-10-01)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Finish the agent's pre-day items (runbook 06 PR, PR 39 check, step 1
+    dry-run, secret equality, staging storage), hand the owner the team
+    message, then the Tuesday steps.
+  acceptance_check:
+    - Every runbook 06 pre-day item is checked or named with its owner before Tuesday evening.

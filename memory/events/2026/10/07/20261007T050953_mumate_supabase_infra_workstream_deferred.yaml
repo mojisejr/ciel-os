@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20261007T050953_mumate_supabase_infra_workstream_deferred
+type: decision
+recorded_at: 2026-10-07T05:09:53+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-supabase-db-audit
+  lane: single
+  objective: >-
+    Record the owner's decision on what follows the Supabase audit: no
+    workstream that moves Supabase into mumate-infra for now; the Friday
+    2026-10-09 cutover stays the main line.
+  scope:
+    - What is deferred, what replaces it for now, and what still has to happen after the cutover.
+  out_of_scope:
+    - The cutover itself (mumate-vercel-to-do-001).
+
+outcome:
+  status: recorded
+  slice: none
+  decision: >-
+    Owner, 2026-10-07 about 05:05 +07:00, after the agent agreed with his
+    reasoning that the dashboard is enough for now: "โอเค เอาตามนี้ครับ".
+    No workstream is opened. A nightly audit job in mumate-infra is not
+    built.
+  reasoning:
+    - >-
+      Owner: the dashboard already handled the fix, and he can see the state
+      there (Advisors, Security Advisor). He did not want to load the
+      DigitalOcean hosts for it.
+    - >-
+      Agent, agreeing on different grounds: the host cost would be small. A
+      run is a short-lived container about once a night, and mumate-2 used
+      1.1 of 3.9 GB. The deciding point is that the database now has two
+      independent locks. The API roles have no grants on public, including
+      for new tables created by postgres, and the Data API is off. Exposure
+      would return only if both were reopened, so a nightly alarm adds
+      little next to the cutover.
+  replaces_for_now:
+    - "The owner opens Advisors > Security Advisor after each production migration, or at least monthly."
+    - "Every migration that creates a public table also enables RLS on it, as book_order and the promo_* tables already did."
+  still_required_after_cutover:
+    - >-
+      Per-app database roles in place of postgres, a postgres password
+      rotation, and new anon and service-role keys. The dashboard locks do
+      not cover anyone holding the postgres password or the service-role key.
+      After the cutover app env lives on DigitalOcean only, so it is changed
+      once. This is SQL-editor and env work, not new infrastructure.
+    - "Owner decisions on real-data copies: the full dump and prod env backups under mootech-fe/testenv on the laptop, and the non-anonymised staging copy."
+  revisit_when:
+    - "The team starts changing the schema often, or more people get database access; then reconsider the nightly audit in mumate-infra."
+
+evidence:
+  repository:
+    head: "a62e89a"
+    branch: hq/20261005
+    working_tree: this-decision-only
+  records:
+    - memory/events/2026/10/06/20261006T210406_mumate_supabase_api_exposure_closed_audit_recorded.yaml
+    - memory/events/2026/10/07/20261007T050308_mumate_supabase_data_api_off_hosts_and_backup_checked.yaml
+
+unresolved:
+  - "The 09:03 +07:00 backup on 2026-10-07 is the first real dump after RLS; a 💾 in Discord closes it, a 🚨 is an incident."
+  - "The other findings of 20261006T210406 stand unchanged: personal files in public buckets, plaintext sensitive columns, no migration ledger, no idle-in-transaction timeout, testenv/env/bazi.env unchecked."
+  - "The two Supabase records and this decision are local commits on hq/20261005 in a public repository; the owner decides when they are pushed."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Confirm the 09:03 backup. After the cutover is stable, propose the
+    per-app roles and the password and key rotation as one small piece of
+    work for the owner to authorize.
+  acceptance_check:
+    - Wake reports no validation error with this event as the newest record.
