@@ -106,13 +106,10 @@ slice 3, 4 และ 5 ใช้ brief เป็น DoD ด้านหน้า
 | Project | Role | Local binding |
 |---|---|---|
 | `ciel-os` | แผน decision และ closeout | . |
+| `praneet-web` | ระบบ: กระดาน lot สาธารณะ, หลังบ้าน `/ops`, LINE webhook (private) | checkouts/praneet-web |
+| `praneet-office` | office: runbook, script, query วิเคราะห์ ตามหลักการเดียวกับ mumate-infra และ ref-office (private) | checkouts/praneet-office |
 
-repo ที่วางแผนไว้ยังไม่มีอยู่จริง จะสร้างและลงทะเบียนใน slice 3 หลังเจ้าของสั่ง go:
-
-| ชื่อที่เสนอ | บทบาท |
-|---|---|
-| praneet-web | ระบบ: กระดาน lot สาธารณะ, หลังบ้าน, LINE webhook |
-| praneet-office | office: runbook, script, คำสั่ง deploy, query วิเคราะห์ (หลักการเดียวกับ mumate-infra และ ref-office) |
+ทั้งสอง repo สร้างเมื่อ 2026-10-09 ใน slice 3
 
 ## Starting evidence at workstream opening
 
