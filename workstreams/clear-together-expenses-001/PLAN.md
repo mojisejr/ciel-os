@@ -1,9 +1,9 @@
 # เคลียร์กัน — รายจ่ายของเราและชื่อแสดงผล
 
 **Workstream:** `clear-together-expenses-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** 5
 **Execution state:** idle
 **Parallelism:** none
@@ -30,6 +30,15 @@
 
 คำยืนยันนี้อนุญาตเปิด workstream และเตรียมแผน ไม่ถือเป็นคำสั่งเริ่ม implementation
 หรืออนุญาต migration/deployment กับข้อมูลจริงโดยอัตโนมัติ
+
+## Owner acceptance and closure — revision 0.2
+
+เจ้าของยืนยันหลังส่งมอบว่า “ผมลองตั้งชื่อละใช้งานได้ครับ และลองบันทึกแล้วครับโอเคเลย
+ปิดได้เลยครับถ้าไม่มีอะไรแล้ว” เป็นผลทดลองใช้งานที่เจ้าของรายงานและคำอนุญาตปิด
+workstream ตามเกณฑ์สุดท้ายที่รออยู่ ไม่ใช่การทดสอบบนอุปกรณ์เจ้าของโดย agent
+บันทึกใน `memory/events/2026/10/08/20261008T191918_clear_together_expenses_acceptance_closure_authorized.yaml`
+ขอบเขตและฟีเจอร์เดิมคงตามแผน ไม่มี implementation, migration หรือ deployment เพิ่ม
+ปิดงานส่งมอบใน HQ ได้โดยการรวม shared standing branch ยังคงเป็นรอบที่เจ้าของควบคุมแยกกัน
 
 ## Project links
 
@@ -193,14 +202,16 @@ DESIGN.md, docs/delivery/*, HQ workstream closeout
 - คู่มือสั้น: ตั้งชื่อ จด/จดแทน ลงย้อนหลัง กรอง/ค้น แก้/ยกเลิก และ backup; physical-phone acceptance ตาม owner ทดลองจริง
 - event สุดท้ายบันทึก merge/deployment/acceptance ที่พิสูจน์จริง แยก unknowns ไม่ปิด workstream จาก URL อย่างเดียว
 
-## Unresolved and next action
+## Unresolved and closure boundary
 
-- เจ้าของอนุญาต implementation slice 2–5 ต่อเนื่องถึง PR; production migration/deploy ยังไม่อนุญาต
-- live provider plan/branch count, credentials และ deployment currentness ยังไม่ได้ตรวจรอบใหม่; ตรวจเมื่อ rollout
+- ข้อความรออนุญาตในแผนเริ่มต้นเป็นขอบเขตของ revision 0.1; authority สำหรับ production preparation
+  และหลักฐาน rollout อยู่ใน events วันที่ 2026-10-08 ตามลำดับ ก่อนคำยืนยันปิดรอบนี้
+- Backup อยู่ในเครื่องเจ้าของเท่านั้น; ไม่มีสำเนานอกเครื่อง และไม่ได้อ่านค่า Vercel Secrets กลับ
 - เจ้าของรายงานว่าได้ลองแอปเดิมแล้วตอบโจทย์; ไม่อนุมานว่า phone install/real-pilot criteria เก่าครบทุกข้อ
 - Retired private Blob store/token และ provider source-retention จาก closeout เดิมยังไม่ยืนยันว่าถูกจัดการแล้ว
   ฟีเจอร์นี้ไม่เพิ่มรูปหรือ store; ไม่ใช้การเปิดงานใหม่เป็นเหตุลบ store หรือรายงานว่าปัญหาเก่าปิด
 - ไม่เพิ่มเงินเข้า งบ/แจ้งเตือน ใช้ AI แยกประเภท หรือเชื่อมธนาคารในรอบนี้; รายจ่ายร่วมกันขึ้นกับข้อมูลที่ทั้งคู่จด
 - ไม่แก้ OWNER.md/AGENTS.md หรือสร้าง global skill/agent infrastructure จากการวางแผนนี้
 
-**Next action:** ทำ slice 2–5 ตาม proof gates แล้วส่ง PR พร้อมตรวจให้เจ้าของ merge; เริ่มตั้งชื่อก่อนจดรายจ่าย
+**Next action:** ไม่มี implementation เพิ่มใน workstream ที่เจ้าของรับและปิดแล้ว
+ใช้แอปต่อได้; เจ้าของรวมบันทึก HQ ตามรอบที่เลือก และดูแล backup/งาน cleanup เดิมภายหลัง
