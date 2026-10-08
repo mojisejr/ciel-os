@@ -1,0 +1,87 @@
+schema_version: ciel.event.v0.1
+id: evt_20261008T133042_clear_together_production_migration_prepared
+type: closeout
+recorded_at: 2026-10-08T13:30:42+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: clear-together-expenses-001
+  lane: single
+  objective: Complete the owner-authorized production backup and additive migration before owner merge of PR 2.
+  scope:
+    - Slice 5 production preparation only; no owner merge, direct application deployment or synthetic production mutations.
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Verified the existing Neon organization is Free with exactly one approved branch and the direct admin endpoint belongs to that branch.
+    - Verified the existing Vercel Pro scope, production Git branch main, production-only credential scopes and active private Blob identity.
+    - Completed same-target backup version 2 with database records and all 13 ready images; verified image byte lengths, SHA-256 checksums and restrictive file permissions before migration.
+    - Applied only reviewed additive migration 003_shared_expenses.sql through the existing transactional migration runner.
+    - Compared fingerprints of all nine pre-existing backed-up database tables before and after migration; every record remained identical.
+    - Verified all four applied migration checksums match committed source; expenses and expense_events exist and are empty.
+    - Read-only rollout preflight and anonymous HTTPS smoke passed; no deployment command or bill mutation was invoked.
+  delivery_boundary: Production schema is prepared for application PR 2. Owner can now merge the reviewed PR; Git-triggered deployment and the new hosted flow are still pending.
+evidence:
+  plan: workstreams/clear-together-expenses-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "5"
+  repository:
+    head: 0700194bfd26b126b6e7ea275160cb2679ca6316
+    branch: hq/20261005
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261005
+  authorization: memory/events/2026/10/08/20261008T132446_clear_together_production_migration_authorized.yaml
+  child_repository:
+    canonical_remote: github.com/mojisejr/clear-together
+    branch: codex/shared-expenses
+    reviewed_source: b47146b91f914e190eb932be455ecb6c46855ed1
+    migration: migrations/003_shared_expenses.sql
+    migration_sha256: 547605e72b4a225a7b81af99f85ec9f722e3446c6e5b52b13e300c8ca53f258e
+    closeout_copy: docs/delivery/20261008T133042_clear_together_production_migration_prepared.yaml
+  pull_request:
+    number: 2
+    url: https://github.com/mojisejr/clear-together/pull/2
+    observed_state: OPEN
+    observed_head: b47146b91f914e190eb932be455ecb6c46855ed1
+    procedure: Keep draft while adding this proof, push and verify closeout ancestry, then return to ready for owner review and merge.
+  providers:
+    neon_org: org-autumn-feather-44217443
+    neon_project: divine-salad-16673788
+    neon_plan: free
+    neon_branch_count: 1
+    neon_branch: br-proud-sun-b3kf6heo
+    neon_endpoint: ep-winter-darkness-b3bqy2y9
+    vercel_team: team_PFECFGw4REYizJFHPCHjFLUg
+    vercel_plan: pro
+    vercel_project: prj_1sxXKUm2kO6GazvkU7DFdHoaZxrS
+    production_git_branch: main
+    active_private_blob: store_9HubB0VhFSs4OgjN
+    blob_access: private
+  backup:
+    owner_controlled_location: checkouts/clear-together/.local/backups/2026-10-08T06-26-27.274Z
+    version: 2
+    completed_at: 2026-10-08T06:26:30.733Z
+    manifest_sha256: 4d80c2f92cce0b65dc062ec858e70ee8665c8f6ef3a58dad8015868da3e9d7bd
+    ready_images_verified: 13
+    permissions: Backup directories private; manifest and images mode 600; no backup data or credentials committed or uploaded.
+  checks:
+    old_records: Full-row fingerprints matched for user, account, members, attachments, claims, claim_receipts, payments, payment_claims and audit_events.
+    migrations: 000_auth.sql, 001_ledger.sql, 002_receipt_history.sql and 003_shared_expenses.sql all match committed checksums.
+    new_tables: Both expenses and expense_events are present with zero rows; no synthetic entries were added.
+    source_guard: Clean child tree and PR head matched the reviewed revision immediately before migration.
+    provider_guard: Live read-only CLI checks verified Free, one branch, approved direct endpoint, existing Vercel team/Pro and private Blob; sensitive credential values were not read from Vercel or changed.
+    rollout_preflight: Passed backup age/target/images, migration checksums and Neon branch endpoint match without invoking deployment.
+    https_read_only: Home and manifest returned 200; anonymous ledger overview returned 401 with private no-store.
+    private_local_proof: Detailed backup/migration/fingerprint/HTTP reports remain in ignored .local files with restricted permissions; no notes, names, passwords or image bytes are in this event.
+unresolved:
+  - Owner merge and Git-triggered deployment of the new feature remain pending; this preparation does not prove the hosted expense flow or physical-phone acceptance.
+  - Backup is stored locally on the owner's machine only; no off-device copy was created or new storage service provisioned.
+  - Vercel Secrets cannot be read back; production credential scopes and the existing approved admin endpoint were verified, while runtime credential values were neither exported from Vercel nor changed.
+  - The provider setup file's historical productionDataPresent=false was not changed or used to bypass trial deployment. Real data are handled only under this authorization.
+  - Prior retired Blob store/token cleanup and historical removed-source retention remain unverified and are outside this migration.
+  - Existing Vercel Pro remains metered; no new service, subscription, compute setting or Neon branch was created or modified.
+  - HQ records await the owner's standing-branch integration independently from application PR 2.
+next_action:
+  action: Return PR 2 to ready after its new proof is pushed and verified; owner merges it. Then verify the resulting deployment from merged Git and let the owner try the new feature on the phone before recording final workstream completion.
