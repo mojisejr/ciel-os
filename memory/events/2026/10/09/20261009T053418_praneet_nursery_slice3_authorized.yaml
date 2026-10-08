@@ -1,0 +1,41 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T053418_praneet_nursery_slice3_authorized
+type: decision
+recorded_at: 2026-10-09T05:34:18+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Authorize slice 3 - lots in the database, recorded from the owner's phone.
+  scope:
+    - Create private praneet-web and praneet-office repositories, register them in CIEL, build the lot database, back office and measurement form under design/BRIEF.md.
+outcome:
+  status: decided
+  decision: >-
+    The owner said go for slice 3 of plan revision 0.3. This covers creating
+    the two private GitHub repositories and building the slice. The first
+    creation of the Neon project and the Vercel project, and the production
+    deployment, still need the owner's confirmation at that step. The
+    back-office credentials the owner placed in the git-ignored
+    .assets/preneet/.env are used only to create the single owner account;
+    the password is stored hashed.
+  owner_statement: "โอเค ถ้าไม่มีอะไรติดแล้ว go slice 3 ได้"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: 422fc764a7597d9f198fa1a1805c70e72dcf1148
+    branch: hq/20261009
+unresolved:
+  - Neon Free limits for an additional project are checked before creation.
+  - The 11 September bagging batch count is to be counted by the owner.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Check Neon Free limits, create the two private repositories, register
+    them in CIEL, and scaffold praneet-web on the clear-together stack.
+  acceptance_check:
+    - Wake shows praneet-web and praneet-office as available project bindings.
