@@ -3,19 +3,19 @@
 **Workstream:** `mumate-referral-release-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** 1
-**Execution state:** idle
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner intent
 
 Fix referral-code collisions and prove the existing build-and-release path
 after MuMate moved to DigitalOcean: reviewed code, named images, staging
-acceptance, owner-operated production release, verification and rollback
+acceptance, owner-authorized production release, verification and rollback
 readiness. The owner requested opening this workstream on 2026-10-09 after
 reviewing the diagnosis and proposed DoD. Opening the plan does not authorize
-either execution slice or a production release.
+either execution slice or a production release. The later owner go authorized slice 1; on 2026-10-09 the owner accepted proceeding past unrelated baseline lint failures and delegated merge, staging and production release if staging proves readiness. This revision records that conditional production authority.
 
 The product fix is the main line. Workflow changes are considered only if an
 observed blocker prevents this release; optional CI or infrastructure improvements
@@ -99,7 +99,7 @@ sequence where necessary. Do not point fixtures at production or export staging
 member rows. The original code must fail the collision regression.
 
 Prepare an owner-reviewed draft PR and its committed closeout before presenting
-the final review. The owner merges it. Select and record the resulting full
+the final review. The agent may merge PR 48 under the owner's direct delegation recorded for revision 0.2. Select and record the resulting full
 bazi SHA and the FE SHA intended for the release; verify that any reused FE
 image exists for both targets. Agent-operated staging build/push and release
 are included only when the slice decision explicitly authorizes those external
@@ -118,17 +118,16 @@ DoD:
 | R3 | An existing member gets the original code with no extra row; concurrent requests for one member produce one row and the same code. Different members keep unique codes. |
 | R4 | Ten occupied candidates stop at the limit and return the intended safe 503. A non-collision DB failure returns a safe failure without collision retries. Logs and response exclude sensitive data. |
 | R5 | GET success, retries and failure leave wallet, ledger and redemption unchanged in fixtures. A valid existing code still awards the current documented rewards once; self-use and repeated use remain rejected. |
-| R6 | Focused tests, the repository default gate, lint and build pass. The container build's no-DB smoke is recorded separately from the real-DB proof. |
+| R6 | Focused tests, default runtime-critical tests, changed-file lint and production build pass. The owner accepts the full-lint baseline exception: 35 errors in 14 files byte-identical to the integration baseline, with no new errors from this change. Full gate remains failed, not relabelled as passed. The container build's no-DB smoke is recorded separately from the real-DB proof. |
 | R7 | Staging release uses the selected FE/bazi SHA pair; deploy-history records `ok`, image tags/digests and runtime health agree, and release-check accepts that pair. |
 | R8 | Through the staging FE, authenticated new-code creation, existing-code retrieval, invite landing and redemption pass using test accounts. Record row-count and QI deltas only. |
 
 Slice-1 completion presents the exact release pair, checks, staging acceptance,
 known limitations and the production/rollback card for the owner's review.
 
-### 2. Owner builds and releases production; verify and close
+### 2. Release production under owner delegation; verify and close
 
-After slice-1 acceptance, obtain a separate owner decision for slice 2 and its
-timing within the post-cutover observation. The owner operates production
+After slice-1 acceptance, record that the condition in the owner's 2026-10-09 delegation is met, naming revision 0.2 and slice 2. The agent operates production
 `container-build` (`push=true`, `target=production`) for the accepted bazi SHA
 and `release` (`env=production`) with the accepted full FE/bazi SHAs. Reuse an
 existing FE image only after verifying its SHA and digest. Staging and production
@@ -144,7 +143,7 @@ DoD:
 
 | ID | Acceptance evidence |
 |---|---|
-| P1 | Owner-operated build/release run URLs, exact source SHAs, image digests and passing staging gate are recorded. |
+| P1 | Owner-authorized build/release run URLs, exact source SHAs, image digests and passing staging gate are recorded. |
 | P2 | Production deploy-history says `ok`; configured image, running image and runtime health agree; the selected FE SHA remains unchanged. |
 | P3 | A designated account that already has a referral code gets the same code through production FE; invite lookup is read-only. No synthetic new-code/redemption/QI write is performed on production without a specific owner decision. |
 | P4 | Observe at least 30 minutes after release: FE/bazi health and synthetics stay healthy, cron outcomes stay at baseline, and attributable referral failures or new regressions are investigated. Record the sample count; zero referral traffic is not proof of a successful new-code path. |
@@ -158,12 +157,11 @@ DoD:
 - The namespace remains limited to 900 codes; retry fixes collision handling,
   not capacity. Expansion needs its own approved scope across generator,
   validators and invite handling while preserving old codes.
-- Slice-2 authorization, release operator/availability, final SHA pair,
-  current staging readiness and production timing remain open.
+- Production authorization is conditional on passing staging acceptance; final SHA pair and readiness still require proof. The unchanged full-lint baseline is accepted for this bounded release, not established harmless in every unrelated flow.
 - Pending cutover observation, Beam test-purchase refund, host cleanup and
   retirement decisions remain with their existing workstreams.
 - Human approval, review and external rules are unknown beyond explicit
   owner decisions and the cited repository records.
 
 Next: execute slice 1 under the owner's 2026-10-09 go, in this bounded lane.
-Present the reviewed change and staging acceptance before the slice-2 decision.
+Merge PR 48, prove staging acceptance, then record condition fulfilment before executing slice 2 under the owner's delegation.
