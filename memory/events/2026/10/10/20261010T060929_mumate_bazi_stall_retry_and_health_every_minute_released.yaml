@@ -1,0 +1,81 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T060929_mumate_bazi_stall_retry_and_health_every_minute_released
+type: closeout
+recorded_at: 2026-10-10T06:09:29+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Fixes 3 and 4 of slice 7 (20261010T054626): bazi survives a stalled
+    database statement without the user seeing an error or a hang, and a hung
+    app on production is recreated in about 2 minutes instead of about 10.
+  scope:
+    - bazi-sft-dataset PR 49, mumate-infra PR 50, staging stall injection, production release and timer change.
+  out_of_scope:
+    - Fix 2 (share image), next.
+    - The stall's origin (network vs client/pooler), which the new log line now measures.
+
+outcome:
+  status: recorded
+  result: >-
+    bazi 6b08b51 runs on staging and production with every query bounded at
+    5 s and a single transparent retry on a fresh pool (30 s). An injected
+    stall on staging returned normal 200 responses in about 5.1 s instead of
+    hanging. Production's health timer ticks every minute (mumate-infra
+    c169e98), so the unchanged two-bad-tick recovery recreates a hung app
+    about 2 minutes after Docker marks it unhealthy.
+  change:
+    - "bazi src/db/resilient-sql.ts (new) wraps the postgres.js pool used by drizzle, raw unsafe() and tagged templates (incl. /api/health). On a stall the pool is retired with end({timeout: 30}) so queries already on it finish, a fresh pool inherits drizzle's parser/serializer overrides, and the query is retried once. Database errors pass through untouched. Each stall logs {event: db_query_stall, kind, waited_ms, action} with no SQL or parameters. Writes are retried too (rationale in 20261010T054626)."
+    - "mumate-infra systemd/mumate-health.timer OnUnitActiveSec 5min -> 1min; owner-facing wait text '~2 นาที' on production, '~10 นาที' elsewhere; runbooks 00 and 04 and comments follow. Recovery rules unchanged."
+  verification:
+    - "bazi unit tests (stand-in pools) 9/9: normal path, stall -> fresh-pool retry with graceful retirement, .values() and tagged template, database error not retried, concurrent stalls replace the pool once, write retried and logged, second stall gives up with DbStallError, drizzle parsers carried over."
+    - "bazi real-socket proof (npm run test:db-stall, PostgreSQL 17 in a disposable local container, removed afterwards; a TCP proxy silences open connections): plain postgres.js does not answer within 1.5 s (bug reproduced); through the guard the normal rows come back in under 2 s; a stalled insert lands exactly once. 3/3."
+    - "bazi runtime-critical 107/107; eslint clean on changed files; tsc 0 errors outside the known stale .next/dev validator; branch container smoke passed (run 38001485241)."
+    - "mumate-infra scripts/*.test.sh all pass, incl. a new check that a 5-minute staging host still says ~10 minutes."
+    - "Staging (mumate-2, fe 23bdc6f + bazi 6b08b51, deploy-history ok 23:04:23Z): warmed the pool, dropped outbound packets of bazi's 3 open connections to pgstaging (iptables in bazi's netns via a throwaway alpine helper), fired 3 parallel /api/health -> 200 db ok in 5221, 5116, 5123 ms; next call 91 ms; three db_query_stall retry_on_fresh_pool lines; rule removed; Docker health stayed healthy."
+    - "Production: ops-status all ✅ and 0 5xx in 30 min before the release; deploy-history ok 2026-10-09T23:06:18Z FE_TAG=23bdc6f BAZI_TAG=6b08b51; ops-status ✅; public /v2 200. Timer applied by git pull (c169e98) + daemon-reload + restart (unit is a link); health ticks logged 23:07:01, 23:08:02, 23:09:04Z, all healthy. Since the release: 0 5xx, 0 db_query_stall, no bazi-calling traffic yet (06:09 +07)."
+  delegation_used: "Agent merged bazi PR 49 and mumate-infra PR 50 and pressed the staging and production releases under 20261010T054626; the merge to pdf-dev also auto-built Vercel bazi production (accepted by the owner, 20261009T203227)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: "3d7e02b"
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_requests:
+    - url: https://github.com/mojisejr/bazi-sft-dataset/pull/49
+      merge_sha: "6b08b51b1b39804fe1e92b0cefbbadd2c079887f"
+    - url: https://github.com/mojisejr/mumate-infra/pull/50
+      merge_sha: "c169e986134d39f1226bbe2c94f9ef89d85f8b82"
+  workflows:
+    bazi_smoke: https://github.com/mojisejr/bazi-sft-dataset/actions/runs/38001485241
+    bazi_staging_build: https://github.com/mojisejr/bazi-sft-dataset/actions/runs/38002242733
+    bazi_production_build: https://github.com/mojisejr/bazi-sft-dataset/actions/runs/38002247124
+    staging_release: https://github.com/mojisejr/mumate-infra/actions/runs/38002497422
+    production_release: https://github.com/mojisejr/mumate-infra/actions/runs/38002663432
+  application:
+    mootech-fe: "23bdc6f on mumate-prod-1 and mumate-2"
+    bazi-sft-dataset: "6b08b51 on mumate-prod-1 and mumate-2"
+    mumate-infra: "c169e98 on mumate-prod-1 and mumate-2"
+    rollback_pair: "fe 23bdc6f + bazi 922ba28 (ok on staging and production before this release)"
+
+unresolved:
+  - "mumate-2's health timer is a copied unit and still ticks every 5 minutes; relinking needs root."
+  - "The stall's origin is still unknown; watch db_query_stall lines (frequency, kind) on prod-1 - a steady rate would point at the network path and deserves its own look."
+  - "A write that genuinely executes longer than 5 s would be retried and could apply twice; none expected, each retry is logged as kind write."
+  - "Organic bazi traffic on 6b08b51 not yet observed (released 06:06 +07)."
+  - "Fix 2 (share image), QStash deduplication id, cleanup list of 20261009T044823, ops key decision of 20261009T045935, hq/20261009 push (owner)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Fix 2: read-only root cause of /api/og/share timing out through the
+    public hostname, then PR, staging, production under the same delegation;
+    check prod-1 for db_query_stall lines and bazi health during the day.
+  acceptance_check:
+    - "No bazi hang on prod-1; any db_query_stall line is followed by a normal response."
