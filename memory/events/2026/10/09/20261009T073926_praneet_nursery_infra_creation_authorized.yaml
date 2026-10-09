@@ -1,0 +1,37 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T073926_praneet_nursery_infra_creation_authorized
+type: decision
+recorded_at: 2026-10-09T07:39:26+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Authorize creating the hosted resources for slice 3.
+  scope:
+    - Neon project praneet in the Free organization (aws-ap-southeast-1) and role praneet_reader; Vercel project praneet-web on the existing Pro team connected to GitHub; public Blob store praneet-photos; production env vars; the owner account and the three lots in the production database.
+outcome:
+  status: decided
+  decision: >-
+    The owner approved the seven listed steps after a read-only check showed
+    no blocker. No paid plan, upgrade or second Neon organization is
+    authorized; the paid 'Vercel: non's projects' Neon organization is not
+    used. Merging the PRs, which deploys production, stays with the owner.
+  owner_statement: "สร้างได้เลยครับ"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: bdf4c78a6c3115d5250befa620cdd92747d62b51
+    branch: hq/20261009
+  pull_requests:
+    - https://github.com/mojisejr/praneet-web/pull/1
+    - https://github.com/mojisejr/praneet-office/pull/1
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: Create the resources in the approved order without printing secrets, verify each, and report.
+  acceptance_check:
+    - The production database holds the operator and three lots, and a deployment of praneet-web builds.
