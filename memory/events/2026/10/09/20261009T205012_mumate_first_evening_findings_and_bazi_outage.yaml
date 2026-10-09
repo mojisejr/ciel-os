@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T205012_mumate_first_evening_findings_and_bazi_outage
+type: closeout
+recorded_at: 2026-10-09T20:50:12+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Close out, at the owner's request, everything found on the first evening
+    of real traffic on DigitalOcean (slice 7 observation, 2026-10-09 promotion
+    night): what was fixed, what is open, and the bazi outage of 20:20-20:30,
+    before its root cause is investigated.
+  scope:
+    - Findings from prod-1 logs 05:30-20:45 +07, the LINE fix (20261009T203227) and the bazi outage.
+  out_of_scope:
+    - Root cause and fix of the bazi outage (next), the share-image fix, cleanup items, Vercel retirement.
+
+outcome:
+  status: recorded
+  summary:
+    - "FIXED: LINE sign-in failed about one attempt in four (DO Singapore -> access.line.me connect drops; next-auth discovery on every sign-in/callback). mootech-fe PR 886 (23bdc6f) released to staging and production 20:31 +07; probes 20/20 and 10/10 without timeout. Detail: 20261009T203227."
+    - "FIXED BY ANOTHER LANE: /api/referral 500 twice at 08:31 +07 - mumate-referral-release-001 (bazi 922ba28, production 11:11 +07)."
+    - "OPEN, NEXT AFTER THE OUTAGE: /api/og/share (LINE link-preview image) times out through the public hostname; 16 occurrences today plus 20:38; each prints ~50-190 'Image size cannot be determined' lines in fe logs. Links still open; previews have no image. Direct to fe it renders in about 1 s; cause not established."
+    - "OPEN, FOR THE TEAM: QStash scheduleReminderPush rejected 'DeduplicationId cannot contain :' (14:47 +07, one reminder not scheduled). Pre-existing code, not caused by the move."
+    - "OBSERVE: Caddy 503s at 18:19:53 POST /api/destiny (12 s) and 19:00:45 GET /api/v2/sacred-map/image (238 s). Both routes reach bazi; whether they are early signs of the outage below is part of its root-cause work."
+    - "SIDE EFFECT OF THE MOVE PROCESS: merges to mootech-fe main and bazi-sft-dataset pdf-dev still auto-build Vercel Production (fe 23bdc6f, bazi 922ba28 today), behind MAINTENANCE_MODE. The owner will not roll back to Vercel (20261009T203227)."
+  incident:
+    title: bazi engine on mumate-prod-1 hung for about 9.5 minutes at peak evening traffic
+    window: "2026-10-09 20:20:55 - 20:30:25 +07 (13:20:55Z - 13:30:25Z)"
+    observed:
+      - "From 20:20:55 every fe route that calls bazi hung (code check: day-detail, calendar-month, missions, qi-wallet, profile, fortune/divine all reach bazi); fe routes that do not call bazi answered in milliseconds throughout, and fe stayed healthy."
+      - "Users saw spinners and then Caddy's maintenance page: 18 requests ended as 503 at 20:24:23 when the clients' HTTP/3 connections closed after 33-208 s; more were abandoned by the clients (status 0, up to 45 s). At least two users on two carrier ranges were affected; volume just before was high (about 900 requests a minute from one mobile carrier range at 20:19)."
+      - "No fe or bazi log line in the window; Caddy logged no proxy error."
+      - "Health timer: 20:25:07 bazi unhealthy, /health.sha empty -> alert '🔴 PRODUCTION · ระบบดูดวง (bazi) ล่ม'. 20:30:07 still unhealthy -> automatic recovery recreated the current bazi image; healthy 20:30:25; alert '🟢 … กลับมาปกติ'. First bazi DOWN on prod-1 in the journal since 2026-10-01."
+      - "The old container's local logs went with the recreate; Alloy shipped logs to Grafana (to be read for the root cause)."
+    not_caused_by: "The LINE fix: the hang began 10 minutes before the 20:31 production release, which reused the same bazi image (922ba28); bazi was not recreated by it."
+    agent_note: "The agent pressed the production release about 16 s after bazi's automatic recovery without running ops-status first. The deploy's own health wait passed and no harm followed; ops-status before every production release from now on."
+    hypotheses_unverified:
+      - "Load-related hang in bazi (database pool or connection wait, or a blocked event loop) - the same family as the fe pool wedge recorded in September."
+      - "bazi 922ba28 (referral GET retry, released 11:11 +07) under concurrency - the first outage came on the first peak after that release."
+    recovery_gap: "Detection and recovery are bounded by the 5-minute health timer: up to about 10 minutes of hang before the recreate."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: "9c677c9"
+    branch: hq/20261009
+    working_tree: this-record-only
+  sources:
+    - "mumate-prod-1: docker compose logs caddy/fe/bazi; journalctl -u mumate-health.service; docker inspect (bazi StartedAt 2026-10-09T13:30:19Z)."
+    - "mootech-fe 23bdc6f: route files under pages/api calling bazi."
+  application:
+    mootech-fe: "23bdc6f on mumate-prod-1"
+    bazi-sft-dataset: "922ba28 on mumate-prod-1 (container recreated 20:30:19 +07)"
+
+unresolved:
+  - "Root cause of the bazi hang; recurrence risk until found."
+  - "Share-image timeout (fix 2 of 20261009T201451)."
+  - "QStash deduplication id defect - to the team."
+  - "Real LINE login on the new code not yet observed in organic traffic."
+  - "Cleanup list of 20261009T044823 and the ops key decision of 20261009T045935 unchanged."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Read-only root cause of the bazi hang: bazi and fe logs 20:10-20:31 +07
+    from Grafana (Loki), bazi's database pool and health code, the 922ba28
+    change; report the cause and a proposed fix to the owner before any
+    change. Then fix 2.
+  acceptance_check:
+    - The cause is named with evidence, or the remaining unknown is stated with what would settle it.
