@@ -1,0 +1,41 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T111350_mumate_referral_production_deployed_watch_started
+type: closeout
+recorded_at: 2026-10-09T11:13:50+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: mumate-referral-release-001
+  lane: single
+outcome:
+  status: recorded
+  result: Production build and gated release succeeded under owner delegation. Runtime and read-only existing-code acceptance pass. Thirty-minute observation is running; this checkpoint does not claim P4 or final delivery.
+evidence:
+  plan: workstreams/mumate-referral-release-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "944b32cfd97eca14d3f1f4c2978e7f5e30d391dc"
+    branch: hq/20261009
+    working_tree: this-production-checkpoint-only
+  production_build: https://github.com/mojisejr/bazi-sft-dataset/actions/runs/37882404701
+  production_release: https://github.com/mojisejr/mumate-infra/actions/runs/37882657722
+  bazi_sha: "922ba28b459c8a245e78da9c0f33f2bd82b86d60"
+  fe_sha: "83ed2f10a6649874a32dfbfcec9c02220a2b5b52"
+  bazi_digest: sha256:6b8d5d4e707e780727f82d694d518bcc75a327615949fcc81a2ff9c7934ed7b7
+  fe_digest: sha256:e421a37a688f3f6de69b48d260f72dcdb9d6b4f0816dc34fc5c5509a5e06c283
+  runtime: Deploy-history ok at 2026-10-09T04:11:26Z; configured and running tags and reported SHAs agree; FE, bazi, Caddy and Alloy healthy. Cron schedules and image manifests match.
+  acceptance: Existing coded member gets unchanged code through production FE using a 180-second in-memory server-signed member seal. Invite lookup and landing return 200. Selected member code, wallet/QI, ledger, redemption and claim state do not change. No production synthetic or reward writes; browser OAuth login is not exercised.
+  probe_request_ids:
+    - fbaaf9fb-da54-472f-a991-cc0324ef5295
+    - 50532ef8-9ff1-4cb0-8c25-557e5d2eb862
+    - b4db6fd4-c7ba-4b70-8aaa-b9dc57736b47
+  observation_started: 2026-10-09T04:12:16Z
+  rollback: Previous FE 83ed2f10a6649874a32dfbfcec9c02220a2b5b52 and bazi 40e8ebf7db0e574b3352c2a745ab04a3b110f04e remain available. Rollback dry-run targets that pair via .env.last-good; no rollback executed. Automatic unhealthy-deploy rollback remains the existing script. Manual production rollback still requires an owner instruction.
+unresolved:
+  - P4 requires at least 30 minutes of healthy observation and referral/cron failure attribution before final closeout.
+  - Full lint baseline, stale ignored dev types, 900-code limit, exact historical exception and staging restore warnings remain as recorded.
+  - Cutover observation, refund, cleanup and retirement remain in other workstreams.
+next_action:
+  action: Finish the 30-minute production health and HTTP observation, inspect aggregate referral and cron outcomes, then record final delivery with actual sample counts and limitations.
