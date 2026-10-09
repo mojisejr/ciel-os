@@ -4,8 +4,8 @@
 **State:** active
 **Execution lane:** single
 **Plan revision:** 0.1
-**Execution phase:** none
-**Execution state:** idle
+**Execution phase:** 1
+**Execution state:** executing
 **Parallelism:** none
 
 ## Objective and owner intent
@@ -158,12 +158,12 @@ DoD:
 - The namespace remains limited to 900 codes; retry fixes collision handling,
   not capacity. Expansion needs its own approved scope across generator,
   validators and invite handling while preserving old codes.
-- Slice authorization, overlap resolution, release operator/availability,
-  final SHA pair, current staging readiness and production timing remain open.
+- Slice-2 authorization, release operator/availability, final SHA pair,
+  current staging readiness and production timing remain open.
 - Pending cutover observation, Beam test-purchase refund, host cleanup and
   retirement decisions remain with their existing workstreams.
 - Human approval, review and external rules are unknown beyond explicit
   owner decisions and the cited repository records.
 
-Next: owner reviews plan 0.1 and decides slice 1, including the staging external
-actions and coordination with overlapping work. Keep execution idle until then.
+Next: execute slice 1 under the owner's 2026-10-09 go, in this bounded lane.
+Present the reviewed change and staging acceptance before the slice-2 decision.
