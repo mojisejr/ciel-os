@@ -1,0 +1,32 @@
+schema_version: ciel.event.v0.1
+recorded_at: 2026-10-09T11:07:20+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: mumate-referral-release-001
+  lane: single
+id: evt_20261009T110720_mumate_referral_production_condition_met
+type: decision
+outcome:
+  status: decided
+  slice: "2"
+  parallelism: approved
+  decision: The owner's direct instruction authorizes production if ready. Staging R7-R8 acceptance now passes on the merged SHA pair, satisfying that condition. Proceed with normal production build/push and release and the read-only acceptance and 30-minute observation in slice 2; no further permission is needed for these delegated actions.
+evidence:
+  plan: workstreams/mumate-referral-release-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "44db54e"
+    branch: hq/20261009
+    working_tree: this-condition-fulfilment-and-phase2-marker
+  authority: memory/events/2026/10/09/20261009T104552_mumate_referral_baseline_and_release_delegation.yaml
+  staging_acceptance: memory/events/2026/10/09/20261009T110720_mumate_referral_staging_accepted.yaml
+  rollback_pair: FE 83ed2f10a6649874a32dfbfcec9c02220a2b5b52 and bazi 40e8ebf7db0e574b3352c2a745ab04a3b110f04e; production healthy and both previous images locally available at the preflight read.
+unresolved:
+  - Production build, release and P1-P6 evidence remain to be completed.
+  - Production synthetic/reward writes and manual rollback remain outside the delegation.
+  - Plan 0.2's recorded limits and unrelated workstream obligations remain open.
+next_action:
+  action: Build the accepted bazi SHA for production, recheck the actual production baseline and then dispatch the normal gated release with the accepted FE/bazi pair.

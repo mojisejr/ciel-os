@@ -1,0 +1,37 @@
+schema_version: ciel.event.v0.1
+recorded_at: 2026-10-09T11:07:20+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: mumate-referral-release-001
+  lane: single
+id: evt_20261009T110720_mumate_referral_staging_accepted
+type: closeout
+outcome:
+  status: recorded
+  result: R1-R8 met under the owner-accepted R6 lint-baseline exception. PR 48 merged; the merged source is healthy on staging and authenticated synthetic FE acceptance passed. Synthetic fixtures were removed.
+evidence:
+  plan: workstreams/mumate-referral-release-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: "44db54e"
+    branch: hq/20261009
+    working_tree: this-staging-checkpoint-and-phase2-authorization
+  pull_request: https://github.com/mojisejr/bazi-sft-dataset/pull/48
+  bazi_sha: "922ba28b459c8a245e78da9c0f33f2bd82b86d60"
+  fe_sha: "83ed2f10a6649874a32dfbfcec9c02220a2b5b52"
+  code_identity: Source, tests, package manifests, Dockerfile and workflows match tested code 0974346 through the merge commit; later content is checkpoint documentation.
+  staging_build: https://github.com/mojisejr/bazi-sft-dataset/actions/runs/37881918685
+  staging_release: https://github.com/mojisejr/mumate-infra/actions/runs/37882208613
+  runtime: Deploy-history ok at 2026-10-09T04:05:34Z; configured and running tags and health SHAs agree; release-check accepts both selected tags.
+  staging_bazi_digest: sha256:8a9f073026823cd48a864d722f97235b40229cea1b8c38d6d377324d219c92c4
+  staging_fe_digest: sha256:c47d4a41cc03c4c228e48f7e9857a6ecbfe2c9533f60c0ccb6cdab2e09123186
+  acceptance: Two synthetic members authenticated via short-lived signed NextAuth JWTs and synthetic provider rows. Unauthenticated GET 401; new and existing GET 200; eight concurrent requests agree with two unique rows across two members; GET has no reward-state changes. Invite lookup and landing 200 with code rendered. Valid redemption 200; self and repeated redemption 409. Owner gains 50 QI, referee 30 QI and 50 XP, two ledger rows and one redemption and claim; repeated use has no extra reward. Cleanup removes both members and all their fixture rows.
+unresolved:
+  - Full lint remains failed under the accepted unchanged-baseline exception; ignored stale dev type cache is not repaired.
+  - Browser OAuth login and invite client interaction were not exercised; authenticated FE APIs and SSR landing were exercised.
+  - Original request attribution, 900-code capacity, historical staging restore errors and other workstreams remain as recorded.
+next_action:
+  action: Execute production through existing workflows under the owner's conditional delegation, after recording the fulfilled staging condition.
