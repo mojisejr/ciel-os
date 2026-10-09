@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T064945_mumate_supabase_pgrst_log_noise_stop_confirmed
+type: closeout
+recorded_at: 2026-10-10T06:49:45+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-supabase-db-audit
+  lane: single
+  objective: >-
+    Close the one open item of 20261010T064552: confirm from the Postgres log
+    that the 32-second PostgREST error stopped after the workaround.
+  scope:
+    - Owner's Postgres log export for 2026-10-10 06:39:06-06:45:23 +07.
+  out_of_scope:
+    - Everything else in 20261010T064552 (unchanged; its re-enable steps stay the reference).
+
+outcome:
+  status: recorded
+  result: >-
+    The error stopped. In the export, 'schema "pg_pgrst_no_exposed_schemas"
+    does not exist' appears every 32 s up to 06:44:27; the workaround
+    statement is logged at 06:44:28; the next expected occurrence (06:44:59)
+    is absent and only routine checkpoint lines follow to the end of the
+    export at 06:45:23. One missed slot is the evidence so far; if the
+    dashboard turns red from this error again, reopen.
+
+evidence:
+  repository:
+    head: "ca9d39f"
+    branch: hq/20261009
+    working_tree: this-record-only
+  log_export: "Owner's CSV in the owner-controlled, gitignored .assets/mumate/ (17 rows; not copied here)."
+  reference: memory/events/2026/10/10/20261010T064552_mumate_supabase_pgrst_log_noise_silenced.yaml
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None. To turn the Data API back on, follow to_turn_the_data_api_back_on
+    in 20261010T064552, step 1 first.
+  acceptance_check:
+    - No further 'pg_pgrst_no_exposed_schemas' entries in the Postgres log.
