@@ -1,0 +1,81 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T062215_mumate_share_image_fix_released
+type: closeout
+recorded_at: 2026-10-10T06:22:15+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Fix 2 of slice 7 (20261009T201451): LINE link previews of shared results
+    get their image again on the self-hosted fe.
+  scope:
+    - Root cause, mootech-fe PR 887, staging and production release, verification.
+  out_of_scope:
+    - Other slice 7 work; Vercel retirement; cleanup items.
+
+outcome:
+  status: recorded
+  result: >-
+    /api/og/share answers 200 with a 1200x630 PNG through the public hostname
+    on staging and production (fe a1900ff); before, every request died and
+    Caddy answered 503 after 20 s.
+  cause: >-
+    Next 14.2 builds an edge route's req.url from the server's listen
+    hostname and port plus X-Forwarded-Proto (next-server.js
+    attachRequestMeta). Behind Caddy that is https://0.0.0.0:3000, so the
+    route fetched its background over TLS from a plain-HTTP port
+    (ERR_SSL_WRONG_VERSION_NUMBER inside the fe container; http on the same
+    address 200), Satori could not size the image, the response died, and
+    Caddy retried 20 s then served its 503 page. Staging reproduced it:
+    direct with X-Forwarded-Proto https -> empty reply in 15 ms; http or no
+    header -> 200 in about 1 s. On Vercel the origin was the public host.
+  change: >-
+    lib/og/asset-origin.ts (new, edge-safe): a listen-address origin
+    (0.0.0.0, localhost, 127.0.0.1, [::], [::1]) becomes
+    http://127.0.0.1:<port>; a real host is unchanged. share.tsx takes its
+    own-asset origin from it. No other route builds URLs from req.url's
+    origin.
+  verification:
+    - "scripts/og-asset-origin.test.ts 4/4 (fails on the old share.tsx); npm test 306 files passed / 22 skipped, 3875 tests passed / 211 skipped; eslint and tsc clean on changed files; pushed with --no-verify over the known verify-architecture baseline."
+    - "Staging (deploy-history ok 2026-10-09T23:20:12Z, fe a1900ff + bazi 6b08b51): /api/og/share with LINE's preview user agent through app.staging.mumate.co -> 200 image/png 1200x630 (5.5 s cold, then 1.2 s with a card image parameter); no fe image errors."
+    - "Production: ops-status all ✅, 0 5xx in 20 min and 0 db_query_stall before the release; deploy-history ok 2026-10-09T23:21:42Z FE_TAG=a1900ff BAZI_TAG=6b08b51; ops-status ✅; /api/og/share with LINE's preview UA through bazichart.mumate.co -> 200 image/png 1200x630 in 2.9 s then 1.2 s; LINE sign-in still 302 to access.line.me authorize; no fe image errors, 0 5xx since the release."
+  delegation_used: "Agent merged PR 887 and pressed the staging and production releases (owner: continue with the pending item, 20261010T054626); the merge auto-built Vercel fe production (accepted by the owner)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: "4700723"
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_request:
+    url: https://github.com/mojisejr/mootech-fe/pull/887
+    merge_sha: "a1900ff88a28f07d54f085c584650caf3cab230d"
+  workflows:
+    fe_staging_build: https://github.com/mojisejr/mootech-fe/actions/runs/38003503656
+    fe_production_build: https://github.com/mojisejr/mootech-fe/actions/runs/38003507483
+    staging_release: https://github.com/mojisejr/mumate-infra/actions/runs/38003833798
+    production_release: https://github.com/mojisejr/mumate-infra/actions/runs/38003970788
+  application:
+    mootech-fe: "a1900ff on mumate-prod-1 and mumate-2"
+    bazi-sft-dataset: "6b08b51 on mumate-prod-1 and mumate-2"
+    mumate-infra: "c169e98 on both hosts"
+    rollback_pair: "fe 23bdc6f + bazi 6b08b51"
+
+unresolved:
+  - "A real LINE preview of a member's shared link on a1900ff not yet observed in organic traffic."
+  - "Slice 7 observation continues: db_query_stall lines and bazi health on prod-1; mumate-2 health timer still 5 min (copied unit)."
+  - "QStash deduplication id defect (for the team); cleanup list of 20261009T044823; ops key decision of 20261009T045935; Vercel retirement (owner); hq/20261009 push (owner)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Report fixes 2-4 to the owner; keep observing prod-1 (bazi stalls, LINE
+    sign-in, share previews); then the owner chooses among the open items
+    (ops key, cleanup list, Vercel retirement, QStash defect to the team).
+  acceptance_check:
+    - "Organic /api/og/share requests from LINE's preview bot answer 200 on prod-1."
