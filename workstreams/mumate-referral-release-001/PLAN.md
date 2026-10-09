@@ -1,12 +1,17 @@
 # MuMate — referral retry fix through the first release after the server move
 
 **Workstream:** `mumate-referral-release-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.2
 **Execution phase:** 2
 **Execution state:** idle
 **Parallelism:** none
+
+The owner authorized closure on 2026-10-09 after the final release
+report. This is owner acceptance of the bounded delivery and its disclosed
+exceptions, not proof that every deferred limit has been resolved. Closure authority:
+`memory/events/2026/10/09/20261009T131028_mumate_referral_owner_closure_authorized.yaml`.
 
 ## Objective and owner intent
 
@@ -150,18 +155,26 @@ DoD:
 | P5 | Automatic unhealthy-deploy rollback is understood from the existing script; the prior SHA pair and manual rollback card are ready. No production rollback drill is run. On failed health, new referral regression or affected QI behaviour, stop progression and offer rollback; manual rollback needs the owner's instruction. |
 | P6 | Append a release closeout with actual results, evidence and remaining limits; final delivery names slice 2 and uses `ready-for-owner-merge` only once its acceptance is met. Publishing the HQ record follows the standing-branch owner workflow. |
 
-## Unresolved and next action
+## Unresolved and closure boundary
 
 - The historical request's exact database error remains inferred. Safe failure
   logging in this fix supplies evidence for a future occurrence.
 - The namespace remains limited to 900 codes; retry fixes collision handling,
   not capacity. Expansion needs its own approved scope across generator,
   validators and invite handling while preserving old codes.
-- Production authorization is conditional on passing staging acceptance; final SHA pair and readiness still require proof. The unchanged full-lint baseline is accepted for this bounded release, not established harmless in every unrelated flow.
+- The owner accepts closure on the final release evidence in
+  `memory/events/2026/10/09/20261009T114430_mumate_referral_release_final_delivery.yaml`.
+  The unchanged full-lint baseline remains an accepted exception, not a claim
+  that every unrelated error is harmless. Production organic new-code traffic
+  and browser OAuth/client interaction were not established in this proof.
+- Staging retains two historical restore errors and its existing 2026-10-16
+  expiry; closure does not authorize a refresh, deletion or unrelated repair.
 - Pending cutover observation, Beam test-purchase refund, host cleanup and
   retirement decisions remain with their existing workstreams.
 - Human approval, review and external rules are unknown beyond explicit
   owner decisions and the cited repository records.
 
-Next: execute slice 1 under the owner's 2026-10-09 go, in this bounded lane.
-Merge PR 48, prove staging acceptance, then record condition fulfilment before executing slice 2 under the owner's delegation.
+Next: no further implementation or release is scheduled in this owner-accepted
+workstream. The owner integrates the HQ standing branch at the chosen round
+boundary; existing cutover observation and deferred maintenance keep their
+own scope and authority.
