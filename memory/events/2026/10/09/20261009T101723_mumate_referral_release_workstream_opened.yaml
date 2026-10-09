@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T101723_mumate_referral_release_workstream_opened
+type: closeout
+recorded_at: 2026-10-09T10:17:23+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-referral-release-001
+  lane: single
+  objective: Open a bounded workstream for the referral retry fix and the first build-and-release round after the DigitalOcean cutover.
+  scope:
+    - Plan 0.1 and this opening checkpoint in HQ.
+  out_of_scope:
+    - Application changes, external writes, builds, deployments and slice authorization.
+
+outcome:
+  status: recorded
+  result: Plan 0.1 created with two proposed slices, regression and QI safeguards, existing staging/production workflow gates, verification and rollback readiness.
+  owner_intent: The owner proposed opening a workstream to use this defect as the first build-and-release opportunity after the server move.
+  authority: Opening only. Neither execution slice, parallel work nor a production action is authorized by this record.
+
+evidence:
+  plan: workstreams/mumate-referral-release-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "869a3ba4b9af9f4536d3d8d7ef21bed09d360751"
+    branch: hq/20261009
+    working_tree: this-plan-and-opening-checkpoint
+  diagnosis:
+    request_id: "1b2b21a9-b2ea-4bce-8742-cde78d34e9f0"
+    observed: Production Caddy 500 with 237-byte body; read-only checks found healthy containers and 204 allocated referral codes.
+    local_proof: Installed Drizzle wrapped a simulated PostgreSQL 23505 under cause; the current retry exited after one attempt and its response was 237 bytes.
+    limit: The original response body and database cause were not logged; the exact historical cause remains inferred.
+  application:
+    bazi_source: "40e8ebf7db0e574b3352c2a745ab04a3b110f04e:src/app/api/referral/route.ts"
+    fe_source: "83ed2f10a6649874a32dfbfcec9c02220a2b5b52:pages/api/referral.ts"
+    release_procedure: "mumate-infra 95df107384eba91f29b9a56b81d233657b3765cc:runbooks/01-deploy-rollback.md"
+    cutover_handoff: memory/events/2026/10/09/20261009T044823_mumate_handoff_after_cutover_24h_watch_lessons.yaml
+
+unresolved:
+  - Slice 1 authorization and coordination with the overlapping cutover and BE-retirement workstreams remain open; no parallel execution is inferred.
+  - Final release SHAs, staging readiness, owner-operated production build/release and timing remain to be established during the authorized slices.
+  - The 900-code capacity limit remains; expansion is outside this plan.
+  - Cutover observation, Beam refund, cleanup and retirement decisions remain in their existing workstreams.
+  - Human approval, review and external rules remain unknown unless explicitly established.
+
+next_action:
+  action: Owner reviews plan 0.1 and decides slice 1, including staging build/push/release and overlap coordination; execution stays idle until then.
+  acceptance_check:
+    - Wake recognizes the plan and opening checkpoint without treating this record as execution authorization or completed workstream delivery.
