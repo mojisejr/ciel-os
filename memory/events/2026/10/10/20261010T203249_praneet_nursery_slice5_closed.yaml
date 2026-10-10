@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T203249_praneet_nursery_slice5_closed
+type: closeout
+recorded_at: 2026-10-10T20:32:49+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Close slice 5 - LINE OA @xpm7982c is the shop's customer channel, and the
+    customer list lives in the shop's database.
+  scope:
+    - praneet-web PR 6 and praneet-office PR 3 (merged), the OA's webhook and rich menu, a real add-friend test.
+outcome:
+  status: slice-complete
+  slice: "5"
+  completed:
+    - "Real test on 2026-10-10: a friend of the owner added @xpm7982c at 20:27:46 +07 and wrote at 20:28:03 (text) and 20:29:08 (sticker). Reader role: one customers row, first_source follow, friend true, display name fetched (9 characters, not copied here); three line_events linked to it with kind and message type only."
+    - "No chat text can be stored: customers and line_events have no content column (id, webhook_event_id, customer_id, kind, message_type, redelivery, occurred_at, received_at)."
+    - "Webhook on https://praneet-web.vercel.app/api/line/webhook: LINE's test succeeded (200), unsigned requests get 401; rich menu richmenu-9fefb28ea1e3e298da898459e4944f07 is the default; the board's primary contact is 'แอด LINE หนวด @xpm7982c' with the phone kept; /privacy is live."
+    - "Proof in tests: Playwright 30/30 including signature refusal, idempotent redelivery, follow-message-group-block-unblock in one row, and no customer id on public pages."
+  owner_statement: "เรียบร้อยครับ ให้เพื่อนทักเข้ามาละ ครับ ลองเชคดู และถ้าพร้อมก็ปิด slice 5 กันจ้า"
+  not_verified:
+    - "The owner reported the test as done in one line; whether each rich menu button, the greeting message and his normal reply were checked one by one is not stated. URI menu taps leave no webhook event, so the data cannot show them."
+    - "userId consistency with a future LIFF rests on the owner's statement that the Messaging API and LINE Login channels share a provider."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "5"
+  repository:
+    head: 50aa56d37c6dd498670916f8096dde82622ab633
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 6
+      base: main
+      state: MERGED
+      merge_commit: 7afcaed
+    - repository: github.com/mojisejr/praneet-office
+      number: 3
+      base: main
+      state: MERGED
+      merge_commit: 9b5463d
+unresolved:
+  - "The 39 friends from before 2026-10-10 join the customer list only when they next interact."
+  - "No back-office delete for a customer; deletion requests go through the agent (praneet-office runbook 01)."
+  - "Remote feature branches in both child repositories were left for the owner."
+  - "HQ hq/20261009 is ahead of origin/main and carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Propose slice 6 (orders and the office desk) to the owner and wait for the
+    go; do not start it before.
+  acceptance_check:
+    - A decision event authorizes plan revision 0.5 slice 6 in the owner's words.
