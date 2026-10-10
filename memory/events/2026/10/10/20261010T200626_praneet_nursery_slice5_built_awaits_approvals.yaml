@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T200626_praneet_nursery_slice5_built_awaits_approvals
+type: closeout
+recorded_at: 2026-10-10T20:06:26+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Checkpoint after building slice 5; production steps wait for the owner's
+    approval of the rich menu image, the privacy and greeting wording, and his
+    go for the migration and Vercel env before the merge.
+  scope:
+    - praneet-web PR 6 and praneet-office PR 3 (drafts); no production change.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "praneet-web PR 6 (feat/slice5-line, head d1210e5): migration 003 (customers, line_events), signed idempotent webhook that never replies and stores no chat text, /ops/customers, /privacy draft, LINE-first contact buttons, reader grant and backup/restore cover the new tables. tsc and build pass; Playwright 30/30 including 4 webhook tests."
+    - "praneet-office PR 3 (feat/line-oa, head 98626ed): rich menu template rendered to a 2500 x 843 JPEG of 90,973 bytes; `bun run line` check, richmenu:render, richmenu:apply and webhook:set; runbook 01 with the greeting draft. `bun run line check` against the live OA, read only, matched the earlier check."
+    - "PR 6 opens with the production order: migration 003 and grant-reader, Vercel env, owner approves /privacy, owner merges, webhook:set with LINE's test, richmenu:apply with the approved image, owner sets the greeting in OA Manager."
+  not_completed:
+    - "Owner approval of the rich menu image, the /privacy wording and the greeting message."
+    - "Owner go for migration 003, the reader grant and the two Vercel env values in production."
+    - "DoD checks: a test account adding the OA creates a customer row; the owner chats normally while the webhook records; the rich menu opens the board."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "5"
+  repository:
+    head: 728f0fa96590c71191986e83f4a7e2905020b65b
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 6
+      base: main
+      state: DRAFT
+      head: d1210e5
+    - repository: github.com/mojisejr/praneet-office
+      number: 3
+      base: main
+      state: DRAFT
+      head: 98626ed
+unresolved:
+  - "'ช่องทางที่มา' is the first event kind; LINE does not report which link brought a follower."
+  - "No back-office delete for a customer yet; deletion requests go through the agent (runbook 01)."
+  - "HQ hq/20261009 is ahead of origin/main and carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    On the owner's approvals and go, run migration 003 and grant-reader in
+    production, set the two Vercel env values, have the owner merge PR 6 and
+    PR 3, then set the webhook, apply the rich menu, and run the add-friend
+    test with a household account.
+  acceptance_check:
+    - "A household account's follow creates one customers row visible at /ops/customers, and the rich menu opens the board."
