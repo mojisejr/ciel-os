@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T202310_mumate_freeze_lifted_after_39h_observation
+type: closeout
+recorded_at: 2026-10-10T20:23:10+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the first 39 hours of MuMate on DigitalOcean (gate 2026-10-09
+    04:41 +07 to 2026-10-10 20:05 +07) and the owner's decision to lift the
+    code freeze on mootech-fe and bazi-sft-dataset that held since
+    2026-10-05 (20261005T194400, "no change until the move succeeds").
+  scope:
+    - Read-only review of mumate-prod-1 (Caddy, app and health logs, cron journal) and mumate-2's backup.
+  out_of_scope:
+    - Vercel retirement, DNS TTL, ops key, cleanup items (each still the owner's word).
+
+outcome:
+  status: recorded
+  owner_decision: >-
+    The owner judged the move successful and lifted the freeze ("โอเค
+    ผมว่าโอเคแล้ว"). The team may merge and ship features again, under the
+    release rules below. This is not a slice-7 delivery: Vercel retirement
+    is still open.
+  observation_since_gate:
+    - "Traffic on bazichart.mumate.co: 111,038 requests; 2xx 93,524, 3xx 16,646, 4xx 594, 5xx 21 (0.02%), client-abandoned 253."
+    - "5xx: 18 from the bazi hang of 2026-10-09 20:20-20:30 (fixed, 20261010T060929), 2 earlier signs of it (18:19, 19:00), 1 matching/calculate 503 at 2026-10-10 16:32 because bazi pair-match answered 500 once (fe handled it as designed: no quota spent, engine-down message)."
+    - "API latency (excluding og and auth): p50 60 ms, p95 538 ms, p99 6.9 s."
+    - "Health incidents: one (bazi DOWN 2026-10-09 20:25, auto-recreated 20:30, recovered 20:35); none since."
+    - "bazi stall guard (6b08b51): 8 db_query_stall events on 2026-10-10 (09:04, 13:04 write, 16:22 x5, 16:30 +07), every one retry_on_fresh_pool, none gave_up - stalls are recurring and were absorbed without user-visible errors."
+    - "Sign-in since fe 23bdc6f: LINE 28 and Google 9 successful callbacks; two real LINE failures were user-side (access_denied on cancel; one state cookie missing on a Windows browser); ten error callbacks were the agent's own probes of 2026-10-09 20:32."
+    - "Payments: 17 Beam webhooks all 200; PromptPay and charge working; reconcile-payment 158 runs all 200."
+    - "Crons: push-reminders and manifest-morning 2,365 runs each, all 200; qi-quota-reset and account-purge first runs 200."
+    - "Share image since fe a1900ff: 200 for LINE, WhatsApp and Facebook previews, no image errors in fe; a burst of about 12 parallel Facebook crawler requests at 14:38 left some abandoned at 7.5 s (render takes about 3-5 s per image)."
+    - "Backup (mumate-2): 2026-10-10 02:06Z 161,954,982 bytes, age 11 h at review."
+    - "Host: disk 12%, memory available 2.3 GB, load average 0.4."
+  release_rules_after_freeze:
+    - "A merge to mootech-fe main or bazi-sft-dataset pdf-dev does not reach users. Path: container-build target staging, mumate-infra release env=staging (agent or any writer), check, then container-build target production and release env=production, which only the owner's account can press and which refuses a SHA without an 'ok' staging line (runbook 01)."
+    - "Each merge still auto-builds Vercel production behind MAINTENANCE_MODE until Vercel is retired."
+    - "Prefer releases outside the evening peak."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: "7b2e03e"
+    branch: hq/20261009
+    working_tree: this-record-only
+  application:
+    mootech-fe: "a1900ff on mumate-prod-1 and mumate-2"
+    bazi-sft-dataset: "6b08b51 on mumate-prod-1 and mumate-2"
+    mumate-infra: "c169e98 on both hosts"
+    vercel: "mootech-fe production at a1900ff behind maintenance (auto-build on merge); bazi production at 6b08b51"
+    dns: "bazichart.mumate.co A 209.38.56.234 TTL 300"
+
+unresolved:
+  - "Slice 7 remains open: Vercel retirement project by project, each on the owner's exact target list."
+  - "DNS TTL back to 3600 (DNS person) - due now that 24 h passed."
+  - "Ops key: prod-1 /ops still opens with staging's key (20261009T045935) - recommended next."
+  - "For the team: QStash scheduleReminderPush deduplication id contains ':' (14:47 +07 on 10-09); bazi pair-match answered 500 once (10-10 16:32)."
+  - "The origin of bazi's stalled statements is unknown; watch the db_query_stall rate."
+  - "Share image render time (3-5 s) under bursts of crawler requests; a cache would help if Facebook sharing grows."
+  - "Other cleanup of 20261009T044823: env .bak files on prod-1, Render delete, backup move off mumate-2, mumate-2 health timer still 5 min, remote branch docs/runbook-06-0400."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Tell the team the freeze is lifted and the release rules above; then the
+    owner chooses among the open items (ops key recommended first, DNS TTL,
+    Vercel retirement).
+  acceptance_check:
+    - A cold session can say the freeze is lifted, why, and how a change now reaches production, from this record.
