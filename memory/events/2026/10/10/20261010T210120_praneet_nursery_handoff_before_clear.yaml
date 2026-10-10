@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T210120_praneet_nursery_handoff_before_clear
+type: closeout
+recorded_at: 2026-10-10T21:01:20+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Handoff before the owner clears the session; slices 1-5 are closed and
+    slice 6 waits for the owner's go.
+  scope:
+    - State of 2026-10-10; no further change.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Slices 1-5 closed under plan revision 0.5: slice 3 evt_20261010T163434, slice 4 evt_20261010T183702, slice 5 evt_20261010T203249. Revision 0.4 (2D first, 360-degree spin as slice 8, no 3D) and 0.5 (slice 5 LINE details) are in PLAN.md."
+    - "Live: https://praneet-web.vercel.app (public board, indexed; /ops back office with round corrections and history, customers list; /privacy); LINE OA @xpm7982c with webhook to /api/line/webhook and rich menu richmenu-9fefb28ea1e3e298da898459e4944f07."
+    - "Child checkouts clean on main equal to origin/main: praneet-web 7afcaed, praneet-office 9b5463d (two untracked .DS_Store files from Finder, harmless). Local Postgres stopped; no dev server running. Nothing waits to be merged."
+  resume:
+    read_first:
+      - workstreams/praneet-nursery-001/PLAN.md
+      - workstreams/praneet-nursery-001/design/BRIEF.md
+      - memory/events/2026/10/10/20261010T203249_praneet_nursery_slice5_closed.yaml
+    local:
+      - "checkouts/praneet-web/.local/secrets (git-ignored, mode 600): neon-direct.url (owner role, for migrations and grant-reader), neon-pooled.url, neon-reader.url (praneet_reader, read only; use it for every analysis). Never print them."
+      - ".assets/preneet/.env (git-ignored, mode 600): owner back-office USERNAME/PASSWORD and LINE_CHANNEL_ID, LINE_CHANNEL_SECRET, LINE_CHANNEL_ACCESS_TOKEN, LINE_OA_BASIC_ID, LINE_LOGIN_CHANNEL_ID."
+      - "checkouts/praneet-web: local Postgres in .local/pg on port 55441 (pg_ctl -D .local/pg -l .local/postgres.log -o '-p 55441 -h 127.0.0.1' start); `bun run test` uses the isolated praneet_test database. The checkout is linked to the Vercel project (.vercel/, git-ignored)."
+      - "checkouts/praneet-office: `bun run lots` (needs READER_DATABASE_URL), `bun run line check|richmenu:render|richmenu:apply|webhook:set` (reads .assets/preneet/.env); runbooks 00 and 01."
+    hosted:
+      - "Neon project late-hat-85016594 (Free org); migrations 000-003 applied in production."
+      - "Vercel project prj_AriMpn1FFTbHOsWyDqvj7axEALPj (team nons-projects-2ee1d9ee); production env includes LINE_CHANNEL_SECRET and LINE_CHANNEL_ACCESS_TOKEN (sensitive)."
+    working_rules_learned:
+      - "A PR whose code needs a new column: get the owner's go and run the additive migration (and grant-reader for new tables) while the PR is draft, write 'do not merge before' first in the PR, then ask for the merge. Vercel deploys main at once."
+      - "Set Vercel env before the merge; a deployment carries env as of its build."
+      - "One app/globals.css serves board and back office; never reuse a back-office class name (.field, .card .cover). tests/quality.spec.ts guards form labels."
+      - "Do not edit JSX/CSS with perl replacements ($1{...} and @word vanish); use Edit or python, and read the diff."
+      - "Owner answers in short lists; decisions go to him in Thai with a recommendation; record his words verbatim."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "5"
+  repository:
+    head: a2ab64096bf09dbc8e2aeecadeee796d962e21c8
+    branch: hq/20261009
+    working_tree: this-record-only
+unresolved:
+  - "Slice 6 (orders and the office desk) is proposed and waits for the owner's go. Open choice at its start: payment slips must be stored privately, not in the public Blob store."
+  - "Lot counts: 70-A 700 confirmed; 70-B bagged count and others are the owner's to fill in."
+  - "The 39 friends from before 2026-10-10 join the customer list only when they next interact."
+  - "Search indexing is on for a vercel.app address; a later shop domain needs redirects."
+  - "Remote feature branches in praneet-web and praneet-office were left for the owner."
+  - "HQ hq/20261009 is ahead of origin/main and carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Next session: run Wake, read this handoff and PLAN slice 6, then ask the
+    owner for the slice 6 go with the payment-slip storage choice; do not
+    start slice 6 before the go is recorded.
+  acceptance_check:
+    - A decision event authorizes plan revision 0.5 slice 6 in the owner's words.
