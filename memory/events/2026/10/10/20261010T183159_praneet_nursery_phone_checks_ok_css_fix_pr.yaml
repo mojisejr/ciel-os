@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T183159_praneet_nursery_phone_checks_ok_css_fix_pr
+type: closeout
+recorded_at: 2026-10-10T18:31:59+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record the owner's real-phone checks of the board and a back-office
+    regression they found; the fix PR comes before the slice 4 closeout.
+  scope:
+    - praneet-web PR 4 (merged) verification and PR 5 (draft fix); no data change by the agent.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Owner's phone checks: 'ใน line มือถือเห็ฯโอเคเลย' (LINE on his Android) and 'ใน iphone โอเคนะ' (household iPhone)."
+    - "PR 4 merged 2026-10-10T11:20:09Z (fb7e567) and verified in production: / carries index, follow; /ops/login noindex, nofollow; robots.txt and sitemap.xml (/, 70-A, 70-B, 70-C) served; link previews are JPEG at 231,569 and 185,915 bytes (were 2.3-2.4 MB PNG), so sharp runs on Vercel."
+    - "Regression found by the owner: every back-office input showed a grey rounded box with clipped labels. Cause: slice 4 named the public field photo .field, the back office's form label class, in the shared app/globals.css (.cover also collided, without a visible effect yet). The existing tests check widths, axe and target sizes, not look, so they passed."
+    - "praneet-web PR 5 (fix/board-css-collision): public classes renamed to .plot-photo and .lot-cover; a new quality test checks back-office labels stay plain and fails on the old CSS with 'rgb(236, 233, 224) 22px hidden'; Playwright 26/26; DESIGN.md records the shared-stylesheet rule."
+  not_completed:
+    - "PR 5 is not merged; the back office in production still shows the broken inputs."
+    - "The owner said the counts are fixed ('แก้จำนวนต้นเรียบร้อยแล้ว'), but production still shows 70-A 700/700 and no bagged count for 70-B, and audit_events has no lot update in the last three hours. Either the values were saved unchanged (an unchanged save writes no audit row) or the edit did not save; to be confirmed with the owner."
+    - "Whether the link preview was checked inside a real LINE chat is not stated."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "4"
+  repository:
+    head: 95df639d75cb0c8a2faeab33028f48fef4bae1c8
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 4
+      base: main
+      state: MERGED
+      merge_commit: fb7e567
+    - repository: github.com/mojisejr/praneet-web
+      number: 5
+      base: main
+      state: DRAFT
+unresolved:
+  - "Lot counts in production (70-A 700; 70-B bagged count empty) need the owner's confirmation."
+  - "HQ hq/20261009 is ahead of origin/main and carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    After the owner merges PR 5, verify the back-office inputs in production,
+    settle the counts with the owner, then record the slice 4 closeout with
+    the owner's confirmation that the board matches the plot.
+  acceptance_check:
+    - "Production back-office labels are plain (no grey box), and the slice 4 closeout quotes the owner."
