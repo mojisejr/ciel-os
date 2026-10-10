@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T061710_mumate_team_release_opened_slice1_authorized
+type: decision
+recorded_at: 2026-10-11T06:17:10+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-team-release-001
+  lane: single
+  objective: >-
+    Open the workstream in which a merge reaches staging by itself for the
+    team, while production stays the owner's button (phone or chat order to the
+    agent), and authorize slice 1: production buttons and gates in mumate-infra.
+  scope:
+    - Plan 0.1 and slice 1 (promote-production, rollback-production, gates, released-by, 5xx report, deploy lock, runbook 01).
+    - mumate-infra topic branch, tests, PR for the owner's merge.
+  out_of_scope:
+    - Any production press without the owner's word at that time; Vercel, DNS, production env; new collaborators, tokens or paid plans.
+
+outcome:
+  status: decided
+  slice: "1"
+  parallelism: approved
+  decision: >-
+    After two proposal rounds the owner chose the free design (teammate stays
+    out of mumate-infra; staging automatic after merge; production only by the
+    owner or by the agent on his order, after a readiness check; a rollback
+    button), answered the open questions (existing Discord channel; the owner
+    or the teammate runs production migrations), saw the Run workflow button
+    in GitHub Mobile, and said "ถ้าไม่มีอะไรต้องเคาะแล้ว เปิด workstream
+    แล้วเริ่มได้เลยครับ เสร็จแล้วบอก ติดตรงไหน ก็บอกก่อนครับ".
+  reverses: >-
+    The 2026-09-30 choice of a staging button over automatic staging release
+    (20260930T121453, checklist row 3), by the owner's own word.
+  parallelism_basis: >-
+    mumate-vercel-to-do-001 and mumate-be-retirement-001 share mootech-fe,
+    bazi-sft-dataset and mumate-infra but are idle, each waiting for the
+    owner's choice; the owner opened this lane knowing those items are open.
+    If he starts one of them, the two lanes take turns on mumate-infra.
+  authority: >-
+    Branch, commits, push and PR in mumate-infra for slice 1. The owner merges.
+    A production press to prove the buttons happens only on his word then.
+
+evidence:
+  plan: workstreams/mumate-team-release-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "e357d6309d4e756aeee8bea16bb3c077e0d9fcbb"
+    branch: hq/20261009
+    working_tree: this-decision-and-plan
+  child_start:
+    mumate-infra: "main c169e986134d39f1226bbe2c94f9ef89d85f8b82, clean, equal to origin/main"
+    mootech-fe: "main a1900ff88a28f07d54f085c584650caf3cab230d, clean"
+    bazi-sft-dataset: "detached at origin/pdf-dev 6b08b51b1b39804fe1e92b0cefbbadd2c079887f, clean (pdf-dev held by the bazi-testenv worktree)"
+  research:
+    - "GitHub Mobile runs workflow_dispatch from Repository -> Actions -> Workflows (GitHub changelog 2024-07-30); input support undocumented."
+    - "mumate-2 sudoers for deploy: systemctl, journalctl, tailscale (sudo -n -l, read-only)."
+
+unresolved:
+  - "The owner's go covers the whole plan; slices 2-4 each get a decision record citing it as they start."
+  - "Actions minutes for public repositories assumed free from GitHub's documentation; billing page not checked."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 1 on a mumate-infra topic branch with tests, open the PR with
+    the CIEL sections, and report to the owner for merge.
+  acceptance_check:
+    - "scripts/release.test.sh and the new tests pass; the PR description follows the CIEL template."
