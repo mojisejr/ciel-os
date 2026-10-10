@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T063355_mumate_team_release_slice3_authorized
+type: decision
+recorded_at: 2026-10-11T06:33:55+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-team-release-001
+  lane: single
+  objective: Authorize slice 3 of plan 0.1 - mumate-2 follows fe main and bazi pdf-dev by itself, with a hold switch and the 🧪 message.
+  scope:
+    - mumate-infra branch stacked on PR 51 (it uses the deploy lock), tests, draft PR; after the owner's merge, link and enable the timer on mumate-2 only.
+  out_of_scope:
+    - Production; the root-copied health and backup units on mumate-2.
+
+outcome:
+  status: decided
+  slice: "3"
+  parallelism: approved
+  decision: >-
+    Under the owner's go for the whole plan (20261011T061710), slice 3 starts
+    while PR 51 (slice 1) and fe 888 / bazi 50 (slice 2) wait for merges.
+    Read-only checks on mumate-2 first: docker manifest inspect tells a present
+    staging image from a missing one, the public GitHub API answers, and the
+    mumate-infra checkout is on main.
+  authority: Branch, commits, push, draft PR; after merge, systemctl link/enable of the new unit on mumate-2 as deploy (sudo systemctl is allowed there).
+
+evidence:
+  plan: workstreams/mumate-team-release-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: "93643eb9b1b15dd176ef69fdf4cbf74e01540f9b"
+    branch: hq/20261009
+    working_tree: this-decision-only
+
+unresolved:
+  - Slices 1 and 2 are not delivered until their PRs merge and prove live.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Write bin/staging-follow.sh and its units and tests, open the draft PR stacked on PR 51.
+  acceptance_check:
+    - Tests cover hold, nothing new, new pair deployed, missing image, failed pair not retried, non-main checkout, API failure, production refusal.
