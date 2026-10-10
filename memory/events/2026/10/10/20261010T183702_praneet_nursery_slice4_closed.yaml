@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T183702_praneet_nursery_slice4_closed
+type: closeout
+recorded_at: 2026-10-10T18:37:02+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Close slice 4 - the public lot board is live on praneet-web.vercel.app,
+    checked on real phones and shared by the owner.
+  scope:
+    - praneet-web PRs 3, 4 and 5 (merged); production on Vercel.
+outcome:
+  status: slice-complete
+  slice: "4"
+  completed:
+    - "Public board live at https://praneet-web.vercel.app: shop page and /lots/<code> with field and metre-stick photos, four big numbers, prices or 'ยังไม่พร้อมขาย', a height chart with the 50 cm line, every round with its note, bagging day, spec, call button 092-993-1147 and the Google Maps link (PR 3, merge b04d9cc)."
+    - "Search engines index the public pages; /ops stays noindex; robots.txt and sitemap.xml served; link previews are 1200 x 630 JPEG at about 186-232 KB (PR 4, merge fb7e567)."
+    - "Back-office inputs restored after the public .field class collision, with a regression test (PR 5, merge 7abcdec at 2026-10-10T11:35:31Z). Production check as the owner, read only: all 6 form labels on /ops plain (transparent, no radius, overflow visible)."
+    - "Owner's real-phone checks: LINE in-app browser on his Android and a household iPhone both fine; he shared a lot link with a friend and it was fine."
+    - "Proof in tests (26/26): no back-office data in public HTML, chart and timeline, prices only when set, previews, 404, six widths, axe light and dark, 44 px targets, LINE user-agent smoke, plain back-office labels."
+  owner_statement: "merged แล้วครับ ผมยังไม่ได้เปลี่ยนครับและ เป็น 700 ถูกต้องแล้วครับ เดี๋ยวที่เหลือผมเปลี่ยนเอง ถ้าไม่ซีเรียสมากก็เปิด ได้เลยครับ ลองแชร์ ลิงค์ให้เพื่อนแล้วครับ โอเคครับ"
+  not_verified:
+    - "The owner did not say in so many words that the board matches the trees in the plot; he accepted it after checking it on two phones and sharing it ('โอเคครับ', 'ถ้าไม่ซีเรียสมากก็เปิด ได้เลยครับ')."
+    - "Page speed on a mid-range Android was judged by the owner's use, not measured."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "4"
+  repository:
+    head: 67ad09131a98fdeb6be56e155590ab1a179a6e30
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 3
+      base: main
+      state: MERGED
+      merge_commit: b04d9cc
+    - repository: github.com/mojisejr/praneet-web
+      number: 4
+      base: main
+      state: MERGED
+      merge_commit: fb7e567
+    - repository: github.com/mojisejr/praneet-web
+      number: 5
+      base: main
+      state: MERGED
+      merge_commit: 7abcdec
+unresolved:
+  - "70-A's 700 is confirmed correct by the owner; 70-B's bagged count and the other counts are the owner's to fill in ('เดี๋ยวที่เหลือผมเปลี่ยนเอง')."
+  - "The board is indexed on a vercel.app address; a later shop domain needs redirects."
+  - "Owner may say whether planeet-panmai-line-app has a LINE OA worth reusing in slice 5."
+  - "Remote feature branches in praneet-web were left for the owner."
+  - "HQ hq/20261009 is ahead of origin/main and carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Propose slice 5 (LINE OA as the shop's only customer channel) and its
+    owner dependency - creating or confirming the LINE OA and Messaging API
+    channel - and wait for the go.
+  acceptance_check:
+    - A decision event authorizes plan revision 0.4 slice 5 in the owner's words.
