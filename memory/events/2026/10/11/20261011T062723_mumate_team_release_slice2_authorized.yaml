@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T062723_mumate_team_release_slice2_authorized
+type: decision
+recorded_at: 2026-10-11T06:27:23+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-team-release-001
+  lane: single
+  objective: Authorize slice 2 of plan 0.1 - images built and pushed for both targets on merge to fe main and bazi pdf-dev, and the PR template saying what a merge now does.
+  scope:
+    - mootech-fe and bazi-sft-dataset topic branches, container-build push trigger, PR template, draft PRs.
+  out_of_scope:
+    - Merging (the owner or the team), any release, Vercel.
+
+outcome:
+  status: decided
+  slice: "2"
+  parallelism: approved
+  decision: >-
+    Under the owner's go for the whole plan (20261011T061710: "เปิด workstream
+    แล้วเริ่มได้เลยครับ เสร็จแล้วบอก ติดตรงไหน ก็บอกก่อนครับ"), slice 2 starts
+    while slice 1 (mumate-infra PR 51) waits for the owner's merge; the two
+    touch different repositories.
+  authority: Branches, commits, pushes and draft PRs in the two app repositories. Merge stays with the owner or the team, told in the PR.
+
+evidence:
+  plan: workstreams/mumate-team-release-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "c0134b2272db7427d5da63f1e1d1a2b0791d447f"
+    branch: hq/20261009
+    working_tree: this-decision-only
+
+unresolved:
+  - Slice 1 is not delivered until PR 51 is merged and its buttons are proven live.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Change container-build in both app repos to build both targets on push to the release branch, update the PR templates, open draft PRs.
+  acceptance_check:
+    - A dispatch still builds one target as before; a push builds and pushes both.
