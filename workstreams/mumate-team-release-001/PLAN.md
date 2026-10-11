@@ -1,12 +1,20 @@
 # MuMate — the team tests on staging by itself; production stays the owner's button
 
 **Workstream:** `mumate-team-release-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.1
-**Execution phase:** 1
-**Execution state:** executing
+**Execution phase:** 4
+**Execution state:** idle
 **Parallelism:** none
+
+The owner closed this workstream on 2026-10-11 after the cleanup PR (mumate-infra 53)
+was checked, without waiting for the team's first merge. Slices 1-3 are proven
+live; slice 4's owner half (a merged pair promoted from the phone) is proven, its
+teammate half is not yet exercised. Final record:
+`memory/events/2026/10/11/20261011T111003_mumate_team_release_final_closeout.yaml`; the rm
+incident during the cleanup PR is recorded in
+`memory/events/2026/10/11/20261011T110217_mumate_team_release_test_payload_rm_incident.yaml`.
 
 ## Objective and owner intent
 

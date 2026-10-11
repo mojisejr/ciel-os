@@ -1,0 +1,83 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T111003_mumate_team_release_final_closeout
+type: closeout
+recorded_at: 2026-10-11T11:10:03+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-team-release-001
+  lane: single
+  objective: >-
+    Final delivery: the team's merges reach staging by themselves and
+    production stays the owner's button (phone or chat order), with rollback.
+  scope:
+    - mumate-infra PRs 51, 52, 53; mootech-fe PR 888; bazi-sft-dataset PR 50; the follower timer on mumate-2.
+  out_of_scope:
+    - Teammate access to mumate-infra; Vercel; production env; staging database migrations.
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "4"
+  result: >-
+    Delivered and in use. A merge to fe main or bazi pdf-dev builds both
+    images (container-build on push) and mumate-2 runs the new pair within
+    about 3 minutes of the images, announcing "🧪 staging พร้อมทดสอบ" with PR
+    numbers (first run: merge 03:14Z to staging healthy 03:18:41Z). The owner
+    promoted fe 7ee35c4 / bazi 293c95b from GitHub Mobile (run 38109059651)
+    through every gate; Discord named him and the commit counts; the 5-minute
+    watch saw 5xx 0 of 249. rollback-production proved by a dry run on prod-1.
+    PR 53 (merged 9c3c771) splits production into named steps gates, deploy,
+    watch and puts sudo in the runbook's journal commands; the full infra test
+    suite passes on main and leaves the repository unchanged.
+  delivered:
+    - "mumate-infra PR 51 (7f75a65): promote-production, rollback-production, gates on every production press, presser recorded, 5xx report, deploy lock, runbooks 00/01 incl. the agent readiness check."
+    - "mumate-infra PR 52 (a8f4998): bin/staging-follow.sh and its timer, linked and enabled on mumate-2 only; hold file; failed pair not retried."
+    - "mootech-fe PR 888 (7ee35c4), bazi-sft-dataset PR 50 (293c95b): images on merge, PR templates, fe MUMATE-GITHUB-FLOW.md section 3."
+    - "mumate-infra PR 53 (9c3c771): named steps, runbook sudo."
+  how_to_use:
+    team: "Merge; wait for 🧪 in Discord (about 5 minutes); test on app.staging.mumate.co; tell the owner. Migrations: additive, on production before the merge, and tell the owner/agent for staging. New env: tell the owner first."
+    owner: "GitHub app → mumate-infra → Actions → promote-production → Run workflow (no input). rollback-production goes back one step. Or tell Claude/Codex in chat; they run the runbook 01 readiness check first."
+  incident: memory/events/2026/10/11/20261011T110217_mumate_team_release_test_payload_rm_incident.yaml
+  application:
+    production: "fe 7ee35c4, bazi 293c95b on mumate-prod-1 (by=mojisejr); rollback pair fe a1900ff + bazi 6b08b51"
+    staging: "fe 7ee35c4-staging, bazi 293c95b-staging on mumate-2 (by=staging-follow); follower timer active"
+    mumate-infra: "main 9c3c771; hosts at a8f4998 until the next release or follow pulls (PR 53 changes only the runner side and a runbook)"
+
+evidence:
+  plan: workstreams/mumate-team-release-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "4"
+  repository:
+    head: "482dc5167d5bc7686acec88c38cdf5a5599ce466"
+    branch: hq/20261009
+    working_tree: this-closure-and-completed-plan
+  owner_decision: memory/events/2026/10/11/20261011T111003_mumate_team_release_owner_closure_authorized.yaml
+  pull_requests:
+    - https://github.com/mojisejr/mumate-infra/pull/51
+    - https://github.com/mojisejr/mumate-infra/pull/52
+    - https://github.com/mojisejr/mumate-infra/pull/53
+    - https://github.com/mojisejr/mootech-fe/pull/888
+    - https://github.com/mojisejr/bazi-sft-dataset/pull/50
+  workflows:
+    owner_phone_promote: https://github.com/mojisejr/mumate-infra/actions/runs/38109059651
+    rollback_dry_run: https://github.com/mojisejr/mumate-infra/actions/runs/38107449444
+
+unresolved:
+  - "The first teammate merge has not gone through yet; closure by the owner's choice."
+  - "The named-steps split (PR 53) is proven by tests only until the next production press."
+  - "Staging database migrations stay manual; a merge needing one reaches staging before its schema unless someone applies it to pgstaging."
+  - "Whether AGENTS.md takes rules from the rm incident: owner discussion next."
+  - "bazi-testenv's pdf-dev has no upstream, so a plain pull there refuses; left untouched."
+  - "Scratchpad forensic folders and the rhysd/actionlint Docker image remain locally; harmless."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    No further work in this workstream. Prevention discussion with the owner
+    (possible AGENTS.md change, its own decision); the owner pushes HQ when he
+    closes the round.
+  acceptance_check:
+    - Wake reports mumate-team-release-001 completed.
