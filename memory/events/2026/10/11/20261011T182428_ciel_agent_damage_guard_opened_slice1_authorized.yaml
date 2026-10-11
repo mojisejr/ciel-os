@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T182428_ciel_agent_damage_guard_opened_slice1_authorized
+type: decision
+recorded_at: 2026-10-11T18:24:28+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-agent-damage-guard-001
+  lane: single
+  objective: >-
+    Open the workstream agreed in the syncup after the rm incident and
+    authorize slice 1 (the AGENTS.md rule), plus the placement of a backup
+    standard in docs/portability for slice 3.
+  scope:
+    - Plan 0.1; slice 1 edits AGENTS.md (two sentences on the Execute line) and trims the agent's memory note.
+  out_of_scope:
+    - Slices 2 and 3 work (their own decisions); any blocking hook; CIEL CLI changes.
+
+outcome:
+  status: decided
+  slice: "1"
+  parallelism: approved
+  decision: >-
+    Syncup answers (2026-10-11): guard the whole family but "ต้องไม่ ขวางการ
+    ทำงาน"; backup to the owner's personal Google Drive, about 100 GB for it,
+    set up by the agent; the eval runner stays in mumate-infra ("ตัว eval
+    อันนี้เป็น specific รายโปรเจค ... ไม่ควรเอามา ไว้ใน ciel-os"); sensitive
+    files encrypted only if they can be decrypted back ("ผมโอเค" to plain plus
+    rclone crypt); one standard every machine's ciel-os can follow ("ขอแค่ให้
+    มันมี standard เดียวกัน"), placed in docs/portability ("ทางนี้ก็ดี");
+    macOS first, Windows guidance written for later ("ขอให้มีแนวไปบอกทางนั้น
+    ว่าทำกันยังไง"). After the shared summary: "เปิด workstream ได้ครับ".
+  structure_authorized: >-
+    docs/portability/ may hold BACKUP.md, a backup rules file and one macOS
+    backup script (AGENTS.md allows no structure beyond what is approved; this
+    is that approval). The script is workspace tooling run by the machine's
+    scheduler, not a CIEL daemon or write path.
+  parallelism_basis: >-
+    ciel-os-template-001, ciel-owner-operating-contract-001 and
+    ciel-mini-template-001 are idle; ciel-windows-portability-001 is paused.
+    None is editing AGENTS.md or docs/portability now. The template lane's note
+    that docs/portability carries owner names is respected by keeping owner
+    values out of the tracked backup files.
+
+evidence:
+  plan: workstreams/ciel-agent-damage-guard-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "4367001be5228cc85fe0daa9985994b673285b62"
+    branch: hq/20261009
+    working_tree: this-decision-and-plan
+  incident: memory/events/2026/10/11/20261011T110217_mumate_team_release_test_payload_rm_incident.yaml
+
+unresolved:
+  - "Slices 2 and 3 get their own decisions as they start, under this go."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Append the two sentences to the Execute line of AGENTS.md, run bun run check, trim the memory note, record the slice-1 closeout.
+  acceptance_check:
+    - "bun run check passes; AGENTS.md gains no new line or heading."
