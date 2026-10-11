@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T100943_mumate_team_release_pr51_merged_rollback_dry_run_live
+type: closeout
+recorded_at: 2026-10-11T10:09:43+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-team-release-001
+  lane: single
+  objective: Record the owner's merge of mumate-infra PR 51 (slice 1) and the first live run of a phone button.
+  scope:
+    - mumate-infra main on mumate-2, rollback-production with dry_run.
+  out_of_scope:
+    - A production promote (needs the owner's word); PR 52 and the app PRs.
+
+outcome:
+  status: recorded
+  slice: "1"
+  result: >-
+    The owner merged PR 51 (merge 7f75a65). PR 52 retargeted to main by
+    itself. mumate-infra main pulled on mumate-2 (no Caddyfile, compose, unit
+    or env file in the diff) so promote can read bin/staging-pair.sh there; it
+    printed fe a1900ff / bazi 6b08b51, unchanged 1,668 min, exit 0.
+    rollback-production with dry_run (run 38107449444, success): gate 0 passed
+    for mojisejr, tailnet joined, prod-1 showed .env fe a1900ff / bazi 6b08b51
+    and .env.last-good fe 23bdc6f / bazi 6b08b51, and printed the dry-run plan
+    only. Production afterwards: last deploy-history line still
+    2026-10-09T23:21:42Z ok, ops-status exit 0.
+  note: "mumate-2 holds untracked .arena-baseline*.txt and .staging-restore.err from earlier rounds; left as they are."
+  correction: "20261011T063856 says all 17 scripts/*.test.sh pass; the count on feat/staging-follow is 16."
+
+evidence:
+  plan: workstreams/mumate-team-release-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "212d4e9"
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_request:
+    url: https://github.com/mojisejr/mumate-infra/pull/51
+    merge_sha: "7f75a65b2ef8dcd7d53f32b2ce4b085caee52fba"
+  workflows:
+    rollback_dry_run: https://github.com/mojisejr/mumate-infra/actions/runs/38107449444
+
+unresolved:
+  - "promote-production not yet run live; a promote of the pair production already runs waits for the owner's word."
+  - "Whether GitHub Mobile shows the optional dry_run / allow_unhealthy inputs is not observed yet."
+  - "Slice 1 is not closed until promote is proven."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner merges PR 52; agent links the follower timer on mumate-2. On the
+    owner's word, promote-production of the current pair proves the promote
+    path.
+  acceptance_check:
+    - "promote-production run green with every gate printed; production still fe a1900ff / bazi 6b08b51 afterwards."
