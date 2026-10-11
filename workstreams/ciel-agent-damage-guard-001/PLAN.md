@@ -1,12 +1,18 @@
-# CIEL — keep agent-run commands from silently damaging local files, and make the damage recoverable
+# CIEL — keep agent-run commands from silently damaging local files
 
 **Workstream:** `ciel-agent-damage-guard-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
-**Plan revision:** 0.1
-**Execution phase:** 1
-**Execution state:** executing
+**Plan revision:** 0.2
+**Execution phase:** 2
+**Execution state:** idle
 **Parallelism:** none
+
+Revision 0.2 (2026-10-11): the owner removed slice 3 (the cloud backup) when
+its setup grew complicated, and closed the workstream on slices 1 and 2. Files
+that Git ignores are the owner's to back up. Decision:
+`memory/events/2026/10/11/20261011T194439_ciel_agent_damage_guard_rev02_backup_removed_owner_closes.yaml`;
+final record `memory/events/2026/10/11/20261011T194439_ciel_agent_damage_guard_final_closeout.yaml`.
 
 ## Objective and owner intent
 
@@ -22,11 +28,11 @@ Agreed in a syncup with the owner on 2026-10-11:
 
 - Guard the whole family, not this one incident, **without slowing ordinary
   work**: no new blocking hook, no step that fires on every command.
-- A rule all clients follow, a mechanical guard where the repository needs one,
-  and a backup so that what Git cannot restore can still be recovered.
+- A rule all clients follow and a mechanical guard where the repository needs
+  one. (Revision 0.1 also planned a backup so that what Git cannot restore can
+  be recovered; revision 0.2 removed it, see below.)
 - Keep it tidy: a universal rule lives in `AGENTS.md`, a project's mechanism
-  lives in that project beside the code it guards, the backup standard lives in
-  `docs/portability/` with machine-specific state outside Git.
+  lives in that project beside the code it guards.
 
 The owner's go after the shared summary: "เปิด workstream ได้ครับ".
 
@@ -34,7 +40,7 @@ The owner's go after the shared summary: "เปิด workstream ได้ค�
 
 | Project ID | Role | Local binding |
 |---|---|---|
-| `ciel-os` | `AGENTS.md` rule; backup standard in `docs/portability/`; this plan | `.` |
+| `ciel-os` | `AGENTS.md` rule; this plan | `.` |
 | `mumate-infra` | disposable-copy test runner for its `eval`-based shell tests | `/Users/non/ghq/github.com/mojisejr/mumate-infra` |
 
 ## Starting evidence
@@ -80,33 +86,22 @@ point to it.
 Done when: owner merges the PR; a deliberately destructive test run through the
 runner leaves the real checkout unchanged.
 
-### 3. Backup standard (ciel-os `docs/portability/`) and this Mac
+## Removed in revision 0.2: backup
 
-- `docs/portability/BACKUP.md`: set up a machine, restore (plain and encrypted
-  parts), turn it off; a Windows section that hands the same standard to a
-  session on that machine (same rclone rules, Task Scheduler instead of launchd,
-  what must be proven there).
-- A tracked rules file: what goes up as plain files, what goes through
-  `rclone crypt`, what is never copied (regenerable directories).
-- A macOS script; the schedule (launchd), Google token, encryption password and
-  the machine's list of roots stay on the machine.
-- Google Drive of the owner through rclone with scope `drive.file`, one folder
-  per machine `CIEL-backup/<machine>/`; changed or deleted files kept 30 days;
-  daily; a macOS notification when the backup is over 100 GB or has failed for
-  more than two days.
-- This Mac backs up `~/dev/ciel-os` and `~/ghq/github.com/mojisejr` without
-  regenerable directories (about 5 GB).
-- The owner signs in to Google once and stores the encryption password in his
-  password manager.
-
-Done when: first backup on Drive; a restore of one plain and one encrypted file
-into a scratch folder matches the original; no sensitive file appears as plain in
-Drive; the schedule ran once by itself.
+Revision 0.1 planned a backup standard in `docs/portability/` (rclone to the
+owner's Google Drive, sensitive files through rclone crypt, daily, 100 GB cap)
+and its setup on this Mac. During setup the owner signed in to Google, rclone
+printed the resulting token into the session, and rclone warned that its shared
+Google client stops working during 2026. The fixes (own Google Cloud client or
+the Google Drive desktop app) added steps the owner did not want: "ผมรู้สึกว่า
+มันเริ่มยุ่งยากครับ". The token was revoked at Google (HTTP 200, then 401 on
+use) and every slice-3 artifact was removed; nothing was ever uploaded.
+Files Git ignores (`.assets/`, `.env` files) are the owner's to back up; the
+simplest route if he wants one later is macOS Time Machine.
 
 ## Boundaries
 
 - No new blocking hook or permission rule; no change to CIEL's read-only CLI.
 - No secret, token, password or owner path in a tracked file.
-- Windows backup is described, not built.
 - Each slice gets its own decision and closeout; ciel-os changes reach `main`
   through the owner's HQ round, mumate-infra through its own PR.

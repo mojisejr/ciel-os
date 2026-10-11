@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T194439_ciel_agent_damage_guard_rev02_backup_removed_owner_closes
+type: decision
+recorded_at: 2026-10-11T19:44:39+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-agent-damage-guard-001
+  lane: single
+  objective: Plan revision 0.2 - remove slice 3 (cloud backup), roll its pieces back, and close the workstream on slices 1 and 2.
+  scope:
+    - PLAN.md revision 0.2; rollback of every slice-3 artifact; closure.
+  out_of_scope:
+    - Any backup of the owner's machine (his responsibility from now on).
+
+outcome:
+  status: decided
+  slice: "2"
+  decision: >-
+    The owner: "ผมรู้สึกว่ามันเริ่มยุ่งยากครับ งั้น rollback slice 3 ดีมั๊ย
+    แล้วเปลี่ยนเป็น park เอาก่อน หรือว่า ไม่ทำ แล้วและ ปล่อยให้ ตัวไฟล์ที่
+    git ไม่สามารถ จัดการได้ และอยู่ในส่วนจอง ignored folder เป็นส่วนที่ผม
+    ต้องรับผิดชอบในการ backup เองจะดีกว่า". The agent recommended dropping
+    rather than parking (OWNER.md: no paused state for one side issue; slices
+    1 and 2 already prevent, the backup only recovers), revoking the leaked
+    token itself, and closing on slices 1 and 2. The owner: "โอเค", then
+    "ปรับ workstream แล้วบอกหน่อยคับ".
+  responsibility: Files Git ignores (.assets/, .env and other ignored files in HQ and child repositories) are the owner's to back up; agents treat them as unrecoverable, which the AGENTS.md Execute rule from slice 1 already makes a stop-and-report case.
+
+evidence:
+  plan: workstreams/ciel-agent-damage-guard-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "c7a90440892ce4d18f108bb0c154f8ce6c820200"
+    branch: hq/20261009
+    working_tree: plan-0.2-and-closure
+
+unresolved:
+  - "This Mac has no backup (no Time Machine destination); the owner holds that risk by choice."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Record the final closeout; no further work in this workstream.
+  acceptance_check:
+    - Wake reports ciel-agent-damage-guard-001 completed.
