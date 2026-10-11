@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T195717_mumate_handoff_before_clear_team_merges_on_staging
+type: closeout
+recorded_at: 2026-10-11T19:57:17+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Hand MuMate over before /clear: where production and staging stand, the
+    team's first merges that staging followed by itself, the release waiting
+    for the owner, and the open items in order. Cold-session entry for MuMate.
+  scope:
+    - Read-only check of mumate-prod-1 and mumate-2 at 19:56 +07; GitHub compare of the pending pair.
+  out_of_scope:
+    - Any release or host change (the next session, on the owner's word).
+
+outcome:
+  status: recorded
+  state:
+    - "Production (mumate-prod-1): fe 7ee35c4 / bazi 293c95b, released by the owner from GitHub Mobile 2026-10-11 03:39:52Z (promote-production run 38109059651); ops-status exit 0; bazichart.mumate.co /api/health ok."
+    - "Staging (mumate-2): fe bc1be69-staging / bazi e73f571-staging since 2026-10-11T11:22:19Z, by=staging-follow; ops-status exit 0."
+    - "Team merges 11:06-11:22Z (18:06-18:22 +07): the follower deployed three times by itself, waited quietly while images built, and posted 🧪 with PR numbers each time - the first teammate round through the new path (the slice-4 half not yet observed when mumate-team-release-001 closed)."
+  pending_release:
+    fe: "7ee35c4 → bc1be69, 5 commits: #890 feat(fortune) ฮวงจุ้ย card page; #891 fix(fengshui) hydration on the draw button; #892 fix(fengshui) summary style; #889 fix(destiny) zero-element meaning; #893 fix(destiny) cache v10."
+    bazi: "293c95b → e73f571, 6 commits: feat(nisai) strong/weak texts; feat(fengshui) 78 card images + EN + TH/EN toggle; feat(chat-cards) three decks + fengshui ask page; fix(chat-cards) tarot wording; feat(fengshui) summary style; fix(nisai) texts per the master's document."
+    before_promote: "Runbook 01 'agent: readiness check' - production health, 5xx, stalls, journals; then per PR: migration (must already be on the production database) and new env (must already be on prod-1). Not yet checked for this pair."
+    how: "Owner presses promote-production in GitHub Mobile, or tells Claude/Codex in chat after the readiness check. Staging must stay unchanged 10 minutes; another team merge restarts that clock."
+  open_items_in_order:
+    - "1. Ops key: prod-1 /ops opens with staging's key (20261009T045935) - env change on prod-1, owner's word."
+    - "2. Delete the 4 env/*.bak-* files on prod-1 by name (secrets inside); mumate-2 has 3."
+    - "3. Move the production database backup off mumate-2 (only copy lives on the staging host)."
+    - "4. Slice 7: Vercel retirement project by project (each merge still builds Vercel behind maintenance)."
+    - "5. DNS TTL of bazichart.mumate.co back to 3600 (still 300)."
+    - "6. mumate-be-retirement-001 step 6 from 2026-10-12 (Render delete etc.)."
+  tools_now:
+    - "mumate-infra: release (named pair), promote-production, rollback-production (each with gates; production steps named gates/deploy/watch); staging-follow timer on mumate-2; scripts/test-all.sh for tests."
+    - "AGENTS.md Execute rule (ciel-agent-damage-guard-001): no real destructive command in tests; git status after any local run that can write."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: "1a82e9d"
+    branch: hq/20261009
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/10/20261010T202310_mumate_freeze_lifted_after_39h_observation.yaml
+    - memory/events/2026/10/11/20261011T111003_mumate_team_release_final_closeout.yaml
+
+unresolved:
+  - "The pending pair's readiness (migrations, env) is unchecked."
+  - "hq/20261009 unpushed (about 58 commits ahead of main); the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Next session: Wake, read this record, run the runbook 01 readiness check on
+    the pending pair (fe bc1be69 / bazi e73f571 or newer), report, and promote
+    only on the owner's word; then the open items in order.
+  acceptance_check:
+    - "A cold session can state production, staging, what is pending and how it goes out, from this record."
