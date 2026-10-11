@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T104543_mumate_team_release_owner_promoted_from_phone
+type: closeout
+recorded_at: 2026-10-11T10:45:43+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-team-release-001
+  lane: single
+  objective: >-
+    Close slice 1 with its live proof - the owner pressed promote-production
+    in GitHub Mobile and the pair staging ran went to production through every
+    gate - and record what remains of slice 4.
+  scope:
+    - promote-production run 38109059651, production verification.
+  out_of_scope:
+    - Workstream closure (owner's word).
+
+outcome:
+  status: recorded
+  slice: "1"
+  slices_closed: ["1"]
+  result: >-
+    The owner pressed promote-production in the GitHub app at 03:38:54Z (run
+    38109059651, actor and triggering actor mojisejr, success). Log: staging
+    pair fe 7ee35c4 / bazi 293c95b; gate 1 both on main / pdf-dev; gate 2
+    both ran healthy on staging at 03:18:41Z; gate 4 production fe a1900ff /
+    bazi 6b08b51 all ✅; going out fe+2 bazi+2; deploy healthy and
+    deploy-history "ok FE_TAG=7ee35c4… BAZI_TAG=293c95b… by=mojisejr" at
+    03:39:52Z; Discord "✅ PRODUCTION · deploy สำเร็จ · fe 7ee35c4 · bazi
+    293c95b · โดย mojisejr · fe+2 bazi+2 · 10:39 น."; cron-check agreed;
+    watch 300 s then "👀 PRODUCTION · 5 นาทีหลังปล่อย: 5xx 0 จาก 249 request ·
+    10:44 น.". Public bazichart.mumate.co/api/health sha 7ee35c4, db ok,
+    env production; /v2 200.
+  owner_observation: "While the single step ran (it covers gates, deploy and the 5-minute watch) the app still showed the step named 'staging pair…' after Discord had already said deploy ok."
+  slice_4_state: >-
+    The owner's phone promote of a merged pair is proven. The slice's other
+    half - a teammate's own merge tested on staging and then promoted - waits
+    for the team's next merge.
+
+evidence:
+  plan: workstreams/mumate-team-release-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "bb3b6d1"
+    branch: hq/20261009
+    working_tree: this-record-only
+  workflows:
+    promote_production: https://github.com/mojisejr/mumate-infra/actions/runs/38109059651
+  application:
+    mootech-fe: "7ee35c4 on mumate-prod-1 and mumate-2"
+    bazi-sft-dataset: "293c95b on mumate-prod-1 and mumate-2"
+    mumate-infra: "a8f4998 on mumate-prod-1 (pulled by the release) and mumate-2"
+    rollback_pair: "fe a1900ff + bazi 6b08b51 (.env.last-good on prod-1)"
+
+unresolved:
+  - "Slice 4: the first teammate merge through staging to the owner's promote."
+  - "One workflow step covers gates, deploy and the watch, so the app cannot show progress; splitting it into named steps would (small infra PR, with the runbook sudo journalctl fix)."
+  - "Staging database migrations stay manual."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner chooses: the small follow-up infra PR (named steps, sudo in the
+    runbook), and whether to close the workstream now or after the team's
+    first merge goes through.
+  acceptance_check:
+    - "The owner's choice is recorded."
