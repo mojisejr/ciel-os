@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T114254_ciel_skills_slice1_skeleton_and_guardrails
+type: closeout
+recorded_at: 2026-10-12T11:42:54+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-skills-001
+  lane: single
+  objective: >-
+    Close slice 1: the ciel-skills repository exists with its rule tests and
+    installer, and no skill content yet.
+  scope:
+    - New private repository mojisejr/ciel-skills; CIEL project registration and local binding; the plan's project-links row.
+  out_of_scope:
+    - Any skill content (slices 2 and 3); installing anything into a real home.
+
+outcome:
+  status: recorded
+  slice: "1"
+  delivered:
+    repository: "github.com/mojisejr/ciel-skills, PRIVATE, main at db3e800 (created and pushed with gh repo create --push; the harness allowed it). Local checkout ~/ghq/github.com/mojisejr/ciel-skills."
+    lint: "src/lint.ts enforces the plan's rule 5: Writes section; no CI/hook/dependency instructions outside Writes unless the line is about <skill-dir>; no 'ciel' in an unprefixed skill; no person or private project names; name = directory, lowercase-hyphen, <= 64; description 1-1024; SKILL.md <= 500 lines; every references/scripts/assets/engine path exists (cross-skill ../ paths too); node_modules skipped. Uses Bun.YAML, no dependencies."
+    installer: "src/install.ts writes only ~/.claude/skills and ~/.agents/skills; ownership in .ciel-skills.json per target; a same-named foreign skill is a conflict unless --adopt, which moves it to ~/.ciel-skills-backup/<time>/; --dry-run, --check (drift), --uninstall (only what it installed); refuses to install a pack that fails lint; never touches CLAUDE.md, AGENTS.md or client config."
+    readme: "Two tiers (neutral, ciel- prefixed), the five rules, install and per-client use."
+  ciel_registration: "projects/ciel-skills/project.yaml added; machine-local binding in projects.local.yaml (untracked); PLAN project-links row added as the plan said."
+
+evidence:
+  plan: workstreams/ciel-skills-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "8605151"
+    branch: hq/20261009
+    working_tree: this-record-plan-row-and-project-entry
+  ciel_skills_head: "db3e800"
+  checks:
+    - "bun test test/ in ciel-skills: 27 pass, 0 fail, on an empty pack."
+    - "Teeth: each of ten rule checks disabled in turn on a scratch copy (independence, no-harness, writes, reference, personal-name, length, name, install conflict, install lint gate, dry-run) turned at least one test red. A first attempt with perl substitutions silently changed nothing and was redone with exact string replacement."
+    - "install --dry-run against a scratch HOME listed only .claude/skills and .agents/skills and created no file; --dry-run against the real home listed the same two targets and wrote nothing."
+    - "bun run wake: no validation error; ciel-skills-001 projects ciel-os and ciel-skills both have verified bindings."
+
+unresolved:
+  - "Later changes to ciel-skills go through a branch and PR the owner merges (the PreToolUse guard refuses agent pushes to main outside *-oracle repositories); only the initial creation pushed main directly."
+  - "The personal-name list in src/lint.ts necessarily contains the names it refuses; it lives in tooling, never in a skill."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Slice 2 (syncup) under the opening go: rewrite syncup in ciel-skills on a
+    branch, rehearse with Codex in a scratch HOME, open a PR for the owner.
+  acceptance_check:
+    - "The slice-2 closeout shows lint green, a Codex prompt-input listing the new syncup, and one real round producing the Shared understanding block."

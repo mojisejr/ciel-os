@@ -33,8 +33,8 @@ Owner intent, 2026-10-12, in his words:
 | Project ID | Role | Local binding |
 |---|---|---|
 | `ciel-os` | this plan and its records only; no CIEL file, rule or code changes | `.` |
+| `ciel-skills` | the pack: skills, rule tests, installer (registered in slice 1) | `/Users/non/ghq/github.com/mojisejr/ciel-skills` |
 
-`ciel-skills` (the new repository) is registered in slice 1, once it exists.
 Pilot targets in slices 2 and 3 are read-only users of the pack and are named
 in those slices' decisions.
 
