@@ -1,12 +1,19 @@
 # MuMate — leave Vercel for DigitalOcean only once DO does 100% of what Vercel does, with a real staging
 
 **Workstream:** `mumate-vercel-to-do-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.4
-**Execution phase:** none
+**Execution phase:** 7
 **Execution state:** idle
 **Parallelism:** proposed
+
+The owner closed this workstream on 2026-10-12 on slice 7. DigitalOcean has
+carried production since the 2026-10-09 cutover; both Vercel projects are
+hibernated (no Git, no domain, a static closed page, no env) and a build +
+smoke check on pull requests replaces Vercel's preview build. Application-side
+observability is deferred by the owner, not dropped. Final record:
+`memory/events/2026/10/12/20261012T085404_mumate_vercel_to_do_final_closeout.yaml`.
 
 ## Objective and owner agreement
 
