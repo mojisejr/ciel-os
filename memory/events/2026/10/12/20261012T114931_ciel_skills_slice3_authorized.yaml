@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T114931_ciel_skills_slice3_authorized
+type: decision
+recorded_at: 2026-10-12T11:49:31+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-skills-001
+  lane: single
+  objective: Authorize slice 3 (the design set and motion-scene-design) under the owner's standing go.
+  scope:
+    - ciel-skills branch feat/design-set (stacked on feat/syncup so an install from it keeps syncup); design-scout, design-init, design-showcase, design-verify, motion-scene-design; a read-only pilot run against checkouts/mbti-planner-pilot.
+  out_of_scope:
+    - Any write to a pilot repository; the cut-over of the rest of oracle-skills (slice 4).
+
+outcome:
+  status: decided
+  slice: "3"
+  parallelism: approved
+  decision: >-
+    Under the owner's go of 2026-10-12 ("ถ้าไม่ติดอะไรคุนทำไปได้เลย"),
+    slice 3 starts while slice 2 waits for its real round and the PR 1 merge;
+    nothing in slice 3 depends on either.
+  implementation_calls: >-
+    Agent's calls, with reasons: (1) the Frame-v2 engine code (engine/*.ts)
+    is not carried over - no repository on this Mac has a design.contract.ts
+    and the only one that used it archived its harness on 2026-08-18; its
+    doctrine (real route, viewport set, three proofs) is kept as a reference.
+    (2) DESIGN.md placeholders become {{...}} and one template file feeds
+    scaffold, spec and validator, replacing three hand-kept copies. (3) Capture
+    moves from Playwright MCP calls to a script that uses the Playwright
+    library from the skill's own directory, so Claude, Codex and a terminal
+    get the same numbers. (4) The validator accepts the three existing
+    conforming DESIGN.md files unchanged.
+  parallelism_basis: >-
+    As in the opening decision: ciel-os is touched only for this workstream's
+    plan and records.
+
+evidence:
+  plan: workstreams/ciel-skills-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: "45bc53c787dbf8975d96dfa40f65fd560aad23a5"
+    branch: hq/20261009
+    working_tree: this-decision
+  pilot: checkouts/mbti-planner-pilot (Vite, static, DESIGN.md with verify_tokens)
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Write the design set on feat/design-set, lint and test, pilot design-verify on mbti-planner-pilot with its git status unchanged, open PR 2.
+  acceptance_check:
+    - "design-verify reports on the pilot and leaves its git status unchanged; design-scout on a prose DESIGN.md says not machine-checkable."
