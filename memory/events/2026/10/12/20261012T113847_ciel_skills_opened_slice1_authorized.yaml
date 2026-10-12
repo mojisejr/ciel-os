@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T113847_ciel_skills_opened_slice1_authorized
+type: decision
+recorded_at: 2026-10-12T11:38:47+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-skills-001
+  lane: single
+  objective: >-
+    Open the ciel-skills workstream - a standalone, client-neutral skill pack
+    built from syncup, the design set and motion-scene-design - and authorize
+    slice 1 (repository, guardrails, installer).
+  scope:
+    - Plan 0.1; slice 1 creates the private repository ciel-skills, registers it as a CIEL project, and lands README, the rule tests and the installer with no skill content.
+  out_of_scope:
+    - Slices 2-4 work (their own decisions); any change to CIEL's AGENTS.md, OWNER.md, src or tests; the old oracle-skills repository and its install.sh.
+
+outcome:
+  status: decided
+  slice: "1"
+  parallelism: approved
+  decision: >-
+    Owner, 2026-10-12, after reviewing the skills audit and the draft plan:
+    the pack must not be bound to CIEL ("ไม่อยากให้ผูกกับ ciel ciel ไม่จำเป็น
+    ต้องรู้ว่ามี skill ชุดนี้อยู่ ... และ ไม่มี skills ชุดนี้ ciel ก็ยังทำงานได้
+    เหมือนเดิม"); no owner name in the skills; name it ciel-skills so later
+    workflow skills share one family name; design against the mumate-fe
+    harness incident ("skill บางอันไปสร้าง harness ใหม่บน repo เป้าหมาย แล้ว
+    ทำให้ เกิด ci ที่ block นั่นนี่เต็มไปหมด"). On opening: "โอเค ผมว่าเรา
+    เริ่มได้เลยครับ บันทึกการตัดสินใจ" and, for the end state, "หลังจากทำเสร็จ
+    ทดสอบเสร็จ แล้วใช้งานได้อย่างมั่นใจแล้ว เรา ยก เอา oracle-skills เดิมออก
+    แล้วแทนที่ด้วย ciel skills" - written into slice 4.
+  agent_defaults_not_objected: >-
+    Proposed by the agent and left standing by the owner: motion-scene-design
+    joins the pack; skill files are written in English and reply in the
+    user's language; the repository is private until the pack is stable;
+    neutral skills carry no prefix and a future CIEL-aware skill takes the
+    prefix ciel-.
+  placement: >-
+    The ciel-skills checkout lives at ~/ghq/github.com/mojisejr/ciel-skills,
+    outside the HQ tree, so its independence is physical as well as textual.
+  parallelism_basis: >-
+    This workstream touches ciel-os only for its plan and records; it edits no
+    file another active workstream owns, and its product is a separate
+    repository.
+
+evidence:
+  plan: workstreams/ciel-skills-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "4c05de681bba3d912705797eaf0b824a2b83c3ef"
+    branch: hq/20261009
+    working_tree: this-decision-and-plan
+  related:
+    - memory/events/2026/10/12/20261012T102213_arra_oracle_system_retired.yaml
+
+unresolved:
+  - "Creating the GitHub repository is an outward write; if the harness refuses it, the owner runs one gh command."
+  - "Slices 2-4 get their own decisions as they start, under this go."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Create ~/ghq/github.com/mojisejr/ciel-skills and its private GitHub
+    remote, register the project, land README, rule tests and installer,
+    record the slice-1 closeout.
+  acceptance_check:
+    - "The pack's tests are green on an empty pack and red on a planted violation of each rule."
+    - "install --dry-run in a scratch HOME lists only ~/.claude/skills and ~/.agents/skills."
