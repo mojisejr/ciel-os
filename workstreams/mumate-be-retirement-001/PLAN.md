@@ -1,12 +1,18 @@
 # MuMate — retire `mootech-be`: every live responsibility moves into `mootech-fe`
 
 **Workstream:** `mumate-be-retirement-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.5
-**Execution phase:** none
+**Execution phase:** 4
 **Execution state:** idle
 **Parallelism:** proposed
+
+The owner closed this workstream on 2026-10-12 after deleting the Render
+service: the backend has left the system. The archive of `mootech-be`, the
+host cleanup of the `be` service and the BE-only credential rotation are
+carried as unresolved, not done. Final record:
+`memory/events/2026/10/12/20261012T162711_mumate_be_retirement_final_closeout.yaml`.
 
 ## Objective and owner agreement
 

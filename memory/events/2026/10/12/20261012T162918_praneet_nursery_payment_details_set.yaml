@@ -1,0 +1,41 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T162918_praneet_nursery_payment_details_set
+type: closeout
+recorded_at: 2026-10-12T16:29:18+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record the owner's receiving details set in Vercel production so the
+    order summary shows a real PromptPay QR and account line.
+  scope:
+    - Vercel production env and one redeploy of main; no code change.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "On the owner's request in chat, PAYMENT_PROMPTPAY_ID (a 10-digit mobile number) and PAYMENT_ACCOUNT_TEXT (KBank account number and account name as the owner typed them, bank written in Thai) were added to Vercel production; values are not recorded here because ciel-os is public."
+    - "Production redeployed from the current main deployment (Ready, aliased to praneet-web.vercel.app); / and /ops/login return 200."
+    - "The PromptPay payload for the owner's id matches promptpay-qr 0.5.0 byte for byte for 1 and 24,900 baht. A 1-baht test QR is in .assets/preneet/slice6-preview/promptpay-test-1-baht.png (git-ignored) for the owner to scan."
+  not_verified:
+    - "The env values are stored hidden; they were piped in and cannot be read back. The first production order page will show them."
+    - "A real bank app scanning the QR: waits for the owner."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.6"
+  repository:
+    head: f01c0d7c88a1ee2548d8bd44390fbed470baa8b8
+    branch: hq/20261009
+    working_tree: this-record-only
+unresolved:
+  - "Owner scans the 1-baht test QR with his bank app and confirms the recipient name, without paying."
+  - "Bag weight and the 70-B count from the owner; the old 70-80 cm stock can be added as a ready lot by the owner (no code change); orders under 50 trees are refused."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Record the owner's scan result; slice 7 waits for his go.
+  acceptance_check:
+    - The owner says the bank app shows his account name for the test QR.
