@@ -1,12 +1,17 @@
 # MuMate — bazi's own pages back for เอ็ม and ซินแส, on production
 
 **Workstream:** `mumate-bazi-backstage-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.2
-**Execution phase:** 1
-**Execution state:** executing
+**Execution phase:** 2
+**Execution state:** idle
 **Parallelism:** none
+
+Completed 2026-10-12: เอ็ม and the owner use https://bazi-sft.staging.mumate.co
+(production, behind the ops passkey). Bugs in the pages go through the normal
+flow later. Final record:
+`memory/events/2026/10/12/20261012T214941_mumate_bazi_backstage_final_closeout.yaml`.
 
 ## Objective and owner intent
 
