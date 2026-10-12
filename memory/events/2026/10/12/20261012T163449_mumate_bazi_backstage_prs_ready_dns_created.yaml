@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T163449_mumate_bazi_backstage_prs_ready_dns_created
+type: closeout
+recorded_at: 2026-10-12T16:34:49+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bazi-backstage-001
+  lane: single
+  objective: Checkpoint of slice 1 steps 1, 3 and 4, and the staging key for step 2.
+  scope:
+    - bazi-sft-dataset PR 52, mumate-infra PR 55, DO DNS record, mumate-2 env/bazi.env.
+  out_of_scope:
+    - Any production step (night window, owner told first).
+
+outcome:
+  status: recorded
+  slice: "1"
+  done:
+    - "Step 1: bazi-sft-dataset PR 52 (src/proxy.ts + src/lib/backstage/gate.ts + tests/backstage-gate.test.ts), ready for review. vitest 8 passed; tsc clean outside stale local .next types; eslint clean; gitleaks clean; PR run 38230469266 build + smoke passed."
+    - "Step 3: DO DNS A bazi-sft.staging.mumate.co 209.38.56.234 TTL 3600 (doctl context mumate-ops); ns1.digitalocean.com answers with aa from prod-1."
+    - "Step 4: mumate-infra PR 55 (draft, 'do not merge before the night step'): site with request_header X-Mumate-Backstage 1 + app_proxy bazi:3000, :80 redirect. caddy-validate staging+production valid; caddy adapt shows the header; scripts/test-all.sh 16 files 0 failed, checkout unchanged."
+    - "Step 2 prep: a staging-only BACKSTAGE_KEY generated into .assets/mumate/backstage-key.staging.env (600, never printed) and appended to mumate-2 env/bazi.env (backup env/bazi.env.bak-20261012T093444Z, one line added, hashes equal). It takes effect when staging next recreates bazi (the follower after PR 52 merges)."
+  noticed: "staging.mumate.co already has A bazi -> 167.99.29.220 (mumate-2, TTL 300, no Caddy site serves it); the new bazi-sft name points at production. Two near-identical names on different hosts; told the owner."
+
+evidence:
+  plan: workstreams/mumate-bazi-backstage-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: "7a5ab74"
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_requests:
+    - https://github.com/mojisejr/bazi-sft-dataset/pull/52
+    - https://github.com/mojisejr/mumate-infra/pull/55
+
+unresolved:
+  - "Owner merges bazi PR 52; then the staging proof (step 2)."
+  - "Night window: readiness check, owner promotes, prod-1 env (BACKSTAGE_KEY from fe OPS_DASHBOARD_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY), owner merges infra PR 55, Caddy recreate, host check."
+  - "Production DB password printed into the session on 2026-10-12; rotation is the owner's decision."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    After the owner merges PR 52 and staging follows: prove the gate on
+    mumate-2 through 127.0.0.1:3100 with and without the stamp; then tell the
+    owner the night step is ready.
+  acceptance_check:
+    - "Staging proof: unstamped 200 as before; stamped no cookie 401 form; wrong key 401; right key 303 + cookie then 200."
