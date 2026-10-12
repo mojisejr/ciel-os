@@ -1,12 +1,18 @@
 # ciel-skills — a standalone, client-neutral skill pack
 
 **Workstream:** `ciel-skills-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.1
-**Execution phase:** 1
+**Execution phase:** 4
 **Execution state:** idle
 **Parallelism:** proposed
+
+Completed 2026-10-12: all four slices done. ciel-skills (six skills) is merged
+at `09dc8bf` and installed for Claude Code and Codex; the old oracle-skills
+install is removed to a dated backup; CIEL behaves the same with the pack
+uninstalled and installed. Final record:
+`memory/events/2026/10/12/` (ciel-skills final closeout).
 
 ## Objective and owner intent
 
