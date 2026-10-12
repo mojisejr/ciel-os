@@ -1,12 +1,16 @@
 # MuMate — take the ฮวงจุ้ย card service off the app until the owner opens it
 
 **Workstream:** `mumate-fengshui-hold-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.1
-**Execution phase:** none
+**Execution phase:** 1
 **Execution state:** idle
 **Parallelism:** none
+
+Completed 2026-10-12: on production the hub hides the card, the page goes to
+coming-soon, and the chat note is off. Reopening is in the final record:
+`memory/events/2026/10/12/20261012T223557_mumate_fengshui_hold_final_closeout.yaml`.
 
 ## Objective and owner intent
 

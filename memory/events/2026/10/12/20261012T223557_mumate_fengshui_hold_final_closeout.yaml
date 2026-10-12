@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T223557_mumate_fengshui_hold_final_closeout
+type: closeout
+recorded_at: 2026-10-12T22:35:57+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-fengshui-hold-001
+  lane: single
+  objective: Final delivery - the ฮวงจุ้ย card service is unreachable on production until the owner opens it.
+  scope:
+    - mootech-fe PR 895, prod-1 env, promote run 38270586532.
+  out_of_scope:
+    - The fe pre-push hook fix.
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  result: >-
+    On production the service hub no longer shows ไพ่อาถรรพ์ฮวงจุ้ย,
+    /v2/fortune/fengshui answers 307 to
+    /v2/service/coming-soon?service=ไพ่อาถรรพ์ฮวงจุ้ย, and bazi runs with
+    CHAT_CARD_NOTE_FENGSHUI=off. Nothing was deleted.
+  steps:
+    - "mootech-fe PR 895 (merged 611c521): hiddenUntilArt on fengshui-cards; ON_HOLD redirect in pages/v2/fortune/fengshui.tsx; FG6a/FG6b tests (7 passed; a mutant without the flag fails); service-cta, sinsae-screen, upgrade-cta-destinations green; eslint, tsc (touched files), gitleaks clean; PR build 38268165148 green. Pushed with --no-verify on the owner's word (main's four verify-architecture violations)."
+    - "prod-1 env/bazi.env: CHAT_CARD_NOTE_FENGSHUI=off added (backup env/bazi.env.bak-20261012T150936Z)."
+    - "Staging followed to fe 611c521 at 15:18:52Z: page 307 to coming-soon, hub without the card. Readiness 22:28 +07: ops-status 0, 5xx 0/388, stalls 0, health and cron clean; the only change fe #895."
+    - "The agent pressed promote-production after the merge, on the owner's standing word (\"หลังผม merged คน release ให้ผมเลยนะ ไม่ต้องรอ\"): run 38270586532, gates/deploy/watch success, 5xx 0 of 57. Production fe 611c521 / bazi 434d069; the deploy recreated bazi (started 15:30:05Z) and the container reads CHAT_CARD_NOTE_FENGSHUI=off."
+  verified: "Production hub HTML has no mention of the card (was 2); the page redirects as above; bazichart /api/health ok sha 611c521. The chat note is verified by the env in the container and the code's condition, not by a live chat answer."
+  reopen: "Remove hiddenUntilArt from fengshui-cards, set ON_HOLD to false in pages/v2/fortune/fengshui.tsx, remove CHAT_CARD_NOTE_FENGSHUI=off from prod-1 env/bazi.env, release."
+
+evidence:
+  plan: workstreams/mumate-fengshui-hold-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "144b9b4"
+    branch: hq/20261009
+    working_tree: this-closure-and-completed-plan
+  owner_decision: memory/events/2026/10/12/20261012T220652_mumate_fengshui_hold_slice1_authorized.yaml
+  pull_requests:
+    - https://github.com/mojisejr/mootech-fe/pull/895
+  workflows:
+    promote: https://github.com/mojisejr/mumate-infra/actions/runs/38270586532
+
+unresolved:
+  - "fe pre-push hook still fails on main's four verify-architecture violations (patch at .assets/mumate/fe-four-violations.patch); every fe push needs --no-verify until fixed."
+  - "env/*.bak-* on prod-1 now include bazi.env.bak-20261012T150936Z (secrets inside); delete by name on the owner's word."
+  - "Production DB password printed into the session earlier on 2026-10-12; rotation is the owner's decision."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: No further work in this workstream; reopening follows the 'reopen' line when the owner says so.
+  acceptance_check:
+    - Wake reports mumate-fengshui-hold-001 completed.
