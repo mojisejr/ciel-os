@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T184352_praneet_nursery_handoff_before_clear
+type: closeout
+recorded_at: 2026-10-13T18:43:52+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Handoff before the owner clears the session; slices 1-6 and 9 are closed,
+    slice 7 waits for his go and slice 8 stays last.
+  scope:
+    - State of 2026-10-13; no further change.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Plan revision 0.7. Slice 6 closed (evt_20261012T155927): orders, stock, phone customers, private payment slips, order summary with a PromptPay QR, office slip archive and runbooks 00, 02-04. Slice 9 closed (evt_20261012T213001): share to LINE and copy link on the lot and home pages."
+    - "Live: https://praneet-web.vercel.app with /ops (lots, measure, orders, customers); LINE OA @xpm7982c. Receiving details (PAYMENT_PROMPTPAY_ID, PAYMENT_ACCOUNT_TEXT) are set in Vercel production; the owner's bank app read a 1-baht test QR. The private slip store answers (bun run slips list: 'Slip store: ok')."
+    - "Child checkouts on main equal to origin/main: praneet-web e3a3f96, praneet-office ccc6a7a (two untracked .DS_Store files). No PR open. Local praneet Postgres (port 55441) stopped; no dev server. The Postgres on port 55439 belongs to another lane."
+  resume:
+    read_first:
+      - workstreams/praneet-nursery-001/PLAN.md
+      - workstreams/praneet-nursery-001/design/BRIEF.md
+      - memory/events/2026/10/12/20261012T213001_praneet_nursery_slice9_closed.yaml
+      - memory/events/2026/10/12/20261012T155927_praneet_nursery_slice6_closed.yaml
+    local:
+      - "checkouts/praneet-web/.local/secrets (git-ignored, mode 600): neon-direct.url (owner role: migrations and grant-reader), neon-pooled.url, neon-reader.url (praneet_reader, read only; use it for every analysis). Never print them."
+      - ".assets/preneet/.env (git-ignored, mode 600): owner back-office USERNAME/PASSWORD and the LINE values. praneet-office bun run slips reads it as a file (zsh keeps USERNAME as the login name)."
+      - "checkouts/praneet-web: pg_ctl -D .local/pg -l .local/postgres.log -o '-p 55441 -h 127.0.0.1' start; bun run check (tsc, build, Playwright 37/37 on isolated praneet_test). Tests regenerate next-env.d.ts: git checkout it after a run."
+      - "checkouts/praneet-office: bun run lots | orders (READER_DATABASE_URL), bun run slips list | archive [--dry-run], bun run line ...; runbooks 00-04."
+      - "Owner previews (git-ignored): .assets/preneet/slice6-preview/ (order card, pages, 1-baht QR), .assets/preneet/slice9-preview/ (share buttons)."
+    hosted:
+      - "Neon project late-hat-85016594 (Free); migrations 000-004 in production; reader grants include orders, order_lines, payment_slips."
+      - "Vercel project prj_AriMpn1FFTbHOsWyDqvj7axEALPj: public photo store via BLOB_READ_WRITE_TOKEN; private slip store via SLIPS_STORE_ID + the deployment's OIDC token (no read-write token; code passes both explicitly so the SDK never falls back to the photo token); PAYMENT_* set (hidden)."
+    working_rules_learned:
+      - "PR with a migration: run the additive migration and grant-reader while the PR is draft, then ask for the merge. Set Vercel env before the merge; a deployment carries env as of its build (redeploy after setting)."
+      - "Never reuse a back-office CSS class name; new classes carry a prefix (od- orders, sh- share)."
+      - "Vercel private Blob stores authenticate by OIDC and store id; the CLI and API cannot connect a store with a custom env prefix, the owner does it in the dashboard."
+      - "ciel-os is public: no bank numbers, names or customer data in HQ records."
+      - "List and ls every event id before committing a record or PR body; two ids typed from recall were wrong on 2026-10-12."
+      - "Other sessions commit to hq/20261009 at the same time: wait out .git/index.lock, never delete it, and commit with a pathspec of your own files."
+      - "Owner answers in short lists; decisions go to him in Thai with a recommendation; record his words verbatim."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.7"
+  repository:
+    head: 5b32e2b652b3916be98c3bd7bc0804391eae95b3
+    branch: hq/20261009
+    working_tree: this-record-only
+unresolved:
+  - "Slice 7 (find buyers, first sale; referral codes rewarded on a real purchase to be discussed there) waits for the owner's go. Slice 8 (360-degree spin) stays last."
+  - "From the owner, not blocking: bag weight (100 trees per cage needs bags of 2 kg or less if the 200 kg cage limit reported in 2024 holds; unverified), the 70-B count (orders on it are refused until counted), and the old 70-80 cm stock he may add as a ready lot himself (orders under 50 trees are refused)."
+  - "The board labels current_count as trees in the plot; it now means trees still for sale. Board copy is the owner's."
+  - "Remote feature branches in praneet-web (feat/slice6-orders, fix/slip-store-oidc, feat/share-buttons) and praneet-office (feat/slice6-desk, fix/slips-store-status) are left for the owner."
+  - "The payment record evt_20261012T162918 was swept into another session's commit c9e153d (content intact)."
+  - "HQ hq/20261009 is ahead of origin/main and carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Next session: run Wake, read this handoff, then wait for the owner: his
+    go for slice 7 (start with a syncup that includes referral codes), an
+    old-stock lot or first real order to support, or the pending figures.
+  acceptance_check:
+    - The owner's next instruction is recorded in his words before any slice work.
