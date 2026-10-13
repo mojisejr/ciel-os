@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T121012_mumate_access_log_retention_pr_open
+type: closeout
+recorded_at: 2026-10-13T12:10:12+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-access-log-retention-001
+  lane: single
+  objective: Record slice 1 at "infra PR 57 ready for the owner's merge" - Caddy archive logger, hourly upload to mumate-logs, 90-day deletion by name date.
+  scope:
+    - "mumate-infra PR 57 (feat/access-log-archive, head d735f23); env file fixed (endpoint, mode 600) without touching key values."
+  out_of_scope:
+    - Merge (owner); staging caddy recreate after merge; production env copy, caddy recreate, timer and Loki backfill at the joint release on the owner's word.
+
+outcome:
+  status: recorded
+  state:
+    - "Key scope proven from a throwaway aws-cli container: write/list/delete in mumate-logs ok; mumate-backups AccessDenied."
+    - "Caddy 2.10.0 sends a site's access log to one logger only (default_logger_name); a global logger with include http.log.access writes the same lines to a file. roll_interval does not exist in 2.10.0, so rolls are by size (20 MiB)."
+    - "Found while testing: stdout (Loki, 14 days) carried the launch console ?key= and OAuth code/state raw; the same filter now REDACTS them on stdout and in the archive."
+    - "test-all.sh 17 files 0 failed; logs-archive.test.sh mutants caught; caddy-edge archive + redaction checks; real Spaces run with a test host uploaded once then held, cleaned up."
+  deviations: []
+
+evidence:
+  plan: workstreams/mumate-access-log-retention-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: "22e83d0"
+    branch: hq/20261009
+    working_tree: this-record-only
+  child:
+    mumate-infra: "feat/access-log-archive d735f23 (PR 57)"
+
+unresolved:
+  - "Loki (14 days) may already hold the launch console key from past requests; it ages out by itself. Whether to rotate LAUNCH_KEY is the owner's call."
+  - "Lines in the active file reach Spaces only after Caddy rolls it (up to ~20 MiB); Loki covers them meanwhile."
+  - "No health-timer check of the archive stamp's age yet (a stopped timer is silent); failures of a run do alert."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: After the owner merges PR 57, recreate caddy on mumate-2 and confirm the file logger; at the joint release, install on prod-1 and run the Loki backfill on his word.
+  acceptance_check:
+    - "Staging writes /var/log/mumate/caddy/access.log with REDACTED secrets; Loki still receives caddy lines."
