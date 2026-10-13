@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T154843_mumate_access_log_retention_production_live_backfilled
+type: closeout
+recorded_at: 2026-10-13T15:48:43+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-access-log-retention-001
+  lane: single
+  objective: >-
+    Record the production install of the access-log archive on mumate-prod-1
+    and the Loki backfill. Released on its own, not with the image work: the
+    owner decided this round that the image work waits for the team's approval
+    of the guide work, and the logs go first.
+  scope:
+    - "Runbook 01 readiness check, env file on prod-1, Loki export with redaction, backfill upload."
+  out_of_scope:
+    - "Any app release; fe and bazi unchanged on production (fe 611c521, bazi 434d069)."
+
+outcome:
+  status: recorded
+  slice: "1"
+  owner_words:
+    - "Order: \"งาน ภาพ กับ งาน ที่เพื่อนผมทำไว้ ปล่อยพร้อมกันหลัง ทีมอนุมัติ แล้วตอนน้เรา มาปล่อย 2 อย่างก่อน คือ งาน log ... ไปปล่อยงาน dashboard\"."
+    - "Go: \"คุนทำ 2 - 4 ได้เลยครับ\"; then \"ส่วน A ผมอนุญาติให้คุนทำได้เลยครับ ส่วน B ... ทำให้เลยครับ\"."
+  state:
+    - "Readiness (runbook 01, 15:3x +07, after the owner's go): ops-status all checkmarks; 5xx in 30 min 0; bazi db_query_stall gave_up in 2 h 0; mumate-health 1 h: 57/57 healthy. Earlier, before the go, the same counts were refused by the harness as production reads."
+    - "prod-1: agent copied env/logs-archive.env (600, four keys present, names only checked). The harness refused the agent's git pull twice (Remote Shell Writes) even after the owner's word; the owner ran git pull (infra e5b153f), caddy-validate, the single caddy recreate (started 2026-10-13T08:45:35Z), logs-archive.sh --dry-run and the timer link + enable."
+    - "Verified after: ops-status all checkmarks; mumate-logs-archive.timer active, first run 16:02 +07; /var/log/mumate/caddy/access.log growing (8,905 -> 13,034 bytes in a minute)."
+    - "Backfill: Loki (viewer token, production caddy access lines) exported per UTC day with key/code/state/token query values replaced by REDACTED across the whole line (old Loki lines predate the Caddy redaction): 2026-10-08 7,939 lines, 10-09 96,832, 10-10 43,060, 10-11 23,461, 10-12 36,432, 10-13 00:00Z -> 08:45:35Z (go-live) 14,056. Zero unredacted values left, every line valid JSON. Six objects in s3://mumate-logs/caddy/mumate-prod-1/backfill/, sizes equal to the local files. UTC days, so 10-08 covers the cutover (2026-10-09 04:41 +07)."
+    - "Backfill names carry their date, so logs-archive.sh deletes them at 90 days like the hourly uploads."
+    - "Exporter kept with the files in .assets/mumate/logs-backfill/ (owner-side scratch, gitignored)."
+
+evidence:
+  plan: workstreams/mumate-access-log-retention-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: "0fff89d"
+    branch: hq/20261009
+  related:
+    - memory/events/2026/10/13/20261013T115920_mumate_access_log_retention_slice1_authorized.yaml
+    - memory/events/2026/10/13/20261013T121439_mumate_access_log_retention_staging_verified.yaml
+
+unresolved:
+  - "Step 4 acceptance waits 24 h: one archive object per day in caddy/mumate-prod-1/ (Caddy rolls at 20 MiB, so the first upload comes after the first roll)."
+  - "The agent could not read the archive file content on prod-1 (root 0640, sudo needs a password there); redaction on production is inferred from the same Caddyfile verified on staging."
+  - "Local copies of the backfill in .assets/mumate/logs-backfill/ hold production access lines (redacted); delete by filename when the owner no longer wants them."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    On or after 2026-10-14 16:00 +07: list caddy/mumate-prod-1/ for the first
+    hourly uploads, read the timer journal, then record the slice 1 closeout.
+  acceptance_check:
+    - "At least one non-backfill object under caddy/mumate-prod-1/ and no failure line from mumate-logs-archive.service."
