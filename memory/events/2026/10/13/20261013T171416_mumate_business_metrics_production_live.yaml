@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T171416_mumate_business_metrics_production_live
+type: closeout
+recorded_at: 2026-10-13T17:14:16+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-business-metrics-001
+  lane: single
+  objective: >-
+    Record slice 1 steps 4-5 reaching production: the bdash host on prod-1 with
+    its own passkey, the nightly snapshot, and the first numbers; what is left
+    before the slice can close.
+  scope:
+    - "Merges of bazi PR 54 + 55 and infra PR 58 (owner); staging setup and checks (agent); production migration, key, release and host setup (owner, agent checks)."
+  out_of_scope:
+    - Any fe change (fe stays 611c521 on production); the guide work and WebP wait for the team.
+
+outcome:
+  status: recorded
+  slice: "1"
+  state:
+    - "Merged by the owner, in the order the agent laid out: bazi PR 54 (a2a24b6), mumate-infra PR 58 (9549c03), bazi PR 55 (b52ccf5, a visual fix found in the staging screenshots: page background to the screen edges, the 1.4% label off the bars)."
+    - "Production DB: the owner ran migration 0055 in the Supabase SQL editor (the agent's attempt through the bazi container failed at module load before any connection, then the harness refused it); the agent verified read-only: four NOT NULL columns, primary key, 0 rows."
+    - "DNS (agent, on the owner's word, doctl context mumate-ops): A bdash.staging.mumate.co -> 209.38.56.234 (prod-1 reserved IP, TTL 3600), A bdash-stg.staging.mumate.co -> 167.99.29.220 (mumate-2 reserved IP, TTL 300)."
+    - "Staging (agent): BDASH_KEY appended to env/bazi.env (backup env/bazi.env.bak-20261013T093538Z), infra pulled by hand (staging-follow pulls only when an app commit changes), caddy and bazi recreated, cron-install enabled bdash-snapshot, one run saved as_of 2026-10-12 in 108 ms."
+    - "Production (owner ran; the harness refused the agent's gh workflow run release and gh run list as Production Deploy even after the owner's order): BDASH_KEY placed with a backup; infra git pull + caddy-validate + the single second caddy recreate of the day; release env=production fe 611c521 + bazi b52ccf5 at 10:12:59Z by mojisejr; cron-install; one snapshot run 200 saved=1 at 10:13:29Z. The first P3 run came before the release: cron-install refused on drift and changed nothing, no snapshot ran, nothing user-facing changed."
+    - "Readiness before the release (runbook 01, 16:50 +07): all checkmarks, 5xx 30 min 0, stall gave_up 0, health clean. After it (17:14): fe 611c521 / bazi b52ccf5 all checkmarks, cron-check ok, 5xx since release 0, gave_up 0, /api/health 200."
+    - "Checked from the internet on https://bdash.staging.mumate.co: no cookie -> passkey page (401); wrong key 401; the staging key 401; the production key -> 303 to /bdash and the page (200) 'ข้อมูลถึง 12 ต.ค.'; POST /api/ops/user-delete, /api/ops/analytics, /, /ops, /api/cron/bdash-snapshot, /.env all 404, also with the cookie; the backstage host still asks for its own key. On bdash-stg the same, plus the backstage key refused, and screenshots (desktop light/dark, phone 390 px, no horizontal overflow)."
+    - "What went to production in bazi besides bdash: the teammates' guide missions (05e9538, 6ca657a), hidden because fe 611c521 lists only daily/once/longterm; owner accepted riding along."
+
+evidence:
+  plan: workstreams/mumate-business-metrics-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "8f11287"
+    branch: hq/20261009
+  related:
+    - memory/events/2026/10/13/20261013T162305_mumate_business_metrics_prs_open.yaml
+
+unresolved:
+  - "DoD items still open: the business team opening the host with its own key (the owner hands over .assets/mumate/env/bdash-key.production.env); the first unattended 03:00 run (2026-10-14 20:00Z); members' response times unchanged (not measured beyond 0 5xx after the release)."
+  - "Env backups created this round, to delete by name with the others on the owner's word: mumate-2 env/bazi.env.bak-20261013T093538Z; prod-1 the env/bazi.env.bak-20261013T* the owner made in P1."
+  - "The production DB check used APP_DATABASE_URL from .assets/mumate/infra-mumate/prod-fill.env (value never displayed); that password is the one still waiting for rotation (handoff open item 2)."
+  - "staging-follow does not pull an infra-only merge; a Caddyfile change on staging needs a hand pull + caddy recreate (as done today)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    2026-10-14 after 03:00 +07: read the mumate-cron@bdash-snapshot journal on
+    prod-1 (one run, 200, saved=1) and that the page shows 13 ต.ค.; with the
+    log-archive check after 16:00, record the slice 1 closeouts of both
+    workstreams.
+  acceptance_check:
+    - "Unattended run at 20:00Z succeeded; the business team confirms they can open the page."
