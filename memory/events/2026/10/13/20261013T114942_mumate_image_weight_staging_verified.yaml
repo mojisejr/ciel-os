@@ -1,0 +1,41 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T114942_mumate_image_weight_staging_verified
+type: closeout
+recorded_at: 2026-10-13T11:49:42+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-image-weight-001
+  lane: single
+  objective: Record slice 1 on staging - WebP from the same URLs and the 7-day image cache live on app.staging.mumate.co; production unchanged.
+  scope:
+    - "Owner merged mootech-fe PR 899 (main e000fb7, which also carries teammates' #896-#898 and #900) and mumate-infra PR 56 (main 31954ff)."
+    - "staging-follow deployed fe e000fb7 and pulled infra 31954ff on mumate-2 (11:49 +07); the agent recreated caddy there (runbook 01)."
+  out_of_scope:
+    - Production release (owner's press, after the runbook 01 readiness check and the team's word on their guide work).
+
+outcome:
+  status: recorded
+  state:
+    - "Staging, checked from outside: sinsae.png -> image/webp 81,132 B for a WebP Accept, image/png 1,373,483 B for */*; BG01.png -> webp 18,256 B; all with Cache-Control public, max-age=604800 and Vary: Accept; a missing image 404 keeps no-store; /v2 and /api/health 200."
+    - "Production (mumate-prod-1) still fe 611c521 / infra 409a4a2."
+
+evidence:
+  plan: workstreams/mumate-image-weight-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "c756b8a"
+    branch: hq/20261009
+    working_tree: this-record-only
+
+unresolved:
+  - "Team visual check of the main screens on staging (plan step 4)."
+  - "Release: promote-production ships fe main e000fb7, which includes teammates' guide work (#896-#898, #900); their readiness is part of the check. prod-1 also needs the infra pull and a caddy recreate for the cache header."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Team looks at staging; on the owner's word, readiness check (runbook 01) then promote-production, infra pull + caddy recreate on prod-1.
+  acceptance_check:
+    - "Production serves WebP with the 7-day cache from the same URLs; one day after, static bytes and 304s fall in Loki."
