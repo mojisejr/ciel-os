@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T115920_mumate_access_log_retention_slice1_authorized
+type: decision
+recorded_at: 2026-10-13T11:59:20+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-access-log-retention-001
+  lane: single
+  objective: Authorize slice 1 (plan 0.2) - production access logs 90 days off-host in mumate-logs, deleted after; released together with mumate-image-weight-001.
+  scope:
+    - "Key check, Caddy logger spike, infra PR, staging; production env copy, caddy recreate, timer and Loki backfill each on the owner's word at release."
+  out_of_scope:
+    - Legal review, user-id logging, IP masking (team's decisions).
+
+outcome:
+  status: decided
+  slice: "1"
+  decision: >-
+    The team made bucket mumate-logs and a Limited key; the owner placed the
+    env file in .assets and said: "เดี๋ยวขึ้น prod พร้อม log ก็ได้ คุน เดิน
+    log ต่อเลย ... ลุยเลยครับ". Q1 separate bucket (as made), Q2 production
+    only (lean). Plan 0.2 replaces the bucket lifecycle rule with deletion by
+    the archive script (a Limited key cannot set lifecycle), adds the Loki
+    backfill, and joins the production step to the image release. The agent
+    fixes the env file's SPACES_ENDPOINT (bucket-style host -> regional
+    endpoint, as backup.env) and its mode (644 -> 600) without touching the
+    key values.
+
+evidence:
+  plan: workstreams/mumate-access-log-retention-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: "e0ea548"
+    branch: hq/20261009
+
+unresolved:
+  - "Production env copy, caddy recreate, timer enable and the Loki backfill read wait for the owner's word at release."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Prove the key's scope from a throwaway container, then the Caddy file-logger spike on caddy 2.10.0.
+  acceptance_check:
+    - "Key writes/lists/deletes in mumate-logs and is refused on mumate-backups."

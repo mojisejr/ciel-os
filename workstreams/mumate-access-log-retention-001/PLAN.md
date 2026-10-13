@@ -3,7 +3,7 @@
 **Workstream:** `mumate-access-log-retention-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** 1
 **Execution state:** idle
 **Parallelism:** none
@@ -47,17 +47,32 @@ anyone remembering to do it.
 - Caddy's file output rolls and gzips itself: `roll_size`, `roll_keep`,
   `roll_keep_for` (docs; to be proved on 2.10.0 in step 1).
 
+## Revision 0.2 (2026-10-13, owner go)
+
+- Bucket `mumate-logs` (sgp1, Standard) and a Limited-access key (Read/Write/Delete
+  on that bucket only) were made by the team; the env file is owner-held in
+  `.assets/mumate/env/logs-archive.env`. Q1 answered: separate bucket. Q2: production only.
+- A Limited key is documented as unable to set bucket lifecycle rules, so the
+  90-day deletion is done by `bin/logs-archive.sh` itself (by the date in each
+  object name), not by a bucket rule; no Full-access key is needed anywhere.
+- Backfill added: before Loki's 14 days run out (~2026-10-23 for 10-09), the
+  production access log from 2026-10-09 is exported from Loki once into the
+  bucket (`caddy/mumate-prod-1/backfill/`).
+- Production goes out together with mumate-image-weight-001 (owner: "ขึ้น prod
+  พร้อมกัน"): one release, one caddy recreate.
+
 ## Slice 1 — 90 days off-host, deleted after
 
 | # | Step | Who | Check |
 |---|---|---|---|
 | 1 | Prove on a local Caddy 2.10.0: a second, named access logger writes JSON to `/var/log/caddy/access.log` (rolled daily, gzipped, `roll_keep_for 720h`) while stdout keeps feeding Loki unchanged | agent | both outputs carry the same request ids; a forced roll leaves a `.gz` |
-| 2 | Spaces: bucket `mumate-logs` (sgp1) with a lifecycle rule expiring objects after 90 days; a key scoped to that bucket, placed by the owner in `env/logs-archive.env` on prod-1 | owner (key) + agent (bucket, rule) | `get-bucket-lifecycle-configuration` shows 90 days; key names only ever displayed |
-| 3 | infra PR: Caddyfile logger, compose volume `/var/log/mumate/caddy`, `bin/logs-archive.sh` (uploads rolled `.gz` files not yet in the bucket to `caddy/<host>/`, verifies size), a systemd timer enabled on production only, Discord line on failure, runbook 04 section | agent | `scripts/test-all.sh` green; owner merges |
-| 4 | Deploy to staging first, then prod-1 on the owner's word (caddy recreate = a few seconds; json-file history resets as it does on every recreate) | owner's word | after 24 h: one object per day in `mumate-logs/caddy/mumate-prod-1/`, host directory < 30 days |
+| 2 | Spaces: bucket and Limited key (done by the team); agent proves the key from a throwaway container: write/list/delete a test object in `mumate-logs`, refused on `mumate-backups` | team + agent | status lines only; key names only ever displayed |
+| 3 | infra PR: Caddyfile logger, compose volume `/var/log/mumate/caddy`, `bin/logs-archive.sh` (uploads rolled `.gz` files not yet in the bucket to `caddy/<host>/`, verifies size, deletes objects older than 90 days by name date), a systemd timer enabled on production only, Discord line on failure, runbook 04 section | agent | `scripts/test-all.sh` green; owner merges |
+| 4 | Deploy to staging first (file logger only, no upload), then prod-1 on the owner's word together with the image release: env file copied to `/opt/mumate/env/logs-archive.env` (600), infra pull, one caddy recreate, timer enabled | owner's word | after 24 h: one object per day in `mumate-logs/caddy/mumate-prod-1/`, host directory < 30 days |
+| 5 | Backfill: production access log 2026-10-09 → go-live exported from Loki (read-only, owner's word) as daily gz files to `caddy/mumate-prod-1/backfill/` | agent, owner's word | one object per day, no gap with step 4 |
 
-DoD: production access logs exist off-host for 90 days and disappear after
-by the bucket rule; the host keeps at most 30 days; Loki unchanged; a failed
+DoD: production access logs exist off-host from 2026-10-09 for 90 days and
+disappear after (archive script, by name date); the host keeps at most 30 days; Loki unchanged; a failed
 upload is announced in Discord.
 
 ## Open before go
