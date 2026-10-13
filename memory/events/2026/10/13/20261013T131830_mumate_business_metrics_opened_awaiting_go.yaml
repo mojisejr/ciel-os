@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T131830_mumate_business_metrics_opened_awaiting_go
+type: decision
+recorded_at: 2026-10-13T13:18:30+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-business-metrics-001
+  lane: single
+  objective: Open the workstream for a read-only business dashboard on its own subdomain, with the metrics GA4 cannot count and the data already holds; no slice authorized yet.
+  scope:
+    - "Plan 0.1 from: web research on metrics beyond GA4, a code inventory of fe and bazi data, read-only timing of five aggregates on the staging copy (counts only), prod-1 headroom."
+  out_of_scope:
+    - Any code, DNS, env or DB change before the owner's go and answers to Q1-Q5.
+
+outcome:
+  status: opened-awaiting-go
+  decision: >-
+    The owner: "เปิด workstream ใหม่ครับ"; a dashboard on its own
+    subdomain (e.g. bdash.staging.mumate.co) separate from /ops and its
+    edit/delete actions; the backstage passkey (same key offered); fold GA4
+    in; build only what the data already supports, park what needs new
+    collection; and asked whether it should live in a new container, in fe
+    as /dash-business, or behind bazi (his lean). The plan leans to bazi on
+    its own host with a Caddy allowlist, a nightly snapshot, and a separate
+    BDASH_KEY, because business holders of the shared key could also open
+    the backstage host that edits and deletes.
+
+evidence:
+  plan: workstreams/mumate-business-metrics-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "97d38d8"
+    branch: hq/20261009
+    working_tree: this-decision-and-plan
+  child_start:
+    bazi-sft-dataset: "origin/pdf-dev 6ca657a"
+    mumate-infra: "origin/main e5b153f"
+
+unresolved:
+  - "Q1 placement, Q2 key, Q3 host name, Q4 read-only DB role, Q5 who merges the bazi PR."
+  - "Found during research: the next production release must include bazi pdf-dev 6ca657a with fe main, or the newbie guide's mission rewards 404 on production."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Report the placement analysis to the owner; on his answers and go, record slice 1 authorized.
+  acceptance_check:
+    - "Wake lists mumate-business-metrics-001 active with no slice authorized, and no longer lists mootech-ga4-instrumentation-001."

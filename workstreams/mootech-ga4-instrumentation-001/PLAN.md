@@ -1,12 +1,19 @@
 # MuMate v2 — Google Analytics that counts members, not cookies
 
 **Workstream:** `mootech-ga4-instrumentation-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
+
+Closed 2026-10-13 by the owner with slices 1-2 delivered and slice 3 (seven
+days of the number read with the team) never run: "ปิด อันเก่า แล้ว เอามารวม
+... เพื่อจะได้ไม่ค้างอยู่ใน wake". What remains of GA4 (the reconciliation of
+GA4 DAU against server truth, the Exploration, the Data API pull) is carried
+into `mumate-business-metrics-001` as a parked item. Final record:
+`memory/events/2026/10/13/20261013T131830_mootech_ga4_closed_folded_into_business_metrics.yaml`.
 
 ## Objective and owner agreement
 
