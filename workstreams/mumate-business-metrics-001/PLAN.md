@@ -87,6 +87,33 @@ Safeguards that make C safe:
    dashboard's reads use a SELECT-only role; only the nightly job writes the
    snapshot. A production DB change, so on the owner's word.
 
+## Look and words — owner-approved on the mock (2026-10-13)
+
+A mock with invented numbers was built as a private claude.ai dashboard and
+iterated with the owner (link kept in chat, not here); he approved it: "หน้า
+ตาผมโอเคแล้วนะ". What slice 1 must carry over:
+- **Plain Thai, not jargon.** Every section heading is the question it
+  answers; each figure says "ยิ่งสูงยิ่งดี" or "ยิ่งต่ำยิ่งดี"; one line says
+  how to read each table or chart. Vocabulary: retention → "สมัครแล้ว กลับมา
+  ใช้อีกไหม" (วันถัดไป / 1 สัปดาห์ต่อมา / 1 เดือนต่อมา); cohort → "คนที่สมัคร
+  สัปดาห์เดียวกัน"; free→paid → "คนสมัครฟรี ยอมจ่ายเงินไหม (ภายใน 5 สัปดาห์)";
+  payment funnel → "กดจ่ายแล้ว ติดตรงไหน" (จ่ายสำเร็จ / ธนาคารหรือบัตรปฏิเสธ /
+  QR หมดเวลา); gateway → "ผู้รับเงิน"; QI earn/burn → "แจก QI มากเกินไปไหม";
+  AI cost → "AI แชตกินเงินเท่าไร" (บาทต่อคน, แพ็กเกจ); failure codes shown as
+  Thai reasons; Thai dates (12 ต.ค.).
+- **MuMate look from bazi `DESIGN.md`** (not fe v3 sapphire, not fe /ops
+  dark): cream canvas `#FAF7F4`, slate ink `#1F2937`, teal `#1B9AAF` for the
+  main series and actions, orange-gold `#F5A623` for QI/energy and reference
+  lines, one dark summary card (`#1F2937`) per screen with the week's
+  sentence, cards radius 20-24, pills; IBM Plex Sans Thai, numbers in Inter;
+  light and dark themes.
+- **Layout:** header (logo, title, "ข้อมูลถึง <date> · อัปเดตทุกตี 3"), dark
+  summary card, four headline figures with icon and up/down pill, then
+  sections: retention heat table + free→paid bars (reference 1.4% SEA,
+  RevenueCat 2026), payment table with stacked success/rejected/expired bar,
+  QI earned-vs-spent lines with stats, AI cost table with per-person bar;
+  footer naming what is not in this version.
+
 ## Slice 1 — the dashboard on its own host, with the metrics the data already has
 
 | # | Step | Who | Check |
