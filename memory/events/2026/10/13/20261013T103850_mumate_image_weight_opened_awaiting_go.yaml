@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T103850_mumate_image_weight_opened_awaiting_go
+type: decision
+recorded_at: 2026-10-13T10:38:50+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-image-weight-001
+  lane: single
+  objective: Open the workstream that serves MuMate's images as WebP from the same URLs and lets browsers cache them; no slice authorized yet.
+  scope:
+    - "Plan 0.1 written from a read-only traffic report (production access log via Loki, 2026-10-09..13), fe code reading and a local WebP measurement."
+  out_of_scope:
+    - Any fe or infra change before the owner's go; member-upload handling (already shrunk in the browser).
+
+outcome:
+  status: opened-awaiting-go
+  decision: >-
+    The owner, after the traffic report: "เรื่อง รูปที่จะทำให้ ลดขนาด และ
+    กิน bandwidth ผมคิดว่าควรทำ", then asked whether it can start now and
+    whether profile uploads should be folded in. Uploads stay out (already
+    512/1024 px JPEG before upload). The plan is opened; slice 1 waits for
+    Q1 (push path) and Q2 (WebP only) and his go.
+
+evidence:
+  plan: workstreams/mumate-image-weight-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "78c47ad"
+    branch: hq/20261009
+    working_tree: this-decision-and-plan
+  child_start:
+    mootech-fe: "origin/main 611c521 (production)"
+    mumate-infra: "origin/main 409a4a2 (production)"
+
+unresolved:
+  - "Q1 --no-verify for the fe PR, Q2 WebP only."
+  - "Local scratch copies of the production access log (IPs, user agents) remain in the session scratchpad until the owner says to delete them."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Ask the owner Q1-Q2; on his go, record slice 1 authorized and run the step-1 spike locally.
+  acceptance_check:
+    - "Wake lists mumate-image-weight-001 active with no slice authorized."

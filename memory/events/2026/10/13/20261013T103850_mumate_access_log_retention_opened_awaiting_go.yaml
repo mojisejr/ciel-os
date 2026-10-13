@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T103850_mumate_access_log_retention_opened_awaiting_go
+type: decision
+recorded_at: 2026-10-13T10:38:50+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-access-log-retention-001
+  lane: single
+  objective: Open the workstream that keeps production access logs off-host for 90 days and deletes them after; no slice authorized yet.
+  scope:
+    - "Plan 0.1 written; read-only check of prod-1 disk (df, docker system df, journald size) and of mumate-infra."
+  out_of_scope:
+    - Any Caddy, compose, Spaces or env change before the owner's go.
+
+outcome:
+  status: opened-awaiting-go
+  decision: >-
+    The owner agreed with the report's recommendation and decided: retention
+    90 days ("เก็บนาน 90 วัน ตาม กฎหมาย"); the existing paid DO Spaces
+    subscription is used; no legal review now ("ไม่จำเป็นก่อน ณ ตอนนี้" -
+    whether the Computer-related Crime Act applies is the team's call).
+    Slice 1 waits for Q1 (separate bucket) and Q2 (production only) and his go.
+    Correction recorded: the DB backup already lands in Spaces
+    (mumate-backups); what lives only on mumate-2 is the backup job and its
+    key, which is what handoff 20261013T002444 open item 2 is about.
+
+evidence:
+  plan: workstreams/mumate-access-log-retention-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "78c47ad"
+    branch: hq/20261009
+    working_tree: this-decision-and-plan
+  child_start:
+    mumate-infra: "origin/main 409a4a2 (production)"
+
+unresolved:
+  - "Q1 separate mumate-logs bucket, Q2 production only."
+  - "Team decisions outside this slice: whether the Act applies, user-id logging, IP masking."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Ask the owner Q1-Q2; on his go, record slice 1 authorized and prove the Caddy file logger locally.
+  acceptance_check:
+    - "Wake lists mumate-access-log-retention-001 active with no slice authorized."
