@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261014T193457_praneet_nursery_slice7_system_live
+type: closeout
+recorded_at: 2026-10-14T19:34:57+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    The owner merged praneet-web PR 10 and praneet-office PR 6; the slice 7
+    system is live on production. Slice 7 stays open until a real sale from
+    the new channel is received and the numbers are summarized.
+  scope:
+    - "praneet-web main 8b109325f96b9bb22261a44fa3739b9575318d69 (Vercel Production deployment of that commit, state success); praneet-office main e741025d5cb574486db7d0fa657e7469d228ab08; this record."
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Merged by the owner: praneet-web PR 10 at 2026-10-14T11:39:10Z, praneet-office PR 6 at 2026-10-14T12:33:55Z (UTC, from gh). Both checkouts are on main equal to origin/main."
+    - "Production check after deploy: /, /lots/70-A, /privacy and /robots.txt answer 200; robots disallows /p/; the privacy page carries the post-link section; /ops/posts redirects to the login page when signed out; an unknown /p link redirects to the home page."
+    - "Facebook groups cannot be found from web search (behind the Facebook login) and the agent has no Facebook access; a git-ignored list with search terms is in praneet-office reports/private/facebook-groups.md for the owner to fill from the app."
+  owner_statements:
+    - "merge web 10 office 6 แล้ว"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.8"
+  repository:
+    head: dd27b1a5629e5c757c6abb9b67d089f9a62d7462
+    branch: hq/20261009
+unresolved:
+  - "Real-phone checks by the owner: a /p link from Facebook, the LINE button opening the app with the post code, saving images and copying text on /ops/posts."
+  - "The old-stock lot (count about 2,000-3,000, bagging month and price from the owner) with its shop sentence and honest photos."
+  - "Group names from the owner's Facebook app; then the first posts."
+  - "Trees per roll-pallet cage at 3-4 kg bags; board shipping copy and PALLET_TREES stay until confirmed."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    The owner adds the old-stock lot and sends group names; the agent renders
+    the card and drafts the first post for his review, then uploads it.
+  acceptance_check:
+    - The slice 7 DoD in PLAN.md revision 0.8.
