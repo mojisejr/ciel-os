@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261014T212848_praneet_nursery_posts_page_or_group_weekly
+type: closeout
+recorded_at: 2026-10-14T21:28:48+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record how slice 7 posting runs: one post a week, to the shop's own
+    Facebook page first, page or group not restricted; group details come
+    from the owner when a group post is made.
+  scope:
+    - This record only; no code, data or plan change.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Posting rhythm agreed: about one post a week, first on the owner's own Facebook page. A post may go to the page or to a group; for a group the owner gives its details when the post is made, so no group list is gathered in advance."
+    - "Each post keeps its own code (F1, F2, ...); the owner types where it went under 'posted' on /ops/posts. The system needs no change for this."
+    - "Agent's first-four-weeks outline, each drafted for the owner's review: (1) old stock shown honestly, once that lot exists; (2) lot 70-A growth with the metre-stick photo, not for sale yet, inviting LINE follows; (3) the shop's story since 2535 and how each round is measured; (4) how to order and ship, only after trees per cage are confirmed, else a new measuring round."
+  owner_statements:
+    - "เอาเป็นว่า เบื้องต้น ผมจะโพส ลงเพจ ตัวเองก่อน เราอาจจะสร้าง สัปดาห์ละโพส ลงเพจตัวเองอ่ะครับ แบบนั้นน่าจะดีกว่า"
+    - "ก็คือเราไม่จำกัดว่าจะโพส กลุ่ม หรือ โพส เพจ เดี๋ยวผมจะให้ รายละเอียด เพิ่มเติมถ้าเป็นกลุ่ม ตอนคุนจะสร้าง แบบนี้ได้มั๊ย ?"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.8"
+  repository:
+    head: 6a3881df33f3007db5ca31c83c4f9522ec5e6bcd
+    branch: hq/20261009
+unresolved:
+  - "Order form label 'กลุ่ม Facebook' (came_from facebook_group): the agent recommends the label 'Facebook' since posts may go to the page; a text-only PR waits for the owner's go."
+  - "Posting day and time: the agent guessed a weekend evening; the owner's choice."
+  - "The old-stock lot, trees per cage at 3-4 kg bags, and the owner's real-phone checks remain open."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Draft the first weekly post for the owner's review: old stock if he has
+    added the lot, otherwise lot 70-A's growth.
+  acceptance_check:
+    - The owner approves the card and text before posts new uploads it.
