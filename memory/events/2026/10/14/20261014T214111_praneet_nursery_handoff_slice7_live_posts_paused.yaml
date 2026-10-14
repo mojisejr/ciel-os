@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261014T214111_praneet_nursery_handoff_slice7_live_posts_paused
+type: closeout
+recorded_at: 2026-10-14T21:41:11+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Handoff: the slice 7 system is live; post-making pauses until the owner
+    photographs the old stock on 2026-10-15. Slice 7 stays open until a real
+    sale from the new channel is received and the numbers are summarized.
+  scope:
+    - State of 2026-10-14; this record only.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Decisions of 2026-10-14, in order: plan revision 0.8 after a four-round syncup (evt_20261014T130602); the owner's figures (old stock about 2,000-3,000 trees, bags 3-4 kg, 70-B about 3,000; evt_20261014T163358); slice 7 go (evt_20261014T163747); migration 005 and grant-reader run on the owner's word and the post-link privacy wording approved (evt_20261014T172739); posting about weekly, page or group not restricted, group details from the owner per post (evt_20261014T212848)."
+    - "Revision 0.8 in one line each: old stock first, shown honestly; the shop's one sentence plus real photos (worst tree included) is the standard for every lot, no grades; one price per shape; target anyone, mainly growers; Facebook posted by hand, no auto-post and no Facebook or TikTok API; our own coded links measure; free trees entered as actually given (usually 100 for 2); referral codes reward the referrer with 2 free trees per 100 on a later order, a new customer's first order only, never the referrer's own, one year, no cash, nothing extra for the referred buyer."
+    - "Live (praneet-web main 8b109325f96b9bb22261a44fa3739b9575318d69, PR 10): shop sentence on cards, lot pages and link previews; order free trees, required came-from, post code and referral code; /ops/customers issues PN codes and shows credit; /ops/posts; /p/<code> short links counting people only; LINE buttons go straight to line.me with '(โพสต์ F..)' and count the tap by beacon."
+    - "Office (praneet-office main e741025d5cb574486db7d0fa657e7469d228ab08, PR 6): bun run posts card | new | list, posts/card.html, runbook 05, runbook 00 additions. A git-ignored reports/private/facebook-groups.md holds search terms; not needed now that group details come per post."
+    - "Production data: no post, referral code, old-stock lot or order yet. No PR open in either repo; both checkouts on main equal to origin/main; local praneet Postgres and dev servers stopped."
+  lessons:
+    - "A Playwright webServer that probes a page reading the database never comes up after a new migration, because global setup migrates only after the server answers; praneet-web now probes /robots.txt."
+    - "A LINE button routed through a server redirect may not open the LINE app on iPhone; link straight to line.me and count on the side (beacon)."
+    - "The production migration was refused for the agent until the owner named it in words, as in earlier rounds; the read-only check afterwards proved nothing had run."
+    - "A checkpoint hash was again typed from a 7-character prefix plus invented characters; caught by git rev-parse before commit. Always paste hashes from command output."
+  resume:
+    read_first:
+      - workstreams/praneet-nursery-001/PLAN.md
+      - memory/events/2026/10/14/20261014T212848_praneet_nursery_posts_page_or_group_weekly.yaml
+      - checkouts/praneet-office/runbooks/05-posts.md
+    local:
+      - "Posts: export READER_DATABASE_URL from ../praneet-web/.local/secrets/neon-reader.url (never print); bun run posts card --lot <code>; draft text in posts/drafts/ (git-ignored); after the owner approves, bun run posts new --title ... --body-file ... --target /lots/<code> --image posts/out/<card>.jpg."
+      - "praneet-web tests: pg_ctl -D .local/pg -l .local/postgres.log -o '-p 55441 -h 127.0.0.1' start; bun run check (Playwright 41/41); git checkout next-env.d.ts afterwards."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.8"
+  repository:
+    head: fb5a18240f58a3274f7d8b968bee70ad444580ad
+    branch: hq/20261009
+unresolved:
+  - "Owner, 2026-10-15: photograph the old stock, add it as a ready lot (code like 69-X, approximate bagging month, count, price, the shop sentence), and record a measuring round with honest photos."
+  - "Owner: real-phone checks of /ops/posts, a /p link from Facebook and the LINE button with the post code."
+  - "Order-form label 'กลุ่ม Facebook' -> 'Facebook' (text only): recommended by the agent; the owner's reply 'โอเค' came with the pause request and is not read as a go for this PR; ask again."
+  - "Posting day and time: the owner's choice (agent guessed a weekend evening)."
+  - "Trees per roll-pallet cage at 3-4 kg bags (Thailand Post's page, seen via a search result only, gives 20-200 kg per cage); board shipping copy and PALLET_TREES = 100 stay until the owner confirms."
+  - "Remote feature branches left for the owner: praneet-web feat/slice7-sales and earlier ones, praneet-office feat/slice7-posts and earlier ones."
+  - "HQ hq/20261009 is ahead of origin/main with other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Next session: run Wake, read this handoff, then wait for the owner's
+    old-stock lot and photos; draft the first weekly post (old stock, or lot
+    70-A's growth if he prefers) for his review before uploading.
+  acceptance_check:
+    - The owner approves the first card and text before bun run posts new.
