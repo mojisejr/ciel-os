@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261014T223946_praneet_nursery_handoff_before_clear
+type: closeout
+recorded_at: 2026-10-14T22:39:46+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Handoff before the owner clears the session: plan revision 0.9 is live
+    (posts, coded links, referrals the customer can see). Slice 7 stays open
+    until a real sale from the new channel is received and the numbers are
+    summarized; slice 8 stays last.
+  scope:
+    - State of 2026-10-14; this record only.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Decisions of 2026-10-14: revision 0.8 (evt_20261014T130602), owner figures (evt_20261014T163358), slice 7 go (evt_20261014T163747), migration 005 on his word (evt_20261014T172739), weekly posts to page or group (evt_20261014T212848), revision 0.9 referrals and go (evt_20261014T221824), migration 006 on his word with privacy wording approved (evt_20261014T223305)."
+    - "Live: praneet-web main 34b5728b7869db8747ff784a1c277e628eeeda01 (PRs 10 and 11; Vercel Production deployment of that commit, state success); praneet-office main 712151b203a5d0b79345b06b8301742095aca97a (PRs 6 and 7). Migrations 000-006 in production; reader grants include posts, post_images, post_hits, referral_codes, referral_rewards, referral_hits."
+    - "Production check after deploy: /, /lots/70-A, /privacy answer 200; the privacy page carries the post-link and referral sections; an unknown /me token answers 404; an unknown /r code redirects home; robots disallow /p/, /r/, /me/."
+    - "What exists for the owner: the shop sentence on each lot; order free trees, required came-from, post and referral codes, claims; /ops/posts; /ops/customers with ReferralDesk (issue code, copy message, open the customer's page, reissue link); codes issued automatically on a customer's first received order; the webhook reads PN and post codes from chat without storing text."
+    - "Production data: lots 3, customers 2, orders 0, no posts, no referral codes. No PR open in either repo; both checkouts on main equal to origin/main; local Postgres and dev servers stopped."
+  resume:
+    read_first:
+      - workstreams/praneet-nursery-001/PLAN.md
+      - memory/events/2026/10/14/20261014T221824_praneet_nursery_rev09_referral_system_authorized.yaml
+      - memory/events/2026/10/14/20261014T212848_praneet_nursery_posts_page_or_group_weekly.yaml
+      - checkouts/praneet-office/runbooks/00-owner-3-minutes.md
+      - checkouts/praneet-office/runbooks/05-posts.md
+    local:
+      - "Secrets (never print): checkouts/praneet-web/.local/secrets/neon-direct.url (migrations, grant-reader), neon-reader.url (analysis); .assets/preneet/.env (owner login for office scripts, LINE values)."
+      - "praneet-web tests: pg_ctl -D .local/pg -l .local/postgres.log -o '-p 55441 -h 127.0.0.1' start; bun run check (Playwright 42/42); git checkout next-env.d.ts afterwards."
+      - "Office: bun run posts card --lot <code> | new ... | list (READER_DATABASE_URL from neon-reader.url); drafts in posts/drafts/, cards in posts/out/ (git-ignored)."
+      - "Previews (git-ignored): .assets/preneet/slice7-preview/, .assets/preneet/slice7-referral-preview/."
+    working_rules_learned:
+      - "A production migration runs only after the owner names that exact write in words; verify read-only afterwards through praneet_reader."
+      - "Migrations run while the PR is draft; merge order is praneet-web first (Vercel deploys main), check the deploy, then praneet-office."
+      - "Paste every hash and event id from command output; a padded short hash slipped once on 2026-10-14 and was caught."
+      - "Decisions go to the owner in Thai with a lean; record his words verbatim; ciel-os is public, so no customer data, names or bank numbers in HQ records."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.9"
+  repository:
+    head: a8a40136011d055dc21a3a0566ba2f94e53feb7b
+    branch: hq/20261009
+unresolved:
+  - "Owner, 2026-10-15: test on his phone - /ops/posts, issue his own code on /ops/customers and open its private page and invite link in LINE, tap the invite link's LINE button from another LINE account and see the order form pre-filled."
+  - "Owner, 2026-10-15: photograph the old stock and add it as a ready lot (code like 69-X, approximate bagging month, count about 2,000-3,000, price, the shop sentence, an honest measuring round)."
+  - "First weekly post: the agent renders the card and drafts the text for his review (old stock, or lot 70-A's growth), then uploads with bun run posts new; posting day and time are his."
+  - "Trees per roll-pallet cage at 3-4 kg bags; board shipping copy and PALLET_TREES = 100 stay until he confirms."
+  - "Order-form label 'กลุ่ม Facebook' -> 'Facebook' (text only) still unanswered."
+  - "Remote feature branches in both repos are left for the owner."
+  - "HQ hq/20261009 is ahead of origin/main with other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Next session: run Wake, read this handoff, then support the owner's phone
+    tests and the old-stock lot; draft the first weekly post for his review.
+  acceptance_check:
+    - The slice 7 DoD in PLAN.md revision 0.9.
