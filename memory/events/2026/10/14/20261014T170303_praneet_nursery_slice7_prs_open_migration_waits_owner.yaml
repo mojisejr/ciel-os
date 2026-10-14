@@ -1,0 +1,44 @@
+schema_version: ciel.event.v0.1
+id: evt_20261014T170303_praneet_nursery_slice7_prs_open_migration_waits_owner
+type: closeout
+recorded_at: 2026-10-14T17:03:03+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Slice 7 build: praneet-web PR 10 and praneet-office PR 6 are open as
+    drafts; production migration 005 waits for the owner because the
+    harness refused the agent's run.
+  scope:
+    - "praneet-web feat/slice7-sales (head ad50b478e2495b79d8cac830a1e676314cab26dc), praneet-office feat/slice7-posts (head 005d359ff19a948dbf317e6534839ba4647cfc30); this record."
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "praneet-web PR 10 (draft): migration 005_sales.sql (additive: lots.public_note; posts, post_images, post_hits; referral_codes, referral_rewards; orders.came_from, post_id, referral_code_id, uses_referral_credit; order_lines.free_quantity); the shop sentence on cards, lot pages and link previews; free trees in stock and on the summary; came-from required on orders; referral codes (never on the referrer's own order, a new customer's first order only, 2 per 100 on receipt, one year); /ops/posts with copy buttons; /p/<code> short links that count people, not link previews, with a one-day cookie holding only the post code; LINE buttons still link straight to line.me and count the tap with a beacon; a privacy-page section on post links drafted for the owner's approval."
+    - "praneet-office PR 6 (draft): bun run posts card | new | list, posts/card.html (1080x1350), runbook 05 and runbook 00 additions."
+    - "Evidence: praneet-web bun run check passed (tsc, build, Playwright 41/41, new tests/outreach.spec.ts); the office script was run end to end against a local test server (card 93 KB, post uploaded with one image, list). Previews in .assets/preneet/slice7-preview/ (git-ignored)."
+    - "Production migration: the agent's run of bun run migrate against Neon was refused by the harness; a read-only check through praneet_reader afterwards found lots.public_note absent, so nothing ran."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.8"
+  repository:
+    head: 9e438c23132bcb46a367c2c3799d40f9b696dd17
+    branch: hq/20261009
+unresolved:
+  - "Migration 005 and grant-reader on production Neon: the owner names this exact write for the agent to run, or runs it himself, before merging PR 10."
+  - "Privacy-page wording for post links waits for the owner's approval in PR 10."
+  - "Board shipping copy (roll pallet about 1,700 baht per 100 trees) and PALLET_TREES = 100 stay until the owner confirms trees per cage at 3-4 kg bags."
+  - "Real-phone checks after merge: a /p link from Facebook, the LINE button opening the app with the post code, saving images and copying text on /ops/posts."
+  - "Not yet done in slice 7: the Facebook group list (reports/private/, git-ignored), the old-stock lot (owner), the first posts, the first sale and the numbers summary."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    The owner allows or runs migration 005 and grant-reader on production,
+    then merges praneet-web PR 10 and praneet-office PR 6; then he adds the
+    old-stock lot and the agent prepares the group list and the first posts.
+  acceptance_check:
+    - lots.public_note exists in production before PR 10 is merged.
