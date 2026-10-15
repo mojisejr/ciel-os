@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T151122_mumate_image_weight_released_with_guide
+type: closeout
+recorded_at: 2026-10-15T15:11:22+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-image-weight-001
+  lane: single
+  objective: >-
+    Record the production release that carried WebP (fe PR 899) together with
+    the teammates' guide, tour and siamsi work, after the team said it may go.
+  scope:
+    - "Runbook 01 readiness, promote-production, post-release checks."
+  out_of_scope:
+    - Opening the siamsi page (it stays on hold in fe).
+
+outcome:
+  status: recorded
+  slice: "1"
+  owner_words:
+    - "\"ถ้าไม่มีอะไรที่ผมต้องตัดสินใจ ผมอนุญาตให้คุน release ให้ผมได้เลยครับ ทีมแจ้งแล้วว่า release ได้เลย\""
+  state:
+    - "What went out: fe 611c521 -> 9861695 (PRs 896-912: the newcomer guide and QI missions, the 8-step app tour, the free element finder before signup, the signup-loop fix, the siamsi page built but on hold, and our WebP 899); bazi b52ccf5 -> 94c0572 (9a01ab0 guide_tour mission; 7199227 and 94c0572 siamsi kiang-kung 80 cards with AI readings, chat answers for guidance/plan/decision questions, backstage 1-or-3 card draws)."
+    - "Checked before: no migration, no new cron, no env to add (fe BAZI_BASE_URL comes from docker-compose on both hosts; bazi SUPABASE_SIAMSI_BUCKET has a default and the 80 card image URLs are absolute, three sampled 200 image/jpeg). Readiness 15:02 +07: staging pair fe 9861695 + bazi 94c0572 unchanged for 109 min, prod all checkmarks, 5xx 30 min 0, stall gave_up 0, health clean."
+    - "promote-production pressed by the agent on the owner's word (this time the harness allowed it): run 38703013937, gates/deploy/watch all success; deploy-history 2026-10-15T08:05:05Z ok FE_TAG=9861695 BAZI_TAG=94c0572; 👀 0 5xx of 583 requests in 5 minutes."
+    - "After: prod fe 9861695 / bazi 94c0572 all checkmarks, cron-check ok, /api/health sha 9861695; /images/v2/popup/sinsae.png answers image/webp 81,132 bytes for Accept image/webp and image/png 1,373,483 bytes for */*, both Cache-Control public, max-age=604800 and Vary: Accept; /v2/fortune/siamsi 307 to coming-soon; bdash page 200 'ข้อมูลถึง 14 ต.ค.', /api/ops/user-delete 404 there."
+
+evidence:
+  plan: workstreams/mumate-image-weight-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: b4e2dc2e45d695b1888dfc6ca75fc193c86a3b88
+    branch: hq/20261009
+  related:
+    - memory/events/2026/10/13/20261013T154843_mumate_image_weight_cache_live_webp_waits_guide.yaml
+
+unresolved:
+  - "Step 5 acceptance: one day after, static bytes per page view and the 304 count from Loki, before vs after (a production read on the owner's word); then the final closeout."
+  - "With fe main released, promote-production picks the right pair again; the pin to fe 611c521 is over."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    2026-10-16 after 15:10 +07: on the owner's word, compare static bytes per
+    page view and 304s in Loki for 24 h before and after 08:05Z, then record
+    the final closeout.
+  acceptance_check:
+    - "Bytes per page view lower after the release; numbers in the closeout."
