@@ -1,7 +1,7 @@
 # MuMate — keep production access logs 90 days, then delete them
 
 **Workstream:** `mumate-access-log-retention-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.2
 **Execution phase:** 1

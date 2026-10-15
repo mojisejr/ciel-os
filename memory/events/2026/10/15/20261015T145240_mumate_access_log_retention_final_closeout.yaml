@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T145240_mumate_access_log_retention_final_closeout
+type: closeout
+recorded_at: 2026-10-15T14:52:40+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-access-log-retention-001
+  lane: single
+  objective: Final delivery - production Caddy access logs kept 90 days off-host in Spaces mumate-logs, deleted after, with the Loki backfill from the cutover.
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  result: >-
+    Since 2026-10-13T08:45:35Z prod-1 writes every access line to
+    /var/log/mumate/caddy (rolled at 20 MiB, 30 days on host) and
+    mumate-logs-archive.timer ships each rolled file hourly to
+    s3://mumate-logs/caddy/mumate-prod-1/, deleting objects older than 90
+    days by name date. The backfill covers 2026-10-08 (UTC, the cutover) to
+    go-live in caddy/mumate-prod-1/backfill/ (six objects).
+  verified:
+    - "2026-10-15 ~14:50 +07 on prod-1: three rolled files on host (access-2026-10-13T22-01-36, -14T09-42-16, -15T00-30-36); timer runs hourly, last runs 06:02Z and 07:02Z: 'uploaded 0, already held 3', 'pruned 0 older than 2026-07-17'; state file held=3."
+    - "Production install and backfill as recorded in 20261013T154843 (six backfill objects, sizes equal to the local files, no unredacted key/code/state/token value)."
+  late_check: "The 24 h acceptance check promised for 2026-10-14 was done on 2026-10-15; nothing ran on 10-14 (no session)."
+
+evidence:
+  plan: workstreams/mumate-access-log-retention-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: 53917d3183ce1b127144a8c3099865453972858c
+    branch: hq/20261009
+    working_tree: this-closure-and-completed-plan
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261009
+  pull_requests:
+    - https://github.com/mojisejr/mumate-infra/pull/57
+  related:
+    - memory/events/2026/10/13/20261013T154843_mumate_access_log_retention_production_live_backfilled.yaml
+
+unresolved:
+  - "Archive content on prod-1 is root 0640 and was not read by the agent; redaction on production rests on the Caddyfile verified on staging."
+  - "Local backfill copies in .assets/mumate/logs-backfill/ (redacted production access lines); delete by filename when the owner no longer wants them."
+  - "Whether MuMate falls under the 2021 traffic-data notification is the team's call (runbook 04 section 10)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: None for this workstream.
+  acceptance_check:
+    - "Wake lists mumate-access-log-retention-001 as completed."

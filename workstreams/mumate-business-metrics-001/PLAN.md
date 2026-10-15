@@ -1,7 +1,7 @@
 # MuMate — a read-only business dashboard for what GA4 cannot count
 
 **Workstream:** `mumate-business-metrics-001`
-**State:** active
+**State:** completed
 **Execution lane:** single
 **Plan revision:** 0.1
 **Execution phase:** 1
