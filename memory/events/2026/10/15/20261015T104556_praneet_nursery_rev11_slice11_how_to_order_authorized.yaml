@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T104556_praneet_nursery_rev11_slice11_how_to_order_authorized
+type: decision
+recorded_at: 2026-10-15T10:45:56+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Authorize slice 11 - "how to order" told by the mascot - under plan revision 1.1, during slice 7.
+  scope:
+    - praneet-web home page "สั่งยังไง" section and shipping cards, public assets and DESIGN.md only; no database change, no wording change.
+outcome:
+  status: decided
+  decision: >-
+    The owner supplied a sticker sheet of the 3D mascot and asked for a much
+    better "สั่งยังไง" section, WebP images, and three or four samples first.
+    The agent cut the sheet into ten stickers by transparency, chose five
+    (standing with a tree, thumbs-up, crouching over trees, pushing a roll
+    pallet cage, waving from a pickup), left out the three box poses (the shop
+    does not ship in boxes; one carries the Thailand Post logo), converted
+    them to WebP, and rendered four samples on the live page at 390 and 1280
+    px: A sticker cards, B zig-zag path, C swipe carousel, D one green strip.
+    The owner chose A, the agent's recommendation. Revision 1.1 adds slice
+    11 in this workstream, as slices 9 and 10 were.
+  owner_statements:
+    - "คุนเห็นตรงนี้หรือเปล่า ผมอยากให้คุน ตัดภาพ จากในนี้ .assets/preneet/images/Friendly Farmer Mascot Sticker Collection.png แล้ว design ให้ ui ตรงนี้สวยขึ้น 500% เลยอ่ะครับ คุนช่วยผมหน่อย สิ แล้ว อย่าลืมเรื่อง webp ด้วยนะ ขอดูตัวอย่างสัก สามสี่แบบก่อนเปิด workstream ครับ"
+    - "ผมชอบ A ครับคุน update workstream แล้วถ้าพร้อมก็ ทำได้เลยครับ เจอกัน PR"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.1"
+  slice: "11"
+  repository:
+    head: 5e911e08df425b08db18c0fc15da436ac491b8ff
+    branch: hq/20261009
+  sources:
+    - "praneet-web main 26e3a1fa288cbd8eae77f6313e0c3f4987d13973: app/page.tsx renders ol.steps (three steps) and div.ship (two shipping rows) under h2#order."
+    - "Owner sticker sheet: 2172x724 PNG with real transparency; cut stickers about 270-500 px wide; WebP trials 30-64 KB each."
+unresolved:
+  - "The sticker sheet's resolution limits each image to about 150 CSS px at 2x before it softens."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build slice 11 in praneet-web on a topic branch with tests, open a draft
+    PR with screenshots for the owner; his approval, merge and phone check
+    close slice 11.
+  acceptance_check:
+    - The slice 11 DoD in PLAN.md revision 1.1.
