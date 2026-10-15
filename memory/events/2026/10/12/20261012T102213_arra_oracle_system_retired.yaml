@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T102213_arra_oracle_system_retired
+type: closeout
+recorded_at: 2026-10-12T10:22:13+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: arra-oracle-retirement
+  lane: single
+  objective: >-
+    Find every background job, hook, skill, server and data store of the arra
+    oracle system (arra-oracle-v3, maw-js, maw-office, oracle vaults) that the
+    owner no longer uses, and retire it on this Mac without breaking CIEL,
+    Claude Code in VS Code, or the ChatGPT Codex desktop app.
+  scope:
+    - This Mac only - launchd, pm2, Claude and Codex config, global skills, ~/ghq checkouts, home data directories.
+  out_of_scope:
+    - GitHub repositories themselves (none deleted or archived on GitHub).
+    - The mootech-fe worktree ~/ghq/github.com/mojisejr/lamun-585-colleague (a mootech-fe matter, left in place).
+
+outcome:
+  status: completed
+  decisions_by_owner:
+    - "Retire the whole arra oracle system, one step at a time with a health check after each: background jobs, then the Codex side, then skills, then data and repositories."
+    - "Skills: remove the arra-oracle-skills-cli set; keep the owner's own oracle-skills set (14 skills) as it is."
+    - "Untracked ψ/ files: keep, do not discard."
+    - "ollama: stop the service but do not uninstall it; uninstall only maw-js."
+    - "Render API key that reached the session transcript during the audit: the owner rotates it himself."
+    - "The owner deleted the related Discord channels (vault monitor, maw-office progress, discord-watcher feed) and emptied the macOS Trash."
+  retired:
+    launchd: "com.mojisejr.maw-office.discord-watcher (KeepAlive, 12 s poll, failing tmux capture), com.mojisejr.team-sync-reconcile (5 min, no-op), com.bongbing.oracle-reindex-fts (daily 04:00, also the nightly oracle.db backup + JSON/CSV export, 10 kept), com.bongbing.oracle-reindex-vector (Sun/Tue/Thu 01:10, ~66 min bge-m3 embedding, Discord card) - unloaded, plists moved out."
+    pm2: "arra-oracle-v3 HTTP server (:47778) and maw serve (:3456) deleted, empty list saved, daemon stopped."
+    ollama: "brew service stopped; package and ~/.ollama model kept."
+    claude_code: "arra-oracle MCP server removed from ~/.claude.json; hooks progress-hook.ts, auto-scale.sh, goo-advisory.sh removed from ~/.claude/settings.json; Oracle Comms Contract block removed from ~/.claude/CLAUDE.md. pretooluse-guard.sh kept."
+    codex: "Same three hooks removed from ~/.codex/hooks.json with the pretooluse-guard entry left byte-identical (its trusted_hash key is per entry); comms block removed from ~/.codex/AGENTS.md; config.toml untouched."
+    skills: "35 skills carrying 'installer: arra-oracle-skills-cli' moved out of each of ~/.claude/skills, ~/.codex/skills, ~/.agents/skills. Kept: oracle-skills (14), motion-scene-design, and the claude.ai 'synced' folder."
+    ciel: "Stale skillOverrides for the 34 removed skills deleted from .claude/settings.local.json (gitignored); the 14 overrides for skills that still exist stay off."
+    repositories: "19 checkouts under ~/ghq (Soul-Brews-Studio/{arra-oracle-v3, maw-js, oracle-v2, opensource-nat-brain-oracle}; mojisejr/{maw-office, o, bongbing-, goo-, too-, toongtoong-, tuewuewue-, lamun-oracle, oracle-vault, arra-oracle-v3, arra-oracle-skills-cli, oracle-ops, L-vault} and two empty folders) plus ~/.oracle, ~/.arra-oracle-v2, ~/.maw were moved to the Trash, which the owner emptied. All repositories have GitHub copies."
+    maw_js: "Global bun package removed; the maw command no longer exists."
+  kept:
+    psi_pushed: "Untracked ψ/inbox messages of 2026-09-02 committed and pushed to their own private repos: too-oracle 566aa03, lamun-oracle 8541d82 (secret-pattern scan clean first)."
+    archive: "~/archive/arra-oracle-20261012/ (366 MB, README inside): git bundles of local-only commits (arra-oracle-v3 x2, L-vault x1, both verified), uncommitted files of six repos, L-vault's 205 staged changes as patch + files, oracle.db (sqlite .backup, integrity ok; holds oracle_learn rows found nowhere else), the last nightly export, maw message history. This is now the only copy of that local-only work."
+    rollback_copies: "~/.retired/arra-oracle-20261012/ holds the pre-change launchd plists, Claude/Codex config files, hooks and skills."
+
+evidence:
+  repository:
+    head: "d54ec09"
+    branch: hq/20261009
+    working_tree: this-record-only
+  checks:
+    - "After each step: bun run wake exit 0; bun run check 45 pass / 0 fail."
+    - "Codex rehearsed first in a scratch HOME (codex debug prompt-input + codex doctor identical before/after), then on the real home: doctor 22 ok / 0 fail, 26 skills listed, comms block absent."
+    - "No launchd job or process of oracle, maw, discord-watcher or ollama left; ports 47778, 3456, 11434 closed."
+    - "pretooluse-guard still active in Claude Code: it blocked a probe command containing the production Supabase ref."
+    - "The owner opened Codex after the change and reports it works normally."
+
+unresolved:
+  - "Render API key rotation: the owner said he will do it; not verified here."
+  - "~/Library/LaunchAgents/pm2.non.plist (root-owned) left; at login it resurrects an empty pm2. Remove with sudo if wanted."
+  - "Codex config.toml still has 38 disabled [[skills.config]] entries, some now pointing at removed paths; rehearsal showed they do not break Codex."
+  - "~/.claude/teams (oracle team configs) and possibly an empty ~/ghq/github.com/Soul-Brews-Studio folder left; harmless."
+  - "The earlier incident in which a skill change broke Codex was not found in any local record; its cause stays unknown."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None for this workstream. Keep ~/archive/arra-oracle-20261012/; delete
+    ~/.retired/arra-oracle-20261012/ whenever the owner is satisfied.
+  acceptance_check:
+    - "A cold session can state, from this record, that the arra oracle system is retired on this Mac, what was kept and where, and what was left in place."

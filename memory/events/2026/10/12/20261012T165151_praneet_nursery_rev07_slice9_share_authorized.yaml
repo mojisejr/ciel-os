@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T165151_praneet_nursery_rev07_slice9_share_authorized
+type: decision
+recorded_at: 2026-10-12T16:51:51+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Authorize slice 9 - share buttons on the board - under plan revision 0.7, ahead of slice 7.
+  scope:
+    - praneet-web public board (home and lot pages) only; no database change.
+outcome:
+  status: decided
+  decision: >-
+    After a one-round syncup (5 of 5 guesses matched) the owner said go.
+    Revision 0.7 adds slice 9, done before slice 7: "แชร์ทาง LINE" and
+    "คัดลอกลิงก์" on each lot page near the LINE contact button and once on
+    the home page, the phone's own share menu only where supported, and an
+    auto-filled text (lot code, latest height, shop name, link; no price).
+    No visit counting yet. Credit or tokens for link visits are dropped;
+    referral codes rewarded on a real purchase are kept for slice 7, not
+    built now. Slice 9 is numbered after 8 so earlier records that name
+    slices 7 and 8 stay true.
+  owner_statements:
+    - "โอเค งั้นเรามาคุยเรื่องปุ่มแชร์ ก่อนเลยนะ ! แล้วก็ตัด เรื่อง credit ออก แต่เก็บเรื่องรหัสแนะนำไว้ (แต่ยังไม่ทำ) น่าจะ syncup กันหน่อยมั๊ย"
+    - "q1 = ทั้งสองแบบ"
+    - "q2 = ตามที่คุนว่า ลองดูก่อน"
+    - "q3 = ทางไลน์ + คัดลอก ตามคุนว่า"
+    - "q4 = ตามคุนว่า"
+    - "q5 = ตามคุนว่า"
+    - "เรา update workstream แล้ว go เลยได้ใช่ป่ะ ถ้าได้ คุนจัดการเลย"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "9"
+  repository:
+    head: fdb0d7b8c6748719537b4fa9d5fa1beecea512bb
+    branch: hq/20261009
+  sources:
+    - "praneet-web main: lot pages already have per-lot Open Graph images and titles (slice 4); the LINE and phone buttons sit at the end of the lot and home pages; no share button and no analytics exist."
+    - "LINE Developers, Using LINE URL scheme (read 2026-10-12): https://line.me/R/share?text={UTF-8 percent-encoded text} opens the share target picker in LINE for iOS and Android; not supported in LINE for PC."
+unresolved:
+  - "Whether the Web Share menu works inside the LINE in-app browser on Android and iPhone; the LINE and copy buttons do not depend on it."
+  - "Button and shared-text wording: the agent drafts, the owner approves in the PR."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build the share buttons in praneet-web with tests, open a PR with
+    screenshots and the draft wording for the owner's approval and merge,
+    then his real-phone check in LINE closes slice 9.
+  acceptance_check:
+    - The slice 9 DoD in PLAN.md revision 0.7.

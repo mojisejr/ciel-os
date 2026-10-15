@@ -1,0 +1,42 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T095851_praneet_nursery_slice10_merged_wording_approved
+type: closeout
+recorded_at: 2026-10-15T09:58:51+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Slice 10 merged and live with the owner's wording approval; his real-phone
+    check remains before slice 10 closes.
+  scope:
+    - praneet-web PR 13 only.
+outcome:
+  status: recorded
+  slice: "10"
+  completed:
+    - "The owner approved the PR 13 wording as drafted (band, tiles, card, bottom bar) and merged it; praneet-web main is 26e3a1fa288cbd8eae77f6313e0c3f4987d13973. The local checkout is on main equal to origin/main."
+    - "GitHub deployment of that commit to environment Production reports state success. On https://praneet-web.vercel.app the home page carries the greeting band and the 3D images; mascot-3d.webp, mascot-3d-wink.webp and mascot-3d-face.webp answer 200 image/webp; /lots/70-A answers 200 with the bottom LINE bar. A 390 px screenshot of the live home page matches the preview."
+  owner_statements:
+    - "ทุกอย่างโอเคละ เดี๋ยว ผม merged. ละครับ"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.0"
+  slice: "10"
+  repository:
+    head: 28cafe3302b9170277ad842f1d4abf33e2bceb2d
+    branch: hq/20261009
+unresolved:
+  - "Owner's real-phone check of the storefront, including the LINE in-app browser, closes slice 10."
+  - "Remote branch feat/storefront-mascot (and feat/logo-ops-entry) in praneet-web are left for the owner."
+  - "Still open in slice 7: the old-stock lot and first post, the second-account LINE invite test, who issued the two existing referral codes, the 'Facebook' label."
+  - "HQ hq/20261009 is ahead of origin/main; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Hear the owner's phone check; if it passes, record the slice 10 closeout.
+    Then the old-stock lot and the first post draft.
+  acceptance_check:
+    - The slice 10 DoD in PLAN.md revision 1.0.

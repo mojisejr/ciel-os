@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T163825_praneet_nursery_slice4_authorized
+type: decision
+recorded_at: 2026-10-10T16:38:25+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Authorize slice 4 - the public lot board - with the owner's shop details.
+  scope:
+    - praneet-web public pages under plan revision 0.4 slice 4; the metre-stick photo is each tree's main image.
+outcome:
+  status: decided
+  decision: >-
+    The owner said go for slice 4 of plan revision 0.4. The board stays on
+    praneet-web.vercel.app; no domain is bought now. The public contact is the
+    shop phone 092-993-1147 until the LINE OA in slice 5, and the map link is
+    the shop's Google Maps place "ปราณีต (เจ๊ฟัก) พันธุ์ไม้" (12.5529547,
+    102.155561). A lot without an owner-set price shows "ยังไม่พร้อมขาย". The
+    LINE check on iPhone uses a household member's phone.
+  owner_statements:
+    - "1. go slice 4 ได้ครับ"
+    - "2. 0929931147"
+    - "3 https://www.google.com/maps/place/ปราณีต+(เจ๊ฟัก)+พันธุ์ไม้/@12.5529547,102.155561,1145m (place 0x310481a79182edf5:0x1c83487514e32fa5)"
+    - "4. ทำบน vercel domain แหละ"
+    - "5. ยังไม่พร้อมขาย (แค่นี้ก็พอ)"
+    - "6. เดี๋ยวลองเครื่องคนในบ้าน"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "4"
+  repository:
+    head: 36354a4e5cb367ab4a0bb1adcf909903468a997b
+    branch: hq/20261009
+unresolved:
+  - "Domain: the board is built and shared on vercel.app for now. Slice 5 puts the board link in the LINE rich menu, so changing the domain later means updating that menu and any shared links."
+  - "Lot counts shown as available are not yet reconciled (70-A 700 vs about 470; 70-B bagged count); the owner fixes them before the board is shared."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build the public board in praneet-web on a topic branch against
+    design/BRIEF.md and the accepted mockup, verify locally, and open a draft
+    PR for the owner to merge.
+  acceptance_check:
+    - The slice 4 DoD in PLAN.md, checked by tests and on the owner's and a household iPhone.

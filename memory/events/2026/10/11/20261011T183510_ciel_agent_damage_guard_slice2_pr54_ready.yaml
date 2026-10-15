@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T183510_ciel_agent_damage_guard_slice2_pr54_ready
+type: closeout
+recorded_at: 2026-10-11T18:35:10+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-agent-damage-guard-001
+  lane: single
+  objective: Record slice 2 built, proven and offered for the owner's merge (mumate-infra PR 54).
+  scope:
+    - scripts/test-all.sh, README test command.
+  out_of_scope:
+    - Merge (owner); slice 3.
+
+outcome:
+  status: recorded
+  slice: "2"
+  result: >-
+    scripts/test-all.sh copies tracked and untracked non-ignored files (no
+    .git, no .env) to mktemp -d, runs every scripts/*.test.sh there, and
+    compares a snapshot of the real tree (status with ignored files,
+    uncommitted diff, checksum of every untracked or ignored file) before and
+    after: exit 0 passed, 1 a test failed, 2 the real checkout changed.
+    Through it: 16 test files, 0 failed, real checkout unchanged; shellcheck
+    clean. Proofs with harmless markers only: a throwaway test touching a
+    marker and appending to README via its own repo path left the real
+    checkout unchanged; a throwaway test touching a marker in the real checkout
+    by absolute path made the runner name the file and exit 2 (marker and
+    proof files then removed by name). git status afterwards: the PR's two
+    files only. README's test command now points to the runner, with why.
+    PR description gate: pass.
+
+evidence:
+  plan: workstreams/ciel-agent-damage-guard-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "d3770d7"
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_request:
+    url: https://github.com/mojisejr/mumate-infra/pull/54
+    head: "2f7b273e3e75f8f01c32a85b2cb6813b189ced6e"
+
+unresolved:
+  - "Running a test file directly is still unguarded; README tells everyone not to."
+  - "Writes outside the repository by absolute path are not detected (only this checkout is compared)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Owner merges PR 54; agent reruns the runner on main and updates its memory note to point at it; then slice 3 when the owner can sign in to Google.
+  acceptance_check:
+    - "bash scripts/test-all.sh on main: all pass, real checkout unchanged."

@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261014T172739_praneet_nursery_slice7_migration_live_prs_ready
+type: closeout
+recorded_at: 2026-10-14T17:27:39+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Migration 005 and grant-reader ran on production on the owner's word;
+    the post-link privacy wording is approved; praneet-web PR 10 and
+    praneet-office PR 6 are ready for his merge.
+  scope:
+    - "Production Neon (additive migration, reader grants); PR 10 head d57e25d77ff4e040fe4e7381156e2f6d68407994, PR 6 head 005d359ff19a948dbf317e6534839ba4647cfc30; this record."
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "bun run migrate on production printed 'Applied 005_sales.sql'; scripts/grant-reader.ts granted praneet_reader SELECT on the five new tables as well."
+    - "Read-only check through praneet_reader: lots.public_note exists; posts, post_images, post_hits, referral_codes and referral_rewards exist and are empty; lots 3 and orders 0 as before. The live site (old code) answered 200 on /, /lots/70-A and /privacy afterwards."
+    - "Privacy-page section on post links marked owner-approved in PR 10 (commit d57e25d); PR 10 and PR 6 marked ready for review, both MERGEABLE."
+  owner_statements:
+    - "อนุมัติ 1 กับ 2 คุน run migration.ได้เลย แล้วถ้าเกิดว่าพร้อมให้ผม merge ก็บอกได้เลยครับ ขอ ลำดับด้วยนะ อะไรก่อนหลัง"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.8"
+  repository:
+    head: a162dfb8ff178e981f847f4a0d6d0ec24176b7b3
+    branch: hq/20261009
+unresolved:
+  - "Board shipping copy and PALLET_TREES = 100 stay until the owner confirms trees per cage at 3-4 kg bags."
+  - "Real-phone checks after merge: a /p link from Facebook, the LINE button opening the app with the post code, saving images and copying text on /ops/posts."
+  - "Still to do in slice 7: the old-stock lot (owner), the Facebook group list, the first posts, the first sale and the numbers summary."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    The owner merges praneet-web PR 10 (Vercel deploys main), checks the
+    deploy, then merges praneet-office PR 6; the agent then syncs both
+    checkouts to main and prepares the group list and the first post.
+  acceptance_check:
+    - Production serves /ops/posts and a lot page shows the shop sentence after PR 10 deploys.

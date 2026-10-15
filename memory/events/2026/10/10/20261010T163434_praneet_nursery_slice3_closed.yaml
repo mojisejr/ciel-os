@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T163434_praneet_nursery_slice3_closed
+type: closeout
+recorded_at: 2026-10-10T16:34:34+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Close slice 3 - lots in the database, recorded and corrected from the
+    owner's phone, readable by the agent through the read-only role.
+  scope:
+    - praneet-web PRs 1-2 and praneet-office PRs 1-2 (merged), production on Vercel, Neon and Blob, real rounds from the owner's phone.
+outcome:
+  status: slice-complete
+  slice: "3"
+  completed:
+    - "Real rounds on 2026-10-10 from the owner's phone inside LINE for 70-A, 70-B and 70-C, each with plot and stick photos stored in production Blob. The 70-B round was saved 2 min 53 s after the 70-A round, walking included; the owner confirms each round took about that long."
+    - "Browser half of the phone check: the owner corrected 70-C in Chrome on his phone at 16:33:31 +07 (30-40 cm to under 30 cm), recorded as edit_round with before {30, 40} and after {0, 30}. Per decision evt_20261010T161338 this correction stands in for a Chrome round."
+    - "Round corrections with internal history (praneet-web PR 2, merge 96c9994; migration 002 in production) and a measure form with no preselected height; the lot summary leaves out removed rounds (praneet-office PR 2, merge 57e4308)."
+    - "Reader-role summary works over production: per lot age in months, height range, upright share, counts and rounds."
+    - "Earlier proof stands (evt_20261009T055150, evt_20261009T074521): BRIEF criteria by Playwright (widths 360-1440, axe, 56/44 px targets, LINE UA smoke), backup and restore drill, reader role without access to auth tables, no secret or customer data in either repository. PR 2 adds 4 tests (16/16) and a restore drill with hidden rows."
+  owner_statement: "ผมแก้สิ่งที่ผมบันทึกผิดเรียบร้อยแล้วครับนอกนั้น ยังถือว่าถูกอยู่ สสครับ แล้วผมทำบน chrome ด้วยครับ"
+  not_verified:
+    - "The Chrome half is an edit of an existing round, not a new round recorded from scratch in Chrome; the owner accepted this in decision evt_20261010T161338."
+    - "Minutes per round are the owner's estimate plus save timestamps; no stopwatch figure exists."
+    - "Only the owner's Android phone was used; the LINE in-app browser on iPhone is untested and remains a slice 4 criterion."
+    - "Stick photos contain no metre stick; the owner accepts this for now (decision evt_20261010T161338)."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: a1f5baa55e0218b959fe9452a886fe23b698d345
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 1
+      base: main
+      state: MERGED
+      merge_commit: 56db16c
+    - repository: github.com/mojisejr/praneet-web
+      number: 2
+      base: main
+      state: MERGED
+      merge_commit: 96c9994
+    - repository: github.com/mojisejr/praneet-office
+      number: 1
+      base: main
+      state: MERGED
+      merge_commit: 4de3529
+    - repository: github.com/mojisejr/praneet-office
+      number: 2
+      base: main
+      state: MERGED
+      merge_commit: 57e4308
+unresolved:
+  - "Lot counts are not reconciled: 70-A shows 700 (plan says about 470 left), 70-B has no bagged count, and the lots total 8,100 vs about 12,000; the owner updates them with 'แก้จำนวนต้น'. The owner says the other recorded values are correct."
+  - "The shop domain is undecided; it must be decided before the board is shared in slice 4. It is the owner's money decision."
+  - "Owner may say whether planeet-panmai-line-app has a LINE OA worth reusing in slice 5."
+  - "LINE in-app browser on iPhone is untested (slice 4 DoD)."
+  - "Remote feature branches of both child repositories were left for the owner."
+  - "HQ hq/20261009 is ahead of origin/main and carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Propose slice 4 (public lot board with the stick photo as each tree's main
+    image, plan revision 0.4) to the owner with the domain decision, and wait
+    for his go; do not start slice 4 before it.
+  acceptance_check:
+    - A decision event authorizes plan revision 0.4 slice 4 in the owner's words.

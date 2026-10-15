@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T164048_praneet_nursery_handoff_before_clear
+type: closeout
+recorded_at: 2026-10-15T16:40:48+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Handoff before the owner clears the session on 2026-10-15: the storefront
+    and back-office work of the day is live; slice 13 waits for the owner's
+    phone check; slice 14 waits for his go; slice 7 (first sale) is unchanged.
+  scope:
+    - State of 2026-10-15 evening; this record only.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Live today (praneet-web): logo 8-tap entry to /ops (PR 12); slice 10 3D mascot storefront (PR 13, closed); slice 11 'how to order' sticker cards (PR 14, closed); lot-card stretch fix (PR 15); slice 12 two-tier lot list with /lots (PR 16, closed); slice 13 back-office shell, today page and /api/ops/today (PR 17). praneet-office: bun run today, links in lots and orders, runbooks 00 and 05 on the new menu (PR 8)."
+    - "Plan: PLAN.md revision 1.3 declares slices 1-7, 9-14, 8 in that file order; slice 8 stays last. Closed today: 10, 11, 12. Slice 13 merged and live (evt_20261015T164010_praneet_nursery_slice13_merged_live), phone check pending. Slice 14 planned, not authorized."
+    - "Heads: praneet-web main 904a6dd69bcb6479febf4fb6a5a132a84b7de298; praneet-office main cd67834f961d2325a3747784d4d57d509302bef0; both checkouts on main equal to origin/main, no local topic branches; local Postgres and dev servers stopped."
+    - "Production today (read through the office, numbers only): lots 3 (all growing), customers include 3 new LINE customers in 7 days, orders 0 open, posts 0."
+  resume:
+    read_first:
+      - workstreams/praneet-nursery-001/PLAN.md
+      - checkouts/praneet-web/DESIGN.md
+      - checkouts/praneet-office/runbooks/00-owner-3-minutes.md
+      - checkouts/praneet-office/runbooks/05-posts.md
+    local:
+      - "Secrets (never print): checkouts/praneet-web/.local/secrets/neon-direct.url, neon-reader.url; .assets/preneet/.env (owner login used by posts new, slips and today)."
+      - "praneet-web tests: pg_ctl -D .local/pg -l .local/postgres.log -o '-p 55441 -h 127.0.0.1' start; bun run check (Playwright 53/53); git checkout next-env.d.ts afterwards. Local server for screenshots: env ... bunx next dev --port 3002 with DATABASE_URL=postgresql://127.0.0.1:55441/praneet_test (use env to pass values with spaces)."
+      - "Office: bun run today (owner sign-in, read only; passed the harness on production today); bun run lots / orders / posts list with READER_DATABASE_URL from neon-reader.url; they print /ops links."
+      - "Owner art in .assets/preneet/images (git-ignored): two 3D mascot PNGs and the sticker sheet; WebP cuts are in praneet-web public/. Sharp: run with node and createRequire from praneet-web/package.json (bun resolved a broken wasm sharp)."
+    working_rules_learned:
+      - "Show the owner 2-4 rendered samples on the live page (390 and 1280 px, light and dark) before opening a slice; he picks, then plan revision, decision, build, draft PR, his merge, phone check, closeout."
+      - "Add new slices BEFORE slice 8 in PLAN.md: Wake treats the last slice heading in file order as the final slice. Use status recorded on slice-level records; never a delivery status on a slice that is not the true last one (a slice-11 record did this today and needed a correction record and a section move)."
+      - "When the owner asks for a summary before work, record the plan with a decision whose status is recorded and that names no slice; authorize the slice only on his go."
+      - "gh pr ready is refused by the harness; the owner merges from draft. Vercel previews open for him; give the preview link and local screenshots."
+      - "Production migrations only on the owner's exact word, run while the PR is draft; merge praneet-web first, check the deploy, then praneet-office."
+      - "Paste hashes and event ids from command output; Thai for the owner's decisions with a lean; no customer names, phones or bank numbers in ciel-os records."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.3"
+  repository:
+    head: 2a872fe3168e65de681c4bb1d59671a4eac51530
+    branch: hq/20261009
+unresolved:
+  - "Slice 13 close: the owner opens /ops on his phone (today page, five tabs, tiles opening filtered lists), approves the today wording, and compares with bun run today (production read today: 0 / 0 / 0 / 3 / 0, field 0 ready, 3 growing, 0 sold out)."
+  - "Slice 14 (every back-office list and page in the same design: compact lot rows with a 'needs measuring' chip and edits moved into the lot page; orders, customers, posts on the row pattern; one-line page intros needing his wording approval; 44 px code links; one page width) waits for his go."
+  - "Slice 7 open: the old-stock lot with photos (it will lead the storefront as 'พร้อมขายตอนนี้' once set ready) and the first weekly post drafted for his review; the second-account LINE invite test; trees per roll-pallet cage at 3-4 kg bags before any shipping price in posts."
+  - "Owner questions still unanswered: who issued the two existing referral codes (likely his own test on 2026-10-14); order-form label 'กลุ่ม Facebook' -> 'Facebook'."
+  - "Remote branch feat/how-to-order-mascot in praneet-web still exists (not removed on merge); deleting it needs the owner's word."
+  - "Follow-up: praneet-office posts.ts and slips.ts keep their own owner sign-in; move them onto scripts/ops-session.ts."
+  - "HQ hq/20261009 is ahead of origin/main with this session's and other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Next session: run Wake, read this handoff, then close slice 13 on the
+    owner's phone check (run bun run today and compare), ask whether to start
+    slice 14, and support slice 7 (old-stock lot, first post).
+  acceptance_check:
+    - The slice 13 DoD in PLAN.md revision 1.3.

@@ -1,0 +1,85 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T135408_praneet_nursery_rev06_slice6_authorized
+type: decision
+recorded_at: 2026-10-12T13:54:08+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Authorize slice 6 - orders and the office desk - under plan revision 0.6.
+  scope:
+    - praneet-web orders, order lines, private payment slips, phone customers, order summary card with PromptPay QR, stale-round warning; praneet-office slip archive script, runbooks and order queries.
+outcome:
+  status: decided
+  decision: >-
+    The owner said go for slice 6. Revision 0.6 records what was agreed
+    before the go: payment slips go to a private Vercel Blob store, readable
+    only through /ops after login, kept six months after the order closes,
+    then exported to a zip in a git-ignored folder of praneet-office for the
+    owner to keep, and deleted from Blob only after the zip is verified.
+    Orders open only on lots the owner has declared ready (no pre-order); an
+    order may hold several lots and shapes; prices start from the lot price
+    and the owner may change them per order; under 50 trees cannot be saved
+    and 50-99 warns; customers pay in full before shipping, trees and
+    shipping in one total. Stock drops when the order is saved and returns on
+    cancel, is one number per lot, cannot go below zero or be taken from a lot
+    with no count; the system never sets sold out by itself. Customers who
+    phone can be added by hand with name and phone. The agent designs the
+    order summary (items, shipping, total, ship and expected arrival dates,
+    PromptPay QR with the amount, bank account) with placeholder numbers
+    until the owner gives the real ones. The back office warns when a lot is
+    not measured for over three weeks. Bare-root sales stay out. The owner
+    asked to stop for his call if a problem comes up, and otherwise to finish
+    and report.
+  owner_statements:
+    - "6 เดือนเก็ฐแล้ว export มา เป็น zip บนเครื่องแล้วเดี๋ยวผมเก็บไว้เองดีกว่า ผมว่านะ"
+    - "ที่โอเคตามคุนคือ 1, 2, 3, 4,"
+    - "5 = ได้"
+    - "6 = ได้"
+    - "7 = จริงๆ ควรจะ ขั้นต่ำ 100 ต้นเลย แต่ถ้า ลูกค้าเอาน้อยสุดก็ไม่ควร 50 ต้นอ่ะ"
+    - "8 = ตามนี้"
+    - "9 = ผมคิดว่าเบื้องต้นถ้าเหลือ 0 ต้องสั่งไม่ได้ก่อน แล้วให้ผมไปเปลี่ยนทีหลัง ไม่งั้นเดี๋ยว order เข้ามาไม่สมเหตุสมผล ป่ะ ?"
+    - "10. = เอาตามคุน"
+    - "11 = เอาไว้ทีหลัง เรื่องขายต้นถอน ขายต้นลงถุงอย่างเดียวก่อน"
+    - "12 = ตามคุน"
+    - "13 = เตือนๆ"
+    - "14 โอเคตามคุน"
+    - "15 อันนี้ผมคิดว่าคุน design ให้ผมเลย เอาให้ user รู้ว่าจะได้ของประมาณวันไหน แล้ว ค่าใช้จ่ายเท่าไหร่ มี QR code หรือ เลข บัญขีรับเงินให้เรียบร้อย (เดี๋ญวผมบอก เลขอีกครั้ง mock ไปก่อน)"
+    - "16 โอเค"
+    - "17 ยังไม่มีน้ำหนัก เดี๋ยวบอกทีหลัง"
+    - "18 รถขนได้คันละ 1200 ต้น"
+    - "19 1700 - 1900 บาท (กรณีจากใต้ไปเหนือ ซึ่งยาก เราอยู่จันทบุรี)"
+    - "20  70B เดี๋ยวนับให้ แล้วไปแก้ครับ"
+    - "export ผมว่าควรจะไปอยู่ใน ignore folder ใน praneet-office น่าจะตรงประเด็นนกว่า"
+    - "ข้อ 7 ถูกต้องละ"
+    - "ข้อ 9 โอเค ผมว่าเอาตามนี้"
+    - "ข้อ 21 ใช่ เฉพาะที่ผมบอกว่าพร้อมขายแล้วเท่านั้น ไม่รับ pre order แหละ"
+    - "** 1 กรงใส่ได้ 100 ต้น นอกนั้นโอเค"
+    - "ถ้าไม่มีอะไรและทุกอย่าง พร้อม ก็ go ได้เลย ไม่ติดอะไร งานจบแล้วสรุปครับ ถ้า มีปัญหา หยุดให้ผม เคาะก่อน"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "6"
+  repository:
+    head: 2b0ba8539624652b408ee08174ad0ddb479fc12f
+    branch: hq/20261009
+  sources:
+    - "Vercel docs read 2026-10-11 (Blob pricing, updated 2026-09-23; Pro plan, updated 2026-09-15): Blob storage $0.023 per GB-month from the Pro team's $20 monthly credit; private and public stores cost the same to store; del() is free. Neon docs: Free gives 1 GB storage per project."
+    - "Photo volume from the record (evt_20261010T161338): three rounds with one plot and one stick photo each, 0.6-1.0 MB per photo. A production read of the photos table was refused by the session's permission guard, so no live total was taken."
+    - "praneet-web main: @vercel/blob 2.8.0 accepts access 'private'; lots.current_count is one nullable number per lot."
+unresolved:
+  - "Real PromptPay ID and bank account: the owner gives them later; the card shows placeholders until then."
+  - "Bag weight: the owner gives it later."
+  - "70-B count: the owner counts and edits it himself."
+  - "Production steps in order: create the private Blob store, set its token in Vercel, run migration 004 while the PR is draft, then the owner merges."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build orders, private slips, phone customers, the order summary card and
+    the stale-round warning in praneet-web; the slip archive script, runbooks
+    and order queries in praneet-office; open draft PRs with the production
+    order written first.
+  acceptance_check:
+    - The slice 6 DoD in PLAN.md revision 0.6.

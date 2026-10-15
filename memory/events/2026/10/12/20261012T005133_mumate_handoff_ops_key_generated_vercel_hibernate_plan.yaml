@@ -1,0 +1,84 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T005133_mumate_handoff_ops_key_generated_vercel_hibernate_plan
+type: closeout
+recorded_at: 2026-10-12T00:51:33+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Hand MuMate over for the next session: the owner's statements of this
+    round, the new production ops key (generated, not placed), the read-only
+    Vercel inventory for slice 7, and the decisions waiting for the owner.
+    Cold-session entry for MuMate.
+  scope:
+    - Read-only checks of Vercel (CLI listings, env names only, public GETs), GitHub rulesets, mumate-prod-1 and mumate-2; one key generated into .assets.
+  out_of_scope:
+    - Any Vercel, DNS or production env change (none made).
+
+outcome:
+  status: recorded
+  owner_statements:
+    - "Production releases: the owner keeps the final press himself until things settle (\"ถือว่าจบเรื่อง release ขั้นสุดท้าย ให้เป็นผมเอาไว้ก่อนจนกว่าจะนิ่ง\"). Agents run the readiness check and report; the owner presses promote-production."
+    - "Vercel: no flip-back to Vercel as the plan (\"เราจะไม่ถอยกลับไปที่ vercel แล้ว\"), but the owner wants both projects kept hibernated - auto-deploy off, main domain removed, maintenance page left up, all env removed - as a last-resort path. Not yet authorized to execute."
+    - "Tokens that live in Vercel env (VERCEL_TOKEN, RENDER_API_KEY, GITHUB_TOKEN): the owner agrees to revoke them (\"ยกเลิกได้เลย\"); revocation is in his dashboards."
+    - "The owner tells the team himself that Vercel previews end (staging replaces them)."
+  production: "fe bc1be69 / bazi e73f571 since run 38143352530 (20261011T203556); unchanged this round."
+  ops_key:
+    generated: ".assets/mumate/ops-dashboard-key.production.20261012.env (600, gitignored, never printed): one line OPS_DASHBOARD_KEY=, 44 url-safe characters."
+    placed_on_prod_1: "No - production env change waits for the owner's word. Do not hand the key to the team before it is placed and the owner has logged in with it."
+    procedure_when_ordered: "Back up env/fe.env on prod-1 by name; replace the OPS_DASHBOARD_KEY line; recreate fe (about 10 s behind the maintenance page); owner logs in to /ops with the new key; then the old key file .assets/mumate/ops-dashboard-key.production.env may be deleted by name."
+    observed: "prod-1's OPS_DASHBOARD_KEY still equals the 2026-10-09 saved file, but no longer hashes equal to mumate-2's (the 10-09 record had them equal; mumate-2 fe.env mtime 2026-09-27). Not chased - the new key replaces it."
+    glass_box: "GLASS_BOX_KEY on prod-1 has the same history (taken from staging at cutover); whether to renew it is open - the master's /glass-box link would change."
+  vercel_inventory:
+    projects: "MuMate has exactly two Vercel projects, mootech-fe and bazi-sft-dataset; every other project in the account (praneet-web, clear-together, jaothui-*, others) is out of scope."
+    mootech_fe: "Live at mootech-fe.vercel.app on bc1be69 (auto-built on merge), pages show the maintenance page, /api/health answers db ok on the production database; project still holds the domain bazichart.mumate.co (DNS already points to DO); mumate.co is a domain entry in the Vercel account."
+    bazi_sft_dataset: "Live and public at bazi-sft-dataset.vercel.app with db ok on the production database and no maintenance gate - an unwatched second engine. The 2026-09-27 plan facts said ADMIN_DOCTRINE_TOKEN was unset there; not re-checked."
+    old_deployments: "Generated deployment URLs of both projects answer 302 to Vercel login (Deployment Protection), so old deployments are not public."
+    env_names_only_on_vercel: "fe: ADMIN_DOCTRINE_TOKEN AI_CONSUME_SECRET CONSENT_SECRET CREDIT_ENFORCE ENVIRONMENT GITHUB_TOKEN HOST LAUNCH_DEPLOY_HOOK_URL LAUNCH_KEY NEXT_PUBLIC_* (build-time) RENDER_API_KEY VERCEL_TOKEN WHATIF_KEY BAZI_BASE_URL (compose sets it on DO). bazi: Neon integration keys (DATABASE_URL*, PG*, POSTGRES_*, NEON_*, VITE_NEON_AUTH_URL), Clerk keys, VERCEL_SUPPORT_LARGE_FUNCTIONS. Production on DO runs without them."
+    neon: "bazi's runtime reads APP_DATABASE_URL (Supabase) first; the Neon database attached through Vercel holds nothing the runtime reads (research/bazi-vercel-inventory.md). Whether it holds data worth keeping is unknown; deleting it is the owner's decision."
+    github: "No ruleset or branch protection requires a Vercel check (mootech-fe ruleset 'main' is disabled; bazi has none), so removing Vercel does not block merges."
+    staging_github_token: "mumate-2 fe.env has GITHUB_TOKEN (used by /ops activity); if it is the same token as Vercel's, revoking it empties staging's activity panel."
+  hibernate_plan_proposed:
+    why_not_env_delete_alone: "A Vercel deployment carries env as of its build, so deleting env leaves the running deployment connected to production; and the fe maintenance gate is itself an env (MAINTENANCE_MODE), so a rebuild without env would serve a broken app."
+    steps_per_project:
+      - "1. Disconnect Git (no builds on merge, no PR comments)."
+      - "2. mootech-fe: remove bazichart.mumate.co from the project (and mumate.co from the account)."
+      - "3. Deploy a static HTML maintenance page as production (no app code, no database)."
+      - "4. Remove all env; for bazi disconnect the Neon integration (deleting the Neon database is a separate decision)."
+      - "5. Verify both *.vercel.app hosts show maintenance and no longer report db ok."
+    order: "bazi-sft-dataset first (public and connected to production today), then mootech-fe."
+    fallback_after: "Old deployments stay behind Vercel login; 'Promote to Production' on the last pre-disconnect deployment plus a DNS change by the DNS person brings the app back (secrets stay baked in those protected deployments; deleting them would remove this path)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: "6399604"
+    branch: hq/20261009
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/11/20261011T203556_mumate_first_teammate_release_promoted.yaml
+    - memory/events/2026/10/11/20261011T195717_mumate_handoff_before_clear_team_merges_on_staging.yaml
+    - memory/events/2026/10/09/20261009T045935_mumate_team_account_deleted_via_ops_key_mismatch_found.yaml
+    - workstreams/mumate-vercel-to-do-001/research/bazi-vercel-inventory.md
+
+unresolved:
+  - "Owner decisions waiting: (a) place the new ops key on prod-1 now; (b) renew GLASS_BOX_KEY too; (c) authorize the Vercel hibernate steps, executed by the agent through the CLI one at a time or by the owner in the dashboard; (d) keep or delete the Neon database."
+  - "bazi-sft-dataset.vercel.app stays public and connected to the production database until (c)."
+  - "Token revocation (VERCEL_TOKEN, RENDER_API_KEY, GITHUB_TOKEN) is the owner's, in his dashboards; mumate-be-retirement-001 step 6 (Render delete) is due from 2026-10-12 and can carry RENDER_API_KEY."
+  - "Other open items from 20261011T195717: env/*.bak-* on prod-1 (4) and mumate-2 (3); production backup still only on mumate-2; DNS TTL 300 -> 3600."
+  - "bazi changes reach production without PRs (direct pushes to pdf-dev); owner's call whether to raise it with the team."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Next session: Wake, read this record, and ask the owner decisions (a)-(d)
+    in Thai; on (a) place the ops key per the procedure above and have the
+    owner log in before the team gets it; on (c) start with bazi-sft-dataset.
+  acceptance_check:
+    - "A cold session can state where the new ops key is, that it is not live yet, and the Vercel hibernate plan with its order, from this record."

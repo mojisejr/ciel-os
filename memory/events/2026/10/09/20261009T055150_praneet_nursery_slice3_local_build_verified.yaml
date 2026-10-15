@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T055150_praneet_nursery_slice3_local_build_verified
+type: closeout
+recorded_at: 2026-10-09T05:51:50+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Checkpoint inside slice 3 - the lot database, back office and measurement form are built and verified locally.
+  scope:
+    - Private repositories created and registered; application and office work on local feature branches; local databases only.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Neon read-only check: the Free organization holds 3 of 100 projects (Free does not bill overages). A second organization 'Vercel: non's projects' is on the paid Launch plan and will not be used."
+    - "Created private GitHub repositories mojisejr/praneet-web and mojisejr/praneet-office; both registered in CIEL and visible to Wake as available bindings."
+    - "praneet-web feat/slice3-lots a617785: Next.js /ops with one operator account (email + password, signup disabled, sign-in limited to 8 a minute), bag lots with ordered grafting sources, measuring rounds (quick ranges and a custom range, upright share in 10 percent steps, required plot and metre-stick photos, optional extra and spin frames), owner-only status and per-shape prices, account/import/backup/restore/reader scripts, DESIGN.md from the accepted brief."
+    - "Checks: tsc clean; next build succeeds; Playwright 12 of 12 pass (access control and refused signup, recording flow with photos, ranges, status and prices persist, add lot, no sideways scroll at 360/390/430/768/1024/1440 on every page, axe without critical or serious findings in light and dark, 56/44 px touch targets, LINE in-app user-agent smoke)."
+    - "Backup and restore drill: 4 lots, 2 rounds, 7 photos and the operator restored into an empty database with identical row digests and photo hashes; a second restore into the non-empty target was refused."
+    - "Reader role: praneet_reader reads lots and measurements, is denied the account table and any write."
+    - "praneet-office feat/slice3-office 3ddb6d0: data/initial-lots.json (70-A 18 Aug 700 bags, 70-B 11 Sep count pending, 70-C 6-7 Oct 5,600 bags; no worker or customer names), runbook 00 for the owner, read-only lot summary script."
+    - "The owner's credentials file .assets/preneet/.env was tightened to mode 600; its values were never printed. The username is an email, so the back office signs in with email and password."
+  not_completed:
+    - "Remote main is empty in both repositories: the agent's push of the baseline commit was blocked by the owner's guard against pushing to main in other repositories, so the owner pushes the baselines; the feature branches are not pushed yet to avoid GitHub adopting them as the default branch."
+    - "No Neon project, Vercel project, Blob store or production deployment exists yet; each needs the owner's confirmation."
+    - "Not verified: a real LINE in-app browser on Android and iPhone, photo capture inside LINE, and the owner's own 3-minute measurement on his phone."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "e789f713e424ecaf07102f338838bb0f8f6d88db"
+    branch: hq/20261009
+    working_tree: this-record-only
+  child_repositories:
+    praneet-web: "feat/slice3-lots a617785 (local, unpushed)"
+    praneet-office: "feat/slice3-office 3ddb6d0 (local, unpushed)"
+unresolved:
+  - "Owner: push the baseline commits to main of both repositories (two commands, README and ignore rules only)."
+  - "Owner confirmation needed: create Neon project 'praneet' in the Free organization (aws-ap-southeast-1), Vercel project 'praneet-web' on the existing Pro team with a public Blob store, and the praneet_reader role on Neon."
+  - The 11 September bagging batch count is to be counted by the owner.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    After the owner pushes main, push both feature branches and open draft
+    PRs; with the owner's confirmation create the Neon and Vercel resources,
+    deploy, import the three lots, and have the owner record the first real
+    round on his phone, including inside LINE.
+  acceptance_check:
+    - The owner records a real measuring round on his phone within 3 minutes and it appears on /ops/lots/<code>.

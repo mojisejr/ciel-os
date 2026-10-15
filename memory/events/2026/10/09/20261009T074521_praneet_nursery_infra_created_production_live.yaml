@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T074521_praneet_nursery_infra_created_production_live
+type: closeout
+recorded_at: 2026-10-09T07:45:21+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Record the hosted resources created for slice 3 and two deviations found while creating them.
+  scope:
+    - Neon, Vercel and Blob creation under evt_20261009T073926_praneet_nursery_infra_creation_authorized; no application change beyond a README correction.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Neon project late-hat-85016594 'praneet' in Free organization org-autumn-feather-44217443, aws-ap-southeast-1, Postgres 18, one branch main. Migrations 000 and 001 applied. Connection strings are kept in praneet-web/.local/secrets (git-ignored, mode 600) and in Vercel env; never printed."
+    - "Operator account created from the owner's file (email + password, hashed); lots 70-A, 70-B, 70-C imported from praneet-office data/initial-lots.json."
+    - "Read-only role praneet_reader created with SQL; reads lots, denied the account table and any write; not a member of neon_superuser."
+    - "Vercel project prj_AriMpn1FFTbHOsWyDqvj7axEALPj 'praneet-web' on the Pro team, connected to github mojisejr/praneet-web, production branch main, domain praneet-web.vercel.app. Production env: DATABASE_URL (pooled, sensitive), BETTER_AUTH_SECRET (sensitive), BETTER_AUTH_URL, BLOB_READ_WRITE_TOKEN from the public Blob store store_2vmSVp7Lvzx4wCN1 'praneet-photos'."
+    - "Production smoke (read-only, owner account): / 200, /ops redirects to login, sign-in works, three lots listed, measurement form loads, no sideways scroll at 390 px, the same with a LINE in-app user agent; HSTS, X-Frame-Options DENY and X-Robots-Tag noindex on /ops."
+  deviations:
+    - "The first Neon reader role was created with neonctl and joined neon_superuser; a test INSERT succeeded. The test row was deleted (graft_batches back to 0 rows, before any real data), the role deleted, and the role recreated with SQL. praneet-web README and scripts/grant-reader.ts now say to create it with SQL (commit bdc5ddc)."
+    - "Vercel's new-project default protected every vercel.app URL including production (all_except_custom_domains), which would block the owner on his phone and in LINE. Protection was changed to previews only, Vercel's standard setting; the back office keeps its own login."
+    - "The first Git deployment of the new project became production from the PR branch (dpl_5mkRpEjrVRZ12YEoAb2XLDttFidR, feat/slice3-lots bdc5ddc) although the production branch is main; the agent did not request a production deployment. It serves exactly the PR content and is left in place for the owner's phone check; the owner's merge deploys main over it."
+  not_completed:
+    - "The owner's own measuring round on his phone, in a normal browser and inside LINE, including photo upload to Blob, is not done yet; it is the remaining slice 3 DoD. Blob writes are untested in production."
+    - "PRs praneet-web#1 and praneet-office#1 remain drafts and unmerged."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "b1c33930565372b046958eddec97fa5d6d111fce"
+    branch: hq/20261009
+    working_tree: this-record-only
+  child_repositories:
+    praneet-web: "feat/slice3-lots bdc5ddc (pushed, PR #1 draft)"
+    praneet-office: "feat/slice3-office 3ddb6d0 (pushed, PR #1 draft)"
+unresolved:
+  - "Owner: record the first real round at https://praneet-web.vercel.app/ops/measure on the phone, once from Chrome and once by opening the link inside LINE; report time taken and anything awkward."
+  - The 11 September bagging batch count is to be counted by the owner.
+  - Vercel Pro usage is metered; Blob storage for lot photos is expected to be small.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    After the owner's phone check, record the slice 3 closeout on the PRs'
+    evidence, mark both PRs ready, and the owner merges.
+  acceptance_check:
+    - A real measuring round with both required photos appears at /ops/lots/<code> on production.

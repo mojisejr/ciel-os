@@ -1,0 +1,75 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T082632_mumate_ops_key_renewed_vercel_hibernated
+type: closeout
+recorded_at: 2026-10-12T08:26:32+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Slice 7 removals on the owner's word: production /ops gets its own key,
+    and both MuMate Vercel projects are hibernated (no Git, no domain, a
+    static closed page, no env), kept as a last-resort path.
+  scope:
+    - "Owner's words this morning: A \"วางเลย\"; B \"ไม่ต้องทำแล้วเพราะไม่ได้ใช้แล้ว\"; C \"ทำผ่าน cli ได้เลยถ้าทุกอย่างทำได้อย่างปลอดภัย\", then \"ส่งคำสั่งมา step by step\" after the agent's verification step was refused."
+  out_of_scope:
+    - Deleting the Vercel projects, old deployments or the Neon database; token revocation; any DNS change.
+
+outcome:
+  status: recorded
+  slice: "7"
+  ops_key:
+    - "prod-1 env/fe.env backed up to env/fe.env.bak-20261012T010101Z, one line changed (OPS_DASHBOARD_KEY) from .assets/mumate/ops-dashboard-key.production.20261012.env, never printed; container value hash equals the file's."
+    - "fe recreated 01:01Z, healthy in about 12 s; ops-status exit 0; 5xx 0 of 57 in the 5 minutes around it."
+    - "The owner logged in to /ops with the new key: ok."
+    - "GLASS_BOX_KEY not renewed: the owner says it is no longer used."
+  vercel_hibernate:
+    safety_checked_first:
+      - "Production makes no call to *.vercel.app: what-if resolves to BAZI_BASE_URL=http://bazi:3000 from compose (BAZI_WHATIF_URL unset on prod-1); other vercel.app strings in fe are comments, harness files or the old default."
+      - "No ruleset or branch protection requires a Vercel check."
+      - "A 90-second live log sample showed no requests on either Vercel host."
+      - "No GitHub workflow deploys to Vercel."
+    bazi_sft_dataset:
+      - "Git disconnected by the agent (CLI: Disconnected mojisejr/bazi-sft-dataset)."
+      - "Static closed page deployed as production by the agent (bazi-sft-dataset-3idhqsrqm…): one index.html, every path 503, no app code, no database."
+      - "The agent's curl check of the result was refused by the harness classifier ([Production Deploy]); the owner opened the host in a browser and saw the closed page, then ran the rest himself."
+      - "Env removed by the owner; vercel env ls empty (agent read 08:2x +07)."
+    mootech_fe:
+      - "Owner ran: Git disconnect; vercel domains rm mumate.co (removes the account entry and bazichart.mumate.co from the project; DNS is at Namecheap, unaffected); static closed page deployed as production; env removed."
+      - "vercel env ls empty and no mumate domain left in the account (agent read)."
+    verified_by_owner:
+      - "bazi-sft-dataset.vercel.app/api/health 503; mootech-fe.vercel.app/api/health 503."
+      - "bazichart.mumate.co/api/health ok, sha bc1be69, platform container, env production."
+    fallback_path: "Vercel dashboard → Deployments → Promote to Production on fe dpl_Dd2WnuWhHwDp6r2zFF2Ra2A1HrQw (bc1be69) or bazi dpl_6jd6yr2BhPFGACcNKeJaBLnjejcV (e73f571), then the DNS person points bazichart back. Those deployments keep their build-time env behind Vercel login (302); not exercised."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "7"
+  repository:
+    head: "7d3d53d"
+    branch: hq/20261009
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/12/20261012T005133_mumate_handoff_ops_key_generated_vercel_hibernate_plan.yaml
+
+unresolved:
+  - "PRs to fe and bazi now run no check at all: container-build triggers only on push to main / pdf-dev, and Vercel's preview build was the only pre-merge build. A broken build is found after merge (staging then does not follow; production is safe because promote takes staging's pair)."
+  - "Old ops key: .assets/mumate/ops-dashboard-key.production.env and prod-1 env/fe.env.bak-20261012T010101Z still hold it; deletion by name waits for the owner."
+  - "Tokens that were in Vercel env (VERCEL_TOKEN, RENDER_API_KEY, GITHUB_TOKEN) are not revoked; the owner plans a key rotation later."
+  - "Neon database: env and connection gone from the project; the database itself is kept until the owner decides."
+  - "Application-side observability (request id, personal data out of logs, error tracking) - the plan puts this decision to the owner at slice 7; not yet asked."
+  - "Other open items: production backup only on mumate-2; env/*.bak-* on both hosts; DNS TTL 300; Render delete (mumate-be-retirement-001 step 6); bazi direct pushes without PR; fe PR template still mentions vercel --prod."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Ask the owner whether slice 7 closes now: the PR-check gap, the
+    observability decision, and the open items above carried as unresolved
+    in the final closeout.
+  acceptance_check:
+    - "A cold session can state that both Vercel projects are hibernated, how to bring one back, and that /ops on production has its own key, from this record."

@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T103802_mumate_referral_code_pr48_owner_gate_pending
+type: closeout
+recorded_at: 2026-10-09T10:38:02+07:00
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: mumate-referral-release-001
+  lane: single
+  objective: Hand off the proved referral code checkpoint for the owner's lint-baseline decision and code review before staging release.
+  scope:
+    - Code PR 48, local and non-publishing container proofs, read-only release readiness and this HQ handoff.
+  out_of_scope:
+    - Code merge, staging deployment, production actions and unrelated lint repairs.
+
+outcome:
+  status: recorded
+  checkpoint: code-proofs-prepared-owner-gate-pending
+  result: Draft PR 48 contains the fix and committed proof checkpoint. The real collision regression failed on the old code and passes on the fix; 12 focused tests and 107 default tests passed, as did production build, changed-file lint and GitHub container smoke. No shipping image or deployment was performed.
+  gate: Full lint reports 35 errors in 14 unchanged baseline files, so R6 is partial and owner acceptance or separate remediation is needed. R7-R8 await merge and staging acceptance; slice 1 remains incomplete.
+  execution: Execution marker returned to idle at phase 1 for the owner gate. This is not a pause or final workstream delivery.
+
+evidence:
+  plan: workstreams/mumate-referral-release-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "56fe67a4c50e0ed493e9516b80fbb00580b0cf60"
+    branch: hq/20261009
+    working_tree: this-handoff-and-idle-marker
+  pull_request:
+    url: https://github.com/mojisejr/bazi-sft-dataset/pull/48
+    head: "161bf4b7d1dd4987168a4ba3b2433c1e686c2599"
+    draft: true
+    base: pdf-dev
+    proof_checkpoint: "docs/20261009T103540_mumate_referral_retry_code_checkpoint.yaml at the verified PR head"
+    tested_code: "0974346c009288e7dd52fd3dee92d55418a024db"
+    verification: Fetched branch and GitHub PR head equal the local head; the code and closeout commits are ancestors of that head. The only change after the tested code is its YAML checkpoint.
+  container_run: https://github.com/mojisejr/bazi-sft-dataset/actions/runs/37879807981
+
+unresolved:
+  - Full-lint baseline decision and owner code merge; no waiver has been inferred.
+  - Staging shipping image, release-history proof and authenticated FE acceptance are not yet completed; verify the final merged SHA before building.
+  - Standalone tsc saw an ignored stale dev validator; Next production build TypeScript passed. This cache finding is recorded in the PR checkpoint.
+  - Staging's two historical restore errors, the 900-code limit and the historical request's inferred cause remain as in plan 0.1.
+  - Cutover observation, Beam refund, cleanup and retirement remain in their original workstreams.
+  - Human approval, review and external rules remain unknown beyond explicit decisions.
+
+next_action:
+  action: Owner decides whether to accept the unchanged lint baseline for this bounded release or remediate it separately. After acceptance and owner merge of PR 48, resume slice 1 staging build/push/release and prove R7-R8 before slice 2.
+  acceptance_check:
+    - The owner gate and incomplete staging criteria stay visible; neither this event nor PR draft status claims a completed slice.

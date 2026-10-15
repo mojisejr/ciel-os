@@ -1,0 +1,6 @@
+schema_version: ciel.project.v0.1
+id: praneet-web
+repository:
+  vcs: git
+  canonical_remote: github.com/mojisejr/praneet-web
+  default_branch: main

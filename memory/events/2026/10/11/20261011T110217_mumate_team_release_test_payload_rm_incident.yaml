@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T110217_mumate_team_release_test_payload_rm_incident
+type: closeout
+recorded_at: 2026-10-11T11:02:17+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-team-release-001
+  lane: single
+  objective: >-
+    Record, at the owner's request ("เก็บข้อมูล ลง closeout ด้วยนะประสบการณ์นี้
+    อันตรายมาก"), the incident in which a test the agent wrote ran a real
+    rm -rf on the owner's Mac, what it touched, how that was established, and
+    what should keep it from happening again.
+  scope:
+    - The cleanup PR's test work in the local mumate-infra checkout, the forensic replay, the damage survey.
+  out_of_scope:
+    - Changing AGENTS.md or OWNER.md (the owner will discuss first).
+
+outcome:
+  status: recorded
+  owner_assessment: "rm -rf นี่แย่ที่สุด ที่เคยเจอมา ตั้งแต่ทำงานกับคุนแล้ว ... ก่อน push ผมอยากแน่ใจว่าไม่มีอะไรพัง"
+  what_happened:
+    - "While adding tests for the named-steps cleanup (mumate-infra PR 53), the agent wanted to prove that production-release.sh strips unsafe characters from the release note. It wrote the test input as a real destructive command (NOTE containing '; rm -rf /') instead of a harmless marker."
+    - "It generated the two test lines through a Python string inside a bash heredoc, into scripts/promote.test.sh, whose harness runs every assertion through eval. The nested quoting ('\"'\"') broke; the input string swallowed the next line, and the check text became a live command: rm -rf with about 40 operands, run with the repository root as working directory."
+    - "The agent ran the test directly in the real checkout (/Users/non/ghq/github.com/mojisejr/mumate-infra), not in a scratch copy first."
+  damage:
+    - "Deleted: bin/deploy.sh in the local mumate-infra checkout (tracked, unchanged on the branch, never committed or pushed in deleted state). Restored with git checkout; byte-identical to origin/main."
+    - "Not touched, established by replay: '/' was not an operand (the first operand was '/' joined with the next line's text, a non-existent path); /opt/mumate does not exist on the Mac and /opt is root-owned; none of the other operand names (strips, git, main, cd, 0, ...) existed in the repository root."
+    - "Not provable after the fact: an ignored file with exactly one of those operand names in the repository root would also have gone; the ignored files present (.env, env/grafana-read.env, env/tailscale.env, .DS_Store) keep their September timestamps."
+    - "Outside the Mac: none. mumate-prod-1 and mumate-2 deploy-history, infra checkout (a8f4998) and ops-status unchanged; bazichart.mumate.co still fe 7ee35c4; no GitHub workflow run or push since 03:45Z until the owner's go."
+  how_it_was_established:
+    - "Rebuilt both earlier versions of the test file (the broken first run, and the second run) in a fresh scratch copy of the repository."
+    - "Replayed each under macOS sandbox-exec with writes denied outside the scratch folder and the user temp folder (probe: a write to the home folder was refused, a write inside scratch allowed), with logging stubs for rm, ssh, gh, git, curl, docker and mv first on PATH, and bash -x tracing."
+    - "The replay reproduced the real run's errors at the same lines (line 78 'Y: unbound variable', line 122 'caddy-1: command not found', exit 127). Outside the test's own fakes only that one rm and the normal temp cleanup were called; no sandbox denial; the script stopped at line 122."
+    - "File-by-file comparison of the replay copy against the real repository: same file list, zero differing files; the real repository showed only the five intended edits and no untracked files."
+    - "A first sandbox profile denied everything (several require-not filters in one rule are OR'ed); fixed with require-all and proven with the probe before the replay counted."
+  side_effects_left:
+    - "Two forensic folders in the session scratchpad (outside every repository); one could not be removed because the shell's working directory was inside it at the time. Harmless."
+    - "A Docker image rhysd/actionlint pulled earlier in the round for workflow linting."
+  fixed:
+    - "The test now uses a harmless payload (';', $(id), backticks, quotes) and compares against a variable, so no quote nests inside the eval'ed check string; full suite passes and the repository is byte-identical before and after the suite."
+    - "Agent memory rule written: no real destructive command in test input (use a marker file), new or edited tests in an eval harness run in a scratch copy first, edit shell tests directly rather than through another language's strings, git status after every test run."
+  agents_md_candidates_for_owner_discussion:
+    - "A test, fixture or example never contains a real destructive command; prove that input is neutralized with a harmless marker."
+    - "A new or changed test runs first in a scratch copy of the repository when the harness evaluates strings (eval, sh -c) or the test exercises deletion."
+    - "After any local command that can write (tests, generators, scripts), compare git status with what the change intended; an unexpected change stops the work and is reported to the owner before anything else."
+    - "Recovery from an agent-caused local deletion: restore from Git, replay in isolation to bound the damage, report with evidence; never continue to push first."
+
+evidence:
+  plan: workstreams/mumate-team-release-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "983f618"
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_request:
+    url: https://github.com/mojisejr/mumate-infra/pull/53
+    head: "e52ac97dcdd4c871bfaabbd2691d24ab80538593"
+
+unresolved:
+  - "Whether AGENTS.md (or OWNER.md) should carry any of the candidates above is the owner's decision; nothing was changed."
+  - "PR 53 awaits the owner's merge; its live proof is the next production press."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner merges PR 53; the agent checks it on main and records the
+    workstream's final closeout as the owner directed. The AGENTS.md
+    discussion is held when the owner chooses.
+  acceptance_check:
+    - "A cold session can state from this record what the rm incident touched, how that was proven, and which rules were proposed."

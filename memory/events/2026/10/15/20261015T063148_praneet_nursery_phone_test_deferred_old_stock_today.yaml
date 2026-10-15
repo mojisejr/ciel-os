@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T063148_praneet_nursery_phone_test_deferred_old_stock_today
+type: closeout
+recorded_at: 2026-10-15T06:31:48+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Morning check of 2026-10-15: the invite-link test from a second LINE
+    account is deferred; today the owner photographs the old stock, adds it as
+    a lot, and the first weekly post is drafted for his review.
+  scope:
+    - State of the morning of 2026-10-15; this record only.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Wake ran clean (expected-evolution from the previous handoff's checkpoint). Production read through praneet_reader only: lots 3 (70-A, 70-B, 70-C, all growing, no prices), customers 2, orders 0, posts 0."
+    - "Correction to evt_20261014T223946_praneet_nursery_handoff_before_clear, which said no referral codes: production holds 2 referral codes, one for each existing customer, issued 2026-10-14 about 19:52 +07:00, with private-page links issued about 22:40-22:41 +07:00. Who issued them is not established from the reader role (it cannot read the user table); the owner was asked and has not answered. Codes are not written here."
+    - "Invite-link test from a second LINE account deferred: the owner has no second account to test with. The agent advised that the test account must not be a real customer, because the first code read from chat stays on the customer and the board cannot clear it (praneet-web lib/line.ts codesFromChat), and that the order form is to be viewed, not saved, while no lot is ready."
+  owner_statements:
+    - "บัญชีที่สอง ไม่มีให้ทดสอบครับ เดี๋ยวค่อยทำนะ , เดี๋ยวว่างวันนี้เข้าไปเก็บภาพ เพิ่ม lot เก่าแล้วทำโพสแรก และ กลับมา ทดสอบ line link อีกครั้ง ครับ"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.9"
+  repository:
+    head: 9f15df8fbd84eaad92dd3f9b30e1901991151503
+    branch: hq/20261009
+unresolved:
+  - "Owner's phone test still open (slice 7 DoD): open the private page and invite link in LINE, tap the invite's LINE button from a second LINE account, see came-from pre-filled on the order form."
+  - "Old-stock lot: code, approximate bagging month, count, price, shop sentence, measuring round with plot and metre-stick photos including the worst tree still sold."
+  - "First weekly post: card and text drafted for the owner's review before posts new; no shipping price until trees per cage at 3-4 kg bags is confirmed."
+  - "Who issued the two existing referral codes (likely the owner testing on 2026-10-14)."
+  - "Order-form label 'กลุ่ม Facebook' -> 'Facebook' (text only) still unanswered."
+  - "Remote feature branches in both repos are left for the owner; HQ hq/20261009 publishing is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    When the owner says the old-stock lot is added, render its card with bun
+    run posts card and draft the first post text in praneet-office
+    posts/drafts/ for his review; then support the LINE link test.
+  acceptance_check:
+    - The owner approves the card and text before posts new uploads it.
+    - The slice 7 DoD in PLAN.md revision 0.9.

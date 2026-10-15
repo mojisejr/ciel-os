@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T075506_praneet_nursery_handoff_before_clear
+type: closeout
+recorded_at: 2026-10-09T07:55:06+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Handoff before the owner clears the session; slice 3 waits only on the owner's phone check.
+  scope:
+    - State of 2026-10-08/09; no further change.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Slices 1-2 closed (workstream open; design accepted, BRIEF.md, plan revision 0.3). Slice 3 built, tested locally (Playwright 12/12, backup/restore drill, reader role) and deployed; see evt_20261009T055150 and evt_20261009T074521."
+    - "Production https://praneet-web.vercel.app serves praneet-web feat/slice3-lots bdc5ddc with the owner account and lots 70-A, 70-B, 70-C."
+    - "Nothing needs merging before the clear: both child PRs are pushed drafts with clean checkouts, and every HQ record is committed on hq/20261009."
+  resume:
+    read_first:
+      - workstreams/praneet-nursery-001/PLAN.md
+      - workstreams/praneet-nursery-001/design/BRIEF.md
+      - memory/events/2026/10/09/20261009T074521_praneet_nursery_infra_created_production_live.yaml
+    local:
+      - "checkouts/praneet-web: local Postgres in .local/pg on port 55441 (stopped at handoff; start with pg_ctl -D .local/pg -l .local/postgres.log -o '-p 55441 -h 127.0.0.1' start); .env.local for development."
+      - "checkouts/praneet-web/.local/secrets (git-ignored, mode 600): neon-direct.url (owner role), neon-pooled.url, neon-reader.url (praneet_reader). Use the reader URL for analysis; never print any of them."
+      - "Owner back-office credentials: .assets/preneet/.env (git-ignored, mode 600)."
+    hosted:
+      - "Neon project late-hat-85016594 (Free org org-autumn-feather-44217443). Never use the paid organization 'Vercel: non's projects'."
+      - "Vercel project prj_AriMpn1FFTbHOsWyDqvj7axEALPj on team team_PFECFGw4REYizJFHPCHjFLUg; Blob store store_2vmSVp7Lvzx4wCN1 praneet-photos (public); protection previews only."
+    pull_requests:
+      - "https://github.com/mojisejr/praneet-web/pull/1 (draft, head bdc5ddc)"
+      - "https://github.com/mojisejr/praneet-office/pull/1 (draft, head 3ddb6d0)"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "29fc34d06e71d9d34c8d92c4edecf18bdc250840"
+    branch: hq/20261009
+    working_tree: this-record-only
+unresolved:
+  - "Owner: record a real round at https://praneet-web.vercel.app/ops/measure from Chrome and from inside LINE; report minutes taken and friction. Blob uploads are untested in production until then."
+  - "Owner: count lot 70-B (bagged 11 Sep)."
+  - "Owner may say whether the July Vercel project planeet-panmai-line-app has a LINE OA or channel worth reusing in slice 5; the agent has not touched it."
+  - "The shop domain is undecided; it is needed before the board is shared in slice 4."
+  - "HQ hq/20261009 is ahead of origin/main (also carries a MuMate record from another session); pushing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    When the owner reports the phone check, verify the round on production
+    with the reader role, record the slice 3 closeout with the PR numbers and
+    observed heads, update both PR descriptions, mark them ready, and the
+    owner merges; then ask for the slice 4 go.
+  acceptance_check:
+    - A real round with plot and stick photos appears at /ops/lots/<code> on production and in the reader summary.

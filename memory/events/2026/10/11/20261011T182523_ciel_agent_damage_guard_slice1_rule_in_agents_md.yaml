@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T182523_ciel_agent_damage_guard_slice1_rule_in_agents_md
+type: closeout
+recorded_at: 2026-10-11T18:25:23+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-agent-damage-guard-001
+  lane: single
+  objective: Slice 1 - the rule every client follows, appended to the Execute line of AGENTS.md.
+  scope:
+    - AGENTS.md Execute line; the agent's memory note.
+  out_of_scope:
+    - Slices 2 and 3.
+
+outcome:
+  status: recorded
+  slice: "1"
+  result: >-
+    AGENTS.md Execute line now ends: "Never put a real destructive command in
+    a test, fixture or example; prove neutralization with a harmless marker.
+    After any local run that can write, compare git status with the intended
+    change; anything unexpected stops the work and goes to the owner before any
+    push." No line or heading added: 104 lines before and after, 1,475 to
+    1,520 words. bun run check: 45 pass, 0 fail. git status after the check:
+    AGENTS.md only (the new rule applied to its own change). The agent's
+    memory note was trimmed to what AGENTS.md does not say (the three-layer
+    quoting trap, mumate-infra's eval harness until slice 2, the sandbox-exec
+    forensic method); its index line was rewritten, no file added.
+  scope_of_effect: "Both clients read AGENTS.md at Wake; the rule takes effect for Codex and Claude sessions on this branch now and on main after the owner's HQ round."
+
+evidence:
+  plan: workstreams/ciel-agent-damage-guard-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "e7b049c"
+    branch: hq/20261009
+    working_tree: AGENTS.md and this record
+
+unresolved:
+  - "Slice 2 (mumate-infra disposable-copy runner) and slice 3 (backup standard and this Mac) wait for their go."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: With the owner's go, slice 2 - scripts/test-all.sh in mumate-infra.
+  acceptance_check:
+    - "A deliberately destructive test run through the runner leaves the real checkout unchanged."

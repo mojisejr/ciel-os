@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T163114_praneet_nursery_round_edit_live_owner_corrects_70c
+type: closeout
+recorded_at: 2026-10-10T16:31:14+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record the merge of round corrections and the production migration;
+    slice 3 now waits only on the owner correcting 70-C in Chrome.
+  scope:
+    - Production migration 002 on the owner's go, read-only verification, child checkout sync.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Owner merged praneet-web PR 2 at 2026-10-10T09:28:22Z (merge 96c9994) and praneet-office PR 2 at 2026-10-10T09:28:49Z (merge 57e4308), before the migration ran."
+    - "On the owner's go ('คุน run migration ได้เลย'), migration 002_corrections.sql was applied to production right after; the production deployment of the merge was created at 16:28:24 +07, so /ops pages could have failed for about two minutes before the columns existed. No row changed: the reader check shows the same three rounds and audit_events counts (create 3, measure 3, update 2)."
+    - "Reader role sees measurements.hidden_at, measurements.updated_at and photos.hidden_at."
+    - "Production smoke as the owner account, read only: / 200, /ops/login 200, unauthenticated PATCH of a round 401; /ops lists 70-A, 70-B, 70-C; the measure form preselects no height; the 70-C editor opens with its values and both photos. Nothing was saved."
+    - "Child checkouts praneet-web and praneet-office are on clean main equal to origin/main; merged local branches deleted, remote branches left for the owner."
+  not_completed:
+    - "70-C is still 30-40 cm; the owner corrects it to under 30 cm in Chrome, which closes the Chrome half of the slice 3 phone check."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: 0125745683a5b31e0ada4e53fb2e4f7f8e561722
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 2
+      base: main
+      state: MERGED
+      merge_commit: 96c9994
+    - repository: github.com/mojisejr/praneet-office
+      number: 2
+      base: main
+      state: MERGED
+      merge_commit: 57e4308
+unresolved:
+  - "Owner: correct 70-C to <30 in Chrome from /ops/lots/70-C."
+  - "Lot counts are not reconciled (70-A 700 vs about 470; 70-B bagged count; 8,100 vs about 12,000); the owner can now fix them with 'แก้จำนวนต้น'."
+  - "Whether 70-A's 30-40 cm was chosen or the old preselected value is not confirmed."
+  - "The shop domain is undecided; it is needed before the board is shared in slice 4."
+  - "Owner may say whether planeet-panmai-line-app has a LINE OA worth reusing in slice 5."
+  - "HQ hq/20261009 is ahead of origin/main and carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    After the owner corrects 70-C in Chrome, verify the corrected round and its
+    edit_round audit row with the reader role, record the slice 3 closeout
+    (slice 3, plan revision 0.4), then propose slice 4 (public lot board, stick
+    photo as main image) with the domain decision.
+  acceptance_check:
+    - "Reader summary shows 70-C at 0-30 cm, and audit_events has an edit_round row for 70-C with before 30-40 and after 0-30."

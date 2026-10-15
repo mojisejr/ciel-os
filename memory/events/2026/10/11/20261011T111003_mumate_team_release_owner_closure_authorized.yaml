@@ -1,0 +1,44 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T111003_mumate_team_release_owner_closure_authorized
+type: decision
+recorded_at: 2026-10-11T11:10:03+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-team-release-001
+  lane: single
+  objective: Record the owner's instruction to close the workstream once the cleanup PR was checked, without waiting for the team's first merge.
+  scope:
+    - Plan 0.1 closure on slice 4.
+  out_of_scope:
+    - Any further change to releases, hosts or the app repositories.
+
+outcome:
+  status: decided
+  slice: "4"
+  decision: >-
+    Asked whether to close now or after the team's first merge went through,
+    the owner said "ผมคิดว่าทำ PR เก็บงานแล้วถ้าเกิดว่าปิดได้เลยหลัจากเรา
+    เชค PR สุดทา้ยก็ปิดเลย", then "merged แล้วครับ เก็บกวาดแบ้วมาคุย กันเรื่องป้องกัน เหตุการณ์นี้ไม่ให้เกิดขึ้นอีก ครับ" after
+    merging mumate-infra PR 53. Slice 4's owner half (a merged pair promoted
+    from the phone) is proven; its teammate half is accepted as not yet
+    exercised. Close plan 0.1.
+
+evidence:
+  plan: workstreams/mumate-team-release-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "4"
+  repository:
+    head: "482dc5167d5bc7686acec88c38cdf5a5599ce466"
+    branch: hq/20261009
+
+unresolved:
+  - "The first teammate merge through staging to the owner's promote is not yet observed; closure does not claim it."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Record the final closeout, mark the plan completed, then hold the prevention discussion the owner asked for.
+  acceptance_check:
+    - Wake reports mumate-team-release-001 completed.

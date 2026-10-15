@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T203556_mumate_first_teammate_release_promoted
+type: closeout
+recorded_at: 2026-10-11T20:35:56+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Release the team's pending pair to production: runbook 01 readiness check
+    by the agent (read-only), owner presses promote-production from the phone,
+    agent watches and verifies.
+  scope:
+    - Read-only checks on mumate-prod-1 and mumate-2; local fetch and diff of fe and bazi; GitHub run watch.
+  out_of_scope:
+    - Any env, DNS or Vercel change; the open items listed in the 19:57 handoff.
+
+outcome:
+  status: recorded
+  result: >-
+    Production now runs fe bc1be69 / bazi e73f571 (was 7ee35c4 / 293c95b),
+    pressed by the owner in GitHub Mobile (promote-production run
+    38143352530, 13:29:09Z, infra 2167255); every gate passed, deploy ok, the
+    5-minute watch saw 5xx 0 of 93. First release of a teammate's merges
+    through staging-follow and the owner's button, and the first press of the
+    named steps from mumate-infra PR 53.
+  readiness_check_before_press:
+    - "Production 19:59 +07: ops-status exit 0; 5xx 0 of 457 in 30 min; db_query_stall 0 in 2h; health journal healthy only; cron 2978 runs in 24h, none non-200."
+    - "Staging: staging-pair --soak 10 ok, pair unchanged since 11:22:19Z (97 min); fe origin/main and bazi origin/pdf-dev equal the staging pair."
+    - "Migrations: none (fe touches no lib/db/*.sql; bazi only adds optional zod fields in schema-types.ts)."
+    - "Env: no new env needed on prod-1. fe uses BAZI_BASE_URL, set by compose on both hosts. bazi adds CHAT_CARD_NOTE_FENGSHUI (default on), CHAT_CARD_NOTE_TAROT (default off), SUPABASE_FENGSHUI_BUCKET (import script only); set on neither host, so production matches staging."
+    - "Fengshui card images (78) on the same Supabase storage host as the live tarot images; sample fetched 200. The 'card' qi gate already exists in production."
+    - "Timing: Sunday evening, owner told; traffic light (about 15 requests a minute)."
+  shipped:
+    fe: "5 commits by one teammate, PRs #890 #891 #892 #889 #893 (fengshui card page, its fixes, destiny zero-element meaning, destiny cache v10)."
+    bazi: "6 commits by the same teammate pushed straight to pdf-dev with no PR (nisai strong/weak texts, fengshui images + EN, three chat decks, tarot wording, fengshui summary style, nisai texts per the master's document)."
+  verified_after:
+    - "bazichart.mumate.co /api/health sha bc1be696d8da…, env production, db ok (20:35 +07)."
+    - "ops-status on prod-1: fe bc1be69 and bazi e73f571 configured = running, healthy ✅; /opt/mumate on prod-1 now at infra 2167255 (was a8f4998)."
+  rollback_pair: "fe 7ee35c4 / bazi 293c95b (rollback-production goes back one step)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: "30b61d4"
+    branch: hq/20261009
+    working_tree: this-record-only
+  workflows:
+    owner_phone_promote: https://github.com/mojisejr/mumate-infra/actions/runs/38143352530
+  related:
+    - memory/events/2026/10/11/20261011T195717_mumate_handoff_before_clear_team_merges_on_staging.yaml
+
+unresolved:
+  - "bazi changes reach production without a PR (direct pushes to pdf-dev); the team flow asks for PRs. Owner's call whether to raise it with the team."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Open items from the 19:57 handoff in order, starting with item 1: prod-1
+    /ops opens with staging's key (env change on prod-1, owner's word).
+  acceptance_check:
+    - "Wake shows this record as latest for mumate-vercel-to-do-001 and production fe bc1be69 / bazi e73f571 is stated here."

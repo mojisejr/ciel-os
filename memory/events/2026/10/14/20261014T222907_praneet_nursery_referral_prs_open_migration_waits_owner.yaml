@@ -1,0 +1,41 @@
+schema_version: ciel.event.v0.1
+id: evt_20261014T222907_praneet_nursery_referral_prs_open_migration_waits_owner
+type: closeout
+recorded_at: 2026-10-14T22:29:07+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Plan revision 0.9 referrals built: praneet-web PR 11 and praneet-office
+    PR 7 open as drafts; migration 006 waits for the owner to name it, and the
+    privacy wording for his approval.
+  scope:
+    - "praneet-web feat/referral-system (head b60d548aef9c84a88f0c55683ca725b07ed381b4), praneet-office feat/referral-system (head e22930f919004b469391049f30398c71647fc71f); this record."
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "praneet-web PR 11 (draft): migration 006_referrals.sql (page_token, customers.referred_by_code_id and came_post_id, orders.claimed_trees, referral_hits; order_lines.quantity may be 0 with a check that each line holds a sold or free tree); lib/referral-rules.ts (100-for-3, +1 per full 100, claims, a balance lapsing after a year without earning, code readers); codes issued on a customer's first received order; /me/<token> private page with no names (noindex); /r/<code> invite link counting people only; the webhook reads referral and post codes from chat text without storing it; the order form pre-fills the source, suggests 2 or 3 per 100 and takes a claim; ReferralDesk in /ops; robots disallow /r/ and /me/; reader grant on referral_hits."
+    - "praneet-office PR 7 (draft): runbook 00 referral section rewritten for 0.9; posts list shows a per-code referral table."
+    - "Evidence: praneet-web bun run check passed (tsc, build, Playwright 42/42); the posts list referral table ran against the local test database. Previews in .assets/preneet/slice7-referral-preview/ (git-ignored)."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.9"
+  repository:
+    head: e05310817482b2bcc2d3da236c4d197b57a9c39b
+    branch: hq/20261009
+unresolved:
+  - "Migration 006 and grant-reader on production: the owner names this write before the agent runs it; then PR 11, then PR 7, are his to merge."
+  - "Privacy wording in PR 11 (reading codes from chat; the referral page) waits for the owner's approval."
+  - "Real-phone checks after merge: the private page in LINE, an invite link's LINE button carrying the code, the order form pre-filled from that chat."
+  - "From earlier: the old-stock lot and photos (owner, 2026-10-15), trees per cage, the order-form label 'กลุ่ม Facebook'."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    On the owner's word, run migration 006 and grant-reader on production
+    while PR 11 is draft, mark both PRs ready, and tell him the merge order.
+  acceptance_check:
+    - customers.referred_by_code_id exists in production before PR 11 is merged.

@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T133450_praneet_nursery_rev04_2d_first_spin_last
+type: decision
+recorded_at: 2026-10-09T13:34:50+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Adopt plan revision 0.4 - finish the 2D system first, add the 360-degree
+    spin as the last slice, drop the 3D model - and keep slice 3 authorized
+    under the new revision.
+  scope:
+    - PLAN.md revision 0.4 and design/BRIEF.md image criteria in HQ; no child repository or production change.
+outcome:
+  status: decided
+  decision: >-
+    Revision 0.4: no 3D model; a 360-degree spin made in praneet-office from
+    one turntable video replaces it, as new slice 8 after the first sale.
+    Slices 3-7 keep their numbers; until slice 8 the lot page uses the
+    metre-stick photo as the tree's main image, shot the same way every
+    round. The owner may pull slice 8 forward when a lot nears sale size, or
+    drop it by decision if the first sale needs no spin. The optional spin
+    field already in the phone form stays until slice 8 decides. This
+    decision names slice 3 only so that slice 3, already authorized under
+    revision 0.3 and still open for the owner's phone check, stays authorized
+    under 0.4; it authorizes no other slice.
+  owner_statements:
+    - "ภาพหมุน 360 ก่อนเพราะคุนบอกว่าทำงาน และจริงๆ ถ้าไม่จำเป็ฯต้องถึง 3D ก็สวยได้ก็ไม่จำเป็นต้องทำถึง 3D ครับ"
+    - "ผมคิดว่าเราน่าจะทำแบบ 2d ให้จบก่อนมั๊ย แล้ว ภาพหมุนทำสุดท้าย ... ตอนนี้ ก็ยังไม่มี ต้นที่พร้อมขายอยู่ดี เต็มทีเข้าก็อยากเห็นแค่ ว่ามันสูงเท่าไหร่"
+    - "โอเค รับแผนตามนี้ครับ"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: 78ea1b483fe7226fee36358bbcf878791dae3a5f
+    branch: hq/20261009
+  sources:
+    - "praneet-web main 56db16c: the measure form already uploads optional spin frames (up to 40, 1200 px, about 350 KB each); there is no spin viewer and no 3D model path."
+    - "Production reader check earlier on 2026-10-09, before this decision: lots 70-A, 70-B, 70-C with 0 measuring rounds; 70-B count empty; 70-A current_count 700 while PLAN records about 470 left."
+unresolved:
+  - "Slice 3 DoD still waits on the owner's phone check: a real round from Chrome and from inside LINE within 3 minutes, with plot and stick photos."
+  - "Owner: count lot 70-B; confirm whether 70-A still holds 700 or about 470."
+  - "Owner may say whether the July Vercel project planeet-panmai-line-app has a LINE OA or channel worth reusing in slice 5."
+  - "The shop domain is undecided; it is needed before the board is shared in slice 4."
+  - "Spin frames as stored now (about 12 MB for 36) exceed the BRIEF's 3 MB budget; slice 8 makes a web-size set."
+  - "HQ hq/20261009 is ahead of origin/main and also carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    When the owner reports the phone check, confirm the rounds and photos
+    with the reader role, record the slice 3 closeout, then ask for the
+    slice 4 go (public lot board, metre-stick photo as main image) and the
+    domain decision.
+  acceptance_check:
+    - A real round with plot and stick photos appears in the reader summary and at /ops/lots/<code>.

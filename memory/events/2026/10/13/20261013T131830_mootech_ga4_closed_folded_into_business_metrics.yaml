@@ -1,0 +1,44 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T131830_mootech_ga4_closed_folded_into_business_metrics
+type: closeout
+recorded_at: 2026-10-13T13:18:30+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mootech-ga4-instrumentation-001
+  lane: single
+  objective: Close the GA4 lane by the owner's decision; carry what remains into mumate-business-metrics-001.
+  scope:
+    - "Plan state set to completed with a closing note; no GA, GTM or code change."
+  out_of_scope:
+    - Slice 3 (seven days read with the team), never run.
+
+outcome:
+  status: recorded
+  decision: >-
+    The owner: "ปิด อันเก่า แล้ว เอามารวม ตอนช่วงที่เราจะทำ เกี่ยวกับ GA4
+    เพื่อจะได้ไม่ค้างอยู่ใน wake แล้วมารวมในนี้แทน". Slices 1-2 stay
+    delivered (hostname guard; login/sign_up, hashed user_id, consent seam).
+    GA4 reconciliation, the Exploration and the Data API pull are parked in
+    mumate-business-metrics-001.
+  state:
+    - "prod-1 env/fe.env carries a non-empty ANALYTICS_USER_ID_KEY (name and emptiness checked only, 2026-10-13), so user_id still reaches GA4 after the move from Vercel."
+
+evidence:
+  plan: workstreams/mootech-ga4-instrumentation-001/PLAN.md
+  plan_revision: "0.3"
+  repository:
+    head: "97d38d8"
+    branch: hq/20261009
+    working_tree: this-record-and-plan-edit
+
+unresolved:
+  - "Event data retention, the Member state dimension and the Exploration were never read for seven days; the business team's 'GA4 does not match' is unexamined."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: None in this lane; see mumate-business-metrics-001.
+  acceptance_check:
+    - "Wake no longer lists mootech-ga4-instrumentation-001 in attention."

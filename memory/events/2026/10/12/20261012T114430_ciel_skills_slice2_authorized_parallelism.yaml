@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T114430_ciel_skills_slice2_authorized_parallelism
+type: decision
+recorded_at: 2026-10-12T11:44:30+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-skills-001
+  lane: single
+  objective: >-
+    Restate the slice-2 authorization with its parallelism approval, which the
+    preceding slice-2 decision left out; this event supersedes it.
+  scope:
+    - Same as evt_20261012T114357_ciel_skills_slice2_authorized.
+  out_of_scope:
+    - Same as evt_20261012T114357_ciel_skills_slice2_authorized.
+
+outcome:
+  status: decided
+  slice: "2"
+  parallelism: approved
+  decision: >-
+    Slice 2 (syncup) is authorized under the owner's standing go of
+    2026-10-12 ("ถ้าไม่ติดอะไรคุนทำไปได้เลย"), as recorded in
+    evt_20261012T114357_ciel_skills_slice2_authorized. The opening decision's
+    parallelism approval carries forward unchanged.
+  parallelism_basis: >-
+    As in the opening decision: this workstream touches ciel-os only for its
+    plan and records and edits no file another active workstream owns.
+  correction: >-
+    Wake reads parallelism from the latest matching decision; the slice-2
+    decision omitted it, so Wake reported owner-confirmation-required. A
+    committed event is never edited, hence this restatement.
+
+evidence:
+  plan: workstreams/ciel-skills-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "bf85b0fbd888207b23a4ea641898652bbddc16eb"
+    branch: hq/20261009
+    working_tree: this-decision
+  supersedes: memory/events/2026/10/12/20261012T114357_ciel_skills_slice2_authorized.yaml
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Write skills/syncup on branch feat/syncup in ciel-skills, lint, rehearse with Codex, open the PR, install.
+  acceptance_check:
+    - "Wake reports ciel-skills-001 slice 2 as authorized."

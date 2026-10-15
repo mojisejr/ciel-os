@@ -1,0 +1,84 @@
+schema_version: ciel.event.v0.1
+id: evt_20261014T130602_praneet_nursery_rev08_slice7_agreed_awaiting_go
+type: decision
+recorded_at: 2026-10-14T13:06:02+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record plan revision 0.8, the slice 7 details the owner agreed in a
+    four-round syncup; slice 7 is not authorized until he says go.
+  scope:
+    - PLAN.md revision 0.8 and this record only; no child repo, database, env or external change.
+  out_of_scope:
+    - Any slice 7 build, migration or outreach before the owner's go.
+outcome:
+  status: agreed-awaiting-go
+  decision: >-
+    The first sale is the owner's old 70-80 cm stock, added by him as a
+    ready lot, sold cheap and shown honestly ("not pretty, good price"); a
+    one-sentence shop note plus real photos including the worst tree becomes
+    the standard for every lot, no grade system. One price per shape. Target
+    anyone, mainly growers. Channel is Facebook posts with the LINE link,
+    posted by hand: no auto-post and no Facebook API; the owner asks in the
+    ciel-os chat, the agent builds posts in praneet-office and uploads them
+    to a new /ops "posts" page for copying from his phone. Results are
+    measured with our own per-post link codes (click counts, no personal
+    data; the code rides into the LINE chat text) and a "came from" field on
+    customers and orders. Order lines get a free-tree field (usually 2 per
+    100, entered as actually given). Referral codes are built in slice 7:
+    any customer can refer, never on their own order, only a new customer's
+    first order counts once it is received, the reward is free trees on the
+    referrer's next order (default 2 per 100 bought, one year, no cash),
+    nothing extra for the referred buyer. TikTok and ads stay out unless the
+    owner orders them.
+  owner_statements:
+    - "q1 = ผมมีของเก่าอยู่ วางแผนว่าจะขายราคาถูก และอยากนำเสนอตามจริงอ่ะ ให้ลูกค้าเห้นว่ามัน ไม่สวยนะ แต่เราขายราคาดี และราคาส่ง ก็ราคาดีอะไรงี้"
+    - "q2 = จริงๆ เริ่มทักได้เลยนะ ... ใจผมอยากให้ลูกค้า เห็นภาพแล้ว ตัดสินได้ว่า ของประมาณไหน ควรซื้อมั๊ยประมาณนั้น โดยที่ผมไม่ต้คองอธิบายอะไรเยอะ"
+    - "q3 = รอบแรกผมคิดว่า ใครก็ได้แต่เป้า น่าจะเป้น คนซื้อไปปลูกมากกว่า"
+    - "q7 = เดิมแล้วเป็นเงิน โอนต่อต้น นะ แต่ผมว่า นายหน้า อาจจะมาในรูปแบบลูกค้ามั๊ย เราอาจจะให้ แบบ ซื้อรอบหน้า ได้ส่วนลดลงอีกแบบนี้ ดีกว่ามั๊ย"
+    - "q9 = ผมคิดว่าเอาตามคุน"
+    - "R1 = ผมว่าโอเคเลย ต่อไปเราก็ใช้ standard นี้ ของดีเราก็ขายตาม ราคา ของไม่สวยเราก็มาโละได้ละทีนี้"
+    - "R2 = ใช้ราคาเดียวก่อนแล้วเดี๋ยวลูกค้าต่อลองหลังบ้านอะไรว่ากันอีกที"
+    - "R4 = ผมคิดว่า น่าจะสร้างโพสไปลง facebook แล้วแนบไลน์อ่ะ ... tiktok ก็น่าสนใจ แต่ผมอยากให้ preneet office จัดการได้เลย ไม่ต้องมา ทำทีละคลิป"
+    - "R5 = เอาตามนี้ก่อน เดี่ยวลองแล้วน่าจะเห็นว่ายังไงดี"
+    - "R7 = ตามนี้"
+    - "T1 = ... ผมคิดว่า ไม่น่าจะต้องทำ auto post ครับแต่อาจจะมี หลังบ้าน ที่เราสามารถ ที่จะแบบว่า ผมคุยกับคุนในนี้ แล้วคุนมีเครื่องมือ ใน office ไป gen post ให้ผมแล้ว ให้ผม copy ภาพ หรือ ลิงค์ ไป โพสง่ายๆ"
+    - "T2 = เอนตามคุนอะนะ ถ้าคุนเห็นว่ายังไม่ต้องทำ"
+    - "T4 = ปกติ 100 แถม 2 อยู่แล้ว อ่ะ เราจะออกแบบยังไง"
+    - "U1 = ใช่เลย ผมจะคุยกับ คุนในนี้ ciel-os แล้วก็ให้คุนไปทำงานใน office ให้ผม แบบนั้น เข้าใจตรงกันนะ"
+    - "U2 = เอาตามคุน"
+    - "U3 = ... ลูกค้าซื้อเท่าไหร่ เราแถมจริงเท่าไหร่ ก็ใส่ไป ถูกป่ะ ... แต่ ปกติ จะ 100 แถม 2"
+    - "U4b เอาตามคุน"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.8"
+  repository:
+    head: 419136e996854fba0ad1214c0fa15747f2427056
+    branch: hq/20261009
+  sources:
+    - "Production read through praneet_reader on 2026-10-13 (counts only): lots 70-A 30-40 cm, 70-B and 70-C 0-30 cm (round of 2026-10-10), all status growing, no prices or expected ready month; 2 customers, 0 orders."
+    - "praneet-web main e3a3f96: customers.first_source holds only the event kind; lib/shop.ts lineMessage pre-fills the LINE chat text; order_lines has no free-tree field and is unique per (order, lot, shape)."
+    - "Meta removed the Groups API (publish_to_groups) in 2024: https://developers.facebook.com/community/threads/584177870580474/"
+    - "TikTok Direct Post from an unaudited client is SELF_ONLY: https://developers.tiktok.com/docs/en/content-sharing-guidelines"
+    - "Buyer research found no study of where growers buy durian seedlings; competitors use volume offers, not referral codes; buyers fear off-variety trees and fake pages. Sources listed in the session; agent inference, not verified fact."
+syncup:
+  rounds: 4
+  guesses_matched: 14
+  questions: 24
+  missed: [Q3 target, Q7 reward form, T1 auto-post]
+unresolved:
+  - "From the owner: old-stock count, approximate bagging month and price; the referral free-tree number if not 2 per 100; bag weight; the 70-B count."
+  - "Whether a coded link survives the LINE in-app browser and LINE's own link handling; checked during the build."
+  - "Whether the TikTok inbox-upload path works for an unaudited app; unverified, TikTok is out of slice 7."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Wait for the owner's go on slice 7 under revision 0.8; on go, record the
+    authorization, then build in praneet-web (migration run while the PR is
+    draft) and praneet-office.
+  acceptance_check:
+    - The owner's go is recorded in his words before any slice 7 work.

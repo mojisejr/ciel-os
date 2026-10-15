@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T115820_ciel_skills_slice3_design_set_installed_pr2
+type: closeout
+recorded_at: 2026-10-12T11:58:20+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-skills-001
+  lane: single
+  objective: >-
+    Record slice 3: the neutral design set and motion-scene-design are built,
+    piloted read-only, rehearsed with Codex, installed in place of the old
+    copies, and offered as ciel-skills PR 2.
+  scope:
+    - ciel-skills branch feat/design-set (04e965a, stacked on feat/syncup), PR 2; this Mac's skill directories for the five skills; a read-only pilot on checkouts/mbti-planner-pilot.
+  out_of_scope:
+    - Removing the rest of oracle-skills (slice 4); fixing anything in the pilot repository.
+
+outcome:
+  status: recorded
+  slice: "3"
+  delivered:
+    skills: "design-scout (read-only; states missing / machine-checkable / prose only / insufficient), design-init (extract / author / contract; one {{...}} template; YAML validator replacing the grep script, version-2 compatible, prose mode, strict checks primitive files exist), design-showcase (one dev-only route), design-verify (capture.ts with the Playwright library from its own scripts/ and a fallback to installed Chrome; verify.ts runs capture plus the three audits; screen doctrine in references/screen-gate.md), motion-scene-design (newest copy, neutral provenance). Each has a Writes section; the CP-6/CP-7 instruction that grew the mootech-fe CI harness is gone, as is all merge-gate language."
+    not_carried_over: "The Frame-v2 engine code (engine/*.ts): no repository on this Mac has a design.contract.ts; the doctrine is kept as a reference. It remains in the oracle-skills repository history."
+    pull_request: "github.com/mojisejr/ciel-skills/pull/2 (open, head 04e965a, stacked on PR 1 - merge PR 1 first)."
+    installed: "install --adopt from 04e965a; old ~/.claude and ~/.agents copies to ~/.ciel-skills-backup/<time>/; old ~/.codex/skills copies of the five skills moved by hand to ~/.ciel-skills-backup/<time>/.codex_skills/; bun install --frozen-lockfile in both installed design-verify/scripts."
+    ciel_os_local: "In the gitignored .claude/settings.local.json the off-overrides for the five new skills were removed so they can be tried in ciel-os sessions; the nine remaining old skills stay off."
+  pilot_findings_for_mbti_planner_pilot: >-
+    Real route / at 393x852: one serious axe color-contrast finding - an aside
+    span at 4.26:1 (#786d91 on #f7efff, 14px), below WCAG AA 4.5:1; and 14px
+    body-length text in that aside. Reported only; the repository was not
+    changed. The /design showcase passed every audit.
+
+evidence:
+  plan: workstreams/ciel-skills-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: "7ce3934"
+    branch: hq/20261009
+    working_tree: this-record
+  ciel_skills_head: "04e965a"
+  checks:
+    - "ciel-skills: lint 6 skills / 0 issues; bun test 34 pass / 0 fail (7 new validator cases)."
+    - "Validator on real files: mbti-planner-pilot, clear-together and plumbaba DESIGN.md pass --strict; dac2, smc-v2, praneet-web, mootech-fe and bazi-sft-dataset are reported not machine-checkable (the prose outcome design-scout reports)."
+    - "Pilot on mbti-planner-pilot (Vite dev on :5199, Chrome fallback because the cached Playwright Chromium revision 1243 is older than 1.64's 1248): /design tokens 4/4, axe 0 blocking, spacing/typography/touch PASS, strip 320/393/768/1280 no overflow and no console errors; a planted wrong --color-primary turned DRIFT. Two capture false positives were found and fixed (14px eyebrow/label text judged as body; a 1x1 visually hidden input counted as a touch target)."
+    - "Pilot git status --porcelain --ignored identical before and after; dev server stopped, port closed."
+    - "Codex rehearsal (scratch HOME): the five skills listed twice before, once after, with new descriptions. Real home: same; codex doctor 22 ok / 0 fail; install --check clean; installed capture.ts loads its dependencies from both install targets."
+    - "ciel-os: bun run wake exit 0; bun run check 45 pass / 0 fail."
+
+unresolved:
+  - "Slice 2 still needs a real syncup round; PRs 1 and 2 await the owner's merge (1 before 2), then rerun install so manifests record merged commits."
+  - "Slice 4 (remove the whole old oracle-skills set) waits for the owner's word that the pack is in confident use, as he set it."
+  - "Each installed design-verify needs bun install --cwd .../design-verify/scripts after every install, because the installer copies without node_modules."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: merge ciel-skills PR 1 then PR 2, and use syncup and the design
+    skills on real work. Agent: after the merges rerun install; when the owner
+    says the pack is in confident use, record the slice-4 decision and cut over.
+  acceptance_check:
+    - "A later record shows both PRs merged, one real syncup round, and the owner's go for slice 4."

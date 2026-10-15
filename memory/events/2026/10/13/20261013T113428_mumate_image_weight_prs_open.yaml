@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T113428_mumate_image_weight_prs_open
+type: closeout
+recorded_at: 2026-10-13T11:34:28+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-image-weight-001
+  lane: single
+  objective: Record slice 1 at "PRs open, waiting for the owner's merge" - WebP from the same URLs (fe) and a 7-day image cache (Caddy).
+  scope:
+    - "mootech-fe PR 899 (feat/image-webp, head 58b09a8) and mumate-infra PR 56 (feat/fe-images-cache, head 9dd4133), both draft until their checks pass."
+  out_of_scope:
+    - Merge (owner), staging caddy recreate (after the infra merge), production release (owner's press).
+
+outcome:
+  status: recorded
+  state:
+    - "Spike proven: beforeFiles rewrite on Accept image/webp serves <file>.webp twins written at image build time; Chromium and WebKit, img and CSS; */* gets PNG; Docker image 509 twins 93.0 MB -> 22.4 MB."
+    - "Added after the owner asked whether it affects teammates: the rewrite exists only with WEBP_TWINS=1 (set in the Dockerfile), so next dev without twins keeps PNGs instead of 404s; proven both ways."
+    - "fe: lint 0 errors, npm test 309 files / 3906 passed, webp-siblings test 16 with mutants caught; pushed --no-verify on the owner's word ('ทำได้เลยครับ')."
+    - "infra: fe_images snippet, 200/304 only; test-all.sh 16 files 0 failed, checkout unchanged."
+    - "Teammates pushed fe #896-#898 and bazi 05e9538 during the round; the fe branch is rebased on #898, no overlap but vitest.config.mts."
+  deviations:
+    - "scripts/caddy-edge.test.sh was once run directly instead of through scripts/test-all.sh (owner rule); no leftover containers, checkout unchanged; then re-run through test-all.sh."
+
+evidence:
+  plan: workstreams/mumate-image-weight-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "4f45c6e"
+    branch: hq/20261009
+    working_tree: this-record-only
+  child:
+    mootech-fe: "feat/image-webp 58b09a8 (PR 899)"
+    mumate-infra: "feat/fe-images-cache 9dd4133 (PR 56)"
+
+unresolved:
+  - "A production promote ships everything on fe main, including teammates' guide work (#896-#898); ask the team before the press."
+  - "Infra change needs a caddy recreate per host after merge (staging-follow does not do it)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Mark both PRs ready when checks pass; after the owner's merges, recreate caddy on mumate-2 and ask the team to check staging.
+  acceptance_check:
+    - "Staging serves WebP for /images/* with Cache-Control max-age=604800 and Vary: Accept."

@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20261014T163358_praneet_nursery_owner_figures_bag_weight_breaks_cage_count
+type: closeout
+recorded_at: 2026-10-14T16:33:58+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record the owner's figures for old stock, bag weight and lot 70-B, and
+    what the bag weight does to the trees-per-cage and trees-per-truck
+    numbers; slice 7 still waits for his go.
+  scope:
+    - PLAN.md unresolved list and this record only; no data, code or external change.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Owner figures recorded: old stock about 2,000-3,000 trees; bag weight about 3-4 kg for old and new trees (estimated, not weighed); lot 70-B about 3,000 trees."
+    - "At 3-4 kg a bag, 100 trees weigh 300-400 kg. Thailand Post's tree page, as quoted in a search result on 2026-10-14 (the page itself returned 403 to a direct fetch), gives a roll pallet range of 20-200 kg, which fits about 50-66 trees, not the 100 per cage in revision 0.6. 1,200 trees per truck would weigh about 3.6-4.8 tonnes."
+    - "Production (praneet_reader, 2026-10-13) holds 70-B with current_count 1800 and no initial_count, and 70-A with 700 initial and current while the plan's Sheet evidence says about 470 remain. Counts are changed by the owner in /ops; the agent does not write data."
+  owner_statements:
+    - "1. ของเก่ามีประมาณ 2000 - 3000 ต้น ครับ , น้ำหนักต่อถุง ทั้งของเก่าและใหม่ ราวๆ 3 - 4 กก, จำนวนต้นของ 7B ~ 3000 ต้น"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.8"
+  repository:
+    head: d7f0d58e3c70c5303952c302514eab21ea9854c4
+    branch: hq/20261009
+  sources:
+    - "Thailand Post roll pallet for trees (search-result quote, not fetched): https://www.thailandpost.co.th/un/article_detail/product/543/20269"
+    - "Thailand Post price change for fresh fruit and trees by roll pallet, April 2024: https://mgronline.com/cyberbiz/detail/9670000028990"
+unresolved:
+  - "Trees per cage and per truck at the real bag weight: the owner confirms with his post office branch or past shipments before shipping cost appears on the board or in a post."
+  - "The owner updates 70-B (about 3,000) and checks 70-A's count in /ops."
+  - "Old stock: approximate bagging month and price still to come from the owner."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Wait for the owner's go on slice 7 under revision 0.8, and his answer on
+    trees per cage.
+  acceptance_check:
+    - The owner's go is recorded in his words before any slice 7 work.

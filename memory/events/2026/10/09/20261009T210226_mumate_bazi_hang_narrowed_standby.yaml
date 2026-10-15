@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T210226_mumate_bazi_hang_narrowed_standby
+type: closeout
+recorded_at: 2026-10-09T21:02:26+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Record the read-only root-cause work on the bazi hang of 20:20-20:30 +07
+    (20261009T205012) and stand by: the owner resumes it tomorrow
+    (2026-10-10) since users are not much affected now.
+  scope:
+    - Evidence gathered 20:50-21:00 +07 from prod-1, Grafana Loki and Prometheus (viewer token), and bazi 922ba28 source.
+  out_of_scope:
+    - Any change; the share-image fix; cleanup items.
+
+outcome:
+  status: recorded
+  established:
+    - "The fault is inside bazi, not Supabase: 20:15-20:31 +07 fe-only API routes (131 requests, fe's own DB through the same Supabase transaction pooler aws-1-ap-southeast-1:6543) were fast except the LINE sign-ins already fixed; bazi-calling routes were slow or hung in 34 of 85."
+    - "bazi was waiting, not working: prod-1 load1 0.02-0.5 and memory steady during the hang; bazi wrote no log line 19:50-20:30 (container and Loki)."
+    - "The stuck resource is bazi's postgres.js pool (src/db/client.ts: max 10, connect_timeout 10, idle_timeout 20, max_lifetime 30 min, no query timeout): every hung endpoint uses the DB (missions, qi/wallet, profile, divine-cards/predict, man-vs-day, sacred-map image), and /api/health's select 1 through the same pool failed. So queries were sent and never answered, holding all 10 connections until the 20:30 recreate."
+    - "The 503s at 18:19 (/api/destiny) and 19:00 (/api/v2/sacred-map/image) were bazi calls too - consistent with connections sticking one by one before the full stall at 20:20 (inference)."
+  ruled_out:
+    - "Pool self-deadlock like fe's September link-account bug: bazi has no transactions."
+    - "The referral change in 922ba28: plain statements, no held connection."
+    - "Load: 85 bazi-calling requests in 16 minutes."
+    - "CPU or memory exhaustion."
+    - "Ongoing network loss to the pooler: 75/75 TCP connects from prod-1 at 20:55 (not measurable for 20:20)."
+  unknown: >-
+    Why the queries got no answer: Postgres or Supavisor side (lock wait,
+    silent connection drop) or a half-open socket between DigitalOcean and
+    AWS (Linux gives up on unacknowledged data after about 15 minutes). Supabase
+    Postgres and Pooler logs for 13:15-13:31Z would settle it; the agent cannot
+    read them (production project ref is hook-blocked), the owner can, in the
+    Supabase dashboard Logs.
+  proposed_not_started:
+    - "Recommended: bound every bazi query (about 15 s) so a stuck query fails and frees its connection instead of stalling the engine; possibly with net.ipv4.tcp_retries2 in the bazi container for dead sockets. PR in bazi-sft-dataset, staging first."
+    - "Faster recovery: today about 10 minutes (5-minute timer, recreate on the second unhealthy observation) - mumate-infra."
+  owner_direction: "Users are not much affected now; continue tomorrow; stand by."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: "59459ff"
+    branch: hq/20261009
+    working_tree: this-record-only
+  state_at_record: "21:02 +07: fe 23bdc6f and bazi 922ba28 healthy on prod-1, no 5xx since 20:31, no DOWN since the 20:30 recovery."
+  sources:
+    - "Grafana datasources grafanacloud-logs ({service=\"bazi\", env=\"production\"}) and grafanacloud-prom (node_load1, node_memory_MemAvailable_bytes, host mumate-prod-1) through the viewer service-account token in the owner-controlled .assets/mumate/grafana/.env."
+    - "bazi-sft-dataset 922ba28: src/db/client.ts, src/app/api/health/route.ts, src/app/api/referral/route.ts; mootech-fe 23bdc6f route files under pages/api."
+
+unresolved:
+  - "Trigger of the stuck bazi queries (Supabase logs needed) and recurrence risk until queries are bounded."
+  - "Share-image timeout; QStash deduplication id defect; real LINE login on new code not yet observed."
+  - "Cleanup list of 20261009T044823 and the ops key decision of 20261009T045935."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    On 2026-10-10 with the owner: read Supabase Postgres and Pooler logs for
+    13:15-13:31Z if he provides them; decide the bounded-query fix for bazi
+    (and faster recovery); check prod-1 for any further bazi DOWN and for the
+    first organic LINE login on 23bdc6f. Then the share-image fix.
+  acceptance_check:
+    - A cold session can state what hung, what is ruled out, what is unknown and the proposed fix from this record and 20261009T205012.

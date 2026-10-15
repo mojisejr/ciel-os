@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T101131_mumate_team_release_pr52_merged_follower_live_on_mumate2
+type: closeout
+recorded_at: 2026-10-11T10:11:31+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-team-release-001
+  lane: single
+  objective: Record the owner's merge of mumate-infra PR 52 (slice 3) and the staging follower installed on mumate-2.
+  scope:
+    - mumate-infra main on mumate-2, systemctl link and enable of mumate-staging-follow.
+  out_of_scope:
+    - The app PRs (fe 888, bazi 50) whose merge is the follower's first real job; production.
+
+outcome:
+  status: recorded
+  slice: "3"
+  result: >-
+    The owner merged PR 52 (merge a8f4998). mumate-2 pulled it (no Caddyfile,
+    compose or env file in the diff). A hand run of bin/staging-follow.sh
+    exited 0 with empty state and no deploy (staging already runs fe main
+    a1900ff and bazi pdf-dev 6b08b51). Then, as deploy with sudo systemctl:
+    link of the service and timer from /opt/mumate/systemd, enable --now. The
+    timer is active; its first tick at 03:11:01Z finished in about 1 s,
+    Result=success, exit 0; next tick every 3 minutes.
+  found: "deploy cannot read the unit's journal without sudo; runbook 01 says journalctl -u mumate-staging-follow.service - it needs sudo journalctl (fix in a later infra PR)."
+
+evidence:
+  plan: workstreams/mumate-team-release-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: "7e85ca6"
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_request:
+    url: https://github.com/mojisejr/mumate-infra/pull/52
+    merge_sha: "a8f4998fe37e6d755820ed15fd75699a9b19c845"
+  host:
+    mumate-2: "mumate-infra a8f4998; /etc/systemd/system/mumate-staging-follow.{service,timer} are links into /opt/mumate/systemd"
+
+unresolved:
+  - "The follower has not yet followed a real merge; fe 888 and bazi 50 are meant to be the first."
+  - "promote-production not yet run live (owner's word)."
+  - "Runbook 01 journal command needs sudo."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Owner merges fe 888 and bazi 50; agent watches both images appear, staging follow, and the 🧪 line.
+  acceptance_check:
+    - "deploy-history on mumate-2 gains an ok line by=staging-follow with the merge commits' -staging tags."

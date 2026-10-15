@@ -1,0 +1,37 @@
+schema_version: ciel.event.v0.1
+recorded_at: 2026-10-09T13:10:28+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: mumate-referral-release-001
+  lane: single
+id: evt_20261009T131028_mumate_referral_owner_accepted_closed
+type: closeout
+outcome:
+  status: ready-for-owner-merge
+  slice: "2"
+  result: The owner accepts and closes the bounded referral fix and post-move release workstream. Plan 0.2 is completed with execution idle; no further implementation or release is scheduled. The application delivery is already merged and deployed; this HQ closure record awaits the separate shared-round integration.
+  proof_boundary: Existing final-delivery evidence is retained by reference. Closure performed only plan and semantic-record edits; it did not repeat tests, deploy, mutate production data, run rollback or close other workstreams.
+evidence:
+  plan: workstreams/mumate-referral-release-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "fdf03cf9cc90a0877ebd71c6a447bc9d3bd9384b"
+    branch: hq/20261009
+    working_tree: this-owner-closure-and-completed-plan-only
+  owner_decision: memory/events/2026/10/09/20261009T131028_mumate_referral_owner_closure_authorized.yaml
+  final_delivery: memory/events/2026/10/09/20261009T114430_mumate_referral_release_final_delivery.yaml
+  application_merge: https://github.com/mojisejr/bazi-sft-dataset/pull/48
+  production_release: https://github.com/mojisejr/mumate-infra/actions/runs/37882657722
+  acceptance: Final delivery records successful staging acceptance and production release with 57 healthy samples over 1802 seconds, no observed 5xx/referral failures and observed cron outcomes all 200. The unchanged full-lint baseline remains an explicit owner-accepted exception.
+unresolved:
+  - Full lint's 35 unchanged baseline errors and ignored stale dev types remain deferred; no harmlessness claim for every unrelated flow is made.
+  - The historical request's exact exception is inferred and the referral namespace remains limited to 900 codes.
+  - The observation had zero organic referral traffic; production new-code/reward writes, browser OAuth and interactive invite behaviour were not exercised. Those boundaries remain in the final-delivery evidence.
+  - Staging retains two historical restore errors and its 2026-10-16 expiry; unrelated restore completeness is not established and no destructive maintenance was performed.
+  - Existing 24-hour cutover watch, Beam refund, cleanup and retirement stay with their original workstreams.
+  - HQ standing-branch integration remains the owner's separate round. Human review and external authority beyond the explicit recorded instructions remain unknown.
+next_action:
+  action: No further implementation in this completed workstream. Owner integrates the HQ shared round at the chosen boundary; address deferred maintenance separately when authorized.

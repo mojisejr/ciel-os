@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T183114_ciel_agent_damage_guard_slice2_authorized
+type: decision
+recorded_at: 2026-10-11T18:31:14+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-agent-damage-guard-001
+  lane: single
+  objective: Authorize slice 2 - mumate-infra runs its eval-based shell tests in a throwaway copy of the working tree.
+  scope:
+    - mumate-infra topic branch, scripts/test-all.sh, its proof, runbook/PR-template pointer, PR for the owner's merge.
+  out_of_scope:
+    - Rewriting the existing tests or their eval harness; other repositories.
+
+outcome:
+  status: decided
+  slice: "2"
+  parallelism: approved
+  decision: 'The owner, after slice 1: "ต่อ slice 2 เลย".'
+  approach: >-
+    Copy tracked and untracked-not-ignored files (no .git, no ignored .env)
+    into a temporary directory, run every scripts/*.test.sh there, and compare
+    a snapshot of the real tree before and after. Proof with harmless markers
+    only (AGENTS.md Execute): a throwaway test that writes a marker and
+    appends to a tracked file must leave the real checkout unchanged.
+
+evidence:
+  plan: workstreams/ciel-agent-damage-guard-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "406512d561830795c604b3429a309b170c1fea5c"
+    branch: hq/20261009
+    working_tree: this-decision-only
+  child_start:
+    mumate-infra: "main 9c3c77104debe588bb46577cb2f9e72e5b4bcab7, clean; no scripts/*.test.sh calls real git (only stand-ins), so the copy needs no .git"
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Write scripts/test-all.sh, prove it, open the PR.
+  acceptance_check:
+    - "All tests pass through the runner; the marker proof leaves the real checkout unchanged."

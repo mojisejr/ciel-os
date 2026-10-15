@@ -1,0 +1,44 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T121439_mumate_access_log_retention_staging_verified
+type: closeout
+recorded_at: 2026-10-13T12:14:39+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-access-log-retention-001
+  lane: single
+  objective: Record slice 1 on staging - archive file logger live on mumate-2 with redaction; production waits for the joint release.
+  scope:
+    - "Owner merged mumate-infra PR 57 (main e5b153f). On mumate-2 the agent pulled infra, validated the Caddyfile and recreated caddy (runbook 01)."
+  out_of_scope:
+    - Production install, timer, Loki backfill (joint release with mumate-image-weight-001 on the owner's word).
+
+outcome:
+  status: recorded
+  decision: >-
+    On the raw ?key= values Loki held before the redaction, the owner: "มีแต่
+    ผมคนเดียวที่เข้าไป ดู log นี้ได้ครับ เพราะงั้น ปล่อยมันครับ" - no
+    LAUNCH_KEY rotation; the old lines age out of Loki in 14 days.
+  state:
+    - "mumate-2: /var/log/mumate/caddy/access.log (root 0640) receives access lines; a test request with ?key=<marker> shows key=REDACTED in the file and on stdout, the marker nowhere; Loki (staging, 5 min) has the caddy access lines, the redacted launch line, and no marker."
+    - "Untracked files already present in /opt/mumate on mumate-2 (.arena-baseline*.txt, .staging-restore.err) were left alone."
+
+evidence:
+  plan: workstreams/mumate-access-log-retention-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: "af78095"
+    branch: hq/20261009
+    working_tree: this-record-only
+
+unresolved:
+  - "Joint production release (owner's word): readiness check incl. teammates' guide work on fe main; promote fe; on prod-1 infra pull, env/logs-archive.env (600) from the owner's copy, one caddy recreate, timer link+enable; Loki backfill 2026-10-09 -> go-live before ~2026-10-23."
+  - "No health-timer check of the archive stamp's age yet."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Wait for the owner's release word; then run the joint release and the backfill.
+  acceptance_check:
+    - "prod-1: rolled files appear in s3://mumate-logs/caddy/mumate-prod-1/ within hours; backfill objects cover 2026-10-09 onward."

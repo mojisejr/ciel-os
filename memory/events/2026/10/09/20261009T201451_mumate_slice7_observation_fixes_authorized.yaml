@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T201451_mumate_slice7_observation_fixes_authorized
+type: decision
+recorded_at: 2026-10-09T20:14:51+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Open slice 7 (observation and retiring Vercel) for its observation part,
+    with fixes to the move-caused defects found under real traffic on
+    2026-10-09. Vercel retirement stays outside this decision.
+  scope:
+    - "Fix 1 (first): LINE sign-in fails about one attempt in four on mumate-prod-1 because next-auth discovers LINE's OpenID metadata from access.line.me on every sign-in and callback, and TCP connects from DigitalOcean Singapore to that Akamai edge drop about half the time (prod-1 and mumate-2 both; the same addresses connect from Thailand; api.line.me and Google connect every time). Change: mootech-fe gives the LINE provider its endpoints directly so the server never calls access.line.me. PR, merge, staging release, production release, verification."
+    - "Fix 2 (after fix 1, discussed with the owner first): the share image /api/og/share times out when requested through the public hostname (LINE link previews get no image); direct to fe it renders in about 1 s."
+  out_of_scope:
+    - Any Vercel project, domain, integration or env change, and the flip-back card; each removal stays a separate owner approval with an exact target list, as slice 7 states.
+    - DNS, the ops key decision, Render deletion and the other cleanup items of 20261009T044823.
+    - "Pre-existing defects unrelated to the move: QStash scheduleReminderPush rejected for a ':' in its deduplication id (one occurrence 14:47 +07)."
+
+outcome:
+  status: decided
+  decision: >-
+    Slice 7 is authorized for observation and for fixes 1 and 2 above. The
+    owner delegated the production deploy of fix 1 to the agent when nothing
+    needs a new decision and every step is safe, including merging the PR
+    when necessary and safe; fix 2 is discussed with the owner after fix 1.
+  findings_2026_10_09:
+    - "18:00-20:00 +07: 84 LINE sign-in starts, 24 failed with 'outgoing request timed out after 3500ms' and 6 callbacks likewise; Google sign-in had no failures."
+    - "Two Caddy 503s (maintenance page from handle_errors) at 18:19:53 POST /api/destiny (12 s) and 19:00:45 GET /api/v2/sacred-map/image (238 s); no fe restart or app error at either moment; cause not established, observe only."
+    - "/api/referral 500 twice at 08:31 +07 was addressed the same day by mumate-referral-release-001 (bazi 922ba28 on prod-1 since 11:11 +07)."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "7"
+  repository:
+    head: "0aab2574ac02a84e4e9675af406fe003fdbb450a"
+    branch: hq/20261009
+    working_tree: this-record-only
+  owner_statement:
+    - "โอเค คุนคิดว่าเราควรเปิด workstream แก้ไขปัญหา 1 อย่างเดียวก่อน หรือ สามารถจัดการได้ทั้งหมด ? ใน 1 workstream นี้ ?"
+    - "โอเค เริ่มได้เลยรับ ถ้าไม่มีอะไรต้องเคาะแล้ว คุนจัดการ deploy on prod ได้เลย ถ้าทุกอย่าง ปลอดภัย หลักจาเสร็จแล้วค่อยมาคุย ข้อ 2 ต่อ (merge PR แทนผมได้เลยถ้าจำเป็น และ ปลอดภัย)"
+  application:
+    mootech-fe: "83ed2f1 on mumate-prod-1"
+    bazi-sft-dataset: "922ba28 on mumate-prod-1"
+
+unresolved:
+  - Vercel stays in maintenance as the flip-back target; this decision does not retire anything.
+  - Everything in 20261009T044823 cleanup_when_owner_returns and the ops key decision of 20261009T045935.
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Fix 1 in mootech-fe: branch from origin/main, give LINE its endpoints,
+    prove it offline, PR with the CIEL sections, merge, build and release on
+    staging then production with bazi 922ba28, and compare LINE sign-in
+    outcomes on prod-1 before and after. Then put fix 2 to the owner.
+  acceptance_check:
+    - After the release, LINE sign-in and callback on prod-1 show no 'outgoing request timed out' and fe and bazi are healthy at the released SHAs.

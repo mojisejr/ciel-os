@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T161338_praneet_nursery_round_edit_with_internal_history
+type: decision
+recorded_at: 2026-10-10T16:13:38+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record the owner's answers on the first real rounds and his go to make
+    rounds correctable inside slice 3, with history kept internally.
+  scope:
+    - praneet-web back office and measure form within slice 3 of plan revision 0.4; no plan change.
+outcome:
+  status: decided
+  decision: >-
+    Before slice 3 closes, praneet-web gains: editing and hiding a measuring
+    round from the lot page in /ops (date, heights, upright share, count,
+    note, photos), each change written to the existing audit_events with
+    before and after values; no preselected height range on the measure
+    form; and editing a lot's bagged count. Lot updates also record before
+    values. Customers see only the current values - no correction marks on
+    the public board. Hiding keeps the row and photos. The owner corrects
+    70-C to under 30 cm himself in Chrome after the merge, which also covers
+    the Chrome half of the slice 3 phone check. The metre stick is not
+    required in stick photos for now. The plan needs no revision; this sits
+    inside slice 3 (recording rounds from the owner's phone).
+  owner_statements:
+    - "1. บันทึกจากในไลน์ทั้งหมด"
+    - "2. 70C ผมบันทึกผิด แต่ไม่รู้แก้ไขตรงไหน จริงๆ มันจะต้อง เป็น <30 เซนก่อน"
+    - "3. รูปไม้เมตรไม่เป็นไรครับ ยังไม่ต้องมี ไม้เมตรก็ได้ครับ ผมอยากเห็นการทำงานของระบบก่อน"
+    - "4. จำนวนต้น ยังไม่ตรงเดี๋ยว update ทีหลังครับ"
+    - "ต้อง update upstream หรือเปล่าครับ ถ้าไม่ต้อง ก็ทำได้เลยครับแล้ว closeout บันทึก การตัดสินใจครับ ส่วนเร่ื่อง 3 นาที ผมคิดว่า เป้นตามนั้นครับ อาจจะมีเดินไป เพื่อให้ถึงที่จะถ่ายไม่นาน"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: 4321a16cc0567c1d353b0fbd2d629081e295e4dc
+    branch: hq/20261009
+  sources:
+    - "Production reader check 2026-10-10: three rounds, all measured_on 2026-10-10 and saved 14:37:39 (70-A), 14:40:32 (70-B), 14:49:42 (70-C) +07, each with one plot and one stick photo in Blob (1500x2000, 0.6-1.0 MB). The 70-B round was saved 2 min 53 s after the 70-A round, walking included."
+    - "70-A and 70-C both carry 30-40 cm, the form's preselected range; the owner confirms 70-C was wrong. None of the three stick photos shows a metre stick."
+    - "praneet-web main 56db16c: lots are patchable (status, prices, current_count, expected month, note) with audit_events recording new values only; measurements have no edit or delete path."
+unresolved:
+  - "Chrome half of the slice 3 phone check: covered when the owner corrects 70-C in Chrome after the fix merges."
+  - "Lot counts are not reconciled: 70-A 700 vs about 470 in the plan, 70-B has no bagged count, and the three lots total 8,100 vs about 12,000; the owner updates them later."
+  - "Whether 70-A's 30-40 cm was chosen or left at the preselected value is not confirmed."
+  - "The shop domain is undecided; it is needed before the board is shared in slice 4."
+  - "Owner may say whether planeet-panmai-line-app has a LINE OA worth reusing in slice 5."
+  - "HQ hq/20261009 is ahead of origin/main and also carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build round editing with history, the required height choice and the
+    bagged-count edit on a praneet-web topic branch, verify locally, open a
+    draft PR for the owner to merge; then the owner corrects 70-C in Chrome
+    and the slice 3 closeout is recorded.
+  acceptance_check:
+    - "After the merge and the owner's edit, the reader summary shows 70-C under 30 cm and audit_events holds the before and after values."

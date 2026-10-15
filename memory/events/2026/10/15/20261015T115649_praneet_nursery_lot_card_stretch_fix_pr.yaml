@@ -1,0 +1,44 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T115649_praneet_nursery_lot_card_stretch_fix_pr
+type: closeout
+recorded_at: 2026-10-15T11:56:49+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Fix the lot cards that stretch in a row with a taller card (seen by the
+    owner on production), as a small PR ahead of the lot-list design; the
+    owner also agreed the two-tier lot list direction and the 50 cm height
+    split for samples.
+  scope:
+    - praneet-web branch fix/lot-card-stretch; CSS and one test; no data change.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Cause: .lot was a grid with an implicit auto column and stretched rows, so in a row with a taller card the photo area and body stretched (pill and figures pushed down), and a long shop sentence could widen the body past the card (measured 438 px body in a 313 px card at 1280 px; the text was clipped)."
+    - "praneet-web commit 78749230722d3b6cf9a80c073a3d4f1610ceb2cf: .lot gets grid-template-columns minmax(0, 1fr) and align-content start; .lot .body gets align-content start and min-width 0. Re-measured: body 313 px in a 313 px card."
+    - "A new board test checks every card at 1280 px (body right under the photo, body no wider than the card, photo at 4:3 or 3:1); it fails without the CSS change and passes with it. bun run check passed: Playwright 46/46."
+    - "Measured with the test database's 10 lots: on a 390 px phone the lot grid is about 4,500 px (5-6 screens), about 9,000 px expected at 20 lots; ready lots are not sorted first (order is sold-out last, then bagging date)."
+  owner_statements:
+    - "ถ้าเราใช้ในโทรศัพท์ เป็นส่วนใหญ่ (แต่เราอยากให้ ใน desktop ก็โอเคด้วยนะไม่ใช่ทิ้งเลย) แต่ในอนาคตเรามีหลายๆ LOT แบบนี้อ่ะ ทำยังไง ถึงจะค้นหา lot ที่ต้องการง่าย ... เราต้องทำเป็น สองชั้นหรือเปล่า ... อาจจะมี search input อะไรด้วย เพื่อความสะดวก"
+    - "โอเค คุนทำ 1 , 2 มาได้เลย ส่วนเส้นแบ่ง ผมโอเค"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.1"
+  repository:
+    head: ebd3adaee6ea79c541efb2961cd02ba5cc10814f
+    branch: hq/20261009
+unresolved:
+  - "The fix PR waits for the owner's merge."
+  - "Lot list for 10-20 lots: the agent recommended two tiers (home shows ready lots in compact cards plus 'see all lots (n)'; /lots lists all with status and height chips, the 50 cm split agreed, ready first, sold-out folded, filters in the URL) and no search box until about 30-40 lots. Three samples are being made; the owner's pick opens a new slice placed before slice 8."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Open the fix PR; render three lot-list samples on the live page at phone
+    and desktop widths for the owner's pick.
+  acceptance_check:
+    - The owner picks a sample, which a decision event records with a new slice before slice 8.

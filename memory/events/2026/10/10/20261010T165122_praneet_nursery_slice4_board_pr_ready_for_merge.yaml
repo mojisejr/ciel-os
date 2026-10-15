@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T165122_praneet_nursery_slice4_board_pr_ready_for_merge
+type: closeout
+recorded_at: 2026-10-10T16:51:22+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Checkpoint after building the public lot board; the draft PR waits for the
+    owner's merge, then the real-phone checks close slice 4.
+  scope:
+    - praneet-web PR 3 (draft); no production change.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "praneet-web PR 3 (feat/slice4-board, head 3bd089a): / and /lots/<code> public pages, lib/board.ts naming every public column, server-drawn height chart with the 50 cm line, 1200 x 630 link previews from real photos, Thai 404, Next image optimization for Blob photos, public-note hints in the back office, DESIGN.md updated to plan revision 0.4."
+    - "Local proof: tsc and next build pass; Playwright 24/24 including 8 new board tests (no back-office data in public HTML, lot numbers, chart, timeline order, prices only when set, PNG previews 1200 x 630, 404, six widths, axe light and dark, 44 px targets, LINE user-agent smoke)."
+    - "A local render against production through the read-only role showed the real 70-A, 70-B and 70-C photos and values, 70-C at under 30 cm; nothing was written."
+    - "A scripted edit during the work removed the back office's 'บันทึกผลวัด' button on the lot page; review caught it, it is restored and now covered by a test."
+  not_completed:
+    - "Real phones: LINE in-app browser on the owner's Android and a household iPhone, and a link preview inside a real LINE chat."
+    - "Owner confirmation that the board matches the trees in the plot."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "4"
+  repository:
+    head: 92288d35ef4d42f41095c224bbbb3f162e202201
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 3
+      base: main
+      state: DRAFT
+      head: 3bd089a
+unresolved:
+  - "Search indexing stays off (noindex) while the board lives on vercel.app; turning it on is the owner's call."
+  - "The roll pallet line 'ประมาณ 1,700 บาท ต่อ 100 ต้น · ถึงใน 2–3 วัน' comes from the accepted mockup; the owner should confirm it before sharing."
+  - "Public counts come from current_count; 70-A still shows 700 against about 470 in the plan."
+  - "Round notes are public by design (mockup); the forms now warn against customer or worker names."
+  - "The shop domain stays vercel.app by the owner's choice; slice 5 links the board from the LINE rich menu."
+  - "HQ hq/20261009 is ahead of origin/main and carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    After the owner merges PR 3, verify production read-only (pages, previews,
+    no leaks), then guide the real-phone checks (LINE on Android and iPhone,
+    a shared link in a LINE chat) and record the slice 4 closeout with the
+    owner's confirmation that the board matches the plot.
+  acceptance_check:
+    - "https://praneet-web.vercel.app/ and /lots/70-A return 200 with real photos, og:image returns a 1200 x 630 PNG, and the owner's words confirming the board are recorded."

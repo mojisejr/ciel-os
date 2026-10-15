@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T154843_mumate_image_weight_cache_live_webp_waits_guide
+type: closeout
+recorded_at: 2026-10-13T15:48:43+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-image-weight-001
+  lane: single
+  objective: >-
+    Record that the infra half (7-day cache on /images/*) reached production
+    with the log release, and why the WebP half waits for the team's approval
+    of the guide work.
+  scope:
+    - "Read-only checks of production headers; fe/bazi commit history between production and staging."
+  out_of_scope:
+    - Any fe or bazi production release.
+
+outcome:
+  status: recorded
+  slice: "1"
+  state:
+    - "infra e5b153f on prod-1 since the owner's caddy recreate (2026-10-13T08:45:35Z): https://bazichart.mumate.co/images/ic_badge.png answers 200 image/png with Cache-Control public, max-age=604800 for both Accept values; a missing image keeps no-store."
+    - "WebP is not on production: fe main is linear and #899 (e000fb7) sits between the guide merges #896-#898, #900 and #901-#903, so any fe commit with WebP also carries the guide."
+    - "Owner's order this round: images and the teammates' guide work go out together after the team approves; logs first, then the business dashboard (bazi only, fe stays 611c521)."
+    - "Teammates' work checked for migrations: fe 611c521..cb2748b touches no database file (only WEBP_TWINS, set in the Dockerfile at build); bazi 434d069..6ca657a (05e9538, 6ca657a) adds guide missions in code and writes the existing bazi_mission_progress table (mission_id text), src/db and drizzle/ unchanged. No migration for either."
+    - "Prod fe 611c521 lists missions by category daily/once/longterm only, so bazi's new 'guide' missions stay hidden if bazi ships before the fe guide."
+    - "Owner asked for and got branch protection on bazi-sft-dataset pdf-dev (15:27 +07): force pushes and deletion refused for everyone incl. admins; no review or status-check rule, direct pushes still allowed. The owner then told the team; the agent's draft message reserved migration 0055 for the dashboard."
+    - "Local mootech-fe main fast-forwarded 5d015e0 -> cb2748b (clean)."
+
+evidence:
+  plan: workstreams/mumate-image-weight-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "0fff89d"
+    branch: hq/20261009
+  related:
+    - memory/events/2026/10/13/20261013T114942_mumate_image_weight_staging_verified.yaml
+    - memory/events/2026/10/13/20261013T154843_mumate_access_log_retention_production_live_backfilled.yaml
+
+unresolved:
+  - "WebP release waits for the team's approval of the guide work, naming the fe commit approved; then runbook 01 and a release of that fe with the newest bazi."
+  - "The day-after measurement (static bytes per page view, 304 count) can start for the cache half from 2026-10-14; WebP's share comes after its release."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the team approves the guide: readiness check, release fe <approved
+    sha> with the bazi then on pdf-dev (env=production, pair named), verify
+    WebP with Accept image/webp on production.
+  acceptance_check:
+    - "Accept image/webp -> image/webp with max-age=604800 and Vary: Accept; */* -> PNG."

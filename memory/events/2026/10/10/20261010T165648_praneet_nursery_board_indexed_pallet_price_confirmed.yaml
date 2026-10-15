@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T165648_praneet_nursery_board_indexed_pallet_price_confirmed
+type: decision
+recorded_at: 2026-10-10T16:56:48+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Record the owner's answers after merging the board - search indexing on, the roll pallet line confirmed.
+  scope:
+    - praneet-web public pages within slice 4 of plan revision 0.4.
+outcome:
+  status: decided
+  decision: >-
+    The public board is open to search engines on praneet-web.vercel.app (the
+    agent had recommended keeping it closed until counts are right; the
+    owner chose indexing). The back office and API stay out of search. The
+    roll pallet line "ประมาณ 1,700 บาท ต่อ 100 ต้น · ถึงใน 2–3 วัน" stays as
+    published. The owner fixes 70-A's count himself before sharing. The agent
+    also shrinks link previews from 2.3-2.4 MB PNG to JPEG in the same change.
+  owner_statements:
+    - "1 merged แล้ว"
+    - "2 ยังใช้ได้อยู่"
+    - "3 เจอ"
+    - "4 ได้เดี๋ยวผมแก้ก่อน"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "4"
+  repository:
+    head: c94db5a810dc0f48ad13b73818f84b8872ea7de4
+    branch: hq/20261009
+  sources:
+    - "praneet-web PR 3 merged 2026-10-10T09:55:05Z (b04d9cc); production: / 200, /lots/70-A, 70-B, 70-C 200, /lots/99-Z 404, og:image routes 200 image/png at 2,402,117 and 2,275,070 bytes; public HTML carries no /ops, audit, spin or recorder strings; og tags point at https://praneet-web.vercel.app."
+unresolved:
+  - "Indexing a vercel.app address means a later domain change needs redirects to keep search results; the owner chose vercel.app for now."
+  - "70-A count: the owner corrects it before sharing."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Open a small praneet-web PR that turns on indexing for public pages only
+    (robots.txt, sitemap, back office kept noindex) and serves link previews as
+    JPEG; after the owner merges it, run the real-phone checks.
+  acceptance_check:
+    - "Production / carries no noindex, /ops does, robots.txt disallows /ops and /api, sitemap lists every lot, and og:image is a JPEG well under 1 MB."

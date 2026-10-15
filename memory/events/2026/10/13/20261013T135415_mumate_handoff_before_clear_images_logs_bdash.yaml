@@ -1,0 +1,86 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T135415_mumate_handoff_before_clear_images_logs_bdash
+type: closeout
+recorded_at: 2026-10-13T13:54:15+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-business-metrics-001
+  lane: single
+  objective: >-
+    Hand MuMate over before /clear after the 2026-10-13 morning round: where
+    production and staging stand, what each of the three new workstreams has
+    reached, what the joint release must do, and the open items in order.
+    Cold-session entry for MuMate (supersedes 20261013T002444 as the entry).
+  scope:
+    - "Read-only check of mumate-prod-1 and mumate-2 at ~13:50 +07; child checkouts clean on their default lines."
+  out_of_scope:
+    - Any release, host or env change.
+
+outcome:
+  status: recorded
+  state:
+    - "Production (mumate-prod-1): fe 611c521 / bazi 434d069 (unchanged since 2026-10-12), infra 409a4a2. No archive dir, no logs-archive timer yet."
+    - "Staging (mumate-2): fe cb2748b (teammates' guide work #896-#903 + our WebP #899), bazi 6ca657a, infra e5b153f; caddy recreated twice today by the agent (fe_images cache, then the archive logger); /var/log/mumate/caddy/access.log written; staging never uploads."
+    - "Child checkouts: mootech-fe main 5d015e0 (origin cb2748b, fetch only), mumate-infra main e5b153f, bazi-sft-dataset detached at origin/pdf-dev 6ca657a; all clean."
+    - "Staging DB copy (pgstaging) is the backup of 2026-10-02 and expires 2026-10-16 (runbook 05: refresh with staging-db.sh up, or down)."
+  round_summary:
+    - "Traffic report from Loki (prod access log 10-09..13, 208k requests): peaks 12-14 and 19-23 Bangkok; scanners 6.6%, nothing leaked (post-cutover .env probes all 404); static 15.3 GB in 4.5 days; part of the analysis was refused by the harness as production reads."
+    - "mumate-image-weight-001 slice 1: fe PR 899 (WebP twins at image build, beforeFiles rewrite on Accept, WEBP_TWINS gate so next dev keeps PNG) and infra PR 56 (/images/* Cache-Control 7 days on 200/304 only) merged by the owner; staging verified (sinsae.png 1,373 KB PNG -> 81 KB WebP). Waits for the production press."
+    - "mumate-access-log-retention-001 slice 1 (plan 0.2): team made bucket mumate-logs (sgp1, Standard) and a Limited Read/Write/Delete key; infra PR 57 merged (global Caddy archive logger include http.log.access, 20 MiB rolls, 30 days on host; bin/logs-archive.sh hourly, production only, 90-day deletion by name date; key/code/state/token query values REDACTED on file and stdout). Staging verified incl. Loki. Waits for the production press + backfill."
+    - "mumate-business-metrics-001 opened (plan 0.1): read-only business dashboard 'bdash' inside bazi on its own host with a Caddy allowlist, nightly snapshot, own key; five metrics from data already held; parked items listed; owner approved the mock's look and plain-Thai wording (plan section 'Look and words'). Waits for Q1-Q5 and go."
+    - "mootech-ga4-instrumentation-001 closed by the owner; remaining GA4 work parked in business-metrics."
+  how_the_joint_release_goes:
+    - "Owner's word first. Readiness check per runbook 01, plus: ask the team whether the guide work on fe main (#896-#903) is ready; bazi must go out at 6ca657a WITH fe main, or the guide's mission rewards 404 on production."
+    - "promote-production (fe + bazi). Then on prod-1: git pull --ff-only (infra e5b153f); install env/logs-archive.env mode 600 from the owner's copy .assets/mumate/env/logs-archive.env; docker compose up -d --force-recreate caddy ONCE (cache header + archive logger; avoid 12:00-14:00); bin/logs-archive.sh --dry-run; systemctl link + enable --now mumate-logs-archive.timer (runbook 04 section 10)."
+    - "Verify on bazichart.mumate.co: image Accept webp -> image/webp with max-age=604800 and Vary: Accept; */* -> PNG; /var/log/mumate/caddy/access.log growing."
+    - "Backfill (production read, owner's word): export the production caddy access log from Loki (viewer token in .assets/mumate/grafana/.env, datasource uid grafanacloud-logs) for 2026-10-09 -> go-live as daily gz into s3://mumate-logs/caddy/mumate-prod-1/backfill/access-YYYY-MM-DD.log.gz, BEFORE ~2026-10-23 when Loki drops 10-09."
+    - "Next day: Loki static bytes per page view and 304 count before/after; first archive objects present; closeouts for both workstreams."
+  keys_and_env:
+    - "Logs archive key: .assets/mumate/env/logs-archive.env (owner's copy, mode 600; SPACES_ENDPOINT fixed to https://sgp1.digitaloceanspaces.com; Limited to mumate-logs; proven refused on mumate-backups)."
+    - "Loki/Grafana reads: .assets/mumate/grafana/.env (GRAFANA_SA_VIEWR_TOKEN, read-only)."
+    - "BDASH_KEY does not exist yet (business-metrics Q2)."
+  open_items_in_order:
+    - "1. Joint production release of image-weight + access-log-retention (above), then the Loki backfill before ~2026-10-23."
+    - "2. Rotate the production DB password (leaked into the 2026-10-12 session); inventory env files by hash/name first; quiet hours 02:00-06:00."
+    - "3. business-metrics-001: owner answers Q1 placement (lean bazi own host), Q2 key (lean separate BDASH_KEY), Q3 host bdash.staging.mumate.co, Q4 read-only DB role (lean later), Q5 who merges the bazi PR; then slice 1."
+    - "4. Staging DB copy expires 2026-10-16: refresh (staging-db.sh up) when next needed, else down per runbook 05."
+    - "5. Move the backup JOB and its key from mumate-2 to prod-1 (correction 2026-10-13: the dumps already live in Spaces mumate-backups)."
+    - "6. fe pre-push hook: four verify-architecture violations on main (every fe push still needs --no-verify on the owner's word)."
+    - "7. Delete env backups by name on the owner's word - prod-1: env/alert.env.bak-20261003T010546Z, env/bazi.env.bak-20261001T000901Z, -20261007T044545Z, -20261012T142440Z, -20261012T150936Z, env/fe.env.bak-20261007T044534Z, -20261012T010101Z; mumate-2: env/alert.env.bak-20261003T005128Z, env/bazi.env.bak-20261012T093444Z, env/bazi.env.pre-s2, .pre-s3, .pre-slice1, env/be.env.bak-20260920-cors, env/fe.env.bak-3c, .pre-s2, .pre-slice1 (+ .arena-baseline*.txt, .staging-restore.err); plus .assets/mumate/ops-dashboard-key.production.env and backstage-key.staging.env."
+    - "8. Rotate tokens that lived in Vercel env and the BE-only credentials (from the 2026-10-13 00:24 handoff)."
+    - "9. be-retirement remainder; owner decisions on Neon, app observability, bazi direct pushes; bazi LINE webhook/LIFF left as is."
+  lessons:
+    - "Caddy 2.10.0 gives each server ONE access logger (default_logger_name): a second site-level log replaces the first; a GLOBAL log with include http.log.access duplicates the lines. roll_interval does not exist in 2.10.0 (size rolls only)."
+    - "A DO Spaces Limited key cannot set bucket lifecycle; keep retention in the uploader."
+    - "A beforeFiles rewrite to build-time twins must be gated to builds that wrote them, or every dev machine 404s its images."
+    - "ssh 'cmd' with $$ inside expands to the remote PID; send SQL through a heredoc on stdin."
+
+evidence:
+  plan: workstreams/mumate-business-metrics-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "c1f8234"
+    branch: hq/20261009
+    working_tree: this-record-and-plan-edit
+  related:
+    - memory/events/2026/10/13/20261013T002444_mumate_handoff_before_clear_vercel_gone_backstage_live.yaml
+    - workstreams/mumate-image-weight-001/PLAN.md
+    - workstreams/mumate-access-log-retention-001/PLAN.md
+
+unresolved:
+  - "hq/20261009 unpushed (101+ commits ahead of origin/main, other lanes' records included); the push is the owner's."
+  - "Deviation this round: scripts/caddy-edge.test.sh was once run directly instead of through scripts/test-all.sh; re-run through test-all.sh, no leftovers."
+  - "Misreport this round, corrected by the owner: the production DB backup is in Spaces, not on the staging host."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Next session: Wake, read OWNER.md and this record, report production and
+    staging, then ask the owner for the joint-release word (item 1) and the
+    business-metrics answers (item 3); recommend the release first because of
+    the 2026-10-23 backfill deadline.
+  acceptance_check:
+    - "A cold session can state production, staging, the three workstreams' positions, the joint-release steps, where the keys are, and the open items in order, from this record."

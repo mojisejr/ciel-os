@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20261014T163747_praneet_nursery_slice7_authorized
+type: decision
+recorded_at: 2026-10-14T16:37:47+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Authorize slice 7 - find buyers and close the first sale - under plan revision 0.8.
+  scope:
+    - "praneet-web: public shop note on cards and lot pages; order free trees, came-from field, referral codes and free-tree credit; per-post link codes, click counts and an /ops posts page with an upload API."
+    - "praneet-office: post generator, Facebook group list (git-ignored), runbook; the first real sale and the numbers summary."
+  out_of_scope:
+    - Auto-posting, any Facebook or TikTok API, ads unless the owner orders them, pre-order and deposits.
+outcome:
+  status: decided
+  decision: >-
+    After the four-round syncup recorded in
+    evt_20261014T130602_praneet_nursery_rev08_slice7_agreed_awaiting_go and
+    the owner's figures in
+    evt_20261014T163358_praneet_nursery_owner_figures_bag_weight_breaks_cage_count,
+    the owner said go on slice 7 with nothing left to settle. Migrations run
+    while each PR is draft; Vercel env is set before a merge and redeployed;
+    new CSS classes carry their own prefix.
+  owner_statements:
+    - "ผมคิดว่าไม่มีอะไรแล้ว ก็ go ได้เลยครับถ้าไม่มีอะไรต้องเคาะแล้ว"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.8"
+  slice: "7"
+  repository:
+    head: 6f7483a9a5745c63cff94ac1798786da867aad75
+    branch: hq/20261009
+unresolved:
+  - "Trees per cage and per truck at 3-4 kg bags: the owner confirms before shipping cost appears on the board or in a post."
+  - "Old stock bagging month and price, the 70-B and 70-A counts: the owner enters them in /ops."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build slice 7 in praneet-web and praneet-office on topic branches, with
+    tests; open draft PRs, run each additive migration while its PR is
+    draft, then ask the owner to merge.
+  acceptance_check:
+    - The slice 7 DoD in PLAN.md revision 0.8.

@@ -1,0 +1,79 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T054626_mumate_bazi_stall_resilience_authorized
+type: decision
+recorded_at: 2026-10-10T05:46:26+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Extend slice 7 (20261009T201451) with two fixes for the bazi hang of
+    2026-10-09 20:20-20:30 +07, under the owner's condition that users must
+    not feel it as an error or a frozen screen. Fix 2 (share image) follows
+    after these.
+  scope:
+    - "Fix 3, bazi-sft-dataset: bound every database query on the client side; on a stall, discard the stuck connection and retry automatically on a fresh one, so the user sees a few seconds' delay, not an error and not a hang. Log each timeout with bounded metadata. Staging proof includes an injected stall."
+    - "Fix 4, mumate-infra: recover a bazi (or fe) that stays unhealthy within about 1-2 minutes instead of about 10."
+  out_of_scope:
+    - A Supabase-wide statement_timeout for the postgres role (affects fe, crons and migrations; does not cover a statement that never reaches the database).
+    - Vercel, DNS, cleanup items.
+
+outcome:
+  status: decided
+  decision: >-
+    Fixes 3 and 4 are authorized inside slice 7 with the same delegation as
+    fix 1: the agent merges and releases to staging then production when
+    nothing needs a new decision and every step is safe, and reports. After
+    them, fix 2 (share image) continues.
+  cause_as_established: >-
+    Supabase Postgres logs 13:10-13:35Z (owner export, kept in the
+    owner-controlled .assets, not copied here) show no database error in the
+    hang window except five 'canceling statement due to statement timeout'
+    at 13:30:18.672-.675Z, all via Supavisor as role postgres with
+    command_tag PARSE and an empty query, i.e. Postgres had received only
+    the Parse message of each statement and was waiting for the rest. They
+    ended about 10 s after the health timer began recreating bazi (13:30:08Z;
+    new container 13:30:19Z) - consistent with the stuck client sockets
+    closing at the stop's kill, an inference since Docker's event buffer no
+    longer held that minute. Role postgres has no statement_timeout
+    (rolconfig only search_path); authenticator has 8s. So the database was
+    idle, not slow or locked: bazi's statements stalled between its
+    postgres.js client and Postgres, and with no client-side bound each held
+    one of bazi's 10 pool connections until restart. Unknown: whether the
+    bytes were lost in the DO-AWS path or held back by the client/pooler.
+  design_choices:
+    - "Reads: short first bound, then a single retry on a fresh connection with a longer bound, so a legitimately slow read still completes."
+    - "Writes: also retried once after a stall. In the observed failure the statement never executed (Postgres in PARSE; a dropped socket aborts the implicit transaction), so a retry cannot double it; a duplicate is possible only for a write that was genuinely executing past its bound, which bazi's single-row writes do not approach. Each retried write is logged so any such case is visible. The owner may ask for writes to be excluded."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "7"
+  repository:
+    head: "fb17e8a32cc3a9917ba3d1782cc24b23f8fd42d0"
+    branch: hq/20261009
+    working_tree: this-record-only
+  owner_statement: "ข้อแรก user จะต้องกลับไปใช้งานต่อได้นะถุกป่ะ ไม่ใช่ error ไปเลย แล้วต้อง refresh. เอง ไม่ใช่แบบนั้นใช่ป่ะ ? ผมคิดว่า ควรทำ 1 + 2 เลย แต่ในเงื่อนไขที่ผมบอกไป ว่า user ต้องไม่รู้สึกว่า error แล้วแย่จังประมาณนี้ หรือ อ่าว ค้างเฉย อะไรงี้ ถ้าต้อง update workstream ก็ทำได้เลยครับ แล้ว เรื่องถัดไปที่เราค้างไว้ ก็ทำต่อจากตรงนี้ครับ"
+  overnight_check: "2026-10-10 05:17 +07: no bazi DOWN or 5xx since 21:00; 8 organic LINE callbacks on fe 23bdc6f all succeeded (302 to /v2 or /v2/welcome-back), no next-auth error; every cron 200 incl. first qi-quota-reset and account-purge on prod-1."
+  application:
+    mootech-fe: "23bdc6f on mumate-prod-1"
+    bazi-sft-dataset: "922ba28 on mumate-prod-1"
+    mumate-infra: "95df107 on mumate-prod-1"
+
+unresolved:
+  - "The stall's origin (network path vs client or pooler) stays unknown; the timeout log of fix 3 is how it becomes measurable."
+  - "Supavisor-side cancel behaviour and query-duration data (pg_stat_statements) not read; bounds are chosen conservatively and observed after release."
+  - "Pipeline items unchanged: share image (fix 2), QStash deduplication id, cleanup list, ops key decision, hq/20261009 push (owner)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Fix 3 in bazi-sft-dataset from origin/pdf-dev (tests incl. a simulated
+    stall), PR, staging with an injected stall, production; fix 4 in
+    mumate-infra; verify, record, report; then fix 2.
+  acceptance_check:
+    - "An injected stall on staging delays the affected request by at most a few seconds and returns its normal response; no request hangs and no user-visible error."
+    - "A bazi that stays unhealthy is recreated within about 2 minutes."

@@ -1,0 +1,40 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T065739_praneet_nursery_logo_taps_phone_ok
+type: closeout
+recorded_at: 2026-10-15T06:57:39+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    The owner confirmed on his phone that 8 taps on the shop logo open /ops on
+    production.
+  scope:
+    - praneet-web PR 12 phone check only.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Owner's phone check passed: 8 logo taps on https://praneet-web.vercel.app reach /ops. The acceptance check of evt_20261015T065707_praneet_nursery_logo_taps_ops_entry_live is met."
+  owner_statements:
+    - "ลองละได้แล้ว บันทึก closeout ผลด้วย"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.9"
+  repository:
+    head: e41b3681a1c48050724280c651ef597497127b0b
+    branch: hq/20261009
+unresolved:
+  - "Remote branch feat/logo-ops-entry in praneet-web is left for the owner."
+  - "Still open: the second-account LINE invite test, the old-stock lot and first post draft, who issued the two existing referral codes, the 'Facebook' label, and whether to draft the lot 70-A post now."
+  - "HQ hq/20261009 is ahead of origin/main; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    When the owner says the old-stock lot is added, render its card and draft
+    the first post for his review; then support the LINE invite-link test.
+  acceptance_check:
+    - The owner approves the card and text before posts new uploads it.
+    - The slice 7 DoD in PLAN.md revision 0.9.

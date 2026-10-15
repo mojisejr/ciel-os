@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T195932_praneet_nursery_rev05_slice5_authorized
+type: decision
+recorded_at: 2026-10-10T19:59:32+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Authorize slice 5 - LINE OA as the shop's only customer channel - under plan revision 0.5.
+  scope:
+    - praneet-web webhook, customer table and board LINE buttons; praneet-office rich menu and LINE scripts; the OA's webhook and rich menu settings.
+outcome:
+  status: decided
+  decision: >-
+    The owner said go for slice 5. Revision 0.5 records what was agreed
+    before the go: use the existing OA "ปราณีต พันธุ์ไม้" (@xpm7982c), whose
+    Messaging API and LINE Login channels share one provider (owner's word);
+    move its webhook from an old ngrok endpoint to praneet-web; replace any
+    rich menu with a new one whose image the agent renders and the owner
+    approves before it is set; existing friends join the customer table only
+    when they next interact; the board's LINE button becomes primary and the
+    phone stays. Production writes in this slice (Vercel env, webhook URL,
+    rich menu, migration) happen in the order the owner sees in each PR.
+  owner_statements:
+    - "1. อยู่ใน provider เดียวกัน และแนบ .env ไปให้แล้ว"
+    - "1. เปลี่ยนมาชี้ระบบใหม่ได้เลย"
+    - "2. ไม่มีแล้ว เอาอันใหม่ได้เลย"
+    - "go slice 5 ได้เลยครับ"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "5"
+  repository:
+    head: 704b5f252ece1d68740c0e9751284c48180d7970
+    branch: hq/20261009
+  sources:
+    - "Read-only LINE API check 2026-10-10: token verifies for LINE_CHANNEL_ID (long-lived); bot displayName 'ปราณีต พันธุ์ไม้', basicId @xpm7982c, chatMode chat, markAsReadMode manual; webhook set and active at an ngrok host under path /tondurian2021/us-central1/api/chatbot; quota limited 300, 0 used this month; no API rich menu; followers 39, blocks 4 on 2026-10-08."
+    - "LINE Developers docs: since 2024-09-04 Messaging API channels are created by enabling the API in OA Manager, and the provider cannot be changed; follower ID lists need a verified or premium account."
+    - "Secrets live in the git-ignored .assets/preneet/.env (mode 600); no value is printed or committed."
+unresolved:
+  - "Greeting message and privacy notice wording: the agent drafts, the owner approves (copy is the owner's)."
+  - "Whether the old ngrok endpoint still runs was not tested."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build the customer table, signed webhook receiver, back-office customer
+    list, privacy page and board LINE buttons in praneet-web; the rich menu
+    template and LINE scripts in praneet-office; show the owner the rich menu
+    and copy drafts; open draft PRs with the production order written first.
+  acceptance_check:
+    - The slice 5 DoD in PLAN.md revision 0.5.

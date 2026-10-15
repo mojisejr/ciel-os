@@ -1,0 +1,28 @@
+schema_version: ciel.event.v0.1
+recorded_at: 2026-10-09T13:10:28+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: mumate-referral-release-001
+  lane: single
+id: evt_20261009T131028_mumate_referral_owner_closure_authorized
+type: decision
+outcome:
+  status: decided
+  decision: The owner asked to close this workstream if it can be closed and instructed closure. The final release report establishes plan 0.2 completion with disclosed exceptions and limits; accept that bounded delivery and mark the workstream completed. No further application changes or deployment are authorized by this closure.
+evidence:
+  plan: workstreams/mumate-referral-release-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "fdf03cf9cc90a0877ebd71c6a447bc9d3bd9384b"
+    branch: hq/20261009
+  owner_statement: "เราปิด workstream นี้ได้เลยใช่มัย ถ้าได้ปิดเลยครับ"
+  acceptance_provenance: Direct owner closure instruction following the final deployment report; not an owner device trial or new production verification.
+  final_delivery: memory/events/2026/10/09/20261009T114430_mumate_referral_release_final_delivery.yaml
+unresolved:
+  - Final delivery exceptions and limits remain explicit; owner acceptance does not turn unperformed checks or deferred work into passed checks.
+  - HQ shared-round integration and other workstreams remain separate; this instruction does not authorize their merge, cleanup or closure.
+next_action:
+  action: Commit the completed plan and append-only owner-accepted closure with final-delivery proof references; verify local Wake reports the plan completed.

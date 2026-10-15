@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261012T214941_mumate_bazi_backstage_final_closeout
+type: closeout
+recorded_at: 2026-10-12T21:49:41+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bazi-backstage-001
+  lane: single
+  objective: >-
+    Final delivery: bazi's own pages are back for เอ็ม and ซินแส on production
+    at bazi-sft.staging.mumate.co, behind the ops passkey.
+  scope:
+    - Slice 2 - handover and confirmation.
+  out_of_scope:
+    - Bugs in bazi's pages themselves (เอ็ม's, later).
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "2"
+  result: >-
+    The owner: "เอ็มบอกว่าใช้ได้ละ ผมลองเข้าแล้วก็ใช้ได้อยู่นะ แต่เดี๋ยว bug
+    อะไรค่อยแก้ต่อ ตอนนี้ปิดได้ก็ปิดเลยคับ". เอ็ม and the owner both opened
+    the pages. Slice 1 evidence: 20261012T214324.
+  delivered:
+    - "bazi-sft-dataset PR 52 (passkey gate, src/proxy.ts) and PR 53 (absolute redirect fix), on production as bazi 434d069."
+    - "mumate-infra PR 55 (409a4a2): Caddy site bazi-sft.staging.mumate.co stamping X-Mumate-Backstage: 1."
+    - "DO DNS A bazi-sft.staging.mumate.co 209.38.56.234 TTL 3600."
+    - "prod-1 env/bazi.env: BACKSTAGE_KEY (= fe OPS_DASHBOARD_KEY), SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY."
+  remove_later: "Delete the bazi-sft site block (mumate-infra PR), the DO DNS record and BACKSTAGE_KEY; recreate Caddy."
+
+evidence:
+  plan: workstreams/mumate-bazi-backstage-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "cbbebdd"
+    branch: hq/20261009
+    working_tree: this-closure-and-completed-plan
+  related:
+    - memory/events/2026/10/12/20261012T214324_mumate_bazi_backstage_host_live_behind_passkey.yaml
+
+unresolved:
+  - "Bugs in bazi's pages, if any, are fixed later through เอ็ม's normal PR → staging → owner promote flow."
+  - "Rotating the fe ops key means updating BACKSTAGE_KEY in prod-1 env/bazi.env too."
+  - "env/*.bak-* on prod-1 (incl. fe.env.bak-20261012T010101Z, bazi.env.bak-20261012T142440Z) and mumate-2 (bazi.env.bak-20261012T093444Z) hold secrets; delete by name on the owner's word. mumate-2 keeps a staging-only BACKSTAGE_KEY."
+  - "Production DB password printed into the session earlier on 2026-10-12; rotation is the owner's decision."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: No further work in this workstream.
+  acceptance_check:
+    - Wake reports mumate-bazi-backstage-001 completed.

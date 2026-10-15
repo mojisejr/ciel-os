@@ -1,0 +1,76 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T064552_mumate_supabase_pgrst_log_noise_silenced
+type: closeout
+recorded_at: 2026-10-10T06:45:52+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-supabase-db-audit
+  lane: single
+  objective: >-
+    Stop the Postgres error that fires every 32 seconds since the Data API
+    was turned off (20261007T050308), which turned the owner's Supabase
+    dashboard red and buried real errors, and record how to turn the Data API
+    back on so nobody has to research it again.
+  scope:
+    - Production Supabase project, role authenticator, PostgREST exposed schemas.
+  out_of_scope:
+    - Re-enabling the Data API; any table, grant or RLS change.
+
+outcome:
+  status: recorded
+  symptom: >-
+    'schema "pg_pgrst_no_exposed_schemas" does not exist' (SQLSTATE 3F000)
+    every 32.04-32.12 s in the Postgres log (owner export 2026-10-10, 999 of
+    1000 rows from 13:33Z to 22:25Z on 10-09). It is not an HTTP 500 and not
+    from our apps.
+  cause: >-
+    Supabase documents it: turning the Data API off does not stop PostgREST;
+    it points PostgREST's exposed schemas at a name that does not exist, and
+    PostgREST retries its schema-cache load forever. Harmless but noisy;
+    Supabase says a fix is in progress.
+  done_by_owner: >-
+    2026-10-10 ~06:40 +07, Supabase SQL Editor on production, Supabase's
+    documented workaround:
+    create schema pgrst_no_exposed_schemas;
+    alter role authenticator set pgrst.db_schemas = 'pgrst_no_exposed_schemas';
+    notify pgrst;
+  verification:
+    - "Owner ran (read-only) select rolname, rolconfig from pg_roles where rolname = 'authenticator' -> session_preload_libraries=supautils, safeupdate; statement_timeout=8s; lock_timeout=8s; pgrst.db_schemas=pgrst_no_exposed_schemas (the last one new)."
+    - "Apps unaffected (they never used the Data API, 20261007T050308): 06:45 +07 prod-1 fe a1900ff and bazi 6b08b51 healthy, 0 5xx in 15 min."
+    - "Not yet observed by the agent: that the 32-second error has stopped in the Postgres log (owner can confirm in Logs -> Postgres, last 5 minutes)."
+  data_api_still_off: >-
+    The Data API remains disabled. pgrst_no_exposed_schemas is an empty
+    schema, so nothing new is exposed. Keep it empty: anything created in
+    it would become reachable the moment the Data API is turned on.
+  to_turn_the_data_api_back_on:
+    - "1. FIRST, in the SQL Editor: alter role authenticator reset pgrst.db_schemas; notify pgrst;  (otherwise PostgREST keeps serving the empty schema and every request answers PGRST106)."
+    - "2. Then Dashboard -> Project Settings -> Data API (API settings): enable it and set the exposed schemas you actually want (Supabase's default is public; review RLS on every table in it first - the 2026-10-06 audit turned the Data API off because of exposure, 20261006T210406)."
+    - "3. Check: select rolname, rolconfig from pg_roles where rolname = 'authenticator' no longer lists pgrst.db_schemas; a request to https://<project>.supabase.co/rest/v1/ with the anon key answers instead of PGRST106."
+    - "4. Optional cleanup once it is on: drop schema pgrst_no_exposed_schemas;  (only while it is still empty)."
+  source: "https://supabase.com/docs/guides/troubleshooting/schema-pg_pgrst_no_exposed_schemas-does-not-exist (read 2026-10-10)"
+
+evidence:
+  repository:
+    head: "85063b4"
+    branch: hq/20261009
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/06/20261006T210406_mumate_supabase_api_exposure_closed_audit_recorded.yaml
+    - memory/events/2026/10/07/20261007T050308_mumate_supabase_data_api_off_hosts_and_backup_checked.yaml
+  log_export: "Owner's CSV exports are in the owner-controlled, gitignored .assets/mumate/infra-mumate/ (not copied into this public repository)."
+
+unresolved:
+  - "Confirm in Logs -> Postgres that the 32-second error stopped (owner)."
+  - "If Supabase ships its own fix, this role setting may become unnecessary; the reset in step 1 removes it."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None for this item unless the error persists in the Postgres log; when
+    the Data API is ever re-enabled, follow to_turn_the_data_api_back_on in
+    order.
+  acceptance_check:
+    - "No 'pg_pgrst_no_exposed_schemas' entries in the Postgres log after 2026-10-10 06:45 +07."

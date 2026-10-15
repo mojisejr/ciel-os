@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T002444_mumate_handoff_before_clear_vercel_gone_backstage_live
+type: closeout
+recorded_at: 2026-10-13T00:24:44+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-vercel-to-do-001
+  lane: single
+  objective: >-
+    Hand MuMate over before /clear after the 2026-10-11/12 round: where
+    production and staging stand, what closed, how releases go now, and the
+    open items in order. Cold-session entry for MuMate (supersedes
+    20261011T195717 as the entry).
+  scope:
+    - Read-only check of mumate-prod-1 and mumate-2 at 00:24 +07; child checkouts tidied to their default branches.
+  out_of_scope:
+    - Any release or host change.
+
+outcome:
+  status: recorded
+  state:
+    - "Production (mumate-prod-1): fe 611c521 / bazi 434d069 since promote run 38270586532 (2026-10-12 15:30Z); ops-status 0; infra 409a4a2."
+    - "Staging (mumate-2): the same pair since 2026-10-12T15:18:52Z, by staging-follow."
+    - "Child checkouts: mootech-fe main 611c521, mumate-infra main 409a4a2, bazi-sft-dataset detached at origin/pdf-dev 434d069, all clean. Merged topic branches remain locally (fe chore/pr-build-check, feat/fengshui-hold; bazi chore/pr-build-check, feat/backstage-passkey, fix/backstage-absolute-redirect; infra feat/bazi-backstage-host)."
+  closed_this_round:
+    - "mumate-vercel-to-do-001 (20261012T085404): DO only; both Vercel projects hibernated (no Git, no domain, static closed page, no env); PR check (container-build on pull_request) in fe and bazi."
+    - "mumate-be-retirement-001 (20261012T162711): Render deleted; step-6 remainder carried."
+    - "mumate-bazi-backstage-001 (20261012T214941): https://bazi-sft.staging.mumate.co = PRODUCTION bazi pages for เอ็ม and ซินแส behind the fe /ops passkey (BACKSTAGE_KEY)."
+    - "mumate-fengshui-hold-001 (20261012T223557): ฮวงจุ้ย card service off production (hub hidden, page → coming-soon, chat note off); reopen steps in that record."
+  how_releases_go_now:
+    - "Team merges → image on push → staging follows by itself → readiness check (runbook 01 'agent: readiness check') → promote-production. The owner keeps the final press; the agent presses only on his word (he gave it per release on 2026-10-12)."
+    - "Every fe push needs --no-verify (owner's word each time) until the pre-push hook's four verify-architecture violations on main are fixed."
+    - "PRs to fe main and bazi pdf-dev now get an 'image (staging)' build check."
+  keys_and_env:
+    - "Production /ops passkey: .assets/mumate/ops-dashboard-key.production.20261012.env; the same value is BACKSTAGE_KEY in prod-1 env/bazi.env - rotate both together."
+    - "prod-1 env/bazi.env also has SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (from .assets/mumate/infra-mumate/from-jareonsak/engine-env.env), CHAT_CARD_NOTE_FENGSHUI=off."
+  open_items_in_order:
+    - "1. Rotate the production DB password: its connection string was printed into the 2026-10-12 session (agent's fail-open sed filter). Inventory first which env files use that role (hash compare, names only): prod-1 bazi and fe, mumate-2 backup.env likely. Old Vercel deployments carry it too and die with the rotation (accepted)."
+    - "2. Move the production database backup off mumate-2 (the only copy lives on the staging host)."
+    - "3. fe pre-push hook: fix the four violations with .assets/mumate/fe-four-violations.patch plus STATE_MAP seeds proven by a Playwright run on the arena."
+    - "4. Delete env/*.bak-* by name on the owner's word: prod-1 has 7, mumate-2 has 4 (secrets inside); old ops key file .assets/mumate/ops-dashboard-key.production.env; staging-only BACKSTAGE_KEY on mumate-2 (.assets/mumate/backstage-key.staging.env)."
+    - "5. Rotate tokens that lived in Vercel env (VERCEL_TOKEN, RENDER_API_KEY, GITHUB_TOKEN - check whether mumate-2's GITHUB_TOKEN is the same) and the BE-only credentials (SendGrid, 8x8, Dify, old Omise)."
+    - "6. be-retirement remainder: archive mootech-be (after copying consent/balance DDL to fe), remove the be service from compose and env/be.env on both hosts."
+    - "7. Owner decisions waiting: Neon database keep/delete; application-side observability (deferred, 'เราจะไม่ลืม'); bazi direct pushes without PRs (เอ็ม)."
+    - "8. bazi LINE webhook / LIFF of channel 2011679472: left as is until เอ็ม asks."
+
+evidence:
+  plan: workstreams/mumate-vercel-to-do-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: "69ed71b"
+    branch: hq/20261009
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/12/20261012T085404_mumate_vercel_to_do_final_closeout.yaml
+    - memory/events/2026/10/12/20261012T162711_mumate_be_retirement_final_closeout.yaml
+    - memory/events/2026/10/12/20261012T214941_mumate_bazi_backstage_final_closeout.yaml
+    - memory/events/2026/10/12/20261012T223557_mumate_fengshui_hold_final_closeout.yaml
+
+unresolved:
+  - "hq/20261009 unpushed (92 commits ahead of origin/main, other lanes' records included); the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Next session: Wake, read OWNER.md and this record, report production and
+    staging, then ask the owner which open item to take; recommend item 1
+    (DB password rotation) first.
+  acceptance_check:
+    - "A cold session can state production, staging, how a release goes, where the keys are, and the open items in order, from this record."

@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261011T194439_ciel_agent_damage_guard_final_closeout
+type: closeout
+recorded_at: 2026-10-11T19:44:39+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-agent-damage-guard-001
+  lane: single
+  objective: >-
+    Final delivery of plan 0.2: a rule every client follows and a mechanical
+    guard for the one repository whose tests eval, so agent-run commands do not
+    silently damage local files; slice 3 (backup) removed and rolled back.
+  scope:
+    - AGENTS.md Execute line; mumate-infra scripts/test-all.sh; rollback of slice 3.
+  out_of_scope:
+    - Backup of ignored files (owner's).
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "2"
+  delivered:
+    - "Slice 1 (HQ 406512d): AGENTS.md Execute line - no real destructive command in a test, fixture or example; git status after any local run that can write, anything unexpected stops the work and goes to the owner before any push. No line or heading added."
+    - "Slice 2 (mumate-infra PR 54, main 2167255): scripts/test-all.sh runs every test in a throwaway copy without .env and exits 2 if the real checkout changed; README points to it. Proven with harmless markers (isolation and detection)."
+  removed_by_rollback:
+    - "Three untracked files in docs/portability (backup-rules.txt, backup.config.example, ciel-backup.sh) - never committed; docs/portability is back to WINDOWS_BOOTSTRAP.md and assets-manifest.yaml."
+    - "~/.config/ciel-backup/ (machine config) removed."
+    - "rclone remote gdrive deleted, ~/.config/rclone/rclone.conf removed, rclone uninstalled (brew)."
+    - "No launchd job was ever created; nothing was ever uploaded to Google Drive."
+  token_incident:
+    what: "After the owner's Google sign-in (rclone scope drive.file, 19:23:57), rclone config create printed the config with the OAuth token, and the agent displayed that output, so the token entered the session transcript and a temporary output file."
+    contained: "Temporary output file deleted; rclone.conf set to 600; then the agent revoked the token at Google's revoke endpoint, sending it from the config through stdin without printing it (HTTP 200); rclone's next call failed with 401 Invalid Credentials; config and tool then removed."
+    exposure: "The token could see only files rclone created (scope drive.file); none existed. The transcript still contains the now-revoked token."
+    lesson: "Never display the raw output of a command that creates credentials; redirect it and read only a status line (agent memory updated)."
+  kept_and_adjusted:
+    - "PLAN.md is revision 0.2: slice 3 section replaced by 'Removed in revision 0.2: backup' (no slice heading, so Wake declares slices 1-2), backup lines dropped from intent and links; starting evidence about the missing backup kept as the reason for the owner's responsibility."
+    - "Files Git ignores are the owner's to back up (decision of this revision); no new AGENTS.md text - the slice-1 rule already makes any unexpected local change stop-and-report."
+    - "Agent memory: the rm-incident note keeps the quoting trap, the test-all.sh instruction and the sandbox-exec method; a new note covers credential-printing commands."
+
+evidence:
+  plan: workstreams/ciel-agent-damage-guard-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "c7a90440892ce4d18f108bb0c154f8ce6c820200"
+    branch: hq/20261009
+    working_tree: plan-0.2-and-closure
+  owner_decision: memory/events/2026/10/11/20261011T194439_ciel_agent_damage_guard_rev02_backup_removed_owner_closes.yaml
+  pull_request: https://github.com/mojisejr/mumate-infra/pull/54
+  incident: memory/events/2026/10/11/20261011T110217_mumate_team_release_test_payload_rm_incident.yaml
+
+unresolved:
+  - "This Mac has no backup; files Git ignores are unrecoverable if lost (owner's choice and responsibility)."
+  - "Running a mumate-infra test file directly is still unguarded; its README says to use test-all.sh."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: No further work in this workstream; the owner pushes HQ when he closes the round.
+  acceptance_check:
+    - Wake reports ciel-agent-damage-guard-001 completed.

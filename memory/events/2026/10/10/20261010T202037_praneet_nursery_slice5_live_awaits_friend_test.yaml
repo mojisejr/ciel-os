@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T202037_praneet_nursery_slice5_live_awaits_friend_test
+type: closeout
+recorded_at: 2026-10-10T20:20:37+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record slice 5 going live - migration, Vercel env, merges, webhook and
+    rich menu - before the add-friend test that closes it.
+  scope:
+    - Production steps of praneet-web PR 6 and praneet-office PR 3, in the order written in PR 6.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "On the owner's go ('คุน run migration กับตั้ง secret ให้ผมเลยถ้าทำได้ ลุย'): migration 003_line_customers.sql applied to production and grant-reader re-run; the reader role counts customers 0 and line_events 0, and an insert as the reader is refused (42501)."
+    - "LINE_CHANNEL_SECRET and LINE_CHANNEL_ACCESS_TOKEN added to Vercel production as sensitive values, piped from .assets/preneet/.env without printing. The checkout was linked to the Vercel project for this; the redundant .gitignore line the CLI added was reverted."
+    - "Owner merged praneet-web PR 6 at 2026-10-10T13:18:35Z (7afcaed) and praneet-office PR 3 at 13:18:52Z (9b5463d), after the env was set."
+    - "Owner set the greeting message in OA Manager and pointed the webhook at https://praneet-web.vercel.app/api/line/webhook himself. Agent check: webhook active at that URL; LINE's webhook test returned success, status 200, so the production secret verifies signatures; an unsigned POST returns 401."
+    - "Rich menu applied with the image shown to the owner (identical 90,973-byte render): richmenu-9fefb28ea1e3e298da898459e4944f07 is the default; chat bar text 'เมนูร้าน'; areas /#lots, /#order and the message 'สวัสดีครับ อยากคุยกับหนวด'."
+    - "Production / , /privacy and /lots/70-A return 200; the board links https://line.me/R/ti/p/@xpm7982c."
+  not_completed:
+    - "DoD: a household account adds the OA and a customer row appears; the owner chats normally while the webhook records; the rich menu buttons open the board."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "5"
+  repository:
+    head: fd416bd2e8072e9c1582ddb0a3a757a63625afd0
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 6
+      base: main
+      state: MERGED
+      merge_commit: 7afcaed
+    - repository: github.com/mojisejr/praneet-office
+      number: 3
+      base: main
+      state: MERGED
+      merge_commit: 9b5463d
+unresolved:
+  - "The owner did not comment on the /privacy wording or the rich menu image before merging; both were offered for change before the merge and went live as drafted."
+  - "Greeting message wording as set in OA Manager is not readable through the API; the agent has not seen it."
+  - "HQ hq/20261009 is ahead of origin/main and carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    After the household account adds @xpm7982c, confirm the customers row with
+    the reader role and in /ops/customers, confirm the owner chatted normally
+    and the menu opened the board, then record the slice 5 closeout.
+  acceptance_check:
+    - "Reader role shows one new customers row with first_source follow and a display name; line_events holds no chat text."

@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261014T221824_praneet_nursery_rev09_referral_system_authorized
+type: decision
+recorded_at: 2026-10-14T22:18:24+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Authorize slice 7 under plan revision 0.9: referrals become a system the
+    customer can see, replacing the revision 0.8 referral rules.
+  scope:
+    - "praneet-web: personal no-login referral page, invite link /r/<code>, codes read from LINE chat without storing text, automatic code on a first received order, claimable free-tree balance, order-form suggestions; privacy wording for reading codes (owner approves)."
+  out_of_scope:
+    - Pushing messages to customers, LIFF and LINE Login, friends' names on a customer's page.
+outcome:
+  status: decided
+  decision: >-
+    After a syncup round (6 of 7 guesses matched; on R1 the owner had meant
+    per friend and accepted per 100 trees), the owner confirmed and said go.
+    Everyone keeps 100-for-2; a referred buyer's first order gets 100-for-3;
+    the referrer earns +1 free tree per full 100 the friend buys in that
+    first order, counted when it is received; never the referrer's own code.
+    Claim any amount with a purchase, or a full 100 without one (plus the
+    usual 2); the balance expires a year after the last earning, stated
+    clearly to the customer. A private no-login link shows code, invite
+    link, balance, expiry and history with no names or phones; the owner can
+    reissue it. The invite link /r/<code> lands with the invitation and fills
+    the code into the LINE chat. The webhook reads referral and post codes
+    from chat text without storing it and pre-fills the order form. Codes
+    are issued automatically on a customer's first received order.
+  owner_statements:
+    - "ผมพอจะเข้าใจละ ผมว่ามันควรจะเป็นระบบ นะไม่ควรจะเป็น manual ขนาดนี้ ผมว่า แล้ว ลูกค้าก็ดูต้นแถมตัวเองไม่ได้ ว่าตัวเองได้เท่าไหร่แล้ว"
+    - "ถ้าใครแนะนำเพื่อนมาซื้อ ให้เขาได้ ต้นแถมรอบหน้า เป็น +1 ต้น ไปเรื่อยๆ สะสมไป แล้วเขาต้องเชคได้ว่าตัวเอง ได้ต้นแถมกี่ต้นแล้ว แล้วจะเคลมได้แบบ เต็มๆ ก็คือ 100 ต้นถ้าไม่ซื้อเลย ถูกป่ะ ถ้าซื้อ แล้วจะเคลมต้นแถมกี่ต้นก็ว่าไป, ทีนี้คนที่มาซื้อ ถ้ามาจากการแนะนำ คนนั้นก็จะได้แถม จาก 100 ละ 2 เป็น 100 ละ 3 ทันที"
+    - "เขาเข้าไปในระบบ แบบไม่ต้อง login แล้วรู้ว่าข้อมูลของเขามีอะไรไม่ได้เหรอ ?"
+    - "r1 = จริงๆ ผมคิดบวกตามจำนวนเพื่อน แต่เพื่อนซื้อเท่าไหร่ ก็บวกตามจำนวน แบบ 100 + 1 ก็ดีครับ จะได้ แฟร์ แต่เรา track ได้เนาะ"
+    - "r2 = ใช่"
+    - "r3 = ใช่เลย (แล้วเราก็จะแถม 2 ด้วยนะถ้าสะสมครบ 100)"
+    - "r4 = ตามนี้เลย (แต่ต้องบอกลูกค้าให้ชัดถูกป่ะ)"
+    - "r5 = โอเคตามนี้"
+    - "r7 = นั่นแหละ"
+    - "r8 = อ่านจากแชทเองเลย แบบนี้เลย"
+    - "ยืนยันแผนแล้ว ถ้าไม่มี อะไรต้องเคาะ go เลยครับ"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.9"
+  slice: "7"
+  repository:
+    head: c1f15c0a2ff810cbc2f3d310408eaa8df9d61c19
+    branch: hq/20261009
+unresolved:
+  - "R6 (codes issued automatically on a first received order) and R9 (only full hundreds count) were confirmed by the owner's 'ยืนยันแผนแล้ว' on the summary that stated them."
+  - "Order-form label 'กลุ่ม Facebook' -> 'Facebook' is still not asked; not part of this go."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build revision 0.9 referrals in praneet-web on a topic branch with tests,
+    open a draft PR, ask the owner to name migration 006 for production, then
+    ask for the merge.
+  acceptance_check:
+    - The slice 7 DoD lines on referrals in PLAN.md revision 0.9.

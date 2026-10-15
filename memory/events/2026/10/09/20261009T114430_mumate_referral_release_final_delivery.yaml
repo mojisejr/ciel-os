@@ -1,0 +1,79 @@
+schema_version: ciel.event.v0.1
+id: evt_20261009T114430_mumate_referral_release_final_delivery
+type: closeout
+recorded_at: 2026-10-09T11:44:30+07:00
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: mumate-referral-release-001
+  lane: single
+  objective: Deliver the referral collision fix and first post-move build/release proof.
+  scope:
+    - Approved referral GET retry and safe failure handling, code PR 48, real-DB regression and named staging and production releases.
+    - Staging synthetic FE acceptance, production existing-code read-only acceptance, rollback readiness and at least 30 minutes of production observation.
+  out_of_scope:
+    - Unrelated lint repair, namespace expansion, migrations, production synthetic/reward writes, manual rollback and other workstreams' cleanup or retirement.
+outcome:
+  status: ready-for-owner-merge
+  slice: "2"
+  result: The scoped fix is deployed to production after staging acceptance under owner delegation. Plan 0.2 R1-R8 and P1-P6 are met with the explicit unchanged-lint-baseline exception. Production observation passed 57 samples over 1802 seconds; available referral and cron logs show no new failures. This is the final workstream delivery for owner review and standing-branch publication.
+  gate_exception: Full default gate remains failed because lint has 35 pre-existing errors in 14 unchanged baseline files. The owner accepted this bounded exception; no rule suppression or unrelated repair was performed. Passing targeted lint, runtime tests and production builds are separate evidence.
+  execution: Phase 2 returned to idle after verification; no further deployment or rollback is queued.
+evidence:
+  plan: workstreams/mumate-referral-release-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "dc450be750bbe6bf6aa32fc182022f0a9747456f"
+    branch: hq/20261009
+    working_tree: this-final-delivery-and-idle-marker-only
+  pull_request:
+    url: https://github.com/mojisejr/bazi-sft-dataset/pull/48
+    merged_at: 2026-10-09T04:00:12Z
+    merge_sha: "922ba28b459c8a245e78da9c0f33f2bd82b86d60"
+    committed_code_checkpoint: docs/20261009T103540_mumate_referral_retry_code_checkpoint.yaml in that merge
+  code_proofs: Real PostgreSQL 17.6 and installed Drizzle regression failed on original 40e8ebf and passes after the fix. Seven real-DB tests and five route-contract tests passed, including forced collision, exhaustion, unrelated DB failure, concurrent members and unchanged reward state. Default runtime-critical suite passed 107 tests in 12 files. Changed-file lint and Node 22.18.0 production build with Next TypeScript passed. Source/tests/package manifests/Dockerfile/workflows match tested code 0974346 through the merge.
+  staging_checkpoint: memory/events/2026/10/09/20261009T110720_mumate_referral_staging_accepted.yaml
+  production_authority: memory/events/2026/10/09/20261009T110720_mumate_referral_production_condition_met.yaml
+  production_checkpoint: memory/events/2026/10/09/20261009T111350_mumate_referral_production_deployed_watch_started.yaml
+  workflows:
+    staging_build: https://github.com/mojisejr/bazi-sft-dataset/actions/runs/37881918685
+    staging_release: https://github.com/mojisejr/mumate-infra/actions/runs/37882208613
+    production_build: https://github.com/mojisejr/bazi-sft-dataset/actions/runs/37882404701
+    production_release: https://github.com/mojisejr/mumate-infra/actions/runs/37882657722
+    result: All four runs succeeded. Production actor and staging-history gates passed. Shipping builds used the same merged bazi source SHA with target-specific public build values; existing FE images were verified and reused.
+  release_pair:
+    fe_sha: "83ed2f10a6649874a32dfbfcec9c02220a2b5b52"
+    bazi_sha: "922ba28b459c8a245e78da9c0f33f2bd82b86d60"
+    staging_fe_digest: sha256:c47d4a41cc03c4c228e48f7e9857a6ecbfe2c9533f60c0ccb6cdab2e09123186
+    staging_bazi_digest: sha256:8a9f073026823cd48a864d722f97235b40229cea1b8c38d6d377324d219c92c4
+    production_fe_digest: sha256:e421a37a688f3f6de69b48d260f72dcdb9d6b4f0816dc34fc5c5509a5e06c283
+    production_bazi_digest: sha256:6b8d5d4e707e780727f82d694d518bcc75a327615949fcc81a2ff9c7934ed7b7
+  deploy_history:
+    staging_ok: 2026-10-09T04:05:34Z
+    production_ok: 2026-10-09T04:11:26Z
+    runtime: At release and final verification, configured and running image tags and reported SHAs agree and FE/bazi are healthy; Caddy, Alloy and tailnet are healthy. FE SHA is unchanged. Cron table, timer schedules and image manifests agree.
+  staging_acceptance: Two isolated synthetic members with short-lived signed NextAuth JWTs. New/existing GET and eight concurrent same-member GETs passed without rewards; invite lookup and SSR landing passed. Redemption awarded owner 50 QI and referee 30 QI plus 50 XP exactly once; self and repeated use returned 409 with no extra reward. Both synthetic members and all fixture rows were removed.
+  production_acceptance: Existing coded member retrieved the same code through production FE using a 180-second in-memory signed member seal; invite lookup and SSR landing returned 200. Selected member code/wallet/QI/ledger/redemption/claim state did not change. No production synthetic or reward writes.
+  health_observation: {"start": "2026-10-09T04:12:16.308022+00:00", "end": "2026-10-09T04:42:16.351578+00:00", "elapsed_seconds": 1802, "samples": 57, "failures": []}
+  log_observation: {"bazi_referral_failure_events": {}, "since": "2026-10-09T04:11:26Z", "referral_requests": {"GET:200": 1}, "organic_referral_requests": {}, "referral_failures": [], "other_caddy_5xx_count": 0, "cron_outcomes": {"push-reminders:200": 32, "manifest-morning:200": 32, "reconcile-payment:200": 2}, "cron_non_2xx": []}
+  observation_limit: Available logs contain one controlled referral GET 200 and zero organic referral requests. This window establishes health and absence of observed failures, not an organic new-code production proof. New-code and redemption evidence comes from real PostgreSQL tests and deployed staging acceptance. Daily cron jobs did not fall due in this window; the three observed interval jobs all returned 200.
+  rollback:
+    previous_fe_sha: "83ed2f10a6649874a32dfbfcec9c02220a2b5b52"
+    previous_bazi_sha: "40e8ebf7db0e574b3352c2a745ab04a3b110f04e"
+    readiness: Previous production images remain locally available; .env.last-good and rollback dry-run point to that pair. No rollback was run. Automatic unhealthy-deploy rollback remains in deploy.sh. Manual production rollback still requires an owner instruction.
+    runbook: mumate-infra/runbooks/01-deploy-rollback.md at 95df107384eba91f29b9a56b81d233657b3765cc
+unresolved:
+  - The reported historical request's exact exception remains inferred; the real collision defect was reproduced and fixed, and future GET failures now log bounded metadata.
+  - Referral namespace still has 900 codes; capacity expansion requires separate approved scope.
+  - Accepted baseline lint errors and the ignored stale dev validator remain deferred; production build TypeScript passed.
+  - Staging restore still reports two historical psql errors; tested referral paths passed, but unrelated restore completeness is not established. Its current database expires 2026-10-16 under the existing staging-data policy.
+  - Browser OAuth login and interactive invite client behaviour were not exercised; authenticated FE APIs and SSR landing were exercised. Production new-code/reward test writes were deliberately excluded by the approved scope.
+  - Zero organic referral traffic limits production-path inference as stated in observation_limit.
+  - Existing 24-hour cutover observation, Beam test-purchase refund, cleanup and retirement decisions remain in their original workstreams; this release does not close or authorize them.
+  - HQ standing-branch publication remains the owner's decision; human review and external rules beyond the explicit recorded delegation remain unknown.
+next_action:
+  action: Owner reviews this final delivery and publishes the HQ standing branch at the chosen round boundary. Continue the existing cutover observation under its own workstream; capacity expansion is deferred to separate approved work.
+  acceptance_check:
+    - Final delivery preserves failed-gate exceptions, sample counts, zero-traffic limits and unrelated workstream obligations.

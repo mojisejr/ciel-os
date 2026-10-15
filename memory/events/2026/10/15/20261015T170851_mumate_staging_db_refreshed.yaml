@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T170851_mumate_staging_db_refreshed
+type: closeout
+recorded_at: 2026-10-15T17:08:51+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-image-weight-001
+  lane: single
+  objective: >-
+    Refresh the staging database copy (pgstaging on mumate-2) before its
+    2026-10-16 expiry, so staging keeps working on current data with a new
+    14-day delete date. Open item 2 of the 20261015T151424 handoff.
+  scope:
+    - "mumate-2 only: bin/staging-db.sh up, then recreate staging fe and bazi (runbook 05)."
+  out_of_scope:
+    - Production hosts, production env, DNS.
+    - The image measurement (open item 1) and every feature item; the owner waits on the team for those.
+
+outcome:
+  status: recorded
+  summary:
+    - "Owner's word 2026-10-15: refresh the staging copy and restart its delete count, then close out."
+    - "bin/staging-db.sh up from pg/mumate-2-20261015T020256Z.sql.gz (was 20261002T020419Z): 191 public tables, 5470 users (was 5360), user_provider 5672, member_subscription 119, member_payment 72, 2 psql errors as before (role/extension noise; detail stays on the host, mode 600); delete before 2026-10-29. Dry-run first; 43 GB disk free."
+    - "docker compose --profile full up -d --force-recreate fe bazi: both healthy; /api/health db ok on fe 9861695 (staging) and bazi 94c0572 (staging); no error lines in their logs over the next 2 minutes; status shows fe and bazi pointing at pgstaging."
+  side_effects:
+    - "Everything the team had tested on staging since 2026-10-02 is gone (the copy is dropped and reloaded by design)."
+    - "Staging fe/bazi were cut off for about 2 minutes during the restore."
+    - "arena.sh sent its info alert (staging DB ready, 5470 users, delete before 2026-10-29) to the alert channel."
+
+evidence:
+  plan: workstreams/mumate-image-weight-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 72747615303c19a8576a788c9f7ba0b3414842d7
+    branch: hq/20261009
+    working_tree: this-record-only
+  host:
+    mumate-2: "infra 9549c03; runbook 05 (runbooks/05-staging-data.md) followed as written."
+  related:
+    - memory/events/2026/10/15/20261015T151424_mumate_handoff_before_clear.yaml
+    - memory/events/2026/10/03/20261003T053518_mumate_team_tests_on_staging_cutover_owner_only_staging_synced.yaml
+
+unresolved:
+  - "The staging copy holds every member's real data as of the 2026-10-15 night backup; runbook 05 rules apply (tailnet only, nothing copied off the host, counts only in records); refresh or down by 2026-10-29."
+  - "Handoff items 1 and 3-9 of 20261015T151424 unchanged; feature items wait on the team (owner, 2026-10-15)."
+  - "hq/20261009 unpushed; the push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    After 2026-10-16 15:10 +07, on the owner's word (production read), take the
+    Loki image measurement and close mumate-image-weight-001. By 2026-10-29,
+    refresh or down the staging copy.
+  acceptance_check:
+    - "bin/staging-db.sh status on mumate-2 shows source 20261015T020256Z and expires 2026-10-29."

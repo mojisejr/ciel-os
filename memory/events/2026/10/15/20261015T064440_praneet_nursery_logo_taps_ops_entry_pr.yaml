@@ -1,0 +1,41 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T064440_praneet_nursery_logo_taps_ops_entry_pr
+type: closeout
+recorded_at: 2026-10-15T06:44:40+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    The owner asked for a way into /ops from the public board: tap the shop
+    logo 8 times in a row. Built on a praneet-web topic branch as a draft PR
+    for his merge.
+  scope:
+    - praneet-web branch feat/logo-ops-entry; no migration, no data change.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "praneet-web commit 609866de48dc6ca5a820039e988368c6266c1071 on feat/logo-ops-entry: components/brand-link.tsx wraps the shop logo; 8 taps, each within 1 second of the last, go to /ops, which still redirects to /ops/login without a session. One tap still goes home. The tap count survives the move from a lot page to home. touch-action: manipulation on .head.shop .brand stops fast taps from zooming; no new class name."
+    - "bun run check passed: tsc, build, Playwright 43/43 including a new board test (7 taps and 8 broken by a pause stay on the board; 8 in a row reach /ops/login)."
+  owner_statements:
+    - "ผมอยากทำทางเข้า /ops บนหน้าหลักด้วยอ่ะ เพราะว่าบางครั้งผมอาจจะต้องเข้าผ่านทางนั้น ผมอยากทำ แบบนี้อ่ะ คือ tab หรือ คลิกที่ logo 8 ครั้ง ต่อเนื่องแล้ว พาไปหน้า /ops อ่ะครับ"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.9"
+  repository:
+    head: e81dd6de6baad10cf8bd46202609faaa6c74d0d1
+    branch: hq/20261009
+unresolved:
+  - "The draft PR waits for the owner's review and merge; after Vercel deploys main, he tries 8 taps on his phone."
+  - "This is a convenience, not access control: anyone who taps 8 times reaches the /ops login page, which already exists at a public address."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Mark the PR ready after this record is committed; after the owner merges,
+    check the Vercel deploy of main, then return to the old-stock lot and the
+    first post.
+  acceptance_check:
+    - On the owner's phone, 8 taps on the logo open the /ops login or /ops.

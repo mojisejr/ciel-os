@@ -1,0 +1,42 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T094058_praneet_nursery_slice10_mascot_pr_draft
+type: closeout
+recorded_at: 2026-10-15T09:40:58+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Slice 10 built: the 3D mascot on the storefront, on praneet-web branch
+    feat/storefront-mascot as a draft PR for the owner's wording approval and
+    merge.
+  scope:
+    - praneet-web public pages, public assets and DESIGN.md; no migration, no data change.
+outcome:
+  status: recorded
+  slice: "10"
+  completed:
+    - "praneet-web commit 4c3b6d482d2e05eef9a92a5e6414b132d8d13cbd: components/storefront.tsx (ShopLine, Greeting, LineCard, LineBar); the home page has the green greeting band with four tiles in place of the header menu, the LINE card under how-to-order and the bottom LINE bar; the lot page has the bottom bar typing its lot code; the public header and the closing line use the 3D face crop; sf- class prefix; DESIGN.md updated for revision 1.0."
+    - "Assets in public/: mascot-3d.webp (512x807), mascot-3d-wink.webp (512x753), mascot-3d-face.webp (160x160); originals stay in .assets/preneet/images."
+    - "bun run check passed: tsc, build, Playwright 44/44. New and extended tests: the greeting tile and the bottom bar carry referral and post codes on home and lot pages, the bar's tap is counted as a post LINE tap, without codes they add the shop, and the last link sits above the bar when scrolled to the end; the existing width, axe (both schemes) and 44 px checks pass with the new parts."
+    - "The post test's LINE-tap count rose from 1 to 2 because it now also taps the bar; that is the intended behaviour, not a regression."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.0"
+  slice: "10"
+  repository:
+    head: 55d7b47d8f8596443755d990512738bff09d3ed1
+    branch: hq/20261009
+unresolved:
+  - "Owner approval of the wording: band 'สวัสดีครับ / หนวดเองครับ / ทุก lot ผมวัดและถ่ายรูปเองจากแปลงจริงที่จันทบุรี'; tiles 'lot ทั้งหมด / สั่งยังไง / แอด LINE (ทัก LINE with a code) / แผนที่'; card 'ถามหนวดได้เลย / บอกรหัส lot กับจำนวน หนวดตอบเองทุกแชต'; bar 'หนวดตอบเอง / ถามได้ทุก lot' (lot page 'ถามเรื่อง <lot> ได้เลย')."
+  - "Owner merge, the Vercel Production deploy check, and his real-phone check including the LINE in-app browser close slice 10."
+  - "The back office, favicon and link-preview image keep the drawn face by decision."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Open the draft PR; after the owner approves the wording and merges, check
+    the Production deploy; his phone check closes slice 10.
+  acceptance_check:
+    - The slice 10 DoD in PLAN.md revision 1.0.

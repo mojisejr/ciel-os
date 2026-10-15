@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T111435_praneet_nursery_slice11_closed
+type: closeout
+recorded_at: 2026-10-15T11:14:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Close slice 11 - "how to order" on the storefront is told by the mascot,
+    all three steps and both ways to ship visible without swiping.
+  scope:
+    - praneet-web PR 14 in production; the owner's check.
+outcome:
+  status: slice-complete
+  slice: "11"
+  completed:
+    - "DoD tests: bun run check 45/45 on PR 14 (three steps in order with numbers, two ways to ship, five WebP pictures that load; widths, axe in both schemes, 44 px)."
+    - "DoD owner: he tried it, approved it and merged PR 14 (merge d3d1c1ffd25a7291ab369ceaf56f7073447c908b); GitHub deployment of that commit to Production reports success; the live home page carries the hw- cards and the five WebP files answer 200 image/webp."
+  owner_statement: "ผมลองดูละ ทุกอย่างโอเคครับ  merged. เรียบร้อยครับ ปิด slice ได้เลยครับ"
+  not_verified:
+    - "Whether his check was on the preview or on production, and on which phone, was not stated separately."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.1"
+  slice: "11"
+  decision: evt_20261015T104556
+  repository:
+    head: 225490ddb7ebdfe0bc9908763af2813910fc0943
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 14
+      base: main
+      state: MERGED
+      merge_commit: d3d1c1ffd25a7291ab369ceaf56f7073447c908b
+unresolved:
+  - "Remote branch feat/how-to-order-mascot in praneet-web still exists (not auto-deleted this time); the local copy is deleted."
+  - "Slice 7 stays open: the old-stock lot and first post, the second-account LINE invite test, who issued the two existing referral codes, the 'Facebook' label; slice 8 stays last."
+  - "HQ hq/20261009 is ahead of origin/main and carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Back to slice 7: when the owner adds the old-stock lot, render its card
+    and draft the first post for his review; then the LINE invite test.
+  acceptance_check:
+    - The slice 7 DoD in PLAN.md revision 1.1.

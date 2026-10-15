@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261010T162315_praneet_nursery_round_edit_prs_await_migration
+type: closeout
+recorded_at: 2026-10-10T16:23:15+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Checkpoint after building round corrections with internal history; the
+    draft PRs wait for the owner's go on the production migration, then merge.
+  scope:
+    - praneet-web PR 2 and praneet-office PR 2 (drafts); no production change.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "praneet-web PR 2 (feat/slice3-round-edit, head bd5dfe6): migration 002 adds measurements.updated_at, measurements.hidden_at and photos.hidden_at; the owner edits a round's date, heights, upright share, count, note and photos, or removes it, from the lot page; nothing is deleted and audit_events keeps the values before and after; the measure form no longer preselects a height; the lot page fixes bagged and current counts."
+    - "praneet-office PR 2 (feat/hidden-rounds, head f39e172): the lot summary leaves out removed rounds."
+    - "Local proof: tsc and next build pass; Playwright 16/16 including four new tests (required height choice; edit, photo replace and removal with exact before/after audit; bagged count edit; editor at six widths, axe in both schemes, 44 px targets); backup and restore of test data with hidden rows matched at millisecond precision."
+    - "Vercel built only a Preview for the branch; production still serves 56db16c."
+  not_completed:
+    - "Migration 002 is not applied to production; merging PR 2 before it would break /ops."
+    - "70-C is still 30-40 cm in production."
+    - "Slice 3 DoD Chrome half: the owner's correction of 70-C in Chrome is still to come."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "3"
+  repository:
+    head: eab4627116ef134b8afaa86e289793781e2fc1f9
+    branch: hq/20261009
+    working_tree: this-record-only
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 2
+      base: main
+      state: DRAFT
+      head: bd5dfe6
+    - repository: github.com/mojisejr/praneet-office
+      number: 2
+      base: main
+      state: DRAFT
+      head: f39e172
+unresolved:
+  - "Owner: say go for running migration 002 against production (additive nullable columns; the running code ignores them)."
+  - "Backup timestamps keep millisecond precision only (JSON); this predates PR 2 and applies to created_at as well."
+  - "Removing a round does not roll back the lot's current count; the owner fixes it with the count form."
+  - "Lot counts are not reconciled (70-A 700 vs about 470; 70-B bagged count; 8,100 vs about 12,000); the owner updates them later."
+  - "The shop domain is undecided; it is needed before the board is shared in slice 4."
+  - "HQ hq/20261009 is ahead of origin/main and carries other sessions' records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    On the owner's go, run migration 002 against production with the owner
+    connection, verify the columns with the reader role, mark both PRs ready
+    for the owner to merge (web first, then office); after the owner corrects
+    70-C in Chrome, verify with the reader role and record the slice 3
+    closeout.
+  acceptance_check:
+    - "Reader summary shows 70-C under 30 cm, and audit_events holds an edit_round row with before 30-40 and after 0-30."

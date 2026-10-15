@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T145240_mumate_business_metrics_final_closeout
+type: closeout
+recorded_at: 2026-10-15T14:52:40+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-business-metrics-001
+  lane: single
+  objective: Final delivery of slice 1 - the read-only business dashboard on its own host with the five metrics the data already holds.
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  result: >-
+    https://bdash.staging.mumate.co/bdash (production data) serves the five
+    metrics behind its own passkey (BDASH_KEY), separate from the backstage
+    key; every other path on that host is 404. The numbers come from a
+    nightly snapshot at 03:00 Bangkok; members' requests never run them.
+    The owner told the team on 2026-10-13 and will collect what they want next.
+  verified:
+    - "Nightly runs on prod-1: 2026-10-13T20:00:01Z 'cron bdash-snapshot: 200 69B 1s saved=1' and 2026-10-14T20:00:02Z '200 70B 2s saved=1' (the journal's seconds include the HTTP call; on the staging copy the computation took 108 ms)."
+    - "Release checks of 2026-10-13 as recorded in 20261013T171416: gate, allowlist, key separation, 0 5xx after the release."
+  not_verified:
+    - "That the business team has opened the page; the owner relays their feedback."
+    - "Members' response times beyond 0 5xx after the release; no before/after latency was measured."
+
+evidence:
+  plan: workstreams/mumate-business-metrics-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 53917d3183ce1b127144a8c3099865453972858c
+    branch: hq/20261009
+    working_tree: this-closure-and-completed-plan
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261009
+  pull_requests:
+    - https://github.com/mojisejr/bazi-sft-dataset/pull/54
+    - https://github.com/mojisejr/bazi-sft-dataset/pull/55
+    - https://github.com/mojisejr/mumate-infra/pull/58
+  related:
+    - memory/events/2026/10/13/20261013T171416_mumate_business_metrics_production_live.yaml
+
+unresolved:
+  - "Parked for a next plan revision, from the owner's team feedback: acquisition source, app-open history, settled/refund times, per-member AI cost (AI logs carry no member id), activation, one revenue number in /ops, the GA4 items."
+  - "Env backups to delete by name on the owner's word: mumate-2 env/bazi.env.bak-20261013T093538Z; the prod-1 env/bazi.env.bak-20261013T* made in P1."
+  - "Remote branches feat/bdash-business-dashboard, fix/bdash-page-edges (bazi) and feat/bdash-host (infra) still exist."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: None for this workstream until the owner brings the team's wishes; then a plan revision.
+  acceptance_check:
+    - "Wake lists mumate-business-metrics-001 as completed."

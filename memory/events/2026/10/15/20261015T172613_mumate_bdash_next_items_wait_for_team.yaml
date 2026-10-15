@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T172613_mumate_bdash_next_items_wait_for_team
+type: closeout
+recorded_at: 2026-10-15T17:26:13+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-business-metrics-001
+  lane: single
+  objective: >-
+    Record the owner's call on the parked bdash items after reviewing what the
+    dashboard holds and what is left: nothing is built now; items are added
+    one at a time when the business team asks for them.
+  scope:
+    - "Review only: bazi 94c0572 (src/lib/bdash, src/app/bdash), fe 9861695; no code, host or data touched."
+  out_of_scope:
+    - Any build, migration or release.
+
+outcome:
+  status: recorded
+  owner_decisions:
+    - "Nothing is built now. Each item is added one at a time when the team asks for it, to avoid building and rolling back what nobody uses (owner, 2026-10-15)."
+    - "One revenue number: when built, it goes on the dashboard; /ops is left as it is."
+    - "GA4 comparison: parked until a GA4 API is opened (none is today)."
+  findings_for_the_next_revision:
+    - "Of the seven parked items, three have data today (activation, one revenue number, GA4 comparison once an API exists) and four need new collection first (acquisition source, app-open history, settled/refund times, per-member AI cost). Collection starts the day it ships; nothing is recoverable backwards."
+    - "Revenue: fe lib/ops/analytics.ts and bazi src/app/api/ops/analytics/route.ts both sum v2_payment.amount_satang where status = 'APPROVED' by created_at; open question for the team is with or without VAT."
+    - "Per-member AI cost may need no code: every llm usage table has anon_id (bazi src/db/schema.ts llmUsageColumns) and chat passes effectiveUserId (src/app/api/v1/chat/completions/route.ts). This contradicts 'AI logs carry no member id' in 20261015T145240; not checked against data."
+    - "Acquisition source: fe ignores the incoming refer_code at signup on purpose (lib/auth/register-login-fe.ts); no UTM capture anywhere; capture must survive the LINE login redirect."
+    - "Settled/refund times: v2_payment has created_at only; settle and refund (lib/payment/webhook-dispatch.ts) change status without a time."
+    - "Every collection item is additive (new table or nullable column) and reverts by reverting its PR; each needs an owner-run production migration; items 4-5 collect per-member behaviour and need the owner's privacy call."
+
+evidence:
+  plan: workstreams/mumate-business-metrics-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: a0a3b395c8d9fbc7d5720a6d5a2c9372df50a777
+    branch: hq/20261009
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/15/20261015T145240_mumate_business_metrics_final_closeout.yaml
+
+unresolved:
+  - "Business team's wishes not yet collected; the owner brings them."
+  - "Whether AI usage rows actually carry anon_id in data (counts on the staging copy, on the owner's word)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None until the owner brings a team request; then a plan revision of
+    mumate-business-metrics-001 for that one item, starting from the findings
+    above.
+  acceptance_check:
+    - "A later session does not re-propose building the parked items without a team request."

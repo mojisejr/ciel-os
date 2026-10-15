@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20261013T110637_mumate_image_weight_slice1_authorized
+type: decision
+recorded_at: 2026-10-13T11:06:37+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-image-weight-001
+  lane: single
+  objective: Authorize slice 1 - WebP from the same image URLs plus a 7-day cache, starting with the local spike.
+  scope:
+    - "Step 1 spike locally; then the fe PR, the infra PR, staging review and release as the plan lists."
+  out_of_scope:
+    - Member-upload handling; PNG deletion; DNS/CDN; production env.
+
+outcome:
+  status: decided
+  slice: "1"
+  decision: >-
+    The owner asked for one workstream at a time and, while the Spaces key for
+    mumate-access-log-retention-001 waits on the team in the US: "เดี๋ยวเรา
+    ไปเดินงาน image ระหว่างรอครับ". No answer to Q2, so the plan's lean
+    applies: WebP only. Q1 stays open by his standing rule: the fe push with
+    --no-verify is asked for when the PR is ready. The log workstream does no
+    infra work until the key arrives, so the two do not execute on
+    mumate-infra at the same time.
+
+evidence:
+  plan: workstreams/mumate-image-weight-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "043def4"
+    branch: hq/20261009
+
+unresolved:
+  - "Q1: --no-verify for the fe push, asked at push time."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Run the step-1 spike on a local standalone build of fe 611c521.
+  acceptance_check:
+    - "Same URL, Accept image/webp vs image/png, returns WebP vs PNG for a literal path, a run-time-built path and a CSS url()."
