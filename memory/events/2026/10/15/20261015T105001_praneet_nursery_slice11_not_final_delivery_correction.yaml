@@ -1,0 +1,39 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T105001_praneet_nursery_slice11_not_final_delivery_correction
+type: closeout
+recorded_at: 2026-10-15T10:50:01+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Correct evt_20261015T104922_praneet_nursery_slice11_how_to_order_pr_draft:
+    its status offered slice 11 as the workstream's final delivery, which it
+    is not.
+  scope:
+    - This correction only.
+outcome:
+  status: recorded
+  slice: "11"
+  completed:
+    - "The agent set outcome.status draft-pr-closeout-prepared-for-final-pr-review on the slice 11 build record. Because slice 11 is the highest-numbered slice in the plan, Wake read it as the final delivery of praneet-nursery-001 (lifecycle awaiting-owner-merge). That is wrong: slice 7 (first sale) and slice 8 (360-degree spin) are open, and the workstream closes only when every slice has a closeout. The record itself cannot be edited once committed; this record supersedes its status. Slice 11 is a draft PR awaiting the owner's merge and phone check, nothing more."
+    - "Root cause and fix: Wake takes the last slice heading in PLAN.md as the final slice, and slices 9, 10 and 11 had been appended after slice 8 although the plan keeps slice 8 last. In the same commit as this record, the slice 8 section moves to the end of the slice list with no text change; Wake then reads declared slices 1-7, 9, 10, 11, 8 and the lifecycle 'Owner decision authorizes plan revision 1.1 slice 11', no longer awaiting-owner-merge."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.1"
+  slice: "11"
+  repository:
+    head: d8eaa761b30b66f2f6e19fca0b92b7e994ec31c2
+    branch: hq/20261009
+unresolved:
+  - "Keep the slice 8 section last in PLAN.md when adding slices, and use recorded on slice-level records of slices other than 8."
+  - "Owner approval, merge, the Production deploy check and his phone check close slice 11."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Open the slice 11 draft PR for the owner; after his merge, check the
+    Production deploy; his phone check closes slice 11.
+  acceptance_check:
+    - The slice 11 DoD in PLAN.md revision 1.1.
