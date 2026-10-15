@@ -1,0 +1,38 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T104922_praneet_nursery_slice11_how_to_order_pr_draft
+type: closeout
+recorded_at: 2026-10-15T10:49:22+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Slice 11 built: "how to order" told by the mascot, on praneet-web branch
+    feat/how-to-order-mascot as a draft PR for the owner's approval and merge.
+  scope:
+    - praneet-web home page section, public assets and DESIGN.md; no migration, no data change, no wording change.
+outcome:
+  status: draft-pr-closeout-prepared-for-final-pr-review
+  slice: "11"
+  completed:
+    - "praneet-web commit 26547a7eaa87e06fc4a04794eed2687e58869d89: app/page.tsx renders hw-steps (three cards with sticker, pale leaf circle and step number) and hw-ship (two straw cards with the roll pallet and pickup stickers); the old .steps and .ship rules are removed with their markup (no other user); DESIGN.md updated for revision 1.1."
+    - "Assets in public/: howto-pick.webp 280x480, howto-line.webp 272x284, howto-sort.webp 344x315, ship-pallet.webp 480x337, ship-truck.webp 444x340 (30-64 KB each)."
+    - "bun run check passed: tsc, build, Playwright 45/45, including a new test (three steps in order with numbers, two ways to ship, five WebP pictures that load) and the existing width, axe (both schemes) and 44 px checks."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.1"
+  slice: "11"
+  repository:
+    head: a78e0ef790bba4a2c79f77b5100ecc0430551ae0
+    branch: hq/20261009
+unresolved:
+  - "Owner approval, merge, the Production deploy check and his phone check close slice 11."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Open the draft PR for the owner; after his merge, check the Production
+    deploy; his phone check closes slice 11.
+  acceptance_check:
+    - The slice 11 DoD in PLAN.md revision 1.1.
