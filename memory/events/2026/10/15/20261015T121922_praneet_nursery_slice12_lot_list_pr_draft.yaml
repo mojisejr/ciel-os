@@ -1,0 +1,39 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T121922_praneet_nursery_slice12_lot_list_pr_draft
+type: closeout
+recorded_at: 2026-10-15T12:19:22+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Slice 12 built: a lot list that holds 10-20 lots, on praneet-web branch
+    feat/lot-list as a draft PR for the owner's approval and merge.
+  scope:
+    - praneet-web home lot section, new /lots page, sitemap, links, DESIGN.md and tests; no migration, no data change.
+outcome:
+  status: recorded
+  slice: "12"
+  completed:
+    - "praneet-web commit b05537ce9563816dddef139d2b7f2f80f15d705e: lib/board orders ready, growing, sold-out then bagging date and adds heightBand (by height_min: 50 and up, 30-49, under 30), heightBandOrder and homeLots (ready lots, at most four, else the growing lots nearest to ready); components/board PublicLotCard becomes the square-photo card (status on the photo, code, height, price, shop sentence clamped to two lines in .lt-clamp); app/lots/page.tsx lists every lot with status and height chips as plain links (?status=, ?h=), ready first, sold-out folded, the bottom LINE bar carrying visit codes; /#lots links now open /lots; the sitemap lists /lots; DESIGN.md updated for revision 1.2."
+    - "bun run check passed: tsc, build, Playwright 50/50. New tests/storefront.spec.ts (runs last, adds lots 73-A to 73-F): home shows at most four ready lots and the link count matches /lots; ready first; status and height chips filter through the link and keep each other; a second tap clears the height; unknown values are ignored; sold-out folded; the shop sentence is on the card and clamped to two lines; the private note never reaches /lots; the sitemap lists /lots; widths, axe in both schemes and 44 px targets on /, /lots and a filtered /lots; square photos with the body right under them at 1280 px. Existing tests moved where the card no longer shows the tree count or lists growing lots on home."
+    - "Fixed during the build: a two-pixel grid gap the layout test caught, a sliver of a third line showing under the clamped sentence, and the height chips iterating ascending because numeric-looking object keys sort first."
+    - "On production today no lot is ready, so the home page will read 'lot ในแปลงตอนนี้' with 'ยังไม่มี lot พร้อมขาย' and the three growing lots; once the old-stock lot is set ready it reads 'พร้อมขายตอนนี้'."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.2"
+  slice: "12"
+  repository:
+    head: 4e471676e8cdf0bf3a8cbc2600d45fccf0e13bba
+    branch: hq/20261009
+unresolved:
+  - "Owner approval of the new wording (home lede lines, /lots title and lede, chip labels, 'ดู lot ทั้งหมด n lot', the sold-out fold), merge, the Production deploy check and his phone check close slice 12."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Open the draft PR for the owner; after his merge, check the Production
+    deploy; his phone check closes slice 12.
+  acceptance_check:
+    - The slice 12 DoD in PLAN.md revision 1.2.
