@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T120436_praneet_nursery_rev12_slice12_lot_list_authorized
+type: decision
+recorded_at: 2026-10-15T12:04:36+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Authorize slice 12 - a lot list that holds 10-20 lots - under plan revision 1.2, during slice 7.
+  scope:
+    - praneet-web home lot section, a new public /lots page, sitemap and DESIGN.md; no database change.
+outcome:
+  status: decided
+  decision: >-
+    The owner asked how the board would look with 10-20 lots and how to find
+    a lot easily on phones while keeping desktop good. The agent measured the
+    test database's 10 lots (about 4,500 px of cards on a 390 px phone, about
+    9,000 px expected at 20) and recommended two tiers, status and height
+    chips with the 50 cm split, filters in the URL, sold-out folded, and no
+    search box until about 30-40 lots. Three samples with 18 sample lots and
+    real photos were rendered on the live page: 1 list rows, 2 two-column
+    cards, 3 a home carousel. The owner chose sample 2 (the agent had leaned
+    to 1). The shop sentence of revision 0.8 stays on the card, clamped to
+    two lines. Slice 12 is placed before slice 8 in PLAN.md so slice 8 stays
+    the last declared slice.
+  owner_statements:
+    - "ส่วนเส้นแบ่ง ผมโอเค"
+    - "ผมชอบ แบบที่ 2 ครับสวนสุดละ , และคิดว่าน่าจะ ได้ ui/ux ดีสุดละครับ merged PR15 เรียบร้อยแล้วครับ ถ้าต้อง update worksrtream คุนทำเลยครับแล้ว ถ้าพร้อมแล้ว ก็​ดำเนินการ implement ได้เลยครับ ไม่มีปัญหาก็ เจอกันที่ PR ครับ"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.2"
+  slice: "12"
+  repository:
+    head: a2d7cc31501e596eff693f984812ba1ff150d91e
+    branch: hq/20261009
+  sources:
+    - "praneet-web main 520401970bedf20b1eb85f4e6c6e121dca93eb7a: the home page lists every lot as a full card (lib/board boardLots, sold-out last then bagging date); no /lots index page exists."
+unresolved:
+  - "Sample 2 leaves out the tree count and age on the card; they stay on the lot page."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build slice 12 in praneet-web on a topic branch with tests, open a draft
+    PR with screenshots; the owner's approval, merge and phone check close it.
+  acceptance_check:
+    - The slice 12 DoD in PLAN.md revision 1.2.
