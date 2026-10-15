@@ -1,0 +1,33 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T120404_praneet_nursery_lot_card_stretch_fix_merged
+type: closeout
+recorded_at: 2026-10-15T12:04:04+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: The lot-card stretch fix is merged and live.
+  scope:
+    - praneet-web PR 15 only.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "The owner merged praneet-web PR 15; main is 520401970bedf20b1eb85f4e6c6e121dca93eb7a; GitHub deployment of that commit to Production reports success. The local checkout is on main equal to origin/main; the local topic branch is deleted and the remote one was removed on merge."
+  owner_statements:
+    - "merged PR15 เรียบร้อยแล้วครับ"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.1"
+  repository:
+    head: b24095e4db91da7bc9ce6dd43d943d8f60b21341
+    branch: hq/20261009
+unresolved:
+  - "Remote branch feat/how-to-order-mascot in praneet-web still exists; the owner has not said to delete it."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: Record plan revision 1.2 (two-tier lot list, sample 2) and build it.
+  acceptance_check:
+    - A decision event authorizes plan revision 1.2 slice 12.
