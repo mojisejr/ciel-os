@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261015T092954_praneet_nursery_rev10_slice10_mascot_authorized
+type: decision
+recorded_at: 2026-10-15T09:29:54+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: Authorize slice 10 - the 3D mascot on the storefront - under plan revision 1.0, during slice 7.
+  scope:
+    - praneet-web public pages (home and lot pages, public header) and DESIGN.md only; no database change.
+outcome:
+  status: decided
+  decision: >-
+    The owner supplied two 3D mascot images and asked for placements. The
+    agent rendered three mockups on the live home page at 390 px (A beside the
+    headline, B a LINE card plus a sticky LINE bar, C a 7-Eleven-like green
+    greeting band with four quick tiles and a bottom tab bar). The owner chose
+    B + C; the agent advised one bottom bar only, and the owner kept B's LINE
+    bar over C's tab bar. Images are converted to WebP before use (512 px full
+    body, 160 px face crop with the hat). The public header changes from the
+    drawn face to the 3D face crop; the back office, favicon and link previews
+    keep the drawn face. Revision 1.0 adds slice 10, numbered after 9 so
+    earlier records stay true. No new workstream: the owner left that to the
+    agent, who kept it in praneet-nursery-001 as slice 9 was.
+  owner_statements:
+    - "ผมว่า เว็บหน้าร้านมันจืดไปหน่อยผมเลยทำ mascot ที่เป็นภาพ 3d มาให้ครับ"
+    - "ผมคิดว่า ui อ่ะ อยากได้แบบ app seven eleven ก็น่าจะดีนะ ผมว่า คุนคิดว่าไง ? หน้าขายอ่ะ ดีมะ"
+    - "ผมชอบอัน B + C ได้ป่ะ แล้วเราปรับภาพห้เป็ฯ webp ก่อนที่เราจะเอาไปใช้ได้หรือเปล่า ? ถามก่อน"
+    - "1 ผมโอเคนะ , ส่วน 2 ผมอยากเห็นก่อนว่าคุนจะ crop แล้วออกมาประมาณไหน ?"
+    - "โอเคทั้งหมดแล้วครับ , ทีนี้ ผมคิดว่าเราน่าจะต้องเปิด workstream หรือเปล่า ? หรือถ้าไม่ใหญ่มากก็ทำเสร็จแล้ว closeout ปกติ ก็ได้ครับ"
+    - "โอเค ถ้า workstream พร้อมแล้ว ก็เริ่มงานได้เลยครับ !"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.0"
+  slice: "10"
+  repository:
+    head: 10e5e79a1aabf9289893cd56b45809f9cab8801b
+    branch: hq/20261009
+  sources:
+    - "praneet-web main c944cd61aadf0599e4ad0fe8754a7f1d4b450041: the public header and the home page's closing line use public/mascot.png (the drawn face); the LINE buttons on home and lot pages carry post and referral codes through lib/visit chatCodes and LineChatLink."
+    - "Owner images: .assets/preneet/images (git-ignored), two 1024x1536 PNGs with real transparency, about 2 MB each; WebP trials 69-74 KB at 512 px and 12-14 KB for the 160 px crop."
+unresolved:
+  - "Wording on the greeting band, the LINE card and the bottom bar: the agent drafts, the owner approves in the PR."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build slice 10 in praneet-web on a topic branch with tests, open a draft
+    PR with phone screenshots and the draft wording for the owner's approval
+    and merge; his real-phone check closes slice 10.
+  acceptance_check:
+    - The slice 10 DoD in PLAN.md revision 1.0.
