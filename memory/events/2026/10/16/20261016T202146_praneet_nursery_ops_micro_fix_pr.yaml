@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261016T202146_praneet_nursery_ops_micro_fix_pr
+type: closeout
+recorded_at: 2026-10-16T20:21:46+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    The owner's micro fix after slice 15: supply-page cards touching, the
+    posts tab shrinking on a computer, and no visible place to set a lot's
+    expected ready months; built as praneet-web draft PR 19. Also an audit of
+    how far the back office is from its DESIGN.md pattern, for his call on
+    slice 14.
+  scope:
+    - praneet-web PR 19; no slice.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Cause, not a class-name collision: (1) the supply page put three .form.editor cards straight into main with no spacing rule; (2) seven back-office pages use wrap narrow (560 px) while the tab pages use 980 px, so the bar and title jump when switching to the posts tab; (3) the ready-month editor lived only behind a button on the lot detail page, not on the /ops/lots card where the owner edits status and price."
+    - "praneet-web PR 19 (head 7063c4e7d9ad792a250722871c5903b296ff8a3a): .op-stack spacing; every back-office page on the 980 px shell with form pages in a 640 px column; growing lot cards show the expected months and a link that opens the editor (?edit=ready); the month inputs replaced by a Thai month list (Android browsers showed dashes). bun run check 61/61 with a new test for the width, spacing and link."
+    - "Audit on test data, every /ops page at 390 and 1280 px: 6-8 font sizes per page against DESIGN.md's four (28/20/16/14); page titles 44 px on a computer against 28; 4-6 corner radii; buttons at many heights (44-88 px on /ops/lots); /ops/lots about 19,600 px long on a phone. DESIGN.md has the back-office pattern in words since revision 1.3, but no shared components or test enforces it, and slice 14 (every page in that design) has not run; pages built since add their own layout."
+  owner_statements:
+    - "ตอนนี้ไม่เห็นว่า มีให้ set ว่าต้นไหนคาดว่า พร้อมนะครับ"
+    - "ผมคิดว่า เราทำ micro fix ตรงนี้ก่อน พร้อมกันกับตรงหน้า โพส"
+    - "ผมว่าคุนควรจะสร้าง design pattern ขึ้นมาใหใ้กับ ops ด้วยนะครับ จะไม่มี consistency อะครับลองดูหน่อย ว่างานใหญ๋มั๊ย ต้อง update workstream หรือ เปิดดป็น workstream ใหม่ยังไง"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.4"
+  repository:
+    head: 51a708ea0b86c71af5126aed892821cf3c1998e8
+    branch: hq/20261015
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 19
+      base: main
+      state: DRAFT
+      head: 7063c4e7d9ad792a250722871c5903b296ff8a3a
+unresolved:
+  - "The owner merges PR 19 and checks /ops/lots, a lot page and the posts tab on his phone and computer."
+  - "The owner's call on the back-office design pattern: the agent recommends revising slice 14 in this workstream (shared components, DESIGN.md patterns made concrete, a test that enforces sizes and widths, every page moved) and moving it before slice 16, with samples first; not a new workstream."
+  - "Slice 15 phone check inside LINE still pending."
+  - "HQ hq/20261015 carries this session's records ahead of origin/main; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    The owner merges PR 19 and decides on the slice 14 revision; on his word,
+    record plan revision 1.5 and render samples of the back-office pattern.
+  acceptance_check:
+    - PR 19 merged and the owner's recorded decision on slice 14.
