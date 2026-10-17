@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261017T215612_praneet_nursery_slice19_prs_draft
+type: closeout
+recorded_at: 2026-10-17T21:56:12+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record slice 19 built: lot pages and the care log as draft pull requests,
+    the additive migration rehearsed and waiting for the owner's word.
+  scope:
+    - praneet-web PR 21 and praneet-office PR 11, both drafts; migration 009 not run on production.
+outcome:
+  status: recorded
+  slice: "19"
+  completed:
+    - "praneet-web PR 21 (draft, head 41e2755928e98a3084da62dcded25315838ea2b8): the lot page as one page with the next step from lib/next-step.ts, short edit pages per subject, a round page, the status question page (the API refuses a status change without confirmed), the care log at /ops/care with regular mixes, care on the storefront timeline and chart (kind and purpose only), migration 009_care.sql, backup format 3, DESIGN.md."
+    - "praneet-office PR 11 (draft, head 37edf654f9483d4812679339958ee42a048cd309): runbooks 00 and 02 for the new lot page, the status question and the care log."
+    - "Checks: bun run check on the local test database passed 73/73 in two full runs (68 before plus 5 in tests/care.spec.ts). An earlier full run had four order tests fail in a chain after one order edit did not navigate within 15 s on a loaded machine; the order code is untouched by this slice."
+    - "Migration rehearsal on a separate local database built from 000-008 with production-shaped rows (3 lots, 3 rounds, 4 varieties): applied once with the same counts, statuses and stock after; care_events.recorded_by references the user table (added after the first rehearsal showed measurements do); select granted to praneet_reader; a second run applied nothing."
+    - "Built pages at 390 and 1280 px, light and dark, are on a private review page whose locator stays outside the repository."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "19"
+  decision: evt_20261017T211745_praneet_nursery_slice19_authorized
+  repository:
+    head: 97ae4a42ab29904ee13d564a264195374db644f8
+    branch: hq/20261015
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 21
+      base: main
+      state: DRAFT
+      head: 41e2755928e98a3084da62dcded25315838ea2b8
+    - repository: github.com/mojisejr/praneet-office
+      number: 11
+      base: main
+      state: DRAFT
+      head: 37edf654f9483d4812679339958ee42a048cd309
+unresolved:
+  - "The owner's word for running migration 009_care.sql on production while PR 21 is a draft; read production before and after with the reader role."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights per bag number, the second-account LINE invite test, the first post."
+  - "Lot ages and estimated months may read a day or more different since the slice 18 day-count fix."
+  - "HQ hq/20261015 is ahead of origin/main; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    With the owner's word, read production with the reader role, run bun run
+    migrate with the direct URL file, read it back; then the owner merges
+    praneet-web PR 21, waits for the deploy, merges praneet-office PR 11, and
+    records real care on his phone.
+  acceptance_check:
+    - The slice 19 DoD in PLAN.md revision 2.0.
