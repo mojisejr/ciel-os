@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20261017T184335_praneet_nursery_slice18_migration_word
+type: decision
+recorded_at: 2026-10-17T18:43:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record the owner's word for slice 18's production migration, with his
+    condition that it is checked before every run. Slice 18 itself is
+    authorized by evt_20261017T183722_praneet_nursery_slice18_authorized.
+  scope:
+    - The slice 18 migration on the production database of praneet-web, while the slice 18 PR is a draft.
+outcome:
+  status: recorded
+  decision: >-
+    The agent may run slice 18's migration on production while the PR is a
+    draft. Before each run the agent checks it: the migration is additive
+    (new tables and columns, data copied, nothing dropped, rewritten or
+    locked for long), it has passed on the local test database and on a
+    fresh database built from the same migration files, and the counts of lots, customers
+    and referral codes are read before and after through praneet_reader. A
+    migration that would drop, rewrite or move existing data in place goes
+    back to the owner instead. The owner also said slice 7 waits, and that
+    matters outside this work, and the HQ publication he has not decided,
+    stay out of this session.
+  owner_statements:
+    - "1. รัน migration ได้เลยครับ ตรวจสอบก่อน run เสมอ"
+    - "3. อันนี้รอก่อน"
+    - "และอะไรไม่เกี่ยวกับ งานนี้ และ hq ยังไม่ตัดสินใจ ใน session นี้ที่ไม่เกี่ยวกัน"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "18"
+  repository:
+    head: d25aa49001660f4e9786a367a4628e6c40137ab3
+    branch: hq/20261015
+unresolved:
+  - "Slice 7 waits for the owner."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build slice 18; check the migration as above, run it on production while
+    the PR is a draft, read back, then open the draft PRs.
+  acceptance_check:
+    - The slice 18 DoD in PLAN.md revision 2.0.

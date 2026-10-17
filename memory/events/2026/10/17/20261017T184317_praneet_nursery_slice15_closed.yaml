@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261017T184317_praneet_nursery_slice15_closed
+type: closeout
+recorded_at: 2026-10-17T18:43:17+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Close slice 15 - "is it in stock?" answered on the first screen - after
+    the owner's phone check of the live pages.
+  scope:
+    - praneet-web PR 18 and praneet-office PR 9 in production; the owner's phone check and approval.
+outcome:
+  status: recorded
+  slice: "15"
+  completed:
+    - "DoD tests: passed on the PRs as recorded in evt_20261016T164923_praneet_nursery_slice15_prs_draft; merged and live as recorded in evt_20261016T172726_praneet_nursery_slice15_merged_live."
+    - "DoD wording: approved on the samples in evt_20261016T162939_praneet_nursery_slice15_authorized."
+    - "DoD owner: he tried the live pages on his phone and said slice 15 may close with nothing left to decide."
+  owner_statement: "slice 15 ลองในมือถือเรียบร้อยแล้วนะ ปิดได้ถ้าไม่มีอะไรต้องเคาะ"
+  not_verified:
+    - "He gave no screenshots and did not say which pages he opened or whether inside LINE; the record rests on his statement."
+  carried_forward:
+    - "Slice 15's per-lot prices and per-sale-year bag weights give way to revision 2.0 (price on the stock row in slice 20; bag weight per bag number in slice 18)."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "15"
+  decision: evt_20261016T162939_praneet_nursery_slice15_authorized
+  repository:
+    head: d25aa49001660f4e9786a367a4628e6c40137ab3
+    branch: hq/20261015
+unresolved:
+  - "Bag weights wait for the owner's weighing (slice 7)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Continue slice 18 under evt_20261017T183722_praneet_nursery_slice18_authorized.
+  acceptance_check:
+    - The slice 18 DoD in PLAN.md revision 2.0.
