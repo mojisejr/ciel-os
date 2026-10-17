@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261017T203623_praneet_nursery_slice18_merged_live
+type: closeout
+recorded_at: 2026-10-17T20:36:23+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Slice 18 merged and live in both repos; the owner's phone check inside
+    LINE remains before slice 18 closes.
+  scope:
+    - praneet-web PR 20 and praneet-office PR 10.
+outcome:
+  status: recorded
+  slice: "18"
+  completed:
+    - "The owner merged praneet-web PR 20 (main 3f637c983fb1c96526bc5adecb64cb9d8444f4f7) and praneet-office PR 10 (main d973f6051bd20f511fe4908db6a86aef32bab45c). GitHub deployment 7140399362 of the web merge commit to Production reports success."
+    - "Live check on https://praneet-web.vercel.app: /, /lots, /lots/70-A and /ops/login answer 200; /ops, /ops/menu and /ops/settings/bags answer 307 to the login. /lots/70-A draws the ready line at 50 cm from the plant kind; the home stock card says ยังไม่ถึง 50 ซม."
+    - "bun run today against production (owner sign-in, read only) printed the seven tasks of the new today page: 0 awaiting transfer, 0 awaiting shipment, 0 awaiting receipt, 0 lots to measure, 0 ready without price, 2 new LINE customers in 7 days, 0 posts; field ready 0, growing 3 (~8,100 trees), sold out 0; no open orders."
+    - "Both checkouts back on main equal to origin/main. Cleaning up, git branch -d also removed two older local branches (praneet-web fix/slip-store-oidc at 512cebd, praneet-office fix/slips-store-status at 0ed884f); both were already merged into main, so nothing is lost."
+  owner_statement: "merged ทั้ง 2 PR แล้วครับ"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "18"
+  decision: evt_20261017T183722_praneet_nursery_slice18_authorized
+  repository:
+    head: ca702f0160995271af63db2cb93046e8a9238077
+    branch: hq/20261015
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 20
+      base: main
+      state: MERGED
+      merge_commit: 3f637c983fb1c96526bc5adecb64cb9d8444f4f7
+    - repository: github.com/mojisejr/praneet-office
+      number: 10
+      base: main
+      state: MERGED
+      merge_commit: d973f6051bd20f511fe4908db6a86aef32bab45c
+unresolved:
+  - "Slice 18 DoD left: the owner's phone check inside LINE (today, one task row, the stock tab, a lot page, menu then bags with one edit) and his approval."
+  - "Lot ages and estimated months may now read a day or more different, because days are counted correctly."
+  - "Slice 7 waits for the owner."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    The owner tries the new back office on his phone inside LINE; on his
+    word, record the slice 18 closeout citing the slice 18 decision, then
+    render samples for slice 19 (lot pages and the care log).
+  acceptance_check:
+    - The slice 18 DoD in PLAN.md revision 2.0.
