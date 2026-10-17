@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261017T230757_praneet_nursery_slice20_migration_word
+type: decision
+recorded_at: 2026-10-17T23:07:57+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record the owner's word for slice 20's additive production migration
+    (migration 010: the stock_prices and lot_splits tables).
+  scope:
+    - praneet-web migrations/010_stock_rows.sql on production, run by the agent while the slice 20 PR is a draft, after a rehearsal and a read-only check before and after.
+outcome:
+  status: recorded
+  slice: "20"
+  decision: >-
+    Before going to sleep the owner told the agent to carry on with whatever
+    is safe, then named the migration as safe and told the agent to run it;
+    he will look at the result the next day. The agent reads this as the
+    word for migration 010 only, under the standing practice: rehearse on a
+    separate database, read production with the reader role before and
+    after, run bun run migrate with the direct URL file while the PR is a
+    draft. Merging both pull requests stays the owner's.
+  owner_statements:
+    - "อะไรที่ทำแล้วปลอดภัยคุณทำผมอนุมัติ"
+    - "Time migration นั้นปลอดภัยคุณสามารถทำไปได้เลยครับโดยเดี๋ยวพรุ่งนี้ผมมาดูอีกที"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "20"
+  decision: evt_20261017T225036_praneet_nursery_slice20_authorized
+  repository:
+    head: 0122bc5da99a55e6d9899f116178b4ece91883eb
+    branch: hq/20261015
+unresolved:
+  - "The rehearsal, the run and the read-back are recorded in the slice 20 records that follow."
+  - "Merging praneet-web then praneet-office, and the phone check in LINE, are the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Finish the slice 20 build and tests, rehearse migration 010, read
+    production, run it while the PR is a draft, read back, and prepare the
+    owner's morning summary.
+  acceptance_check:
+    - Migration 010 applied on production with lots, rounds, care and orders read back unchanged.
