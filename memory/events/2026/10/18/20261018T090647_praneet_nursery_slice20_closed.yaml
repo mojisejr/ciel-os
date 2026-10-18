@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261018T090647_praneet_nursery_slice20_closed
+type: closeout
+recorded_at: 2026-10-18T09:06:47+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Close slice 20 - the storefront stock table and stock-row pages - after
+    both pull requests merged and the owner's check on his phone.
+  scope:
+    - praneet-web PR 22 and praneet-office PR 12 in production; the owner's check; local and private-page clean-up.
+outcome:
+  status: recorded
+  slice: "20"
+  completed:
+    - "DoD tests: passed on the PRs as recorded in evt_20261017T232402_praneet_nursery_slice20_migrated_prs_ready (76/76 on two full runs); migration 010 ran on production and read back as recorded there."
+    - "Merged: praneet-web PR 22 (merge commit eb4bdd53f392cf4535e664cb9c60553917d07341, Vercel deployment at that commit completed) and praneet-office PR 12 (merge commit 2e7704f1d90df1d0b7f794597ea1afa427f270dc), web first."
+    - "DoD owner: he tried everything and likes it as it is; his approval covers the wording, including 'ทักถามราคา'."
+    - "Production after his check, read-only role, counts only: 3 lots growing with the same stock, 3 rounds, 1 care record, 0 orders, 0 row prices, 0 splits. The live home page shows two stock rows: หมอนทอง bag 9, 30-40 cm and under 30 cm."
+    - "Clean-up: both checkouts on main equal to origin/main, local topic branches deleted (the remote ones were already gone). The two private slice 20 pages (samples and built-pages review) were deleted at the owner's request; the screen map page stays for slices 21-23."
+  owner_statement: "ผมลองดูแล้วครับทุกอย่าง ณ ตอนนี้ผมชอบแล้ว และ merged ทั้ง 2 PRs เรียบร้อยแล้วครับ ถ้าไม่มีอะไรติด คุนเก็บกวาด ลบ artifact ที่ไม่ได้ใช้แล้ว และ เดิน slice 21 ต่อได้เลย"
+  not_verified:
+    - "No screenshots from his phone; the record rests on his statement and the production read."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "20"
+  decision: evt_20261017T225036_praneet_nursery_slice20_authorized
+  repository:
+    head: dd881e909205ba53118da70dd05d35d7c0aca650
+    branch: hq/20261015
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 22
+      base: main
+      state: MERGED
+      merge_commit: eb4bdd53f392cf4535e664cb9c60553917d07341
+    - repository: github.com/mojisejr/praneet-office
+      number: 12
+      base: main
+      state: MERGED
+      merge_commit: 2e7704f1d90df1d0b7f794597ea1afa427f270dc
+unresolved:
+  - "LINE rich menu: the owner asked for a new image whose button says stock instead of 'ดู lot ทั้งหมด', saved under .assets for him; uploading it to LINE is a separate step."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights per bag number, the second-account LINE invite test, the first post."
+  - "Lot ages and estimated months may read a day or more different since the slice 18 day-count fix."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Slice 21 (orders from chat to receipt, and the customer's own page):
+    render 2-4 samples on the real back office and customer page with a
+    lean for the owner, as for slices 18-20.
+  acceptance_check:
+    - The owner picks a slice 21 sample and a decision authorizes plan revision 2.0 slice 21.
