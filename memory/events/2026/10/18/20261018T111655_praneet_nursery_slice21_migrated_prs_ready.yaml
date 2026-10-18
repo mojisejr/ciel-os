@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261018T111655_praneet_nursery_slice21_migrated_prs_ready
+type: closeout
+recorded_at: 2026-10-18T11:16:55+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record migration 011 on production read back and praneet-web PR 23 and
+    praneet-office PR 14 marked ready for the owner's merge.
+  scope:
+    - Production migration 011 and the two pull requests; this record only.
+outcome:
+  status: recorded
+  slice: "21"
+  completed:
+    - "On the owner's word (evt_20261018T111538_praneet_nursery_slice21_migration_word), with PR 23 still a draft at head 9f9c258bf14462026a00356ca51153ed80cd44cf: bun run migrate with the direct URL file printed Applied 011_order_rows.sql."
+    - "Production read back, reader role, counts only: 3 lots all growing with counts unchanged (700, 1800, 5600), 3 rounds, 1 care record, 3 customers, 3 referral codes, 0 orders, 0 order lines, 0 slips; 3 of 3 customers with a page token equal to their referral page; order_picks present, readable by the reader role, 0 rows; the status check includes packed. Live /, /lots, /lots/70-A, /ops/login answered 200."
+    - "PR 23 description updated with the migration result; the Vercel preview of PR 23 built; PR 23 and PR 14 marked ready for review, both mergeable."
+    - "Local clean-up: rehearsal database dropped, local postgres and dev servers stopped."
+  not_verified:
+    - "No real phone inside LINE, no bank app scanning the customer page's QR, no sms: link on the owner's phone, no real Thailand Post tracking number; the owner's test order covers the first three."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "21"
+  decision: evt_20261018T095834_praneet_nursery_slice21_authorized
+  migration_word: evt_20261018T111538_praneet_nursery_slice21_migration_word
+  repository:
+    head: 9c865febeca1961c2c747a8eb51a158aeb61395a
+    branch: hq/20261015
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 23
+      base: main
+      state: OPEN
+      head: 9f9c258bf14462026a00356ca51153ed80cd44cf
+    - repository: github.com/mojisejr/praneet-office
+      number: 14
+      base: main
+      state: OPEN
+      head: d8972a2cb0c63e7a6fdaaa6188aa83f63c370c0e
+unresolved:
+  - "Owner: merge praneet-web PR 23, wait for the Vercel deploy, then praneet-office PR 14; then a test order on his phone to the end (slice 21 DoD)."
+  - "Production has no row price yet and every lot is growing; a test order uses a growing row with a typed price, and a test order left open holds trees on the storefront until it is cancelled."
+  - "Privacy page slip sentence changed to 'no slip image is kept'; customer-facing wording for the owner to check."
+  - "praneet-office PR 13 (LINE menu 'ดูสต็อก') is open; applying the image to the live OA needs the owner's word; the OA greeting text is changed by hand in LINE Official Account Manager."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights per bag number, the second-account LINE invite test, the first post."
+  - "Lot ages and estimated months may read a day or more different since the slice 18 day-count fix."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    After the owner merges both PRs (web first) and runs his test order,
+    record the slice 21 closeout, delete the two slice 21 private pages,
+    return both checkouts to main, then start slice 22 with 2-4 rendered
+    samples.
+  acceptance_check:
+    - The slice 21 DoD in PLAN.md revision 2.0 - the owner's test order on his phone to the end.
