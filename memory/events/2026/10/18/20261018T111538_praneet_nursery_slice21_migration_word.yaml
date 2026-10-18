@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261018T111538_praneet_nursery_slice21_migration_word
+type: decision
+recorded_at: 2026-10-18T11:15:38+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record the owner's word for slice 21's production migration (migration
+    011: order statuses, order lines by stock row, order_picks, customer page
+    tokens) and for marking praneet-web PR 23 and praneet-office PR 14 ready.
+  scope:
+    - praneet-web migrations/011_order_rows.sql on production, run by the agent while PR 23 is a draft, after the rehearsal and with a read-only check before and after; then both PRs marked ready for review.
+outcome:
+  status: recorded
+  slice: "21"
+  decision: >-
+    After seeing the built pages and the migration question, the owner said
+    he likes it and told the agent to run the migration and turn the PRs
+    ready to merge, then give him the merge order and a short way to try the
+    flow alone. The agent reads this as the word for migration 011 only,
+    under the standing practice (rehearsed, production read with the reader
+    role before and after, bun run migrate with the direct URL file while the
+    PR is a draft). Merging both pull requests stays the owner's.
+  owner_statements:
+    - "โอเคผมชอบแบบนี้ละครับ เดี๋ยวคุน run migration. ให้ผม แล้ว พลิก  PR ให้ พร้อม merge ได้เลยครับ แล้วบอก ลำดับ merge มาได้เลย"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "21"
+  decision: evt_20261018T095834_praneet_nursery_slice21_authorized
+  repository:
+    head: 72b8e10039f90f41e842c105aaf1409dfd5883cf
+    branch: hq/20261015
+unresolved:
+  - "The run and the read-back are recorded in the slice 21 record that follows."
+  - "Merging praneet-web then praneet-office, and the owner's test order on his phone, are the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Run migration 011 on production while PR 23 is a draft, read back with
+    the reader role, mark PR 23 and PR 14 ready, give the owner the merge
+    order and a solo test walk.
+  acceptance_check:
+    - Migration 011 applied on production with lots, rounds, customers and referral codes read back unchanged and 3 customer page tokens equal to their referral pages.
