@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T045831_ciel_hq_round_publication_closeout
+type: closeout
+recorded_at: 2026-10-21T04:58:31+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-hq-round-20261021
+  lane: single
+  objective: >-
+    Publish the hq/20261021 round, which carries only the wake-weight Codex
+    cold-check record, so the next session starts from a main that holds it.
+    A round checkpoint, not a delivery slice for any workstream.
+  scope:
+    - The agent pushed the standing branch, opened draft PR 92, prepares this checkpoint, verifies the published head, marks it ready, merges it and syncs HQ, all on the owner's word.
+  out_of_scope:
+    - Any code, contract or product change.
+
+outcome:
+  status: recorded
+  owner_statement: >-
+    2026-10-21: the owner asked to close the round, push, open the PR, merge
+    it and sync if nothing needs his decision
+    ("ปิดรอบเลยครับ ... push pr แล้ว merge ให้ผมเลย และ sync ให้เรียบร้อยครับ ถ้าไม่มีอะไรต้องเคาะแล้วครับ").
+  state:
+    - "Draft PR 92 opened against main at 631461f2699c87a74d5c1bf52054931dbaa66b85, 1 commit ahead of fetched origin/main and 0 behind; one file, the cold-check record."
+  not_done:
+    - This record does not claim a merged PR or a synchronized main.
+
+evidence:
+  repository:
+    head: 631461f2699c87a74d5c1bf52054931dbaa66b85
+    branch: hq/20261021
+    working_tree: this-record-only
+    fetched_base: 91b320c6007acf530999e16ffcecca40fede806c
+  pull_request:
+    number: 92
+    url: https://github.com/mojisejr/ciel-os/pull/92
+    base: main
+    head_branch: hq/20261021
+    observed_head: 631461f2699c87a74d5c1bf52054931dbaa66b85
+    observed_state: draft
+  semantic_sources:
+    cold_check: memory/events/2026/10/21/20261021T045602_wake_weight_codex_cold_check_and_done.yaml
+
+unresolved:
+  - "Next: a syncup with the owner on keeping workstreams small and self-contained, the rule ciel-wake-weight-001 deferred until it finished."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Commit and push this record to PR 92, verify it is the PR head, mark the PR
+    ready, merge it with a merge commit, return HQ to a clean current main and
+    delete hq/20261021.
+  acceptance_check:
+    - PR 92 head contains the cold-check record and this checkpoint; bun run wake passes.
