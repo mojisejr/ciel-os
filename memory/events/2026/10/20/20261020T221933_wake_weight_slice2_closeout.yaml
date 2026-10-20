@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261020T221933_wake_weight_slice2_closeout
+type: closeout
+recorded_at: 2026-10-20T22:19:33+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-wake-weight-001
+  lane: single
+  objective: >-
+    Wake reports a delivered non-final slice as delivered and the next
+    declared slice as not yet authorized, from the slice numbers closeouts
+    already carry.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "src/portfolio/read.ts deriveDeliveredSlice: a closeout recorded after the authorizing decision, with the same plan_revision and slice and a delivery status, ends that slice once the commit that added it is reachable from origin/<target>; the lifecycle then reads needs-owner-decision, naming the delivered slice, its closeout and the next slice, and any malformed decision recorded after it."
+    - "Unmerged slice closeouts and cases Git cannot check leave the slice authorized, as before; a later decision re-authorizing a slice wins over an earlier delivery."
+    - "test/portfolio/read.test.ts: one fixture walks authorized, recorded-unmerged, delivered-non-final, next slice authorized, and finished."
+    - "AGENTS.md: one sentence under the semantic event convention states the rule."
+  proof:
+    checks: "bun run check: typecheck clean, 53 passed, 0 failed, 251 assertions, at efe5f506e1f8dd17579faf169677cdbfa73b46a8."
+    regression: "The new test fails on the old src/portfolio/read.ts (expected needs-owner-decision, received authorized)."
+    hq_reading: "bun run wake on this HQ: no validation errors, warnings or anomalies; ciel-owner-operating-contract-001 reads 'Slice 2 of plan revision 0.2 is delivered: its closeout at memory/events/2026/10/20/20261020T192006_owner_contract_slice2_closeout.yaml has reached origin/main. No owner decision authorizes slice 3 yet.' No other open workstream changed state."
+  not_completed:
+    - "Slice 3 (fewer git calls, measurement under Codex's sandbox) not started."
+  owner_statement: >-
+    2026-10-20: the owner authorized slice 2 and allowed related easy fixes
+    that do not conflict with the contract ("ลุย slice 2 ได้เลยครับ").
+
+evidence:
+  plan: workstreams/ciel-wake-weight-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  decision: memory/events/2026/10/20/20261020T221601_wake_weight_slice2_authorized.yaml
+  repository:
+    head: efe5f506e1f8dd17579faf169677cdbfa73b46a8
+    branch: feat/wake-weight-slice2
+    working_tree: this-record-only
+    fetched_base: d13e3c82b251e95a0253c85e02e9a625630423e8
+  delivery:
+    target_branch: main
+    topic_branch: feat/wake-weight-slice2
+  pull_request:
+    number: 90
+    url: https://github.com/mojisejr/ciel-os/pull/90
+    base: main
+    head: feat/wake-weight-slice2
+    observed_head: efe5f506e1f8dd17579faf169677cdbfa73b46a8
+    observed_state: draft
+
+unresolved:
+  - "Related problems left alone because fixing them in Wake would contradict the contract or need a record only another lane may write: ref-office-001 slice 4 and ciel-mini-template-001 slice 5 still read authorized, because their closeouts use status words AGENTS.md says are ignored (slice-4-ready-for-owner-merge, recorded); mumate-image-weight-001's decision lacks evidence.execution_phase and needs a corrected decision in the MuMate lane."
+  - "Paused one-liners still show the latest next-action sentence rather than a pause reason; no event field carries a reason, so reading one would need a convention the owner has not chosen."
+  - "Slice 3 needs its own decision."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner reviews and merges PR 90 with a merge commit. Then return HQ to a
+    clean current main, delete feat/wake-weight-slice2, and ask the owner
+    whether to authorize slice 3.
+  acceptance_check:
+    - "PR 90 head contains this closeout; bun run check and bun run wake pass on it."
