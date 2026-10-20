@@ -251,6 +251,33 @@ PR head plus local Git ancestry determines whether that plan is awaiting an
 owner merge, needs synchronization or cleanup, or is complete; do not edit a
 plan merely to journal those derived outcomes.
 
+A new workstream splits its plan, so that a session reads only the agreement
+and the slice in hand:
+
+```text
+workstreams/<id>/PLAN.md       header, goal, current agreement, slice index
+workstreams/<id>/slices/1.md   one slice: scope and acceptance
+workstreams/<id>/slices/2.md
+```
+
+- The `slices/` directory marks a plan as split.
+- `PLAN.md` keeps the usual header and a `## Slices` section with one line per
+  slice, in delivery order: `- [<n>. <title>](slices/<n>.md)`. The last line is
+  the final slice.
+- The header `State` is `active` or `paused`. Finished is derived, never
+  written.
+
+Wake reports a validation error when any of these holds:
+
+- an index line points at a missing file, or is malformed;
+- a slice file is not indexed;
+- a number repeats, or does not match its file;
+- a slice heading sits in `PLAN.md`;
+- the header says anything else.
+
+A file above `SPLIT_PLAN_FILE_SOFT_LIMIT_BYTES` draws a warning that names it.
+Plans without `slices/` read as before.
+
 ## Current proof target
 
 Without calling an LLM API, CIEL must let a new coding-agent session reconstruct
