@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261016T164923_praneet_nursery_slice15_prs_draft
+type: closeout
+recorded_at: 2026-10-16T16:49:23+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Slice 15 built: "is it in stock?" on the first screen, on praneet-web
+    feat/in-stock-first-screen and praneet-office docs/in-stock-supply as
+    draft PRs for the owner (web first); the additive migration is on
+    production.
+  scope:
+    - praneet-web PR 18 and praneet-office PR 9.
+outcome:
+  status: recorded
+  slice: "15"
+  completed:
+    - "praneet-web PR 18 (head 1cf93d040de640a5e55df7c4c6d63de2ce53fafb): stock card under the greeting (sample 1); expected ready months on cards, lot pages, link previews and share text (the owner's months, else the system's estimate from rounds, never a past month); ready box with the small-trees line; dotted projection on the chart; supply page /ops/lots/supply (shipping per pallet and to the South, yearly bag weights, bag sizes); bag and ready-month editor on the back-office lot page; orders from growing lots with a warning, sold-out lots refused; migration 007 (additive); DESIGN.md and README.md."
+    - "praneet-office PR 9 (head cf3718d19093a29ae1e038991081fee311da496f): runbooks 00, 03 and 05 for the new order rule, the supply page and shipping per tree."
+    - "bun run check on PR 18: tsc, build and Playwright 60/60, including the new tests/supply.spec.ts and updated orders and board tests. Vercel preview deployment of PR 18 completed (behind Vercel sign-in)."
+    - "Production migration 007 applied while PR 18 is a draft, on the owner's word in the slice 15 decision. Read back through praneet_reader: shop_settings 100 / 1,700 / 1,900; bag_sizes 9 at 4.5 x 12; bag_weights empty; all 3 lots on bag 9. Production code reads none of it until the merge."
+    - "Screenshots of the build with made-up local data: .assets/preneet/slice15-pr (git-ignored); the samples stay in .assets/preneet/slice15-preview and on the local-only branch sample/slice15-in-stock."
+  not_verified:
+    - "No real-phone or LINE in-app browser check yet; the preview needs the owner's Vercel sign-in."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "15"
+  decision: evt_20261016T162939_praneet_nursery_slice15_authorized
+  repository:
+    head: ff4e674e06c346b38b3ceb9bd68fbb9a1a8c6674
+    branch: hq/20261015
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 18
+      base: main
+      state: DRAFT
+      head: 1cf93d040de640a5e55df7c4c6d63de2ce53fafb
+    - repository: github.com/mojisejr/praneet-office
+      number: 9
+      base: main
+      state: DRAFT
+      head: cf3718d19093a29ae1e038991081fee311da496f
+unresolved:
+  - "Slice 15 close: the owner merges PR 18, waits for the deploy, merges office PR 9, and tries the home page and a growing lot on his phone inside LINE."
+  - "Bag weights: the owner weighs dry and watered #9 bags and enters them on the supply page; until then the board shows no weight."
+  - "praneet-web scripts/backup.ts and restore.ts list neither the slice 7 tables (posts, post_images, post_hits, referral_codes, referral_rewards, referral_hits) nor the new bag_sizes, bag_weights, shop_settings; a restore from today's backup would lose them. Deferred; the database's own Neon history is the workaround."
+  - "Local-only branch sample/slice15-in-stock in praneet-web and local database praneet_sample hold the samples; safe to delete after the merge."
+  - "Slice 7 open: the old-stock lot with photos (the owner was rained out on 2026-10-16), the first post, the second-account LINE invite test."
+  - "Slices 16 and 17 then 14 follow; slice 16 needs a LINE Login channel the owner creates."
+  - "HQ hq/20261015 carries this session's records ahead of origin/main; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    The owner reviews and merges praneet-web PR 18, then praneet-office PR 9
+    after the deploy; then a phone check inside LINE closes slice 15.
+  acceptance_check:
+    - The slice 15 DoD in PLAN.md revision 1.4.

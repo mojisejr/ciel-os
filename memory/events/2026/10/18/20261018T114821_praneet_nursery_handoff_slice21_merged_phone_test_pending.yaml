@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20261018T114821_praneet_nursery_handoff_slice21_merged_phone_test_pending
+type: closeout
+recorded_at: 2026-10-18T11:48:21+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Handoff before the owner clears the session on 2026-10-18: slice 21 is
+    merged and deployed, clean-up is done, and the owner's own test order on
+    his phone (the slice 21 DoD) is still to come.
+  scope:
+    - State of 2026-10-18 late morning; this record only.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Slice 21 built, tested (Playwright 77/77), migration 011 rehearsed and run on production on the owner's word, read back (evt_20261018T111655_praneet_nursery_slice21_migrated_prs_ready)."
+    - "Owner merged praneet-web PR 23 (merge c78b15411e5b6a652766d0e866233dc06d53c675), praneet-office PR 14 (merge 034ed9acb01ccd4d4503cca55088199614a4c4ea) and PR 13, the LINE menu 'ดูสต็อก' file (merge 0ac736d1bc709c8545f69f0d0730c2d9efb4756f). Production answers the new routes (pack and merge pages redirect to login, /me with an unknown token is 404); /, /lots, /ops/login 200."
+    - "Clean-up: both checkouts on main equal to origin/main (praneet-web c78b15411e5b6a652766d0e866233dc06d53c675, praneet-office 0ac736d1bc709c8545f69f0d0730c2d9efb4756f); local branches slice21-orders and richmenu-stock deleted, remote branches already gone, no open PRs; local postgres and dev servers stopped; the rehearsal database dropped."
+    - "Private pages: the slice 21 samples page and the built-pages review were deleted on the owner's word; the screen map stays for slices 22-23. Locators stay outside the repository."
+    - "Owner given the merge order and a solo test walk: phone customer with his own number, a growing row with a typed price (no row price exists yet), summary copied to his own LINE, the customer page opened in LINE, paid, packed, shipped by truck, received on the customer page."
+  not_verified:
+    - "The owner's test order on his phone to the end, inside LINE: the slice 21 DoD."
+    - "A bank app scanning the customer page's QR, the sms: link, a real Thailand Post tracking number."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  repository:
+    head: f3f530aad8a7fc1cc476e64db60b5603c5d5aefd
+    branch: hq/20261015
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 23
+      base: main
+      state: MERGED
+      head: 9f9c258bf14462026a00356ca51153ed80cd44cf
+    - repository: github.com/mojisejr/praneet-office
+      number: 14
+      base: main
+      state: MERGED
+      head: d8972a2cb0c63e7a6fdaaa6188aa83f63c370c0e
+  resume:
+    read_first:
+      - this record, then memory/events/2026/10/18/20261018T111655_praneet_nursery_slice21_migrated_prs_ready.yaml
+      - workstreams/praneet-nursery-001/PLAN.md (Owner revision 2.0, slice 21 DoD, slice 22)
+      - checkouts/praneet-web/DESIGN.md (หลังบ้าน, ออเดอร์ slice 21, screens table) and README.md (Orders, slice 21)
+    test_leftovers_to_expect:
+      - "The owner's test order leaves on production: order #0001 (received), a phone customer named as a test with a referral code, and lot 70-A lower by the trees picked at packing (fixed by recounting 70-A to 700 on its lot page). Removing the test order or customer is a production write and needs the owner's word."
+    local:
+      - "Secrets (never print): checkouts/praneet-web/.local/secrets/neon-direct.url, neon-reader.url; .assets/preneet/.env."
+      - "Read-only production check: bun .local/prodcheck.ts .local/secrets/neon-reader.url (counts only; extended for slice 21: order lines, picks, customer page tokens)."
+      - "Tests: pg_ctl -D .local/pg -l .local/postgres.log -o '-p 55441 -h 127.0.0.1' start; DATABASE_URL=postgresql://127.0.0.1:55441/praneet_test bun run check (77/77, about 6 minutes, run in the background); git checkout next-env.d.ts afterwards; stop next dev first, since build and dev share .next."
+      - "Order walk with shots: bun .local/walk21.ts <out dir> against next dev on port 3002 (start it with env ... so quoted values survive zsh) after resetting praneet_test with tests/setup.ts."
+unresolved:
+  - "The owner's phone test of slice 21 (DoD); on his word that it works, record the slice 21 closeout. Anything he finds is a fix on a new topic branch."
+  - "Privacy page slip sentence now reads 'no slip image is kept'; the owner may change the wording."
+  - "LINE menu 'ดูสต็อก' (PR 13) is merged as files only; applying it to the live OA needs the owner's word (bun run line richmenu:apply) or he uploads it himself; the OA greeting text is changed by hand in LINE Official Account Manager."
+  - "No row price is set on production yet and every lot is growing."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights per bag number, the second-account LINE invite test, the first post."
+  - "Lot ages and estimated months may read a day or more different since the slice 18 day-count fix."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Next session: run Wake, read this handoff; ask the owner how his slice 21
+    test order went; on his word record the slice 21 closeout (and fix
+    anything he found on a topic branch first); then start slice 22
+    (interest and reminders on LINE) with 2-4 rendered samples.
+  acceptance_check:
+    - The slice 21 DoD in PLAN.md revision 2.0 - the owner's test order on his phone to the end.

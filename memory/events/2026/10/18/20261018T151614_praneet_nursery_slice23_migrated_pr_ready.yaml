@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261018T151614_praneet_nursery_slice23_migrated_pr_ready
+type: closeout
+recorded_at: 2026-10-18T15:16:14+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record slice 23 built and tested, migration 012 run on production and
+    read back, and praneet-web PR 24 ready for the owner's merge.
+  scope:
+    - praneet-web branch slice23-reseller-pictures and production migration 012; this record only.
+outcome:
+  status: recorded
+  slice: "23"
+  completed:
+    - "praneet-web PR 24 (head a52592a6aa67ecad91305ad254c279daedc0c8fb): reseller picture of a stock row (sample B, 1080 x 1350, words from lib/pictures.ts, drawn in the browser, no shop, logo, link, phone, price or lot code) in a box under 'แชร์แถวนี้'; /ops/stock/picture with the named and plain list pictures; customers.buyer_kind (shop | farm) with a short label page, audited, carried by a phone-to-LINE merge; DESIGN.md and README."
+    - "bun run check on the local test database: typecheck, build, Playwright 81/81 (4 new in tests/pictures.spec.ts; quality covers the new pages). A first run failed 5 tests because the new test lots reused supply.spec.ts's 74- codes; moved to 76-, then a clean run."
+    - "Local walk on a test database seeded with production's rows and its real public photos plus one made-up priced ready row: row box, drawn picture, both list pictures, label page at 390 and 1280 px in light and dark; no page errors."
+    - "Rehearsal: fresh local database from main's migrations 000-011 with 3 LINE customers; Applied 012_buyer_kind.sql; 3 rows, 0 labelled, check constraint present; a second run applied nothing; database dropped."
+    - "Production, on the owner's word in evt_20261018T144551_praneet_nursery_slice23_authorized, PR 24 still a draft: before (reader role, counts only) 3 lots growing 700/1800/5600, 3 rounds, 3 customers, 3 codes, 0 orders, buyer_kind absent; bun run migrate printed Applied 012_buyer_kind.sql; after the same counts plus buyer_kind on 3 customers, 0 labelled, readable by the reader role, with its check; a second run applied nothing. Live /, /lots, the row page and /ops/login answered 200; the PR 24 preview built."
+  not_verified:
+    - "Saving and passing on a picture inside LINE's in-app browser on a real Android or iPhone: the slice 23 DoD, for the owner after merge."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.1"
+  slice: "23"
+  decision: evt_20261018T144551_praneet_nursery_slice23_authorized
+  repository:
+    head: a6c365b6db4ba215c331a62dec448e620f08ed73
+    branch: hq/20261015
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 24
+      base: main
+      state: OPEN
+      head: a52592a6aa67ecad91305ad254c279daedc0c8fb
+unresolved:
+  - "Owner: merge praneet-web PR 24, then on his phone save a reseller picture and the list picture and send one in LINE (slice 23 DoD); on his word, record the slice 23 closeout."
+  - "Slice 21 DoD: the owner's test order on his phone to the end."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights per bag number, the second-account LINE invite test, the first post."
+  - "Slice 22 kept, not built; slice 8 not started."
+  - "No row price is set on production yet, so the named list shows 'ทักถามราคา' for ready rows and today every row is growing."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    The owner merges praneet-web PR 24 (no praneet-office change); after
+    the Vercel deploy he saves and sends a picture in LINE on his phone;
+    then record the slice 23 closeout and delete the slice 23 samples page.
+  acceptance_check:
+    - "The slice 23 DoD in PLAN.md: the owner saves and sends a picture in LINE on a real phone."

@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261016T162939_praneet_nursery_slice15_authorized
+type: decision
+recorded_at: 2026-10-16T16:29:39+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Authorize slice 15 - "is it in stock?" answered on the first screen - under
+    plan revision 1.4, with sample 1 (stock card under the greeting).
+  scope:
+    - praneet-web public board, back office, an additive migration, DESIGN.md and tests.
+outcome:
+  status: decided
+  decision: >-
+    The owner reviewed three samples rendered on the live page with made-up
+    lots (local branch sample/slice15-in-stock, screenshots in the git-ignored
+    .assets/preneet/slice15-preview) and chose sample 1. He approved the
+    sample wording, chose the system's estimated ready months shown at once
+    marked as an estimate with his override in the back office, and said go:
+    the agent may run the slice's migration on production itself while the PR
+    is a draft if nothing about it is really risky, and meet him at the PR.
+  owner_statements:
+    - "1. ผมเลือกแบบที่ 1"
+    - "2. ผมว่าคำพูดโอเคละ ไม่ซีเรียส"
+    - "3. เอาตามที่คุนว่า"
+    - "ถ้ามี migration คุนก็ทำได้เลยอีกแหละ แล้วเจอกันที่ PR ถ้าไม่มีอะไรเสี่ยงจริงๆ ครับ อุมัมติ go ได้"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "15"
+  repository:
+    head: 3c9ff5e2e18cf4beb96f9acd7e64aa678b220bd1
+    branch: hq/20261015
+unresolved:
+  - "Real bag weights (dry and wet) wait for the owner's weighing; the board shows no weight until he enters one."
+  - "The production migration is additive only; anything that drops, rewrites or locks existing data goes back to the owner instead."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build slice 15 on a praneet-web topic branch with tests, run the additive
+    migration on production while the PR is a draft, and open the draft PR
+    with screenshots for the owner.
+  acceptance_check:
+    - The slice 15 DoD in PLAN.md revision 1.4.

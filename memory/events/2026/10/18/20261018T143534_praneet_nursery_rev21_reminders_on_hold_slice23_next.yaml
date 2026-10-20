@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261018T143534_praneet_nursery_rev21_reminders_on_hold_slice23_next
+type: decision
+recorded_at: 2026-10-18T14:35:34+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record plan revision 2.1: slice 22 (interest and reminders on LINE) is
+    kept in the plan but not built, slice 23 (pictures for resellers) follows
+    slice 21 as the last build the owner orders now, and slice 8 is not
+    started. No slice is authorized by this record: slice 23 waits for its
+    samples and the owner's pick.
+  scope:
+    - Plan only; no code, pull request or production change in this record.
+outcome:
+  status: recorded
+  decision: >-
+    The owner saw three slice 22 samples rendered on the live stock-row page
+    and learned that every reminder is a push message counted against the
+    shop's LINE quota (one per recipient per send, the owner's own broadcasts
+    in the same pool, 300 a month on the Thai free plan with no top-up). He
+    judged that reminders set by many customers on many lots would not work
+    and would be a cost that keeps growing, and decided to keep slice 22 for
+    later without building it, move on to slice 23, leave slice 8 for now,
+    and do his own parts of slices 21 and 7 when he is free. Slice 22 has no
+    code, branch, pull request or migration. The agent agreed: nothing is
+    ready or priced on production yet, and the existing "ทัก LINE เรื่องแถวนี้"
+    button already collects interest without using quota.
+  owner_statements:
+    - "ถ้าแบบนี้ ลูกค้า มาตั้งเวลา กัน หลายๆ lot มันก็จะไม่เวิร์ค และเป็นต้นทุน ที่บวมขึ้นเรื่อยๆ"
+    - "ผมจะเก็บ 22 เอาไว้ก่อนยังไม่ทำครับ, แล้วข้ามไปทำ 23 เลยแต่ยังไม่ทำ 8 คับ และ 21 , 7. ก็เหมือนกันเดี่ยวผมว่างแล้ว ผมทำครับ นี่คือการตัดสินใจของผมครับ"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.1"
+  repository:
+    head: 87de2756e467d576260f9dc3f5b66178fa421738
+    branch: hq/20261015
+  sources:
+    - "LINE Developers, Messaging API pricing and the 2026-05-28 tip on counting messages: push, multicast, broadcast and narrowcast are counted per recipient; reply messages and sends to users who blocked the account are not."
+    - "Thai plan figures (free 300 messages a month, no top-up; Basic 1,280 baht for 15,000) come from third-party pages citing LINE pricing of September 2026; not checked against LINE for Business directly."
+    - "The slice 22 samples were shown as a private page; its locator is kept outside the repository."
+unresolved:
+  - "Slice 23 waits for 2-4 rendered samples and the owner's pick; then a decision authorizing revision 2.1 slice 23."
+  - "Slice 21 DoD: the owner's test order on his phone to the end; on his word, record the slice 21 closeout."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights per bag number, the second-account LINE invite test, the first post."
+  - "Slice 22 kept, not built; resuming it needs a new decision. Slice 8 not started."
+  - "LINE menu 'ดูสต็อก' (praneet-office PR 13) is merged as files only; applying it to the live OA needs the owner's word."
+  - "No row price is set on production yet and every lot is growing; the privacy page slip sentence awaits the owner's wording."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Render 2-4 samples of slice 23 (reseller pictures of a stock row without
+    the shop's name, and one stock-list picture for LINE groups) with a lean,
+    and bring them to the owner.
+  acceptance_check:
+    - The owner picks a sample and a decision authorizes plan revision 2.1 slice 23.

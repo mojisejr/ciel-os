@@ -1,0 +1,80 @@
+schema_version: ciel.event.v0.1
+id: evt_20261016T223530_praneet_nursery_redesign_syncup_round1
+type: decision
+recorded_at: 2026-10-16T22:35:30+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record the first round of the owner's redesign syncup: stop patching the
+    back office, map the shop's real work end to end, and redesign the back
+    office (and the parts of the storefront it touches) as one plan revision
+    2.0 in this workstream; slices 14, 16 and 17 wait. This record authorizes
+    no slice.
+  scope:
+    - Syncup answers only; no plan text and no code in this record.
+outcome:
+  status: recorded
+  decision: >-
+    The owner said the back office reads like a prototype that grew by
+    patches and that he does not understand much of it. Research (the
+    back-office inventory, mobile admin patterns of Shopify, Shopee Seller,
+    Square, Stripe and LINE OA, NN/g and Apple/Material guidance) and
+    production usage (only lots, measuring, status changes and referral codes
+    have been used; no real orders or posts; 70-A's status toggled six times
+    on 2026-10-16 with no confirmation) were shown. The owner then told his
+    workflow: grafting chambers, transplanting into nursery bags in rounds
+    (each bagging day, bag size or re-graft is its own lot, age from the
+    bagging day), care (height, spraying, fertilizing), selecting trees by
+    height at sale, interest and reminders, a PromptPay QR in LINE, slips in
+    LINE, post-office tracking or a truck notice with the plate, and the
+    customer confirming receipt. His answers to round 1: one lot is one bag
+    size, recorded with bagging date, bag number and count; bags are named by
+    the shop number (เบอร์ 7, 9, 12) that growers use, not inches, and the
+    agent researches the mapping. Care entries sit on each lot's timeline: by
+    default only "sprayed" or "fertilized" and what for, front and back;
+    optional product lines (brand name, common name, amount per tank, group)
+    with the tank volume entered once and remembered, and autocomplete or
+    saved favourites from past entries. One list price per lot; the real
+    price is set per order line after bargaining (for example 40 to 38 baht),
+    an order holds several lots and kinds (for example 50 cm, 80 cm and
+    พวงมณี) each with its own price, and the receipt shows the price sold.
+    Slips stay in the LINE chat as the proof: the owner marks paid himself
+    and no slip image needs to be stored. The customer gets a private page
+    for their orders without logging in, tied to the LINE id the shop
+    already has. Slices 14, 16 and 17 wait for plan revision 2.0; the owner
+    merged praneet-web PR 19 (the micro fix).
+  owner_statements:
+    - "เราไม่ควรแก้ไปเรื่อยๆ หรือเปล่า ? ผมคิดว่าเราควรจะ ตรวจ design แล้วก็วาง design ของ ระบบหลังบ้านใหม่"
+    - "ดูแล้วหลังบ้านเป็นเหมือน อะไรที่ทำขึ้นมาคร่าวๆ เพื่อให้ลองใช้เฉยๆ ไม่ได้เป็น UI แบบที่เป็น ระบบจริงๆ"
+    - "Lot เดียวกันผมจะให้เป็นถุงเบอร์เดียวกัน ... ขนาด ถุงที่ชาวสวนเข้าใจกันอ่ะ มันไม่ใช่แบบ 4.5 x 12 นิ้ว งี้ มันเป็น เบอร์ 9"
+    - "ให้ผมแค่ใส่ได้ว่า วันนี้เราพ่นยา หรือ ใส่ปุ๋ย ใส่เกี่ยวกับอะไรก็พอแล้ว ... ให้มี สามารถใส่ ชื่อยาได้ด้วย แบบ optional"
+    - "ผมจะตั้งราคเดียวแหละ ... ตอน ออก order ให้ลูกค้าต้องตรง"
+    - "ผมไป mark ว่า จ่ายแล้วเอง ละไม่ต้องแนบรูปก็ได้ มั๊ยนะ เพราะว่า เราก็มีหลักฐานอยู่ในไลน์ (ลดการเก็บรูป)"
+    - "ถ้าไม่ต้อง login ได้ก็จะดี ... เราก็เก็บ id เค้าได้แล้วนิ"
+    - "Q7 = ผมคิดว่าควรจะเป็นแบบนั้นอ่ะ และผม ก็ merge PR 19 ไปแล้ว"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.4"
+  repository:
+    head: ea1c13b1b744a1949664c9dbea453cfae2aae4d9
+    branch: hq/20261015
+  sources:
+    - "praneet-web PR 19 merged (main 3f3066a9401fe3f828f5de52276233dd19207c09); GitHub deployment of that commit to Production reports success; /, /ops/login and /lots/70-A answer 200."
+    - "Production audit_events (counts by entity and action only): lot create 3, measure 3, edit_round 1, update 9 (eight status changes on 70-A, one shop sentence on 70-C), customer issue_referral_code 3, reissue_referral_page 2; no order or post events. The two referral codes asked about earlier were issued by the owner on 2026-10-14 and 2026-10-15."
+unresolved:
+  - "Syncup continues 2026-10-17: the sale step the owner had not finished (selecting by height, bag weight, height measured from the bag), the agent's bag-number research, the screen map of the whole flow (back office and storefront), then the shared understanding block before plan revision 2.0."
+  - "Open design points from round 1: whether a whole-plot spray is entered once and copied onto every lot in the field that day; the slip policy versus the slice 6 slip store already built; the customer's private orders page versus the existing /me referral page; truck receipts and post-office tracking links."
+  - "Slice 15 phone check inside LINE is still pending; slice 7 waits for the old-stock lot and bag weights."
+  - "HQ hq/20261015 carries this session's records ahead of origin/main; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Next session: bring the bag-number research and a draft flow and screen
+    map, continue the syncup live with the owner, then write the shared
+    understanding block for his confirmation before any plan revision 2.0.
+  acceptance_check:
+    - The owner confirms the shared understanding block; only then plan revision 2.0 is recorded.

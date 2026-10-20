@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20261020T172149_mumate_handoff_before_clear
+type: closeout
+recorded_at: 2026-10-20T17:21:49+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-image-weight-001
+  lane: single
+  objective: >-
+    Hand MuMate over before /clear after the 2026-10-20 team release: where
+    production and staging stand, what this session did, how releases work
+    now, and the open items in order. Cold-session entry for MuMate
+    (supersedes 20261015T151424 as the entry).
+  scope:
+    - "State at ~17:20 +07; child checkouts fast-forwarded to their default lines from refs fetched this session."
+  out_of_scope:
+    - Any further release, host, env or data change.
+
+outcome:
+  status: recorded
+  state:
+    - "Production (mumate-prod-1): fe aa7e212 / bazi c0f8369 since 2026-10-20T09:34:38Z (owner's promote run 39401541201; 0 5xx of 7 requests in 5 min); infra 9549c03."
+    - "Staging (mumate-2): the same pair; pgstaging from the 2026-10-15 backup, delete or refresh by 2026-10-29."
+    - "Child checkouts: mootech-fe main aa7e212, bazi-sft-dataset detached at origin/pdf-dev c0f8369 (bazi-testenv on pdf-dev c0f8369), mumate-infra main 9549c03; all clean."
+  this_session:
+    - "2026-10-15: staging DB copy refreshed (20261015T170851); bdash parked items held until the team asks (20261015T172613); HQ round hq/20261009 published as ciel-os PR 85 and merged (merge 76208d2), hq/20261015 opened."
+    - "2026-10-17: bdash check, read-only, from code (bazi 94c0572): no mock data; the page reads the latest nightly snapshot. 'Still' by design: retention and the week-2 figure move weekly, payments/QI/AI are 28-30 day sums, free-to-paid shows '-' until 2026-10-25. Phone defects found and NOT fixed (owner: nothing to do while it updates): SVG charts (viewBox 560) shrink tick/value text to ~6 px at 390 px; .bd-chart min-height 230 leaves a gap under the scaled chart; tooltips are hover-only (<title>) while the hint says to point; the conversion chart adds one bar a week with no cap, labels crowd from about mid-December. bdash-stg reads the frozen staging copy, so it looks static. The live page was not opened (harness refused the production read); the owner checks the 'ข้อมูลถึง' date himself."
+    - "2026-10-20: team release live (20261020T164024)."
+  how_releases_work_now:
+    - "Team merges -> staging follows main by itself -> agent runs the runbook 01 readiness check on the owner's order -> the OWNER presses promote-production (the harness refused the agent's press on 2026-10-20; it had passed on 10-12 and 10-15)."
+    - "SSH on prod-1 only for a new env/key, a Caddyfile change, a new timer or a migration; reads on prod-1 for the readiness check (ops-status, 5xx count, stall grep, health journal) passed on 2026-10-20."
+  open_items_in_order:
+    - "1. mumate-image-weight-001 final: Loki static bytes per page view and 304 count, 24 h before vs after 2026-10-15T08:05Z, on the owner's word (production read). The before-window ages out of Loki around 2026-10-28."
+    - "2. Staging copy: refresh (staging-db.sh up) or down by 2026-10-29 (runbook 05)."
+    - "3. Rotate the production DB password (leaked 2026-10-12); inventory env files by hash/name first; quiet hours 02:00-06:00; owner runs on prod-1."
+    - "4. Delete by name on the owner's word: env backups and old key files listed in 20261015T151424 item 7; remote branches feat/bdash-business-dashboard, fix/bdash-page-edges (bazi), feat/bdash-host (infra)."
+    - "5. Rotate tokens that lived in Vercel env and the BE-only credentials."
+    - "6. bdash: next revision only on a team request (20261015T172613); phone chart defects above if the owner asks."
+    - "7. Move the backup job and its key from mumate-2 to prod-1; fe pre-push hook (four violations on main, pushes need --no-verify on the owner's word); be-retirement remainder."
+
+evidence:
+  plan: workstreams/mumate-image-weight-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: df89b57509856061d4327dfd266be11bd923f446
+    branch: hq/20261015
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/20/20261020T164024_mumate_free_tier_limits_released.yaml
+    - memory/events/2026/10/15/20261015T172613_mumate_bdash_next_items_wait_for_team.yaml
+    - memory/events/2026/10/15/20261015T170851_mumate_staging_db_refreshed.yaml
+    - memory/events/2026/10/15/20261015T151424_mumate_handoff_before_clear.yaml
+
+unresolved:
+  - "hq/20261015 unpushed; the push is the owner's. Another local session was busy at 17:21 +07; check it is quiet before the push."
+  - "Nightly bdash snapshots after 2026-10-14 are not verified by the agent."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Next MuMate session: Wake, read this record, report production and
+    staging, then ask the owner about item 1 (before 2026-10-28) and item 2
+    (by 2026-10-29).
+  acceptance_check:
+    - "A cold session can state production, staging, how releases work now, and the open items in order, from this record."

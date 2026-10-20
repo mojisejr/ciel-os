@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261018T154237_praneet_nursery_slice23_merged_phone_test_pending
+type: closeout
+recorded_at: 2026-10-18T15:42:37+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record praneet-web PR 24 (slice 23) merged and deployed and the clean-up
+    done; the owner's own check of saving and sending a picture in LINE (the
+    slice 23 DoD) is still to come, and he returns to the open items later.
+  scope:
+    - State after the merge on 2026-10-18; this record only.
+outcome:
+  status: recorded
+  slice: "23"
+  completed:
+    - "The owner merged praneet-web PR 24 (merge 2b85366c5664cd788bfa5783113dbee06be2156a). Vercel's production deployment is at that commit; the live stock-row page carries the 'รูปสำหรับส่งต่อ' box, /ops/stock/picture redirects to sign-in, / and /ops/login answer 200."
+    - "Clean-up: praneet-web on main equal to origin/main at the merge; local branch slice23-reseller-pictures deleted, remote branch already gone, no open PRs, clean tree; local postgres stopped, the rehearsal database dropped; the slice 23 samples page deleted (owner's standing rule for merged slices). The slice 22 samples page stays, as slice 22 is kept, not built."
+  not_verified:
+    - "Saving and passing on a reseller picture and the list picture inside LINE on the owner's phone: the slice 23 DoD."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.1"
+  slice: "23"
+  repository:
+    head: cc982afce34dbeae13933180f9ff6b219caa55e8
+    branch: hq/20261015
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 24
+      base: main
+      state: MERGED
+      head: a52592a6aa67ecad91305ad254c279daedc0c8fb
+  resume:
+    read_first:
+      - this record, then memory/events/2026/10/18/20261018T143534_praneet_nursery_rev21_reminders_on_hold_slice23_next.yaml
+      - workstreams/praneet-nursery-001/PLAN.md (Owner revision 2.1, slices 21, 7, 23)
+unresolved:
+  - "Slice 23 DoD: the owner saves and sends a picture in LINE on his phone; on his word, record the slice 23 closeout."
+  - "Slice 21 DoD: the owner's test order on his phone to the end; anything he finds is a fix on a new topic branch."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights per bag number, the second-account LINE invite test, the first post."
+  - "Slice 22 kept, not built (LINE push quota); slice 8 not started."
+  - "LINE menu 'ดูสต็อก' (praneet-office PR 13) is merged as files only; applying it to the live OA needs the owner's word."
+  - "No row price is set on production yet and every lot is growing; the privacy page slip sentence awaits the owner's wording."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    When the owner returns: ask how his slice 23 picture check and slice 21
+    test order went; on his word record each closeout (fixes on a topic
+    branch first); then continue slice 7 with what he brings.
+  acceptance_check:
+    - The slice 23 and slice 21 DoD in PLAN.md - the owner's checks on his phone.

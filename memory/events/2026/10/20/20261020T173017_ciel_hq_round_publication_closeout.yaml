@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20261020T173017_ciel_hq_round_publication_closeout
+type: closeout
+recorded_at: 2026-10-20T17:30:17+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-hq-round-20261015
+  lane: single
+  objective: >-
+    Publish the hq/20261015 round for owner review, preserving project
+    evidence and unfinished work. A round checkpoint, not a new execution
+    plan or a delivery slice for its constituent lanes.
+  scope:
+    - The owner pushed the standing branch; the agent opened draft PR 86, prepared this checkpoint, and verifies the published head before marking it ready.
+  out_of_scope:
+    - Owner merge, production changes, child-project implementation.
+
+outcome:
+  status: recorded
+  owner_statement: >-
+    2026-10-20: the owner cleared his working sessions, asked the agent to
+    check that no session was left open, pushed hq/20261015 himself, and
+    asked the agent to open the PR and mark it ready once it is ready.
+  state:
+    - "Before publication: working tree clean, one worktree; no lane claimed (the four plans still marked executing each have a merged closeout); the last MuMate and Praneet sessions each ended with a handoff record (20261020T172149, 20261020T172224); no other Claude session running; one Codex app-server process worked in another repository, and the location of the Codex VS Code process was not observable."
+    - "Draft PR 86 opened against main at ad910ce685507efb394c555d16488d3d3bb1a007, 40 commits ahead of fetched origin/main and 0 behind."
+    - "The round carries Praneet Nursery slice 13 closed, plan revisions 1.4, 2.0 and 2.1, slices 15 and 18-23 with production migrations 007-012; the MuMate team release on production (fe aa7e212 / bazi c0f8369) and its handoff; one Mac housekeeping record. Only memory/events and workstreams/praneet-nursery-001/PLAN.md change; AGENTS.md, README.md, CLI source and tests unchanged."
+    - "Pre-push scan of the 2,739 added lines, counts only: no email, LINE user id, API token, private key, credential-bearing database URL or private artifact link. One record repeats that the production DB password still needs rotating after 2026-10-12; the same statement is on main since 20261013T135415, so no new exposure."
+  not_done:
+    - This record does not claim a merged PR, a synchronized main, or completion of any workstream beyond its own records.
+
+evidence:
+  repository:
+    head: ad910ce685507efb394c555d16488d3d3bb1a007
+    branch: hq/20261015
+    working_tree: this-record-only
+    fetched_base: 76208d26dfc4780658b401b957c701c04c0f5c60
+  pull_request:
+    number: 86
+    url: https://github.com/mojisejr/ciel-os/pull/86
+    base: main
+    head_branch: hq/20261015
+    observed_head: ad910ce685507efb394c555d16488d3d3bb1a007
+    observed_state: draft
+  checks:
+    hq_check: "bun run check at ad910ce: typecheck clean; 45 passed, 0 failed, 202 assertions; git status unchanged after the run."
+    wake: "At ad910ce: no validation errors or warnings; reconciliation expected-evolution."
+  semantic_sources:
+    mumate_release: memory/events/2026/10/20/20261020T164024_mumate_free_tier_limits_released.yaml
+    mumate_entry: memory/events/2026/10/20/20261020T172149_mumate_handoff_before_clear.yaml
+    praneet_entry: memory/events/2026/10/20/20261020T172224_praneet_nursery_handoff_field_day_checks_pending.yaml
+    mac_housekeeping: memory/events/2026/10/20/20261020T063146_mac_claude_cli_fix_and_disk_cleanup.yaml
+
+unresolved:
+  - Owner review and merge remain pending; synchronization follows the actual merge and Git establishes it.
+  - "MuMate: image measurement before 2026-10-28; staging copy refresh or down by 2026-10-29; DB password and token rotations on the owner's word (20261020T172149)."
+  - "Praneet Nursery: the owner's field-day checks for slices 21 and 23, then slice 7 (20261020T172224)."
+  - Active attention also remains for ciel-mini-template-001, ciel-os-template-001, ciel-owner-operating-contract-001, mumate-image-weight-001 and ref-office-001; their plans and latest records hold the next actions.
+  - Paused attention remains for ciel-windows-portability-001, dac2-guided-inputs-001, mootech-fe-beam-gateway-001, mumate-be-decoupling-001 and orchard-decision-lab-001; this round does not resume them.
+  - "Owner discussion opened this session, not yet a plan: make OWNER.md optional and have the Claude bridge load AGENTS.md and OWNER.md by @import instead of a sentence (Claude Code loads only CLAUDE.md when both files exist); candidate for ciel-owner-operating-contract-001 revision 0.2 on the owner's word."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them. The owner's request supplies authority for this round's publication only.
+
+next_action:
+  action: >-
+    Commit this record and push it to PR 86 (the owner pushes if the agent's
+    push is refused); the agent fetches, verifies this commit is the PR head,
+    finalizes the description and marks the PR ready. The owner merges with a
+    merge commit; the next HQ write opens the next standing branch from the
+    merged main.
+  acceptance_check:
+    - PR 86 head contains this checkpoint and the round; HQ checks pass.

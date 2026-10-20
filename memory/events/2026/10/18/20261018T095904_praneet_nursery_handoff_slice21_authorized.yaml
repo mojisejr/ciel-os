@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20261018T095904_praneet_nursery_handoff_slice21_authorized
+type: closeout
+recorded_at: 2026-10-18T09:59:04+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Handoff before the owner clears the session on 2026-10-18 morning: slice
+    20 is closed, slice 21 is authorized and not started; the next session
+    builds it.
+  scope:
+    - State of 2026-10-18 morning; this record only.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "2026-10-17 night to 2026-10-18 morning: slice 20 samples, decision, build, migration 010 on the owner's word, PRs praneet-web 22 and praneet-office 12 merged, phone check, closeout evt_20261018T090647_praneet_nursery_slice20_closed; then the LINE menu image and slice 21 samples; decision evt_20261018T095834_praneet_nursery_slice21_authorized."
+    - "Heads: praneet-web main eb4bdd53f392cf4535e664cb9c60553917d07341; praneet-office main 2e7704f1d90df1d0b7f794597ea1afa427f270dc; both checkouts on main equal to origin/main; local postgres and dev servers stopped."
+    - "praneet-office PR 13 (branch richmenu-stock): the menu's first button 'ดูสต็อก · ความสูง จำนวน ราคา' and runbook 01's greeting example; a rendered copy is in the git-ignored .assets/preneet/richmenu-stock-20261018.jpg. Not applied to the live OA."
+    - "Production: 3 lots growing (หมอนทอง bag 9), 0 orders, 0 row prices, migrations 000-010 applied."
+    - "Private pages: the slice 21 samples page stays until slice 21 closes; the screen map stays for slices 21-23; the slice 20 pages were deleted. Locators stay outside the repository."
+  resume:
+    read_first:
+      - workstreams/praneet-nursery-001/PLAN.md (Owner revision 2.0, the slice 21 pick, slice 21 scope and DoD)
+      - memory/events/2026/10/18/20261018T095834_praneet_nursery_slice21_authorized.yaml
+      - checkouts/praneet-web/DESIGN.md (หลังบ้าน, ตารางสต็อก, screens table)
+      - "checkouts/praneet-web: lib/orders.ts, lib/order-format.ts, components/orders.tsx, app/ops/orders/**, app/me/[token]/page.tsx, lib/referrals.ts, lib/stock.ts, components/ops-ui.tsx"
+      - checkouts/praneet-office/runbooks/00-owner-3-minutes.md and 03-order-to-delivery.md, scripts/orders.ts
+    build_notes:
+      - "Order lines become stock rows (variety, bag, band) with agreed price and free trees; stock is held per stock row from saving the order (storefront rows subtract held trees) and leaves chosen lots at packing; cancel releases. Existing order_lines keep lot_id; production has 0 orders, so the migration can add columns and tables without moving data."
+      - "Statuses: agreed (รอโอน) → paid (ต้องจัดของ) → packed (ต้องส่ง) → shipped (กำลังส่ง) → received (สำเร็จ), cancelled; 'paid' is one tap, no slip upload (old slip storage stays for old orders); the customer or the owner marks received; the referral code is issued on received as before."
+      - "Shipping: post (tracking number and the post's tracking link) or truck (plate, driver phone required, driver name optional, departure time, expected arrival)."
+      - "Customer page: one private token per customer (merge with referral_codes.page_token for customers who already have one), never indexed, names no one; send by copy (LINE) or an sms: link from the owner's phone; phone customers can later be merged with their LINE account."
+      - "The today page's order tasks and the office's bun run today follow the new statuses (to pack, to ship)."
+    local:
+      - "Secrets (never print): checkouts/praneet-web/.local/secrets/neon-direct.url, neon-reader.url; .assets/preneet/.env."
+      - "Read-only production check: bun .local/prodcheck.ts .local/secrets/neon-reader.url (counts only; extend it for new tables, it is git-ignored)."
+      - "Tests: pg_ctl -D .local/pg -l .local/postgres.log -o '-p 55441 -h 127.0.0.1' start; DATABASE_URL=postgresql://127.0.0.1:55441/praneet_test bun run check (76/76 at main, about 4-7 minutes, run in the background); git checkout next-env.d.ts afterwards; stop next dev first, since build and dev share .next."
+      - "Samples and screenshots: next dev on port 3002 against praneet_test with every env key on the command line, log in with .local/test/account.json, wait for networkidle before injecting and check the marker; storefront samples can be injected into the live public pages instead."
+      - "Migration practice: copy migrations up to the last applied into a scratch folder and run scripts/migrate.ts from there against a fresh local database, add production-shaped rows, then run the branch's migrate; read production before and after with the reader role; run bun run migrate with the direct URL file while the PR is a draft."
+    working_rules_learned:
+      - "Show 2-4 rendered samples with a lean and a task-by-task table before each slice; decision; build; draft PRs; migration on the owner's word for that slice; ready; merge web first then office; phone check; closeout; delete the slice's private pages."
+      - "New slices go BEFORE slice 8 in PLAN.md; slice-level records use status recorded."
+      - "Every back-office page builds from components/ops-ui.tsx and is listed in tests/quality.spec.ts; back-office text sizes only 28/20/16/14."
+      - "Test files run in name order and share one database; a later file sees prices, rounds and lots that earlier files left, so name rows by key and clean prices a test sets."
+      - "Paste hashes and ids from command output; Thai for the owner; no customer names, phones, bank numbers or claude.ai links in ciel-os records."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  repository:
+    head: 911d64a390cbfa37b367de93fa2c8c76939d9803
+    branch: hq/20261015
+unresolved:
+  - "Slice 21 not started; the owner's word for its production migration comes later in the slice."
+  - "praneet-office PR 13 open: the owner merges it; applying the image to LINE needs his word (bun run line richmenu:apply) or he uploads it himself; the greeting text is changed by hand in OA Manager."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights per bag number, the second-account LINE invite test, the first post."
+  - "Lot ages and estimated months may read a day or more different since the slice 18 day-count fix."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Next session: run Wake, read this handoff, the slice 21 decision and
+    PLAN.md slice 21, the order code and the customer page; then build
+    slice 21 on topic branches (praneet-web, then praneet-office), with
+    tests, local screenshots and a rehearsed migration, and ask the owner's
+    word before running it on production.
+  acceptance_check:
+    - The slice 21 DoD in PLAN.md revision 2.0.

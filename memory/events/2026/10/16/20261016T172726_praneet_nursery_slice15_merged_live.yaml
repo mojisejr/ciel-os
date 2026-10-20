@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261016T172726_praneet_nursery_slice15_merged_live
+type: closeout
+recorded_at: 2026-10-16T17:27:26+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Slice 15 merged and live in both repos; the owner's phone check inside
+    LINE remains before slice 15 closes.
+  scope:
+    - praneet-web PR 18 and praneet-office PR 9.
+outcome:
+  status: recorded
+  slice: "15"
+  completed:
+    - "Before the merge the owner chose that the stock card always answers, also with nothing ready: 'ตอนนี้ยังไม่มีของพร้อมขาย', growing lots and trees, all under 50 cm (praneet-web c22b80c38e27a00448cf44d72f8ad8aa17fa8a92 on PR 18; bun run check 60/60 again)."
+    - "The owner merged praneet-web PR 18 (main b651ce0c882fe71bf03a05bf3758470238c76085) and praneet-office PR 9 (main 46630b141bc1cc92eb3b92860b23d7db13f6cdab). GitHub deployment of the web merge commit to Production reports success."
+    - "Live check on https://praneet-web.vercel.app: /, /lots, /lots/70-A, /lots/70-B, /ops/login and /sitemap.xml answer 200; /ops/lots/supply answers 307 to the login. The home page carries the stock card: 'ตอนนี้ยังไม่มีของพร้อมขาย', ~8,100 trees, growing 3 lots, all under 50 cm, estimate after the next round, roll pallet ~17 baht a tree. /lots/70-B shows 'ยังประเมินไม่ได้', the small-trees line and bag 9 at 4.5 x 12 inches. Every production lot has one round (10 Oct), so no month is estimated yet."
+    - "Both checkouts on main equal to origin/main; topic branches deleted locally and removed on merge. The local sample branch, the sample databases and every generated preview image under .assets/preneet (54 files: slice 6, 7, 9 and 15 previews and screenshots) were deleted at the owner's request; .assets/preneet/images (owner art) and the workbook stay. Local Postgres stopped."
+  owner_statements:
+    - "ตัดสินเอนตามคุนครับ บอกเค้าไปเลยว่ามีเท่าไหร่และทั้งหมดยังไม่พร้อมขาย"
+    - "merged ทั้งสอง PRs แล้วครับ"
+    - "เสร็จแล้วคุนช่วย clear ภาพที่ gen ขึ้นมาใน asset/ ที่เป้ฯภาพตัวอย่างที่ไม่ได้ใช้แล้วให้ด้วย"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "15"
+  repository:
+    head: 65f0a1171333f19c7df2f423c2d4d87aebb570c6
+    branch: hq/20261015
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 18
+      base: main
+      state: MERGED
+      merge_commit: b651ce0c882fe71bf03a05bf3758470238c76085
+    - repository: github.com/mojisejr/praneet-office
+      number: 9
+      base: main
+      state: MERGED
+      merge_commit: 46630b141bc1cc92eb3b92860b23d7db13f6cdab
+unresolved:
+  - "Slice 15 DoD left: the owner's real-phone check inside LINE (home stock card, a growing lot page, the supply page, the order form warning without saving) and his approval."
+  - "Bag weights wait for the owner's weighing; system ready months start once a lot has a second round more than 20 days after 10 Oct."
+  - "The Vercel Preview environment has no DATABASE_URL, so PR previews cannot show database pages; review is by local screenshots and production after merge."
+  - "praneet-web backup.ts and restore.ts miss the slice 7 tables and the slice 15 supply tables (deferred, recorded in evt_20261016T164923_praneet_nursery_slice15_prs_draft)."
+  - "Slice 7 open (old-stock lot, first post, second-account invite test); slices 16, 17 then 14 follow; slice 16 needs a LINE Login channel the owner creates."
+  - "HQ hq/20261015 carries this session's records ahead of origin/main; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    The owner tries the live pages on his phone inside LINE; on his word,
+    record the slice 15 closeout. Then slice 7 (old stock, weights) and the
+    slice 16 samples.
+  acceptance_check:
+    - The slice 15 DoD in PLAN.md revision 1.4.

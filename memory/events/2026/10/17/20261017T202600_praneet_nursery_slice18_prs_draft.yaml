@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261017T202600_praneet_nursery_slice18_prs_draft
+type: closeout
+recorded_at: 2026-10-17T20:26:00+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Slice 18 built and checked: the back-office frame in sample 1, the shared
+    parts, the today task list, the stock rows, the menu and the settings
+    tables; its additive migration ran on production while both PRs are
+    drafts. The owner's merge and phone check remain.
+  scope:
+    - praneet-web PR 20 and praneet-office PR 10 (drafts); migration 008 on production.
+outcome:
+  status: recorded
+  slice: "18"
+  completed:
+    - "praneet-web feat/ops-frame-settings at 16f7d2fa61f4e600d35540eec2901d40b8a72f48 (draft PR 20 on main 3f3066a9401fe3f828f5de52276233dd19207c09): shared parts in components/ops-ui.tsx; tabs วันนี้ · สต็อก · ออเดอร์ · ลูกค้า · เมนู; /ops as grouped tasks with two new counts (awaiting_receipt, ready_without_price); /ops/lots as rows by variety and bag with search and filter links; the lot page in the new frame with its old editors; /ops/menu and settings for plant kinds and varieties, bags with weights, shipping; the board's ready line and estimate follow the kind's height; a new lot picks variety and bag from the tables; DESIGN.md back-office section rewritten."
+    - "praneet-office docs/ops-frame-settings at 2ad7b6f3072a645f0e75da4c9efc9ae6f2d95104 (draft PR 10 on main 46630b141bc1cc92eb3b92860b23d7db13f6cdab): runbooks 00, 03 and 05 for the new menu and settings; bun run today prints the task list and skips counts the site does not send yet."
+    - "Checks: bun run check passed (typecheck, build, Playwright 68/68 in 2.4 min); a run on an overloaded machine (load average near 46 from other apps) timed out and was repeated. New: a scan of every back-office page for the 28/20/16/14 type scale, buttons of at least 48 px and one page width; settings add, rename, delete only when unused, the board following the ready height; calendar-day counting."
+    - "Found and fixed on the way: daysBetween passed the ISO month to Date.UTC unchanged, so spans across months of different lengths were off by a day or more (ages, the 3-week measuring rule, estimates) since the earliest slices; the add-variety link opened the kind form; the dark-mode order badge was white on light pink."
+    - "Backup and restore now cover every table (format version 2); a backup of the test database restored into a fresh database with every table count equal."
+    - "Migration 008 rehearsed on a separate local database built from 000-007 with production-shaped data, then run on production on the owner's word (evt_20261017T184335_praneet_nursery_slice18_migration_word): read-only role before 3 lots (หมอนทอง, bag 9), 3 customers, 3 referral codes, 0 orders, no bag weights, shipping 100 / 1700 / 1900; 'Applied 008_settings.sql'; after the same counts plus bags 7 / 9 / 12, ทุเรียน 50 cm and หมอนทอง; live /, /lots, /lots/70-A and /ops/login answered 200 on the current deploy."
+    - "Screenshots of seven pages at 390 and 1280 px in light and dark were shown to the owner as a private page (locator kept outside the repository)."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "18"
+  decision: evt_20261017T183722_praneet_nursery_slice18_authorized
+  repository:
+    head: bb586e78bcf41c776dde06bc8aef979e5f6846df
+    branch: hq/20261015
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 20
+      base: main
+      state: OPEN
+      draft: true
+      head: 16f7d2fa61f4e600d35540eec2901d40b8a72f48
+    - repository: github.com/mojisejr/praneet-office
+      number: 10
+      base: main
+      state: OPEN
+      draft: true
+      head: 2ad7b6f3072a645f0e75da4c9efc9ae6f2d95104
+unresolved:
+  - "Slice 18 DoD left: the owner merges praneet-web PR 20, waits for the deploy, merges praneet-office PR 10, tries the new back office on his phone inside LINE and approves."
+  - "Until PR 20 deploys, the live add-lot form accepts only a variety already in the table (หมอนทอง)."
+  - "After deploy, lot ages and estimated months may move by a day or more because days are now counted correctly."
+  - "Slice 7 waits for the owner."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Owner reviews the screenshots and merges praneet-web PR 20, then
+    praneet-office PR 10 after the deploy, and tries the back office on his
+    phone; on his word, record the slice 18 closeout, then render samples
+    for slice 19.
+  acceptance_check:
+    - The slice 18 DoD in PLAN.md revision 2.0.

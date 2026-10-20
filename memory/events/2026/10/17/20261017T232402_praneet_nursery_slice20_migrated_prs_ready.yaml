@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261017T232402_praneet_nursery_slice20_migrated_prs_ready
+type: closeout
+recorded_at: 2026-10-17T23:24:02+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record slice 20 built, migration 010 on production read back, and
+    praneet-web PR 22 and praneet-office PR 12 ready for the owner's merge;
+    also the handoff for the owner's next session (he went to sleep and asked
+    for a morning summary).
+  scope:
+    - praneet-web branch slice20-stock-rows, praneet-office branch slice20-stock-rows, production migration 010; this record only.
+outcome:
+  status: recorded
+  slice: "20"
+  completed:
+    - "Built: storefront stock card with rows of variety x bag x 10 cm band (sample 1), /lots as every row, the stock-row page in the lot page's look (R1) with one chart of every lot and one timeline, the lot page's link to its row and the row's price; back office stock tab views lot | แถวสต็อก, row page and row price page, the lot's split page, the today task counted by row, orders defaulting to the row's price; migration 010 (stock_prices, lot_splits); backup format 4; DESIGN.md; the office runbook and scripts."
+    - "Tests: bun run check on the local test database, Playwright 76/76 on two consecutive full runs of the committed branch (the run before updating the old lot-card tests had 4 failures, all in tests still written for lot cards and lot prices)."
+    - "Migration rehearsal on a separate local database built from 000-009 with production-shaped rows: 010 applied, counts unchanged, reader grant in place, rows read 30-40 (70-A) and under 30 (70-B + 70-C) as on the samples."
+    - "Production, read-only role, counts only: before 3 lots all growing (หมอนทอง bag 9), 3 rounds, 3 customers, 3 referral codes, 0 orders, 1 care record on 3 lots, no lot price, stock tables absent; Applied 010_stock_rows.sql; after the same, with stock_prices and lot_splits present, readable by the reader role, 0 rows. Live /, /lots, /lots/70-A, /ops/login answered 200."
+    - "praneet-web PR 22 (head 5a2c0aa5a47208d812ece5359d0dc7dec59eff1d) and praneet-office PR 12 (head 95e2f9ea9b8167b9d44bf19a9d79f86b718ed19c) opened as drafts, the Vercel preview of PR 22 built, both marked ready for review."
+    - "Local clean-up: rehearsal database dropped, local postgres and dev servers stopped. Two private pages exist for the owner (the slice 20 samples and the built-pages review with the morning summary); their locators stay outside the repository."
+  not_verified:
+    - "No real phone inside LINE yet; that is the owner's check after merge."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "20"
+  decision: evt_20261017T225036_praneet_nursery_slice20_authorized
+  migration_word: evt_20261017T230757_praneet_nursery_slice20_migration_word
+  repository:
+    head: 6f106ae51b02b72b2efc6802633d4b7305d04ab6
+    branch: hq/20261015
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 22
+      base: main
+      state: OPEN
+      head: 5a2c0aa5a47208d812ece5359d0dc7dec59eff1d
+    - repository: github.com/mojisejr/praneet-office
+      number: 12
+      base: main
+      state: OPEN
+      head: 95e2f9ea9b8167b9d44bf19a9d79f86b718ed19c
+unresolved:
+  - "Owner: merge praneet-web PR 22, wait for the deploy, then praneet-office PR 12; then the phone check in LINE (open the stock card from the LINE menu, open a row, tap the LINE button, set a row price in the back office)."
+  - "New wording not on the samples: a ready row without a price tells customers 'ทักถามราคา'; the owner may change it."
+  - "The LINE rich menu image still reads 'ดู lot ทั้งหมด'; it opens /#lots, now the stock card."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights per bag number, the second-account LINE invite test, the first post."
+  - "Lot ages and estimated months may read a day or more different since the slice 18 day-count fix."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Next session: run Wake, read this record; after the owner merges both
+    PRs (web first) and checks on his phone, record the slice 20 closeout,
+    delete the two slice 20 private pages, return both checkouts to main,
+    then start slice 21 with 2-4 rendered samples of the order flow.
+  acceptance_check:
+    - The slice 20 DoD in PLAN.md revision 2.0 - the owner's phone check in LINE and approval of the wording.

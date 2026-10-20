@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261017T204505_praneet_nursery_handoff_slice18_done
+type: closeout
+recorded_at: 2026-10-17T20:45:05+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Handoff before the owner clears the session on 2026-10-17 evening:
+    slices 15 and 18 are closed; slice 19 samples come next; slice 7 waits
+    for the owner.
+  scope:
+    - State of 2026-10-17 evening; this record only.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "2026-10-17: slice 18 samples (owner chose sample 1 'grouped rows'), decision evt_20261017T183722_praneet_nursery_slice18_authorized, migration word evt_20261017T184335_praneet_nursery_slice18_migration_word, build, migration 008 on production, praneet-web PR 20 and praneet-office PR 10 merged, phone check, closeout evt_20261017T204236_praneet_nursery_slice18_closed. Slice 15 closed in evt_20261017T184317_praneet_nursery_slice15_closed."
+    - "The slice 18 closeout's 'same records' for lots, customers and referral codes means the same counts read back (3, 3, 3), not a record-by-record comparison."
+    - "Heads: praneet-web main 3f637c983fb1c96526bc5adecb64cb9d8444f4f7; praneet-office main d973f6051bd20f511fe4908db6a86aef32bab45c; both checkouts on main equal to origin/main with no local topic branches."
+    - "Production: 3 lots growing (all หมอนทอง, bag 9), none ready, 0 orders, 2 new LINE customers in 7 days; settings: ทุเรียน 50 cm; varieties หมอนทอง, เม็ดในยายปราง, ชะนี, หนามดำ (โอฉี); bags 7 / 9 / 12 unweighed; shipping 100 trees 1,700 / south 1,900."
+    - "The two private slice 18 pages (samples and the built-pages review) were deleted at the owner's request; the screen map page stays for slices 19-23 (its locator is kept outside the repository)."
+  resume:
+    read_first:
+      - workstreams/praneet-nursery-001/PLAN.md (Owner revision 2.0 with the slice 18 pick, slices 19-23)
+      - memory/events/2026/10/17/20261017T204236_praneet_nursery_slice18_closed.yaml
+      - checkouts/praneet-web/DESIGN.md (หลังบ้าน revision 2.0)
+      - checkouts/praneet-web/components/ops-ui.tsx (the shared parts every new page uses)
+      - checkouts/praneet-office/runbooks/00-owner-3-minutes.md
+    local:
+      - "Secrets (never print): checkouts/praneet-web/.local/secrets/neon-direct.url, neon-reader.url; .assets/preneet/.env (owner login used by bun run today)."
+      - "checkouts/praneet-web/.local/prodcheck.ts (git-ignored, no secrets) reads production through the reader URL file and prints counts and settings only: bun .local/prodcheck.ts .local/secrets/neon-reader.url"
+      - "Tests: pg_ctl -D .local/pg -l .local/postgres.log -o '-p 55441 -h 127.0.0.1' start; DATABASE_URL=postgresql://127.0.0.1:55441/praneet_test bun run check (68/68 at main, about 3 minutes); check uptime first - other apps once pushed the load average near 46 and every test timed out; git checkout next-env.d.ts afterwards."
+      - "Samples and screenshots: next dev on port 3002 against praneet_test (env from playwright.config.ts with BETTER_AUTH_URL=http://127.0.0.1:3002), log in with .local/test/account.json, inject markup into the real /ops with Playwright (createRequire from praneet-web/package.json); for full-page shots set the viewport to the page height, or the fixed bottom menu lands mid-page."
+      - "Migration practice: rehearse on a separate database built from the earlier migration files with production-shaped rows, read production before and after with the reader role, run bun run migrate with the direct URL file."
+    working_rules_learned:
+      - "Every back-office page builds from components/ops-ui.tsx; tests/quality.spec.ts fails on any type size other than 28/20/16/14, a .cta under 48 px, or a second page width."
+      - "Show 2-4 rendered samples (390 and 1280 px, light and dark) with a lean before each slice; then decision, build, draft PRs, merge web first, then office, phone check, closeout."
+      - "New slices go BEFORE slice 8 in PLAN.md; slice-level records use status recorded."
+      - "Additive production migrations run on the owner's word for that slice while the PR is a draft, checked before running."
+      - "Paste hashes and ids from command output; Thai for the owner; no customer names, phones, bank numbers or claude.ai links in ciel-os records."
+      - "git branch -d with several names also removes other merged local branches; name the branch."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  repository:
+    head: b2060e3a6befd4db8a1a43b61bfd1297dde0150c
+    branch: hq/20261015
+unresolved:
+  - "Slice 19 (lot pages and the care log): render 2-4 samples on the real page with a lean; then a decision authorizing revision 2.0 slice 19."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights (now per bag number under เมนู › ถุง), the second-account LINE invite test, the first post."
+  - "Lot ages and estimated months may read a day or more different since the day-count fix in slice 18."
+  - "HQ hq/20261015 is ahead of origin/main with this session's records; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Next session: run Wake, read this handoff, PLAN.md slice 19 and the
+    shared parts, then render 2-4 samples of slice 19 (the lot page as one
+    page with its next step, setting ready with a confirmation, and the care
+    log entered for the whole field or chosen lots) with a lean for the owner.
+  acceptance_check:
+    - The owner picks a slice 19 sample and a decision authorizes plan revision 2.0 slice 19.

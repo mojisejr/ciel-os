@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261017T183722_praneet_nursery_slice18_authorized
+type: decision
+recorded_at: 2026-10-17T18:37:22+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Authorize slice 18 - back-office frame, shared parts and settings tables -
+    under plan revision 2.0, with sample 1 (grouped rows).
+  scope:
+    - praneet-web back office, an additive migration, DESIGN.md and tests; praneet-office runbook 00 and the today script if the menu or counts change.
+outcome:
+  status: decided
+  decision: >-
+    The owner reviewed three samples rendered inside the real local back
+    office with made-up data (four screens each: today, the lot list, a lot
+    page and the bag settings table, at 390 and 1280 px in light and dark;
+    shown as a private page whose locator stays outside the repository) and
+    chose sample 1, grouped rows, over sample 2 (Shopee-style green band and
+    number grid) and sample 3 (today as sentences). He approved the wording
+    on the samples. PLAN.md revision 2.0 records the pick and the slice 18
+    boundary: existing pages move into the new frame and pass the layout
+    rules but keep their behaviour until slices 19 and 21; data moves are
+    additive. This decision does not give the word for a production
+    migration; that waits for the owner in this slice.
+  owner_statements:
+    - "โอเค ผมว่าโอเค กับแบบ ที่ 1 , คำบนหน้าจอโอเค , บันทึกการตัดสินใจแล้ว"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "18"
+  repository:
+    head: cb2ecf65f6cabed7e9377b09cde3b5ed933484ee
+    branch: hq/20261015
+  sources:
+    - "praneet-web main 3f3066a9401fe3f828f5de52276233dd19207c09 is the starting point; migration 007_supply.sql holds bag_sizes, bag_weights (per sale year) and shop_settings, which slice 18 moves into the settings tables."
+    - "While sampling: the live back-office order badge (.op-badge) is white text on --danger, which is light pink in dark mode and fails contrast; slice 18 fixes it."
+unresolved:
+  - "The owner's word for slice 18's additive production migration, given while the PR is a draft."
+  - "Slice 15 close: the owner's phone check inside LINE is still pending."
+  - "Slice 7 open: the old-stock lot with photos, real bag weights, the second-account LINE invite test, the first post."
+  - "MuMate (another workstream): the Loki image measurement is due and needs the owner's word; the staging copy must be refreshed or removed by 2026-10-29."
+  - "HQ hq/20261015 is ahead of origin/main; publishing it is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build slice 18 on a praneet-web topic branch from main with tests and
+    local screenshots; ask the owner's word before running the additive
+    migration on production while the PR is a draft; open the draft PR, merge
+    praneet-web first, then praneet-office.
+  acceptance_check:
+    - The slice 18 DoD in PLAN.md revision 2.0.

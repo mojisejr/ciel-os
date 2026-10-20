@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261018T104520_praneet_nursery_slice21_built_migration_word_pending
+type: closeout
+recorded_at: 2026-10-18T10:45:20+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record slice 21 built on topic branches with tests, local screenshots and
+    a rehearsed migration, praneet-web PR 23 and praneet-office PR 14 open as
+    drafts, and migration 011 waiting for the owner's word for production.
+  scope:
+    - praneet-web branch slice21-orders, praneet-office branch slice21-orders; this record only.
+outcome:
+  status: recorded
+  slice: "21"
+  completed:
+    - "Built (list B, creation A, customer page C1): order lines by stock row with the agreed price and free trees, held on the row from saving until packing (storefront and order form subtract held trees); statuses agreed, paid, packed, shipped, received, cancelled; one tap for paid without a slip; packing picks lots per line (repack allowed); shipping by post (tracking number and the post's tracking link) or truck (plate, driver phone, departure, expected day); received by the customer on their page or by the owner for them, issuing the referral code as before; one private page per customer merged with /me; phone-to-LINE customer merge; Shopee-style list with status tabs, one-page creation, order page with next step and timeline, pack and ship pages; today page and API keys to_pack and to_ship; settings refuse deleting a bag or variety an order uses; backup format 5; DESIGN.md, README, privacy slip sentence."
+    - "Migration 011 (011_order_rows.sql): additive with two loosened checks (status adds packed; order_lines.lot_id and shape nullable with a lot-or-row check), new order_picks, customers.page_token filled from existing referral pages."
+    - "Tests: bun run check on the local test database, Playwright 77/77 on the committed branch; the first full run had 2 failures, both in tests (a lot code another file had measured, an assertion on the order list that shows from a second order)."
+    - "Local walk of one order through every step at 390 and 1280 px with no page errors; lots fell only at packing (70-A 700 to 649, 70-C 5600 to 5396); the customer's receipt closed the order and issued a code."
+    - "Rehearsal on a fresh local database from main's migrations 000-010 with production-shaped rows (3 LINE customers each with a referral page token, 3 growing lots with rounds, 0 orders): Applied 011_order_rows.sql; 3 of 3 customers got their page token, all equal to their referral page; lot counts unchanged; a second run applied nothing."
+    - "Production, read-only role, counts only, before: 3 lots, 3 rounds, 3 customers, 3 referral codes all with a page token, 0 orders, 0 order lines, 0 slips; status check without packed; order_picks and customers.page_token absent."
+    - "praneet-web PR 23 (head 9f9c258bf14462026a00356ca51153ed80cd44cf) and praneet-office PR 14 (head d8972a2cb0c63e7a6fdaaa6188aa83f63c370c0e) opened as drafts. A private page with the built screens and the migration question exists for the owner; its locator stays outside the repository."
+  not_verified:
+    - "No real phone inside LINE, no bank app scanning the customer page's QR, no sms: link on the owner's phone, no real Thailand Post tracking number through the tracking link."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "21"
+  decision: evt_20261018T095834_praneet_nursery_slice21_authorized
+  repository:
+    head: 73ad85f1c1e3cc844212f0ed16ac95185e9845de
+    branch: hq/20261015
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 23
+      base: main
+      state: OPEN
+      head: 9f9c258bf14462026a00356ca51153ed80cd44cf
+    - repository: github.com/mojisejr/praneet-office
+      number: 14
+      base: main
+      state: OPEN
+      head: d8972a2cb0c63e7a6fdaaa6188aa83f63c370c0e
+unresolved:
+  - "The owner's word for running migration 011 on production while PR 23 is a draft."
+  - "Privacy page: the slip sentence now says no slip image is kept; customer-facing wording for the owner to check in PR 23."
+  - "praneet-office PR 13 (LINE menu 'ดูสต็อก') is open; applying the image to the live OA needs the owner's word; the OA greeting text is changed by hand in LINE Official Account Manager."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights per bag number, the second-account LINE invite test, the first post."
+  - "Lot ages and estimated months may read a day or more different since the slice 18 day-count fix."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Ask the owner's word for migration 011 on production; with it, run
+    bun run migrate with the direct URL file while PR 23 is a draft, read
+    production back with the reader role, mark both PRs ready; the owner
+    merges praneet-web first, then praneet-office after the deploy, and runs
+    a test order on his phone to the end.
+  acceptance_check:
+    - The slice 21 DoD in PLAN.md revision 2.0.

@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261018T144551_praneet_nursery_slice23_authorized
+type: decision
+recorded_at: 2026-10-18T14:45:51+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Authorize slice 23 - pictures a shop can pass on as its own, and one
+    stock-list picture - under plan revision 2.1, with reseller picture B
+    (photo above, numbers below), no price on it, the list picture in the
+    back office, and the owner's word for this slice's additive production
+    migration.
+  scope:
+    - praneet-web reseller picture of a stock row, its box on the stock-row page, the stock-list picture in the back office, the shop/farm label on customers with an additive migration, DESIGN.md, README and tests.
+outcome:
+  status: decided
+  decision: >-
+    The owner reviewed three reseller pictures made from the live stock row
+    and its real photos (A full photo, B photo above with numbers below, C
+    two photos), the box rendered into the live stock-row page at 390 and
+    1280 px in light and dark, and the list picture in two versions with
+    made-up data (a private page whose locator stays outside the
+    repository). He chose the agent's lean on all four questions: picture B,
+    no price on the reseller picture (the stock count stays), the list
+    picture in the back office with a named-and-priced or plain version,
+    and the wording on the samples. He also gave the word in advance for
+    this slice's additive production migration, to be rehearsed and checked
+    first and run while the PR is a draft. PLAN.md revision 2.1 records the
+    picks.
+  owner_statements:
+    - "1. ผมเอน B ตามคุนคับ ! 2. รูปส่งต่อไม่มีราคา 3. ตามนั้น 4 ตามนั้o"
+    - "ถ้าต้อง migrate database ก็ทำได้เลยครับ แล้วถ้าไม่ต้องเคาะอะไรแล้วก็ ลุยได้เลย"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.1"
+  slice: "23"
+  repository:
+    head: dafe4ee6a38392a53404a17febf57067f144e45e
+    branch: hq/20261015
+  sources:
+    - "praneet-web main c78b15411e5b6a652766d0e866233dc06d53c675, equal to origin/main as last fetched, is the starting point."
+unresolved:
+  - "Slice 21 DoD: the owner's test order on his phone to the end."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights per bag number, the second-account LINE invite test, the first post."
+  - "Slice 22 kept, not built; slice 8 not started."
+  - "No row price is set on production yet and every lot is growing, so the named list shows no price until the owner sets one."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build slice 23 on a praneet-web topic branch from main with tests and
+    local shots; rehearse the additive migration, run it on production while
+    the PR is a draft, read it back; then the owner merges and saves and
+    sends a picture inside LINE on his phone.
+  acceptance_check:
+    - "The slice 23 DoD in PLAN.md: no shop name, logo, link or back-office data on the reseller picture and it carries its data date; the customer label never reaches a public page; the owner saves and sends a picture in LINE on a real phone."

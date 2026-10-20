@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261018T154643_praneet_nursery_local_cleanup
+type: closeout
+recorded_at: 2026-10-18T15:46:43+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record the owner-requested clean-up of local, git-ignored test output
+    for praneet-web and praneet-office: what was deleted, what was kept and
+    why. No tracked file, branch, remote or production data changed.
+  scope:
+    - Git-ignored and untracked local files in checkouts/praneet-web, checkouts/praneet-office and .assets/preneet; this record only.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Deleted by name in praneet-web: the check and dev-server logs of slices 18-23, the slice 21 and 23 screenshot folders, three old helper scripts (a slice 3 screenshot script, a slice 3 production smoke script, the slice 19 care-leak check now covered by the Playwright suite), test-results/, and the .next and .next-test build caches (both rebuilt on the next run). About 3.6 GB freed."
+    - "Deleted in praneet-office: two untracked macOS .DS_Store files."
+    - "Both checkouts afterwards: on main, clean tree, no untracked files."
+  kept:
+    - "praneet-web .local/secrets (credentials, never printed) and .local/backups (three owner-controlled backups from 2026-10-08 and 2026-10-12 holding customer details and the password hash; deleting them is the owner's call)."
+    - "praneet-web .local/pg, .local/test and .local/test-files: the local test database and fixtures the test suite rebuilds and needs."
+    - "praneet-web .local/prodcheck.ts (read-only production counts around a migration) and the walk scripts with their seed and public photos for slices 21 and 23, kept until those slices close in case the owner's phone checks need a fix."
+    - "praneet-office richmenu/out (the 'ดูสต็อก' menu image not yet applied to the live OA) and reports/private (slice 7's Facebook group list)."
+    - ".assets/preneet: nothing deleted. It holds the .env, the owner's original mascot PNGs (not in any repository), the owner's spreadsheet and the rich-menu image awaiting upload. Other lanes' folders in .assets were not touched."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.1"
+  repository:
+    head: c4df7b8c97ac444a1dc25b5831367944e78b591d
+    branch: hq/20261015
+unresolved:
+  - "After the slice 21 and 23 closeouts, delete praneet-web .local walk21.ts, walk23.ts, seed23.ts and walk23/."
+  - "The three local backups in praneet-web .local/backups stay until the owner decides."
+  - "Slice 23 DoD (picture saved and sent in LINE on the owner's phone) and slice 21 DoD (test order to the end) are still the owner's."
+  - "Slice 7 open, waiting for the owner; slice 22 kept, not built; slice 8 not started."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    When the owner returns: ask how his slice 23 and slice 21 phone checks
+    went; on his word record each closeout, then delete the remaining walk
+    scripts, and continue slice 7 with what he brings.
+  acceptance_check:
+    - Both praneet checkouts stay on main with a clean tree; the slice 21 and 23 DoD in PLAN.md.

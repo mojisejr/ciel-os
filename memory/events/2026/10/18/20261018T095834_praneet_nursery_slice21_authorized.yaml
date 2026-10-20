@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261018T095834_praneet_nursery_slice21_authorized
+type: decision
+recorded_at: 2026-10-18T09:58:34+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Authorize slice 21 - orders from chat to receipt, and the customer's own
+    page - under plan revision 2.0, with order list B (Shopee cards), order
+    creation A (one page) and customer page C1 (status first).
+  scope:
+    - praneet-web back-office orders (list, create, detail, packing, shipping), stock held by stock row and taken from lots at packing, the customer's private page merged with /me, an additive migration, DESIGN.md and tests; praneet-office runbooks and scripts that describe orders.
+outcome:
+  status: decided
+  decision: >-
+    The owner reviewed samples rendered inside the real local back office
+    and the real /me page with made-up data (order list A rows / B Shopee
+    cards, creation A one page / B steps, customer page C1 status first /
+    C2 bill first, plus the shared order, packing and shipping pages, at 390
+    and 1280 px; a private page whose locator stays outside the repository)
+    and chose the agent's recommendation: list B, creation A, customer page
+    C1. Reading "แบบที่คุนว่า" as covering the other questions on that page,
+    he also agreed that packing and shipping are two steps, that he may mark
+    an order received for the customer (no automatic receipt), and to the
+    wording on the samples. PLAN.md revision 2.0 records the picks and the
+    rules. This decision does not give the word for a production migration;
+    that waits for the owner in this slice.
+  owner_statements:
+    - "โอเค ผมเอา B , A, C1 แบบที่คุนว่าครับ เดี๋ยวบันทึกการตัดสินใจ เอาไว้นะครับ"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "21"
+  repository:
+    head: a03696cf9feb7a2c9052e92d91d2de08a2030023
+    branch: hq/20261015
+  sources:
+    - "praneet-web main eb4bdd53f392cf4535e664cb9c60553917d07341 and praneet-office main 2e7704f1d90df1d0b7f794597ea1afa427f270dc, both equal to origin/main, are the starting points."
+    - "Every sample kept its injected markup after the page settled, had no sideways scroll, back-office text only at 28/20/16/14 px, and no new tap target under 44 px."
+unresolved:
+  - "The owner's word for slice 21's additive production migration, given while the PR is a draft."
+  - "praneet-office PR 13 (LINE menu image 'ดูสต็อก') is open; applying the image to the live OA needs the owner's word; the OA greeting text is changed by hand in LINE Official Account Manager."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights per bag number, the second-account LINE invite test, the first post."
+  - "Lot ages and estimated months may read a day or more different since the slice 18 day-count fix."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build slice 21 on a praneet-web topic branch from main with tests and
+    local screenshots; rehearse the additive migration and ask the owner's
+    word before running it on production while the PR is a draft; merge
+    praneet-web first, then praneet-office; the owner runs a test order on
+    his phone to the end.
+  acceptance_check:
+    - The slice 21 DoD in PLAN.md revision 2.0.

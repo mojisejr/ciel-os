@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261017T222517_praneet_nursery_handoff_slice19_done
+type: closeout
+recorded_at: 2026-10-17T22:25:17+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Handoff before the owner clears the session on 2026-10-17 night: slice 19
+    is closed; slice 20 samples come next; slice 7 waits for the owner.
+  scope:
+    - State of 2026-10-17 night; this record only.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "2026-10-17 evening: slice 19 samples (owner approved sample 1 'rows throughout' with sample 2's regular-mix rows), decision evt_20261017T211745_praneet_nursery_slice19_authorized, build, migration word evt_20261017T220111_praneet_nursery_slice19_migration_word, migration 009 on production read back, praneet-web PR 21 and praneet-office PR 11 merged, phone check, closeout evt_20261017T222257_praneet_nursery_slice19_closed."
+    - "Heads: praneet-web main f963ba99432502dc6e371e50249cefd03166160f; praneet-office main 64c62ed5e2d83c6e6f020ceef81600eb9d1b8b6c; both checkouts on main equal to origin/main with no topic branches; local postgres and dev servers stopped."
+    - "Production: 3 lots growing (all หมอนทอง, bag 9), none ready, 0 orders; one care record (fertilize, whole field, 3 lots); no regular mix saved yet; migrations 000-009 applied."
+    - "The two private slice 19 pages were deleted at the owner's request; the screen map page stays for slices 20-23 (its locator is kept outside the repository). One older private page from 2026-10-08 (the storefront look) was left for the owner to decide."
+  resume:
+    read_first:
+      - workstreams/praneet-nursery-001/PLAN.md (Owner revision 2.0 with the slice 18 and 19 picks; slice 20 scope)
+      - memory/events/2026/10/17/20261017T222257_praneet_nursery_slice19_closed.yaml
+      - checkouts/praneet-web/DESIGN.md (หลังบ้าน revision 2.0 and the screens table)
+      - checkouts/praneet-web/components/ops-ui.tsx and components/board.tsx (shared back-office parts; the storefront lot card and chart)
+      - checkouts/praneet-web/app/page.tsx and app/lots/page.tsx (the storefront slice 20 replaces with the stock table)
+    local:
+      - "Secrets (never print): checkouts/praneet-web/.local/secrets/neon-direct.url, neon-reader.url; .assets/preneet/.env."
+      - "Read-only production checks (git-ignored, no secrets, counts only): bun .local/prodcheck.ts .local/secrets/neon-reader.url; after a care-related change bun .local/carecheck.ts .local/secrets/neon-reader.url (product words found on public pages, true/false)."
+      - "Tests: pg_ctl -D .local/pg -l .local/postgres.log -o '-p 55441 -h 127.0.0.1' start; DATABASE_URL=postgresql://127.0.0.1:55441/praneet_test bun run check (73/73 at main, about 4 minutes); check uptime first; git checkout next-env.d.ts afterwards; stop any next dev first, since build and dev share .next."
+      - "Samples: next dev on port 3002 against praneet_test with every env key on the command line (overrides .env.local), log in with .local/test/account.json, wait for networkidle before injecting markup into the real page and check the injected marker survived, run the quality.spec type and button scan inside the page, full-page shots with the viewport set to the page height."
+      - "Migration practice: rehearse on a separate database built from the earlier migration files with production-shaped rows that satisfy the foreign keys, read production before and after with the reader role, run bun run migrate with the direct URL file."
+    working_rules_learned:
+      - "Show 2-4 rendered samples (390 and 1280 px, light and dark) with a lean and a task-by-task table before each slice; then decision, build, draft PRs, migration on the owner's word for that slice, ready, merge web first then office, phone check, closeout, delete the slice's pages."
+      - "New slices go BEFORE slice 8 in PLAN.md; slice-level records use status recorded (Wake keeps showing the slice as authorized; that is expected)."
+      - "Every back-office page builds from components/ops-ui.tsx; tests/quality.spec.ts scans every page, so new dynamic pages (records, rounds) go into its page lists."
+      - "A status change needs confirmed: true at the API; tests that set status through lib updateLot pass it too."
+      - "Paste hashes and ids from command output; Thai for the owner; no customer names, phones, bank numbers or claude.ai links in ciel-os records."
+      - "Shell traps seen this round: zsh does not split an unquoted variable (use arrays); psql -c with several statements prints only the last result; a first full test run on a loaded machine can fail a chain of order tests, so rerun before reading it as a regression."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.0"
+  repository:
+    head: 4093fd2e1c026a6469de8b8414496989b6ae07bb
+    branch: hq/20261015
+unresolved:
+  - "Slice 20 (the storefront stock table and stock-row pages): render 2-4 samples on the real page with a lean; then a decision authorizing revision 2.0 slice 20."
+  - "Slice 7 open, waiting for the owner: the old-stock lot with photos, real bag weights per bag number, the second-account LINE invite test, the first post."
+  - "Lot ages and estimated months may read a day or more different since the slice 18 day-count fix."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Next session: run Wake, read this handoff, PLAN.md slice 20, the
+    storefront pages and the shared parts, then render 2-4 samples of the
+    storefront stock table (variety x bag number x 10 cm height rows with
+    count, price and ready or expected month) and a stock-row page, with a
+    lean for the owner.
+  acceptance_check:
+    - The owner picks a slice 20 sample and a decision authorizes plan revision 2.0 slice 20.

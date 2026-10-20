@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261020T164024_mumate_free_tier_limits_released
+type: closeout
+recorded_at: 2026-10-20T16:40:24+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-team-release-001
+  lane: single
+  objective: >-
+    Release the team's 2026-10-20 staging pair to production on the owner's
+    order, after the runbook 01 readiness check, so the owner can tell the
+    team it is live.
+  scope:
+    - "Runbook 01 agent readiness check, then promote-production; verify and record."
+  out_of_scope:
+    - The content decisions in the release (free-tier limits, guide rewards); they are the team's.
+    - Any host, env, DNS or database change.
+
+outcome:
+  status: recorded
+  released:
+    - "Production fe 9861695 -> aa7e21228d88c5f54713db232c474e6d93e76e05, bazi 94c0572 -> c0f8369d4e17b0bde3c6615b442ccf1d441936d7; infra unchanged (9549c03)."
+    - "fe: PR 913 free-tier limits (calendar 7 days; cards, siamsi and lucky number together 1 free use a day, was 2; advanced detail blurred; unlimited upsell popup) and the universal day score; PR 914 (score as a word only) reverted by PR 915, so the score keeps its circle. bazi c0f8369: universal day score; free card quota 2 -> 1 a day; guide QI rewards cut (step 5->1, chapter 20->3, complete 50->10, tour 10->2)."
+  readiness_check:
+    - "1 Production before: fe and bazi healthy (ops-status all OK), 0 5xx in 30 min, no bazi db_query_stall gave_up in 2 h, mumate-health journal 1 h only systemd start/finish lines."
+    - "2 Staging pair (staging-pair.sh --soak 10): fe aa7e212 / bazi c0f8369 since 2026-10-20T06:05:47Z (205 min), both healthy; PRs 913-915 checks success; bazi container-build success."
+    - "3 No migration, no new env (BAZI_BASE_URL already in use), no cron change; bazi has /api/qi/feature-check, feature-consume and entitlements that the new fe calls; no SSH step needed."
+    - "4 Time 16:30 +07, before the evening peak."
+  release:
+    - "The agent's promote-production press was refused by the harness; no run was created (checked). The owner ran promote-production himself: run 39401541201, gates passed, deploy-history 2026-10-20T09:34:38Z ok by=mojisejr, cron-check agrees."
+    - "After: ops-status fe aa7e21228d88 and bazi c0f8369d4e17 configured = running = /health.sha, healthy; bazichart.mumate.co /api/health ok, db ok; 5-minute watch: 0 5xx of 7 requests."
+
+evidence:
+  plan: workstreams/mumate-team-release-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 569cd694a23f3281e128807c75e255b0bb15ab4d
+    branch: hq/20261015
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/15/20261015T151424_mumate_handoff_before_clear.yaml
+    - mumate-infra runbooks/01-deploy-rollback.md
+
+unresolved:
+  - "The 5-minute watch saw only 7 requests (the 2026-10-15 release saw 583); 0 5xx is a small sample. A later look at the access log is a production read on the owner's word."
+  - "The harness refuses the agent's promote-production press as of 2026-10-20 (it passed on 10-12 and 10-15); the owner presses."
+  - "Open items of 20261015T151424 unchanged: image measurement (Loki before-window ages out around 2026-10-28), staging copy by 2026-10-29, DB password and token rotations, deletions on the owner's word."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner tells the team the release is live. Rollback, if needed:
+    rollback-production (one step back to fe 9861695 / bazi 94c0572).
+  acceptance_check:
+    - "ops-status on prod-1 shows fe aa7e21228d88 and bazi c0f8369d4e17 healthy."

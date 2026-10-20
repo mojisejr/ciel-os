@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261016T140515_praneet_nursery_rev14_wholesale_buyers_agreed
+type: decision
+recorded_at: 2026-10-16T14:05:15+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record plan revision 1.4 - designing for wholesale buyers (nursery shops
+    that resell first, large-plot farmers second): "is it in stock" on the
+    first screen, following a lot with LINE alerts, and pictures a shop can
+    pass on - as agreed after research and a four-round syncup. Slices 15, 16
+    and 17 are planned; none is started until the owner picks a sample.
+  scope:
+    - Plan only; no code in this record.
+outcome:
+  status: recorded
+  decision: >-
+    The owner judged the site and system on the right track but not yet
+    serving the buyers he wants. Three research passes (what the system has;
+    Thai seedling buyers; LINE OA, notify and share patterns) and four syncup
+    rounds led to revision 1.4 in PLAN.md: resellers are the main customer
+    (superseding revision 0.8's "เน้นคนซื้อไปปลูก"); split resellers and
+    farmers by the picture, not the person; follow a lot through LINE Login
+    with the reminder date set on the web and a Vercel cron sending one LINE
+    message, plus an automatic alert when the owner sets a lot ready
+    (revision 0.2 and 0.9's LINE Login deferral lifted for this; LIFF for
+    orders and payment stays deferred); interest, not reservation, first,
+    with followers told two days before the public post; a deposit
+    reservation (50%, held 14 days after the ready alert, forfeited on a
+    no-show) only on a later decision; trees under 50 cm sold on request at a
+    price agreed in chat; a bag-size table and a yearly average bag weight
+    (dry and wet); a roll pallet holds 100 trees in #9 bags at 1,700 THB
+    (1,900 to the South). Order: slices 15, 16, 17, then 14, all placed
+    before slice 8. Guess hit rate over the syncup: 8 of 15 over three rounds,
+    then both final leans accepted.
+  owner_statements:
+    - "เราไม่อยากให้ลูกค้าแค่เข้ามาดู ว่า ต้นยังไม่พร้อมขายแล้วออกไป"
+    - "ให้ระบบ เป็น cron ได้มั๊ยนะ แล้ว user กำหนด วันเองใน ระบบเลย"
+    - "ผมเอนตามคุนนะ แต่ต้องมีวิธีที่ สะดวกลื่นไหล และ ใช้ได้จริง ส่วนตัว เลขผมขอเป็น 50% 14 วัน"
+    - "q18 = เอนตามคุน"
+    - "บันทึกการตัดสินใจแล้วเดินหน้าได้เลย"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "1.4"
+  repository:
+    head: 22803eb04e80f9bcb2f99c740cd425ee4ce1dcac
+    branch: hq/20261015
+  sources:
+    - "praneet-web main 904a6dd69bcb6479febf4fb6a5a132a84b7de298: lots.expected_ready_month exists with no back-office form; bag_size is fixed text; the webhook never sends; lib/orders.ts refuses lots not set ready; no cron in vercel.json."
+    - "LINE for Business TH and LINE Developers pages read 2026-10-16: Free 300 messages a month, Basic 1,280 THB for 15,000; reply messages free; push and multicast count per recipient; narrowcast needs 50 or more recipients; LINE VOOM closed in Thailand 2026-09-28."
+    - "Thai market sources read 2026-10-16 (OAE planted-area series, DOA planting guide, nursery listings): planting from late April into the early rainy season; listed wholesale prices 25-85 THB in #7-9 bags; no competitor found showing a lot's growth."
+unresolved:
+  - "Slice 15 waits for the owner to pick among rendered samples; then a decision authorizing revision 1.4 slice 15."
+  - "Slice 16 needs a LINE Login channel the owner creates under the OA's provider, and a real-phone test of login from the Facebook in-app browser."
+  - "Real bag weights (dry and wet) and the old-stock photos wait for the owner (heavy rain on 2026-10-16)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Render 2-4 samples for slice 15 on the live page with test data (390 and
+    1280 px, light and dark) with a lean, and bring them to the owner.
+  acceptance_check:
+    - The owner picks a sample and a decision authorizes plan revision 1.4 slice 15.

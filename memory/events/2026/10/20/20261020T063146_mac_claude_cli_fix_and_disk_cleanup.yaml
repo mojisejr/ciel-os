@@ -1,0 +1,90 @@
+schema_version: ciel.event.v0.1
+id: evt_20261020T063146_mac_claude_cli_fix_and_disk_cleanup
+type: closeout
+recorded_at: 2026-10-20T06:31:46+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mac-housekeeping
+  lane: single
+  objective: >-
+    Record the owner-requested housekeeping on this Mac over 2026-10-19 and
+    2026-10-20: the terminal claude command was repaired, and the full disk
+    (2.2 GiB free) was cleaned of caches that can be rebuilt, so that later
+    sessions know what was removed, what was kept and what is still open.
+  scope:
+    - This Mac only - Claude Code installs, the Foundry anvil fork cache, and AI tool caches and logs.
+  out_of_scope:
+    - Any repository's tracked files, branches or remotes; any production system.
+    - Package-manager caches, build outputs, Docker images, simulators and session histories (listed for the owner, not touched).
+
+outcome:
+  status: recorded
+  slice: none
+  decisions_by_owner:
+    - "Replace the broken bun-installed Claude Code with Anthropic's native installer, then move the old installs out with a way back."
+    - "Delete the anvil fork state now; Codex forks again from the latest block when it resumes."
+    - "Clean the AI-1 list (caches and logs only), then stop the clean-up. The owner prefers to delete session histories himself inside each app."
+    - "The z.ai token printed to the session on 2026-10-19 (alias clz in ~/.zshrc) needs no rotation; the owner says it had already expired. Not verified here."
+  completed:
+    claude_cli: >-
+      Cause: bun skips the postinstall of @anthropic-ai/claude-code, so
+      ~/.bun/bin/claude stayed a 500-byte stub. The installer script was read
+      in full before running it (checksum-verified download, no sudo). Native
+      2.1.303 now sits at ~/.local/bin/claude, first and only on PATH.
+      ~/.zshrc, ~/.zprofile and ~/.claude/settings.json were byte-identical
+      before and after; ~/.claude.json gained installMethod native and one
+      key, autoUpdatesProtectedForNative.
+    old_installs: >-
+      bun 2.1.197, Homebrew npm 1.0.43 and nvm npm 2.1.270 (plus a failed
+      npm staging folder) were moved, not deleted, to
+      ~/.claude-old-installs-20261019/ (625 MB) with restore.sh. bun's global
+      manifest no longer lists claude-code; arra-oracle-skills is unaffected.
+    anvil: >-
+      The growth source. An idle anvil fork of bitkubchain (port 18559,
+      started by a Codex-run start-fork.mjs in the jaothui-dashboard
+      buffalo-write-integrity worktree) was stopped, and its four
+      ~/.foundry/anvil/tmp/anvil-state-* folders (26 GB) were deleted by
+      name. The script forks from the latest block each run and loads no
+      saved state, so nothing reads those folders. The worktree and Foundry
+      binaries were untouched.
+    ai_caches: >-
+      About 14 GiB: opencode logs and tool-output (opencode.db, auth and
+      storage kept), Trae's downloaded update, Playwright chromium builds
+      older than 1243, Puppeteer Chrome 119 and 121 (127 kept), VS Code's
+      VSIX cache, crash dumps and old session logs (current session kept),
+      and Claude CLI logs older than 3 days.
+  result: "Free space went from 2.2 GiB to 41 GiB (91 % used)."
+  kept:
+    - "Backups made before the native install: ~/.zshrc, ~/.zprofile, ~/.zshenv, ~/.profile and ~/.claude.json, each with the suffix .bak-20261019. The .claude.json copy holds login data."
+    - "Playwright MCP browser profiles mcp-chrome-* (388 MB): they may hold logins agents use."
+    - "~/.claude/projects (holds Claude's memory), ~/.codex/packages and ~/.cache/codex-runtimes (Codex's own runtime), ~/.gemini/antigravity-browser-profile, ~/.ollama/models, Docker volumes, and .assets/."
+
+evidence:
+  repository:
+    head: ebf8fa00e08c081bf0799ed69dfe20c154e1420a
+    branch: hq/20261015
+    working_tree: this-record-only
+  checks:
+    - "which -a claude lists only ~/.local/bin/claude; claude --version prints 2.1.303 (Claude Code)."
+    - "After the anvil stop: no anvil process, nothing open under ~/.foundry/anvil/tmp; anvil --version still prints 1.2.3-stable."
+    - "df on the Data volume: 2.2 GiB free before the anvil step, 28 GiB after it, 41 GiB after the AI caches."
+
+unresolved:
+  - "The anvil leak returns on every fork run (4-8 GB each) until start-fork.mjs stops anvil when a phase ends and clears ~/.foundry/anvil/tmp/anvil-state-* before forking. That fix belongs to Codex in the jaothui-dashboard work; Codex is at its usage limit."
+  - "Codex has no running fork now; phase 5f work must start a new one first."
+  - "AI-1 items left because their apps were open (about 3 GB): Cursor globalStorage/state.vscdb.backup (1.8 GB), VS Code Cache and CachedData, ~/Library/Caches/Codex and ~/.codex/.tmp."
+  - "~/.claude-old-installs-20261019 and the .bak-20261019 files can go once the owner is satisfied with the native CLI; restore.sh has a syntax check only and was never run."
+  - "Not touched, listed for the owner: package-manager caches (npm 39 GB, Docker build cache 21 GB, Yarn 13 GB, bun 7.4 GB, pnpm 6.4 GB, uv 2.8 GB); Rust target folders (about 30 GB); unused Docker images (27 GB); iOS simulators and Xcode DeviceSupport (about 37 GB); AI scratch .tmp folders in opilot projects (about 7.6 GB, some are git worktrees with unpushed commits); VS Code chat history for the opilot workspace (3.2 GB); Codex sessions (1.35 GB)."
+  - "If the owner deletes Codex history in the app: archiving only moves files to archived_sessions, and thread_history_1.sqlite may not shrink after rows are deleted. Unverified."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When Codex is available again, tell it to fix the anvil clean-up in
+    start-fork.mjs before its next fork run. If free space drops below about
+    15 GB, run npm cache clean --force first (34 GB).
+  acceptance_check:
+    - "ls ~/.foundry/anvil/tmp stays empty or holds only the running fork after a Codex test phase ends."
