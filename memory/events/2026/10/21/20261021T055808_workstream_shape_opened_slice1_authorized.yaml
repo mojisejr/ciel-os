@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T055808_workstream_shape_opened_slice1_authorized
+type: decision
+recorded_at: 2026-10-21T05:58:08+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-workstream-shape-001
+  lane: single
+  objective: >-
+    Open the workstream agreed in the 2026-10-21 syncup and authorize slice 1:
+    new workstreams may split their plan into PLAN.md plus slices/<n>.md, every
+    fact has one home, and Wake and check verify the shape on every run.
+  scope:
+    - "Plan 0.1 slice 1: recognise the split shape by a slices/ directory; read declared slices from the PLAN.md index, last line final; structural validation errors; soft size warnings; AGENTS.md and README wording for each fact's home, the split shape and one slice per session; fixtures; byte-identical output for every existing plan."
+  out_of_scope:
+    - Slice 2 (its own decision); existing plans; disk housekeeping; a write path or scaffolding command; hooks and skills; fixed caps; event schema changes; the host-layer cleanup of the agent's own memory.
+
+outcome:
+  status: decided
+  slice: "1"
+  parallelism: approved
+  decision: >-
+    Syncup on 2026-10-21, four rounds, guess hit rate 8 of 12. The owner
+    named the problem: context fills fast, sessions slow down, decisions get
+    less accurate, and he clears sooner. He chose new workstreams only, a
+    principle rather than a size cap, and checks in code rather than an
+    agent's habit. He asked that the one-home rule hold always
+    ("คุนต้องทำให้เป็นแบบนี้เสมอไม่หลุด และ robust ไม่บวม"), and that CIEL work
+    without the agent's own memory. He confirmed the shared understanding
+    ("ยืนยันครับผม") and, after the plan summary, authorized slice 1
+    ("โอเค เริ่ม slice 1 ได").
+  parallelism_basis: >-
+    No other HQ session is live; the slice edits the shared files src/,
+    AGENTS.md and README.md.
+
+evidence:
+  plan: workstreams/ciel-workstream-shape-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "96aeb816ed320373d20bd0d252d469de01959d76"
+    branch: feat/workstream-shape
+    working_tree: this-decision-and-plan-only
+
+unresolved:
+  - "Slice 2 needs its own decision."
+  - "How a change to one slice file maps to a plan revision is proposed in slice 1's contract wording: any owner-decided change to PLAN.md or a slice file raises the plan revision, and Git keeps the diff."
+  - "The host-layer cleanup of the agent's auto memory is separate and not started."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 1 on feat/workstream-shape: save the pre-change Wake outputs
+    outside Git, add the split-shape reader, checks and wording with fixtures,
+    prove existing outputs byte-identical, then record the closeout and open a
+    pull request.
+  acceptance_check:
+    - "Slice 1 acceptance in the plan: fixtures for every error and warning and a split workstream through its lifecycle; byte-identical outputs for existing plans; check and wake pass."
