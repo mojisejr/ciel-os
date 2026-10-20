@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T045602_wake_weight_codex_cold_check_and_done
+type: closeout
+recorded_at: 2026-10-21T04:56:02+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-wake-weight-001
+  lane: single
+  objective: >-
+    Record the owner's pre-merge check of slice 3 in a fresh Codex session and
+    that the workstream is finished. A record, not a delivery.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Before merging PR 91 the owner ran a fresh Codex session on feat/wake-weight-slice3 at 680fc5b with five questions and expected answers the agent wrote first; Codex answered all five correctly: Wake about 4 s (3.94 s and 4.06 s), output read whole including OWNER.md; praneet slices 21 and 23 await field checks, slice 7 open; five paused workstreams, each with its real pause reason looked up from records; PR 91 awaiting merge, read from the last fetch; owner-contract slice 2 delivered, slice 3 not authorized. The checkout was left clean and unchanged."
+    - "PR 91 merged as 91b320c6007acf530999e16ffcecca40fede806c; main equals origin/main; feat/wake-weight-slice3 deleted locally and on origin; Wake reads ciel-wake-weight-001 as completed."
+  correction: >-
+    The slice 3 closeout's sandbox figure (606.0 s to 76.8 s) was measured with
+    'codex sandbox -c sandbox_mode=read-only' and does not describe a real Codex
+    session, where Wake took about 4 s. Why the two differ is not established.
+
+evidence:
+  plan: workstreams/ciel-wake-weight-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 91b320c6007acf530999e16ffcecca40fede806c
+    branch: hq/20261021
+    working_tree: this-record-only
+  semantic_sources:
+    slice3_closeout: memory/events/2026/10/21/20261021T044622_wake_weight_slice3_closeout.yaml
+
+unresolved:
+  - "Why 'codex sandbox' read-only measures about 77 s while a real Codex session takes about 4 s is not established; use a real session when Codex timing matters."
+  - "The small-workstream rule was to follow this workstream; its size notice has not fired on this HQ (brief about 17 KB, under the 25 KB soft limit)."
+  - "Paused one-liners show the latest next-action sentence rather than a pause reason; Codex found the reasons by reading the records."
+  - "This record sits on hq/20261021, not pushed; publishing the round is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None for this workstream. Publish hq/20261021 when the owner closes the
+    round.
+  acceptance_check:
+    - "bun run wake reads ciel-wake-weight-001 as completed on main after this round merges."
