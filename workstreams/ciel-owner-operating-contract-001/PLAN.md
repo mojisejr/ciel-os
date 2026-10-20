@@ -3,7 +3,7 @@
 **Workstream:** `ciel-owner-operating-contract-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -28,6 +28,70 @@ The owner confirmed this framing through a two-round alignment on 2026-09-08.
 The contract applies across CIEL-operated projects. The first live dogfood lane
 will be the owner's urgent `mootech-fe` work after slice 1 merges. DAC2 slice 6
 remains unauthorized and is not part of this workstream.
+
+## Revision 0.2: an optional owner layer, loaded without agent memory
+
+On 2026-10-20 a Claude session ran Wake and then answered without reading
+`OWNER.md`; it read `README.md` only after the owner asked. `AGENTS.md` makes
+`OWNER.md` mandatory Wake input, but nothing loads it. The rule depends on the
+agent remembering to open the file.
+
+The same gap covers the whole contract for Claude. When a repository has both
+`CLAUDE.md` and `AGENTS.md`, Claude Code loads only `CLAUDE.md` by default, and
+the current bridge asks in words for `AGENTS.md` to be read. The Claude Code
+documentation names that pattern: Claude sees `AGENTS.md` only if it decides to
+open the file.
+
+The owner also wants `OWNER.md` to be an optional layer. A workspace without one
+runs on `AGENTS.md` alone, with no error and no invented owner rules.
+
+The owner agreed the following in a two-round syncup on 2026-10-20:
+
+- The contract is loaded by the client or by CIEL's own code, not by agent
+  memory.
+- The change stays minimal and solves the observed problem. Layer boundaries
+  stay clear, so the system does not decay as time passes.
+- Every client receives `OWNER.md` when it exists, Codex included.
+- CIEL gets no hook. A hook belongs to the host machine's own configuration,
+  which CIEL does not know about.
+- This work is recorded here as revision 0.2, not as a new workstream. The
+  bridge change cross-references `ciel-multi-client-support-001`.
+
+### Layers
+
+| Layer | Kept in | Holds | Delivers `OWNER.md` by |
+|---|---|---|---|
+| CIEL contract | repository | `AGENTS.md`, optional `OWNER.md` | — |
+| CIEL code | repository | Wake | echoing the `OWNER.md` text when present, for every client |
+| Client bridge | repository, one per client | `CLAUDE.md`: an `@AGENTS.md` import plus Claude-only mechanics | `AGENTS.md` carrying a bare `@OWNER.md` import, which Claude Code expands |
+| Host | the owner's machine | hooks, launchers, terminals | out of scope; CIEL does not reference it |
+
+### Starting evidence for revision 0.2
+
+- HQ began on clean `main` at `2e4d572c645f123c46d523319221ddd2f1233eff`,
+  equal to fetched `origin/main`.
+- Wake observes `OWNER.md` by presence only
+  (`ownerOperatingContractPresent` in `src/wake/read.ts`), so a missing file
+  already passes. `test/git-workflow.test.ts` asserts the "mandatory Wake
+  input" wording.
+- Headless Claude Code 2.1.304 was tested in scratch folders:
+  - `CLAUDE.md` importing `@AGENTS.md`, which imports `@OWNER.md`, loads both
+    files.
+  - With `OWNER.md` absent, the import is skipped with no notice and
+    `AGENTS.md` still loads.
+  - With no `CLAUDE.md`, native `AGENTS.md` loading also expands `@OWNER.md`.
+- Native `AGENTS.md` loading needs Claude Code 2.1.277 or later. Per the
+  documentation, it stops in four cases: a `CLAUDE.local.md` exists, the
+  Project instructions setting is changed, the built-in plugin is disabled, or
+  it is the first session after an upgrade. A `CLAUDE.md` that imports
+  `AGENTS.md` works in all four, so the thin bridge stays.
+- An import written inside backticks is not expanded, so the import line must
+  be bare.
+- Codex 0.163.0-alpha loads `AGENTS.md` natively and does not expand `@`
+  imports. A Codex SessionStart hook could inject the file, but the layer rule
+  above excludes hooks.
+- `ciel-mini-template` carries `AGENTS.md` only. `ciel-os-template` does not
+  exist yet and syncs from `ciel-os` under its own plan. Neither is in scope.
 
 ## Project links
 
@@ -145,7 +209,72 @@ and continue the product outcome without an unnecessary owner question. A
 baseline that already behaves correctly is recorded and limits any improvement
 claim; it does not get rewritten as a failure.
 
-### 2. Decide after real dogfood
+### 2. Make the owner layer optional and loaded without agent memory
+
+1. `AGENTS.md`:
+   - Wake reads `README.md` and the task-relevant plan.
+   - `OWNER.md` is read when present and skipped without error when absent.
+   - A bare `@OWNER.md` line on its own carries the import, and a plain
+     sentence states the same rule for clients that do not expand imports.
+   - Instruction-file hygiene states the layers in one line.
+2. `CLAUDE.md` becomes an `@AGENTS.md` import plus Claude-specific mechanics
+   only.
+   - It keeps the note that global skills, global memory and session history
+     are not Wake evidence.
+   - It drops the restated Wake instruction, which now arrives through the
+     import.
+3. Wake echoes the `OWNER.md` text verbatim when the file exists.
+   - The text is not parsed, so there is no profile and no compliance claim.
+   - The text is placed last in the report, so a tail-truncated read still
+     shows it.
+   - When the file is absent, Wake reports presence false and no text.
+4. Update the `README.md` wording, and update the tests to cover:
+   - the `OWNER.md` echo, present and absent;
+   - the optional-read wording;
+   - `CLAUDE.md` carrying `@AGENTS.md` and still no owner rule text.
+5. Prove the change on the candidate branch, recording observed output only:
+   1. Headless Claude in the candidate checkout quotes a line from each of
+      `AGENTS.md` and `OWNER.md` without using tools.
+   2. Headless Claude in a scratch copy without `OWNER.md` quotes `AGENTS.md`
+      with no error.
+   3. `codex exec` runs in both. It quotes `AGENTS.md`, then runs Wake and
+      reports the `OWNER.md` text, or reports none in the copy.
+   4. The owner opens an interactive Claude session, and `/context` lists both
+      `AGENTS.md` and `OWNER.md`. The agent hands this check to the owner step
+      by step when it cannot observe it.
+   5. After `/compact`, `OWNER.md` is still listed. The agent tries this first
+      and hands it to the owner step by step when needed.
+   6. `bun run check` and `bun run wake` pass, and `git status` matches the
+      intended change.
+
+Slice 2 is done when checks 1, 2, 3 and 6 pass, and checks 4 and 5 are each
+either observed or recorded as owner-confirmed. A failure is recorded as found,
+not reworded. A failure in check 5 alone does not block the slice, because the
+Wake echo remains the floor.
+
+Out of scope for slice 2:
+
+- any hook, launcher or Wake auto-run;
+- any change to the content of `OWNER.md`;
+- the templates;
+- behavioural evaluation of rule compliance;
+- Genesis ratification.
+
+Limits:
+
+- Claude receives the owner text twice, through the import and through Wake.
+  That costs about 120 lines of context, accepted so that each layer stands on
+  its own.
+- Codex must still run Wake. That single point remains agent discipline, as
+  `AGENTS.md` has always required.
+- Import behaviour belongs to Claude Code and can change upstream. The Wake
+  echo is the client-neutral floor.
+
+Rollback of slice 2 is a forward change from current `main`. It restores the
+bridge sentence, removes the import lines and the echo field, and restores the
+mandatory wording and its tests.
+
+### 3. Decide after real dogfood
 
 After slice 1 reaches `main`, run the contract for four weeks and collect at
 least three real qualifying encounters across CIEL-operated work. Synthetic
@@ -161,7 +290,12 @@ observation database or event type is introduced.
 After four weeks and three encounters, present the evidence for an owner-only
 decision to adopt v0.1, supersede it with a separately approved revision, or
 roll it back. Four weeks with fewer than three encounters is `inconclusive`,
-not passed. Slice 2 is not authorized by this plan's slice 1 decision.
+not passed. Slice 3 is not authorized by this plan's slice 1 decision.
+
+This slice was numbered 2 in revision 0.1; revision 0.2 renumbered it so that it
+stays last. Its four-week window, which began after slice 1 merged, ended on
+2026-10-07 without an adoption verdict. The verdict remains the owner's, and
+revision 0.2 does not decide it.
 
 ## Behavioral scenarios
 
@@ -219,9 +353,13 @@ whole delivery PR.
   bump, database, SQLite, index, MCP server, daemon, API, embedding, global
   skill, agent team, new event type, auto-learning, profile inference, issue
   automation, or `PARK` mechanism.
-- Slice 2 and any amendment or rollback require a separate owner decision.
+- Slice 2 and slice 3, and any amendment or rollback, each require a separate
+  owner decision.
+- Slice 2 uses one topic branch, `feat/owner-layer-optional`, and one draft
+  pull request. It touches the shared files `AGENTS.md`, `README.md` and
+  `src/`, so no other HQ session may be live while it runs.
 
-## Starting evidence
+## Starting evidence for revision 0.1
 
 - HQ began on clean `main` at
   `18ea9c04cf5e367c0e8ab037e0c2f608fde3414a`, equal to fetched

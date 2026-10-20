@@ -15,9 +15,13 @@ test("keeps the startup Git rule concise and the workflow discoverable", async (
   expect(agents).toContain("Do not develop tracked changes directly on `main`.");
   expect(agents).toContain("return to a clean local `main` that matches fetched `origin/main`");
   expect(agents).toContain("Keep every remote PR as a draft until its phase closeout");
-  expect(agents).toContain("Read `README.md`, `OWNER.md`, and the task-relevant plan or Genesis document.");
-  expect(agents).toContain("`OWNER.md` is mandatory Wake input before Align.");
-  expect(agents).toContain("confirmed owner-specific response rules in `OWNER.md`");
+  expect(agents).toContain("Read `README.md` and the task-relevant plan or Genesis document.");
+  expect(agents).toContain("When `OWNER.md` exists it is Wake input before Align; when it is absent, this contract applies alone.");
+  expect(agents).toContain("confirmed owner-specific response rules in the optional `OWNER.md`");
+  // The contract is loaded by the client, not by an agent remembering to open
+  // it. An import only expands on a bare line: inside backticks it is text.
+  expect(claude).toMatch(/^@AGENTS\.md$/m);
+  expect(agents).toMatch(/^@OWNER\.md$/m);
   expect(owner).toContain("**Version:** 0.1");
   expect(owner).toContain("**Status:** Experimental");
   expect(owner).toContain("Observe -> suggest interpretation -> owner explicitly confirms -> record");

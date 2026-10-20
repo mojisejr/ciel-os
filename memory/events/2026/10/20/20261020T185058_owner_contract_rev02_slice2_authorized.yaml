@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20261020T185058_owner_contract_rev02_slice2_authorized
+type: decision
+recorded_at: 2026-10-20T18:50:58+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-owner-operating-contract-001
+  lane: single
+  objective: >-
+    Record plan revision 0.2 and authorize slice 2: OWNER.md becomes an
+    optional layer, and the contract reaches every client through the client's
+    own loader or through Wake instead of agent memory.
+  scope:
+    - "Plan 0.2: AGENTS.md (optional OWNER.md read plus a bare @OWNER.md import), CLAUDE.md (an @AGENTS.md import plus Claude-only mechanics), Wake echoing the OWNER.md text last in its report, README wording, tests, and the proof matrix in slice 2."
+  out_of_scope:
+    - Any hook, launcher or Wake auto-run; OWNER.md content; the templates; behavioural compliance evaluation; slice 3's adoption verdict.
+
+outcome:
+  status: decided
+  slice: "2"
+  parallelism: approved
+  decision: >-
+    Syncup on 2026-10-20, two rounds. Round 1: the goal is both the owner's
+    rules in front of the agent without memory and an optional OWNER.md for
+    other users; the owner added that only what is truly necessary and truly
+    solves the problem should go in, with clear layer boundaries so the system
+    does not decay over time. The contract itself should load the same way
+    ("ใช่"). Codex and any other model should receive OWNER.md too ("ไม่ว่าจะเป็ฯ
+    llm model ไหนก็ควรจะทำ ถ้ามี OWNER.md"). No hook this round, and a hook
+    belongs to a layer CIEL need not know about. Proof is by observed loading,
+    judged by the agent from what happens. Round 2: the bare @OWNER.md import in
+    AGENTS.md plus the Wake echo ("ผมว่าโอเค"); CLAUDE.md reduced to
+    the import plus Claude-only notes ("โอเคตามนี้"); recorded as revision 0.2
+    of this workstream ("ไม่ต้องเปิด workstream ใหม่ถ้าเรื่องเดียวกัน"); the
+    headless Claude and Codex matrix plus the owner's /context check ("เอาตาม
+    นั้นเลยครับ"). After the shared understanding: "ผมว่าเราล่างแผนได้เลย",
+    with the open unknowns to be proved along the way, handed to the owner
+    step by step where the agent cannot observe them. After the plan draft:
+    "ไม่มี session. ไหนทำงานอยู๋แล้ว คุนลุยได้เลย".
+  parallelism_basis: >-
+    The owner confirmed no other session is live. The slice edits the shared
+    files AGENTS.md, README.md, CLAUDE.md and src/, which README allows only
+    while no other lane runs.
+
+evidence:
+  plan: workstreams/ciel-owner-operating-contract-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "2e4d572c645f123c46d523319221ddd2f1233eff"
+    branch: feat/owner-layer-optional
+    working_tree: this-decision-and-plan
+  related_workstream: ciel-multi-client-support-001
+  prior_unresolved: memory/events/2026/10/20/20261020T173017_ciel_hq_round_publication_closeout.yaml
+
+unresolved:
+  - "Unknowns proved during slice 2: whether an interactive start loads the same files as a headless one; whether OWNER.md survives /compact; whether Codex reads the Wake echo when the output is long."
+  - "Slice 3 (adoption verdict on OWNER.md v0.1) stays open; its four-week window ended 2026-10-07 without a verdict."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Edit AGENTS.md, CLAUDE.md, src/wake and README.md with their tests; run
+    bun run check; run the slice 2 proof matrix; open a draft PR and record
+    the slice 2 closeout on its head.
+  acceptance_check:
+    - "bun run check and bun run wake pass; proof checks 1, 2, 3 and 6 pass, and checks 4 and 5 are observed or owner-confirmed."
