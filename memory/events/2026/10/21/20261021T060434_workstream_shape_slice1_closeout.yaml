@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T060434_workstream_shape_slice1_closeout
+type: closeout
+recorded_at: 2026-10-21T06:04:34+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-workstream-shape-001
+  lane: single
+  objective: >-
+    New workstreams may split their plan into PLAN.md plus slices/<n>.md, every
+    fact has one home, and Wake and check verify the shape on every run.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "src/portfolio/read.ts readSplitPlan: a slices/ directory marks a plan as split; declared slices come from the PLAN.md '## Slices' index in its order, the last line final; validation errors for a missing or unindexed slice file, a repeated number, a number that does not match its file, a malformed index line, no index, a slice heading in PLAN.md, and a State other than active or paused; a warning names any split-plan file above SPLIT_PLAN_FILE_SOFT_LIMIT_BYTES (12 KB). Plans without slices/ take the old path unchanged."
+    - "AGENTS.md Plan step states each fact's one home, that a plan changes only on an owner decision with a raised plan revision and Git keeping the diff, and that new workstreams split their plan; Closeout step names a recorded slice closeout as the point to clear and start the next slice fresh. README.md shows the layout and lists the checks."
+    - "test/portfolio/read.test.ts: a split workstream indexed 1, 3, 2 runs through authorized, delivered-non-final, a non-final slice 3 and finished on slice 2; every drift case is rejected and kept out of the report; a grown slice file warns; a paused split plan reads cleanly."
+  proof:
+    checks: "bun run check: typecheck clean, 57 passed, 0 failed, at ecefafbf18f8de50bc16b9490da1874027584e6a."
+    byte_identity: "Default, --full, an unknown id and all 64 --workstream outputs (67) byte-identical between main 96aeb81 code and ecefafb, each pair run back to back on the same HQ state; 4 pairs re-run because FETCH_HEAD moved mid-pair."
+  not_completed:
+    - "Slice 2 (convert this plan to the split shape and prove it with cold sessions, auto memory off) not started."
+  owner_statement: >-
+    2026-10-21: the owner confirmed the syncup and authorized slice 1
+    ("โอเค เริ่ม slice 1 ได").
+
+evidence:
+  plan: workstreams/ciel-workstream-shape-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  decision: memory/events/2026/10/21/20261021T055808_workstream_shape_opened_slice1_authorized.yaml
+  repository:
+    head: ecefafbf18f8de50bc16b9490da1874027584e6a
+    branch: feat/workstream-shape
+    working_tree: this-record-only
+    fetched_base: 96aeb816ed320373d20bd0d252d469de01959d76
+  delivery:
+    target_branch: main
+    topic_branch: feat/workstream-shape
+  pull_request:
+    number: 93
+    url: https://github.com/mojisejr/ciel-os/pull/93
+    base: main
+    head: feat/workstream-shape
+    observed_head: ecefafbf18f8de50bc16b9490da1874027584e6a
+    observed_state: draft
+
+unresolved:
+  - "Slice 2 needs its own decision; by the agreed pattern it starts in a fresh session."
+  - "The checks cover structure, not prose: a sentence like 'slice 3 done' inside a slice file is not detected. Whether that needs more than the contract wording is for slice 2's evidence to show."
+  - "The host-layer cleanup of the agent's own auto memory is separate and not started."
+  - "Old plans keep their stale headers (34 say active, 11 are open); left as they are by the owner's choice."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner reviews and merges PR 93 with a merge commit. Then return HQ to a
+    clean current main, delete feat/workstream-shape, and in a fresh session
+    ask the owner to authorize slice 2.
+  acceptance_check:
+    - "PR 93 head contains this closeout; bun run check and bun run wake pass on it."

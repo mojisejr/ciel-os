@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync, statSync } from "node:fs";
 import { basename, dirname, join, relative, resolve, sep } from "node:path";
 
 import { parseDocument } from "yaml";
@@ -95,8 +95,77 @@ function readPlanField(plan: string, name: string): string | null {
   return plan.match(new RegExp(`^\\*\\*${name}:\\*\\*\\s*(.+?)\\s*$`, "m"))?.[1]?.trim() ?? null;
 }
 
-function parsePlan(path: string, text: string): { errors: PortfolioValidationError[]; workstream: PortfolioWorkstream | null } {
+// A split plan's files each warn above this size. It is a signal, not a cap:
+// nothing is cut, and the warning names the file so a person can decide.
+export const SPLIT_PLAN_FILE_SOFT_LIMIT_BYTES = 12 * 1024;
+
+const sliceIndexLine = /^- \[(\d+)\.\s+[^\]]+\]\(slices\/([^)]+)\)\s*$/;
+
+// A plan whose folder holds a slices/ directory is split: PLAN.md carries the
+// header, the current agreement and a "## Slices" index, one line per slice in
+// order, and each slice lives in slices/<n>.md. The index states the final
+// slice as its last line, where a single-file plan left it to whichever heading
+// happened to sit last. Every rule here is checked on every run, so a split
+// plan cannot drift into the shape the single-file plans drifted into. Plans
+// without a slices/ directory are read exactly as before.
+function readSplitPlan(path: string, text: string): { declaredSlices: string[]; errors: PortfolioValidationError[]; warnings: PortfolioValidationError[] } {
+  const slicesDirectory = join(dirname(path), "slices");
   const errors: PortfolioValidationError[] = [];
+  const warnings: PortfolioValidationError[] = [];
+  const declaredSlices: string[] = [];
+
+  const indexStart = text.search(/^## Slices\s*$/m);
+  const afterIndex = indexStart === -1 ? "" : text.slice(indexStart).replace(/^## Slices\s*$/m, "");
+  const nextSection = afterIndex.search(/^## /m);
+  const index = nextSection === -1 ? afterIndex : afterIndex.slice(0, nextSection);
+  const indexed = new Set<string>();
+
+  for (const line of index.split("\n").filter((entry) => entry.startsWith("- "))) {
+    const match = line.match(sliceIndexLine);
+    if (match?.[1] === undefined || match[2] === undefined) {
+      errors.push({ path, message: `slice index line must read "- [<n>. <title>](slices/<n>.md)": ${line}` });
+      continue;
+    }
+    const [, slice, file] = match;
+    if (file !== `${slice}.md`) {
+      errors.push({ path, message: `slice ${slice} must live in slices/${slice}.md, not slices/${file}` });
+    }
+    if (declaredSlices.includes(slice)) {
+      errors.push({ path, message: `slice ${slice} is indexed more than once` });
+      continue;
+    }
+    declaredSlices.push(slice);
+    indexed.add(file);
+    if (!existsSync(join(slicesDirectory, file))) {
+      errors.push({ path, message: `slice ${slice} is indexed but slices/${file} does not exist` });
+    }
+  }
+
+  if (declaredSlices.length === 0) {
+    errors.push({ path, message: "a plan with a slices/ directory must index its slices under ## Slices" });
+  }
+  if (/^### \d+\.\s/m.test(text)) {
+    errors.push({ path, message: "a plan with a slices/ directory keeps each slice in slices/<n>.md, not as a heading in PLAN.md" });
+  }
+
+  const sliceFiles = readdirSync(slicesDirectory).filter((file) => file.endsWith(".md")).sort();
+  for (const file of sliceFiles.filter((file) => !indexed.has(file))) {
+    errors.push({ path: join(slicesDirectory, file), message: "slice file is not listed in the PLAN.md slice index" });
+  }
+
+  for (const [filePath, bytes] of [[path, Buffer.byteLength(text)] as const, ...sliceFiles.map((file) => [join(slicesDirectory, file), statSync(join(slicesDirectory, file)).size] as const)]) {
+    if (bytes > SPLIT_PLAN_FILE_SOFT_LIMIT_BYTES) {
+      warnings.push({ path: filePath, message: `${bytes} bytes, above the soft limit of ${SPLIT_PLAN_FILE_SOFT_LIMIT_BYTES}; consider whether it holds more than the current agreement or one slice` });
+    }
+  }
+
+  return { declaredSlices, errors, warnings };
+}
+
+function parsePlan(path: string, text: string): { errors: PortfolioValidationError[]; warnings: PortfolioValidationError[]; workstream: PortfolioWorkstream | null } {
+  const errors: PortfolioValidationError[] = [];
+  const slicesDirectory = join(dirname(path), "slices");
+  const split = existsSync(slicesDirectory) && statSync(slicesDirectory).isDirectory() ? readSplitPlan(path, text) : null;
   const declaredId = readPlanField(text, "Workstream")?.replace(/^`|`$/g, "") ?? null;
   const state = readPlanField(text, "State");
   const lane = readPlanField(text, "Execution lane");
@@ -114,6 +183,10 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
 
   if (state !== "active" && state !== "blocked" && state !== "completed" && state !== "paused") {
     errors.push({ path, message: "plan State must be active, blocked, completed, or paused" });
+  } else if (split !== null && state !== "active" && state !== "paused") {
+    // Whether split work is finished is derived from its closeouts and Git,
+    // never written into the plan.
+    errors.push({ path, message: "a split plan's State must be active or paused; finished is derived, not written" });
   }
 
   if (lane === null || !/^[a-z0-9][a-z0-9-]*$/.test(lane)) {
@@ -140,7 +213,9 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
     errors.push({ path, message: "plan Parallelism must be none or proposed" });
   }
 
-  const declaredSlices = [...text.matchAll(/^### (\d+)\.\s/gm)].map((match) => match[1] as string);
+  errors.push(...(split?.errors ?? []));
+  const warnings = split?.warnings ?? [];
+  const declaredSlices = split?.declaredSlices ?? [...text.matchAll(/^### (\d+)\.\s/gm)].map((match) => match[1] as string);
   const projectIds = extractProjectIds(text);
   if (projectIds.length === 0) {
     errors.push({ path, message: "plan must list at least one project under Project links" });
@@ -156,11 +231,12 @@ function parsePlan(path: string, text: string): { errors: PortfolioValidationErr
     executionState === null ||
     parallelism === null
   ) {
-    return { errors, workstream: null };
+    return { errors, warnings, workstream: null };
   }
 
   return {
     errors,
+    warnings,
     workstream: {
       checkpointsByLane: {},
       declaredSlices,
@@ -1043,6 +1119,7 @@ export async function readPortfolioWakeReport(repositoryDirectory = ".", git = n
 
   const projects = await Promise.all(projectIdentities.map((project) => observeProject(git, repositoryPath, project, bindings.get(project.id))));
   const workstreams: PortfolioWorkstream[] = [];
+  const planWarnings: PortfolioValidationError[] = [];
   const workstreamsDirectory = join(repositoryPath, "workstreams");
   if (!existsSync(workstreamsDirectory)) {
     return { attention: [], projects, validationErrors, validationWarnings: [], workstreams };
@@ -1051,6 +1128,7 @@ export async function readPortfolioWakeReport(repositoryDirectory = ".", git = n
     const path = join(workstreamsDirectory, relativePath);
     const parsed = parsePlan(path, await Bun.file(path).text());
     validationErrors.push(...parsed.errors);
+    planWarnings.push(...parsed.warnings);
     if (parsed.workstream !== null) {
       workstreams.push(parsed.workstream);
     }
@@ -1066,7 +1144,7 @@ export async function readPortfolioWakeReport(repositoryDirectory = ".", git = n
     attention: deriveAttention(repositoryPath, workstreams, projects),
     projects,
     validationErrors,
-    validationWarnings: deriveCloseoutWarnings(repositoryPath, workstreams, checkpoints.events),
+    validationWarnings: [...planWarnings, ...deriveCloseoutWarnings(repositoryPath, workstreams, checkpoints.events)],
     workstreams
   };
 }

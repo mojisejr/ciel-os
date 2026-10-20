@@ -1158,3 +1158,130 @@ test("does not raise a conflict for an overlap the owner has already decided", a
     await rm(root, { force: true, recursive: true });
   }
 });
+
+function splitPlan(id: string, projectIds: string[], index: string[], revision: string, state = "active", extra = ""): string {
+  return [
+    `# ${id}`,
+    "",
+    `**Workstream:** \`${id}\`  `,
+    `**State:** ${state}  `,
+    "**Execution lane:** single  ",
+    `**Plan revision:** ${revision}  `,
+    "**Execution phase:** none  ",
+    "**Execution state:** idle  ",
+    "**Parallelism:** none",
+    "",
+    "## Project links",
+    "",
+    "| Project ID | Role | Local binding |",
+    "|---|---|---|",
+    ...projectIds.map((projectId) => `| \`${projectId}\` | fixture | local |`),
+    "",
+    "## Slices",
+    "",
+    ...index,
+    "",
+    extra,
+    ""
+  ].join("\n");
+}
+
+async function addSplitPlan(root: string, id: string, index: string[], files: string[], options: { extra?: string; state?: string } = {}): Promise<void> {
+  const directory = join(root, "workstreams", id);
+  await mkdir(join(directory, "slices"), { recursive: true });
+  await writeFile(join(directory, "PLAN.md"), splitPlan(id, ["hq"], index, "8.0", options.state, options.extra));
+  for (const file of files) {
+    await writeFile(join(directory, "slices", file), `# ${file}\n\nfixture slice\n`);
+  }
+}
+
+test("reads a split plan's slices from its index, last line final, through the whole lifecycle", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    await initializeWorkspace(root);
+    git(root, ["remote", "add", "origin", "https://github.com/example/hq.git"]);
+    await mkdir(join(root, "projects", "hq"), { recursive: true });
+    await writeFile(join(root, "projects", "hq", "project.yaml"), projectYaml("hq"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  hq:", "    path: .", ""].join("\n"));
+    // Slice 3 is indexed before slice 2, so 2 is final: the index says so,
+    // whatever the numbers suggest.
+    await addSplitPlan(root, "split", ["- [1. first](slices/1.md)", "- [3. third](slices/3.md)", "- [2. second](slices/2.md)"], ["1.md", "2.md", "3.md"]);
+    const eventsDirectory = join(root, "memory/events/2026/09/06");
+    await mkdir(eventsDirectory, { recursive: true });
+    await writeFile(join(eventsDirectory, "20260906T000000_slice_one_decision.yaml"), sliceDecision("split_one", "split", "8.0", "1"));
+    git(root, ["add", "."]);
+    git(root, ["commit", "-m", "declare split plan and authorize slice 1"]);
+    const base = git(root, ["rev-parse", "HEAD"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", base]);
+    const read = async () => (await readPortfolioWakeReport(root)).workstreams.find((item) => item.id === "split");
+
+    let workstream = await read();
+    expect(workstream?.declaredSlices).toEqual(["1", "3", "2"]);
+    expect(workstream?.lifecycle).toEqual(expect.objectContaining({ state: "authorized", detail: expect.stringContaining("slice 1") }));
+
+    await writeFile(join(eventsDirectory, "20260906T000001_slice_one_closeout.yaml"), sliceCloseout("split", base, "8.0", "1"));
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "close slice 1"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", git(root, ["rev-parse", "HEAD"])]);
+    workstream = await read();
+    expect(workstream?.lifecycle?.state).toBe("needs-owner-decision");
+    expect(workstream?.lifecycle?.detail).toContain("No owner decision authorizes slice 3 yet.");
+
+    // A closeout for slice 3 does not finish the work; slice 2 is final.
+    await writeFile(join(eventsDirectory, "20260906T000002_slice_three_decision.yaml"), sliceDecision("split_three", "split", "8.0", "3"));
+    await writeFile(join(eventsDirectory, "20260906T000003_slice_three_closeout.yaml"), sliceCloseout("split", base, "8.0", "3"));
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "authorize and close slice 3"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", git(root, ["rev-parse", "HEAD"])]);
+    workstream = await read();
+    expect(workstream?.lifecycle?.state).toBe("needs-owner-decision");
+    expect(workstream?.lifecycle?.detail).toContain("No owner decision authorizes slice 2 yet.");
+
+    await writeFile(join(eventsDirectory, "20260906T000004_slice_two_decision.yaml"), sliceDecision("split_two", "split", "8.0", "2"));
+    await writeFile(join(eventsDirectory, "20260906T000005_slice_two_closeout.yaml"), sliceCloseout("split", base, "8.0", "2"));
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "authorize and close slice 2"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", git(root, ["rev-parse", "HEAD"])]);
+    expect((await read())?.lifecycle?.state).toBe("completed");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test("rejects every way a split plan can drift, and warns when one of its files grows", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    await mkdir(join(root, "projects", "hq"), { recursive: true });
+    await writeFile(join(root, "projects", "hq", "project.yaml"), projectYaml("hq"));
+    const cases: [string, string[], string[], { extra?: string; state?: string }, string][] = [
+      ["missing-file", ["- [1. a](slices/1.md)", "- [2. b](slices/2.md)"], ["1.md"], {}, "slice 2 is indexed but slices/2.md does not exist"],
+      ["unindexed-file", ["- [1. a](slices/1.md)"], ["1.md", "2.md"], {}, "slice file is not listed in the PLAN.md slice index"],
+      ["duplicate", ["- [1. a](slices/1.md)", "- [1. again](slices/1.md)"], ["1.md"], {}, "slice 1 is indexed more than once"],
+      ["misnamed", ["- [1. a](slices/one.md)"], ["one.md"], {}, "slice 1 must live in slices/1.md, not slices/one.md"],
+      ["heading-in-plan", ["- [1. a](slices/1.md)"], ["1.md"], { extra: "### 1. a\n\ninline detail" }, "keeps each slice in slices/<n>.md, not as a heading in PLAN.md"],
+      ["written-finished", ["- [1. a](slices/1.md)"], ["1.md"], { state: "completed" }, "a split plan's State must be active or paused"],
+      ["malformed-line", ["- [1. a](slices/1.md)", "- slice two, see slices/2.md"], ["1.md"], {}, "slice index line must read"],
+      ["no-index", [], [], {}, "must index its slices under ## Slices"]
+    ];
+    for (const [id, index, files, options] of cases) {
+      await addSplitPlan(root, id, index, files, options);
+    }
+    await addSplitPlan(root, "grown", ["- [1. a](slices/1.md)"], []);
+    await writeFile(join(root, "workstreams", "grown", "slices", "1.md"), `# 1. a\n\n${"x".repeat(13 * 1024)}\n`);
+    await addSplitPlan(root, "paused-ok", ["- [1. a](slices/1.md)"], ["1.md"], { state: "paused" });
+
+    const report = await readPortfolioWakeReport(root);
+    for (const [id, , , , message] of cases) {
+      expect({ id, errors: report.validationErrors.filter((error) => error.path.includes(`/${id}/`)).map((error) => error.message).join(" | ") })
+        .toEqual({ id, errors: expect.stringContaining(message) });
+      expect(report.workstreams.some((item) => item.id === id)).toBe(false);
+    }
+    expect(report.validationErrors.some((error) => error.path.includes("/grown/") || error.path.includes("/paused-ok/"))).toBe(false);
+    expect(report.validationWarnings).toEqual([
+      expect.objectContaining({ path: join(root, "workstreams", "grown", "slices", "1.md"), message: expect.stringContaining("above the soft limit") })
+    ]);
+    expect(report.workstreams.map((item) => item.id).sort()).toEqual(["grown", "paused-ok"]);
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
