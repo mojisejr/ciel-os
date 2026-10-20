@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261020T214431_ciel_handoff_before_clear
+type: closeout
+recorded_at: 2026-10-20T21:44:31+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-wake-weight-001
+  lane: single
+  objective: >-
+    Hand the CIEL lane to the next session before the owner clears this one:
+    what was delivered today, what waits for the owner, and where to start.
+
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "HQ round hq/20261015 published and merged (PR 86, closeout 20261020T173017)."
+    - "ciel-owner-operating-contract-001 revision 0.2 slice 2 merged (PR 87, closeout 20261020T192006): CLAUDE.md imports AGENTS.md, AGENTS.md imports an optional OWNER.md, Wake echoes OWNER.md last."
+    - "ciel-wake-weight-001 opened after a five-round syncup and four research subagents; slice 1 merged (PR 88, closeout 20261020T212610): Wake prints a 17 KB brief of open work, with --workstream <id> and --full for everything else."
+    - "At handoff: main at 9c7730db19857857333c875e657a3008e88a628e equals origin/main; feat/owner-layer-optional and feat/wake-weight deleted locally and on GitHub; this record sits on the new standing branch hq/20261020, not pushed."
+  waiting_for_owner:
+    - "ciel-wake-weight-001 slice 2 (report a delivered non-final slice truthfully) is not authorized; the owner asked to start it in a fresh session."
+    - "hq/20261015 is fully merged and still exists locally and on GitHub; deleting it needs the owner's word (asked several times this session, not yet answered)."
+    - "hq/20261020 carries only this record; the push is the owner's."
+    - "ciel-owner-operating-contract-001 slice 3, the adoption verdict on OWNER.md v0.1, is the owner's and not urgent."
+
+evidence:
+  plan: workstreams/ciel-wake-weight-001/PLAN.md
+  plan_revision: "0.1"
+  slice: none
+  repository:
+    head: 9c7730db19857857333c875e657a3008e88a628e
+    branch: hq/20261020
+    working_tree: this-record-only
+  semantic_sources:
+    round_publication: memory/events/2026/10/20/20261020T173017_ciel_hq_round_publication_closeout.yaml
+    owner_contract_slice2: memory/events/2026/10/20/20261020T192006_owner_contract_slice2_closeout.yaml
+    wake_weight_slice1: memory/events/2026/10/20/20261020T212610_wake_weight_slice1_closeout.yaml
+
+unresolved:
+  - "Wake still makes 479 git calls (about 11 s) and has not been measured under Codex's sandbox since the brief; slice 3 records both."
+  - "Paused one-liners show the latest next-action sentence, not always the pause reason (slice 1 limit)."
+  - "Slice 2 must stop and ask the owner if Wake cannot tell a delivered non-final slice apart without a new event field."
+  - "The small-workstream rule waits until ciel-wake-weight-001 finishes and its size notice shows the need."
+  - "MuMate (image measurement before 2026-10-28, staging copy by 2026-10-29, rotations) and Praneet (field-day checks for slices 21 and 23, slice 7) are unchanged from their 2026-10-20 handoffs."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Next CIEL session: run Wake, read this record and the ciel-wake-weight-001
+    plan, ask the owner to authorize slice 2 and, separately, whether to
+    delete hq/20261015; on his word record the slice 2 decision on a topic
+    branch from main and build it per the plan.
+  acceptance_check:
+    - "A cold session can state, from Wake and this record alone, what merged today, what slice 2 is, and what waits for the owner."
