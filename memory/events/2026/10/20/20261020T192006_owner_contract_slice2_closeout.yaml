@@ -1,0 +1,84 @@
+schema_version: ciel.event.v0.1
+id: evt_20261020T192006_owner_contract_slice2_closeout
+type: closeout
+recorded_at: 2026-10-20T19:20:06+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-owner-operating-contract-001
+  lane: single
+  objective: >-
+    Make OWNER.md an optional layer and have the contract reach the agent
+    through the client's own loader or through Wake, not through the agent
+    remembering to open a file.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "CLAUDE.md is an @AGENTS.md import plus Claude-only notes; the restated Wake instruction is gone because the import now delivers it."
+    - "AGENTS.md reads OWNER.md when present and applies alone when absent, carries a bare @OWNER.md import with a plain sentence for clients that do not expand imports, and names the layers (contract, Wake, client bridge, host) with hooks outside CIEL."
+    - "Wake adds ownerOperatingContract as the last field of its report: the verbatim OWNER.md text, or null when absent. It is never parsed and claims no compliance."
+    - "README wording and tests updated: optional-read wording, bare import lines in CLAUDE.md and AGENTS.md, echo present and absent, echo placed last."
+    - "Plan revision 0.2 recorded with the new slice 2; the dogfood verdict renumbered to slice 3 so it stays last."
+  proof:
+    check_1: "PASS. Headless Claude Code 2.1.304 (claude -p, no tools) in this branch quoted the first heading of both AGENTS.md and OWNER.md."
+    check_2: "PASS. The same in a clone with OWNER.md deleted: AGENTS.md quoted, OWNER.md reported not loaded, no error or notice."
+    check_3: "PARTIAL. codex exec (0.163.0-alpha, read-only sandbox, ephemeral) quoted AGENTS.md from its loaded instructions in both checkouts, but never received Wake's output, so the OWNER.md echo was not observed by Codex."
+    check_4: "PASS, owner-confirmed. An interactive Claude session's /context listed CLAUDE.md, AGENTS.md and OWNER.md under memory files."
+    check_5: "PASS, owner-confirmed. After /compact, /context still listed AGENTS.md (3.5k), OWNER.md (1.3k) and CLAUDE.md (210)."
+    check_6: "PASS. bun run check: typecheck clean, 45 passed, 0 failed, 208 assertions; bun run wake: no validation errors or warnings; git status matched the intended change."
+  findings:
+    - "Wake is heavy: 22 s and 546,264 bytes of output on this HQ, about 392 KB of it workstream detail; the OWNER.md text is about 4 KB at the end."
+    - "Under Codex's read-only sandbox, Wake ran more than 10 minutes without finishing; it makes hundreds of git calls and each is slower in the sandbox. Codex moved on after the first output line. Three leftover runs, all read-only git, were stopped; no file or lock changed."
+    - "The defect predates this slice and affects every Wake fact for Codex, not only the echo."
+  not_completed:
+    - "Codex does not yet receive OWNER.md mechanically; until Wake is lighter it reaches OWNER.md only through the AGENTS.md sentence, which is agent discipline."
+    - "No behavioural compliance claim: the slice proves what loads, not that an agent follows it."
+  owner_statement: >-
+    2026-10-20, after the Codex finding: the owner agreed to close this slice
+    on the outcome it reached and to take Wake's weight to its own workstream
+    ("เราปิดตรงนี้ ตามผลลัพที่เราต้องการแล้ว ... เราควรจะไป คุยกันเพื่อหาวิธีใน
+    อีก workstream จะเหมาะกว่า ผมเห็นด้วย"), and reported checks 4 and 5
+    ("เจอ 3 file ครับครบถ้วน", "compact แล้วเจอ ... เจอครบครับ").
+
+evidence:
+  plan: workstreams/ciel-owner-operating-contract-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  decision: memory/events/2026/10/20/20261020T185058_owner_contract_rev02_slice2_authorized.yaml
+  repository:
+    head: a308e3c0df7d7a0dc06e6090d930bd304e997787
+    branch: feat/owner-layer-optional
+    working_tree: this-record-only
+    fetched_base: 2e4d572c645f123c46d523319221ddd2f1233eff
+  delivery:
+    target_branch: main
+    topic_branch: feat/owner-layer-optional
+  pull_request:
+    number: 87
+    url: https://github.com/mojisejr/ciel-os/pull/87
+    base: main
+    head: feat/owner-layer-optional
+    observed_head: a308e3c0df7d7a0dc06e6090d930bd304e997787
+    observed_state: draft
+  related_workstream: ciel-multi-client-support-001
+  proof_method: >-
+    Headless prompts asked the client, without tools, to quote the first
+    heading of each instruction file from its loaded context. No session id,
+    transcript or screenshot is committed.
+
+unresolved:
+  - "Wake weight (22 s, 546 KB, over 10 min under Codex's sandbox) needs its own syncup and workstream; ciel-wake-blind-spots-001 is a candidate home. The owner chose this on 2026-10-20."
+  - "Slice 3, the adoption verdict on OWNER.md v0.1, stays open; its four-week window ended 2026-10-07."
+  - "The copied echo costs Claude about 1.3k tokens twice per session (import plus Wake), accepted so each layer stands alone."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner reviews and merges PR 87 with a merge commit. Then return HQ to a
+    clean current main, delete the merged topic branch, and syncup on Wake's
+    weight before opening its workstream.
+  acceptance_check:
+    - "PR 87 head contains this closeout; bun run check and bun run wake pass on it."
