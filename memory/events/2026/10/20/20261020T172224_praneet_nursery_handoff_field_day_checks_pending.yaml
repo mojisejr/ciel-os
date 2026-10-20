@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261020T172224_praneet_nursery_handoff_field_day_checks_pending
+type: closeout
+recorded_at: 2026-10-20T17:22:24+07:00
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Handoff before the owner clears the session: every build the owner
+    ordered under plan revision 2.1 is merged and live; what remains is the
+    owner's own phone checks for slices 21 and 23, his field items for slice
+    7, and decisions he will make when convenient.
+  scope:
+    - State at handoff; this record only.
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "Plan revision 2.1 recorded (evt_20261018T143534_praneet_nursery_rev21_reminders_on_hold_slice23_next): slice 22 kept, not built, because every reminder is a counted LINE push; slice 23 the last build; slice 8 not started."
+    - "Slice 23 authorized (evt_20261018T144551_praneet_nursery_slice23_authorized), built, tested 81/81, migration 012 run on production and read back (evt_20261018T151614_praneet_nursery_slice23_migrated_pr_ready), praneet-web PR 24 merged and deployed (evt_20261018T154237_praneet_nursery_slice23_merged_phone_test_pending)."
+    - "Local clean-up of test output recorded (evt_20261018T154643_praneet_nursery_local_cleanup)."
+    - "At handoff: praneet-web on main at 2b85366c5664cd788bfa5783113dbee06be2156a and praneet-office on main at 0ac736d1bc709c8545f69f0d0730c2d9efb4756f, both clean, equal to origin/main as last fetched on 2026-10-18 (GitHub was unreachable at handoff, so not re-fetched); no open PRs as of 2026-10-18."
+    - "The owner was given a private checklist page for his day at the nursery (locator kept outside the repository): field items (old-stock lot with photos, row prices, bag weights, care log, next measuring round from 2026-10-31), a solo order test, the picture check, a friend's full order through LINE with the invite-link test, the warning that the summary's PromptPay QR is the shop's real account, and what to report back."
+  not_verified:
+    - "No result from the owner's day at the nursery has been reported yet."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.1"
+  repository:
+    head: df89b57509856061d4327dfd266be11bd923f446
+    branch: hq/20261015
+  resume:
+    read_first:
+      - this record, then memory/events/2026/10/18/20261018T154643_praneet_nursery_local_cleanup.yaml
+      - workstreams/praneet-nursery-001/PLAN.md (Owner revision 2.1; slices 7, 21, 23)
+      - checkouts/praneet-web/README.md (Orders, Pictures a shop can pass on) and DESIGN.md
+    local:
+      - "Secrets (never print): checkouts/praneet-web/.local/secrets; .assets/preneet/.env."
+      - "Read-only production counts: bun .local/prodcheck.ts .local/secrets/neon-reader.url (in praneet-web)."
+      - "Kept until slices 21 and 23 close, then delete: praneet-web .local/walk21.ts, walk23.ts, seed23.ts, walk23/ (seed23 needs tests/setup.ts run in its own process first)."
+unresolved:
+  - "Slice 21 DoD: the owner's test order on his phone to the end; on his word record the closeout; anything he finds is a fix on a new topic branch."
+  - "Slice 23 DoD: the owner saves and sends a reseller picture and the list picture in LINE on his phone; on his word record the closeout."
+  - "Slice 7 open: the old-stock lot with photos and price, real bag weights per bag number, the second-account invite test, the first post, then a real order from the new channel."
+  - "Test data a friend's or the owner's test orders leave on production (orders, test customers, lot counts lowered at packing): recount on the lot page; deleting orders or customers is a production write and needs the owner's word."
+  - "LINE menu 'ดูสต็อก' (praneet-office PR 13) is merged as files only; applying it to the live OA needs the owner's word (or he uploads it); the OA greeting text is changed by hand."
+  - "No row price set on production yet; every lot growing; the privacy page slip sentence awaits the owner's wording; three old local backups in praneet-web .local/backups await the owner's keep-or-delete."
+  - "The owner was told to rotate the Anthropic API key of this machine after an agent command printed the environment on 2026-10-18; not confirmed done."
+  - "Slice 22 kept, not built (a quota-free variant, a recorded interest list the owner answers by hand in chat, is one option if resumed); slice 8 not started; the slice 22 samples page is still kept."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Next session: run Wake, read this handoff; ask the owner what he
+    reported from the nursery (solo order, picture check, friend's order,
+    invite test, old-stock lot, prices, bag weights, test data to clean);
+    on his word record the slice 21 and 23 closeouts, fix anything found on
+    a topic branch first, then continue slice 7 with what he brought.
+  acceptance_check:
+    - The slice 21 and 23 DoD in PLAN.md - the owner's checks on his phone.
