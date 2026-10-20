@@ -21,7 +21,7 @@ CIEL preserves evidence, decisions, and reconstructable context across disposabl
 
 On every fresh session, before giving a substantive answer or changing a file, perform this read-only Wake procedure. Do not require the human to invoke a separate skill.
 
-1. From the repository root, run `bun run wake`. Treat its output as local, read-only evidence; it validates events and reports current Git facts, the newest event, reconciliation, and unknowns.
+1. From the repository root, run `bun run wake`. Treat its output as local, read-only evidence. It validates events and reports current Git facts, the newest event, reconciliation, unknowns, open work, and each paused workstream on one line. It reports finished work only when something about it is wrong or could not be checked. When the owner asks about one workstream, run `bun run wake --workstream <id>`. That prints everything recorded for it, and an unknown id returns candidate ids. `bun run wake --full` prints the complete report.
 2. Read `README.md` and the task-relevant plan or Genesis document. When `OWNER.md` exists it is Wake input before Align; when it is absent, this contract applies alone.
 3. Identify the project/workstream explicitly. If multiple candidates fit, surface the ambiguity; do not choose silently.
 4. Inspect further Git history, code, tests, or issues only where the report or task requires it. Separate observed facts, recorded claims, inferences, decisions, and unknowns. State uncertainty rather than filling a gap with a confident guess.

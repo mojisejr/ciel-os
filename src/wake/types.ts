@@ -1,5 +1,5 @@
 import type { EventValidationError, EventValidationWarning } from "../events/types.ts";
-import type { PortfolioWakeReport } from "../portfolio/types.ts";
+import type { PortfolioAttention, PortfolioProject, PortfolioWakeReport, PortfolioWorkstream } from "../portfolio/types.ts";
 
 export interface WakeReport {
   observed: {
@@ -87,4 +87,51 @@ export interface WakeReport {
     path: "OWNER.md";
     text: string;
   };
+}
+
+// What a session reads by default: open work, paused work in one line each,
+// and finished work only when something about it is wrong. Its size follows
+// open work, never history; everything omitted stays reachable through
+// WakeWorkstreamDetail or the full WakeReport.
+export interface WakeBrief {
+  validationErrors: WakeReport["validationErrors"];
+  validationWarnings: WakeReport["validationWarnings"];
+  reconciliation: WakeReport["reconciliation"];
+  anomalies: Array<{ id: string; detail: string }>;
+  openWork: Array<{
+    id: string;
+    state: PortfolioWorkstream["state"];
+    executionState: PortfolioWorkstream["executionState"];
+    lifecycle: null | { state: string; detail: string };
+    attention: null | { state: string; detail: string };
+    projectIds: string[];
+    latestRecord: null | {
+      eventPath: string;
+      recordedAt: string | null;
+      nextAction: string | null;
+      nextActionState: "merged" | "unknown" | "unmerged";
+      unresolved: string[];
+    };
+    anomaly?: string;
+  }>;
+  paused: Array<{
+    id: string;
+    stoppedAt: string | null;
+    record: string | null;
+    lastNextAction: string | null;
+  }>;
+  notices: string[];
+  repository: WakeReport["observed"]["repository"];
+  projectsNeedingAttention: PortfolioProject[];
+  latestEvent: WakeReport["recorded"]["latestEvent"];
+  instructions: WakeReport["observed"]["instructions"];
+  unknowns: string[];
+  howToSeeMore: string[];
+  ownerOperatingContract: WakeReport["ownerOperatingContract"];
+}
+
+export interface WakeWorkstreamDetail {
+  workstream: PortfolioWorkstream;
+  attention: PortfolioAttention[];
+  projects: PortfolioProject[];
 }

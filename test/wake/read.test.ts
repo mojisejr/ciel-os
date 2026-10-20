@@ -192,6 +192,35 @@ test("CLI returns the report without changing the fixture repository", async () 
   }
 });
 
+test("CLI serves the brief, the complete report, and one workstream on request", async () => {
+  const fixture = await createRepositoryFixture();
+  const run = async (...extra: string[]) => {
+    const process = Bun.spawn(["bun", "run", "bin/ciel.ts", "wake", fixture.path, ...extra], {
+      stderr: "pipe",
+      stdout: "pipe"
+    });
+    return { code: await process.exited, stdout: await new Response(process.stdout).text() };
+  };
+
+  try {
+    const brief = JSON.parse((await run()).stdout);
+    expect(Object.keys(brief)).toContain("openWork");
+    expect(Object.keys(brief).at(-1)).toBe("ownerOperatingContract");
+
+    const full = JSON.parse((await run("--full")).stdout);
+    expect(Object.keys(full)).toEqual(Object.keys(await readWakeReport(fixture.path)));
+
+    const unknown = await run("--workstream", "no-such-lane");
+    expect(unknown.code).toBe(1);
+    expect(JSON.parse(unknown.stdout).candidates).toEqual([]);
+
+    expect((await run("--workstream")).code).toBe(2);
+    expect((await run("--full", "--workstream", "x")).code).toBe(2);
+  } finally {
+    await rm(fixture.path, { force: true, recursive: true });
+  }
+});
+
 test("observes whether the client bridge is present alongside the shared contract", async () => {
   const fixture = await createRepositoryFixture();
 

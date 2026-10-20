@@ -1,13 +1,52 @@
 import { validateEventDirectory } from "./events/validate.ts";
 import { validateProjectDirectory } from "./projects/validate.ts";
+import { briefWakeReport, workstreamCandidates, workstreamDetail } from "./wake/brief.ts";
 import { readWakeReport } from "./wake/read.ts";
 
 const usage = [
   "Usage:",
   "  ciel events validate [events-directory]",
   "  ciel projects validate [projects-directory]",
-  "  ciel wake [repository-directory]"
+  "  ciel wake [repository-directory]                      open work; finished work only when wrong",
+  "  ciel wake [repository-directory] --workstream <id>    everything recorded for one workstream",
+  "  ciel wake [repository-directory] --full               the complete report"
 ].join("\n");
+
+type WakeOptions =
+  | { directory: string; mode: "brief" | "full" }
+  | { directory: string; mode: "workstream"; workstreamId: string };
+
+function parseWakeOptions(arguments_: string[]): WakeOptions | null {
+  let directory: string | null = null;
+  let full = false;
+  let workstreamId: string | null = null;
+
+  for (let index = 0; index < arguments_.length; index += 1) {
+    const argument = arguments_[index] as string;
+    if (argument === "--full") {
+      full = true;
+    } else if (argument === "--workstream") {
+      const value = arguments_[index + 1];
+      if (value === undefined || value.startsWith("--")) {
+        return null;
+      }
+      workstreamId = value;
+      index += 1;
+    } else if (!argument.startsWith("--") && directory === null) {
+      directory = argument;
+    } else {
+      return null;
+    }
+  }
+
+  if (full && workstreamId !== null) {
+    return null;
+  }
+  if (workstreamId !== null) {
+    return { directory: directory ?? ".", mode: "workstream", workstreamId };
+  }
+  return { directory: directory ?? ".", mode: full ? "full" : "brief" };
+}
 
 export async function runCli(arguments_: string[]): Promise<number> {
   const [area, actionOrDirectory, optionalDirectory] = arguments_;
@@ -52,10 +91,36 @@ export async function runCli(arguments_: string[]): Promise<number> {
     return 0;
   }
 
-  if (area === "wake" && arguments_.length <= 2) {
-    const report = await readWakeReport(actionOrDirectory ?? ".");
-    console.log(JSON.stringify(report, null, 2));
-    return report.validationErrors.length === 0 ? 0 : 1;
+  if (area === "wake") {
+    const options = parseWakeOptions(arguments_.slice(1));
+    if (options === null) {
+      console.error(usage);
+      return 2;
+    }
+
+    const report = await readWakeReport(options.directory);
+    const status = report.validationErrors.length === 0 ? 0 : 1;
+
+    if (options.mode === "full") {
+      console.log(JSON.stringify(report));
+      return status;
+    }
+
+    if (options.mode === "workstream") {
+      const detail = workstreamDetail(report, options.workstreamId);
+      if (detail === null) {
+        console.log(JSON.stringify({
+          error: `No workstream has the id ${options.workstreamId}.`,
+          candidates: workstreamCandidates(report, options.workstreamId)
+        }));
+        return 1;
+      }
+      console.log(JSON.stringify(detail));
+      return status;
+    }
+
+    console.log(JSON.stringify(briefWakeReport(report)));
+    return status;
   }
 
   console.error(usage);
