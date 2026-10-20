@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T015158_wake_weight_slice3_authorized
+type: decision
+recorded_at: 2026-10-21T01:51:58+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-wake-weight-001
+  lane: single
+  objective: >-
+    Authorize slice 3: Wake asks Git less with byte-identical answers, and the
+    git-call count, time, output size and time under Codex's read-only sandbox
+    are recorded.
+  scope:
+    - "Plan 0.1 slice 3: repository-wide facts once per run, one history walk and one reachable-commit set instead of per-event log -1 and merge-base, one status per project, no repeated work for the same commit, safe concurrency across workstreams; byte-identical default and detail output on the same HQ state; measurements recorded."
+  out_of_scope:
+    - Caches, indexes, databases, embeddings, hooks; event schema changes; a speed target; the small-workstream rule.
+
+outcome:
+  status: decided
+  slice: "3"
+  parallelism: approved
+  decision: >-
+    After PR 90 merged and the agent summarised slice 3 with its
+    recommendation, the owner authorized it
+    ("ถ้าทุกอย่างพร้อมแล้ว และ slice 3 ทำได้เลยผมไม่ต้องเคาะอะไรแล้ว ก็เริ่มได้เลยครับ").
+  parallelism_basis: >-
+    No other HQ session is live; the slice edits the shared files src/,
+    AGENTS.md and README.md.
+
+evidence:
+  plan: workstreams/ciel-wake-weight-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: "df8cf09e1d13983d4d648dfced04b780f13fa014"
+    branch: feat/wake-weight-slice3
+    working_tree: this-decision-only
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Save the old Wake outputs as a baseline outside Git, count its git calls,
+    change Wake per slice 3, prove the outputs byte-identical on the same HQ
+    state, measure, record the closeout and open a pull request.
+  acceptance_check:
+    - "Default and detail outputs byte-identical before and after on the same HQ state."
+    - "Git-call count, time, output size and time under Codex's read-only sandbox recorded."
+    - "bun run check passes."

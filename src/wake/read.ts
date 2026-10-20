@@ -5,14 +5,9 @@ import { parseDocument } from "yaml";
 
 import { findEventCheckpoint } from "../events/checkpoint.ts";
 import { validateEventDirectory } from "../events/validate.ts";
+import { GitSession } from "../git/session.ts";
 import { readPortfolioWakeReport } from "../portfolio/read.ts";
 import type { WakeReport } from "./types.ts";
-
-interface GitResult {
-  exitCode: number;
-  stderr: string;
-  stdout: string;
-}
 
 interface LatestEvent {
   checkpoint: string | null;
@@ -32,21 +27,8 @@ function readString(record: Record<string, unknown>, key: string): string | null
   return typeof value === "string" && value.trim().length > 0 ? value : null;
 }
 
-async function runGit(repositoryPath: string, arguments_: string[]): Promise<GitResult> {
-  const process = Bun.spawn(["git", "-C", repositoryPath, ...arguments_], {
-    stderr: "pipe",
-    stdout: "pipe"
-  });
-
-  return {
-    exitCode: await process.exited,
-    stderr: await new Response(process.stderr).text(),
-    stdout: await new Response(process.stdout).text()
-  };
-}
-
-async function requireGit(repositoryPath: string, arguments_: string[]): Promise<string> {
-  const result = await runGit(repositoryPath, arguments_);
+async function requireGit(git: GitSession, repositoryPath: string, arguments_: string[]): Promise<string> {
+  const result = await git.run(repositoryPath, arguments_);
 
   if (result.exitCode !== 0) {
     throw new Error(`git ${arguments_.join(" ")} failed: ${result.stderr.trim()}`);
@@ -84,23 +66,24 @@ function parseStandingBranch(branch: string | null, today = new Date()): WakeRep
 // main. Derived from local Git refs; nothing is stored, and no judgement is
 // attached, because deciding that a leftover branch matters is the owner's.
 async function readMergedStandingBranches(
+  git: GitSession,
   repositoryPath: string,
   today = new Date()
 ): Promise<WakeReport["observed"]["repository"]["mergedStandingBranches"]> {
   const remoteTarget = "refs/remotes/origin/main";
-  const remoteExists = await runGit(repositoryPath, ["show-ref", "--verify", "--quiet", remoteTarget]);
+  const remoteExists = await git.run(repositoryPath, ["show-ref", "--verify", "--quiet", remoteTarget]);
   if (remoteExists.exitCode !== 0) {
     return [];
   }
 
-  const refs = await runGit(repositoryPath, ["for-each-ref", "--format=%(refname:short)", "refs/heads/hq"]);
+  const refs = await git.run(repositoryPath, ["for-each-ref", "--format=%(refname:short)", "refs/heads/hq"]);
   if (refs.exitCode !== 0) {
     return [];
   }
 
   const merged: WakeReport["observed"]["repository"]["mergedStandingBranches"] = [];
   for (const name of refs.stdout.trim().split("\n").filter((line) => line.length > 0).sort()) {
-    const reachable = await runGit(repositoryPath, ["merge-base", "--is-ancestor", `refs/heads/${name}`, remoteTarget]);
+    const reachable = await git.isAncestor(repositoryPath, `refs/heads/${name}`, remoteTarget);
     if (reachable.exitCode !== 0) {
       continue;
     }
@@ -127,16 +110,17 @@ async function readMergedStandingBranches(
 // owner's to say, and the branch the checkout is standing on is marked rather
 // than hidden, so a reader can tell their own work from work left behind.
 async function readUnmergedWork(
+  git: GitSession,
   repositoryPath: string,
   currentBranch: string | null
 ): Promise<WakeReport["observed"]["repository"]["unmergedWork"]> {
   const remoteTarget = "refs/remotes/origin/main";
-  const remoteExists = await runGit(repositoryPath, ["show-ref", "--verify", "--quiet", remoteTarget]);
+  const remoteExists = await git.run(repositoryPath, ["show-ref", "--verify", "--quiet", remoteTarget]);
   if (remoteExists.exitCode !== 0) {
     return [];
   }
 
-  const refs = await runGit(repositoryPath, [
+  const refs = await git.run(repositoryPath, [
     "for-each-ref",
     "--format=%(refname)%09%(committerdate:iso-strict)",
     "refs/heads",
@@ -156,7 +140,7 @@ async function readUnmergedWork(
 
     const local = reference.startsWith("refs/heads/");
     const name = local ? reference.slice("refs/heads/".length) : reference.slice("refs/remotes/origin/".length);
-    const reachable = await runGit(repositoryPath, ["merge-base", "--is-ancestor", reference, remoteTarget]);
+    const reachable = await git.isAncestor(repositoryPath, reference, remoteTarget);
     if (reachable.exitCode === 0) {
       continue;
     }
@@ -174,7 +158,7 @@ async function readUnmergedWork(
 
   const unmerged: WakeReport["observed"]["repository"]["unmergedWork"] = [];
   for (const [name, entry] of [...grouped.entries()].sort(([left], [right]) => left.localeCompare(right))) {
-    const counted = await runGit(repositoryPath, ["rev-list", "--count", `${remoteTarget}..${entry.reference}`]);
+    const counted = await git.run(repositoryPath, ["rev-list", "--count", `${remoteTarget}..${entry.reference}`]);
     unmerged.push({
       name,
       local: entry.local,
@@ -199,13 +183,13 @@ async function readUnmergedWork(
 // fetch that found nothing new would leave it reporting an alarming age for a
 // view that is current. Answering the wrong question confidently is worse than
 // reaching outside Git for a modification time.
-async function readRemoteView(repositoryPath: string): Promise<WakeReport["observed"]["repository"]["remoteView"]> {
-  const remoteExists = await runGit(repositoryPath, ["show-ref", "--verify", "--quiet", "refs/remotes/origin/main"]);
+async function readRemoteView(git: GitSession, repositoryPath: string): Promise<WakeReport["observed"]["repository"]["remoteView"]> {
+  const remoteExists = await git.run(repositoryPath, ["show-ref", "--verify", "--quiet", "refs/remotes/origin/main"]);
   if (remoteExists.exitCode !== 0) {
     return { fetchedAt: null, detail: "No origin/main ref exists in this checkout, so there is no view of it to age." };
   }
 
-  const gitPath = await runGit(repositoryPath, ["rev-parse", "--git-path", "FETCH_HEAD"]);
+  const gitPath = await git.run(repositoryPath, ["rev-parse", "--git-path", "FETCH_HEAD"]);
   if (gitPath.exitCode !== 0) {
     return { fetchedAt: null, detail: "Git could not resolve where a fetch would record itself, so the age of this view is unknown." };
   }
@@ -285,6 +269,7 @@ async function readIfPresent(path: string): Promise<boolean> {
 }
 
 async function reconcileCheckpoint(
+  git: GitSession,
   repositoryPath: string,
   head: string,
   latestEvent: LatestEvent | null
@@ -300,7 +285,7 @@ async function reconcileCheckpoint(
     };
   }
 
-  const exists = await runGit(repositoryPath, ["cat-file", "-e", `${latestEvent.checkpoint}^{commit}`]);
+  const exists = await git.run(repositoryPath, ["cat-file", "-e", `${latestEvent.checkpoint}^{commit}`]);
   if (exists.exitCode !== 0) {
     return {
       status: "needs-reconciliation",
@@ -315,7 +300,7 @@ async function reconcileCheckpoint(
     };
   }
 
-  const isAncestor = await runGit(repositoryPath, ["merge-base", "--is-ancestor", latestEvent.checkpoint, head]);
+  const isAncestor = await git.run(repositoryPath, ["merge-base", "--is-ancestor", latestEvent.checkpoint, head]);
   if (isAncestor.exitCode === 0) {
     return {
       status: "expected-evolution",
@@ -332,13 +317,14 @@ async function reconcileCheckpoint(
 export async function readWakeReport(repositoryDirectory = "."): Promise<WakeReport> {
   const repositoryPath = resolve(repositoryDirectory);
   const eventsDirectory = join(repositoryPath, "memory/events");
-  const head = (await requireGit(repositoryPath, ["rev-parse", "HEAD"])).trim();
-  const branchOutput = (await requireGit(repositoryPath, ["branch", "--show-current"])).trim();
-  const statusOutput = await requireGit(repositoryPath, ["status", "--porcelain=v1"]);
-  const worktreeOutput = await requireGit(repositoryPath, ["worktree", "list", "--porcelain"]);
+  const git = new GitSession();
+  const head = (await requireGit(git, repositoryPath, ["rev-parse", "HEAD"])).trim();
+  const branchOutput = (await requireGit(git, repositoryPath, ["branch", "--show-current"])).trim();
+  const statusOutput = await requireGit(git, repositoryPath, ["status", "--porcelain=v1"]);
+  const worktreeOutput = await requireGit(git, repositoryPath, ["worktree", "list", "--porcelain"]);
   const validation = await validateEventDirectory(eventsDirectory);
   const latestEvent = await readLatestEvent(eventsDirectory);
-  const portfolio = await readPortfolioWakeReport(repositoryPath);
+  const portfolio = await readPortfolioWakeReport(repositoryPath, git);
   const statusEntries = statusOutput.length === 0 ? [] : statusOutput.trimEnd().split("\n");
 
   return {
@@ -352,9 +338,9 @@ export async function readWakeReport(repositoryDirectory = "."): Promise<WakeRep
           entries: statusEntries
         },
         standingBranch: parseStandingBranch(branchOutput.length > 0 ? branchOutput : null),
-        mergedStandingBranches: await readMergedStandingBranches(repositoryPath),
-        unmergedWork: await readUnmergedWork(repositoryPath, branchOutput.length > 0 ? branchOutput : null),
-        remoteView: await readRemoteView(repositoryPath),
+        mergedStandingBranches: await readMergedStandingBranches(git, repositoryPath),
+        unmergedWork: await readUnmergedWork(git, repositoryPath, branchOutput.length > 0 ? branchOutput : null),
+        remoteView: await readRemoteView(git, repositoryPath),
         worktrees: parseWorktrees(worktreeOutput)
       },
       instructions: {
@@ -368,7 +354,7 @@ export async function readWakeReport(repositoryDirectory = "."): Promise<WakeRep
       }
     },
     recorded: { latestEvent, portfolio },
-    reconciliation: await reconcileCheckpoint(repositoryPath, head, latestEvent),
+    reconciliation: await reconcileCheckpoint(git, repositoryPath, head, latestEvent),
     unknowns: [
       "Human approval, review, and external rules are unknown unless a repository record explicitly establishes them."
     ],

@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T044622_wake_weight_slice3_closeout
+type: closeout
+recorded_at: 2026-10-21T04:46:22+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-wake-weight-001
+  lane: single
+  objective: >-
+    Wake asks Git less with byte-identical answers, and the git-call count,
+    time, output size and time under Codex's read-only sandbox are recorded.
+    The last declared slice of plan 0.1.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "src/git/session.ts GitSession, one per Wake run: a repeated Git question is asked once; merge-base --is-ancestor is answered from one rev-list per target; log -1 -- <event> from one 'log --no-renames -c --name-only -- memory/events' walk; the single call is made wherever a shortcut cannot be shown to agree (path changed more than once or not listed, unresolvable commit or target)."
+    - "src/portfolio/read.ts and src/wake/read.ts share one session per run; their runGit copies are removed; per-workstream terminal-lifecycle and latest-record work runs concurrently."
+    - "test/git/session.test.ts compares every session answer with the direct Git call on a fixture history (side-branch merge, file changed twice, conflict-resolving merge, uncommitted file, path outside the walk, non-ancestor, missing commit and target) and checks a repeated question is asked once."
+  proof:
+    checks: "bun run check: typecheck clean, 55 passed, 0 failed, at 7ba703953d99f73d1e2e83c64130cc49e39fc913."
+    byte_identity: "Default, --full, an unknown id and all 63 --workstream outputs (66) byte-identical between main df8cf09 and 7ba7039, each pair run back to back on the same clean HQ state at 7ba7039."
+    walk_agreement: "For all 975 events the walk equals git log -1 for every path changed once; 8 paths changed more than once take the fallback."
+    measurements: "Same HQ state, not targets. Default: 471 git calls to 91; 11.2-13.1 s to 2.2-3.0 s; 17,158 bytes both. --full: 11.5 s to 4.3 s, 398,934 bytes both. --workstream praneet-nursery-001: 13.0 s to 2.8 s, 38,491 bytes both. Codex read-only sandbox (codex sandbox -c sandbox_mode=read-only, codex-cli 0.153.4), default: 606.0 s to 76.8 s, both finished."
+  not_completed:
+    - "Plan item 'one status --porcelain=v2 --branch per project' not done: Wake prints v1 status lines verbatim, and converting v2 back would risk byte identity; the 76 per-project calls already run concurrently."
+  owner_statement: >-
+    2026-10-21: the owner authorized slice 3
+    ("ถ้าทุกอย่างพร้อมแล้ว และ slice 3 ทำได้เลยผมไม่ต้องเคาะอะไรแล้ว ก็เริ่มได้เลยครับ").
+
+evidence:
+  plan: workstreams/ciel-wake-weight-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  decision: memory/events/2026/10/21/20261021T015158_wake_weight_slice3_authorized.yaml
+  repository:
+    head: 7ba703953d99f73d1e2e83c64130cc49e39fc913
+    branch: feat/wake-weight-slice3
+    working_tree: this-record-only
+    fetched_base: df8cf09e1d13983d4d648dfced04b780f13fa014
+  delivery:
+    target_branch: main
+    topic_branch: feat/wake-weight-slice3
+  pull_request:
+    number: 91
+    url: https://github.com/mojisejr/ciel-os/pull/91
+    base: main
+    head: feat/wake-weight-slice3
+    observed_head: 7ba703953d99f73d1e2e83c64130cc49e39fc913
+    observed_state: draft
+
+unresolved:
+  - "Under Codex's read-only sandbox Wake still takes about 77 s for 91 calls; whether that is acceptable or calls for a later step (the plan names a disposable cache keyed by Git state) is a separate owner decision."
+  - "Something on this machine, most likely the editor's background fetch, moves FETCH_HEAD every few minutes, which changes remoteView.fetchedAt; a byte comparison of Wake outputs must run pairs back to back and re-run a pair when FETCH_HEAD moves."
+  - "Event YAML is still parsed by three separate readers (validation, latest event, portfolio); no git cost, outside this slice."
+  - "Paused one-liners show the latest next-action sentence rather than a pause reason; no event field carries one, so reading it needs a convention the owner has not chosen."
+  - "The small-workstream rule was to follow this workstream; its size notice has not fired on this HQ (default brief 17 KB, under the 25 KB soft limit)."
+  - "MuMate (image measurement before 2026-10-28, staging copy by 2026-10-29, mumate-image-weight-001's decision lacks execution_phase) and Praneet (field-day checks for slices 21 and 23, slice 7) are unchanged."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner reviews and merges PR 91 with a merge commit. Then return HQ to a
+    clean current main, delete feat/wake-weight-slice3, and confirm Wake reads
+    ciel-wake-weight-001 as completed.
+  acceptance_check:
+    - "PR 91 head contains this closeout; bun run check and bun run wake pass on it."
