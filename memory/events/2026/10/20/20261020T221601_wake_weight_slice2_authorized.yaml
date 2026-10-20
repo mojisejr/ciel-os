@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261020T221601_wake_weight_slice2_authorized
+type: decision
+recorded_at: 2026-10-20T22:16:01+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-wake-weight-001
+  lane: single
+  objective: >-
+    Authorize slice 2: Wake reports a delivered non-final slice as delivered
+    and the next declared slice as not yet authorized, from the slice numbers
+    closeouts already carry, with no new event field.
+  scope:
+    - "Plan 0.1 slice 2: derive a delivered non-final slice in Wake, report it under the existing needs-owner-decision state with a detail naming the delivered slice and the next one, a fixture test for authorized, delivered-non-final and finished, and the wording that describes it."
+    - "A related problem Wake reports that this slice can fix easily without conflicting with the contract or causing a new problem; the owner allowed this in the same message."
+  out_of_scope:
+    - Slice 3 (its own decision); new event fields; reading closeout status words the contract says are ignored; caches, indexes, databases, embeddings, hooks.
+
+outcome:
+  status: decided
+  slice: "2"
+  parallelism: approved
+  decision: >-
+    After Wake and a summary of slice 2 (needs-owner-decision reused with a
+    delivered-slice detail; unmerged slice closeouts stay authorized;
+    ref-office-001's slice-4-ready-for-owner-merge wording stays unread), the
+    owner authorized it and allowed related easy fixes that do not conflict
+    with the contract
+    ("ลุย slice 2 ได้เลยครับ ถ้ามีปัญหา ข้างบนที่แก้ใน slice นี้ได้และไม่ขัดหลัก หรือ ไม่ทำให้ มีปัญหาก็แก้ด้วยได้เลย ถ้าเกี่ยวโยงกัน และแก้ง่ายครับ").
+  parallelism_basis: >-
+    No other HQ session is live; the slice edits the shared files src/,
+    AGENTS.md and README.md.
+
+evidence:
+  plan: workstreams/ciel-wake-weight-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "d13e3c82b251e95a0253c85e02e9a625630423e8"
+    branch: feat/wake-weight-slice2
+    working_tree: this-decision-only
+
+unresolved:
+  - "Slice 3 needs its own decision."
+  - "hq/20261015 has no local ref and no origin ref as of the last fetch (2026-10-20 22:11 +07); GitHub was not checked."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 2 per the plan on feat/wake-weight-slice2, run bun run check
+    and bun run wake, record the closeout and open a draft pull request.
+  acceptance_check:
+    - "A fixture test covers authorized, delivered-non-final, and finished."
+    - "ciel-owner-operating-contract-001 reads as slice 2 delivered; slice 3 not authorized."
