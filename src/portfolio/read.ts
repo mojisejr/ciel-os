@@ -730,6 +730,65 @@ async function deriveTerminalLifecycle(
   };
 }
 
+// A decision authorizes one slice, and only the last slice's closeout finishes
+// the workstream, so once an earlier slice's closeout merged the decision kept
+// reading as authorized for work already delivered. A closeout recorded after
+// that decision, scoped to the same plan revision and slice and worded as a
+// delivery, settles it once its commit has reached the target branch. It reads
+// only fields a slice closeout already carries. Until it merges, or when Git
+// cannot say, the slice stays authorized, which is what it was before.
+async function deriveDeliveredSlice(
+  repositoryPath: string,
+  workstream: PortfolioWorkstream,
+  events: WorkstreamEvent[],
+  decision: WorkstreamEvent,
+  slice: string
+): Promise<PortfolioWorkstream["lifecycle"]> {
+  const nextSlice = workstream.declaredSlices[workstream.declaredSlices.indexOf(slice) + 1];
+  if (nextSlice === undefined) {
+    return null;
+  }
+  const later = events.slice(events.indexOf(decision) + 1);
+  const closeoutIndex = later.findLastIndex((event) => {
+    const outcome = isRecord(event.value.outcome) ? event.value.outcome : {};
+    const evidence = isRecord(event.value.evidence) ? event.value.evidence : {};
+    const status = readString(outcome, "status");
+    return readString(event.value, "type") === "closeout"
+      && status !== null && (deliveryStatuses as readonly string[]).includes(status)
+      && readString(evidence, "plan_revision") === workstream.planRevision
+      && readString(evidence, "slice") === slice;
+  });
+  const closeout = later[closeoutIndex];
+  if (closeout === undefined) {
+    return null;
+  }
+
+  const closeoutPath = repositoryReference(repositoryPath, closeout.path);
+  const commit = await runGit(repositoryPath, ["log", "-1", "--format=%H", "--", closeoutPath]);
+  if (commit.exitCode !== 0 || commit.stdout.trim().length === 0) {
+    return null;
+  }
+  const targetBranch = readDelivery(closeout).targetBranch;
+  const merged = await runGit(repositoryPath, ["merge-base", "--is-ancestor", commit.stdout.trim(), `refs/remotes/origin/${targetBranch}`]);
+  if (merged.exitCode !== 0) {
+    return null;
+  }
+
+  const clauses = [
+    `Slice ${slice} of plan revision ${workstream.planRevision} is delivered: its closeout at ${closeoutPath} has reached origin/${targetBranch}.`,
+    `No owner decision authorizes slice ${nextSlice} yet.`
+  ];
+  const unread = unreadDecision(workstream, later.slice(closeoutIndex + 1));
+  if (unread !== null) {
+    clauses.push(`A decision at ${repositoryReference(repositoryPath, unread.event.path)} is recorded for this workstream but authorizes nothing: ${unread.unmet.join("; ")}. Record a corrected decision beside it rather than editing it.`);
+  }
+  return {
+    decisionEventPath: null,
+    detail: clauses.join(" "),
+    state: "needs-owner-decision"
+  };
+}
+
 function readStringList(record: Record<string, unknown>, key: string): string[] {
   const value = record[key];
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0).map((item) => item.trim()) : [];
@@ -911,6 +970,13 @@ async function deriveLifecycle(
       continue;
     }
     const authorizedSlice = decisionAuthorizedSlice(decision, workstream);
+    const deliveredSlice = authorizedSlice === null
+      ? null
+      : await deriveDeliveredSlice(repositoryPath, workstream, eventsByWorkstream.get(workstream.id) ?? [], decision, authorizedSlice);
+    if (deliveredSlice !== null) {
+      workstream.lifecycle = deliveredSlice;
+      continue;
+    }
     workstream.lifecycle = {
       decisionEventPath: decision.path,
       detail: authorizedSlice !== null

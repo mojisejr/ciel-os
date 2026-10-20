@@ -741,6 +741,56 @@ test("treats only a closeout for the last declared slice as a terminal delivery"
   }
 });
 
+test("reports a delivered non-final slice as delivered and the next slice as not yet authorized", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
+  try {
+    await initializeWorkspace(root);
+    git(root, ["remote", "add", "origin", "https://github.com/example/hq.git"]);
+    await mkdir(join(root, "projects", "hq"), { recursive: true });
+    await writeFile(join(root, "projects", "hq", "project.yaml"), projectYaml("hq"));
+    await writeFile(join(root, "projects.local.yaml"), ["bindings:", "  hq:", "    path: .", ""].join("\n"));
+    const directory = join(root, "workstreams", "stepwise");
+    await mkdir(directory, { recursive: true });
+    await writeFile(join(directory, "PLAN.md"), slicedPlan("stepwise", ["hq"], 3, "7.0"));
+    const eventsDirectory = join(root, "memory/events/2026/09/05");
+    await mkdir(eventsDirectory, { recursive: true });
+    await writeFile(join(eventsDirectory, "20260905T000000_slice_one_decision.yaml"), sliceDecision("slice_one", "stepwise", "7.0", "1"));
+    git(root, ["add", "."]);
+    git(root, ["commit", "-m", "declare plan and authorize slice 1"]);
+    const base = git(root, ["rev-parse", "HEAD"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", base]);
+    const lifecycle = async () => (await readPortfolioWakeReport(root)).workstreams.find((item) => item.id === "stepwise")?.lifecycle;
+
+    expect(await lifecycle()).toEqual(expect.objectContaining({ state: "authorized", detail: expect.stringContaining("slice 1") }));
+
+    // Recorded but not merged: the slice is still the authorized work in hand.
+    await writeFile(join(eventsDirectory, "20260905T000001_slice_one_closeout.yaml"), sliceCloseout("stepwise", base, "7.0", "1"));
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "record slice 1 closeout"]);
+    expect((await lifecycle())?.state).toBe("authorized");
+
+    git(root, ["update-ref", "refs/remotes/origin/main", git(root, ["rev-parse", "HEAD"])]);
+    const delivered = await lifecycle();
+    expect(delivered?.state).toBe("needs-owner-decision");
+    expect(delivered?.detail).toContain("Slice 1 of plan revision 7.0 is delivered");
+    expect(delivered?.detail).toContain("No owner decision authorizes slice 2 yet.");
+
+    await writeFile(join(eventsDirectory, "20260905T000002_slice_two_decision.yaml"), sliceDecision("slice_two", "stepwise", "7.0", "2"));
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "authorize slice 2"]);
+    expect(await lifecycle()).toEqual(expect.objectContaining({ state: "authorized", detail: expect.stringContaining("slice 2") }));
+
+    await writeFile(join(eventsDirectory, "20260905T000003_slice_three_decision.yaml"), sliceDecision("slice_three", "stepwise", "7.0", "3"));
+    await writeFile(join(eventsDirectory, "20260905T000004_slice_three_closeout.yaml"), sliceCloseout("stepwise", base, "7.0", "3"));
+    git(root, ["add", "memory"]);
+    git(root, ["commit", "-m", "authorize and close slice 3"]);
+    git(root, ["update-ref", "refs/remotes/origin/main", git(root, ["rev-parse", "HEAD"])]);
+    expect((await lifecycle())?.state).toBe("completed");
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
 test("counts an overlap on a child project but never on the HQ project every workstream lists", async () => {
   const root = await mkdtemp(join(tmpdir(), "ciel-portfolio-"));
   try {
