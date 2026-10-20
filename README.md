@@ -89,11 +89,20 @@ bun run bin/ciel.ts projects validate
 bun run check
 ```
 
-When `projects.local.yaml` is present, `wake` also reports the active
-workstreams in `workstreams/*/PLAN.md`, their event checkpoints grouped by
-lane, and local-Git verification for each bound project. The local file is a
-machine locator only: a missing, inaccessible, or mismatched binding is
-reported as attention, never inferred as a valid checkout.
+When `projects.local.yaml` is present, `wake` also reads the workstreams in
+`workstreams/*/PLAN.md` and verifies each bound project in local Git. The local
+file is a machine locator only: a missing, inaccessible, or mismatched binding
+is reported as attention, never inferred as a valid checkout.
+
+By default `wake` prints a brief whose size follows open work, not history:
+- open work, with each workstream's next action and unresolved items;
+- paused work, one line each;
+- finished work only when something about it is wrong or could not be checked;
+- a notice when the brief grows past a soft limit, or when open work has gone
+  quiet.
+
+`wake --workstream <id>` prints everything recorded for one workstream,
+including its event checkpoints, and `wake --full` prints the complete report.
 
 ## Windows recovery proof
 

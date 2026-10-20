@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20261020T211524_wake_weight_opened_slice1_authorized
+type: decision
+recorded_at: 2026-10-20T21:15:24+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-wake-weight-001
+  lane: single
+  objective: >-
+    Open the workstream agreed in the 2026-10-20 syncup and authorize slice 1:
+    Wake reports open work only, keeps every fact reachable through a detail
+    mode, surfaces anomalies and unknowns, and warns when it grows.
+  scope:
+    - "Plan 0.1 slice 1: baseline and question set first, then the default report, paused one-liners, silent finished work with anomaly and unknown surfacing, the detail mode, the soft bloat warning, layout, compact JSON, AGENTS.md wording, tests and the continuity comparison."
+  out_of_scope:
+    - Slices 2 and 3 (their own decisions); caches, indexes, databases, embeddings, hooks; event schema changes; the small-workstream rule.
+
+outcome:
+  status: decided
+  slice: "1"
+  parallelism: approved
+  decision: >-
+    Syncup on 2026-10-20, five rounds, after four research subagents. The
+    owner: Wake must improve without conflicting with what CIEL is unless truly
+    necessary; agents are the only readers; finished work is not raised unless
+    asked
+    ("ถ้าเสร็จแล้วผมไม่ถามก็ไม่ต้องเอาขึ้นมา")
+    or something is wrong
+    ("เว้นแต่ คุนเจอ แบบ แปลกๆ หรือ ผิดพลาด หรือ งงๆ");
+    paused work gets one line saying what, where and why; do the least that
+    works
+    ("ทำน้อย ถ้าได้ผลก็แค่นั้น");
+    no fixed cap, but a signal when it bloats
+    ("ไม่งั้น มันจะหลอกตัวเอง"),
+    and long-silent work flagged only so he knows it exists; quality and
+    continuity over speed
+    ("เราไม่จำเป็นต้องเร็วขนาดนั้น แต่เราต้องมีคุนภาพ");
+    the slice-status defect included, split or discussed if complex; a new
+    workstream; the small-workstream rule separate and only after this one
+    proves the need. He confirmed the shared understanding
+    ("ผมยืนยันสรุปนี้ครับ เริ่มได้เลย")
+    and, after the plan summary, authorized the start
+    ("เริ่มได้ครับ").
+  parallelism_basis: >-
+    No other HQ session is live; the slice edits the shared files src/,
+    AGENTS.md and README.md.
+
+evidence:
+  plan: workstreams/ciel-wake-weight-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "865095f8f5acf6505cc3da7f244edad755f4bb56"
+    branch: feat/wake-weight
+    working_tree: this-decision-only
+
+unresolved:
+  - "Slices 2 and 3 need their own decisions."
+  - "Unknowns from the syncup: why Codex's sandbox is slow; the real size after the change; whether an agent can find work from a loose name without a list."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Save the baseline Wake report, fix the question set with expected answers
+    from the records, run it through cold sessions against today's Wake, then
+    change Wake per slice 1 and repeat the comparison.
+  acceptance_check:
+    - "Slice 1 acceptance in the plan: no fact lost, size follows open work only, behaviour tests, continuity at least as good as the baseline, checks pass."

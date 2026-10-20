@@ -1,0 +1,81 @@
+schema_version: ciel.event.v0.1
+id: evt_20261020T212610_wake_weight_slice1_closeout
+type: closeout
+recorded_at: 2026-10-20T21:26:10+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-wake-weight-001
+  lane: single
+  objective: >-
+    Wake reports open work only, keeps every fact reachable, surfaces
+    anomalies and unknowns, and warns when it grows, without growing with
+    history.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "src/wake/brief.ts builds the default brief from the unchanged full report: validation and reconciliation first, then anomalies, open work (lifecycle, next action, unresolved), paused one-liners, notices, repository facts, projects needing attention, and ownerOperatingContract last."
+    - "Finished work (plan completed, or lifecycle completed / merged-needs-sync / merged-needs-cleanup) is silent unless an anomaly fires: needs-reconciliation, merged-needs-cleanup, plan completed but not delivered, or nextActionState unknown."
+    - "Notices: open work with no record for over 30 days is named; a brief over the soft limit (25 KB, one constant) is named with its three largest open entries. Nothing is cut."
+    - "CLI: wake prints the brief as compact JSON; wake --workstream <id> prints the full entry, its attention and its projects, and an unknown id returns candidate ids; wake --full prints the complete report."
+    - "AGENTS.md Wake step 1 and README describe the modes; tests added in test/wake/brief.test.ts and a CLI test in test/wake/read.test.ts."
+  proof:
+    checks: "bun run check: typecheck clean, 52 passed, 0 failed, 244 assertions, before and after commit d618565."
+    size: "Brief 16,741 bytes on this HQ, from 546,264. Largest detail (praneet-nursery-001) 38,497 bytes; --full 397,765 bytes."
+    no_fact_lost: "For all 63 workstreams, --workstream returned an entry, attention and projects deep-equal to the full report (one-off script, not committed)."
+    size_follows_open_work: "Fixture test: 60 finished workstreams with 40 events each leave the brief byte-identical."
+    continuity: >-
+      The same six owner-style questions (praneet status, Vercel move done,
+      paused work and why, PRs awaiting merge, MuMate items before 10-28,
+      owner-contract slice 2) went to cold headless Claude sessions with tools
+      limited to Wake, Read, Grep and Glob and auto memory off. Expected
+      answers were written from the records before either run. Baseline on the
+      old Wake: 6/6 correct, 73 turns, 440 s, USD 2.81. New Wake: 6/6 correct,
+      42 turns, 369 s, USD 2.31. The new sessions used --workstream as AGENTS.md
+      directs; one found records still asking for merges that have since
+      happened.
+    speed_recorded: "Brief run 11.0 s; git calls unchanged at 479 (slice 3)."
+  not_completed:
+    - "A paused line shows the latest record's first next-action sentence, which is not always why the work paused (ciel-windows-portability-001, mumate-be-decoupling-001); the record path is given."
+    - "Slice-status defect (slice 2) and git-call reduction (slice 3) not started."
+  owner_statement: >-
+    2026-10-20: the owner confirmed the syncup summary and authorized the
+    start ("เริ่มได้ครับ").
+
+evidence:
+  plan: workstreams/ciel-wake-weight-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  decision: memory/events/2026/10/20/20261020T211524_wake_weight_opened_slice1_authorized.yaml
+  repository:
+    head: d61856547062835dd7c8de152d2f80c1c8a6ed45
+    branch: feat/wake-weight
+    working_tree: this-record-only
+    fetched_base: ecbf2ce972c4648664f825646d178ec66b4af6fc
+  delivery:
+    target_branch: main
+    topic_branch: feat/wake-weight
+  pull_request:
+    number: 88
+    url: https://github.com/mojisejr/ciel-os/pull/88
+    base: main
+    head: feat/wake-weight
+    observed_head: d61856547062835dd7c8de152d2f80c1c8a6ed45
+    observed_state: draft
+
+unresolved:
+  - "Slices 2 and 3 need their own decisions."
+  - "Paused one-liners lack a reliable pause reason; a later change could read it from the pausing record, if the owner wants it."
+  - "Codex's sandbox behaviour with the brief is not measured yet; slice 3 records it."
+  - "The small-workstream rule waits for this workstream to finish; the size notice names the largest open entries as its evidence."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner reviews and merges PR 88 with a merge commit. Then return HQ to a
+    clean current main and ask the owner whether to authorize slice 2.
+  acceptance_check:
+    - "PR 88 head contains this closeout; bun run check and bun run wake pass on it."
