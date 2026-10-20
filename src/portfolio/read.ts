@@ -3,6 +3,7 @@ import { basename, dirname, join, relative, resolve, sep } from "node:path";
 
 import { parseDocument } from "yaml";
 
+import { GitSession } from "../git/session.ts";
 import type {
   LifecycleGateState,
   PortfolioAttention,
@@ -26,12 +27,6 @@ interface ProjectIdentity {
 
 interface LocalBinding {
   path: string;
-}
-
-interface GitResult {
-  exitCode: number;
-  stderr: string;
-  stdout: string;
 }
 
 // The only outcome.status values the delivery machinery acts on. Everything
@@ -83,19 +78,6 @@ function canonicalizeRemote(remote: string): string {
   }
 
   return withoutGitSuffix.replace(/^\/+/, "");
-}
-
-async function runGit(repositoryPath: string, arguments_: string[]): Promise<GitResult> {
-  const process = Bun.spawn(["git", "-C", repositoryPath, ...arguments_], {
-    stderr: "pipe",
-    stdout: "pipe"
-  });
-
-  return {
-    exitCode: await process.exited,
-    stderr: await new Response(process.stderr).text(),
-    stdout: await new Response(process.stdout).text()
-  };
 }
 
 function extractProjectIds(plan: string): string[] {
@@ -260,7 +242,7 @@ async function readLocalBindings(repositoryPath: string): Promise<{ bindings: Ma
   return { bindings, errors };
 }
 
-async function observeProject(repositoryPath: string, project: ProjectIdentity, binding: LocalBinding | undefined): Promise<PortfolioProject> {
+async function observeProject(git: GitSession, repositoryPath: string, project: ProjectIdentity, binding: LocalBinding | undefined): Promise<PortfolioProject> {
   if (binding === undefined) {
     return {
       id: project.id,
@@ -280,7 +262,7 @@ async function observeProject(repositoryPath: string, project: ProjectIdentity, 
     };
   }
 
-  const remote = await runGit(path, ["remote", "get-url", "origin"]);
+  const remote = await git.run(path, ["remote", "get-url", "origin"]);
   if (project.repository.identity === "local-only" && remote.exitCode === 0) {
     return {
       id: project.id,
@@ -314,9 +296,9 @@ async function observeProject(repositoryPath: string, project: ProjectIdentity, 
   }
 
   const [head, branch, status] = await Promise.all([
-    runGit(path, ["rev-parse", "HEAD"]),
-    runGit(path, ["branch", "--show-current"]),
-    runGit(path, ["status", "--porcelain=v1"])
+    git.run(path, ["rev-parse", "HEAD"]),
+    git.run(path, ["branch", "--show-current"]),
+    git.run(path, ["status", "--porcelain=v1"])
   ]);
   if (head.exitCode !== 0 || branch.exitCode !== 0 || status.exitCode !== 0) {
     return {
@@ -630,6 +612,7 @@ function sharedTopicBranches(eventsByWorkstream: Map<string, WorkstreamEvent[]>)
 }
 
 async function deriveTerminalLifecycle(
+  git: GitSession,
   repositoryPath: string,
   workstream: PortfolioWorkstream,
   events: WorkstreamEvent[],
@@ -641,7 +624,7 @@ async function deriveTerminalLifecycle(
   }
 
   const eventPath = repositoryReference(repositoryPath, event.path);
-  const eventCommit = await runGit(repositoryPath, ["log", "-1", "--format=%H", "--", eventPath]);
+  const eventCommit = await git.lastCommitTouching(repositoryPath, "memory/events", eventPath);
   if (eventCommit.exitCode !== 0 || eventCommit.stdout.trim().length === 0) {
     return {
       decisionEventPath: null,
@@ -652,7 +635,7 @@ async function deriveTerminalLifecycle(
 
   const delivery = readDelivery(event);
   const remoteTarget = `refs/remotes/origin/${delivery.targetBranch}`;
-  const remoteExists = await runGit(repositoryPath, ["show-ref", "--verify", "--quiet", remoteTarget]);
+  const remoteExists = await git.run(repositoryPath, ["show-ref", "--verify", "--quiet", remoteTarget]);
   if (remoteExists.exitCode !== 0) {
     return {
       decisionEventPath: null,
@@ -661,7 +644,7 @@ async function deriveTerminalLifecycle(
     };
   }
 
-  const merged = await runGit(repositoryPath, ["merge-base", "--is-ancestor", eventCommit.stdout.trim(), remoteTarget]);
+  const merged = await git.isAncestor(repositoryPath, eventCommit.stdout.trim(), remoteTarget);
   if (merged.exitCode === 1) {
     return {
       decisionEventPath: null,
@@ -678,10 +661,10 @@ async function deriveTerminalLifecycle(
   }
 
   const [head, branch, status, targetHead] = await Promise.all([
-    runGit(repositoryPath, ["rev-parse", "HEAD"]),
-    runGit(repositoryPath, ["branch", "--show-current"]),
-    runGit(repositoryPath, ["status", "--porcelain=v1"]),
-    runGit(repositoryPath, ["rev-parse", remoteTarget])
+    git.run(repositoryPath, ["rev-parse", "HEAD"]),
+    git.run(repositoryPath, ["branch", "--show-current"]),
+    git.run(repositoryPath, ["status", "--porcelain=v1"]),
+    git.run(repositoryPath, ["rev-parse", remoteTarget])
   ]);
   if (
     head.exitCode !== 0 || branch.exitCode !== 0 || status.exitCode !== 0 || targetHead.exitCode !== 0 ||
@@ -704,9 +687,9 @@ async function deriveTerminalLifecycle(
 
   if (delivery.topicBranch !== null) {
     for (const reference of [`refs/heads/${delivery.topicBranch}`, `refs/remotes/origin/${delivery.topicBranch}`]) {
-      const exists = await runGit(repositoryPath, ["show-ref", "--verify", "--quiet", reference]);
+      const exists = await git.run(repositoryPath, ["show-ref", "--verify", "--quiet", reference]);
       if (exists.exitCode === 0) {
-        const fullyMerged = await runGit(repositoryPath, ["merge-base", "--is-ancestor", reference, remoteTarget]);
+        const fullyMerged = await git.isAncestor(repositoryPath, reference, remoteTarget);
         if (fullyMerged.exitCode !== 0) {
           return {
             decisionEventPath: null,
@@ -738,6 +721,7 @@ async function deriveTerminalLifecycle(
 // only fields a slice closeout already carries. Until it merges, or when Git
 // cannot say, the slice stays authorized, which is what it was before.
 async function deriveDeliveredSlice(
+  git: GitSession,
   repositoryPath: string,
   workstream: PortfolioWorkstream,
   events: WorkstreamEvent[],
@@ -764,12 +748,12 @@ async function deriveDeliveredSlice(
   }
 
   const closeoutPath = repositoryReference(repositoryPath, closeout.path);
-  const commit = await runGit(repositoryPath, ["log", "-1", "--format=%H", "--", closeoutPath]);
+  const commit = await git.lastCommitTouching(repositoryPath, "memory/events", closeoutPath);
   if (commit.exitCode !== 0 || commit.stdout.trim().length === 0) {
     return null;
   }
   const targetBranch = readDelivery(closeout).targetBranch;
-  const merged = await runGit(repositoryPath, ["merge-base", "--is-ancestor", commit.stdout.trim(), `refs/remotes/origin/${targetBranch}`]);
+  const merged = await git.isAncestor(repositoryPath, commit.stdout.trim(), `refs/remotes/origin/${targetBranch}`);
   if (merged.exitCode !== 0) {
     return null;
   }
@@ -799,12 +783,13 @@ function readStringList(record: Record<string, unknown>, key: string): string[] 
 // for a terminal closeout, applied to the record carrying the advice, so it
 // needs no new evidence field and no stored state.
 async function deriveNextActionState(
+  git: GitSession,
   repositoryPath: string,
   event: WorkstreamEvent,
   eventPath: string
 ): Promise<PortfolioLatestRecord["nextActionState"]> {
   const targetBranch = readDelivery(event).targetBranch;
-  const commit = await runGit(repositoryPath, ["log", "-1", "--format=%H", "--", eventPath]);
+  const commit = await git.lastCommitTouching(repositoryPath, "memory/events", eventPath);
   if (commit.exitCode !== 0 || commit.stdout.trim().length === 0) {
     return {
       detail: "This record is not committed in local Git history, so whether its next action has already been carried out cannot be established.",
@@ -813,7 +798,7 @@ async function deriveNextActionState(
   }
 
   const remoteTarget = `refs/remotes/origin/${targetBranch}`;
-  const remoteExists = await runGit(repositoryPath, ["show-ref", "--verify", "--quiet", remoteTarget]);
+  const remoteExists = await git.run(repositoryPath, ["show-ref", "--verify", "--quiet", remoteTarget]);
   if (remoteExists.exitCode !== 0) {
     return {
       detail: `No fetched ${remoteTarget} ref is available, so whether this record's next action has already been carried out cannot be established.`,
@@ -821,7 +806,7 @@ async function deriveNextActionState(
     };
   }
 
-  const merged = await runGit(repositoryPath, ["merge-base", "--is-ancestor", commit.stdout.trim(), remoteTarget]);
+  const merged = await git.isAncestor(repositoryPath, commit.stdout.trim(), remoteTarget);
   if (merged.exitCode === 1) {
     return {
       detail: `This record has not reached origin/${targetBranch}, so its next action has not travelled through a merge.`,
@@ -844,7 +829,7 @@ async function deriveNextActionState(
 // The most recent record for a workstream, read for what it tells a person to
 // do rather than for reconciliation. Knowing what was last proposed is what
 // makes a later change of direction legible instead of unexplained.
-async function readLatestRecord(repositoryPath: string, events: WorkstreamEvent[]): Promise<PortfolioLatestRecord | null> {
+async function readLatestRecord(git: GitSession, repositoryPath: string, events: WorkstreamEvent[]): Promise<PortfolioLatestRecord | null> {
   const event = events.at(-1);
   if (event === undefined) {
     return null;
@@ -854,7 +839,7 @@ async function readLatestRecord(repositoryPath: string, events: WorkstreamEvent[
   return {
     eventPath,
     nextAction,
-    nextActionState: await deriveNextActionState(repositoryPath, event, eventPath),
+    nextActionState: await deriveNextActionState(git, repositoryPath, event, eventPath),
     recordedAt: readString(event.value, "recorded_at"),
     unresolved: readStringList(event.value, "unresolved")
   };
@@ -880,21 +865,19 @@ function occupiesItsProjects(workstream: PortfolioWorkstream): boolean {
 }
 
 async function deriveLifecycle(
+  git: GitSession,
   repositoryPath: string,
   workstreams: PortfolioWorkstream[],
   projects: PortfolioProject[],
   eventsByWorkstream: Map<string, WorkstreamEvent[]>
 ): Promise<void> {
   const shared = sharedTopicBranches(eventsByWorkstream);
-  for (const workstream of workstreams) {
-    if (workstream.state !== "active") {
-      continue;
-    }
-    const terminalLifecycle = await deriveTerminalLifecycle(repositoryPath, workstream, eventsByWorkstream.get(workstream.id) ?? [], shared);
+  await Promise.all(workstreams.filter((workstream) => workstream.state === "active").map(async (workstream) => {
+    const terminalLifecycle = await deriveTerminalLifecycle(git, repositoryPath, workstream, eventsByWorkstream.get(workstream.id) ?? [], shared);
     if (terminalLifecycle !== null) {
       workstream.lifecycle = terminalLifecycle;
     }
-  }
+  }));
 
   const projectsById = new Map(projects.map((project) => [project.id, project]));
   const headquarters = headquartersProjectIds(repositoryPath, projects);
@@ -972,7 +955,7 @@ async function deriveLifecycle(
     const authorizedSlice = decisionAuthorizedSlice(decision, workstream);
     const deliveredSlice = authorizedSlice === null
       ? null
-      : await deriveDeliveredSlice(repositoryPath, workstream, eventsByWorkstream.get(workstream.id) ?? [], decision, authorizedSlice);
+      : await deriveDeliveredSlice(git, repositoryPath, workstream, eventsByWorkstream.get(workstream.id) ?? [], decision, authorizedSlice);
     if (deliveredSlice !== null) {
       workstream.lifecycle = deliveredSlice;
       continue;
@@ -1050,7 +1033,7 @@ function deriveAttention(repositoryPath: string, workstreams: PortfolioWorkstrea
   });
 }
 
-export async function readPortfolioWakeReport(repositoryDirectory = "."): Promise<PortfolioWakeReport> {
+export async function readPortfolioWakeReport(repositoryDirectory = ".", git = new GitSession()): Promise<PortfolioWakeReport> {
   const repositoryPath = resolve(repositoryDirectory);
   const validationErrors: PortfolioValidationError[] = [];
   const { errors: projectErrors, projects: projectIdentities } = await readProjectIdentities(repositoryPath);
@@ -1058,7 +1041,7 @@ export async function readPortfolioWakeReport(repositoryDirectory = "."): Promis
   const { bindings, errors: bindingErrors } = await readLocalBindings(repositoryPath);
   validationErrors.push(...bindingErrors);
 
-  const projects = await Promise.all(projectIdentities.map((project) => observeProject(repositoryPath, project, bindings.get(project.id))));
+  const projects = await Promise.all(projectIdentities.map((project) => observeProject(git, repositoryPath, project, bindings.get(project.id))));
   const workstreams: PortfolioWorkstream[] = [];
   const workstreamsDirectory = join(repositoryPath, "workstreams");
   if (!existsSync(workstreamsDirectory)) {
@@ -1075,10 +1058,10 @@ export async function readPortfolioWakeReport(repositoryDirectory = "."): Promis
 
   const checkpoints = await groupCheckpoints(repositoryPath, workstreams);
   validationErrors.push(...checkpoints.errors);
-  for (const workstream of workstreams) {
-    workstream.latestRecord = await readLatestRecord(repositoryPath, checkpoints.events.get(workstream.id) ?? []);
-  }
-  await deriveLifecycle(repositoryPath, workstreams, projects, checkpoints.events);
+  await Promise.all(workstreams.map(async (workstream) => {
+    workstream.latestRecord = await readLatestRecord(git, repositoryPath, checkpoints.events.get(workstream.id) ?? []);
+  }));
+  await deriveLifecycle(git, repositoryPath, workstreams, projects, checkpoints.events);
   return {
     attention: deriveAttention(repositoryPath, workstreams, projects),
     projects,
