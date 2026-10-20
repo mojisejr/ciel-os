@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261020T214627_ciel_hq_round_publication_closeout
+type: closeout
+recorded_at: 2026-10-20T21:46:27+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-hq-round-20261020
+  lane: single
+  objective: >-
+    Publish the hq/20261020 round, which carries only the CIEL handoff, so the
+    next session starts from a main that holds it. A round checkpoint, not a
+    delivery slice for any workstream.
+  scope:
+    - The agent pushed the standing branch on the owner's word, opened draft PR 89, prepared this checkpoint, and verifies the published head before marking it ready.
+  out_of_scope:
+    - Owner merge; any code, contract or product change.
+
+outcome:
+  status: recorded
+  owner_statement: >-
+    2026-10-20: asked whether to keep working on a standing branch or publish
+    first, the owner chose to publish ("push และเปิด PR เลยครับ").
+  state:
+    - "Draft PR 89 opened against main at 3193014e3597fa907cd8ba6c6720b418c895baff, 1 commit ahead of fetched origin/main and 0 behind; one file, the handoff record."
+  not_done:
+    - This record does not claim a merged PR or a synchronized main.
+
+evidence:
+  repository:
+    head: 3193014e3597fa907cd8ba6c6720b418c895baff
+    branch: hq/20261020
+    working_tree: this-record-only
+    fetched_base: 9c7730db19857857333c875e657a3008e88a628e
+  pull_request:
+    number: 89
+    url: https://github.com/mojisejr/ciel-os/pull/89
+    base: main
+    head_branch: hq/20261020
+    observed_head: 3193014e3597fa907cd8ba6c6720b418c895baff
+    observed_state: draft
+  semantic_sources:
+    handoff: memory/events/2026/10/20/20261020T214431_ciel_handoff_before_clear.yaml
+
+unresolved:
+  - Owner review and merge remain pending; synchronization follows the actual merge.
+  - "The handoff's waiting items stand: wake-weight slice 2 decision, hq/20261015 deletion, owner-contract slice 3 verdict."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Commit and push this record to PR 89, verify it is the PR head, mark the PR
+    ready; the owner merges; then return HQ to a clean current main before the
+    owner clears the session.
+  acceptance_check:
+    - PR 89 head contains the handoff and this checkpoint; bun run wake passes.
