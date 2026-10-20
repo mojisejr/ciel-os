@@ -83,4 +83,8 @@ export interface WakeReport {
   unknowns: string[];
   validationErrors: EventValidationError[];
   validationWarnings: EventValidationWarning[];
+  ownerOperatingContract: null | {
+    path: "OWNER.md";
+    text: string;
+  };
 }

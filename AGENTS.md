@@ -1,6 +1,6 @@
 # CIEL Operating Contract
 
-**Clients:** Codex and Claude. This file holds the shared operating contract; `CLAUDE.md` points to it and holds nothing else.
+**Clients:** Codex and Claude. This file holds the shared operating contract; `CLAUDE.md` imports it and holds only Claude-specific mechanics.
 
 ## CIEL's role
 
@@ -22,7 +22,7 @@ CIEL preserves evidence, decisions, and reconstructable context across disposabl
 On every fresh session, before giving a substantive answer or changing a file, perform this read-only Wake procedure. Do not require the human to invoke a separate skill.
 
 1. From the repository root, run `bun run wake`. Treat its output as local, read-only evidence; it validates events and reports current Git facts, the newest event, reconciliation, and unknowns.
-2. Read `README.md`, `OWNER.md`, and the task-relevant plan or Genesis document. `OWNER.md` is mandatory Wake input before Align.
+2. Read `README.md` and the task-relevant plan or Genesis document. When `OWNER.md` exists it is Wake input before Align; when it is absent, this contract applies alone.
 3. Identify the project/workstream explicitly. If multiple candidates fit, surface the ambiguity; do not choose silently.
 4. Inspect further Git history, code, tests, or issues only where the report or task requires it. Separate observed facts, recorded claims, inferences, decisions, and unknowns. State uncertainty rather than filling a gap with a confident guess.
 
@@ -38,10 +38,17 @@ On every fresh session, before giving a substantive answer or changing a file, p
 
 ### Owner operating contract
 
-`OWNER.md` contains only owner-confirmed working patterns and agent response
-rules. It is not a profile or personal-memory store. An agent may observe and
-suggest an interpretation, but only an explicit owner decision may change that
-file. Client bridges point to this shared boundary and do not copy its rules.
+`OWNER.md` is optional. When it exists, it contains only owner-confirmed
+working patterns and agent response rules. It is not a profile or
+personal-memory store. An agent may observe and suggest an interpretation, but
+only an explicit owner decision may change that file. Client bridges point to
+this shared boundary and do not copy its rules.
+
+No client has to remember to open it. Claude Code expands the import on the
+next line, and skips it silently when the file is absent. Wake prints the file
+last in its report for every client. A client that does neither reads the file.
+
+@OWNER.md
 
 ## Work lifecycle
 
@@ -92,7 +99,8 @@ reported by `bun run wake`. This file does not track them.
 
 - Keep this file concise, specific, and non-conflicting. State each rule once.
 - A client bridge carries pointers and client-specific mechanics only, never the only copy of a rule. A rule that applies to any client belongs here, stated once.
-- Put universal, durable CIEL rules here and confirmed owner-specific response rules in `OWNER.md`. Put task-specific procedures in a future skill only after repeat use justifies it; put path-specific rules next to the affected code only when that code exists.
+- Keep the layers apart. This file and an optional `OWNER.md` are the contract, and Wake is CIEL's code. A client bridge loads the contract by that client's own import. Hooks, launchers and terminals belong to the host machine, and CIEL does not reference them.
+- Put universal, durable CIEL rules here and confirmed owner-specific response rules in the optional `OWNER.md`. Put task-specific procedures in a future skill only after repeat use justifies it; put path-specific rules next to the affected code only when that code exists.
 - Review an instruction when a repeated failure, human correction, or measured evaluation shows that the instruction is needed or obsolete.
 
 ## Required final report

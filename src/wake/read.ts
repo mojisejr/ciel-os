@@ -363,8 +363,6 @@ export async function readWakeReport(repositoryDirectory = "."): Promise<WakeRep
         // every client; a bridge whose content drifts does not. Verifying the
         // managed section would need a checker that no evidence justifies yet.
         claudeMdPresent: await readIfPresent(join(repositoryPath, "CLAUDE.md")),
-        // Presence only. OWNER.md is human-authored meaning, so Wake must not
-        // parse it into a profile or claim that a client followed its rules.
         ownerOperatingContractPresent: await readIfPresent(join(repositoryPath, "OWNER.md")),
         readmePresent: await readIfPresent(join(repositoryPath, "README.md"))
       }
@@ -375,6 +373,23 @@ export async function readWakeReport(repositoryDirectory = "."): Promise<WakeRep
       "Human approval, review, and external rules are unknown unless a repository record explicitly establishes them."
     ],
     validationErrors: [...validation.errors, ...portfolio.validationErrors],
-    validationWarnings: [...validation.warnings, ...portfolio.validationWarnings]
+    validationWarnings: [...validation.warnings, ...portfolio.validationWarnings],
+    // Verbatim and last. OWNER.md is human-authored meaning, so Wake neither
+    // parses it into a profile nor claims a client followed it; it only puts
+    // the text in front of every client, at the end, where a read of the
+    // report's tail still finds it. An absent file is the standard contract.
+    ownerOperatingContract: await readOwnerOperatingContract(repositoryPath)
   };
+}
+
+async function readOwnerOperatingContract(
+  repositoryPath: string
+): Promise<WakeReport["ownerOperatingContract"]> {
+  const path = join(repositoryPath, "OWNER.md");
+
+  if (!existsSync(path)) {
+    return null;
+  }
+
+  return { path: "OWNER.md", text: await Bun.file(path).text() };
 }

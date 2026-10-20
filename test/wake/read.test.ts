@@ -211,10 +211,20 @@ test("observes whether the client bridge is present alongside the shared contrac
     expect(report.observed.instructions.claudeMdPresent).toBe(true);
     expect(report.observed.instructions.agentsMdPresent).toBe(true);
 
+    // No OWNER.md is the standard contract: nothing to echo, and no failure.
+    expect(report.ownerOperatingContract).toBeNull();
+    expect(report.validationErrors).toEqual([]);
+
     await writeFile(join(fixture.path, "OWNER.md"), "# fixture owner contract\n");
     report = await readWakeReport(fixture.path);
 
     expect(report.observed.instructions.ownerOperatingContractPresent).toBe(true);
+    expect(report.ownerOperatingContract).toEqual({
+      path: "OWNER.md",
+      text: "# fixture owner contract\n"
+    });
+    // Last in the report, so a read of the tail of Wake's output still finds it.
+    expect(Object.keys(report).at(-1)).toBe("ownerOperatingContract");
   } finally {
     await rm(fixture.path, { force: true, recursive: true });
   }

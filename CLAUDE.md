@@ -2,12 +2,11 @@
 
 <!-- ciel:managed:start -->
 
-This repository is CIEL. Its operating contract is `AGENTS.md`. Read that file
-and follow it as written; this bridge adds no rule of its own.
+@AGENTS.md
 
-Before any substantive answer or file change, run `bun run wake` from the
-repository root. It is an operating invariant, not an optional command, and it
-does not need a slash command or a skill to invoke it.
+This repository is CIEL. The import above loads its operating contract,
+`AGENTS.md`, and through it `OWNER.md` when that file exists. This bridge only
+loads them for Claude; it adds no rule of its own.
 
 While establishing a Wake fact, use only repository files and local Git. A
 global skill, global memory, prior session history, or an external service such
