@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T170846_mumate_bdash_v2_slice2_delivered
+type: closeout
+recorded_at: "2026-10-21T17:08:46+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Slice 2 delivered: bdash has five menus, one date range across them, live
+    reads with guards, and card C, on production since 2026-10-21 16:46 +07;
+    phone reading no longer stores the number.
+  scope:
+    - "Slice 2 of plan 0.2: bazi PR 57 (merge e78fd5b), staging check, production release and production checks."
+  out_of_scope:
+    - Slices 3 and 4; removing Omise from the payment system (mootech-fe); the nightly snapshot job (kept).
+
+outcome:
+  status: ready-for-owner-merge
+  done:
+    - "bazi-sft-dataset PR 57 merged by the owner into pdf-dev at e78fd5bae6dacd62c0026282bd6a49aad221ac74; released by promote-production run 39579413643 at 09:46:28Z, 0 5xx of 39 requests in the 5 minutes after."
+    - "The owner's change during review, on his word: payments show one row per method with no Beam/Omise split; Omise's old payments still count under their method."
+    - "Phone reading on production after the release (owner's walk): 1 row with the member id and no label."
+    - "Card C people counts: the query the code builds (queryPeopleTotals, SQL taken from drizzle and run on pgstaging for 30 days) returned chat 1 (2 questions), เซียมซี 1, ทำนายเบอร์ 1, ไพ่เทวะ 1, ไพ่ออราเคิล 1 = the direct count on the same copy."
+    - "Slowest bdash query on production after the owner opened bdash: 182 ms (features, 90 days, ai_buckets); overview 40 ms, stay 37 ms, money 11 ms. On staging (same data size): 89 ms."
+    - "Owner opened production bdash and found it fine ('ผมลองเปิดแล้วโอเคเลย'); the team already has access with its passkey (owner's word)."
+  acceptance:
+    - "390 and 1280 px, light and dark, every menu: no sideways scroll, chart text >= 11 px (12.1 px phone, 12.5 px desktop), 5 rows then 'ดูทั้งหมด' on phones: met on the local render check."
+    - "Range carries across menus and survives a copied link: met."
+    - "Card C people counts match a direct count on the staging copy: met (code-built query vs direct count)."
+    - "Slowest query of each page logged on production and under the timeout: met (182 ms)."
+    - "Team opens bdash with its passkey: met on the owner's word."
+    - "Caddy and the bazi door answer 404 outside /bdash/*: met on staging and production."
+    - "A phone reading writes a usage row with the member id and no number: met on production."
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  decision: memory/events/2026/10/21/20261021T142507_mumate_bdash_v2_slice2_authorized.yaml
+  repository:
+    head: "639d071a39c8b9039c6330e8450fba1cea4cf266"
+    branch: feat/mumate-bdash-v2
+    working_tree: this-record-and-slice1-closeout
+  delivery:
+    target_branch: main
+    topic_branch: feat/mumate-bdash-v2
+  related:
+    - memory/events/2026/10/21/20261021T162800_mumate_bdash_v2_slice2_built_on_staging.yaml
+    - memory/events/2026/10/21/20261021T165231_mumate_bdash_v2_slice2_released_checks_owed.yaml
+    - memory/events/2026/10/21/20261021T170825_mumate_bdash_v2_slice1_delivered.yaml
+    - "bazi-sft-dataset PR 57; mumate-infra promote-production run 39579413643"
+
+unresolved:
+  - "The overview summary sentence was approved with the page as a whole, not by name."
+  - "Card C counts people only from 2026-10-21; ranges before that show uses and AI cost only, and the page says so."
+  - "Omise is still in the payment system of the app (mootech-fe); only bdash stopped showing the split."
+  - "Rule-change markers: one so far (2026-10-20 card free 2 to 1); the team adds more by PR in src/lib/bdash/features.ts."
+  - "Cause of the production db_query_stall bursts at 05:2x and 05:4x UTC on 2026-10-21 is unknown."
+  - "MuMate open items: Loki image measurement before about 2026-10-28 (production read on the owner's word); staging copy delete before 2026-11-04; DB password and token rotations."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner pushes ciel-os feat/mumate-bdash-v2 and merges it into main. Slice 3
+    (who paid, and do they buy again) opens on its own owner decision, in a
+    fresh session that starts from this record.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/mumate-bdash-v2-001/slices/2.md."

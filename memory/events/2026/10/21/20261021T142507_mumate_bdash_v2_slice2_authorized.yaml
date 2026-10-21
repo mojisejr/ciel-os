@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T142507_mumate_bdash_v2_slice2_authorized
+type: decision
+recorded_at: "2026-10-21T14:25:07+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Raise the plan to 0.2 so slice 2 also stops phone reading from storing the
+    number, and authorize slice 2: five menus, the range bar and card C.
+  scope:
+    - "Plan 0.2 slice 2 as written in workstreams/mumate-bdash-v2-001/slices/2.md, including item 6 (phone reading usage row records the member, not the number)."
+  out_of_scope:
+    - Slices 3 and 4 (each needs its own decision); /ops; clearing the number from phone reading rows written before slice 2 ships (a separate owner decision).
+
+outcome:
+  status: decided
+  slice: "2"
+  parallelism: approved
+  parallelism_basis: >-
+    Carried from the slice 1 decision, where the owner approved working
+    alongside the other lane ("ทำคู่กับอีก lane ได้"); the basis is unchanged:
+    mumate-image-weight-001 shares mootech-fe, but its only open item is a
+    read-only Loki measurement, and slice 2 changes bazi only. The owner was
+    told of this carry-over when slice 2 opened.
+  decision: >-
+    After the slice 1 staging walk showed phone reading storing
+    'วิเคราะห์เบอร์ <number>' beside the member id, the owner chose to fix it
+    inside slice 2 rather than in a separate PR ("แก้ไปพร้อมกับ การทำ slice 2
+    ไม่ได้เหรอ ? จะได้ไม่ต้อง มี หลาย PR"), and to release slice 1 first and
+    build the rest one slice at a time ("งั้น เอาตามคุนครับ"). He then
+    authorized slice 2 ("โอเค เปิด slice 2 ได้เลยถ้าเกิดว่ามันทำได้เลย").
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "1c6d177e93a8a1842a2df5f700d6fd5857030b13"
+    branch: feat/mumate-bdash-v2
+    working_tree: this-decision-and-plan-only
+  related:
+    - memory/events/2026/10/21/20261021T142335_mumate_bdash_v2_slice1_released_count_pending.yaml
+
+unresolved:
+  - "Slice 1 still owes its production count of member ids (owner's word naming the read) and its delivery closeout."
+  - "Card C counts people only from the slice 1 release, 2026-10-21T07:08:16Z."
+  - "The overview summary sentence needs the owner's approval of its wording."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 2 on a bazi topic branch from pdf-dev: five routes with the
+    menu bar and range bar, guarded live reads, card C, the overview, the
+    readability fixes and the phone-label fix; render samples at 390 and 1280,
+    light and dark, for the owner before the PR leaves draft.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/mumate-bdash-v2-001/slices/2.md."

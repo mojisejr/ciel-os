@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T111259_mumate_bdash_v2_opened_slice1_authorized
+type: decision
+recorded_at: 2026-10-21T11:12:59+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Open bdash v2 from the business team's 2026-10-21 request and authorize
+    slice 1: every AI usage row and every chat reply records which member it
+    was for, so bdash can count people per feature and chat topics from the
+    day it ships.
+  scope:
+    - "Plan 0.1 slice 1: fe chat proxy forwards the member id to bazi; bazi card, narrate and reading routes pass the id to their usage logs; staging rehearsal on a refreshed staging copy; release with the next production press."
+  out_of_scope:
+    - Slices 2-4 (each needs its own decision); any migration; /ops; storing question or answer text.
+
+outcome:
+  status: decided
+  slice: "1"
+  parallelism: approved
+  decision: >-
+    The team answered the owner's question in chat on 2026-10-21: "จำนวนคนที่
+    เข้าในแต่ละfeature" and a 7/30/90/custom range ("และเลือกcustom ได้"). After
+    three rounds of samples rendered on the real /bdash page, the owner chose
+    card C, a payer list with names only, people who actually used a feature
+    ("เราบอกว่าเราจะทำในสิ่งที่ GA4 ให้ไม่ได้"), recording who used what if it
+    is safe for members, live reads with guards, chat topics instead of
+    keywords, and five menus with a bottom bar on phones. He confirmed the plan
+    ("ผม confirm แผนนี้ละครับ"), asked when migrations are needed (none, per the
+    schema checks on the staging copy), and authorized slice 1 alongside the
+    other lane ("เริ่มเลยครับ slice 1 และทำคู่กับอีก lane ได้").
+  parallelism_basis: >-
+    mumate-image-weight-001 shares mootech-fe, but its only open item is a
+    read-only Loki measurement; it changes no fe code.
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "cbb6a38755af954fbab2715837d2da3dba4df9ee"
+    branch: feat/mumate-bdash-v2
+    working_tree: this-decision-and-plan-only
+  related:
+    - memory/events/2026/10/15/20261015T172613_mumate_bdash_next_items_wait_for_team.yaml
+
+unresolved:
+  - "Slices 2-4 need their own decisions; slice 4 waits two to three weeks of data after slice 1 ships."
+  - "Two members bought PLUS yearly and PRO yearly on the same day (staging copy); the team should check upgrade or double payment."
+  - "The 20261015T172613 finding that per-member AI cost may need no code is wrong in data: no usage row carries a member id."
+  - "Production schema was not read directly; the staging copy (backup ~2026-10-15) and an unchanged bazi schema since 2026-10-14 stand in for it."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 1: fe PR to main forwarding the member id; bazi PR to pdf-dev
+    passing the id in card, narrate and reading routes and their pages; refresh
+    the staging copy; rehearse on staging after merge; release with the owner's
+    promote-production press; record the closeout.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/mumate-bdash-v2-001/slices/1.md."

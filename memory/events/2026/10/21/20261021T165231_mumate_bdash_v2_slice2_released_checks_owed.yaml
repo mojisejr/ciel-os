@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T165231_mumate_bdash_v2_slice2_released_checks_owed
+type: closeout
+recorded_at: "2026-10-21T16:52:31+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Checkpoint: slice 2 is merged and on production. Its production checks
+    (member-id counts for card C, the slowest query per page on production,
+    the team opening bdash) are still owed, so slice 2 is not yet delivered.
+  scope:
+    - "Owner merged bazi PR 57; staging hold removed; staging followed the merge; runbook 01 readiness; promote-production on the owner's word ('คุนทำต่อได้เลย'); post-release checks; local cleanup."
+  out_of_scope:
+    - Production database reads (need the owner's word naming the read).
+    - Slices 3 and 4.
+
+outcome:
+  status: recorded
+  done:
+    - "bazi PR 57 merged by the owner into pdf-dev at e78fd5bae6dacd62c0026282bd6a49aad221ac74 (2026-10-21T09:30:02Z)."
+    - "/opt/mumate/staging-hold removed 09:31Z; staging-follow deployed fe 2fce43b / bazi e78fd5b at 09:34:35Z; bdash-stg answers 401 on /bdash."
+    - "Runbook 01 readiness: production all green; 0 5xx in 30 min; 0 db_query_stall and 0 gave_up in 2 h; the release carries only PR 57 (bazi 8e51ac7..e78fd5b, fe unchanged), no migration, no new env; staging soaked 10 min."
+    - "promote-production run 39579413643 by mojisejr at the owner's word: success; production fe 2fce43b / bazi e78fd5b healthy at 09:46:28Z; 0 5xx of 39 requests in the 5 minutes after; bazichart.mumate.co/api/health ok."
+    - "Production bdash host (bdash.staging.mumate.co, prod-1): /bdash and /bdash/features answer 401 without the passkey, /api/health and /ops 404. To 09:52Z: no stall, error or 5xx lines; no bdash_query lines yet, as nobody had opened the new bdash."
+    - "Local cleanup: bazi dev server on :3010 stopped, container bdash-s2-pg removed; bazi-sft-dataset detached at origin/pdf-dev e78fd5b, topic branch deleted locally; bazi-testenv pdf-dev fast-forwarded to e78fd5b."
+  state_at_record:
+    - "Production: fe 2fce43b / bazi e78fd5b. Staging: same pair, following main."
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "48e2c6baa3c9ba6acd3aa58ed744693336fb0e38"
+    branch: feat/mumate-bdash-v2
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/21/20261021T162800_mumate_bdash_v2_slice2_built_on_staging.yaml
+    - memory/events/2026/10/21/20261021T142335_mumate_bdash_v2_slice1_released_count_pending.yaml
+    - "bazi-sft-dataset PR 57; mumate-infra promote-production run 39579413643"
+
+unresolved:
+  - "Slice 2 acceptance still owed on production: the slowest bdash query per page in the logs (appears once someone opens the new bdash), the team opening bdash with its passkey and switching ranges and menus, and card C's people counts against a direct count."
+  - "Slice 1 acceptance still owes the production member-id count per feature; one read-only count on the owner's word can close slices 1 and 2 together."
+  - "Overview summary sentence: approved with the page as a whole, not by name."
+  - "Phone reading rows written between 07:08Z and 09:46Z on 2026-10-21 carry the number with the member id; clearing them is an owner decision."
+  - "Cause of the production db_query_stall bursts at 05:2x and 05:4x UTC on 2026-10-21 is unknown."
+  - "Removing Omise from the payment system itself (mootech-fe) was not done; bdash only stopped showing the split."
+  - "ciel-os branch feat/mumate-bdash-v2 is not pushed; the HQ push is the owner's."
+  - "MuMate open items: Loki image measurement before about 2026-10-28 (production read on the owner's word); staging copy delete before 2026-11-04; DB password and token rotations."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    On the owner's word naming the read, count on production (read-only role,
+    counts only) the usage rows since 2026-10-21T07:08:16Z per feature and how
+    many carry the member id, and card C's people per feature for a chosen
+    range; read the bdash_query lines on prod-1 after the owner or the team
+    opens bdash; then record the slice 1 and slice 2 delivery closeouts.
+    Slice 3 opens only on its own owner decision.
+  acceptance_check:
+    - "Slice 1 and slice 2 acceptance in workstreams/mumate-bdash-v2-001/slices/1.md and 2.md."
