@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T200936_ciel_office_plan_0_3_rollback_and_removal
+type: decision
+recorded_at: 2026-10-21T20:09:36+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-office-001
+  lane: single
+  objective: >-
+    Raise the plan to 0.3: three removal levels with a check, at most three
+    cards a run, no self-trigger, and a webhook of the office's own.
+  scope:
+    - "Plan 0.3 slice 1 gains the removal runbook, the card cap and self-trigger tests, and removal acceptance checks."
+  out_of_scope:
+    - Authorizing slice 1.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner asked whether rollback and removal were prepared in case the
+    office does not work. The agent showed what the office touches, three
+    removal levels, and the failure modes with their guards, and recommended
+    adding them as plan 0.3. The owner said "เพิ่ม แล้วรอ คำว่า go อย่าเพิ่ง go".
+    Slice 1 is not authorized.
+  completed:
+    - Added the rollback and removal section and the guards to PLAN.md and slice 1.
+
+evidence:
+  plan: workstreams/ciel-office-001/PLAN.md
+  plan_revision: "0.3"
+  authorization:
+    observed_directly_by_this_session: true
+    owner_instruction: "เพิ่ม แล้วรอ คำว่า go อย่าเพิ่ง go"
+  repository:
+    head: "a4db35affd140204cc4ac895952b902bae01bad2"
+    branch: feat/ciel-office
+    working_tree: this-decision-and-plan-only
+  related:
+    - memory/events/2026/10/21/20261021T193606_ciel_office_plan_0_2_closeout_signal.yaml
+
+unresolved:
+  - "Unverified until slice 1: that launchd fires on Git's append to .git/logs/HEAD, and that say and the Discord post work from a LaunchAgent."
+  - "Unverified assumption behind rejecting post-commit: that a sandboxed agent session blocks the hook's network call or detached process."
+  - "Closeouts carry few URLs and are often committed before the PR is ready, so the card's PR and test links may be sparse."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Wait for the owner's go on slice 1; then record the slice 1 decision and
+    build it.
+  acceptance_check:
+    - "Wake reports ciel-office-001 at plan 0.3 with one declared slice and no validation errors."

@@ -3,7 +3,7 @@
 **Workstream:** `ciel-office-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -85,9 +85,34 @@ for each: card to Discord + one Thai sentence spoken; remember its event id
 - **Failures speak.** A failed Discord post adds "ส่ง Discord ไม่สำเร็จ"; an
   unreadable event is announced with its path; a failed `gh` lookup prints
   "เช็ก PR ไม่ได้" on the card. Each run appends one line per channel to a log.
+- **At most three cards a run.** Further new closeouts become one line,
+  "อีก N รายการ", and are recorded as seen.
+- **No self-trigger.** The scan only reads Git, with `GIT_OPTIONAL_LOCKS=0`,
+  and writes nothing under `ciel-os/.git`; the LaunchAgent sets a
+  `ThrottleInterval`.
+- **Own webhook.** The office uses a webhook made for it alone, not shared with
+  opilot, so it can be revoked on its own.
 - **Places outside Git.** Webhook: `~/.config/ciel-office/env`, mode 600. Seen
   list and log: `~/.local/state/ciel-office/`. LaunchAgent:
   `~/Library/LaunchAgents/`.
+
+## Rollback and removal
+
+The office changes nothing the agents or CIEL read: not `~/.claude`,
+`~/.codex`, shell files, Git config or any file in `ciel-os`. Removal therefore
+restores nothing; it only stops and deletes the office's own pieces.
+
+1. **Pause.** `launchctl bootout` the LaunchAgent; every file stays. Loading it
+   again resumes without re-announcing, because the seen list is kept.
+2. **Remove from the machine.** Pause, then delete the LaunchAgent file,
+   `~/.config/ciel-office` and `~/.local/state/ciel-office`; the clone may stay
+   or go.
+3. **Retire.** The owner deletes the Discord webhook and archives the GitHub
+   repository (archive, not delete); a closeout in this workstream records the
+   retirement. Earlier events stay, as the event log is append-only.
+
+Check: `launchctl print` for the label reports it absent, and a test closeout
+commit produces no card and no sound.
 
 ## Slices
 
@@ -101,7 +126,6 @@ for each: card to Discord + one Thai sentence spoken; remember its event id
   read is announced, never skipped silently.
 - The office only reads Git and GitHub: no event, commit, push or PR.
 - No vendor hook, model call, daemon or long-running process.
-- Removal: unload and delete the LaunchAgent; nothing in `ciel-os` changes.
 - Out of scope: per-turn or permission-wait alerts, replying from the phone,
   a dashboard, LINE, Wake-derived workstream alerts, quiet hours, deadline
   reminders, repositories other than `ciel-os`. Each is a later owner decision.
