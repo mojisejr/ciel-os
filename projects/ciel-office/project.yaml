@@ -1,0 +1,6 @@
+schema_version: ciel.project.v0.1
+id: ciel-office
+repository:
+  vcs: git
+  canonical_remote: github.com/mojisejr/ciel-office
+  default_branch: main
