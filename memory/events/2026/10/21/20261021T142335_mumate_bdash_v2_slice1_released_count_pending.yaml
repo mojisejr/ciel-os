@@ -1,0 +1,75 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T142335_mumate_bdash_v2_slice1_released_count_pending
+type: closeout
+recorded_at: "2026-10-21T14:23:35+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Checkpoint: slice 1 passed its staging rehearsal and is on production. The
+    production count of member ids is still owed, so slice 1 is not yet
+    delivered.
+  scope:
+    - "Staging check, staging copy refresh (runbook 05), owner's staging walk and counts, runbook 01 readiness, promote-production on the owner's word, post-release checks."
+  out_of_scope:
+    - Slice 2 and later.
+    - The production count of member ids (refused by the harness on the second production read; needs the owner's word again).
+
+outcome:
+  status: recorded
+  done:
+    - "Staging ran bazi 8e51ac7 and fe 2fce43b; fe 2fce43b is eb9088c plus the team's #922 (account course card only, no chat file)."
+    - "Staging copy refreshed from pg/mumate-2-20261021T020419Z.sql.gz: 191 public tables, 5493 users, 2 psql errors as before; delete before 2026-11-04. The first up failed at DROP (a postgres.js client of staging fe/bazi reconnected between terminate and drop) with the old copy intact; stopping fe and bazi first, then up, then recreating them with --profile full worked. Staging fe and bazi env checked to point at pgstaging by key name before the recreate."
+    - "Before the walk, no usage row on the copy carried a member id except one reading_topic row; mate_ai_chat_meta had 0 rows."
+    - "Owner walked staging with one test account. Rows since the refresh, all from that one member: oracle 1, divine 1, fortune sage 1, phone reading 1, each with the member id; card and sage rows have no label; chat 2 questions gave 4 open_webui_usage rows (fixed labels triage and reply) and 2 mate_ai_chat_meta rows with topic, persona and timeframe; bazi_feature_quota chat used 2, card used 4, no QI ledger row (free daily quota covered them), so chat was charged once per question. The calendar was opened but its AI button was not pressed, so almanac had 0 rows; it shares the narrate route that phone reading proved. Reading topic was skipped."
+    - "Migration 0056 is the team's (bazi 57407cd, Jaroensak); our PRs touch no migration. It was absent from the 02:04Z backup and present on production at 07:22Z (read-only check of the activity_coupon constraint)."
+    - "Runbook 01 readiness: production all green, 0 5xx in 3 h; db_query_stall bursts on production bazi at 05:2x and 05:4x UTC (13 gave_up, 35 s each) on the old pair, cause unknown; quiet from 05:47:58Z. Env keys BAZI_CLIENT_ID_SECRET and OPS_ADMIN_SECRET present on prod-1 (key names only). The owner chose to release before the 2 h window cleared."
+    - "promote-production run 39559803840 by mojisejr at the owner's word: success; production fe 2fce43b / bazi 8e51ac7 healthy at 07:08:26Z; 0 5xx of 17 requests in the 5 minutes after; bazichart.mumate.co/api/health sha 2fce43b; no stall, gave_up, 5xx or error line in fe and bazi logs to 07:14Z."
+    - "First production count (read-only role mumate_backup from mumate-2, counts only, 07:22Z): 0 new usage rows in any table since the release. The access log shows no AI route call after the release in that window (the 15 reading/topic calls were at 07:05Z, before it), so this does not test the change."
+  side_effects:
+    - "Everything the team had tested on staging since 2026-10-15 is gone (the copy is dropped and reloaded by design); staging fe/bazi were down about 3 minutes."
+    - "arena.sh sent its info alert (staging DB ready) and the release sent its production alerts to the alert channel."
+  owner_decisions:
+    - "Phone reading writes 'วิเคราะห์เบอร์ <number>' as its usage label, so from this release the number sits beside the member id. Not shown on bdash; /stats already showed the number without the member. Owner chose on 2026-10-21 to fix it inside slice 2 rather than in a separate PR, accepting that rows until slice 2 ships carry the number with the member id."
+    - "Owner chose to release slice 1 now and build slices 2-4 one at a time, rather than holding everything for one release."
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 1d07c8ce82cc39d500b4b50e1269f89ff846a1d1
+    branch: feat/mumate-bdash-v2
+    working_tree: this-record-only
+  host:
+    mumate-2: "infra 9549c03; runbook 05 followed, plus stopping fe and bazi before up."
+    mumate-prod-1: "fe 2fce43b38a82e947c60657935ac6cf8285b650a5, bazi 8e51ac7a8302f7a85ff9d2df498ac3a52db9c8bd, deploy-history by=mojisejr."
+  related:
+    - memory/events/2026/10/21/20261021T123108_mumate_bdash_v2_slice1_merged_rehearsal_next.yaml
+    - memory/events/2026/10/21/20261021T111259_mumate_bdash_v2_opened_slice1_authorized.yaml
+    - "mumate-infra promote-production run 39559803840"
+
+unresolved:
+  - "Slice 1 acceptance still owes the production count: new rows carrying the member id for each feature. The second production read was refused by the harness; it needs the owner's word naming that read."
+  - "Phone reading usage rows on production carry the number with the member id until slice 2 ships; whether to clear the number from those rows then is an owner decision."
+  - "Cause of the production db_query_stall bursts at 05:2x and 05:4x UTC on 2026-10-21 is unknown; one candidate, unverified, is the team running 0056 or course queries then."
+  - "staging-db.sh up can fail at DROP while staging fe/bazi hold a pool; workaround: docker compose --profile full stop fe bazi before up."
+  - "fe verify-architecture still blocks pushes on four violations already on main; bazi tests/member-client-secret.test.ts M5 still fails on the team's course-access route."
+  - "ciel-os branch feat/mumate-bdash-v2 is not pushed; the HQ push is the owner's."
+  - "MuMate open items: Loki image measurement before about 2026-10-28 (production read on the owner's word); staging copy delete before 2026-11-04; DB password and token rotations; deletions on the owner's word; old card and fortune-stick rows still hold question text."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    On the owner's word naming the read, count on production (read-only role,
+    counts only) the rows since 2026-10-21T07:08:16Z per feature and how many
+    carry the member id, plus mate_ai_chat_meta rows with a topic; check
+    production 5xx over the release window; then record the slice 1 delivery
+    closeout. Slice 2 opens only on its own owner decision, which also raises
+    the plan to carry the phone-label fix.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/mumate-bdash-v2-001/slices/1.md."
