@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T170825_mumate_bdash_v2_slice1_delivered
+type: closeout
+recorded_at: "2026-10-21T17:08:25+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Slice 1 delivered: every AI usage row the members' app writes now records
+    which member it was for, on production since 2026-10-21 14:08 +07.
+  scope:
+    - "Slice 1 of plan 0.1 (carried unchanged into 0.2): fe PR 921, bazi PR 56, staging rehearsal, production release and the production count."
+  out_of_scope:
+    - Slices 2-4 (slice 2 has its own delivery closeout).
+
+outcome:
+  status: ready-for-owner-merge
+  done:
+    - "Code: mootech-fe PR 921 (main eb9088c) and bazi-sft-dataset PR 56 (pdf-dev 8e51ac7), merged by the owner."
+    - "Staging rehearsal on a refreshed copy: oracle, divine, fortune sage and phone reading rows carried the member id; chat wrote 2 rows per question with the member id and mate_ai_chat_meta with topic, persona and timeframe; QI was charged once per chat question (free daily quota)."
+    - "Release: promote-production run 39559803840 at 07:08:26Z (fe 2fce43b / bazi 8e51ac7), 0 5xx in the 5 minutes after."
+    - "Production count on the owner's word (read-only role, counts only, 10:07Z), rows since 07:08:16Z: oracle 1, divine 2, fortune sage 1, phone reading 1, chat 2 (reply + triage), mate_ai_chat_meta 1 with topic, persona and timeframe; every row carries the member id; card and fortune-stick rows have no label. Most of these came from the owner's own walk on production."
+    - "Almanac and reading topic had no production rows: the members' app calendar (/v2/calendar) makes no AI call, and no chat in the window grounded through the topic route. Both pass the id through the same narrate and topic routes the tests cover, and phone reading proved the narrate path in production."
+    - "Production 5xx since the release: 0 (5 minute checks after both releases; no error lines)."
+  acceptance:
+    - "On staging, every feature walked writes usage rows with the member id, and chat writes mate_ai_chat_meta with a topic and no text: met."
+    - "QI is charged once per question: met on staging."
+    - "No migration; tests cover the forwarded header and each route passing the id: met (fe and bazi PRs)."
+    - "After release, a production count shows new rows carrying the member id for each feature: met for chat, both card decks, fortune sage and phone reading; almanac and topic not exercised in production (see done)."
+    - "No rise in production 5xx in the release window: met."
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  decision: memory/events/2026/10/21/20261021T111259_mumate_bdash_v2_opened_slice1_authorized.yaml
+  repository:
+    head: "639d071a39c8b9039c6330e8450fba1cea4cf266"
+    branch: feat/mumate-bdash-v2
+    working_tree: this-record-and-slice2-closeout
+  delivery:
+    target_branch: main
+    topic_branch: feat/mumate-bdash-v2
+  related:
+    - memory/events/2026/10/21/20261021T142335_mumate_bdash_v2_slice1_released_count_pending.yaml
+    - "mootech-fe PR 921; bazi-sft-dataset PR 56; mumate-infra promote-production run 39559803840"
+
+unresolved:
+  - "Old card and fortune-stick usage rows (before 2026-10-21) still hold question text; clearing them is a separate owner decision."
+  - "No phone reading row on production carries a number with the member id: the count between the two releases was 0, so there is nothing to clear."
+  - "fe verify-architecture still blocks pushes on four violations already on main; bazi M5 test still fails on the team's course-access route."
+  - "Cause of the production db_query_stall bursts at 05:2x and 05:4x UTC on 2026-10-21 is unknown."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner pushes ciel-os feat/mumate-bdash-v2 and merges it into main with
+    the slice 2 delivery closeout.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/mumate-bdash-v2-001/slices/1.md."
