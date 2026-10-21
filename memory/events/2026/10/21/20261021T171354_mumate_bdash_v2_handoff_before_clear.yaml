@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T171354_mumate_bdash_v2_handoff_before_clear
+type: closeout
+recorded_at: "2026-10-21T17:13:54+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Handoff before /clear: slices 1 and 2 are delivered and on production; the
+    HQ record is in ciel-os PR 95 for the owner to merge. Cold-session entry
+    for slice 3.
+  scope:
+    - "ciel-os PR 95 (feat/mumate-bdash-v2 to main): the workstream's plan, two decisions, slice 1 and slice 2 closeouts."
+  out_of_scope:
+    - Slice 3 build (needs its own decision in a fresh session).
+
+outcome:
+  status: ready-for-owner-merge
+  state_at_record:
+    - "Production: fe 2fce43b / bazi e78fd5b (released 2026-10-21 09:46:28Z). Staging: same pair, following main, no hold."
+    - "bdash on production is bdash.staging.mumate.co (prod-1, the team's); staging bdash is bdash-stg.staging.mumate.co (mumate-2). The names mislead."
+    - "Usage rows carry the member id since 2026-10-21 07:08:16Z; card C counts people from 2026-10-21."
+    - "Child checkouts clean: mootech-fe main 2fce43b; bazi-sft-dataset detached at origin/pdf-dev e78fd5b; bazi-testenv pdf-dev e78fd5b. Local throwaway Postgres and dev server removed."
+    - "Staging copy: pgstaging from the 2026-10-21 backup, delete before 2026-11-04."
+  how_slices_ran:
+    - "Build on a child topic branch, draft PR with the CIEL sections plus the repo's Deploy impact checklist; check on staging by holding it on the branch (runbook 01: staging-hold, container-build target staging, release env=staging) before merge; owner merges; remove the hold; runbook 01 readiness; promote-production on the owner's word (the agent's press passed twice on 2026-10-21); production counts read-only on the owner's word via the mumate_backup role from mumate-2."
+  next_slices:
+    - "Slice 3, who paid and do they buy again (workstreams/mumate-bdash-v2-001/slices/3.md): payer list with names only, shortened for phones, on /bdash/money; one-time vs repeat buyers and days between purchases. Samples approved on 2026-10-21 (round 2/3)."
+    - "Slice 4, chat topics: waits two to three weeks of mate_ai_chat_meta data after 2026-10-21."
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  decision: memory/events/2026/10/21/20261021T142507_mumate_bdash_v2_slice2_authorized.yaml
+  repository:
+    head: "4e889cafffc70696fdcfea6f83ba2ddc4fc270f0"
+    branch: feat/mumate-bdash-v2
+    working_tree: this-record-only
+  delivery:
+    target_branch: main
+    topic_branch: feat/mumate-bdash-v2
+  pull_request:
+    number: 95
+    url: https://github.com/mojisejr/ciel-os/pull/95
+    base: main
+    head: feat/mumate-bdash-v2
+    observed_head: "4e889cafffc70696fdcfea6f83ba2ddc4fc270f0"
+  related:
+    - memory/events/2026/10/21/20261021T170825_mumate_bdash_v2_slice1_delivered.yaml
+    - memory/events/2026/10/21/20261021T170846_mumate_bdash_v2_slice2_delivered.yaml
+
+unresolved:
+  - "Overview summary sentence on /bdash: approved with the page as a whole, not by name."
+  - "Omise is still in the app's payment system (mootech-fe); bdash only stopped showing the split."
+  - "Old card and fortune-stick usage rows (before 2026-10-21) still hold question text; clearing them is an owner decision."
+  - "Cause of the production db_query_stall bursts at 05:2x and 05:4x UTC on 2026-10-21 is unknown; a candidate, unverified, is the team running 0056 or course queries then."
+  - "staging-db.sh up can fail at DROP while staging fe/bazi hold a pool; workaround: docker compose --profile full stop fe bazi before up."
+  - "fe verify-architecture blocks pushes on four violations already on main (push with --no-verify on the owner's word); bazi M5 test fails on the team's course-access route; full bazi vitest has 10 failures that also fail on unchanged pdf-dev."
+  - "MuMate open items: Loki image measurement before about 2026-10-28 (production read on the owner's word); staging copy delete before 2026-11-04; DB password and token rotations."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner merges ciel-os PR 95 with a merge commit, then /clear. Next session:
+    return HQ to a clean current main, delete the merged topic branch, Wake
+    (bun run wake --workstream mumate-bdash-v2-001), read this record and
+    slices/3.md, and ask the owner to authorize slice 3.
+  acceptance_check:
+    - "After the merge, Wake shows slice 2 delivered and slice 3 needing an owner decision."
