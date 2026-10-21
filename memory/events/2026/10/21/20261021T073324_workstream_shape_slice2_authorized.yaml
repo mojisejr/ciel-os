@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T073324_workstream_shape_slice2_authorized
+type: decision
+recorded_at: 2026-10-21T07:33:24+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-workstream-shape-001
+  lane: single
+  objective: >-
+    Authorize slice 2: convert this workstream's own plan to the split shape
+    and prove it with cold headless sessions, auto memory off.
+  scope:
+    - "Plan 0.2 slice 2. Plan revision 0.2 is the split-shape conversion that slice 2 calls for: PLAN.md plus slices/1.md and slices/2.md, the text moved unchanged."
+    - "Six owner-style questions with expected answers written from the records first, run once before and once after the conversion in fresh headless Claude sessions with auto memory off and tools limited to Wake, Read, Grep and Glob."
+  out_of_scope:
+    - src/, AGENTS.md and README.md; existing plans; a check on plan prose; the host-layer cleanup of the agent's own memory.
+
+outcome:
+  status: decided
+  slice: "2"
+  parallelism: approved
+  decision: >-
+    After the slice 1 merge the owner asked where the cost figure of the
+    earlier cold runs came from. It is the total_cost_usd field claude -p
+    reports, priced at API rates. ANTHROPIC_API_KEY is set in the owner's
+    shell, so a plain claude -p may bill that key. The owner accepted
+    claude -p if it uses the same login as the agent: runs drop the key for
+    the command, and a probe reported apiKeySource none on the claude.ai Max
+    login. The Codex session is skipped for now because the owner's Codex
+    usage is at its limit. The owner authorized slice 2
+    ("อนุมัติ slice 2 ถ้าไม่มีอะไรต้องเคาะครับ", then "โอเค ลุยได้").
+  parallelism_basis: >-
+    Slice 2 edits only this workstream's plan files and its events; the
+    shared files src/, AGENTS.md and README.md are not touched.
+
+evidence:
+  plan: workstreams/ciel-workstream-shape-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "438c32abf1ce843c37d725508d3847a6236c36af"
+    branch: feat/workstream-shape-slice2
+    working_tree: this-decision-and-plan-conversion-only
+
+unresolved:
+  - "The Codex session in slice 2 is deferred until the owner's Codex usage allows it; the closeout records it as not done."
+  - "Whether the earlier cold runs of ciel-wake-weight-001 billed the API key is not established; the console billing would show it."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Convert the plan to the split shape at revision 0.2, check that Wake reads
+    slice 1 delivered and slice 2 authorized with no other output change, run
+    the after set, then record the closeout and open a draft pull request.
+  acceptance_check:
+    - "Slice 2 acceptance in slices/2.md: every answer correct, at least 6/6 with auto memory off, tokens at session start and turn 10 recorded."

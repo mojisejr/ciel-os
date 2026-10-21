@@ -3,7 +3,7 @@
 **Workstream:** `ciel-workstream-shape-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -67,59 +67,8 @@ The owner and agent agreed the following in a four-round syncup on 2026-10-21:
 Each slice keeps Wake read-only and inside the evidence boundary: repository
 files and local Git only, no new truth store, no write path.
 
-### 1. The split plan shape, checked every run
-
-Add the following, without changing how any existing plan reads:
-
-1. **Recognition.** A workstream whose folder has a `slices/` directory uses the
-   split shape. `PLAN.md` carries the usual header and a `## Slices` index with
-   one line per slice, in order: `- [<n>. <title>](slices/<n>.md)`. The last
-   line is the final slice, so the final slice is stated, not inferred from
-   where a heading happens to sit.
-2. **Declared slices.** Wake reads declared slices from that index, so
-   decisions, closeouts and the delivered-slice and final-slice logic work
-   unchanged.
-3. **Errors** (validation errors, so `bun run wake` reports them and `bun run
-   check` fails on a fixture):
-   - an index line points at a missing file;
-   - a slice file is missing from the index;
-   - a slice number repeats, or does not match its file name;
-   - a slice heading sits in `PLAN.md` itself;
-   - the header `State` is anything but `active` or `paused`.
-
-   "Finished" is derived. No one writes it.
-4. **Warnings** (soft, never truncating): `PLAN.md` or one slice file over a
-   named size constant. The warning names the file.
-5. **Contract.** `AGENTS.md` and `README.md` say once:
-   - each fact's home;
-   - the split shape for new workstreams;
-   - that a plan change is a decision plus Git history;
-   - the one-slice-per-session pattern.
-
-Acceptance:
-
-- Fixture tests cover every error and warning above, plus a split workstream
-  read through authorized, delivered-non-final and finished.
-- On this HQ, every existing plan reads exactly as before: the default,
-  `--full` and `--workstream` outputs are byte-identical to the pre-change
-  outputs.
-- `bun run check` and `bun run wake` pass, and `git status` matches the
-  intended change.
-
-### 2. Prove it cold, without the agent's memory
-
-1. Convert this workstream's own plan to the split shape, as its first real use.
-2. Run the owner-style question set through fresh headless sessions with auto
-   memory off and tools limited, once before and once after the conversion.
-   The set includes a question that needs one slice's acceptance criteria. Add
-   one Codex session, since that client also reads Wake.
-
-Acceptance:
-
-- Every answer is correct, recorded as observed.
-- With auto memory off, answers are at least as good as the slice 1 baseline
-  of ciel-wake-weight-001 (6/6).
-- Tokens at session start and at turn 10 are recorded. They are not a target.
+- [1. The split plan shape, checked every run](slices/1.md)
+- [2. Prove it cold, without the agent's memory](slices/2.md)
 
 ## Boundaries
 
