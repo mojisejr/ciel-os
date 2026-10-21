@@ -3,7 +3,7 @@
 **Workstream:** `mumate-bdash-v2-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -129,7 +129,7 @@ read-only:
 
 - [1. Record who used what](slices/1.md)
 - [2. Five menus, the range bar and card C](slices/2.md)
-- [3. Who paid, and do they buy again](slices/3.md)
+- [3. Who paid, do they buy again, and the mascot in the header](slices/3.md)
 - [4. What chat is asked about](slices/4.md)
 
 ## Boundaries

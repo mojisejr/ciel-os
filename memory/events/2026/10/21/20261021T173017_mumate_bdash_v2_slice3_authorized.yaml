@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T173017_mumate_bdash_v2_slice3_authorized
+type: decision
+recorded_at: "2026-10-21T17:30:17+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Raise the plan to 0.3 so slice 3 also puts the MuMate mascot in the bdash
+    header, and authorize slice 3: who paid, and do they buy again.
+  scope:
+    - "Plan 0.3 slice 3 as written in workstreams/mumate-bdash-v2-001/slices/3.md, including item 3 (mascot in the header) in the same bazi pull request."
+  out_of_scope:
+    - Slice 4 (needs its own decision); /ops; any mumate-infra change; every unresolved item carried below, which the owner set aside for now ("เรื่องที่ยังค้างเอาไว้ก่อนนะ").
+
+outcome:
+  status: decided
+  slice: "3"
+  parallelism: approved
+  parallelism_basis: >-
+    Carried from the slice 1 and slice 2 decisions: mumate-image-weight-001
+    shares mootech-fe, but its only open item is a read-only Loki
+    measurement, and slice 3 changes bazi only. The mascot is copied from
+    mootech-fe public files; mootech-fe itself is not changed.
+  decision: >-
+    The owner asked to replace the "mu" circle in the bdash header with the
+    MuMate logo or mascot taken from fe, inside slice 3 or as a small addition
+    in the same pull request, and to start slice 3 if nothing needed his
+    decision ("ถ้าได้ ก็จัดการได้เลยครับ แล้วถ้าไม่ต้องมีอะไรต้องเคาะหรือตัดสินใจ
+    ก็เริ่ม slice 3 ได้เลยครับ"). The agent chose the mascot fe already uses
+    as a round nav icon (public/images/v2/mascot/01-nav.png).
+  agent_choice_not_owner_answer: >-
+    The repeat-buyer definition in slices/3.md item 1 is the agent's
+    recommendation from the opening message of this session. The owner did
+    not answer it directly; he said to start if nothing needed his decision.
+    He can change it at the staging check.
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  repository:
+    head: "e60815913a09791290efd565e1cf6a4040183230"
+    branch: feat/mumate-bdash-v2-slice3
+    working_tree: this-decision-and-plan-only
+  related:
+    - memory/events/2026/10/21/20261021T171354_mumate_bdash_v2_handoff_before_clear.yaml
+
+unresolved:
+  - "Overview summary sentence on /bdash: approved with the page as a whole, not by name."
+  - "Omise is still in the app's payment system (mootech-fe); bdash only stopped showing the split."
+  - "Old card and fortune-stick usage rows (before 2026-10-21) still hold question text; clearing them is an owner decision."
+  - "Cause of the production db_query_stall bursts at 05:2x and 05:4x UTC on 2026-10-21 is unknown."
+  - "MuMate open items: Loki image measurement before about 2026-10-28 (production read on the owner's word); staging copy delete before 2026-11-04; DB password and token rotations."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 3 on a bazi topic branch from pdf-dev: the payer summary and
+    payer list on /bdash/money and the mascot in the header; check counts on
+    the staging copy and render 390 and 1280, light and dark, before the PR
+    leaves draft.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/mumate-bdash-v2-001/slices/3.md."
