@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T061835_ciel_office_slice1_authorized
+type: decision
+recorded_at: 2026-10-22T06:18:35+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-office-001
+  lane: single
+  objective: >-
+    Raise the plan to 0.4 (a male English voice, an English card, the webhook
+    file where the owner put it) and authorize slice 1: the closeout card and
+    voice, built, dogfooded, installed and proven by this slice's own closeout.
+  scope:
+    - "Plan 0.4 slice 1: private repository mojisejr/ciel-office, office scan with tests and runbook, a dogfood LaunchAgent on a scratch repository removed through levels 1 and 2, then the ciel-os LaunchAgent loaded."
+  out_of_scope:
+    - Merging any pull request; deleting anything outside the office's own files; any change to client settings.
+
+outcome:
+  status: decided
+  slice: "1"
+  parallelism: approved
+  decision: >-
+    After hearing the plan, the DoD, what he must prepare and the voices
+    installed (the only Thai voice, Kanya, is female), the owner chose a male
+    voice speaking English and an English card, put the webhook in
+    .assets/ciel-office/.env, and gave the go while away ("ให้เป็น ผู้ชาย แล้ว
+    พูดเป็นภาษาอังกฤษเลย ข้อมูลเข้า discord ก็ไม่ต้องแปลไทยก็ได้ถ้า มันราบรื่นกว่า
+    แล้วคุน go ได้เลย"). He asked the agent to act where it can safely decide
+    for him, wait for him where his word is really needed, and dogfood before
+    the closeout so he may see it on his phone ("อะไรที่ตัดสินใจแทนผมได้อย่าง
+    ปลอดภัยให้ทำเลย อะไรที่ต้องรอผมเคาะจริงๆ ก็รอก่อนครับ ... ลอง dogfood ดู
+    สักหน่อยก่อน closeout"). The agent reads that go as covering the repository
+    creation and loading the reversible LaunchAgent; merges stay his.
+  parallelism_basis: >-
+    No other HQ lane is live; the slice adds only this workstream's files and
+    projects/ciel-office/ in ciel-os.
+
+evidence:
+  plan: workstreams/ciel-office-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "1"
+  authorization:
+    observed_directly_by_this_session: true
+  setup:
+    - "The webhook file holds one key, DISCORD_WEBHOOK_URL, in the Discord webhook format; its mode was 644 and the agent set it to 600. The value was not printed."
+    - "say -v '?' lists Kanya as the only th_TH voice; Daniel (en_GB, male) is installed. gh is logged in as mojisejr with repo scope."
+  repository:
+    head: "632e84a34fffe6f5d11443c1a89e5eb4b336912d"
+    branch: feat/ciel-office
+    working_tree: this-decision-and-plan-only
+  related:
+    - memory/events/2026/10/21/20261021T200936_ciel_office_plan_0_3_rollback_and_removal.yaml
+
+unresolved:
+  - "Unverified until the dogfood: that launchd fires on Git's append to .git/logs/HEAD, and that say and the Discord post work from a LaunchAgent."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Create the repository, build and test office scan, dogfood on a scratch
+    repository, load the ciel-os LaunchAgent, then commit this slice's closeout
+    and confirm its card and voice.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/ciel-office-001/slices/1.md."

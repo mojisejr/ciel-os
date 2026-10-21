@@ -3,7 +3,7 @@
 **Workstream:** `ciel-office-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -31,6 +31,10 @@ and changing LLM would mean redoing it. He wants it small and lasting:
 - A turn that only waits for the owner (a question, a permission prompt) is
   not the office's job; each client's own notification covers it.
 - No summariser model: the card and sentence come from the event's fields.
+- A male voice speaking English, and an English card with no translation
+  (2026-10-22): "ให้เป็น ผู้ชาย แล้ว พูดเป็นภาษาอังกฤษเลย". The only Thai voice
+  installed, Kanya, is female.
+- The webhook lives where the owner put it, `ciel-os/.assets/ciel-office/.env`.
 
 Plan 0.1 used Claude Code and Codex hooks and a model summary; the owner
 replaced it with this plan after asking for a vendor-independent way.
@@ -56,7 +60,7 @@ launchd (macOS) sees the file change and runs `office scan` once, as the user
 scan: closeouts reachable from HEAD that were never announced
         │  none → exit
         ▼
-for each: card to Discord + one Thai sentence spoken; remember its event id
+for each: card to Discord + one English sentence spoken; remember its event id
 ```
 
 - **Trigger.** A user LaunchAgent with `WatchPaths` on `ciel-os/.git/logs/HEAD`.
@@ -70,7 +74,7 @@ for each: card to Discord + one Thai sentence spoken; remember its event id
   never announces twice. The first run records every existing closeout as seen
   without announcing.
 - **Card** (Discord embed), from the event:
-  - headline: workstream, slice, status in Thai;
+  - headline: workstream, slice, status;
   - done: `outcome.done` or `outcome.completed`, first few lines;
   - DoD: `outcome.acceptance` or `next_action.acceptance_check`;
   - next: `next_action.action`;
@@ -79,20 +83,23 @@ for each: card to Discord + one Thai sentence spoken; remember its event id
     branch name;
   - links: URLs copied verbatim from the event text;
   - footer: "from the closeout as recorded, not a re-check".
-- **Voice.** `say` with a Thai voice, from a template per `outcome.status`, for
-  example `ready-for-owner-merge` → "<workstream> slice <n> เสร็จแล้ว รอคุณ merge".
-  One utterance at a time.
-- **Failures speak.** A failed Discord post adds "ส่ง Discord ไม่สำเร็จ"; an
+- **Voice.** `say -v Daniel` (male, English), from a template per
+  `outcome.status`, for example `ready-for-owner-merge` → "<workstream>, slice
+  <n> done. Waiting for your merge." The voice name is a setting. One
+  utterance at a time.
+- **Failures speak.** A failed Discord post adds "Discord post failed"; an
   unreadable event is announced with its path; a failed `gh` lookup prints
-  "เช็ก PR ไม่ได้" on the card. Each run appends one line per channel to a log.
+  "PR check failed" on the card. Each run appends one line per channel to a log.
 - **At most three cards a run.** Further new closeouts become one line,
-  "อีก N รายการ", and are recorded as seen.
+  "+N more", and are recorded as seen.
 - **No self-trigger.** The scan only reads Git, with `GIT_OPTIONAL_LOCKS=0`,
   and writes nothing under `ciel-os/.git`; the LaunchAgent sets a
   `ThrottleInterval`.
 - **Own webhook.** The office uses a webhook made for it alone, not shared with
   opilot, so it can be revoked on its own.
-- **Places outside Git.** Webhook: `~/.config/ciel-office/env`, mode 600. Seen
+- **Places outside Git.** Webhook: `DISCORD_WEBHOOK_URL` in
+  `ciel-os/.assets/ciel-office/.env` (ignored by Git), mode 600; its path is a
+  setting. Seen
   list and log: `~/.local/state/ciel-office/`. LaunchAgent:
   `~/Library/LaunchAgents/`.
 
@@ -105,8 +112,8 @@ restores nothing; it only stops and deletes the office's own pieces.
 1. **Pause.** `launchctl bootout` the LaunchAgent; every file stays. Loading it
    again resumes without re-announcing, because the seen list is kept.
 2. **Remove from the machine.** Pause, then delete the LaunchAgent file,
-   `~/.config/ciel-office` and `~/.local/state/ciel-office`; the clone may stay
-   or go.
+   `~/.local/state/ciel-office` and, by filename, `.assets/ciel-office/.env`;
+   the clone may stay or go.
 3. **Retire.** The owner deletes the Discord webhook and archives the GitHub
    repository (archive, not delete); a closeout in this workstream records the
    retirement. Earlier events stay, as the event log is append-only.
