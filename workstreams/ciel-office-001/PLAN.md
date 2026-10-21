@@ -1,9 +1,9 @@
-# ciel-office — tell the owner when a session finishes, by voice and on Discord
+# ciel-office — tell the owner when work is finished, by voice and on Discord
 
 **Workstream:** `ciel-office-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -12,93 +12,96 @@
 
 The owner wants to know, without switching screens, whether the work he gave a
 session is finished: "ผมอยากจะรู้ว่า งานที่ผมสั่งไป มันเสร็จหรือยัง ในแต่ละ
-session แค่นั้นเลย". Each finished turn should say what was done, the DoD and
-the next action, as a readable card and a short sentence spoken at the desk.
-PRs waiting for his merge and links to test should show on the card.
+session แค่นั้นเลย". Finished work should say what was done, the DoD and the
+next action, as a readable card on Discord and a short sentence spoken at the
+desk, with the PR to merge and any links to test.
 
 He wants it in its own repository, out of CIEL, so it can be removed or grown
-later: "ไม่อยากให้ มัน มาปนกับ ciel เพราะบางทีผมอาจจะถอดออก".
-
-The model is `~/dev/opilot` `scripts/oracle-voice.ts` (macOS `say` plus a
-Discord embed). Its trigger, a rule telling the agent to call the script last,
-is not reused: it would put an office rule in CIEL's contract, and a forgotten
-call stays silent.
+later: "ไม่อยากให้ มัน มาปนกับ ciel เพราะบางทีผมอาจจะถอดออก". It must not
+depend on any one agent vendor: a vendor hook "จะจำเพาะเจาะจง กับ แต่ละเจ้า",
+and changing LLM would mean redoing it. He wants it small and lasting:
+"งาน เล็กๆ เราก็ทำ ให้ใช้งานได้ แล้ว คงทนอยู่นานก็จบละ".
 
 ## Owner decisions (2026-10-21)
 
-- Repository `mojisejr/ciel-office`, private.
-- Its build is tracked as this CIEL workstream.
-- Every Claude Code and Codex session on this machine, whatever its folder;
-  the card names the project.
-- A session waiting for permission is announced by a short spoken line only.
-- The summary uses the same `claude` login as the owner's sessions, never an
-  API key.
+- Repository `mojisejr/ciel-office`, private; its build is this workstream.
+- **The signal is a committed CIEL closeout**, not a vendor hook. `AGENTS.md`
+  already requires every client to record one when work reaches a checkpoint,
+  so any agent that works through CIEL produces it.
+- A turn that only waits for the owner (a question, a permission prompt) is
+  not the office's job; each client's own notification covers it.
+- No summariser model: the card and sentence come from the event's fields.
+
+Plan 0.1 used Claude Code and Codex hooks and a model summary; the owner
+replaced it with this plan after asking for a vendor-independent way.
 
 ## Project links
 
 | Project ID | Role | Local binding |
 |---|---|---|
-| `ciel-office` | the office: hook entry, worker, tests, runbook (created in slice 1) | `/Users/non/ghq/github.com/mojisejr/ciel-office` |
-| `ciel-os` | this plan and its events | `.` |
+| `ciel-office` | the office: scan command, launchd file, tests, runbook (created in slice 1) | `/Users/non/ghq/github.com/mojisejr/ciel-office` |
+| `ciel-os` | this plan and its events; the closeouts the office reads | `.` |
 
 The office lives outside `checkouts/` so it keeps working if the CIEL checkout
-moves or goes away.
+moves.
 
 ## Current agreement
 
 ```text
-Claude Code ends a turn ──(Stop hook, ~/.claude/settings.json)──┐
-Claude Code needs permission ──(Notification hook)─────────────┤
-Codex ends a turn ──(notify, ~/.codex/config.toml)─────────────┤
-                                                                ▼
-                ciel-office hook: normalise the payload, spawn the worker, exit at once
-                                                                ▼
-                worker: last message → URLs → summary → open PRs → voice + card + log
+any agent commits a closeout in ciel-os
+        │  git appends to ciel-os/.git/logs/HEAD
+        ▼
+launchd (macOS) sees the file change and runs `office scan` once, as the user
+        ▼
+scan: closeouts reachable from HEAD that were never announced
+        │  none → exit
+        ▼
+for each: card to Discord + one Thai sentence spoken; remember its event id
 ```
 
-- **Hook entry.** Reads the client's JSON, starts the worker detached and exits
-  0 at once, so a session never waits on the office. It exits immediately when
-  `CIEL_OFFICE_INNER` is set, so the summariser cannot trigger itself.
-- **Last message.** The worker reads only the final assistant message of the
-  turn, from the payload or the transcript it names.
-- **Links.** URLs on the card are copied from that message by pattern. The
-  summariser never writes a URL, so a link shown was written by the session; a
-  link the session did not write is not shown.
-- **Summary.** `claude -p` on a small model, run from a neutral folder so no
-  project contract or Wake loads, with `ANTHROPIC_API_KEY` removed from its
-  environment so it uses the login. It returns what was done, the DoD, the next
-  action and one spoken sentence. A DoD the message does not state reads
-  "ไม่ได้ระบุ". If it fails, the card and voice use the message's first sentence.
-- **PRs.** `gh` lists the owner's open, non-draft pull requests. The card always
-  shows the count; it lists the links when the set differs from the last card.
-  If `gh` fails the card says the PRs could not be checked.
-- **Voice.** `say` with a Thai voice, one utterance at a time through a lock.
-- **Discord.** One webhook. The card carries summaries, links and the PR list,
-  never a secret; it says it reports what the agent said, not a re-check.
-- **Places outside Git.** Secret: `~/.config/ciel-office/env`, mode 600. State
-  and a per-channel delivery log: `~/.local/state/ciel-office/`.
-- **Failures speak.** A failed Discord post adds a spoken "ส่ง Discord ไม่สำเร็จ";
-  an unreadable payload is announced, not dropped.
+- **Trigger.** A user LaunchAgent with `WatchPaths` on `ciel-os/.git/logs/HEAD`.
+  It runs as the owner, outside any agent's sandbox, and exits after each run;
+  nothing stays running. A Git `post-commit` hook was rejected: it runs inside
+  the committing agent's sandbox, where network or detached processes may be
+  blocked.
+- **Scan, not "this commit".** Each run looks for closeout files added in
+  commits reachable from `HEAD` whose event id is not in the seen list, so a
+  missed trigger is caught by the next one and an amend, rebase or second fire
+  never announces twice. The first run records every existing closeout as seen
+  without announcing.
+- **Card** (Discord embed), from the event:
+  - headline: workstream, slice, status in Thai;
+  - done: `outcome.done` or `outcome.completed`, first few lines;
+  - DoD: `outcome.acceptance` or `next_action.acceptance_check`;
+  - next: `next_action.action`;
+  - open items: the count of `unresolved`;
+  - PR: the open PR for the event's branch, found with `gh`; otherwise the
+    branch name;
+  - links: URLs copied verbatim from the event text;
+  - footer: "from the closeout as recorded, not a re-check".
+- **Voice.** `say` with a Thai voice, from a template per `outcome.status`, for
+  example `ready-for-owner-merge` → "<workstream> slice <n> เสร็จแล้ว รอคุณ merge".
+  One utterance at a time.
+- **Failures speak.** A failed Discord post adds "ส่ง Discord ไม่สำเร็จ"; an
+  unreadable event is announced with its path; a failed `gh` lookup prints
+  "เช็ก PR ไม่ได้" on the card. Each run appends one line per channel to a log.
+- **Places outside Git.** Webhook: `~/.config/ciel-office/env`, mode 600. Seen
+  list and log: `~/.local/state/ciel-office/`. LaunchAgent:
+  `~/Library/LaunchAgents/`.
 
 ## Slices
 
-- [1. Claude Code sessions: card, voice and PRs](slices/1.md)
-- [2. Codex sessions](slices/2.md)
+- [1. Closeout card and voice](slices/1.md)
 
 ## Boundaries
 
 - CIEL does not reference the office: no line in `AGENTS.md`, `CLAUDE.md`,
-  `OWNER.md`, `src/` or Wake names it. The hooks live in the user's own client
-  settings, the host layer. This is the owner-approved reading of the current
-  stage rule against CIEL hooks and daemons: the rule binds CIEL, and the office
-  is a separate project that only reads what sessions emit.
-- The office never writes to `ciel-os` or any project: no event, commit, push
-  or PR.
-- Removal is deleting the hook entries and the Codex `notify` line; nothing else
-  changes.
-- Creating the GitHub repository and editing `~/.claude/settings.json` and
-  `~/.codex/config.toml` happen in the slice that needs them, under its
-  decision.
-- Out of scope: replying or giving commands from the phone, a dashboard,
-  a daemon or timer, LINE, Wake-derived workstream alerts, quiet hours, and
-  deadline reminders. Each is a later owner decision.
+  `OWNER.md`, `src/` or Wake names it. The office depends on CIEL's event
+  schema `ciel.event.v0.1` and reads only the fields above; an event it cannot
+  read is announced, never skipped silently.
+- The office only reads Git and GitHub: no event, commit, push or PR.
+- No vendor hook, model call, daemon or long-running process.
+- Removal: unload and delete the LaunchAgent; nothing in `ciel-os` changes.
+- Out of scope: per-turn or permission-wait alerts, replying from the phone,
+  a dashboard, LINE, Wake-derived workstream alerts, quiet hours, deadline
+  reminders, repositories other than `ciel-os`. Each is a later owner decision.

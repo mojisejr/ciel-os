@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T193606_ciel_office_plan_0_2_closeout_signal
+type: decision
+recorded_at: 2026-10-21T19:36:06+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-office-001
+  lane: single
+  objective: >-
+    Raise the plan to 0.2: the office announces committed CIEL closeouts, read
+    from Git by a launchd file watch, instead of using Claude Code and Codex
+    hooks and a model summary.
+  scope:
+    - "Plan 0.2 with one slice: closeout card and voice."
+  out_of_scope:
+    - Authorizing slice 1; creating the GitHub repository; loading the LaunchAgent.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner asked whether the office could avoid each vendor's hooks, which
+    would tie it to one LLM ("ถ้า ciel ย้าย llm ก็จะทำให้ ต้องมาหาวิธี จัดการ
+    hook นี้อีก"). The agent's research found no vendor-neutral turn signal
+    that is stable today (OpenTelemetry GenAI conventions still in development,
+    ACP needs the office to host the agent, terminal bells carry no content, an
+    MCP tool depends on the agent remembering) and proposed the committed
+    closeout that AGENTS.md already requires of every client. The owner found
+    the first version too complex; the agent cut it to a Git trigger and the
+    closeout fields, and the owner accepted ("โอ้ว ง่ายเลย แล้วผมรู้สึก robust
+    ขึ้นเลยอ่ะ") and said to update the workstream without starting ("ไม่มี
+    อะไรต้องเคาะแล้วก็ update workstream ครับ แต่ยังไม่ต้องเริ่ม"). While
+    writing the plan the agent replaced the proposed Git post-commit hook with a
+    launchd watch on .git/logs/HEAD, because a post-commit hook runs inside the
+    committing agent's sandbox; the owner is told this with the plan. Slice 1
+    is not authorized.
+  completed:
+    - Rewrote PLAN.md to revision 0.2 and slice 1; removed slice 2 (Codex).
+
+evidence:
+  plan: workstreams/ciel-office-001/PLAN.md
+  plan_revision: "0.2"
+  authorization:
+    observed_directly_by_this_session: true
+    owner_instruction: "ไม่มีอะไรต้องเคาะแล้วก็ update workstream ครับ แต่ยังไม่ต้องเริ่ม ขอ ฟังแผนทั้งหมด และขอ sequence diagram อีกที"
+  research:
+    - "OpenTelemetry GenAI agent spans: https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-agent-spans (status Development)."
+    - "Codex notification layers (tui notification_method osc9 or bel; notify fires on agent-turn-complete only): https://codex.danielvaughan.com/2026/04/13/codex-cli-notification-pipeline-osc9-hooks-alerts/ (secondary source)."
+    - "launchd WatchPaths does not report which path changed: https://lists.macosforge.org/pipermail/launchd-dev/2008-August/000369.html"
+  repository:
+    head: "19e679dbdda496fc76145be016481ce0c6eee60e"
+    branch: feat/ciel-office
+    working_tree: this-decision-and-plan-only
+  related:
+    - memory/events/2026/10/21/20261021T182205_ciel_office_workstream_opened.yaml
+
+unresolved:
+  - "Unverified until slice 1: that launchd fires on Git's append to .git/logs/HEAD, and that say and the Discord post work from a LaunchAgent."
+  - "Unverified assumption behind rejecting post-commit: that a sandboxed agent session (for example Codex's default) blocks the hook's network call or detached process."
+  - "Closeouts carry few URLs and are often committed before the PR is ready, so the card's PR and test links may be sparse."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner hears the whole plan and the sequence diagram; on his go, record the
+    slice 1 decision and build it.
+  acceptance_check:
+    - "Wake reports ciel-office-001 at plan 0.2 with one declared slice and no validation errors."
