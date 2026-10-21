@@ -1,0 +1,76 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T162800_mumate_bdash_v2_slice2_built_on_staging
+type: closeout
+recorded_at: "2026-10-21T16:28:00+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Checkpoint: slice 2 is built in bazi PR 57, held on staging and approved
+    there by the owner, with the Beam/Omise split removed on his word. Merge,
+    release and the production checks remain.
+  scope:
+    - "bazi PR 57 (feat/bdash-five-menus): five menus, range bar, guarded live reads, card C, readability fixes, phone reading without the number, payments by method only."
+    - "Staging held on the branch per runbook 01 (staging-hold, container-build target staging, release env=staging)."
+  out_of_scope:
+    - Merge of PR 57, the production release and its checks.
+    - Slices 3 and 4.
+    - Removing Omise from the payment system itself (mootech-fe).
+
+outcome:
+  status: recorded
+  done:
+    - "bazi PR 57 to pdf-dev, head 2de0fc45e01df94ec227afca98bbc075b87dd2c5 (commits 72a6b9e, 2de0fc4); opened as draft."
+    - "Five routes /bdash, /bdash/stay, /bdash/money, /bdash/features, /bdash/chat; bottom bar on phones, top tabs on desktop; the range (7/30/90 or custom) sits in the link and carries across menus; /bdash/chat holds a note until slice 4."
+    - "Live reads: read-only transaction, statement_timeout 3000 ms, 12 s page budget, 10 minute cache per page and range, a bdash_query log line per query; compute.ts queries are shared with the nightly snapshot, whose output is unchanged."
+    - "Card C: people (distinct member ids), uses and uses per person (chat counts reply rows), share who ever paid by the range end, AI cost; untracked features say so; chart of the top 4 features switchable between people, AI cost and paid share smoothed over 4 weeks; one rule-change marker, 2026-10-20 card free 2 to 1 (bazi c0f8369)."
+    - "Phone reading logs label null with the member id kept (plan 0.2 item 6)."
+    - "Owner on staging: 'ผมว่าดูโอเคแล้ว', then asked to drop Omise because payments go through Beam only. The money card now shows one row per method; Omise's old payments (2026-08-25 to 2026-09-09 on the staging copy, 20 rows) still count under their method."
+    - "Checks: 22 + 2 new unit tests and 3 Postgres guard tests (timeout becomes 'range too heavy', a write fails 25006, durations logged) pass; tsc passes; eslint clean on changed files; full vitest has the same 10 failures as unchanged pdf-dev 8e51ac7 in bazi-testenv."
+    - "Render check on a disposable local database with invented data: 5 menus x 390/1280 x light/dark x 5 ranges, no sideways scroll, smallest chart text 12.1 px (phone) and 12.5 px (desktop), 5 rows then 'ดูทั้งหมด' on phones."
+    - "Staging (pgstaging = production backup of 2026-10-21): slowest query per page 89 ms (overview cohorts, 30 days) over 7/30/90 days; no bazi error lines; bdash-stg.staging.mumate.co answers 401 on /bdash/* without the passkey and 404 elsewhere."
+  state_at_record:
+    - "Staging held (/opt/mumate/staging-hold) on fe 2fce43b / bazi 2de0fc4; no fe or bazi merge was waiting when the hold went on."
+    - "Production unchanged since 07:08:26Z: fe 2fce43b / bazi 8e51ac7."
+  side_effects:
+    - "A local Postgres container bdash-s2-pg (127.0.0.1:55440, invented data only) and a bazi dev server on :3010 are still running on the owner's Mac for re-renders."
+    - "The agent first sent the owner to bdash.staging.mumate.co, which is production bdash (prod-1), so he saw no change; staging bdash is bdash-stg.staging.mumate.co."
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "54fb40946dcfd6dfec1bf5387e32e263f089f53c"
+    branch: feat/mumate-bdash-v2
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/21/20261021T142507_mumate_bdash_v2_slice2_authorized.yaml
+    - memory/events/2026/10/21/20261021T142335_mumate_bdash_v2_slice1_released_count_pending.yaml
+    - "bazi-sft-dataset PR 57; bazi container-build runs 39570938313 and 39575241551; mumate-infra release runs 39571285826 and 39575597969 (env staging)"
+
+unresolved:
+  - "Card C's people counts were not read back from the staging page (needs the staging passkey); the direct count on pgstaging for 30 days is 1 each for chat, oracle, divine, เซียมซี and ทำนายเบอร์, 0 for the rest. The production count after release is the stronger check."
+  - "The overview summary sentence is new wording; the owner approved the page as a whole ('ดูโอเคแล้ว') but not this sentence by name."
+  - "Staging stays held on the branch until PR 57 merges or the owner says otherwise; remove /opt/mumate/staging-hold afterwards so staging follows main."
+  - "Slice 1 still owes its production member-id count (owner's word naming the read) and its delivery closeout."
+  - "Phone reading rows written between the slice 1 release and the slice 2 release carry the number with the member id; clearing them is an owner decision."
+  - "Cause of the production db_query_stall bursts at 05:2x and 05:4x UTC on 2026-10-21 is unknown."
+  - "ciel-os branch feat/mumate-bdash-v2 is not pushed; the HQ push is the owner's."
+  - "MuMate open items: Loki image measurement before about 2026-10-28 (production read on the owner's word); staging copy delete before 2026-11-04; DB password and token rotations."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner merges bazi PR 57 into pdf-dev. Then remove the staging hold,
+    confirm staging follows the merge commit, run the runbook 01 readiness
+    check, and on the owner's word promote-production; after release, on the
+    owner's word naming the read, count production member ids for slice 1 and
+    slice 2's card C, log the slowest bdash query per page, and record the
+    slice 1 and slice 2 delivery closeouts.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/mumate-bdash-v2-001/slices/2.md."
