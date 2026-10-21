@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T123108_mumate_bdash_v2_slice1_merged_rehearsal_next
+type: closeout
+recorded_at: 2026-10-21T12:31:08+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Checkpoint before /clear: slice 1 code is merged in fe and bazi; the
+    staging rehearsal, the production release and the slice 1 closeout remain.
+    Cold-session entry for this workstream.
+  scope:
+    - "Slice 1 build: fe PR 921 and bazi PR 56, both merged by the owner; child checkouts synced and cleaned."
+  out_of_scope:
+    - Staging DB refresh, staging walk, production release (next session).
+
+outcome:
+  status: recorded
+  done:
+    - "fe PR 921 merged into main at eb9088c7be06ab11fed597114f0aeb016180f785 (2026-10-21T05:30:01Z): the chat proxy sends the resolved member as x-openwebui-user-id; /api/v2/narrate sends anonId; anonymous callers send nothing."
+    - "bazi PR 56 merged into pdf-dev at 8e51ac7a8302f7a85ff9d2df498ac3a52db9c8bd (2026-10-21T05:29:42Z): narrate, /api/reading/topic, chat grounding, oracle cards, divine cards and fortune sage write the member id to their usage log; naming a member needs the MuMate client secret (bazi/narrate and reading/topic added to OPTIONAL_ID_ROUTES)."
+    - "Owner chose option ก on 2026-10-21: card and fortune-stick logs record the member and no longer store the question text (label null); /stats 'รายการล่าสุด' shows no card question from the release on; older rows keep theirs."
+    - "fe was pushed with --no-verify on the owner's word: verify-architecture stops on four violations already on main (pages/v2/fortune/sage.tsx, pages/v2/shop/checkout.tsx, pages/v2/shop/qrcode.tsx, features/v2-shell/components/AppHeader.tsx); lint (0 errors), vitest (3,951 passed), tsc, build and gitleaks were run by hand and pasted in the PR."
+    - "Checks before merge: test merges against the team's newer main and pdf-dev were clean; our tests passed on the merged trees; mutants M1-M3 (fe) and four bazi mutants failed as intended."
+    - "Child checkouts: mootech-fe main eb9088c clean; bazi-sft-dataset detached at origin/pdf-dev 8e51ac7 clean; bazi-testenv pdf-dev 8e51ac7; merged topic branches deleted locally, and GitHub removed the remote ones."
+    - "Samples dev server and the throwaway Postgres container were stopped and removed."
+  state_at_record:
+    - "Production unchanged: fe aa7e212 / bazi c0f8369 (release of 2026-10-20)."
+    - "Staging: container-build for fe eb9088c and bazi 8e51ac7 in progress at 05:31Z; staging follows them by itself."
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 18f38b7fdb43ec76557f7044b1468e1733fc7ae0
+    branch: feat/mumate-bdash-v2
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/21/20261021T111259_mumate_bdash_v2_opened_slice1_authorized.yaml
+    - memory/events/2026/10/20/20261020T172149_mumate_handoff_before_clear.yaml
+    - "mootech-fe PR 921; bazi-sft-dataset PR 56"
+
+unresolved:
+  - "The team's bazi commit 57407cd added migration drizzle/0056_activity_coupon_course.sql (activity_coupon reward_kind check now allows 'course'); whether it ran on production is unknown. Ask the team before promote-production; our change does not depend on it."
+  - "On pdf-dev, tests/member-client-secret.test.ts M5 fails on the team's new src/app/api/ops/course-access/route.ts (guarded by OPS_ADMIN_SECRET but not listed in EXEMPT); a one-line test fix for the team, not ours."
+  - "fe verify-architecture blocks every push on four violations already on main; each push needs --no-verify on the owner's word until the team fixes them."
+  - "ciel-os branch feat/mumate-bdash-v2 (decision + this record) is not pushed; the HQ push is the owner's."
+  - "MuMate open items carried from 20261020T172149: Loki image measurement before about 2026-10-28 (production read on the owner's word); the staging copy refresh (by 2026-10-29) now happens inside this rehearsal; DB password and token rotations; deletions on the owner's word."
+  - "Old card and fortune-stick usage rows still hold question text; clearing them is a separate owner decision."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Next session: Wake; confirm staging runs fe eb9088c and bazi 8e51ac7;
+    refresh the staging copy (runbook 05: staging-db.sh up, then recreate fe
+    and bazi with --profile full); check whether 0056 is on the copy; the owner
+    walks chat, oracle and divine cards, เซียมซี, ทำนายเบอร์ and ปฏิทิน on
+    staging with a test account; count on pgstaging that new rows carry the
+    member id, card rows have no label, chat writes mate_ai_chat_meta with a
+    topic, and QI was charged once per question; then the owner presses
+    promote-production (after the team confirms 0056); verify and record the
+    slice 1 closeout.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/mumate-bdash-v2-001/slices/1.md."
