@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T074110_workstream_shape_slice2_closeout
+type: closeout
+recorded_at: 2026-10-21T07:41:10+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-workstream-shape-001
+  lane: single
+  objective: >-
+    New workstreams may split their plan into PLAN.md plus slices/<n>.md, every
+    fact has one home, and Wake and check verify the shape on every run.
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "This workstream's plan is split at revision 0.2: PLAN.md (4,228 bytes) plus slices/1.md (1,782) and slices/2.md (670), the text moved unchanged. Wake reads it with no validation error or warning; in --full only this workstream's entry (revision, lifecycle) and the working-tree entries changed."
+    - "Six owner-style questions, with expected answers written from the records first: this workstream's status; slice 2's acceptance criteria; praneet's open items; paused work and why; MuMate before 10-28 and 10-29; owner-contract slice 2 and what follows. Each ran in its own fresh headless Claude session with auto memory off and tools limited to Wake, Read, Grep and Glob, on the Max login (ANTHROPIC_API_KEY dropped for the command, apiKeySource none)."
+  proof:
+    before: "main 438c32a, plan 0.1 single file: 6/6 correct. 41 turns, 285 s, USD 2.37 estimated."
+    after: "554d2ec, plan 0.2 split: 6/6 correct. 53 turns, 331 s, USD 2.54 estimated. One naming slip: the slice-2 answer called the baseline workstream ciel-workstream-wake-weight-001; the criteria themselves were right and quoted from slices/2.md."
+    slice_question: "The acceptance question read PLAN.md:119-122 before and slices/2.md:9-14 after: 6 turns, 49,278 tokens at its last call before; 5 turns, 45,786 after. One sample each."
+    tokens: "Context at session start about 39.1k tokens in all twelve runs. Only one session reached its 10th API call (after, paused-work question): 66,797 tokens there. The rest ended at 45.8k to 73.0k tokens."
+    turns_note: "The turn difference comes mostly from the paused-work question (11 to 22 turns), which read more records; it touches no split plan. Single runs; not a trend."
+    checks: "bun run check: typecheck clean, 57 passed, 0 failed, at 554d2ec."
+    harness_note: "The first before run fed the question list to claude -p through stdin, so each session saw all six questions; it was discarded and re-run with stdin closed."
+  not_completed:
+    - "The Codex session is deferred: the owner's Codex usage is at its limit."
+  owner_statement: >-
+    2026-10-21: the owner authorized slice 2 ("อนุมัติ slice 2 ถ้าไม่มีอะไรต้องเคาะครับ",
+    then "โอเค ลุยได้") and asked that claude -p use the same login as the agent.
+
+evidence:
+  plan: workstreams/ciel-workstream-shape-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  decision: memory/events/2026/10/21/20261021T073324_workstream_shape_slice2_authorized.yaml
+  repository:
+    head: 554d2ec639255ce7ec5467dd387c62f790f19e49
+    branch: feat/workstream-shape-slice2
+    working_tree: this-record-only
+    fetched_base: 438c32abf1ce843c37d725508d3847a6236c36af
+  delivery:
+    target_branch: main
+    topic_branch: feat/workstream-shape-slice2
+  pull_request:
+    number: 94
+    url: https://github.com/mojisejr/ciel-os/pull/94
+    base: main
+    head: feat/workstream-shape-slice2
+    observed_head: 554d2ec639255ce7ec5467dd387c62f790f19e49
+    observed_state: draft
+
+unresolved:
+  - "One Codex cold session on the split plan is still owed; when the owner's usage allows, record it beside this closeout as a record, as ciel-wake-weight-001 did."
+  - "Prose checks: no progress wording appeared in the slice files and no answer was misled by plan prose, so this slice shows no need beyond the contract wording. One small sample."
+  - "The question set, expected answers and runner lived in the session scratchpad, not the repository; the six questions are listed above."
+  - "Whether the earlier cold runs of ciel-wake-weight-001 billed the API key is not established; the console billing would show it."
+  - "The host-layer cleanup of the agent's own auto memory is separate and not started."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner reviews and merges PR 94 with a merge commit, which finishes this
+    workstream. Then return HQ to a clean current main and delete
+    feat/workstream-shape-slice2.
+  acceptance_check:
+    - "PR 94 head contains this closeout; bun run check and bun run wake pass on it."
