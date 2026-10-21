@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T181527_mumate_bdash_v2_slice3_delivered
+type: closeout
+recorded_at: "2026-10-21T18:15:27+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Slice 3 delivered: เงินเข้า shows who paid and whether they buy again, and
+    the bdash header shows the MuMate mascot, on production since 2026-10-21
+    18:09 +07.
+  scope:
+    - "Slice 3 of plan 0.3: bazi PR 58 (merge 2134478), staging check with Playwright, production release and checks."
+  out_of_scope:
+    - Slice 4 (chat topics); mootech-fe; mumate-infra changes.
+
+outcome:
+  status: ready-for-owner-merge
+  done:
+    - "bazi-sft-dataset PR 58 merged by the owner into pdf-dev at 213447888e7f741201662207963f68f4d6a47f49."
+    - "Staging check on the owner's instruction ('ใช้ playwright เข้าไป ทดสอบได้'): Playwright logged in with the staging bdash passkey, fed from the host env and never printed, and opened all five menus at 390 and 1280, light and dark, on the branch build 4788ea3: every page 200, no console errors or failed requests, no sideways scroll, no text under 11 px, the mascot loads, no email, phone number or UUID in any page's HTML; เงินเข้า 30 days 48 payers / 49 payments and 90 days 53 / 70, each equal to the direct count on pgstaging."
+    - "Staging hold removed after the merge; staging-follow deployed fe 2fce43b / bazi 2134478 at 10:57:36Z, ok."
+    - "Runbook 01 readiness before promote: prod-1 ops-status all ✅; 5xx in 30 min 0; one db_query_stall in 2 h with action retry_on_fresh_pool and no gave_up; health journal only start/finish lines; outgoing change bazi e78fd5b..2134478 = PR 58 only, fe unchanged; no migration, no env; staging soak 10 min passed at 11:07:58Z. The owner was told it was the evening peak and had already asked for the release."
+    - "promote-production run 39589727430 (pressed by the agent on the owner's instruction 'release on prod ไปได้เลย'): deploy ok at 11:09:18Z, fe 2fce43b / bazi 2134478, both ✅; 5-minute watch 0 5xx of 9 requests; 0 5xx of 14 in the 8 minutes after; no gave_up."
+    - "Production bdash host (bdash.staging.mumate.co, prod-1): 404 for / and /api/ops/analytics; 401 for /bdash/money and the mascot file without the passkey cookie."
+  acceptance:
+    - "Payer and payment counts match v2_payment approved rows for the range on the staging copy: met (code-built SQL and the staging page, 30 and 90 days, and three ranges by SQL)."
+    - "No email, phone or member id on the page or in its HTML: met on the local render with marker ids and on every staging page."
+    - "Long names never widen the page at 390 px: met (local 45-character Thai name; staging 390 light and dark)."
+    - "The mascot loads through the bdash door on staging at 390 and 1280, light and dark: met."
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  decision: memory/events/2026/10/21/20261021T173017_mumate_bdash_v2_slice3_authorized.yaml
+  repository:
+    head: "7cbd40eaee242e744f1c93122759c43594a3c67d"
+    branch: feat/mumate-bdash-v2-slice3
+    working_tree: this-record-only
+  delivery:
+    target_branch: main
+    topic_branch: feat/mumate-bdash-v2-slice3
+  related:
+    - memory/events/2026/10/21/20261021T174710_mumate_bdash_v2_slice3_built_on_staging.yaml
+    - "bazi-sft-dataset PR 58; container-build runs 39586533587 and 39587663283; mumate-infra release run 39586911390 (env staging) and promote-production run 39589727430"
+
+unresolved:
+  - "The owner has not yet opened production bdash after this release; he said he would try it. The agent did not open production bdash."
+  - "The repeat-buyer definition (two or more purchase days up to the range end) is the agent's recommendation; the owner did not answer it directly."
+  - "Production query time for the payers query is not read (production log read on the owner's word); on the staging copy it ran in 2.5 ms."
+  - "Overview summary sentence on /bdash: approved with the page as a whole, not by name."
+  - "Omise is still in the app's payment system (mootech-fe); bdash only stopped showing the split."
+  - "Old card and fortune-stick usage rows (before 2026-10-21) still hold question text; clearing them is an owner decision."
+  - "Cause of the production db_query_stall bursts on 2026-10-21 is unknown; one more stall at about 17:00-18:00 +07 recovered on a fresh pool."
+  - "MuMate open items: Loki image measurement before about 2026-10-28 (production read on the owner's word); staging copy delete before 2026-11-04; DB password and token rotations."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner opens production bdash เงินเข้า with the passkey and merges this
+    ciel-os PR with a merge commit. Slice 4 (chat topics) waits for two to
+    three weeks of mate_ai_chat_meta data after 2026-10-21 and opens on its
+    own owner decision in a fresh session.
+  acceptance_check:
+    - "After the merge, Wake shows slice 3 delivered and slice 4 needing an owner decision."

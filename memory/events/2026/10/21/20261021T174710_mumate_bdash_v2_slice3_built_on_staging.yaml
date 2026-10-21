@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T174710_mumate_bdash_v2_slice3_built_on_staging
+type: closeout
+recorded_at: "2026-10-21T17:47:10+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Checkpoint: slice 3 (payer summary, payer list, mascot in the header) is
+    built in bazi draft PR 58 and held on staging for the owner's check.
+  scope:
+    - "bazi-sft-dataset PR 58 (feat/bdash-payers 4788ea3 into pdf-dev), draft."
+    - "Staging held on the branch per runbook 01."
+  out_of_scope:
+    - Merge of PR 58, the production release and its checks.
+
+outcome:
+  status: built-held-on-staging
+  done:
+    - "PR 58: queryPayers (v2_payment approved; no user_id selected), shapePayers/payerName/packageTh in view.ts, two cards on /bdash/money, mascot (fe public/images/v2/mascot/01-nav.png cropped to 132x132) as a static import in the bdash header."
+    - "Counts on pgstaging (backup through 2026-10-19), SQL taken from the code through drizzle PgDialect, read-only: 2026-09-20..10-19 50 payers / 51 payments; 2026-08-25..10-19 53 / 70; 2026-10-13..10-19 2 / 2; each equal to the direct count on v2_payment approved. Whole-history query 2.5 ms."
+    - "Local render (next dev on a throwaway Postgres with fake rows, removed after): member ids carrying MARKER appear 0 times in the HTML, no email or phone; 390 and 1280, light and dark, on money and chat: no sideways scroll, no text under 11 px, mascot loads, 5 payers on phones."
+    - "bdash tests 57/57, tsc and eslint clean on the bdash files."
+    - "Staging hold placed at /opt/mumate/staging-hold; container-build run 39586533587 (target staging, push); mumate-infra release run 39586911390 env staging: fe 2fce43b / bazi 4788ea3, success. bdash-stg answers 404 outside /bdash/* and 401 for /bdash and /_next/* without the passkey cookie; app health 200."
+  acceptance:
+    - "Payer and payment counts match v2_payment approved rows on the staging copy: met."
+    - "No email, phone or member id on the page or in its HTML: met on the local render with marker ids."
+    - "Long names never widen the page at 390 px: met on the local render (45-character Thai name)."
+    - "The mascot loads through the bdash door on staging at 390 and 1280, light and dark: open; needs the staging passkey, which the agent does not use."
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "3"
+  decision: memory/events/2026/10/21/20261021T173017_mumate_bdash_v2_slice3_authorized.yaml
+  repository:
+    head: "46f0341fb2a3e66f07c36c65ae819260282d8c57"
+    branch: feat/mumate-bdash-v2-slice3
+    working_tree: this-record-only
+  related:
+    - "bazi-sft-dataset PR 58; container-build run 39586533587; mumate-infra release run 39586911390 (env staging)"
+
+unresolved:
+  - "The repeat-buyer definition (two or more purchase days up to the range end) is the agent's recommendation; the owner can change it at the staging check."
+  - "Staging stays held on the branch until PR 58 merges or the owner says otherwise; remove /opt/mumate/staging-hold afterwards so staging follows main."
+  - "Overview summary sentence on /bdash: approved with the page as a whole, not by name."
+  - "Omise is still in the app's payment system (mootech-fe)."
+  - "MuMate open items: Loki image measurement before about 2026-10-28 (production read on the owner's word); staging copy delete before 2026-11-04; DB password and token rotations."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner opens bdash-stg.staging.mumate.co/bdash/money with the passkey on
+    phone and desktop and checks the two cards and the mascot. On his word
+    PR 58 leaves draft and he merges it into pdf-dev; then remove the staging
+    hold, runbook 01 readiness, and promote-production on the owner's word.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/mumate-bdash-v2-001/slices/3.md."
