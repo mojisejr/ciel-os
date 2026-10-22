@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261021T182205_ciel_office_workstream_opened
+type: decision
+recorded_at: 2026-10-21T18:22:05+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-office-001
+  lane: single
+  objective: >-
+    Open ciel-office: a separate private repository that, when a Claude Code or
+    Codex session ends a turn, speaks one sentence at the desk and posts a card
+    to Discord with what was done, the DoD, the next action, links the session
+    wrote and the pull requests waiting for the owner's merge.
+  scope:
+    - "Plan 0.1 with two slices: Claude Code first, Codex second."
+  out_of_scope:
+    - Authorizing any slice; creating the GitHub repository; editing client settings.
+
+outcome:
+  status: decided
+  decision: >-
+    The owner asked whether CIEL could have an office like mumate-infra to
+    report the agent's work to him, kept out of CIEL's core. He narrowed it to
+    one need ("ผมอยากจะรู้ว่า งานที่ผมสั่งไป มันเสร็จหรือยัง ในแต่ละ session
+    แค่นั้นเลย"), pointed at opilot's voice closeout as the model, asked for PRs
+    and test links on Discord, and asked how robust it would be. He chose the
+    repository name ciel-office, a CIEL workstream for its build, every session
+    on the machine, and a spoken line for permission waits; reviewed the
+    sequence diagram; confirmed the summariser uses his claude login, not an
+    API key; and said to open the workstream ("ผมว่าโอเคแล้วแหละ คุนเปิด
+    workstream ได้เลยครับ"). This opens plan 0.1 and authorizes no slice; slice
+    1 waits for his go after he reads the plan.
+  completed:
+    - Recorded the plan, its two slices, the owner's choices and the boundary that CIEL does not reference the office.
+  not_completed:
+    - No repository, code, hook or settings change was made.
+
+evidence:
+  plan: workstreams/ciel-office-001/PLAN.md
+  plan_revision: "0.1"
+  authorization:
+    observed_directly_by_this_session: true
+    owner_instruction: "ผมว่าโอเคแล้วแหละ คุนเปิด workstream ได้เลยครับ ผมจบงาน กับ mumate lane แล้ว"
+  research:
+    - "~/dev/opilot scripts/oracle-voice.ts read 2026-10-21: say with a Thai voice plus a Discord embed, triggered by a contract rule the agent must remember."
+    - "This host's shell environment sets ANTHROPIC_API_KEY (name checked, value not read); the plan strips it from the summariser."
+  repository:
+    head: "a1f220be71bd07fed7dbe345506919920aef822b"
+    branch: feat/ciel-office
+    working_tree: this-decision-and-plan-only
+
+unresolved:
+  - "Unverified until slice 1: that hooks run the same in the VS Code extension as in the terminal, and whether the Stop payload carries the last message or only the transcript path."
+  - "Unverified until slice 2: the Codex notify payload of the installed version, and whether Codex has any permission-wait event."
+  - "Test links depend on the session writing them in its final message; the office shows only what was written."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner reads plan 0.1 and its slices; on his go, record the slice 1 decision
+    and build it.
+  acceptance_check:
+    - "Wake recognizes ciel-office-001 and this decision without validation errors."
