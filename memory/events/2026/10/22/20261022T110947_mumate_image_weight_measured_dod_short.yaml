@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T110947_mumate_image_weight_measured_dod_short
+type: closeout
+recorded_at: "2026-10-22T11:09:47+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-image-weight-001
+  lane: single
+  objective: >-
+    Record the post-release measurement of slice 1 (step 5): image bytes per
+    page view fell about a quarter, not the planned most of -96%, so the DoD is
+    not shown and closing the workstream waits for the owner.
+  scope:
+    - "Production Caddy access logs, 24 h before and after the release at 2026-10-15T08:05Z, and the 2026-10-21 UTC day, read-only, totals only."
+  out_of_scope:
+    - Any production change; a per-file breakdown.
+
+outcome:
+  status: recorded
+  measurement:
+    method: >-
+      The owner ran an agent-written script on mumate-prod-1 (the harness
+      refused the agent's own production read, even after the owner's
+      "คุนอ่านเลยได้ป่ะ log อ่ะ"). It read the 16 rolled access-log files covering
+      the windows through the running caddy container (the rolled .gz files are
+      root-only on the host) at nice 19, counted bazichart.mumate.co requests,
+      and printed totals only; no IP, URL or user agent left the host. The
+      result file and the script were deleted afterwards on the owner's word.
+    page_view_definition: >-
+      GET with status 200 or 304 to a path outside /api/, /_next/, /images/,
+      /fonts/, /favicon and without a file extension: document loads only, so
+      client-side navigations are not counted and per-view figures are rough.
+    before: "2026-10-14T08:05Z..10-15T08:05Z: 303 page views; 8,218 image requests (27.1 per view); 1.33 GB of images, 4,276.9 KiB per view, 161.5 KB per image response; WebP 9.8% of image responses; 50 image 304s."
+    after: "2026-10-15T08:05Z..10-16T08:05Z: 952 page views; 40,906 image requests (43.0 per view); 3.07 GB, 3,146.5 KiB per view (-26.4%), 75.0 KB per image response (-53.6%); WebP 74.2%; 0 image 304s."
+    recent: "2026-10-21 UTC, lines to 20:16Z only (the newest rolled file): 259 page views; 9,246 image requests (35.7 per view); 0.87 GB, 3,286.6 KiB per view (-23.2%), 94.3 KB per image response (-41.6%); WebP 63.2%; 1 image 304."
+  reading:
+    - "Shown: production serves WebP to most image requests, and image 304s fell to about zero, as the 7-day cache intends."
+    - "Not shown: the DoD's 'static bandwidth drops by most of the measured -96% on the heavy files'. Per page view the drop is about 23-26%; per image response 42-54%."
+    - "Likely contributors, not measured: 26-37% of image responses are still not WebP; image requests per view rose from 27 to 36-43, and the same release added the newcomer guide and the 8-step app tour; traffic tripled on the release day."
+
+evidence:
+  plan: workstreams/mumate-image-weight-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "cd4119c5a91458c2f84cbd620e77625790621ec8"
+    branch: docs/image-weight-measured
+    working_tree: this-record-only
+  delivery:
+    target_branch: main
+    topic_branch: docs/image-weight-measured
+  related:
+    - memory/events/2026/10/15/20261015T151122_mumate_image_weight_released_with_guide.yaml
+    - memory/events/2026/10/20/20261020T172149_mumate_handoff_before_clear.yaml
+
+unresolved:
+  - "Which image paths still go out as PNG or JPEG, and which are heaviest after the release, is unknown; a per-file breakdown needs another owner-run read."
+  - "The host keeps rolled access logs 30 days, so the before window stays readable on mumate-prod-1 until about 2026-11-13 and in Spaces for 90 days; the Loki deadline of about 2026-10-28 no longer binds this measurement."
+  - "Wake lists no declared slice for this plan (its heading '## Slice 1 — ...' is not in the index form), so which record finishes the workstream needs checking before the final closeout."
+  - "Wake flags this workstream as conflicting with mumate-bdash-v2-001 on mootech-fe; no code change is pending here, so the flag clears when this workstream closes."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decides: accept slice 1 as delivered with these numbers and close the
+    workstream, or authorize a per-file breakdown (owner-run, totals per path
+    only) to find the images still heavy.
+  acceptance_check:
+    - "An owner decision recorded for mumate-image-weight-001."

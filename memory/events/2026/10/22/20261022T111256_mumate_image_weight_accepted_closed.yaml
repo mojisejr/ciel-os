@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T111256_mumate_image_weight_accepted_closed
+type: closeout
+recorded_at: "2026-10-22T11:12:56+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-image-weight-001
+  lane: single
+  objective: >-
+    Slice 1 delivered and accepted by the owner: production serves WebP from
+    the same URLs with a 7-day cache, measured at -23 to -26% image bytes per
+    page view; the -96% target is waived.
+  scope:
+    - "Plan 0.1, execution phase 1, steps 1-5."
+  out_of_scope:
+    - A per-file breakdown; further image work.
+
+outcome:
+  status: ready-for-owner-merge
+  done:
+    - "Released 2026-10-15T08:05Z (fe 9861695): /images/* answer image/webp to browsers that accept it and the original to the rest, Cache-Control public, max-age=604800 and Vary: Accept (20261015T151122)."
+    - "Measured on production access logs (20261022T110947): image KiB per page view 4,276.9 before, 3,146.5 the day after (-26.4%), 3,286.6 on 2026-10-21 (-23.2%); KB per image response -54% and -42%; WebP 74% and 63% of image responses; image 304s from 50 to 0-1."
+  acceptance:
+    - "Production serves WebP to browsers that accept it and PNG to the rest from the same URLs: met."
+    - "Images reload from cache within 7 days: met (image 304s fell to about zero)."
+    - "Static bandwidth drops by most of the measured -96% on the heavy files: not met (-23 to -26% per view); waived by the owner."
+    - "No visible change: no record since the release reports one; not checked separately."
+  owner_decision: >-
+    2026-10-22: "ไม่จำเป็นต้องถึงเป้า ผมว่าถ้ามัน พิสูจน์ได้แล้ว ก็ถือว่าจบครับ
+    ปิดได้เลย ไม่ต้องวัดแล้ว เดี๋ยวถ้าช้า หรือว่า มีปัญหาค่อยมาดูกันใหม่ครับ"
+
+evidence:
+  plan: workstreams/mumate-image-weight-001/PLAN.md
+  plan_revision: "0.1"
+  execution_phase: "1"
+  repository:
+    head: "04a161d84e0b08d5d115569bbac474e52bb15e3f"
+    branch: docs/image-weight-measured
+    working_tree: this-record-only
+  delivery:
+    target_branch: main
+    topic_branch: docs/image-weight-measured
+  pull_request:
+    number: 98
+    url: https://github.com/mojisejr/ciel-os/pull/98
+    base: main
+    head: docs/image-weight-measured
+  related:
+    - memory/events/2026/10/22/20261022T110947_mumate_image_weight_measured_dod_short.yaml
+    - memory/events/2026/10/15/20261015T151122_mumate_image_weight_released_with_guide.yaml
+
+unresolved:
+  - "26-37% of image responses are still not WebP and which paths they are is unknown; reopen only if the app is slow or bandwidth becomes a problem, as the owner said."
+  - "The other MuMate open items of 20261020T172149 (staging copy, password and token rotations, deletions, backup move) belong to no open workstream and stay as listed there."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner merges PR 98 with a merge commit, which finishes this workstream and
+    clears the mootech-fe overlap flag. Then return HQ to a clean current main
+    and delete docs/image-weight-measured.
+  acceptance_check:
+    - "After the merge, Wake reports mumate-image-weight-001 completed and no conflict."
