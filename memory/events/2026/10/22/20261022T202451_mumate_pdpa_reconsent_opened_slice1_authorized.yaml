@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T202451_mumate_pdpa_reconsent_opened_slice1_authorized
+type: decision
+recorded_at: "2026-10-22T20:24:51+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-pdpa-reconsent-001
+  lane: single
+  objective: >-
+    Open the workstream and authorize slice 1: members accept the updated
+    privacy policy once, on one screen, with the AI item as its own optional
+    box, and policy updates stay a one-file change with a pre-push warning.
+  scope:
+    - "Plan 0.1 slice 1 as written in workstreams/mumate-pdpa-reconsent-001/slices/1.md: one mootech-fe pull request and one bazi-sft-dataset pull request, with checkpoint commits."
+  out_of_scope:
+    - "A /ops policy editor; making the system meet the team's three claims; gating pages other than home and chat; merging the two consent stores; production release (owner's word)."
+
+outcome:
+  status: decided
+  slice: "1"
+  parallelism: approved
+  parallelism_basis: >-
+    praneet-nursery-001 commits to the same HQ standing branch but touches no
+    MuMate repository; mumate-bdash-v2-001 is delivered; this lane stages only
+    its own paths.
+  decision: >-
+    The owner ran a four-round syncup and answered: the combined screen with
+    the AI item as a separate optional box ("เอาตามที่ทีมขอ เอนตามคุน เอาปลอดภัย");
+    the team's wording goes in first and the agent writes the owner a note for
+    the team; open the workstream; one home for the long text ("เอาตามคุน");
+    every member with an older version, once, at home and chat ("ไม่รบกวน แต่ไม่
+    ปล่อยผ่าน"); AI box ticked only when already accepted; neutral, gentle
+    wording ("ภาษาแบบเลี่ยงๆ แต่ปลอดภัย"); no /ops editor, and a warning rather
+    than a block when the text changes without the version ("ไม่ fix นะ หลวมๆ").
+    He then confirmed the shared understanding and asked the agent to build in
+    one go, one pull request per repository with checkpoint commits, push and
+    merge to staging, test with Playwright, and report when ready to release
+    ("ถ้าไม่มีอะไรต้องเคาะแล้ว คุนเริ่มงานได้เลย ... push -> merge ขึ้น staging
+    แล้วใช้ playwright ทดสอบ").
+  agent_choice_not_owner_answer: >-
+    The member flow is tested locally with next dev and the dev login, because
+    staging runs production builds where the dev login is off and member login
+    needs LINE or Google. Staging is checked for the deploy and the public
+    policy page.
+
+evidence:
+  plan: workstreams/mumate-pdpa-reconsent-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "16031206bed2f7ad4bb7d4ed94711abdfccb6990"
+    branch: hq/20261022
+    working_tree: this-decision-and-plan-only
+  related:
+    - memory/events/2026/10/22/20261022T172632_mumate_team_chat_consent_popup_removed_released.yaml
+
+unresolved:
+  - "The team's AI wording claims names are removed, the data cannot identify anyone, and deletion after two years is automatic; the system does none of these yet. The owner sends the team the agent's note; until they answer, the policy text says more than the system does."
+  - "AI_QUESTION_SALT is unset on prod-1; owner decision, best taken while ai_question_log is empty."
+  - "mootech-fe main fails its pre-push verify-architecture gate in four files untouched here; every fe push through the hook stops there."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 1 on a mootech-fe topic branch from main and a bazi topic
+    branch from pdf-dev, check locally, push, merge to staging, check staging,
+    and report ready to release.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/mumate-pdpa-reconsent-001/slices/1.md."
