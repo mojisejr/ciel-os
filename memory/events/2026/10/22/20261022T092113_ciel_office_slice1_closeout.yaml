@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T092113_ciel_office_slice1_closeout
+type: closeout
+recorded_at: "2026-10-22T09:21:13+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: ciel-office-001
+  lane: single
+  objective: >-
+    Slice 1 delivered: committed CIEL closeouts are announced by a male English
+    voice at the desk and a card on Discord, through a LaunchAgent that watches
+    ciel-os/.git/logs/HEAD, with no vendor hook and no model.
+  scope:
+    - "Plan 0.4 slice 1: private repository mojisejr/ciel-office, office scan with tests and runbook, dogfood on a scratch repository, the ciel-os LaunchAgent loaded."
+  out_of_scope:
+    - Turns that only wait for the owner; quiet hours; repositories other than ciel-os.
+
+outcome:
+  status: ready-for-owner-merge
+  done:
+    - "Created private github.com/mojisejr/ciel-office, seeded main once (7f427362efc2b4086908888da60ac7e565b87b07), cloned at /Users/non/ghq/github.com/mojisejr/ciel-office and registered projects/ciel-office/project.yaml; Wake reports its binding available."
+    - "Branch feat/office-scan at d27732cbbde32b07b559ef762eb8640e0e5ae4ba, draft PR https://github.com/mojisejr/ciel-office/pull/1: office scan, --dry-run, --settle, replay, plist; read-only Git with GIT_OPTIONAL_LOCKS=0; card fields from the event; URLs copied verbatim; at most three cards then +N more; runbook with three removal levels."
+    - "Office bun run check: typecheck clean, 13 tests pass on temporary Git repositories with fake say, gh and Discord."
+    - "Dogfood on a scratch repository with its own LaunchAgent (com.mojisejr.ciel-office.dogfood): first load seeded silently; a commit was announced about 3 s later (Discord HTTP 204, spoken by Daniel); a commit made inside sandbox-exec with network denied (curl there could not resolve discord.com) was announced the same way; paused, a commit produced nothing; resumed, only that closeout was announced; after removal level 2, launchctl print reported the service absent, no office file was left, and a further commit produced nothing."
+    - "The ciel-os LaunchAgent com.mojisejr.ciel-office is loaded; its first run at 2c08a10c6e88e13dfbc40657fd967219191ee79e recorded 998 existing events as seen and announced nothing."
+    - "The webhook file .assets/ciel-office/.env holds DISCORD_WEBHOOK_URL; its mode was set from 644 to 600. The value was never printed."
+  acceptance:
+    - "This slice's own closeout produces the card and the sentence within about 15 seconds with no agent after the commit: this commit is the test; the observed office.log line is added to PR 97's description."
+    - "A closeout committed by a sandboxed agent session is announced the same way: met in the dogfood (sandbox-exec, network denied)."
+    - "Re-running the scan or a later commit does not announce it again: met in tests (second run, amend) and the dogfood."
+    - "Removal level 1 silences a test closeout and loading again announces nothing old: met on the dogfood LaunchAgent, built from the same plist renderer."
+    - "Removal level 2 leaves no office file except the clone and launchctl reports the label absent: met on the dogfood LaunchAgent; the owner's webhook file was kept on purpose."
+    - "Office tests pass; CIEL bun run check passes (57 pass); ciel-os changes are this workstream's files and projects/ciel-office/ only: met."
+
+evidence:
+  plan: workstreams/ciel-office-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "1"
+  decision: memory/events/2026/10/22/20261022T061835_ciel_office_slice1_authorized.yaml
+  repository:
+    head: "2c08a10c6e88e13dfbc40657fd967219191ee79e"
+    branch: feat/ciel-office
+    working_tree: this-record-only
+  delivery:
+    target_branch: main
+    topic_branch: feat/ciel-office
+  pull_request:
+    number: 97
+    url: https://github.com/mojisejr/ciel-os/pull/97
+    base: main
+    head: feat/ciel-office
+    observed_state: draft
+  related:
+    - "ciel-office PR 1, branch feat/office-scan, head d27732cbbde32b07b559ef762eb8640e0e5ae4ba."
+
+unresolved:
+  - "Four dogfood cards titled ciel-office-dogfood-001 are in the Discord channel; deleting them is the owner's choice."
+  - "Resuming after a pause announces the closeouts committed during it (at most three, then +N more); documented in the runbook, not configurable."
+  - "Switching HQ to a branch that holds closeouts never seen announces them; the cap of three limits the noise."
+  - "launchd ThrottleInterval is 5 s; a commit within 5 s of a finished run waits for the next change of .git/logs/HEAD. A commit that lands during a run is caught by the run's own recheck."
+  - "Turns that only wait for the owner are not announced by design; each client's own notification covers them."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner reviews and merges ciel-office PR 1 and ciel-os PR 97 with merge
+    commits, which finishes this workstream. Then return HQ to a clean current
+    main and delete feat/ciel-office and feat/office-scan.
+  acceptance_check:
+    - "PR 97 head contains this closeout; bun run check and bun run wake pass on it."
