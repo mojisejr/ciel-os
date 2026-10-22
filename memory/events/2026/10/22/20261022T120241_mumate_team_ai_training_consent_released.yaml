@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T120241_mumate_team_ai_training_consent_released
+type: closeout
+recorded_at: 2026-10-22T12:02:41+07:00
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-team-release-001
+  lane: single
+  objective: >-
+    Record a production release made entirely of the team's merges (the
+    ai_training consent and question log, the deep divine-card knowledge), which
+    followed to staging by itself and was promoted on the owner's word.
+  scope:
+    - "Runbook 01 readiness, migration check handed to the owner, promote-production, post-release checks."
+  out_of_scope:
+    - Reviewing or changing the team's code.
+    - Placing AI_QUESTION_SALT or running the help-article seed on production.
+
+outcome:
+  status: recorded
+  owner_words:
+    - "\"คุนเชคหน่อยเพื่อนผม เพิ่มของขึ้นมาใหม่ บน staging ผมอยากให้คุน release ขึ้น prod ให้ผมเลย\""
+    - "\"เดี๋ยวคุน release แทนผมเลยครับผมไม่ว่างละ\""
+  state:
+    - "What went out: fe 2fce43b -> 6e2a8cb (PR 923 ai_training consent at signup, settings switch and a one-time ask in chat for existing members, policy 3.1; PR 924 privacy link at signup); bazi 2134478 -> 4d5ae04 (3e164de deep knowledge for the 80 divine cards in LLM and chat; 90eb753 consented chat questions stored without answers, PII scrubbed, subject HMAC, purge on withdrawal, /ops review and export, migration 0057; 4d5ae04 PDPA help chapter and seed HELP_SLUG). All commits by Jaroensak."
+    - "Migration 0057 (ai_question_log) is required before release: without it a consent withdrawal returns 500 after its row is written. The owner ran the read-only index check on production: ai_question_log_pkey, _subject_idx and _created_idx all present. No new env is required; the salt falls back to OPS_ADMIN_SECRET."
+    - "First press by the owner at 04:27:25Z (run 39722473771) was refused by the soak gate (staging changed 04:21:44Z); production untouched."
+    - "Readiness at 11:31 +07: prod fe 2fce43b / bazi 2134478 all checkmarks, 0 5xx in 30 min, 0 db_query_stall and 0 gave_up in 2 h; staging pair fe 6e2a8cb / bazi 4d5ae04 unchanged 10 min."
+    - "promote-production pressed by the agent on the owner's word: run 39722900224 success; deploy-history 2026-10-22T04:33:03Z ok FE_TAG=6e2a8cb BAZI_TAG=4d5ae04; both checkmarks; cron-check ok; 👀 0 5xx of 85 requests in 5 minutes; bazichart.mumate.co/api/health sha 6e2a8cb; to 05:01Z 0 5xx, 0 db_query_stall, no ai_question line in bazi logs."
+    - "Slice 4's teammate half (a teammate's merge reaches staging by itself and is promoted) is now exercised; the promote was the agent's on the owner's word, not from the phone."
+
+evidence:
+  plan: workstreams/mumate-team-release-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 3c00a61ef0e41ebaf772cf87fa73731706a1c3d4
+    branch: docs/mumate-team-release-20261022
+  related:
+    - memory/events/2026/10/11/20261011T111003_mumate_team_release_final_closeout.yaml
+
+unresolved:
+  - "AI_QUESTION_SALT is not set on prod-1 (key name absent; checked by count only). Subjects use OPS_ADMIN_SECRET, so rotating that secret, or setting the salt later, leaves already-stored questions unpurgeable on withdrawal. Workaround: set a dedicated salt only while ai_question_log is empty, or never change OPS_ADMIN_SECRET without migrating subjects. Owner decision."
+  - "The PDPA help chapter (bazi 4d5ae04) may need its seed run on the production database before it shows; until then the help page shows the previous text."
+  - "Whether the team tested the consent flow on staging is not known to the agent; the agent did not open the app."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decides on AI_QUESTION_SALT before ai_question_log gathers rows, and
+    asks the team whether the help seed was run on production.
+  acceptance_check:
+    - "Either the salt is placed on prod-1 while the table is empty, or the owner records that OPS_ADMIN_SECRET stays fixed."
