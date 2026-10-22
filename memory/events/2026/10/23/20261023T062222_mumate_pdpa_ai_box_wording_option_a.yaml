@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20261023T062222_mumate_pdpa_ai_box_wording_option_a
+type: decision
+recorded_at: "2026-10-23T06:22:22+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-pdpa-reconsent-001
+  lane: single
+  objective: >-
+    Record the owner's choice of softer words for the optional AI consent box
+    (option A), and that the team's words replace them whenever the team
+    sends its own.
+  scope:
+    - "features/v2-privacy/aiTraining.ts AI_TRAINING_TITLE and AI_TRAINING_SUB in mootech-fe (the sign-up box, the updated-policy box and the settings switch share them)."
+  out_of_scope:
+    - "Removing the consent box or moving to an opt-out basis; the full policy text (3.1 stays the team's); the ai_training consent version (the purpose is unchanged)."
+
+outcome:
+  status: decided
+  slice: "1"
+  decision: >-
+    After testing staging, the owner asked for softer words on the AI box
+    without bending the policy's meaning, and asked whether the box could be
+    dropped with the purpose stated only in the policy. The agent answered
+    that dropping it while raw question text is kept looks too risky without a
+    lawyer (questions often hold health details, sensitive under PDPA section
+    26; the team's own 3.1 says consent only), and offered option A and B. The
+    owner chose A: "โอเค งั้นเอาแบบ A แก้ไข แล้ว merged ขึ้น staging เลย
+    บันทึกการตัดสินใจของผมเอาไว้หน่อยนะ เดี๋ยว ถ้าทีมเปลี่ยนจะได้เอาคำทีมมาใส่เลย".
+  wording:
+    title: "ให้เราใช้คำถามของคุณ เพื่อช่วยให้เสี่ยวมู่ตอบได้ดียิ่งขึ้น"
+    sub: "ใช้เฉพาะคำถามที่คุณพิมพ์ ไม่รวมคำตอบ เพื่อปรับปรุงเสี่ยวมู่และบริการ · เปลี่ยนใจได้ทุกเมื่อที่ ตั้งค่า › จัดการความยินยอม"
+    floor: >-
+      Whatever words replace these must still say what is used (the questions
+      the member types), what for (improving Xiaomu and the service), and that
+      it is optional and can be changed; the box stays separate from the
+      required tick and is never pre-ticked for a member who has not accepted.
+  standing_instruction: >-
+    When the business team sends its own words for this box, put them in
+    without a new syncup, as long as they keep the floor above; raise to the
+    owner only if they drop it.
+  team_context: >-
+    The business team (Kittipon) saw the earlier chat popup and wrote
+    "ถามแบบนี่อาจจะไม่มีคนเล่นนะครับ เดี่ยวพี่คุยกับเอ็มก่อนนะครับ". That popup is
+    the 2026-10-22 version Em removed from chat in mootech-fe PR 926.
+
+evidence:
+  plan: workstreams/mumate-pdpa-reconsent-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "357cfd1bbd57710227f85692f327015c51e1ed9b"
+    branch: hq/20261022
+    working_tree: this-decision-only
+  related:
+    - memory/events/2026/10/22/20261022T214336_mumate_pdpa_reconsent_built_merge_owner.yaml
+
+unresolved:
+  - "Whether the team moves to an opt-out basis is open; that needs a lawyer, a rewritten 3.1, a bazi change to log unless opted out, and a scrub that removes health details."
+  - "The team's AI wording in 3.1 still claims three things the system does not do yet (names removed, not identifiable, automatic two-year deletion)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Change the two strings in mootech-fe, open the pull request, and have it
+    merged to staging (the merge is the owner's; the harness refuses it to the
+    agent).
+  acceptance_check:
+    - "Staging shows the option A words on the sign-up box, the updated-policy box and the settings switch."
