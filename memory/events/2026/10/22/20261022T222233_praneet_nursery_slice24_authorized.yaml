@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T222233_praneet_nursery_slice24_authorized
+type: decision
+recorded_at: "2026-10-22T22:22:33+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record plan revision 2.3 (the owner's picks from the slice 24 samples)
+    and authorize slice 24, "ใส่รถพอไหม".
+  scope:
+    - "praneet-web: a vehicles table and fit settings with back-office pages, the calculator with its side view and loading guide, floating buttons, use and LINE-tap counts."
+    - "praneet-office: the four-slot rich menu design for the owner to apply."
+outcome:
+  status: decided
+  decision: >-
+    The owner looked at the round-two samples in praneet-office
+    samples/slice24 (rows across the bed from the cab, two layers in the
+    first row and one more each row up to the cage, rear-heavy or balanced,
+    the margin taken as a lower pile, the side view and the loading guide
+    from the same rows) and accepted them. The agent had asked him to answer
+    "โอเค เริ่มได้" or to correct the numbers; he answered that the samples
+    are fine, which the agent takes as the go. The starting settings are the
+    agent's own and are editable in the back office.
+  owner_statements:
+    - "Q27 = ชิดหัวรถครับ เอาจิงๆ จากประสบการณ์คือ ถ้าเราขึ้นสูงแต่แรก มันจะเอนล้มลงมาได้ง่าย"
+    - "Q28 = จริงๆ มันจะเป้นหลังเต่าอ่ะแหละ ... แต่สวนใหญ่รถ คอกชอบให้ของหนักท้ายครับ"
+    - "ตัวอย่างนี้โอเคเลยครับ"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.3"
+  slice: "24"
+  repository:
+    head: ecd052d13e0e1f18bf3793e1eb7db7e5945cc9de
+    branch: hq/20261022
+  related:
+    - memory/events/2026/10/22/20261022T201018_praneet_nursery_rev22_vehicle_fit_agreed.yaml
+unresolved:
+  - "Starting settings (18 bags a row, 11 rows, 15 cm a layer, tail drop 3, margin 80%) are the agent's; the owner's high-cage bed measurement and a real load photo would replace them."
+  - "Running the slice's additive migration on production needs the owner's word."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Build slice 24 in praneet-web on a topic branch with tests, then a draft
+    pull request with screenshots of the floating button, the calculator and
+    the four-slot rich menu for the owner.
+  acceptance_check:
+    - The slice 24 DoD in PLAN.md.
