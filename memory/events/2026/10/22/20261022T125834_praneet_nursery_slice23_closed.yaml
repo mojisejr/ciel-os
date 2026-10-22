@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T125834_praneet_nursery_slice23_closed
+type: closeout
+recorded_at: "2026-10-22T12:58:34+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Close slice 23 - pictures a shop can pass on as its own - on the owner's
+    word that he saved and sent them in LINE and likes them, and record his
+    answers to the open items of the 2026-10-20 handoff.
+  scope:
+    - praneet-web PR 24 in production; the owner's check on his phone; his answers on 2026-10-22.
+outcome:
+  status: ready-for-owner-merge
+  slice: "23"
+  completed:
+    - "DoD tests and migration 012 as recorded in evt_20261018T151614_praneet_nursery_slice23_migrated_pr_ready; praneet-web PR 24 merged and deployed as recorded in evt_20261018T154237_praneet_nursery_slice23_merged_phone_test_pending."
+    - "DoD owner: he saved and sent the pictures in LINE; 'ส่งได้ครับสวยด้วย'."
+    - "Ready stock seen on the public storefront on 2026-10-22, both measured 22 Oct 2569: ชะนี bag 9, 60 cm and up, ~1,000 trees, 30 baht a tree (lot 69-M); หมอนทอง bag 9, 70-80 cm, ~2,000 trees, 30 baht a tree (lot 69-D); ~8,100 more growing. This meets slice 7's old-stock lot with photos and price."
+    - "Owner answers: he applies the LINE menu 'ดูสต็อก' himself; the privacy slip sentence stays as written; the Anthropic API key raised on 2026-10-18 needs no rotation because it has expired; the three old local backups in praneet-web .local/backups are to be deleted."
+  owner_statement: "ผมว่าปิดได้แล้วผมทำไปแล้ว ส่งได้ครับสวยด้วย"
+  not_verified:
+    - "No screenshots from his phone; the record rests on his statement and the public storefront."
+    - "The agent's delete of the three backups was refused by the harness; they remain until the owner deletes them."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.1"
+  slice: "23"
+  decision: memory/events/2026/10/18/20261018T144551_praneet_nursery_slice23_authorized.yaml
+  repository:
+    head: fc32450d20fcc028889be2ef56f232691c38b901
+    branch: hq/20261022
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261022
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 24
+      base: main
+      state: MERGED
+      merge_commit: 2b85366c5664cd788bfa5783113dbee06be2156a
+unresolved:
+  - "Test orders and test customers on production: deletion ordered by the owner; the exact rows are listed for his confirmation first (production read on his word), lot counts lowered at packing are recounted on the lot page."
+  - "Slice 7 open: real bag weights per bag number, the second-account invite test, the first post, then a real order from the new channel."
+  - "Round notes on the storefront carry two typos the owner may correct: 'กำลัว' (69-M) and 'ไม่ทรงค่อยสวย' (69-D)."
+  - "Slice 22 kept, not built; slice 8 not started; the slice 22 samples page is still kept."
+  - "Kept until now and free to delete: praneet-web .local/walk21.ts, walk23.ts, seed23.ts, walk23/."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Slice 7: render a post card for 69-D and 69-M with a draft text for the
+    owner, upload it to /ops/posts on his word, and he posts it by hand.
+  acceptance_check:
+    - "After the merge, Wake shows slice 23 delivered; the first post has a code and the owner has posted it."
