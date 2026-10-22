@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T132433_mumate_bdash_v2_slice4_built_fe_push_blocked
+type: closeout
+recorded_at: "2026-10-22T13:24:33+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Checkpoint: slice 4 of plan 0.4 (chat topics card, consent 2026-10.2,
+    real-question card) is built in one branch per repository; bazi is a draft
+    pull request and the mootech-fe push is stopped by a pre-existing gate
+    failure that needs the owner.
+  scope:
+    - "bazi-sft-dataset feat/mumate-bdash-v2-slice4 (45414b6), draft PR 59 into pdf-dev."
+    - "mootech-fe feat/ai-training-consent-analysis (de53f28), local only."
+  out_of_scope:
+    - Merges, staging check, production release and their checks; the delivery closeout of slice 4.
+
+outcome:
+  status: built-fe-push-blocked
+  done:
+    - "bazi: AI_TRAINING_VERSION 2026-10.2 in ai-question-log.ts; hasAiTrainingConsent requires the latest answer to accept that version; the PDPA help chapter seed text gains the analysis purpose."
+    - "bazi bdash: src/lib/bdash/chat.ts, /bdash/chat page and styles. Topics card from mate_ai_chat_meta: questions and people per topic, paying versus free (paid on or before the range end, as card C), off-topic and chit-chat share, timeframe groups, top-4 topic chart with days before 2026-10-21 left empty, previous-range change hidden until that range starts on or after 2026-10-21. Question card from ai_question_log: only rows asked after the member's latest ai_training answer accepted 2026-10.2, subjects recomputed server-side, topic and word filters by GET form, 100 newest, 5 on phones then ดูทั้งหมด, no subject, label, delete or export."
+    - "mootech-fe: consent version 2026-10.2, title and sub-line name the analysis purpose, the one-time ask returns for members whose latest answer is the old version (with one line saying what changed), the settings switch is on only for an accept of 2026-10.2, policy 3.1 adds the purpose and that the team sees only question, topic and time."
+    - "Checks, bazi: bdash unit tests 51/51; test:bdash-db 6/6 on a throwaway local Postgres 17 with SSL (topic counts equal a direct count; old-version, pre-re-consent, withdrawn and out-of-range questions excluded; filters including a literal %; no member id or subject in the page data); ai-question-log 5/5; tsc and eslint clean. Full vitest: 9 failures in 7 files, the same 9 on origin/pdf-dev 4d5ae04 unchanged."
+    - "Checks, mootech-fe: consent tests 6/6; full vitest 3967 passed; tsc clean; lint 0 errors; npm run build green with the VAPID gate."
+    - "Local render of /bdash/chat (next dev on fake rows with marked ids, Postgres stopped after) at 390 and 1280, light and dark: 200, no console errors or failed requests, no sideways scroll, smallest text 11.5 px, marked ids absent from the HTML, 5 questions on phones then all 11 after the tap, topic plus word filter returns the one match. Two defects found on the render were fixed before the PR: phones showed all questions, and the chart grew to the full card width."
+    - "Both checkouts clean after the runs; nothing was written to any shared database."
+  blocked:
+    - "mootech-fe push stopped by the pre-push hard gate verify-architecture: 4 violations in pages/v2/fortune/sage.tsx, pages/v2/shop/checkout.tsx, pages/v2/shop/qrcode.tsx and features/v2-shell/components/AppHeader.tsx, none touched here; origin/main 6e2a8cb reports the same 4. Lint, tests and the tsx lane passed before it. The agent did not bypass the hook."
+  acceptance:
+    - "Topic counts match a direct count on the data: met on the disposable database through the code's own SQL; production not read."
+    - "bdash adds no table and stores no question or answer text: met (no migration; read-only transaction)."
+    - "The topics card says topics are the AI's label: met."
+    - "No question recorded before the new wording reached production on the question card: met by construction (only questions after a 2026-10.2 accept, which only the new fe sends); proven on the disposable database."
+    - "Old-version members asked again and none of their questions kept until they accept: met in fe tests AT4a-b and bazi ai-question-log test."
+    - "Question card reaches production only with or after the new wording: open; depends on releasing fe and bazi together."
+    - "Owner shows the business team: open."
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.4"
+  decision: memory/events/2026/10/22/20261022T130252_mumate_bdash_v2_slice4_authorized.yaml
+  repository:
+    head: "cae6db6cb7eed969a38167edeee61a1981caf7bd"
+    branch: hq/20261022
+    working_tree: this-record-only
+  related:
+    - "bazi-sft-dataset PR 59 (feat/mumate-bdash-v2-slice4 45414b6835cc374e2e18c1b4aad3ed435d9268a5 into pdf-dev), draft"
+    - "mootech-fe feat/ai-training-consent-analysis de53f28aa966aaf9a582045efe848f06c89e158a, not pushed"
+
+unresolved:
+  - "mootech-fe verify-architecture fails on main itself (4 violations above), so every fe push through the hook stops there. Owner decision: push this branch with --no-verify citing the main failure, or have the team fix main first."
+  - "The member-facing consent wording (title, sub-line, re-ask line, policy 3.1) is the agent's draft; the owner approves it on the fe pull request."
+  - "The PDPA help chapter shows the new text only after the help seed runs on production with HELP_SLUG; the earlier seed is also still unconfirmed."
+  - "The team's PII scrub keeps names and slash-written dates, and the policy calls the subject irreversible; not fixed here, the owner tells the team. Workaround: bdash shows questions as stored and adds no second scrub."
+  - "AI_QUESTION_SALT is unset on prod-1; owner decision, best taken while ai_question_log is empty."
+  - "Nine bazi tests in seven files fail on pdf-dev without this change (mascot-v2, newdata-lookup, reading-topic-route, two real-case files, source-integration, topic-knowledge snapshot); not investigated."
+  - "MuMate open items: Loki image measurement before about 2026-10-28 (production read on the owner's word); staging copy delete before 2026-11-04; DB password and token rotations."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner approves the consent wording and decides how the mootech-fe branch
+    gets pushed; then open the fe draft PR with the prepared description, merge
+    bazi PR 59 and the fe PR together, check /bdash/chat on staging, and
+    promote both on the owner's word.
+  acceptance_check:
+    - "Both PRs merged; staging shows the topics card and the question card's empty state; production promoted as one pair."
