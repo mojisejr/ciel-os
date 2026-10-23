@@ -1,9 +1,9 @@
-# MuMate — members accept the updated privacy policy once, with the AI item as its own choice
+# MuMate — members read the updated privacy policy to the end and accept it once; the AI item is switched off in settings
 
 **Workstream:** `mumate-pdpa-reconsent-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -41,6 +41,28 @@ The owner decided in a four-round syncup on 2026-10-22:
   editor. A pre-push line warns when the policy text changed but its version
   did not; it never stops the push.
 
+### Revision 0.2 (2026-10-23)
+
+After checking staging, the business team asked for a read-to-the-end screen
+with one tick and no AI box, and confirmed that an opt-out like ChatGPT's is
+acceptable to them. The agent advised that health details in questions make
+opt-out risky under PDPA section 26 and recommended an off-by-default switch in
+settings. The owner decided to follow the team: "ผมตัดสินใจ ตามทีม เค้าบอกผมว่า
+ทำได้แบบ opt-out ของ chatgpt ครับ ดังนั้น เราคงต้องทำตามแบบนั้นครับ". This
+replaces the "One combined consent screen", "AI box state" and "Gentle words,
+specific box" bullets above:
+
+- **Scrollwrap.** The updated-policy screen shows the full policy, not the
+  cards, the summary or a link. The single tick "ฉันอ่านและยอมรับ
+  นโยบายความเป็นส่วนตัว" unlocks only when the member has scrolled to the end;
+  tapping it earlier shows a message asking them to read to the end.
+- **AI by acceptance, off in settings.** Accepting turns the `ai_training`
+  item on, then a one-time notice says so and points to ตั้งค่า ›
+  จัดการความยินยอม. Switching it off there works as today and deletes the
+  stored questions.
+- **Slice 1 is revised, not followed by a new slice.** Production still runs
+  `v1`, so one release asks members once.
+
 ## Project links
 
 | Project ID | Role | Local binding |
@@ -75,7 +97,8 @@ The owner decided in a four-round syncup on 2026-10-22:
   after its own checks on the owner's word for this workstream; production is
   promoted only on the owner's word.
 - No migration, no new env, no change to first-run for new members, the
-  settings switches, `/ops`, or bazi's question log.
+  settings switches, `/ops`, or bazi's question log. Revision 0.2 keeps these:
+  the AI item is turned on by the fe recording `ai_training` on acceptance.
 - Out of scope: making the system meet the team's three claims; gating pages
   other than home and chat; merging the two consent stores.
 
