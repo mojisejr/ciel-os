@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261024T053715_mumate_pdpa_no_notice_on_staging
+type: closeout
+recorded_at: "2026-10-24T05:37:15+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-pdpa-reconsent-001
+  lane: single
+  objective: >-
+    Checkpoint: plan 0.4 (no popup after accepting) runs on staging; the
+    team checks it; production waits for the owner's release word.
+  scope:
+    - "mootech-fe PR 930 and the staging deploy."
+  out_of_scope:
+    - Production release.
+
+outcome:
+  status: staged-awaiting-team
+  done:
+    - "mootech-fe PR 930 removes AiTrainingNotice from /v2/policy-update and /v2/first-run; accepting still records ai_training yes unless the latest answer is a no. tsc, lint (0 errors), 3987 tests, tsx lane, guard-workflow-integrity, gitleaks and build passed; pushed with --no-verify, opened and merged by the agent on the owner's instruction (merge 9a11760)."
+    - "staging-follow deployed fe 9a11760 / bazi 20ff92f at 2026-10-23T22:36:48Z; ops-status shows both healthy with ✅."
+  acceptance:
+    - "Staging runs revision 0.4. A member who already accepted 2026-10.1 on staging (the owner's test account) is not asked again; seeing the screen again needs another account."
+
+evidence:
+  plan: workstreams/mumate-pdpa-reconsent-001/PLAN.md
+  plan_revision: "0.4"
+  decision: memory/events/2026/10/24/20261024T052823_mumate_pdpa_no_notice_plan_0_4.yaml
+  repository:
+    head: "3665f8854f98fb3300ceca4e2fd72f85e054c0bb"
+    branch: hq/20261022
+    working_tree: this-record-only
+  related:
+    - "mootech-fe PR 930 merge 9a11760c3421fbf9661b60b6557a6b2a3d7dc16f"
+
+unresolved:
+  - "The bdash question card still says only phone numbers, emails, long digit runs and links are removed; deferred, owner has not answered."
+  - "The effective date is still 2026-10-23 and must become the production release day."
+  - "Production order on the owner's word: salt on prod-1 env/bazi.env generated on the host, promote fe 9a11760 or later with bazi 20ff92f or later, delete ai_question_log rows created before the new bazi started, git pull plus bin/cron-install.sh, the privacy-and-deletion help update (UPDATE generated from the merged seed), then the slice 1 delivery closeout."
+  - "Legal risk accepted by the owner on the team's word; no lawyer has reviewed opt-out for questions that can hold health details."
+  - "The design samples artifact for this slice is still published (private); delete it only on the owner's word."
+  - "HQ standing branch hq/20261022 is unpushed and carries other lanes; pushing and merging it belong to the owner."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the owner names the release day: set the effective date in
+    mootech-fe on a topic branch, merge it, then run the production order
+    above step by step with the owner.
+  acceptance_check:
+    - "Production runs the pair with both ✅, the salt is set, no question from before the new bazi remains, the timer is on, and /privacy/policy shows 2026-10.1 with the release-day effective date."
