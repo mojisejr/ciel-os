@@ -3,7 +3,7 @@
 **Workstream:** `mumate-pdpa-reconsent-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -63,12 +63,38 @@ specific box" bullets above:
 - **Slice 1 is revised, not followed by a new slice.** Production still runs
   `v1`, so one release asks members once.
 
+### Revision 0.3 (2026-10-23)
+
+The owner picked sample A and asked whether questions are cleaned of names and
+personal details before they are kept. They are only partly cleaned: links,
+emails, phone numbers and long digit runs are removed, but names, dates,
+places and workplaces are kept, the hash key `AI_QUESTION_SALT` is unset, and
+nothing deletes questions after two years on a schedule. The owner decided:
+
+- **Layout A, plain text.** The full policy reads as ordinary text, with no
+  box or highlight on 3.1.
+- **Sign-up follows.** New members get the same single tick and opt-out; the
+  optional AI box leaves first-run.
+- **3.1 matches everywhere.** The policy, the short AI text, the settings
+  switch and the help chapter say what the system does.
+- **Rewrite before keeping.** A question is cleaned by the rules, rewritten
+  by the model to keep its meaning without names, dates, places or other
+  details that point to a person, and cleaned by the rules again. If the
+  rewrite fails, nothing is kept.
+- **Clean start with a salt.** `AI_QUESTION_SALT` is set on staging and
+  production, and the questions kept so far are deleted: "ลบทิ้งเลยแล้ว
+  เริ่มเก็บใหม่อย่างถูกต้อง". The hash stays, so a withdrawal still deletes
+  that member's questions.
+- **Two-year deletion on a schedule:** "ตั้งงานเลย". A daily job deletes
+  questions older than two years.
+
 ## Project links
 
 | Project ID | Role | Local binding |
 |---|---|---|
-| `mootech-fe` | policy file and page, version gate, re-consent screen, pre-push warning | `/Users/non/ghq/github.com/mojisejr/mootech-fe` |
-| `bazi-sft-dataset` | the PDPA help chapter seed text | `/Users/non/ghq/github.com/mojisejr/bazi-sft-dataset` |
+| `mootech-fe` | policy file and page, version gate, re-consent and sign-up screens, pre-push warning | `/Users/non/ghq/github.com/mojisejr/mootech-fe` |
+| `bazi-sft-dataset` | question rewrite, scheduled two-year deletion route, the PDPA help chapter seed text | `/Users/non/ghq/github.com/mojisejr/bazi-sft-dataset` |
+| `mumate-infra` | the daily deletion timer, `AI_QUESTION_SALT` in the host env | `/Users/non/ghq/github.com/mojisejr/mumate-infra` |
 | `ciel-os` | this plan and its events | `.` |
 
 ## Starting evidence (2026-10-22, fe f2bd444, bazi f3c9558)
@@ -96,11 +122,16 @@ specific box" bullets above:
 - One pull request per repository, with checkpoint commits. The agent merges
   after its own checks on the owner's word for this workstream; production is
   promoted only on the owner's word.
-- No migration, no new env, no change to first-run for new members, the
-  settings switches, `/ops`, or bazi's question log. Revision 0.2 keeps these:
-  the AI item is turned on by the fe recording `ai_training` on acceptance.
-- Out of scope: making the system meet the team's three claims; gating pages
-  other than home and chat; merging the two consent stores.
+- No migration and no change to the settings switches or `/ops`. Revision
+  0.3 changes first-run (sign-up), bazi's question log (rewrite before
+  keeping) and adds one cron job; `AI_QUESTION_SALT` is already read by the
+  code and only gets a value.
+- Production writes are on the owner's word: setting the salt, deleting the
+  questions kept so far (given in revision 0.3), turning the timer on, the
+  help seed, and the promotion. The salt's value lives in the host env files,
+  never in a repository, event or response.
+- Out of scope: gating pages other than home and chat; merging the two
+  consent stores.
 
 ## Slices
 
