@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261023T152153_mumate_pdpa_plan_0_3_on_staging
+type: closeout
+recorded_at: "2026-10-23T15:21:53+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-pdpa-reconsent-001
+  lane: single
+  objective: >-
+    Checkpoint: plan 0.3 runs on staging (fe 9cba6ea, bazi 20ff92f,
+    mumate-infra ef7026d) with its own salt, the question table, the daily
+    deletion timer and the new help text; the business team reviews it next.
+    Production is unchanged.
+  scope:
+    - "Staging host mumate-2 and its database mumate_staging."
+  out_of_scope:
+    - "Production: salt, clean start, timer, help seed, promotion, effective date."
+
+outcome:
+  status: staged-awaiting-team
+  done:
+    - "The owner merged bazi-sft-dataset PR 61 (merge 20ff92f), mumate-infra PR 59 (merge ef7026d) and mootech-fe PR 929 (merge 9cba6ea). staging-follow deployed fe 9cba6ea / bazi 20ff92f at 2026-10-23T08:20:19Z; ops-status shows both healthy with ✅."
+    - "AI_QUESTION_SALT set on mumate-2 at the owner's request: a 64-hex value generated on the host with openssl and appended to env/bazi.env without being printed; backup env/bazi.env.pre-ai-salt (mode 600); the only key added is AI_QUESTION_SALT; the running bazi container has a 64-character value."
+    - "Migration 0057 (ai_question_log, additive) was missing on the staging database (61 bazi_* tables, no ai_question_log). Without it a switch-off in settings returns 500 and the account-purge and ai-question-purge jobs fail, so the agent applied drizzle/0057_ai_question_log.sql to mumate_staging; the three indexes are present. Production already has the table (2026-10-22 record)."
+    - "Clean start on staging: ai_question_log had 0 rows after the new bazi started, so nothing was deleted."
+    - "bin/cron-install.sh enabled mumate-cron-ai-question-purge.timer (next run 17:45 UTC); one manual run returned 200 with deleted=0."
+    - "Help chapter privacy-and-deletion updated on mumate_staging with one UPDATE generated from the merged seed (the runtime image has no seed script); UPDATE 1."
+    - "Public check: app.staging.mumate.co/privacy/policy shows ฉบับ 2026-10.1, the new 3.1 sentences, and not the removed claim."
+  acceptance:
+    - "Staging parts of slice 1 revision 0.3 are met. The member flow on staging is for the owner and the team (automation cannot log in there); it was proven locally before the merge."
+
+evidence:
+  plan: workstreams/mumate-pdpa-reconsent-001/PLAN.md
+  plan_revision: "0.3"
+  decision: memory/events/2026/10/23/20261023T144449_mumate_pdpa_rewrite_salt_purge_plan_0_3.yaml
+  repository:
+    head: "fe90ceaa4eec196dded5fe64d44ef5785ba8196e"
+    branch: hq/20261022
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/23/20261023T150721_mumate_pdpa_plan_0_3_built_prs_open.yaml
+    - "mootech-fe PR 929 merge 9cba6eafbf29ee16ea50de51d0e940cb060f9dd1; bazi-sft-dataset PR 61 merge 20ff92f84839b12739d6eee29c57b03dde801441; mumate-infra PR 59 merge ef7026d"
+
+unresolved:
+  - "The business team reviews staging, including the 3.1 wording (the agent's draft) and the notice words; changes go in on a topic branch."
+  - "The effective date is still 2026-10-23 and must become the production release day."
+  - "Production order on the owner's word: salt on prod-1 (env/bazi.env), promote fe and bazi together, delete ai_question_log rows created before the new bazi started, git pull plus bin/cron-install.sh, the help update for privacy-and-deletion, then the slice 1 delivery closeout."
+  - "The staging database copy expires per runbook 05; a refresh from a production backup brings the production ai_question_log rows and salt-less subjects into staging, so the clean start repeats after a refresh."
+  - "Legal risk accepted by the owner on the team's word; no lawyer has reviewed opt-out for questions that can hold health details."
+  - "mootech-fe main fails verify-architecture in four old files; fe pushes need the owner's word for --no-verify."
+  - "HQ standing branch hq/20261022 is unpushed and carries other lanes; pushing and merging it belong to the owner."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner sends staging to the business team; on their answer apply word
+    changes if any, set the effective date to the release day, and on the
+    owner's release word run the production order above.
+  acceptance_check:
+    - "Production runs the pair with both ✅, the salt is set, no question from before the new bazi remains, the timer is on, and /privacy/policy shows the new version and the release-day effective date."
