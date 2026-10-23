@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261024T052823_mumate_pdpa_no_notice_plan_0_4
+type: decision
+recorded_at: "2026-10-24T05:28:23+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-pdpa-reconsent-001
+  lane: single
+  objective: >-
+    Record plan revision 0.4: the business team removes the one-time notice
+    after accepting the policy; everything else in revision 0.3 stays.
+  scope:
+    - "mootech-fe: remove AiTrainingNotice from /v2/policy-update and /v2/first-run."
+  out_of_scope:
+    - "The opt-out itself, the settings switch, 3.1, bazi and mumate-infra: unchanged."
+
+outcome:
+  status: decided
+  slice: "1"
+  decision: >-
+    The team reviewed staging. The owner sent a screenshot of the notice
+    marked with a cross: "อรุณสวัสดิ์ครับ , เดี๋ยวคุน เอาตรงนี้ออกครับ ทีมไม่เอา
+    นอกนั้นเหมือนเดิม". Asked whether only the title and text or the whole
+    popup goes, the owner chose the whole popup. He then asked the agent to
+    carry it through on its own: "ถ้าไม่มีอะไรต้องเคาะแล้ว และคุนทำเสร็จแล้ว
+    push no verify -> PR -> merge -> deploy to staging ให้เลย".
+  implementation_calls:
+    - "Accepting still records ai_training yes unless the latest answer is a no; the member goes straight on."
+
+evidence:
+  plan: workstreams/mumate-pdpa-reconsent-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "1"
+  repository:
+    head: "f8845520a2bce2ea150d82f0b3870b0c234574fd"
+    branch: hq/20261022
+    working_tree: this-decision-and-plan-0.4
+  related:
+    - memory/events/2026/10/23/20261023T153216_mumate_pdpa_staging_proven_standby_for_team.yaml
+
+unresolved:
+  - "With no notice, the member learns that questions are used only from 3.1 in the policy they scroll through before ticking. The owner accepted the legal risk of opt-out on the team's word; no lawyer has reviewed it."
+  - "The effective date must become the production release day."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Push the mootech-fe change with --no-verify, open the pull request, merge
+    it, and confirm staging runs it.
+  acceptance_check:
+    - "Staging accepts the updated policy with no popup and the settings switch is on afterwards."

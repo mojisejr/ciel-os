@@ -3,7 +3,7 @@
 **Workstream:** `mumate-pdpa-reconsent-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -87,6 +87,14 @@ nothing deletes questions after two years on a schedule. The owner decided:
   that member's questions.
 - **Two-year deletion on a schedule:** "ตั้งงานเลย". A daily job deletes
   questions older than two years.
+
+### Revision 0.4 (2026-10-24)
+
+The business team reviewed staging and asked to remove the one-time notice
+after accepting; the owner relayed it: "เอาตรงนี้ออกครับ ทีมไม่เอา นอกนั้น
+เหมือนเดิม" and confirmed the whole popup goes. Accepting still turns the AI
+item on and it is still switched off in settings; 3.1 in the policy the
+member has just read to the end is where this is said.
 
 ## Project links
 
