@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261024T055841_mumate_pdpa_handoff_owner_tested_standby
+type: closeout
+recorded_at: "2026-10-24T05:58:41+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-pdpa-reconsent-001
+  lane: single
+  objective: >-
+    Handoff: the owner tested plan 0.4 on staging and found everything in
+    order; the business team checks it once more; the agent stands by.
+    Production waits for the team and the owner's release word.
+  scope:
+    - "State of slice 1 at plan 0.4 on staging, and what the next session needs."
+  out_of_scope:
+    - Production release.
+
+outcome:
+  status: staged-awaiting-team
+  done:
+    - "The owner tested the updated-policy screen on staging after the reset: 'ผมลองทดสอบเรียบร้อยแล้ว ทุกอย่างโอเค ละ เดี๋ยวผมรายงานทีมให้เชคอีกทีก่อน'."
+    - "Decisions so far, each recorded: plan 0.2 opt-out by accepting and scrollwrap (20261023T140632); plan 0.3 layout A in plain text, sign-up opt-out, 3.1 matching the system, rewrite before keeping, clean start with a salt, two-year deletion job (20261023T144449); plan 0.4 no popup after accepting (20261024T052823)."
+    - "Staging runs fe 9a11760 / bazi 20ff92f / mumate-infra ef7026d with its own AI_QUESTION_SALT, migration 0057, the ai-question-purge timer and the new help text; the owner's end-to-end test stored one rewritten question and bdash showed it."
+    - "Production is unchanged."
+  acceptance:
+    - "Staging meets slice 1 revision 0.4. Production acceptance remains open."
+
+evidence:
+  plan: workstreams/mumate-pdpa-reconsent-001/PLAN.md
+  plan_revision: "0.4"
+  decision: memory/events/2026/10/24/20261024T052823_mumate_pdpa_no_notice_plan_0_4.yaml
+  repository:
+    head: "7df23f96c5d29f39577e67d7bf6b3dd9f3e07542"
+    branch: hq/20261022
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/24/20261024T053715_mumate_pdpa_no_notice_on_staging.yaml
+    - memory/events/2026/10/24/20261024T055140_mumate_pdpa_staging_test_consent_reset.yaml
+    - memory/events/2026/10/23/20261023T153216_mumate_pdpa_staging_proven_standby_for_team.yaml
+
+unresolved:
+  - "The business team checks staging once more; word changes go in on a topic branch."
+  - "The effective date is still 2026-10-23 and must become the production release day (constants/privacy-policy.ts, then re-stamp)."
+  - "Production order on the owner's word: AI_QUESTION_SALT on prod-1 env/bazi.env generated on the host and never printed (backup first); promote fe 9a11760 or later with bazi 20ff92f or later; delete ai_question_log rows created before the new bazi started; git pull plus bin/cron-install.sh on prod-1; the privacy-and-deletion help UPDATE generated from the merged seed; then the slice 1 delivery closeout."
+  - "The bdash question card still says only phone numbers, emails, long digit runs and links are removed (bazi src/app/bdash/chat/page.tsx); deferred, the owner has not answered."
+  - "bdash caches each range and filter for 10 minutes; the owner accepted it as it is."
+  - "Legal risk accepted by the owner on the team's word; no lawyer has reviewed opt-out for questions that can hold health details, and with no popup members learn of it only from 3.1."
+  - "A model rewrite lowers but does not remove the chance a personal detail is kept."
+  - "A staging refresh from a production backup brings production ai_question_log rows into staging; repeat the clean start after a refresh."
+  - "The design samples artifact for this slice is still published (private); delete it only on the owner's word."
+  - "mootech-fe main fails verify-architecture in four old files; fe pushes go with --no-verify on the owner's word."
+  - "HQ standing branch hq/20261022 is unpushed and carries other lanes; pushing and merging it belong to the owner."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Next session: Wake and read this handoff; when the owner brings the
+    team's answer, apply any word changes on a topic branch; when the owner
+    names the release day, set the effective date, then walk the production
+    order above step by step with the owner and record the slice 1 delivery
+    closeout.
+  acceptance_check:
+    - "Production runs the pair with both ✅, the salt is set, no question from before the new bazi remains, the timer is on, and /privacy/policy shows 2026-10.1 with the release-day effective date."
