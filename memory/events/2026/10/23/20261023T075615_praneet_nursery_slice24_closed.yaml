@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20261023T075615_praneet_nursery_slice24_closed
+type: closeout
+recorded_at: "2026-10-23T07:56:15+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Close slice 24, "ใส่รถพอไหม", on the owner's word after he used it on
+    production, and hand over before he clears the session.
+  scope:
+    - "praneet-web PR 25, praneet-office PR 16, migration 013 and the four-slot LINE menu on production."
+outcome:
+  status: ready-for-owner-merge
+  slice: "24"
+  completed:
+    - "Built and checked as recorded in evt_20261023T074352_praneet_nursery_slice24_built_migration_word_pending (fit.spec 8/8, Vercel preview build passed)."
+    - "The owner merged praneet-web PR 25 (merge e37626bdc671e9eeae6b3dcec2e4334b1a4a00ae) before the migration ran; on his word ('รัน migration ให้ผมเลย') migration 013 was applied to production right after with the owner role. Read back with the reader role: 5 vehicles (the high cage with the shop's 1,250-1,300), bag 9 loading sizes 8.3 / 21 / 15 cm, settings 2 / 3 / 80% / 700, fit_hits empty, 5 lots unchanged; a second run applied nothing. Between the merge's deploy and the migration, /fit and the back-office menu would have failed; no production log was read."
+    - "Live: /, /fit, a stock row's /fit and /ops/login answered 200; /fit showed 1,250-1,300 and the side view '11 แถว สูงสุด 6 ชั้น'; no 'ปลอดภัย'; the home page carries the floating button."
+    - "praneet-office: PR 15 (menu plus samples) closed and its branch deleted after the owner said not to keep the samples ('เราไม่เก็บขยะเอาไว้ครับ'); PR 16 (menu only) merged (c76079ec27088399665d5eb628f78e5ad0a5a2b6). On his word the four-slot menu was applied through the Messaging API as the default (richmenu-962d97cb53d7224199449d2218b9a5f4), the older API menu removed; LINE OA Manager templates allow at most three slots, which the API does not depend on."
+    - "Clean-up: the slice 24 samples are gone from praneet-office (the plan's revision 2.3 still names where they were); local scratch removed in both checkouts (shot and walk scripts, slice 21/23 walk files and photos, logs, unused post cards and draft); both checkouts on main equal to origin/main, merged topic branches deleted."
+    - "DoD owner: he used it and approves ('ผมลองใช้ดูแล้ว มันโอเคอยู่ครับ ... ผมอนุมัติ อันนี้ครับ'); adjustments come in a later conversation."
+  owner_statement: "แจ๋วเลยครับ ผมว่า ผมจะ clear session ผมลองใช้ดูแล้ว มันโอเคอยู่ครับ เดี๋ยว ปรับตรงไหนเราไปคุยกันอีกที ผมคิดว่าผม อนุมัติ อันนี้ครับ closeout แล้วบอกผมหน่อยว่าเราพร้อม clear"
+  not_verified:
+    - "The agent did not see the LINE menu or /fit on a phone; the record rests on the owner's word and the live HTTP checks."
+    - "The full local Playwright suite and next build are broken on main in this environment (machine load, next/font); not investigated."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.3"
+  slice: "24"
+  decision: memory/events/2026/10/22/20261022T222233_praneet_nursery_slice24_authorized.yaml
+  repository:
+    head: 412aa48f02c10778a8d808e60be01b20473f3d38
+    branch: hq/20261022
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261022
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 25
+      base: main
+      state: MERGED
+      merge_commit: e37626bdc671e9eeae6b3dcec2e4334b1a4a00ae
+    - repository: github.com/mojisejr/praneet-office
+      number: 16
+      base: main
+      state: MERGED
+      merge_commit: c76079ec27088399665d5eb628f78e5ad0a5a2b6
+  resume:
+    read_first:
+      - this record
+      - workstreams/praneet-nursery-001/PLAN.md (Owner revisions 2.2 and 2.3, slices 24 and 7)
+      - checkouts/praneet-web/README.md ("ใส่รถพอไหม" (slice 24))
+unresolved:
+  - "Loading settings (18 a row, 21 cm a row, 15 cm a layer, tail drop 3, margin 80%, truck from 700) and the high cage's 150 cm are the agent's; the owner's bed measurement and one real load photo would replace them in the back office. Bag 9 has no weight on production, so /fit says it is unweighed."
+  - "The side view draws a pickup body for every vehicle, the 6-wheel included."
+  - "Post F1 is on the shop page; group posts (one code each) wait for F1's figures. Post style rule is in praneet-office branch posts-text-style (commit 6d84f2a), not pushed."
+  - "Test orders and customers on production: deletion ordered 2026-10-22; the exact rows go to the owner first (production read and write on his word)."
+  - "Slice 7 open: the second-account invite test, group posts, a real order from the new channel; bag weights deferred by the owner. Slice 22 kept, not built; slice 8 not started; the slice 22 samples page is still kept."
+  - "The local full suite and next build fail on main in this environment; deferred."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Owner pushes and merges the HQ standing branch hq/20261022. Next
+    session: Wake, then read F1's opens and LINE taps (posts list) and the
+    /fit counts on /ops/settings/fit, and talk through any adjustments to
+    "ใส่รถพอไหม" the owner brings.
+  acceptance_check:
+    - "After the merge, Wake shows slice 24 delivered and the next slice needing an owner decision."
