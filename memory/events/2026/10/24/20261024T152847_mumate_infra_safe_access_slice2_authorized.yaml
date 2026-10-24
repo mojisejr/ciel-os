@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261024T152847_mumate_infra_safe_access_slice2_authorized
+type: decision
+recorded_at: "2026-10-24T15:28:47+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-safe-access-001
+  lane: single
+  objective: Authorize slice 2 (env-set.sh and the rotation procedure) of plan 0.1.
+  scope:
+    - "Slice 2 as written in workstreams/mumate-infra-safe-access-001/slices/2.md."
+  out_of_scope:
+    - "Rotating the exposed database password."
+
+outcome:
+  status: decided
+  decision: >-
+    The owner authorized both slices in one run ('2 slices ให้คุนทำยาวเลย ถ้าไม่มีอะไรให้ผมต้องเคาะอีกแล้ว และเจอกัน ที่ PR เลยครับ'),
+    as recorded in the slice 1 decision. Slice 1's delivery closeout now
+    exists, so slice 2 is authorized under the same words.
+
+evidence:
+  plan: workstreams/mumate-infra-safe-access-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: "78605065dfababdb0e1874b9274af29f0772ede6"
+    branch: hq/20261024
+    working_tree: this-decision-and-slice-1-closeout
+  related:
+    - memory/events/2026/10/24/20261024T152113_mumate_infra_safe_access_slice1_authorized.yaml
+    - memory/events/2026/10/24/20261024T152846_mumate_infra_safe_access_slice1_delivered.yaml
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Build bin/env-set.sh and its test on a mumate-infra topic branch; prove on staging.
+  acceptance_check:
+    - "Slice 2 acceptance in slices/2.md."
