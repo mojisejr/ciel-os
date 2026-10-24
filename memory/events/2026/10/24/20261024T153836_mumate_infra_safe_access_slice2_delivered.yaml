@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20261024T153836_mumate_infra_safe_access_slice2_delivered
+type: closeout
+recorded_at: "2026-10-24T15:38:36+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-safe-access-001
+  lane: single
+  objective: >-
+    Deliver slice 2, the final slice: bin/env-set.sh, its leak test, the
+    rotation procedure, and the staging proof.
+  scope:
+    - "mumate-infra PRs 61 and 62, and a proof on mumate-2."
+  out_of_scope:
+    - "Rotating the exposed database password; the owner names the day."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "2"
+  completed:
+    - "mumate-infra PR 61 (merge a3408bff9a2b0de517e5696d5d9dbace554e3175) adds bin/env-set.sh. It handles one key in one env file: a value from stdin or a hidden prompt, --generate-hex, --url-password (swaps only the password, URL-encoded) and --unset. It backs up to mode 600 first, writes through awk's environment, checks every other line is unchanged before the swap, keeps the file mode, and prints only name|value lines. scripts/env-set.test.sh plants old and new canaries and proves neither shows, and that a copy which prints the value does leak. prod-sql.sh --fingerprint now covers *DB_PASSWORD, hashing URL passwords decoded. .gitignore keeps env/*.env.bak-* and env/*.env.pre-* out of git. Runbook 01 sends env edits only through the tool and holds the six-step rotation procedure."
+    - "The staging proof found a defect. A set and an unset in the same second wrote the same backup name, and the second overwrote the first. The file itself came back byte for byte. PR 62 (merge 05c86b68580b35270f31ea5f2ce25a73e0ac34e3) adds -2, -3 to a taken name, and test 4b fails on the PR 61 version and passes on the fix. scripts/test-all.sh: 19 files, 0 failed, real checkout unchanged. shellcheck and gitleaks clean. The PR sections check passed on 60, 61 and 62."
+    - "Proof on mumate-2 at 05c86b6, on env/bazi.env. ENV_SET_PROOF was added with --generate-hex 16 and then removed. The output showed only env_set, key, backup, length and restart lines. A name-only diff showed the one key added and every other line the same. After the unset the file was identical to the original, and two backups existed (…083814Z, holding the original, and …083814Z-2). git ignores them. The agent then deleted its three proof backups by name. Staging fe and bazi stayed ✅."
+    - "Fingerprint by hash. prod-1 env/fe.env DATABASE_URL and env/bazi.env APP_DATABASE_URL share the production password (p.1c1edd19). On mumate-2, env/be.env DB_PASSWORD shares it too. env/backup.env uses another user and password on the same host. Runbook 01's rotation list names exactly these three keys."
+  acceptance:
+    - "Slice 2 acceptance met: the test passes and catches a talky copy; the staging run showed the backup and a one-key change and printed no value; runbook 01 holds the rotation procedure; the PRs are merged."
+
+evidence:
+  plan: workstreams/mumate-infra-safe-access-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  decision: memory/events/2026/10/24/20261024T152847_mumate_infra_safe_access_slice2_authorized.yaml
+  repository:
+    head: "a59f6263614a5a2d467bafebb5a71cb366d03ee8"
+    branch: hq/20261024
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261024
+  pull_requests:
+    - repository: github.com/mojisejr/mumate-infra
+      number: 61
+      base: main
+      state: MERGED
+      merge_commit: a3408bff9a2b0de517e5696d5d9dbace554e3175
+    - repository: github.com/mojisejr/mumate-infra
+      number: 62
+      base: main
+      state: MERGED
+      merge_commit: 05c86b68580b35270f31ea5f2ce25a73e0ac34e3
+  related:
+    - memory/events/2026/10/24/20261024T152846_mumate_infra_safe_access_slice1_delivered.yaml
+
+unresolved:
+  - "The exposed production database password is not rotated. On the owner's day, runbook 01 'เปลี่ยนรหัสฐานข้อมูล production' changes prod-1 env/fe.env and env/bazi.env and mumate-2 env/be.env; the owner pastes the new password in his own terminal."
+  - "mumate-2 (a staging host, be retired) keeps a copy of the production password in env/be.env DB_PASSWORD; removing it with env-set.sh --unset is the owner's call."
+  - "prod-1 carries older hand-made env backups with secrets (env/*.bak-* from 2026-10-01 to 10-12, env/bazi.env.pre-ai-salt); git now ignores them; deleting them by name is the owner's call."
+  - "prod-1 runs mumate-infra 4f1f79b (pulled for the slice 1 proof); env-set.sh reaches it with the next promote or pull."
+  - "The Claude permission rule for the read mode of the tools on the owner's machine is not added yet; it is host configuration outside this plan."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner reviews and merges the HQ pull request for hq/20261024; after
+    the merge Wake reports this workstream finished. Rotation follows runbook
+    01 on the day the owner names.
+  acceptance_check:
+    - "After the merge, Wake shows mumate-infra-safe-access-001 delivered with no open slice."
