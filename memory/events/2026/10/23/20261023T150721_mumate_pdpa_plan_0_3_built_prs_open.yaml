@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261023T150721_mumate_pdpa_plan_0_3_built_prs_open
+type: closeout
+recorded_at: "2026-10-23T15:07:21+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-pdpa-reconsent-001
+  lane: single
+  objective: >-
+    Checkpoint: plan 0.3 is built in three repositories and their pull
+    requests are open for the owner; nothing is merged, staging and
+    production are unchanged.
+  scope:
+    - "bazi-sft-dataset PR 61, mumate-infra PR 59, mootech-fe PR 929."
+  out_of_scope:
+    - "Merging, the salt values, deleting the kept questions, the timers and the production release."
+
+outcome:
+  status: prs-open-awaiting-owner
+  done:
+    - "bazi-sft-dataset PR 61 (branch feat/ai-question-rewrite-purge, 6fa6161, base pdf-dev): rule clean, model rewrite, rule clean before keeping, nothing kept on a failed rewrite; scrubPii also catches slash dates and 'น.' times; /api/cron/ai-question-purge deletes rows older than 730 days; account-purge also deletes the account's questions (it did not before: they are keyed by subject); help chapter text."
+    - "mumate-infra PR 59 (branch feat/cron-ai-question-purge, 08c1ac8): cron.tsv row and timer ai-question-purge at 17:45 UTC on staging and production; runbook 01 release order."
+    - "mootech-fe PR 929 (branch feat/pdpa-scrollwrap-opt-out, c907e8e): sample A screen for sign-up and the updated policy, full policy as plain text, tick unlocked at the end, early-tap message, no AI box; accepting turns ai_training on unless the latest answer is a no, then a one-time notice; 3.1 rewritten to the system's behaviour; policy version 2026-10.1, stamped."
+    - "The owner gave the word for the fe push with --no-verify after the harness refused it once: 'คุนยิง no verify ได้เลย'."
+  acceptance:
+    - "Tests: bazi 29 changed tests pass, full suite has only the 9 failures already on pdf-dev; mumate-infra cron.test.sh all passed; fe 3987 passed, tsc, lint 0 errors, tsx lane, guard-workflow-integrity and gitleaks green, build green with the VAPID line. verify-architecture fails only on the four old files already failing on main."
+    - "Live rewrite of 10 sample questions with the local Gemini key replaced every name, date, time, address, school, workplace and LINE id and kept the meaning."
+    - "Local render at 390 and 1280, light and dark, with every API intercepted: an early tap stays empty with the message; at the end it ticks; accepting shows the notice and posts ai_training once."
+
+evidence:
+  plan: workstreams/mumate-pdpa-reconsent-001/PLAN.md
+  plan_revision: "0.3"
+  decision: memory/events/2026/10/23/20261023T144449_mumate_pdpa_rewrite_salt_purge_plan_0_3.yaml
+  repository:
+    head: "b70b2ad3f39c0d5c01419da4f3322ef9e186b126"
+    branch: hq/20261022
+    working_tree: this-record-only
+  related:
+    - "bazi-sft-dataset PR 61 head 6fa6161774217987575c743c53515e8f1e5b591d"
+    - "mumate-infra PR 59 head 08c1ac854c9161cab06d1b2c8a5d2b3504c4a36e"
+    - "mootech-fe PR 929 head c907e8edcc8572b5fbb1d26554978f5f9fe05f2a"
+
+unresolved:
+  - "The owner approves the 3.1 wording in fe PR 929 before merging; it is the agent's draft from the team's text."
+  - "The effective date is still 2026-10-23 and must become the production release day."
+  - "Release order: AI_QUESTION_SALT on the host, then bazi, delete questions created before the new bazi by created_at, then the timer with bin/cron-install.sh; on production also the help seed (HELP_SLUG=privacy-and-deletion) and the fe and bazi promotion together. Opt-out must not reach production before the rewrite."
+  - "Legal risk accepted by the owner on the team's word; no lawyer has reviewed opt-out for questions that can hold health details."
+  - "A model rewrite lowers but does not remove the chance a personal detail is kept."
+  - "mootech-fe main fails verify-architecture in four old files (pages/v2/fortune/sage.tsx, pages/v2/shop/checkout.tsx, pages/v2/shop/qrcode.tsx, features/v2-shell/components/AppHeader.tsx); fe pushes need the owner's word for --no-verify."
+  - "gh pr merge is refused to the agent by the harness; the owner merges."
+  - "HQ standing branch hq/20261022 is unpushed and carries other lanes; pushing and merging it belong to the owner."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner approves 3.1 and names the production day; the agent sets the
+    effective date in PR 929; the owner merges bazi 61, mumate-infra 59 and
+    mootech-fe 929 after the staging salt is set; then the staging clean
+    start and timer, the staging check, and the production release on the
+    owner's word.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/mumate-pdpa-reconsent-001/slices/1.md, revision 0.3."

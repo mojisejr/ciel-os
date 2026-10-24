@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T140839_mumate_bdash_v2_slice4_delivered
+type: closeout
+recorded_at: "2026-10-22T14:08:39+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Slice 4 delivered: แชตถามอะไร shows the chat topics card and the
+    consent-based real-question card, and the ai_training consent 2026-10.2
+    covers analysing questions, on production since 2026-10-22 14:02 +07.
+  scope:
+    - "Slice 4 of plan 0.4: mootech-fe PR 925 (merge 398b33d), bazi-sft-dataset PR 59 (merge f3c9558), staging soak, production release and checks."
+  out_of_scope:
+    - "/ops; the team's PII scrub; AI_QUESTION_SALT; the help seed run on production; mumate-infra changes."
+
+outcome:
+  status: ready-for-owner-merge
+  done:
+    - "The build and local checks are recorded in memory/events/2026/10/22/20261022T132433_mumate_bdash_v2_slice4_built_fe_push_blocked.yaml."
+    - "The owner pushed the mootech-fe branch himself (the pre-push verify-architecture gate fails on main); the agent opened PR 925 and marked PRs 925 and 59 ready; the owner merged both, fe first."
+    - "Staging-follow deployed fe 398b33d / bazi f3c9558 at 06:46:00Z, both ✅; staging-pair --soak 10 passed at 07:01:13Z (15 min); no bazi error lines in 20 min; bdash-stg answers 401 for /bdash/chat and 404 for / without the passkey. The agent did not open bdash with the passkey."
+    - "Runbook 01 readiness on prod-1 before promote: fe 6e2a8cb / bazi 4d5ae04 both ✅; 0 5xx in 30 min; 0 db_query_stall and 0 gave_up in 2 h; outgoing change = PR 925 and PR 59 only; no migration, no env; 14:01 +07, not the evening peak."
+    - "promote-production pressed by the agent on the owner's word ('release ได้เลยหรือเปล่า ถ้าได้จัดการเลยครับ') at 07:01:42Z. Listing the run was refused by the harness, so the result was read on prod-1: deploy-history 2026-10-22T07:02:50Z ok FE_TAG=398b33d BAZI_TAG=f3c9558 by=mojisejr; both ✅; cron-check agrees; bazichart.mumate.co/api/health ok with sha 398b33d."
+    - "Five minutes after release (to 07:08:14Z): 0 5xx of 133 requests, 0 db_query_stall, both ✅."
+  acceptance:
+    - "Topic counts match a direct count on the data: met on a disposable database through the code's SQL; production counts not read."
+    - "bdash adds no table and stores no question or answer text: met."
+    - "The topics card says topics are the AI's label: met."
+    - "The question card shows no question recorded before the new wording reached production: met by construction; only 2026-10.2 accepts count, and only the fe released at 07:02:50Z sends them."
+    - "Old-version members are asked again and none of their questions are kept until they accept: met in tests; production behaviour not observed by the agent."
+    - "The question card reached production with the new wording: met (one promote, one pair)."
+    - "The owner shows the business team: open."
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "4"
+  decision: memory/events/2026/10/22/20261022T130252_mumate_bdash_v2_slice4_authorized.yaml
+  repository:
+    head: "e8a47449a4ee64c187eb1f009b7c305d19a4173e"
+    branch: hq/20261022
+    working_tree: this-record-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261022
+  related:
+    - memory/events/2026/10/22/20261022T132433_mumate_bdash_v2_slice4_built_fe_push_blocked.yaml
+    - "mootech-fe PR 925 (merge 398b33db0d8d222aa43827758b9bef3f32a98845); bazi-sft-dataset PR 59 (merge f3c9558a22e465583f8ac68c2246ebfcf4f90360)"
+
+unresolved:
+  - "The owner has not yet opened production bdash แชตถามอะไร or shown the business team; the agent did not open bdash with a passkey on staging or production."
+  - "The member-facing consent wording was approved by merging PR 925, not by name."
+  - "AI_QUESTION_SALT is unset on prod-1 and members can now accept 2026-10.2, so ai_question_log may start gathering rows; setting the salt later leaves those rows unpurgeable on withdrawal. Owner decision."
+  - "For the team, through the owner: the PII scrub keeps names and slash-written dates; the policy calls the subject irreversible; mootech-fe main fails verify-architecture in 4 files; the help seed (HELP_SLUG for the PDPA chapter) must run on production for the new text."
+  - "Nine bazi tests in seven files fail on pdf-dev without this change; not investigated."
+  - "The previous checkpoint event says the fe branch was not pushed; it was pushed by the owner afterwards (PR 925)."
+  - "MuMate open items: Loki image measurement before about 2026-10-28 (production read on the owner's word); staging copy delete before 2026-11-04; DB password and token rotations."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner opens production bdash แชตถามอะไร, shows the business team, decides
+    AI_QUESTION_SALT, and merges the HQ standing branch hq/20261022 with a merge
+    commit when the round closes.
+  acceptance_check:
+    - "After the merge, Wake shows mumate-bdash-v2-001 finished, with slice 4 delivered."

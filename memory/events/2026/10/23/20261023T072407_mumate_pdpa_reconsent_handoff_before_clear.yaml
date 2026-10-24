@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261023T072407_mumate_pdpa_reconsent_handoff_before_clear
+type: closeout
+recorded_at: "2026-10-23T07:24:07+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-pdpa-reconsent-001
+  lane: single
+  objective: >-
+    Handoff before the owner clears the session: slice 1 and the option A
+    wording are on staging; the business team is checking staging; production
+    waits for the team and the owner's word.
+  scope:
+    - "State of mootech-fe PRs 927 and 928, bazi PR 60, staging and production, and what the next session needs."
+  out_of_scope:
+    - Production release.
+
+outcome:
+  status: staged-awaiting-team
+  done:
+    - "The owner merged mootech-fe PR 927 (merge 21ae328), bazi PR 60 (merge 9274c2a) and mootech-fe PR 928 (merge 20bb957, option A words). staging-follow deployed fe 20bb957 / bazi 9274c2a at 2026-10-23T00:02:39Z; both ✅; 0 fe error lines in 10 minutes."
+    - "The owner tested staging and asked for softer AI box words; option A is recorded in memory/events/2026/10/23/20261023T062222_mumate_pdpa_ai_box_wording_option_a.yaml with a standing instruction to put in the team's words when they keep the floor."
+    - "For the team, through the owner: a short LINE summary of who sees the screen, when, where, how often, and what yes and no change; and a plain-language note on PDPA risk if the wording dodges too far (sections 19, 26, 79, 81-84, 73, 77-78, 90, read from the MDES unofficial translation; the first PDPC fine of THB 7 million in August 2024 began with complaints)."
+    - "Production is unchanged: fe f2bd444 / bazi f3c9558."
+    - "Local checkouts back to base: mootech-fe on main, bazi detached at origin/pdf-dev 9274c2a; merged local topic branches deleted (remote branches left)."
+  acceptance:
+    - "Members with an older version asked once at home and chat; new members not asked; AI box never pre-ticked and never tied to the main button; policy page shows version and date; stamp warning never blocks: met on the local render and in tests; the member flow on staging is being tried by the owner and the team (automation cannot log in there)."
+
+evidence:
+  plan: workstreams/mumate-pdpa-reconsent-001/PLAN.md
+  plan_revision: "0.1"
+  decision: memory/events/2026/10/23/20261023T062222_mumate_pdpa_ai_box_wording_option_a.yaml
+  repository:
+    head: "7f48282f78af01726d7350f0053806826e7545e5"
+    branch: hq/20261022
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/22/20261022T214336_mumate_pdpa_reconsent_built_merge_owner.yaml
+    - "mootech-fe PR 927 (merge 21ae328320115038b4b8f159562d095e93eafaf1), PR 928 (merge 20bb957516cd72a44f303d9b388701f74f0d74c9); bazi-sft-dataset PR 60 (merge 9274c2af0271379df49286791a0535de7d677fc7)"
+
+unresolved:
+  - "The business team is checking staging; they may send their own words for the AI box (put them in if they keep the floor) or for 3.1."
+  - "The policy's effective date is 2026-10-23; if production goes out on another day, change effectiveDate in constants/privacy-policy.ts (the stamp check stays quiet because the date is outside the hashed content)."
+  - "The team's 3.1 still claims names removed, not identifiable, and automatic two-year deletion; the system does none of these yet."
+  - "The first-run card 'AI วิเคราะห์เพื่อสุขภาพเท่านั้น' on the same screen reads against the AI item; unchanged, for the team."
+  - "The help chapter shows the new text only after HELP_SLUG=privacy-and-deletion seed runs on production."
+  - "gh pr merge is refused to the agent by the harness ('Merge Without Review'); the owner merges, unless he adds a permission rule."
+  - "mootech-fe main fails verify-architecture in four files; fe pushes go with --no-verify on the owner's word after the other gates are run by hand."
+  - "AI_QUESTION_SALT is unset on prod-1; owner decision, best taken while ai_question_log is empty."
+  - "HQ standing branch hq/20261022 is unpushed and carries other lanes (praneet-nursery-001); pushing and merging it belong to the owner."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Next session: Wake, read this handoff; when the owner brings the team's
+    answer, apply any word changes on a topic branch; on the owner's release
+    word run runbook 01 readiness and promote fe 20bb957 or later with bazi
+    9274c2a or later, then record the slice 1 delivery closeout.
+  acceptance_check:
+    - "Production runs the pair with both ✅, 0 5xx in five minutes, and /privacy/policy shows ฉบับ 2026-10 with the right effective date."

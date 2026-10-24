@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T201018_praneet_nursery_rev22_vehicle_fit_agreed
+type: decision
+recorded_at: "2026-10-22T20:10:18+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record plan revision 2.2: slice 24, "ใส่รถพอไหม", a free tool on the
+    storefront that tells a customer roughly how many trees from a stock row
+    his own vehicle surely carries per trip and which way of shipping pays.
+    No slice is authorized by this record: slice 24 waits for the picture
+    and screen samples and the owner's pick.
+  scope:
+    - Plan only; no code, pull request or production change in this record.
+outcome:
+  status: recorded
+  decision: >-
+    After a four-round syncup the owner confirmed the shared understanding
+    written into PLAN.md Owner revision 2.2 and slice 24: the shop's own
+    version only (the full Fit Cargo of his PRD is a separate application
+    later, with its own workstream), counts from his experience (bag 9 on a
+    high-cage Revo/Vigo ~1,250-1,300 a trip, turtleback pile leaning forward,
+    wet bag 3.5-4 kg), "surely fits" at 80% of the lowest count, no word
+    "safe" and no default vehicle rating, own pickup / roll pallet / truck
+    compared with a 700-tree threshold the owner guessed, both figures
+    editable in the back office, vehicles in a database table with sources,
+    a side-view SVG assembled from drawn parts without AI, a floating button
+    on stock-row pages and the home page, and a fourth rich-menu slot. He
+    asked to see the SVG picture first, researched and kept in the office,
+    so the build is not redone.
+  owner_statements:
+    - "ผมว่า เอา ก ก่อนครับ และทำใน version ที่เหมาะกับ ร้านเราก็พอ ส่วนตัวเต็ม เราไปทำ เป็น application"
+    - "โอเค ยืนยันครับ แต่ผมอยากเห็น \"ภาพ\". svg นั้นก่อนอ่ะครับว่ามันจะออกมาเป็นแบบไหน"
+  syncup_hit_rate: "17/25 over four rounds (2.5/8, 4/6, 5.5/6, 5/5)"
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.2"
+  repository:
+    head: 6f943a8170069f3183943d7b984c709c2ad5557c
+    branch: hq/20261022
+  related:
+    - .assets/preneet/FIT_CARGO_PRD_TH.md (owner's PRD, git-ignored)
+unresolved:
+  - "The owner measures his high-cage Revo bed inside (width x length x cage height) and, if he can, photographs one real load from the side."
+  - "The 700-tree truck threshold is his guess until a driver's real price arrives."
+  - "Vehicle bed dimensions from manufacturers are to be researched with sources."
+  - "The LINE menu 'ดูสต็อก' (praneet-office PR 13) is not applied; the owner applies the four-slot menu once, after slice 24."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Research and render two to three side-view picture styles and the
+    calculator screen in praneet-office samples, show the owner with a lean,
+    and on his pick record the decision authorizing plan revision 2.2 slice 24.
+  acceptance_check:
+    - "The owner picks a picture style and a screen sample."

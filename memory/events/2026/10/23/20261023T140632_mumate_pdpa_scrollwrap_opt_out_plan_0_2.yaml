@@ -1,0 +1,78 @@
+schema_version: ciel.event.v0.1
+id: evt_20261023T140632_mumate_pdpa_scrollwrap_opt_out_plan_0_2
+type: decision
+recorded_at: "2026-10-23T14:06:32+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-pdpa-reconsent-001
+  lane: single
+  objective: >-
+    Record the owner's plan revision 0.2: the updated-policy screen becomes a
+    read-to-the-end screen with one tick, and the AI item is turned on by
+    accepting the policy and switched off in settings (opt-out).
+  scope:
+    - "mootech-fe: the updated-policy screen (pages/v2/policy-update.tsx, PdpaConsentScreen update variant), the one-time notice after acceptance, and policy 3.1 if the team's words change."
+  out_of_scope:
+    - "Sign-up for new members (first-run keeps its optional AI box until the owner decides)."
+    - "bazi, the settings switch and the question log: unchanged; the fe records ai_training on acceptance."
+    - Production release.
+
+outcome:
+  status: decided
+  slice: "1"
+  decision: >-
+    The business team checked staging and asked for the full policy on the
+    screen, a tick that unlocks only after scrolling to the end with a message
+    on an early tap, and one tick only, without the AI box. The owner asked for
+    conventions; the agent reported that ChatGPT and Claude train on chats by
+    default with a switch in settings (ChatGPT on legitimate interest under
+    GDPR), that ChatGPT Health conversations are not used to train foundation
+    models, and that health details in questions make opt-out risky under PDPA
+    section 26, and it recommended an off-by-default switch in settings. The
+    owner decided to follow the team: "เอางี้นะ ทีมยืนยันว่าให้ทำตามนี้ ...
+    ผมคิดว่าผมตัดสินใจ ตามทีม เค้าบอกผมว่า ทำได้แบบ opt-out ของ chatgpt ครับ
+    ดังนั้น เราคงต้องทำตามแบบนั้นครับ แผนคือเราจะทำ scroll wrap
+    (เอาเนื้อหา อื่นๆ ออกและให้เหลือ เนื้อหา policy ฉบับเต็ม) แล้วให้ user
+    scrollwrap ลงมา แล้วติ๊ก ยินยอมอันเดียว จากนั้นเปิดเลย,แล้ว ค่อยบอก user
+    ไป จัดการได้ใน setting".
+  implementation_calls:
+    - "Accepting records ai_training accepted at the current version, except when the member's latest ai_training answer is a no; an explicit no is kept."
+    - "Slice 1 is revised rather than followed by slice 2: production still runs v1, so one release asks members once."
+    - "Layout sample A (whole page scrolls, bar fixed at the bottom) is the agent's lean; the owner may pick sample B."
+  supersedes:
+    - "The AI box parts of plan 0.1 and the floor in memory/events/2026/10/23/20261023T062222_mumate_pdpa_ai_box_wording_option_a.yaml for the updated-policy screen; the option A words stay on the settings switch and sign-up."
+
+evidence:
+  plan: workstreams/mumate-pdpa-reconsent-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: "5f630e2fe5145b21cfc083734baa5efb721d77b4"
+    branch: hq/20261022
+    working_tree: this-decision-and-plan-0.2
+  related:
+    - memory/events/2026/10/23/20261023T072407_mumate_pdpa_reconsent_handoff_before_clear.yaml
+    - memory/events/2026/10/23/20261023T062222_mumate_pdpa_ai_box_wording_option_a.yaml
+    - "Agent's sources: OpenAI Data Controls help page; OpenAI 'Introducing ChatGPT Health' (January 2026); EDPB ChatGPT Taskforce summary by Ashurst; reports on Anthropic's 2025 consumer terms."
+    - "Samples: a private claude.ai artifact shown to the owner; its link is not kept in this public repository."
+
+unresolved:
+  - "Legal risk accepted by the owner on the team's word: the AI item now rides on the required acceptance, and questions often hold health details (PDPA sections 19 and 26). No lawyer has reviewed it."
+  - "Policy 3.1 still says questions are used only with consent and that the member may refuse; it must say that accepting turns the item on and where to switch it off. Team's words, or an agent draft approved by the owner."
+  - "The team's 3.1 still claims names removed, not identifiable, not tied to the account, and automatic two-year deletion; the system does none of these, and opt-out means questions from nearly every member."
+  - "AI_QUESTION_SALT is unset on prod-1; with opt-out, rows arrive from nearly every member at release, and setting the salt later leaves them unpurgeable on withdrawal. Recommended before the production release; owner decision."
+  - "Sign-up for new members keeps its optional, unticked AI box, so new members are opt-in while existing members are opt-out; whether sign-up follows is the owner's call."
+  - "The effective date must be the production release day."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the owner confirms sample A or B, build the revised screen in
+    mootech-fe on a topic branch with tests, check it locally at 390 and 1280
+    light and dark with the dev login, and open a pull request for the owner
+    to merge to staging.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/mumate-pdpa-reconsent-001/slices/1.md, revision 0.2."

@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T145522_praneet_nursery_first_post_f1_text_first
+type: closeout
+recorded_at: "2026-10-22T14:55:22+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Slice 7 checkpoint: the first post (F1) is on the shop's own Facebook
+    page, and the owner set how posts are made from now on - text in his
+    style, his own photos, pictures from the agent only when he asks.
+  scope:
+    - Slice 7 posts; praneet-office runbook 05; post F1 on production.
+outcome:
+  status: recorded
+  completed:
+    - "Owner's way of working for posts (2026-10-22): the agent writes the post text in the mood and tone of the owner's own sample post and puts it on /ops/posts through the office; the owner copies it, adds photos he takes himself and posts by hand; post cards or QR cards are made only when he asks, case by case."
+    - "praneet-office branch posts-text-style, commit 6d84f2a2070fe5f18feebe42f0b17c2af3cf6c9c: runbook 05-posts.md carries that rule and the style guide (headline with 📣, 🍃/🚚 lines, 'กลุ่มไหน?' with หลังไมค์ offers, 100 trees minimum, 'ไม่กัด 😝' close, LINE OA, figures equal to the storefront). Not pushed."
+    - "Post F1 'เพจร้าน · พร้อมขาย 22 ต.ค.' uploaded on the owner's word ('อัปโหลดได้'), text only, target /: หมอนทอง bag 9 70-80 cm and ชะนี bag 9 60 cm+, 30 baht a tree, roll pallet 1,700 baht a cage (south 1,900), LINE OA @xpm7982c. The owner posted it on the shop page and marked it posted; read-only posts list at 14:55 +07: 7 opens, 0 LINE taps, 0 orders."
+    - "A LINE add-friend QR card (posts/out/line-qr-card.jpg, git-ignored) was made at the owner's request; it points to https://line.me/R/ti/p/@xpm7982c and was not scanned by the agent. QR scans land on the OA directly, so they are not counted against a post."
+    - "The owner deleted the three old local backups in praneet-web .local/backups himself."
+  not_verified:
+    - "The QR card has not been scanned on a phone."
+    - "Whether F1's 'where' field should say 'เพจร้าน': it is empty."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.1"
+  repository:
+    head: bf9e2fb6ed5db26ce60538cbce553f16f5f22daa
+    branch: hq/20261022
+  related:
+    - memory/events/2026/10/22/20261022T125834_praneet_nursery_slice23_closed.yaml
+    - "praneet-office runbooks/05-posts.md on branch posts-text-style"
+unresolved:
+  - "Prices and promotions in the owner's sample post (bag 9 at 70 baht, bag 7 at 30 baht, free roll pallet shipping, truck prices 45 and 23 baht) differ from the storefront; F1 used the storefront's figures. A free-shipping offer needs the storefront changed first."
+  - "Test orders and test customers on production: deletion ordered by the owner; the exact rows are listed for his confirmation first."
+  - "Slice 7 open: the second-account invite test, posts to Facebook groups (one code per group), then a real order from the new channel; bag weights deferred by the owner."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Owner reviews praneet-office branch posts-text-style for a PR; read F1's
+    opens and LINE taps with posts list after a day, then write the group
+    posts in the same style, one code per group.
+  acceptance_check:
+    - "posts list shows F1's figures; group posts each carry their own code."

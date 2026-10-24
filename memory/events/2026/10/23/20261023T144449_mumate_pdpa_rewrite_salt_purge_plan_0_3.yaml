@@ -1,0 +1,75 @@
+schema_version: ciel.event.v0.1
+id: evt_20261023T144449_mumate_pdpa_rewrite_salt_purge_plan_0_3
+type: decision
+recorded_at: "2026-10-23T14:44:49+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-pdpa-reconsent-001
+  lane: single
+  objective: >-
+    Record plan revision 0.3: layout A in plain text, sign-up also opt-out,
+    3.1 matching the system everywhere, questions rewritten without personal
+    details before they are kept, a clean start under its own salt, and a
+    scheduled two-year deletion.
+  scope:
+    - "mootech-fe: the updated-policy and sign-up screens, the one-time notice, policy 3.1 and aiTraining.ts."
+    - "bazi-sft-dataset: the rewrite in logAiQuestion, a cron route for two-year deletion, the PDPA help chapter."
+    - "mumate-infra: a daily cron.tsv row and timer for the deletion route."
+    - "Staging and production: AI_QUESTION_SALT values and deleting the questions kept so far, at release."
+  out_of_scope:
+    - "Gating pages other than home and chat; merging the two consent stores."
+
+outcome:
+  status: decided
+  slice: "1"
+  decision: >-
+    The owner picked sample A with no highlight ("ไม่ต้อง highlight
+    อะไรเป็นพิเศษเลยครับ ให้เนื้อความเป็นเนื้อความปกติเลย"), asked for 3.1 to
+    match everywhere, and put sign-up on the same opt-out ("หน้าสมัครผมคิดว่า
+    ทำแบบเดียวกัน คือให้เป็น opt-out ไปเลย"). He asked whether questions are
+    cleaned of names and personal details before they are kept and, if not,
+    to add it to this workstream with the salt. The agent reported from bazi
+    9274c2a that scrubPii removes links, emails, phone numbers and digit runs
+    of six or more, but not names, slash dates, places or workplaces; that
+    AI_QUESTION_SALT is unset so the hash falls back to OPS_ADMIN_SECRET; and
+    that purge-expired is only a manual ops action with no caller in bazi,
+    mumate-infra or mootech-fe. The owner answered the two open questions:
+    "1 ลบทิ้งเลยแล้วเริ่มเก็บใหม่อย่างถูกต้อง 2 ตั้งงานเลย".
+  implementation_calls:
+    - "The rewrite uses the Gemini key and client options the chat already uses, so no new processor receives the question; it runs after the reply and keeps nothing when it fails."
+    - "The subject hash stays so a withdrawal can still delete that member's questions; 3.1 says so instead of 'not tied to the account'."
+    - "The deletion job follows the existing cron pattern: a bazi /api/cron route guarded by CRON_SECRET, its vercel.json entry, and a cron.tsv row with its timer."
+    - "Questions created before the new bazi runs are deleted after it starts, by created_at, so none written by the old code in between survive."
+    - "One slice, released together: opt-out does not reach production before the rewrite, the salt and the clean start."
+
+evidence:
+  plan: workstreams/mumate-pdpa-reconsent-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "1"
+  repository:
+    head: "8bf19462a371e242e2e68235a15653f650dbaf1d"
+    branch: hq/20261022
+    working_tree: this-decision-and-plan-0.3
+  related:
+    - memory/events/2026/10/23/20261023T140632_mumate_pdpa_scrollwrap_opt_out_plan_0_2.yaml
+    - "bazi-sft-dataset 9274c2a: src/lib/bazi/ai-question-log.ts (scrubPii, subjectFor, salt fallback), src/app/api/ops/ai-questions/route.ts (purge-expired)."
+    - "mumate-infra 9549c03: cron.tsv and systemd/mumate-cron-*.timer."
+
+unresolved:
+  - "Legal risk accepted by the owner on the team's word (plan 0.2): the AI item rides on the required acceptance, and rewritten questions can still carry health details. No lawyer has reviewed it."
+  - "A model rewrite lowers but does not remove the chance that a personal detail is kept; tests cover the common cases only."
+  - "Each kept question now costs one extra small Gemini call."
+  - "The effective date must be the production release day."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build the bazi change (rewrite, deletion route, help chapter) on a topic
+    branch from origin/pdf-dev with tests, then the mumate-infra timer, then
+    the fe screens and 3.1, and open one pull request per repository for the
+    owner.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/mumate-pdpa-reconsent-001/slices/1.md, revision 0.3."

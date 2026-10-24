@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T172632_mumate_team_chat_consent_popup_removed_released
+type: closeout
+recorded_at: "2026-10-22T17:26:32+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-team-release-001
+  lane: single
+  objective: >-
+    Record a production release made of one team merge, mootech-fe PR 926
+    (Em removes the one-time ai_training consent popup from the chat screen),
+    which followed to staging by itself and was promoted on the owner's word.
+  scope:
+    - "Runbook 01 readiness, promote-production, post-release checks."
+  out_of_scope:
+    - Reviewing or changing the team's code.
+
+outcome:
+  status: recorded
+  owner_words:
+    - "\"เพื่อนผม เพิ่ง จะ update content ขึ้นมาใหม่นะครับ staging พร้อมแล้ว คุน release ให้ผมได้เลย\""
+  state:
+    - "What went out: fe 398b33d -> f2bd444 (PR 926 by Jaroensak: ChatScreen no longer renders AiTrainingAsk); bazi unchanged at f3c9558. No migration, no env."
+    - "Readiness at 17:14-17:18 +07 (evening; the owner had already asked for the release): prod fe 398b33d / bazi f3c9558 both ✅; 0 5xx of 1,412 requests in 30 min; one db_query_stall in 2 h with action retry_on_fresh_pool and no gave_up; staging fe f2bd444 / bazi f3c9558 deployed 10:08:27Z, soak 10 passed at 10:18:33Z."
+    - "promote-production pressed by the agent at 10:18:43Z: deploy-history 2026-10-22T10:19:54Z ok FE_TAG=f2bd444 BAZI_TAG=f3c9558 by=mojisejr; both ✅; cron-check agrees; bazichart.mumate.co/api/health ok with sha f2bd444."
+    - "Five minutes after: 0 5xx of 19 requests, 0 db_query_stall, both ✅, 0 fe error lines. The low count is traffic, not the release: requests per minute fell to 1-2 from 10:14Z, before the deploy at 10:19:54Z."
+    - "Effect on mumate-bdash-v2-001 slice 4: the chat popup was the only place existing members were asked about ai_training, including the re-ask of members who answered version 2026-10. After this release, ai_training consent is given only by the sign-up checkbox (new members) or the settings switch. The bdash question card will therefore fill slowly, and old-version members are no longer asked again, which slice 4's acceptance named."
+
+evidence:
+  plan: workstreams/mumate-team-release-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "4db2c05928df350c3c29263d290f474fc547445f"
+    branch: hq/20261022
+  related:
+    - memory/events/2026/10/22/20261022T140839_mumate_bdash_v2_slice4_delivered.yaml
+    - "mootech-fe PR 926 (merge f2bd444a2ace493e3e3cbb52bafd46555f493921)"
+
+unresolved:
+  - "Whether existing members should still be asked about ai_training somewhere (the popup is gone) is an owner decision with the team; until then the bdash question card draws only on new sign-ups and members who open the settings switch."
+  - "AI_QUESTION_SALT is unset on prod-1; owner decision, best taken while ai_question_log is empty."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner asks Em why the popup was removed and decides whether existing
+    members are asked anywhere else.
+  acceptance_check:
+    - "The owner's answer is recorded, or a team change that asks existing members is released."

@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T214336_mumate_pdpa_reconsent_built_merge_owner
+type: closeout
+recorded_at: "2026-10-22T21:43:36+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-pdpa-reconsent-001
+  lane: single
+  objective: >-
+    Checkpoint: slice 1 is built and checked in mootech-fe PR 927 and
+    bazi-sft-dataset PR 60; the merge was refused to the agent by the harness
+    and goes to the owner.
+  scope:
+    - "mootech-fe feat/pdpa-reconsent (6861a9b), PR 927 into main, ready."
+    - "bazi-sft-dataset feat/pdpa-help-points-to-policy (9253fbb), PR 60 into pdf-dev, ready."
+  out_of_scope:
+    - Merge, staging check, production release.
+
+outcome:
+  status: built-merge-owner
+  done:
+    - "mootech-fe: constants/privacy-policy.ts holds version 2026-10, effective date 2026-10-23 and every section; the team's AI text replaces 3.1 verbatim and the other sections moved unchanged (32 fragments checked); the policy page renders it with the version and date; PDPA_POLICY_VERSION comes from it."
+    - "mootech-fe: GET /api/user adds policyConsent (latest consent.policy_version, own catch, null = not determined); needsReconsent gate in useV2Home after first-run and usePolicyGate on chat; /v2/policy-update reuses PdpaConsentScreen variant update (neutral heading and line, link to the full policy, no pager); POST /api/v2/policy-consent appends a consent row at the server version, session identity, onboarded_at untouched; the AI box arrives ticked only for a current ai_training yes and is recorded only when changed; promo popup excluded from the page; one positive AI sub-line in aiTraining.ts; pre-push prints a stamp warning and cannot fail."
+    - "bazi: the PDPA help chapter's AI part is three lines pointing at policy 3.1."
+    - "Checks, mootech-fe: pdpa-reconsent tests 15/15; full npm test 3983 passed, no unhandled errors (the user-route test's db mock made lazy); tsc clean; lint 0 errors; npm run build green with the VAPID gate; gitleaks no leaks in the branch; workflow-integrity ok; verify-architecture the same 4 violations as main, none in touched files. Pushed with --no-verify on the owner's word."
+    - "Local Playwright (next dev, dev login, throwaway Postgres, bazi pointed at a dead port, Postgres stopped after): old member at /v2 sent to the screen; button disabled until the main tick; AI box unticked; accept returns to /v2 and chat passes; a 2026-10 row appended and onboarded_at unchanged; /v2/chat?topic=love straight to the screen and back to the same URL after accepting; a current member never asked; 390 and 1280, light and dark, no sideways scroll, no page errors, no promo after the fix."
+  blocked:
+    - "gh pr merge was refused to the agent by the harness classifier; the owner merges PR 927 and PR 60."
+
+evidence:
+  plan: workstreams/mumate-pdpa-reconsent-001/PLAN.md
+  plan_revision: "0.1"
+  decision: memory/events/2026/10/22/20261022T202451_mumate_pdpa_reconsent_opened_slice1_authorized.yaml
+  repository:
+    head: "10a75394756177c174eb9c1b7ab5644f6a655ef7"
+    branch: hq/20261022
+    working_tree: this-record-only
+  related:
+    - "mootech-fe PR 927 (feat/pdpa-reconsent 6861a9b564101026d76754c85d0c7812173ce790)"
+    - "bazi-sft-dataset PR 60 (feat/pdpa-help-points-to-policy 9253fbb0bd6dd9b780fe1bdd377d29ffdf4949d6)"
+
+unresolved:
+  - "The team's AI wording claims names are removed, the data cannot identify anyone, and deletion after two years is automatic; the system does none of these yet. The owner sends the team the agent's note."
+  - "The first-run card 'AI วิเคราะห์เพื่อสุขภาพเท่านั้น', shown on the same screen, now reads against the AI item; unchanged here, for the team."
+  - "The policy's effective date is 2026-10-23; if production goes out later it should change, which also needs a re-stamp."
+  - "The help chapter shows the new text only after HELP_SLUG=privacy-and-deletion seed runs on production; the earlier seed run is also unconfirmed."
+  - "On staging and production the member flow cannot be automated (production builds have no dev login; member login is LINE or Google); staging is checked for the deploy and the public policy page."
+  - "AI_QUESTION_SALT is unset on prod-1; owner decision."
+  - "mootech-fe main fails verify-architecture in four files untouched here."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner merges mootech-fe PR 927 and bazi PR 60 with merge commits; the agent
+    then checks staging (deploy, /privacy/policy version line, health) and
+    reports ready to release.
+  acceptance_check:
+    - "Staging runs both merges with ✅ and /privacy/policy shows ฉบับ 2026-10."

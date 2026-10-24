@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261023T074352_praneet_nursery_slice24_built_migration_word_pending
+type: closeout
+recorded_at: "2026-10-23T07:43:52+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Slice 24 checkpoint: "ใส่รถพอไหม" is built and both draft pull requests
+    are open; migration 013 on production waits for the owner's word, then
+    his merge and phone check.
+  scope:
+    - "praneet-web PR 25 and praneet-office PR 15 (drafts); no production change."
+outcome:
+  status: recorded
+  slice: "24"
+  completed:
+    - "praneet-web branch slice24-vehicle-fit (head 23a3760632679afdc6122c24868163891c0d2fed), draft PR 25: /fit with the loading arithmetic in lib/fit-model.ts, side view and guide from the same rows, floating button on / and stock rows, vehicles and fit settings in the back office, bag loading sizes, daily use and LINE-tap counts, migration 013 (additive), README and DESIGN.md."
+    - "praneet-office branch slice24-richmenu (head aea749b5de26328401bc848115695c45a29d1a4d), draft PR 15: four-slot LINE menu rendered (not applied) and the slice 24 samples kept in samples/slice24 as the owner asked."
+    - "tests/fit.spec.ts 8/8 on the local test database; typecheck clean; Vercel preview build of PR 25 passed."
+    - "Starting vehicles from sources: Revo standard cab bed 2,315 x 1,575 x 480 mm (car250.com), D-Max Spark 2,330 x 1,590 x 465 mm (Isuzu brochure), D-Max Spacecab 1,805 x 1,530 x 490 mm (headlightmag.com), a 6-wheel cage truck as an estimate; the high cage uses the Revo bed with a 150 cm cage until the owner measures."
+  not_verified:
+    - "The full local Playwright suite is not usable evidence today: branch 68 passed / 11 failed, unchanged main 19 passed / 62 failed under the same machine load (interrupted navigations, beforeAll compile timeouts). Two real findings were fixed on the branch (settings.spec counting fit.spec's vehicle delete; 15 px text on the fit settings page)."
+    - "next build fails locally on main as well (next/font Google: 'queries have exactly one entry'); the Vercel preview build is the build check."
+    - "The preview is behind Vercel login; the agent has not opened it."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.3"
+  slice: "24"
+  decision: memory/events/2026/10/22/20261022T222233_praneet_nursery_slice24_authorized.yaml
+  repository:
+    head: 5f630e2fe5145b21cfc083734baa5efb721d77b4
+    branch: hq/20261022
+  pull_requests:
+    - repository: github.com/mojisejr/praneet-web
+      number: 25
+      base: main
+      state: DRAFT
+      head: 23a3760632679afdc6122c24868163891c0d2fed
+    - repository: github.com/mojisejr/praneet-office
+      number: 15
+      base: main
+      state: DRAFT
+      head: aea749b5de26328401bc848115695c45a29d1a4d
+unresolved:
+  - "Migration 013 on production needs the owner's word; /fit and the menu rows fail on production until it runs, so it runs before the merge."
+  - "Starting loading settings and the high cage's 150 cm are the agent's; the owner's bed measurement and one real load photo would replace them. Bag 9 has no weight on production, so the page says it is unweighed."
+  - "The side view draws a pickup body for every vehicle."
+  - "The local full suite and local build are broken on main in this environment (load and next/font); deferred, not investigated."
+  - "Test orders and customers on production: deletion ordered 2026-10-22; the exact rows are listed for the owner first."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    On the owner's word, run migration 013 on production and read it back;
+    he opens the preview, merges PR 25 then PR 15, applies the four-slot
+    menu, and tries /fit on his phone; on his word record the slice 24
+    closeout.
+  acceptance_check:
+    - The slice 24 DoD in PLAN.md.

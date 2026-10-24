@@ -3,7 +3,7 @@
 **Workstream:** `mumate-bdash-v2-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -36,12 +36,31 @@ rendered on the real page:
 
 The owner confirmed the whole plan: "ผม confirm แผนนี้ละครับ".
 
+On 2026-10-22 the business team saw the empty chat card and asked to keep the
+questions themselves ("อันนี้ให้เก็บคำถามเลยได้ไหมครับ"). The team's own
+change then went to production: a separate, optional `ai_training` consent,
+and the table `ai_question_log`, which keeps consenting members' chat
+questions without answers, scrubbed, under a one-way subject, with `/ops` to
+review, label and export them. In a syncup the same day the owner decided
+(plan 0.4):
+
+- **bdash still stores no question text.** It reads `ai_question_log`
+  read-only, and only for questions recorded under consent wording that covers
+  analysing questions to improve the service.
+- **The consent wording widens in this workstream, done by us**, with the team
+  reviewing it ("เราทำกันเลยครับ"): policy 3.1 and the consent line say the
+  questions are also analysed to improve the service, the consent version
+  rises, members who answered the old version are asked again, and bazi keeps
+  questions only from members who accepted the new version.
+- **The topics card goes up now**, not after two or three weeks.
+- Labelling, deleting and exporting stay on `/ops`.
+
 ## Project links
 
 | Project ID | Role | Local binding |
 |---|---|---|
 | `bazi-sft-dataset` | usage logging, `/bdash` pages and live reads | `/Users/non/ghq/github.com/mojisejr/bazi-sft-dataset` |
-| `mootech-fe` | chat proxy forwards the member id to bazi | `/Users/non/ghq/github.com/mojisejr/mootech-fe` |
+| `mootech-fe` | chat proxy forwards the member id to bazi; the `ai_training` consent wording, version and re-ask | `/Users/non/ghq/github.com/mojisejr/mootech-fe` |
 | `ciel-os` | this plan and its events | `.` |
 
 `mumate-infra` needs no change: Caddy's bdash host and bazi's bdash door both
@@ -121,7 +140,9 @@ read-only:
     anywhere on bdash.
   - Usage and chat-topic rows carry the member id in the database, but bdash
     shows them only as totals.
-  - No question or answer text is stored.
+  - bdash stores no question or answer text. Its question card reads the
+    team's consent-based `ai_question_log`, shows no subject, and has no
+    label, delete or export.
 - **Samples.** The approved samples are on a private claude.ai page, kept out
   of this public repository.
 
@@ -147,5 +168,7 @@ read-only:
   - login history;
   - payment settle and refund times;
   - GA4 import;
-  - storing question text or keywords;
+  - bdash storing question text or keywords of its own;
+  - changing the team's PII scrub in `ai_question_log` (reported to the team
+    through the owner);
   - removing the nightly snapshot job and table (a later owner decision).

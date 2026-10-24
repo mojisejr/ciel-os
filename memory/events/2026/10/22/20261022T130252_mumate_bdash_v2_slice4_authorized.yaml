@@ -1,0 +1,75 @@
+schema_version: ciel.event.v0.1
+id: evt_20261022T130252_mumate_bdash_v2_slice4_authorized
+type: decision
+recorded_at: "2026-10-22T13:02:52+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-bdash-v2-001
+  lane: single
+  objective: >-
+    Raise the plan to 0.4 so slice 4 follows the team's consent-based question
+    log, and authorize slice 4: the topics card now, consent wording that
+    covers analysis, and a read-only question card.
+  scope:
+    - "Plan 0.4 slice 4 as written in workstreams/mumate-bdash-v2-001/slices/4.md: one bazi pull request to pdf-dev and one mootech-fe pull request to main, with checkpoint commits."
+  out_of_scope:
+    - "/ops and its write paths; the team's PII scrub in ai_question_log (reported to the team through the owner); AI_QUESTION_SALT (a separate owner decision); any mumate-infra change."
+
+outcome:
+  status: decided
+  slice: "4"
+  parallelism: approved
+  parallelism_basis: >-
+    praneet-nursery-001 commits to the same HQ standing branch but touches no
+    MuMate repository; this lane stages only its own paths in ciel-os.
+  decision: >-
+    After the business team asked to keep the questions themselves and the
+    team shipped ai_question_log behind a separate ai_training consent
+    (memory/events/2026/10/22/20261022T120241_mumate_team_ai_training_consent_released.yaml),
+    the owner ran a two-round syncup and decided: revise this plan rather than
+    open a new workstream; the team's go-ahead includes widening the consent
+    wording; question card as proposed, then see what the team says; split
+    paying and free members on the topics card only; topics card up now, and
+    anything that blocks on the team must reach the owner first ("อะไรที่ทำให้เรา
+    ติด และทำงานเราต่อไม่ได้และ ต้องคุยกับเอ็ม ให้บอกผมก่อน"); raise the consent
+    version, ask old-version members again, keep questions only under the new
+    version, and show only questions recorded after the new wording; "เราทำกันเลย
+    ครับ" for the fe and bazi consent changes; the PII scrub gaps are not fixed
+    here but kept as an open item for the owner to tell the team. He then asked
+    for one pull request per repository, built in one go with checkpoint
+    commits ("ผมหมายถึงว่า repo ละ 1 PR ไง").
+  agent_choice_not_owner_answer: >-
+    The new consent wording is drafted by the agent; the owner approves it on
+    the pull request. Rendered screenshots of the built page replace samples
+    before building, because the owner asked for the slice in one go.
+
+evidence:
+  plan: workstreams/mumate-bdash-v2-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "4"
+  repository:
+    head: "c48acd9858c2883dbacfc24d90559bdb1ef8f9f0"
+    branch: hq/20261022
+    working_tree: this-decision-and-plan-only
+  related:
+    - memory/events/2026/10/21/20261021T181527_mumate_bdash_v2_slice3_delivered.yaml
+    - memory/events/2026/10/22/20261022T120241_mumate_team_ai_training_consent_released.yaml
+
+unresolved:
+  - "The team's PII scrub keeps names and slash-written dates such as 12/05/1990, and the policy calls the subject irreversible although anyone holding the secret and a list of member ids can relink it. Not fixed here; the owner tells the team. Workaround: bdash shows questions as stored and adds no second scrub."
+  - "AI_QUESTION_SALT is unset on prod-1; owner decision, best taken while ai_question_log is empty."
+  - "Whether the business team finds the question card useful is open until the owner shows them."
+  - "Old card and fortune-stick usage rows (before 2026-10-21) still hold question text; clearing them is an owner decision."
+  - "MuMate open items: Loki image measurement before about 2026-10-28 (production read on the owner's word); staging copy delete before 2026-11-04; DB password and token rotations."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 4 on a bazi topic branch from pdf-dev and a mootech-fe topic
+    branch from main, check counts on local data, render 390 and 1280 light
+    and dark, and open one draft pull request per repository.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-bdash-v2-001/slices/4.md."
