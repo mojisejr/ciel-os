@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261024T152846_mumate_infra_safe_access_slice1_delivered
+type: closeout
+recorded_at: "2026-10-24T15:28:46+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-safe-access-001
+  lane: single
+  objective: Deliver slice 1, bin/prod-sql.sh, its leak test, and the runbook 01 rule.
+  scope:
+    - "mumate-infra PR 60 and one read-only proof run on prod-1."
+  out_of_scope:
+    - "Slice 2 (env-set.sh, rotation procedure); the rotation itself."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  completed:
+    - "mumate-infra PR 60 (merge 4f1f79ba84bab4f37f1f07c374e63dd04f335357) adds bin/prod-sql.sh. It reads the URL itself, strips quotes silently, passes it by environment only, runs one transaction (dry run by default, --commit, optional --expect N via psql ROW_COUNT), and prints only name|value lines. A line holding the password is dropped. An error is result|fail_psql_exit_N. --fingerprint compares credentials by short hash."
+    - "scripts/prod-sql.test.sh plants a canary and shows it never appears on success, on connection or SQL errors, on an --expect mismatch, with a bad or missing URL, in --fingerprint, or on docker argv. It also shows that copies of the tool without the filter, and without the password drop, both leak in the test. scripts/test-all.sh ran 18 files, 0 failed, with the real checkout unchanged. shellcheck and gitleaks were clean. The PR sections check passed."
+    - "Checked against a real throwaway Postgres 17 locally. Dry run rolled back. A commit with --expect matching committed 2 of 5 rows. A mismatched --expect rolled back with exit 4. SQL, host and URL-option errors each printed only the fail line."
+    - "Runbook 01 has a new section: production data only through bin/prod-sql.sh. Counts need no question, writes are done and reported, and the agent asks only for serious matters per OWNER.md. Production migrations run by the agent only on the owner's word, through the tool."
+    - "Proof on prod-1 after a fast-forward pull to 4f1f79b. One dry-run read printed mode|dry_run, ai_questions_total|5, ai_questions_before_release|0, rows|1 and result|dry_run_rolled_back. --fingerprint showed env/fe.env DATABASE_URL and env/bazi.env APP_DATABASE_URL with the same user, password and host hashes. Nothing else was printed."
+  acceptance:
+    - "Slice 1 acceptance met: the test passes and catches a broken filter; the production read printed only name|value lines; runbook 01 points to the tool; the PR is merged."
+
+evidence:
+  plan: workstreams/mumate-infra-safe-access-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  decision: memory/events/2026/10/24/20261024T152113_mumate_infra_safe_access_slice1_authorized.yaml
+  repository:
+    head: "78605065dfababdb0e1874b9274af29f0772ede6"
+    branch: hq/20261024
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261024
+  pull_requests:
+    - repository: github.com/mojisejr/mumate-infra
+      number: 60
+      base: main
+      state: MERGED
+      merge_commit: 4f1f79ba84bab4f37f1f07c374e63dd04f335357
+
+unresolved:
+  - "The exposed production database credential is not rotated; the owner names the day. bin/hosts.sh compare shows env/backup.env only on mumate-2, and be.env there carries DB_PASSWORD; slice 2's procedure checks both."
+  - "prod-1 holds untracked env backups (env/*.bak-*) with secrets inside; git does not ignore them. Slice 2 names its own backups and decides how they stay out of git."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Slice 2 on the owner's same word: record its decision, then build
+    bin/env-set.sh, its test, the rotation procedure, and the staging proof.
+  acceptance_check:
+    - "Slice 2 acceptance in slices/2.md."
