@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20261024T152113_mumate_infra_safe_access_slice1_authorized
+type: decision
+recorded_at: "2026-10-24T15:21:13+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-safe-access-001
+  lane: single
+  objective: Authorize slice 1 (prod-sql.sh) of plan 0.1.
+  scope:
+    - "Slice 1 as written in workstreams/mumate-infra-safe-access-001/slices/1.md."
+  out_of_scope:
+    - "Rotating the exposed database password."
+
+outcome:
+  status: decided
+  decision: >-
+    After PR 100 merged and Wake showed no overlap, the owner said: 'โอเค safe
+    access ถ้าเกิดว่า พร้อมแล้ว และคุน จัดการให้ผมรวดเดียวได้เลย 2 slices
+    ให้คุนทำยาวเลย ถ้าไม่มีอะไรให้ผมต้องเคาะอีกแล้ว และเจอกัน ที่ PR เลยครับ'.
+    Slice 1 is authorized now. The same words cover slice 2, which is recorded
+    in its own decision once slice 1's delivery closeout exists.
+
+evidence:
+  plan: workstreams/mumate-infra-safe-access-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "cfe6d3d87c9cf987eafb0dbd7950f3dd322ddeaa"
+    branch: hq/20261024
+    working_tree: this-decision-only
+  child_start:
+    mumate-infra: "origin/main ef7026db2c0e2556bfc2c715f2ed12a851c42efc"
+
+unresolved:
+  - "The exposed production database credential is not rotated; the owner names the day."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: Build bin/prod-sql.sh and its test on a mumate-infra topic branch.
+  acceptance_check:
+    - "Slice 1 acceptance in slices/1.md."
