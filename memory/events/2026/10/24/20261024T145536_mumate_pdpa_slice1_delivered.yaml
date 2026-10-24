@@ -1,0 +1,109 @@
+schema_version: ciel.event.v0.1
+id: evt_20261024T145536_mumate_pdpa_slice1_delivered
+type: closeout
+recorded_at: "2026-10-24T14:55:36+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: mumate-pdpa-reconsent-001
+  lane: single
+  objective: >-
+    Deliver slice 1 at plan 0.4: members read the updated privacy policy to
+    the end and accept it once; the AI item is on by acceptance and switched
+    off in settings; questions are rewritten before keeping and deleted after
+    two years.
+  scope:
+    - "The two production database steps left by the previous checkpoint, and the delivery record."
+  out_of_scope:
+    - "Credential rotation and the safe production tools (a separate workstream the owner is weighing)."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  completed:
+    - "Production release, salt, deletion timer and the release-day policy page as recorded in memory/events/2026/10/24/20261024T140906_mumate_pdpa_production_released_cleanup_pending.yaml."
+    - "On the owner's word ('จบงาน pdpa ทั้งสามข้อ แล้วปิด workstream pdpa'), one transaction on the production database through a host script that strips the quotes silently, passes the URL by environment only, and prints only name|number lines (filter proven first with a canary URL in an error line, which it dropped): ai_question_log had 7 rows, 3 created before 2026-10-24T02:14:28Z (the new bazi's start); 3 deleted, 4 kept; the help chapter privacy-and-deletion updated (1 row) and its body md5 equals the merged seed's; committed, psql exit 0. No value was printed."
+    - "Local checkouts back on their base (fe main, bazi detached at origin/pdf-dev, mumate-infra main); merged local topic branches deleted."
+  acceptance:
+    - "Production runs fe bad87b7 and bazi 20ff92f with both ✅, the salt is set, no question from before the new bazi remains, the timer is on, /privacy/policy shows 2026-10.1 with มีผลตั้งแต่ 24 ตุลาคม 2569, and the help chapter matches the seed."
+  owner_statement: "งั้นเอาอย่างงี้นะ 1. จบงาน pdpa ทั้งสามข้อ แล้วปิด workstream pdpa ก่อนจะได้ไม่ค้างอยู่ ให้เรียบร้อยแล้วรายงานผมก่อนว่าเราเดิน workstream อื่นต่อได้หรือยัง ?"
+  not_verified:
+    - "The four kept questions were not read; that they are rewritten rests on the staging proof and the deployed bazi."
+    - "The member flow on production was not walked (production builds have no dev login)."
+
+evidence:
+  plan: workstreams/mumate-pdpa-reconsent-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "1"
+  decision: memory/events/2026/10/24/20261024T052823_mumate_pdpa_no_notice_plan_0_4.yaml
+  repository:
+    head: "c809b0d9bd08dffe7d04a7a716a4f742d3e955d2"
+    branch: hq/20261022
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261022
+  pull_requests:
+    - repository: github.com/mojisejr/mootech-fe
+      number: 927
+      base: main
+      state: MERGED
+      merge_commit: 21ae328320115038b4b8f159562d095e93eafaf1
+    - repository: github.com/mojisejr/mootech-fe
+      number: 928
+      base: main
+      state: MERGED
+      merge_commit: 20bb957516cd72a44f303d9b388701f74f0d74c9
+    - repository: github.com/mojisejr/mootech-fe
+      number: 929
+      base: main
+      state: MERGED
+      merge_commit: 9cba6eafbf29ee16ea50de51d0e940cb060f9dd1
+    - repository: github.com/mojisejr/mootech-fe
+      number: 930
+      base: main
+      state: MERGED
+      merge_commit: 9a11760c3421fbf9661b60b6557a6b2a3d7dc16f
+    - repository: github.com/mojisejr/mootech-fe
+      number: 931
+      base: main
+      state: MERGED
+      merge_commit: bad87b772196e9f1cead64dd46be6e518ec2cf60
+    - repository: github.com/mojisejr/bazi-sft-dataset
+      number: 60
+      base: pdf-dev
+      state: MERGED
+      merge_commit: 9274c2af0271379df49286791a0535de7d677fc7
+    - repository: github.com/mojisejr/bazi-sft-dataset
+      number: 61
+      base: pdf-dev
+      state: MERGED
+      merge_commit: 20ff92f84839b12739d6eee29c57b03dde801441
+    - repository: github.com/mojisejr/mumate-infra
+      number: 59
+      base: main
+      state: MERGED
+      merge_commit: ef7026db2c0e2556bfc2c715f2ed12a851c42efc
+  related:
+    - memory/events/2026/10/24/20261024T140906_mumate_pdpa_production_released_cleanup_pending.yaml
+    - "mumate-infra promote-production run 40053268922"
+
+unresolved:
+  - "A production database credential was printed into an agent session earlier today (recorded in 20261024T140906); not rotated. The owner will handle it; rotation touches prod-1 env/bazi.env and env/fe.env."
+  - "mumate-infra has no safe tool for production database work or single env edits; today's script lives only in the agent's scratch. The owner is weighing a separate workstream for those tools."
+  - "The bdash question card still says only phone numbers, emails, long digit runs and links are removed (bazi src/app/bdash/chat/page.tsx); deferred, the owner has not answered."
+  - "Legal risk accepted by the owner on the team's word; no lawyer has reviewed opt-out for questions that can hold health details, and with no popup members learn of it only from 3.1."
+  - "A model rewrite lowers but does not remove the chance a personal detail is kept."
+  - "A staging refresh from a production backup brings production ai_question_log rows into staging; repeat the clean start after a refresh."
+  - "The design samples artifact for this slice is still published (private); delete it only on the owner's word."
+  - "mootech-fe main fails verify-architecture in four old files; fe pushes go with --no-verify on the owner's word."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner pushes and merges the HQ standing branch hq/20261022 (ciel-os is
+    public and the earlier record names an unrotated credential without its
+    value; the owner decides whether to rotate first). After the merge Wake
+    reports this workstream finished.
+  acceptance_check:
+    - "After the merge, Wake shows mumate-pdpa-reconsent-001 delivered with no open slice."
