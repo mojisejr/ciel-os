@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261024T151416_mumate_infra_safe_access_opened_awaiting_go
+type: decision
+recorded_at: "2026-10-24T15:14:16+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-infra-safe-access-001
+  lane: single
+  objective: >-
+    Open the workstream that gives mumate-infra safe tools for production
+    database work and single env edits, which never print a secret; no slice
+    authorized yet.
+  scope:
+    - "Plan 0.1 from a two-round syncup with the owner on 2026-10-24."
+  out_of_scope:
+    - "Any mumate-infra change before the owner's go; rotating the exposed database password."
+
+outcome:
+  status: opened-awaiting-go
+  decision: >-
+    After a production database credential was printed into an agent session
+    for the second time, the owner asked whether protection belongs to each
+    project and how to keep work smooth. In the syncup he answered:
+    Q1 two slices, each proved by real use ('โอเค'); Q2 the rotation is not
+    in this workstream, he names the day ('คนยังเยอะอยู่ เดี๋ยวผมจะทำเมื่อไรจะบอกอีกครั้ง');
+    Q3 and Q7 ask only when truly dangerous, otherwise do it, no cage
+    ('ถ้าอันตรายถามก่อน ถ้าไม่อันตรายทำได้เลย ... เราจะไม่สร้าง กรงมาขัง ความสามารถของเรา');
+    Q4 the five tool guarantees ('ตามนี้เลย'); Q5 the out-of-scope list and a
+    host permission rule for the read mode ('ใช่ตามนี้'); Q6 slice 2 proved on
+    staging with the rotation procedure ready ('ใช่'); Q8 guidance where the
+    agent works easily. Then: 'คุนเปิด workstream ได้เลยครับผม ... เดี๋ยวถ้าผมดูแล้วโอเคเราเริ่มกันครับ'.
+    The plan is opened. Slice 1 waits for his review of the plan.
+
+evidence:
+  plan: workstreams/mumate-infra-safe-access-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "58fd7cecb99cbe03342b32f9c3e294be43c93f17"
+    branch: hq/20261022
+    working_tree: this-decision-and-plan
+  child_start:
+    mumate-infra: "origin/main ef7026db2c0e2556bfc2c715f2ed12a851c42efc (production)"
+  related:
+    - memory/events/2026/10/24/20261024T140906_mumate_pdpa_production_released_cleanup_pending.yaml
+
+unresolved:
+  - "The exposed production database credential is not rotated; the owner names the day."
+  - "Whether env/backup.env shares that credential is unknown; slice 1's tool settles it by hash."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner reviews plan 0.1; on his go, record slice 1 authorized and
+    build bin/prod-sql.sh on a mumate-infra topic branch.
+  acceptance_check:
+    - "Wake lists mumate-infra-safe-access-001 active with no slice authorized."
