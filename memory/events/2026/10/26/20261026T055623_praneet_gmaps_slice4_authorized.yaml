@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261026T055623_praneet_gmaps_slice4_authorized
+type: decision
+recorded_at: "2026-10-26T05:56:23+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Raise the plan to revision 0.2 with slices 4 and 5, placed before slice 3,
+    and authorize slice 4: post links may land on feature pages.
+  scope:
+    - "Slice 4 of plan 0.2; slice 5 is authorized by its own decision on the same word; slice 3 still waits for Google."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After F3 to F7 had to land on / because post targets allow only / or a
+    lot page, the owner said the link should go to the feature page
+    ('ลิงค์โพสพาไปหน้า feature ตรงๆ ผมว่าควรแก้เลย') and asked for /me from
+    the rich menu. On the agent's proposal of slices 4 and 5 he said to
+    record what is pending and start both, with posts and other waiting
+    items resumed later ('เริ่ม ทำ slice 4 - 5 ได้เลยครับถ้าไม่มีอะไรต้องเคาะแล้ว
+    ... แก้งานกับเพิ่ม เมนูก่อนได้'). This covers the additive migration on
+    production while the PR is a draft; merges stay with the owner.
+    Running beside the idle praneet-nursery-001 stays approved as in plan 0.1.
+
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "4"
+  repository:
+    head: 79051bccf822643357ee81479947348c15a2c581
+    branch: hq/20261025
+  checked:
+    - "Post targets are limited twice: lib/posts.ts (zod regex) and the posts target CHECK in migrations/005_sales.sql; the post target is chosen only by praneet-office posts new --target."
+    - "/, /lots, /lots/<code>, /fit and /stock/<variety>/<bag>/<band> read the post code through lib/visit.ts visitFrom; /me does not."
+  related:
+    - memory/events/2026/10/26/20261026T054540_praneet_gmaps_fit_posts_f3_f7_prepared.yaml
+
+unresolved:
+  - "Pending owner items stay as recorded in evt_20261026T054540_praneet_gmaps_fit_posts_f3_f7_prepared: post F3 to F7, schedule the F4 broadcast, try 4, and slice 3 after Google's approval."
+  - "Production migrations may be refused to the agent by the harness; the owner runs them then."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 4 on topic branches in praneet-web and praneet-office, run
+    migration 015 on production while the PR is a draft, and build slice 5
+    beside it.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/praneet-gmaps-001/slices/4.md."
