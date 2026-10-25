@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T200113_praneet_gmaps_slices_built_awaiting_owner
+type: closeout
+recorded_at: "2026-10-25T20:01:13+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Record slices 1 to 3 built as draft pull requests and what each waits for
+    from the owner: the production migration, merges, his LINE user id, and
+    the Google sign-in.
+  scope:
+    - "praneet-web PR 27; praneet-office PRs 18, 19, 20; Maps link post F2 on production."
+outcome:
+  status: built-awaiting-owner
+  completed:
+    - "Step 0 checked: the OAuth client in .assets/preneet is a Desktop client of project tondurian2021 (key names only); ptplant.com carries a google-site-verification TXT record."
+    - "Step 0.5: post F2 'Google Maps' (target /) created on production with bun run posts new; https://www.ptplant.com/p/F2 answers 302 to /?p=F2. The owner puts it in the profile's website field."
+    - "Slice 1, praneet-web PR 27 (branch gmaps-origin-review, head b2985f5b8f196db29267c7a61ac332aaa6c05111), built by a subagent and reviewed: google_maps origin, migration 014 (widens orders_came_from_check, adds shop_settings.review_url), owner setting /ops/settings/review, review section on /me after a received order with no reward. bun run check: typecheck, build, Playwright 96 passed 0 failed; a loosened condition made the new test fail, then pass after restoring."
+    - "Slice 1, praneet-office PR 20 (branch gmaps-origin-review, head 210b7c5b8948907d27bcb4e1c3a331198b03c3ed): per-origin table in bun run orders, the caller question and review rules in runbook 00, runbook 04."
+    - "Slice 2, praneet-office PR 18 (branch line-broadcast, head e0a270a72437713b4f2b6e284d5c932d7aeadfbc): broadcast:draft, broadcast:test, broadcast:send --yes. Draft read live: LINE validation ok, reaches about 30 of 41 friends, 30 of 300 used this month. Send refuses untested, changed, already-sent drafts and missing --yes; nothing was sent."
+    - "Slice 3, praneet-office PR 19 (branch gmaps-report, head ad0b87fbb50f91b774377252f51be76d43746ace): gmaps login, check, report; builds; not yet run against Google."
+  not_verified:
+    - "Migration 014 on production: the harness refused the agent's run ([Production Deploy]); PR 27 must not merge before it."
+    - "broadcast:test, which needs LINE_OWNER_USER_ID."
+    - "The Google sign-in round trip and every Google response shape; whether Google granted Business Profile access."
+    - "Whether Google's review page asks for sign-in inside LINE's in-app browser."
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: db51f0e327cca293197d7c37df9f7f8f75577ff5
+    branch: hq/20261025
+  related:
+    - memory/events/2026/10/25/20261025T194216_praneet_gmaps_slice1_authorized.yaml
+    - memory/events/2026/10/25/20261025T194446_praneet_gmaps_slice2_authorized.yaml
+    - memory/events/2026/10/25/20261025T194807_praneet_gmaps_slice3_authorized.yaml
+    - "https://github.com/mojisejr/praneet-web/pull/27"
+    - "https://github.com/mojisejr/praneet-office/pull/18"
+    - "https://github.com/mojisejr/praneet-office/pull/19"
+    - "https://github.com/mojisejr/praneet-office/pull/20"
+unresolved:
+  - "The owner runs migration 014 on production before merging PR 27: in checkouts/praneet-web on branch gmaps-origin-review, env DATABASE_URL=\"$(cat .local/secrets/neon-direct.url)\" bun run migrate, which prints only 'Applied 014_gmaps_review.sql'."
+  - "Wake reports praneet-nursery-001 as owner-confirmation-required because its own latest decision carries no parallelism field; the owner approved running beside it in this workstream's decisions, and a new nursery decision would re-authorize its delivered slice 24, so none is written."
+  - "The owner's Performance screenshots ('ป้าปราณี') have not been sent."
+  - "The system-features Facebook post drafted earlier will be F3, not F2, when uploaded."
+  - "The HQ standing branch hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Owner: run migration 014, merge PR 27 and PR 20, put /p/F2 in the
+    profile's website field, add LINE_OWNER_USER_ID, run bun run gmaps login.
+    Agent: then gmaps check (set the review link from it), the broadcast
+    test, merges of PR 18 and 19, and delivery closeouts per slice.
+  acceptance_check:
+    - "Each slice's acceptance in workstreams/praneet-gmaps-001/slices/."
