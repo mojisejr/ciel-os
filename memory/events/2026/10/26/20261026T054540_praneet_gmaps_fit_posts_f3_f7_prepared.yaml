@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261026T054540_praneet_gmaps_fit_posts_f3_f7_prepared
+type: closeout
+recorded_at: "2026-10-26T05:45:40+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Record try 2 (Maps link counts) and try 3 prepared: one sales post that
+    introduces the truck-fit page, uploaded as five post links so each place
+    it goes is counted apart.
+  scope:
+    - "praneet-web production posts F3 to F7 via bun run posts new; no code change."
+outcome:
+  status: recorded-posts-prepared-owner-posts
+  completed:
+    - "Try 2: the owner tapped 'เว็บไซต์' on the Maps profile; bun run posts list showed F2 opens 1 (was 0). The count includes the owner's own tap."
+    - "The owner chose to introduce the system inside a sales post, optional to use ('ไม่ใช้ก็ได้ แต่ถ้าใช้เมื่อไหร่จะดี'), rather than a separate feature post; this post's feature is 'ใส่รถพอไหม' (/fit)."
+    - "The agent drafted the post from the live storefront figures of 2026-10-26 and took three phone-width screenshots of the live /fit page (result, form, shipping choice); the owner asked for the screenshots and prepares other images himself."
+    - "Posts F3 (เพจร้าน), F4 (LINE broadcast), F5 to F7 (กลุ่ม 1 to 3) created on production with the same text and the three screenshots; the copy button appends each post's own link."
+    - "The owner schedules the LINE broadcast himself in LINE OA Manager from F4's text; the Messaging API cannot schedule, and an agent-timed send would be an automatic send, which the plan excludes."
+  not_verified:
+    - "No post has been placed yet; group names are not chosen."
+    - "Whether the post code survives from / to /fit for a real visitor; it rides the one-day pn_post cookie, which /fit reads."
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 055a7f1d532b9f5cd3d5f0b62c6de29fea33baaa
+    branch: hq/20261025
+  related:
+    - memory/events/2026/10/25/20261025T211652_praneet_gmaps_owner_try_list_deferred.yaml
+unresolved:
+  - "Post targets accept only / or a lot page (lib/posts.ts), so F3 to F7 land on the storefront and the text tells the reader to tap its floating 'ใส่รถพอไหม?' button; deferred. Allowing /fit as a target is a small praneet-web change if the owner wants posts that land on a feature."
+  - "The owner chooses 2 to 3 Facebook groups (search terms in praneet-office reports/private/facebook-groups.md), posts one or two groups a day, and presses 'โพสต์แล้ว' with the group name so posted_where is set."
+  - "A broadcast scheduled in OA Manager leaves no sent.json; the agent checks quota and F4 counts after the owner's chosen time."
+  - "Try 4 (Performance screenshots) stays open; slice 3 waits for Google's approval (about 2026-11-03 to 2026-11-06)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Two to three days after the owner posts, run bun run posts list and
+    compare F3 to F7 opens, LINE taps and orders with the owner.
+  acceptance_check:
+    - "posts list shows posted_where for each placed post and its counts."
