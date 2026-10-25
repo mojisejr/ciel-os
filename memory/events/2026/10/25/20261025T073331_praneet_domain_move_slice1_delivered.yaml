@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T073331_praneet_domain_move_slice1_delivered
+type: closeout
+recorded_at: "2026-10-25T07:33:31+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-domain-move-001
+  lane: single
+  objective: >-
+    Deliver slice 1: the back office signs in at www.ptplant.com and the
+    office scripts default to it.
+  scope:
+    - "praneet-web production env BETTER_AUTH_URL; praneet-office PR 17."
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  completed:
+    - "Built and checked as recorded in evt_20261025T073008_praneet_domain_move_slice1_built_slice2_authorized."
+    - "The owner merged praneet-office PR 17 (merge 159216d48483ce0ecd5abf0206235e62e37f936e) ('mergted'). Local main equals origin/main; branches ptplant-domain and richmenu-ptplant-domain deleted locally, and the remote branch is gone."
+    - "After the merge: sign-in POST with a made-up account from www.ptplant.com answers 401 wrong credentials; bun run line check on main reports the webhook on praneet-web.vercel.app active and richmenu-514ca03ce6358b0385ca4875137b1b7e as default."
+  not_verified:
+    - "The owner's own sign-in at www.ptplant.com/ops on his phone and the storefront logo-tap entry; he has not reported them yet."
+evidence:
+  plan: workstreams/praneet-domain-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  decision: memory/events/2026/10/25/20261025T072409_praneet_domain_move_slice1_authorized.yaml
+  repository:
+    head: 0593fc620ad8841802930aaeca7bf3dd0ac0e69b
+    branch: hq/20261024
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261024
+  child_merges:
+    praneet-office: "PR 17, origin/main 159216d48483ce0ecd5abf0206235e62e37f936e"
+unresolved:
+  - "The owner signs in once at www.ptplant.com/ops; sessions on the old address no longer work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Record slice 2's delivery after its production check.
+  acceptance_check:
+    - "Slice 2 closeout recorded."
