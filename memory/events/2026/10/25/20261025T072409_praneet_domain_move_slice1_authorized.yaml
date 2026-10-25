@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T072409_praneet_domain_move_slice1_authorized
+type: decision
+recorded_at: "2026-10-25T07:24:09+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-domain-move-001
+  lane: single
+  objective: >-
+    Authorize slice 1 (back office and office scripts onto www.ptplant.com)
+    and running this workstream beside the idle praneet-nursery-001.
+  scope:
+    - "Slice 1 of plan 0.1; slice 2 follows in the same round on the same word, recorded by its own decision after slice 1's closeout."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner reviewed plan 0.1 and said to run both slices in one go and
+    report when done ('ถ้าทำรวดเดียว 2 slices ได้เลย ก็ลุยได้เลยครับ เสร็จแล้วบอกผมคับ').
+    That covers the production env change and redeploy of slice 1 and the
+    praneet-web redirect of slice 2, and running beside praneet-nursery-001,
+    which has no work in hand.
+
+evidence:
+  plan: workstreams/praneet-domain-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 16db0e77ce030c06e881e50514ba98e5aab6dad8
+    branch: hq/20261024
+  related:
+    - memory/events/2026/10/25/20261025T071746_praneet_domain_move_opened_awaiting_go.yaml
+
+unresolved:
+  - "Merging pull requests may be refused to the agent by the harness; the owner merges then."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Set BETTER_AUTH_URL on praneet-web production to https://www.ptplant.com
+    and redeploy; move the office defaults on a topic branch with the rich
+    menu change; check sign-in and one read-only office command.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/praneet-domain-move-001/slices/1.md."
