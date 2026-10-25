@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T192205_praneet_gmaps_opened_awaiting_go
+type: decision
+recorded_at: "2026-10-25T19:22:05+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Open the workstream that turns people who find the shop on Google Maps
+    into buyers, measured at every step through praneet-office, with a LINE
+    broadcast command; no slice authorized yet.
+  scope:
+    - "Plan 0.1: step 0 owner-side setup; slice 1 order origin 'Google Maps' and a review button on /me; slice 2 broadcast in office; slice 3 gmaps report with Search Console after Google approves API access."
+  out_of_scope:
+    - "Merchant Center and products on the profile; writes to Google; scheduled reports; a Google dashboard in /ops; storing chat text; automatic broadcasts; renaming the shop before the numbers are seen."
+
+outcome:
+  status: opened-awaiting-go
+  decision: >-
+    After three syncup rounds the owner confirmed the shared understanding
+    ('ยืนยันครับ เปิด workstream ได้เลย'). Read-only first, a tool in office
+    rather than ad-hoc scripts, nothing scheduled, Search Console included,
+    every broadcast only on his word 'ส่ง'. He also asked that the system keep
+    as much real sales and work context as it can for the agent; recorded as
+    a principle in the plan: events and numbers, no chat text, and a new field
+    only when a question cannot be answered.
+  completed:
+    - "The owner reported signing in to the back office at www.ptplant.com on his phone and his computer (praneet-domain-move-001 slice 1). The storefront logo-tap entry and his tap on the F1 link are not reported."
+
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 32b82a6a8a1b09edeeacded683ac5513f9654586
+    branch: hq/20261025
+    working_tree: this-decision-and-plan
+  child_start:
+    praneet-web: "origin/main 883fc16fa99c865e33e86e5a28a74d428197032b"
+    praneet-office: "origin/main 159216d48483ce0ecd5abf0206235e62e37f936e"
+  related:
+    - memory/events/2026/10/25/20261025T073340_praneet_domain_move_slice2_delivered.yaml
+
+unresolved:
+  - "praneet-gmaps-001 shares praneet-web, praneet-office and ciel-os with praneet-nursery-001, so Wake reports an overlap until the owner's go also approves running it beside the idle nursery workstream."
+  - "How often people searching 'ป้าปราณี' reach the shop is unknown until the owner sends the profile's Performance screenshots."
+  - "Whether Google grants Business Profile API access is unknown; review takes up to about 14 days after the owner applies."
+  - "Where to record why a customer asked and did not buy is deferred to a later conversation."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner does step 0 (applies for API access, verifies ptplant.com in
+    Search Console, sends Performance screenshots) and reviews plan 0.1; on
+    his go, which also settles running beside praneet-nursery-001, record
+    slice 1 authorized with parallelism approved.
+  acceptance_check:
+    - "Wake lists praneet-gmaps-001 active with no slice authorized."
