@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T073008_praneet_domain_move_slice1_built_slice2_authorized
+type: decision
+recorded_at: "2026-10-25T07:30:08+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-domain-move-001
+  lane: single
+  objective: >-
+    Record slice 1 built and live on production, waiting for the owner's
+    merge of praneet-office PR 17 and his sign-in at www.ptplant.com/ops, and
+    authorize slice 2 on the same word.
+  scope:
+    - "Slice 1 state; slice 2 authorized."
+
+outcome:
+  status: decided
+  decision: >-
+    Slice 2 is authorized by the owner's word for both slices in one go
+    ('ถ้าทำรวดเดียว 2 slices ได้เลย ก็ลุยได้เลยครับ เสร็จแล้วบอกผมคับ'),
+    recorded in evt_20261025T072409_praneet_domain_move_slice1_authorized.
+  slice1_done:
+    - "praneet-web production: BETTER_AUTH_URL replaced with https://www.ptplant.com (vercel env rm + add), then production redeployed (https://praneet-gh84fs4rq-nons-projects-2ee1d9ee.vercel.app). Sign-in POST with a made-up account: www.ptplant.com 401 wrong credentials; praneet-web.vercel.app 403 INVALID_ORIGIN."
+    - "praneet-office PR 17 (branch ptplant-domain, head ef0305192b92bbbc521d33fa660d61647f26345b, includes the rich menu commit 0bf8a78): one SITE constant in scripts/ops-session.ts for lots, orders, posts, slips, today and line; runbook 01 privacy link moved, webhook line kept. bun build passes; bun run today signs in and reads on the new default (exit 0, no error lines) and fails with OPS_BASE on the old address; bun run lots prints 5 links on www.ptplant.com."
+    - "gh pr merge 17 was refused to the agent by the harness ('Merge Without Review')."
+  slice1_open:
+    - "The owner merges praneet-office PR 17 and signs in once at www.ptplant.com/ops on his phone, including the storefront logo-tap entry."
+
+evidence:
+  plan: workstreams/praneet-domain-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: dee329f36057c65320c807d3311a47b55858e189
+    branch: hq/20261024
+  related:
+    - memory/events/2026/10/25/20261025T072409_praneet_domain_move_slice1_authorized.yaml
+    - "https://github.com/mojisejr/praneet-office/pull/17"
+
+unresolved:
+  - "Until PR 17 merges, a checkout of praneet-office main still defaults to the old address, where the office cannot sign in any more."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+  - "Order of work: slice 2 was built between 07:24 and this record, on the owner's word recorded at 07:24; this event writes down its authorization afterwards. Its build is recorded in the next closeout."
+
+next_action:
+  action: >-
+    Record slice 2 built (praneet-web PR 26); after the owner merges PR 17
+    and PR 26, check production against slice 2's acceptance and record the
+    delivery closeouts.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-domain-move-001/slices/2.md."
