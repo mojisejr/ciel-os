@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T210529_praneet_gmaps_signed_in_access_form_sent
+type: closeout
+recorded_at: "2026-10-25T21:05:29+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Record the owner's production migration, the Google sign-in, Search
+    Console access, the access form sent, and the test broadcast to the owner.
+  scope:
+    - "praneet-web production schema; praneet-office branches gmaps-report and line-broadcast; Google Cloud project tondurian2021."
+outcome:
+  status: waiting-on-google-and-owner-merges
+  completed:
+    - "The owner ran migration 014 on production; read back through praneet_reader: shop_settings.review_url exists and orders_came_from_check allows google_maps."
+    - "The owner put https://www.ptplant.com/p/F2 in the profile's website field and LINE_OWNER_USER_ID in .assets/preneet/.env (key present; value not read)."
+    - "bun run gmaps login: the owner allowed business.manage and webmasters.readonly; GOOGLE_REFRESH_TOKEN saved, not printed."
+    - "Search Console: the owner had verified ptplant.com under another Google account and added the signed-in account; gmaps check now reports sc-domain:ptplant.com siteFullUser. gmaps report runs end to end; Search Console has no rows yet and F2 has no opens yet."
+    - "Business Profile APIs: enabling them was not approval; Google answered 429 with quota_limit_value 0 for project 1073078029144. The owner then sent the Basic API Access form on 2026-10-25; Google states 7 to 10 business days."
+    - "broadcast:test sent a self-test draft (hash d5f01f70811762be, scratch folder, never to be broadcast) to the owner's LINE only; one message of the quota."
+  not_verified:
+    - "The owner has not yet said he received the test broadcast."
+    - "praneet-web PR 27 and praneet-office PRs 18, 19, 20 are not merged; the review button is not live."
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: b336e14327666862ff4e61473e797ccfc4d61b1e
+    branch: hq/20261025
+  related:
+    - memory/events/2026/10/25/20261025T200113_praneet_gmaps_slices_built_awaiting_owner.yaml
+unresolved:
+  - "Business Profile figures and the review link from newReviewUri wait for Google's approval; check with bun run gmaps check (granted, or quota 0). Until then the owner can set the review link by hand from the profile's 'ขอรีวิว' button."
+  - "The access form's support case id is in the owner's browser and email, not recorded here because this repository is public."
+  - "The owner's Performance screenshots ('ป้าปราณี') have not been sent."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Owner confirms the test broadcast and merges PR 27, PR 20 and PR 18;
+    agent records slices 1 and 2 delivered. When Google approves, run gmaps
+    check and report, set the review link, and close slice 3 after PR 19.
+  acceptance_check:
+    - "Each slice's acceptance in workstreams/praneet-gmaps-001/slices/."
