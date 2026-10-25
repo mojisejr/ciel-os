@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T061416_praneet_nursery_ptplant_domain_richmenu
+type: closeout
+recorded_at: "2026-10-25T06:14:16+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record the shop's own domain, ptplant.com, bought and connected by the
+    owner, and the LINE rich menu moved onto it on his word.
+  scope:
+    - "Domain ptplant.com at Namecheap and Vercel (owner); praneet-office scripts/line.ts and the live default rich menu (agent)."
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "The owner bought ptplant.com at Namecheap, added it to the praneet-web Vercel project and set DNS (A @ 216.150.1.1, CNAME www to Vercel); the Namecheap URL Redirect record on @ was removed after the agent found it answering beside Vercel's address. The domain name was the agent's recommendation: it equals the Facebook page handle ptPlant and avoids the many spellings of ปราณีต."
+    - "Checked by the agent at about 06:10 +07: www.ptplant.com answers 200 over HTTPS for / and /fit; ptplant.com resolves to Vercel only, but its certificate covered only www at that moment, so https://ptplant.com failed with a name mismatch."
+    - "On the owner's word ('คุน update line richmenu url ให้ผมหน่อย'), praneet-office branch richmenu-ptplant-domain commit 0bf8a781b274df73516b01a053f4d6626c0293b3 points BOARD at https://www.ptplant.com, and richmenu:apply made richmenu-514ca03ce6358b0385ca4875137b1b7e the default with the slice 24 image, removing richmenu-962d97cb53d7224199449d2218b9a5f4. Read back from LINE: ดูสต็อก /#lots, ใส่รถพอไหม /fit, สั่งยังไง /#order on www.ptplant.com; คุยกับหนวด unchanged."
+    - "www was chosen for the menu because it works with a valid certificate now and keeps working whichever of ptplant.com or www the owner makes primary."
+  owner_statements:
+    - "โอเค เดี่ยวเรียบร้อยแล้ว คุน update line richmenu url ให้ผมหน่อย ผมคิดว่า domain พร้อมแล้ว"
+  not_verified:
+    - "The agent did not tap the menu on a phone."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.3"
+  repository:
+    head: 6dceff0a1f0828bfb405b69e9d1f7184596c04e4
+    branch: hq/20261024
+  related:
+    - memory/events/2026/10/23/20261023T075615_praneet_nursery_slice24_closed.yaml
+    - "praneet-office branch richmenu-ptplant-domain, not pushed"
+unresolved:
+  - "ptplant.com had no certificate of its own at the check; Vercel issues it after DNS settles. The Vercel setting still sends ptplant.com to www with a 308; the agent recommended the reverse (ptplant.com primary) so share links need no hop. Owner's choice."
+  - "Share links, the preview image and the sitemap still say praneet-web.vercel.app until production is redeployed (they read the production domain at build time)."
+  - "/ops login and its write checks are bound to BETTER_AUTH_URL on praneet-web.vercel.app; the back office must keep using that address until it is moved. The LINE webhook, the slips webhook and the office scripts (OPS_BASE default) also stay on vercel.app, so vercel.app must not be redirected."
+  - "PLAN.md still records the domain as undecided (revision 0.2); moving the back office onto ptplant.com needs an owner decision and a plan revision."
+  - "Google Maps profile website still points at vercel.app; the owner changes it to the new domain."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Owner redeploys praneet-web production on Vercel; the agent then checks
+    https://ptplant.com has its certificate and that the preview image and
+    share links carry the new domain, and the owner reviews praneet-office
+    branch richmenu-ptplant-domain for a PR.
+  acceptance_check:
+    - "curl https://ptplant.com succeeds and og:image starts with the new domain."

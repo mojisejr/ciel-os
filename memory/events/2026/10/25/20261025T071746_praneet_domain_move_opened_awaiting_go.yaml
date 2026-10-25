@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T071746_praneet_domain_move_opened_awaiting_go
+type: decision
+recorded_at: "2026-10-25T07:17:46+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-domain-move-001
+  lane: single
+  objective: >-
+    Open the workstream that moves everything the owner and customers open
+    onto www.ptplant.com, after research instead of fixing one point at a
+    time; no slice authorized yet.
+  scope:
+    - "Plan 0.1: slice 1 back office and office scripts, slice 2 vercel.app redirects to www."
+  out_of_scope:
+    - "Moving the LINE webhook; canonical tags; Search Console and the Google Business Profile API; email on the domain."
+
+outcome:
+  status: opened-awaiting-go
+  decision: >-
+    The owner first said to move the back office ('คุนจัดการให้ผมได้ หรือเปล่า ? ถ้าได้ ก็จัดได้เลยครับผม'),
+    then stopped the agent's first reads and asked for research, a plan and a
+    new workstream ('ผมคิดว่าคุน research ให้ครบแล้วรวบรวม ข้อมูล สร้างแผนแก้ไข แล้วเปิด workstream ใหม่ดีกว่ามั๊ยครับ ?
+    เพราะไม่งั้นน่าจะแก้ไปเรื่อยๆ เรามาจัดการเรื่อง domain กันก่อนละกัน').
+    Nothing was changed after his stop. Plan 0.1 is opened from read-only
+    research of both repositories, the production env names, LINE and the
+    database; slice 1 waits for his review of the plan.
+
+evidence:
+  plan: workstreams/praneet-domain-move-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 04771d23f2fdeec61b18702114711f308055c012
+    branch: hq/20261024
+    working_tree: this-decision-and-plan
+  child_start:
+    praneet-web: "origin/main e37626bdc671e9eeae6b3dcec2e4334b1a4a00ae"
+    praneet-office: "origin/main c76079ec27088399665d5eb628f78e5ad0a5a2b6; local branch richmenu-ptplant-domain 0bf8a781b274df73516b01a053f4d6626c0293b3 not pushed"
+  related:
+    - memory/events/2026/10/25/20261025T061416_praneet_nursery_ptplant_domain_richmenu.yaml
+    - memory/events/2026/10/25/20261025T061814_praneet_nursery_ptplant_redeployed_ops_origin_open.yaml
+
+unresolved:
+  - "praneet-domain-move-001 shares praneet-web, praneet-office and ciel-os with praneet-nursery-001, so Wake reports an overlap until the owner's go also approves running it beside the idle nursery workstream."
+  - "Whether the LINE OA greeting or profile still carries a praneet-web.vercel.app link is unknown; the Messaging API cannot read the greeting. Owner's side."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner reviews plan 0.1; on his go (which also settles running it
+    beside praneet-nursery-001), record slice 1 authorized, set
+    BETTER_AUTH_URL on production and change the office defaults on a
+    topic branch.
+  acceptance_check:
+    - "Wake lists praneet-domain-move-001 active with no slice authorized."

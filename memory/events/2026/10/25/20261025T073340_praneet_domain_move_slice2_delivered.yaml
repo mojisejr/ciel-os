@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T073340_praneet_domain_move_slice2_delivered
+type: closeout
+recorded_at: "2026-10-25T07:33:40+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-domain-move-001
+  lane: single
+  objective: >-
+    Deliver slice 2, the last of plan 0.1: praneet-web.vercel.app sends
+    people to www.ptplant.com and keeps /api for the webhook.
+  scope:
+    - "praneet-web PR 26 on production."
+outcome:
+  status: ready-for-owner-merge
+  slice: "2"
+  completed:
+    - "Built and checked as recorded in evt_20261025T073035_praneet_domain_move_slice2_built_awaiting_merges."
+    - "The owner merged praneet-web PR 26 (merge 883fc16fa99c865e33e86e5a28a74d428197032b); Vercel deployed it to production (https://praneet-hsnlh34o0-nons-projects-2ee1d9ee.vercel.app, Ready). Local main equals origin/main; branch vercel-app-redirect deleted locally, the remote branch is gone."
+    - "Production on praneet-web.vercel.app: /, /lots?status=ready, /me/not-a-token, /ops/login and /p/ZZ9 answer 308 to the same path and query on https://www.ptplant.com; /p/ZZ9 ends at www.ptplant.com/ with 200; /api/line/webhook is not redirected (GET answers 405); bun run line check reports the webhook active. www.ptplant.com answers 200."
+    - "Plan 0.1's outcome holds as far as the agent can see: everything the owner and customers open is on www.ptplant.com; old links reach the same page there."
+  not_verified:
+    - "The owner tapping post F1 on the page and landing on www.ptplant.com; an unknown code was used so as not to add an open to F1."
+    - "The owner's phone sign-in at www.ptplant.com/ops (slice 1)."
+evidence:
+  plan: workstreams/praneet-domain-move-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  decision: memory/events/2026/10/25/20261025T073008_praneet_domain_move_slice1_built_slice2_authorized.yaml
+  repository:
+    head: 0593fc620ad8841802930aaeca7bf3dd0ac0e69b
+    branch: hq/20261024
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261024
+  child_merges:
+    praneet-web: "PR 26, origin/main 883fc16fa99c865e33e86e5a28a74d428197032b"
+unresolved:
+  - "The slice 2 decision (evt_20261025T073008) lacks outcome.parallelism approved, although the owner's word in evt_20261025T072409 covers it, so Wake may report an overlap with praneet-nursery-001 until this workstream reads as finished. A committed event is not amended."
+  - "LINE OA greeting and profile and the Facebook page website field may still name the old address; owner's side, and old links redirect."
+  - "Google Search Console and the Google Business Profile API are the next workstream, on the owner's word."
+  - "HQ standing branch hq/20261024 is not pushed; pushing and merging it belong to the owner."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Owner signs in at www.ptplant.com/ops on his phone, then pushes and
+    merges hq/20261024. Next: syncup and open the Google Business Profile
+    API workstream.
+  acceptance_check:
+    - "Wake shows praneet-domain-move-001 finished once hq/20261024 reaches origin/main."

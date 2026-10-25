@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T061814_praneet_nursery_ptplant_redeployed_ops_origin_open
+type: closeout
+recorded_at: "2026-10-25T06:18:14+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Redeploy praneet-web production so the storefront carries ptplant.com,
+    on the owner's word, and list what still points elsewhere.
+  scope:
+    - "praneet-web production on Vercel; read-only checks of the storefront, sitemap and back-office login."
+outcome:
+  status: recorded
+  slice: none
+  completed:
+    - "On the owner's word ('คุน redeploy prod ให้ผมเลยได้หรือเปล่า'), the agent ran vercel redeploy of production deployment dpl_7H3128PLywTUDtgyaGsokRQ2z8vX (created 2026-10-23 07:46 +07) to production; the new deployment is https://praneet-mi36uaybw-nons-projects-2ee1d9ee.vercel.app. No code or environment change."
+    - "After it: https://ptplant.com now has its certificate and 308s to www.ptplant.com; on www, /, /fit, /lots, /privacy, /sitemap.xml, /robots.txt and the preview image answer 200. og:image, twitter:image, the share button URL, sitemap locations and the robots sitemap line all read https://www.ptplant.com. praneet-web.vercel.app still serves / and /ops/login."
+    - "The owner changed the Google Maps profile website to the new domain (his word)."
+    - "Back-office login is bound to the old address: a sign-in POST with a made-up address answered 403 INVALID_ORIGIN from origin www.ptplant.com and 401 wrong-credentials from praneet-web.vercel.app."
+  owner_statements:
+    - "โอเคงั้นคุน redeploy prod ให้ผมเลยได้หรือเปล่า แล้วเชคหน่อยว่าเราต้อง ปรับตรงไหนอีกบ้างครับ ? ผมเปลี่ยน domain ใน google map เรียบร้อยแล้ว"
+  not_verified:
+    - "Post links (/p/<code>) were not opened on the new domain, so as not to add an open to the counts."
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.3"
+  repository:
+    head: c5143db8a41035d8433b09d20d3e4b14663bcca6
+    branch: hq/20261024
+  related:
+    - memory/events/2026/10/25/20261025T061416_praneet_nursery_ptplant_domain_richmenu.yaml
+unresolved:
+  - "/ops cannot log in on ptplant.com (INVALID_ORIGIN), and the storefront's logo-tap entry opens /ops on whatever domain the visitor is on; until BETTER_AUTH_URL moves, the owner uses praneet-web.vercel.app/ops. Moving it is an environment change on production plus the office OPS_BASE default; owner decision and plan revision."
+  - "praneet-web.vercel.app still serves the public pages with robots index,follow and no canonical link, so search engines can see two copies; vercel.app cannot simply be redirected while the LINE and slips webhooks and the office scripts use it."
+  - "www.ptplant.com is the primary (ptplant.com redirects to it) and every link the system builds now uses www; changing the direction later would change them again."
+  - "Facebook page and LINE OA profile website fields still name the old address if they were ever set; owner's side."
+  - "praneet-office branch richmenu-ptplant-domain and the HQ standing branch hq/20261024 are not pushed."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Owner decides whether the back office moves to www.ptplant.com
+    (BETTER_AUTH_URL and the office OPS_BASE default) before the Google
+    Business Profile API work starts.
+  acceptance_check:
+    - "If moved: sign-in from www.ptplant.com reaches the credential check, and the office posts list and posts new work against it."

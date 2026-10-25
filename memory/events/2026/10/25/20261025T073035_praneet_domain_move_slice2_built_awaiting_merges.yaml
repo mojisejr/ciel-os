@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T073035_praneet_domain_move_slice2_built_awaiting_merges
+type: closeout
+recorded_at: "2026-10-25T07:30:35+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-domain-move-001
+  lane: single
+  objective: >-
+    Record slice 2 built and both slices waiting for the owner: merges of
+    praneet-office PR 17 and praneet-web PR 26, and his sign-in on the new
+    address.
+  scope:
+    - "praneet-web PR 26; praneet-office PR 17."
+outcome:
+  status: built-awaiting-owner-merge
+  completed:
+    - "praneet-web PR 26 (branch vercel-app-redirect, head da1cee6785ad1de930671f77cb6c8d9f425a7883): next.config.ts redirects() sends host praneet-web.vercel.app, every path except /api and /api/*, 308 to https://www.ptplant.com with path and query; /p/ and /r/ are sent before their cookie is set. tests/domain.spec.ts covers pages and query, /api kept, no cookie on the old host, other hosts untouched."
+    - "Checks: bun run typecheck passes; playwright domain, storefront and board specs 24 passed; with the rule pointed at another host the redirect test fails (expected 308, received 200); Vercel preview build of PR 26 passed."
+    - "The local dev server rewrote next-env.d.ts during the tests; it was restored, and git status matched the intended change before commit."
+  not_verified:
+    - "Slice 2 on production: it deploys when the owner merges PR 26."
+    - "The owner's own sign-in at www.ptplant.com/ops on his phone."
+evidence:
+  plan: workstreams/praneet-domain-move-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: dee329f36057c65320c807d3311a47b55858e189
+    branch: hq/20261024
+  related:
+    - memory/events/2026/10/25/20261025T073008_praneet_domain_move_slice1_built_slice2_authorized.yaml
+    - "https://github.com/mojisejr/praneet-web/pull/26"
+    - "https://github.com/mojisejr/praneet-office/pull/17"
+unresolved:
+  - "Merging PRs is refused to the agent by the harness; the owner merges PR 17 and PR 26 with merge commits."
+  - "Until PR 26 merges, the old address still serves the storefront, and its /ops refuses sign-in."
+  - "LINE OA greeting and profile, and the Facebook page website field, may still carry the old address; owner's side. Old links keep working after PR 26 because they are redirected."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Owner merges praneet-office PR 17 and praneet-web PR 26 and signs in at
+    www.ptplant.com/ops; the agent then checks production against slice 2's
+    acceptance and records the delivery closeouts for slices 1 and 2.
+  acceptance_check:
+    - "praneet-web.vercel.app/lots answers 308 to https://www.ptplant.com/lots; /api/line/webhook is not redirected; bun run line check reports the webhook active."
