@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T210758_praneet_gmaps_slice2_delivered
+type: closeout
+recorded_at: "2026-10-25T21:07:58+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Deliver slice 2: the office LINE desk drafts, tests on the owner's LINE,
+    and broadcasts only a tested draft on the owner's word.
+  scope:
+    - "praneet-office PR 18."
+outcome:
+  status: ready-for-owner-merge
+  slice: "2"
+  completed:
+    - "Built and checked as recorded in evt_20261025T200113_praneet_gmaps_slices_built_awaiting_owner."
+    - "broadcast:test reached the owner's LINE; he confirmed ('ข้อความในไลน์ ขึ้นแล้ว')."
+    - "The owner merged praneet-office PR 18 (merge 77025bd); local main equals origin/main; branch deleted."
+  not_verified:
+    - "broadcast:send has not been run: no customer broadcast has been asked for."
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  decision: memory/events/2026/10/25/20261025T194446_praneet_gmaps_slice2_authorized.yaml
+  repository:
+    head: dff5666b92e210f781dd7a1d700f7da1268f4cb5
+    branch: hq/20261025
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261025
+  child_merges:
+    praneet-office: "PR 18, origin/main 77025bd"
+unresolved:
+  - "Slice 3 waits for Google's Business Profile approval (7 to 10 business days from 2026-10-25); PR 19 stays a draft until gmaps report runs on real profile figures."
+  - "The owner's Performance screenshots ('ป้าปราณี') have not been sent."
+  - "The HQ standing branch hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    When Google approves (gmaps check says granted), run gmaps check and
+    report on branch gmaps-report, set the review link, compare call figures
+    with the owner's Performance page, then ask the owner to merge PR 19 and
+    record slice 3's delivery.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-gmaps-001/slices/3.md."
