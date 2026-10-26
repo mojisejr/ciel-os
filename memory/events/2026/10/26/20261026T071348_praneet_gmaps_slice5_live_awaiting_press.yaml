@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261026T071348_praneet_gmaps_slice5_live_awaiting_press
+type: closeout
+recorded_at: "2026-10-26T07:13:48+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Record slice 5 merged and its menu live, waiting only for the owner's
+    press on a real phone, and hand the morning's round over for the
+    afternoon session.
+  scope:
+    - "praneet-web PR 29; praneet-office PR 22; the LINE OA default rich menu; local branch cleanup."
+outcome:
+  status: merged-menu-live-awaiting-owner-press
+  completed:
+    - "Built and checked as recorded in evt_20261026T061940_praneet_gmaps_slices4_5_built_awaiting_owner."
+    - "PR 29 conflicted in README.md after PR 28 merged (both added a section at one anchor); the agent rebased me-richmenu onto post-feature-targets, kept both sections, and force-pushed head 513eaef. Two full checks on 513eaef had 97 passed and the same one quality.spec timeout at load averages 8 to 11; the owner merged then."
+    - "The owner merged praneet-web PR 29 (merge d22d316; Vercel production deployment of d22d316 reported success) and praneet-office PR 22 (merge e8e5371)."
+    - "bun run check on praneet-web main d22d316: 98 passed, 0 failed; 'back office pages fit every width' took 55.4 s of its 90 s."
+    - "On the owner's word ('ขึ้น menu พร้อมกับ เก็บกวาดได้เลยครับ') the agent ran richmenu:render and richmenu:apply from office main e8e5371: the large menu is the default (richmenu-934297dccc44f79b551bba37a627cc39) and the one older API menu is deleted; line check shows one menu."
+    - "Cleanup: both checkouts on main equal to origin/main; topic branches deleted locally and on GitHub; the slice 5 worktree removed; menu samples deleted from the scratchpad."
+  not_verified:
+    - "The 'ออเดอร์ของฉัน' button on a real phone: the owner has not pressed it yet."
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: a74a853904f8ade97284c175a684749e15c64b4c
+    branch: hq/20261025
+  related:
+    - memory/events/2026/10/26/20261026T055624_praneet_gmaps_slice5_authorized.yaml
+    - memory/events/2026/10/26/20261026T070543_praneet_gmaps_slice4_delivered.yaml
+unresolved:
+  - "The owner presses 'ออเดอร์ของฉัน' in the LINE OA chat on his phone; he has no order, so the expected reply is 'ยังไม่มีออเดอร์ในชื่อคุณครับ'. Then slice 5 is recorded delivered."
+  - "Posts F3 to F7: the owner posts the page (F3) and 2 to 3 groups (F5 to F7, one or two a day) and presses 'โพสต์แล้ว'; he schedules the F4 broadcast in OA Manager and tells the agent the time. Two to three days later the agent compares them with posts list."
+  - "Try 4, the owner's Performance screenshots ('ป้าปราณี'), is still open."
+  - "Slice 3 (gmaps report, PR 19 draft) waits for Google's Business Profile approval, expected about 2026-11-03 to 2026-11-06; check with bun run gmaps check on branch gmaps-report."
+  - "praneet-web quality.spec 'back office pages fit every width' runs about 50 to 55 s of its 90 s when idle and timed out three times under load averages of 7.5 to 11; deferred. Workaround: rerun bun run check with nothing else running."
+  - "PLAN.md is 13,063 bytes, above Wake's 12,288 soft limit; Wake warns."
+  - "The HQ standing branch hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    When the owner returns, have him press 'ออเดอร์ของฉัน' and record slice 5
+    delivered; then take up the posts F3 to F7 results when he has posted.
+  acceptance_check:
+    - "Slice 5 acceptance in workstreams/praneet-gmaps-001/slices/5.md."
