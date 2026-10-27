@@ -3,7 +3,7 @@
 **Workstream:** `praneet-orchard-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -48,6 +48,16 @@
 - **ทำพร้อมงานอื่น:** เจ้าของอนุญาตให้ทำขนานกับ `praneet-nursery-001` และ `praneet-gmaps-001`
   ซึ่งรอข้อมูลจากเจ้าของอยู่ทั้งคู่
 
+## ข้อตกลงจาก slice 1 (revision 0.2, 2026-10-27)
+
+เจ้าของตัดสินหลังดูข้อมูลจริงและหน้าจอตัวอย่าง 2 รอบ ("แบบ 1 โอเคเอาตามคุน บันทึก decision ได้เลยครับ")
+
+- **ค่าแรงคิดจากงาน:** มีชื่อในงานของวันไหน วันนั้นได้ค่าแรง ไม่มีช่องลา ("วันไหนหยุดก็คือไม่ได้ค่าแรง") (slice 2)
+- **บันทึกด้วยคำของเจ้าของ จัดหมวดทีหลัง:** ปุ่มงานที่ใช้บ่อยกับช่องพิมพ์ agent จัดหมวดให้เจ้าของตรวจ (slice 2, 5)
+- **หน้าของวันแยกจากหน้าเพิ่มงาน (ตัวอย่างแบบ 1):** บันทึกต่อกันได้เป็นชุดตอนเย็น ไม่มีป๊อปอัป (slice 2)
+- **ระยะใบบันทึกตอนพ่น** และ**กฎยาเริ่มจากผลตรวจแหล่งอ้างอิง** (slice 5)
+- **รูปแบบ event** และ**กติกานำเข้า** (slice 4, 3)
+
 ## Project links
 
 | Project ID | Role | Local binding |
@@ -61,8 +71,7 @@
 - praneet-web: Next.js, Neon, Better Auth บัญชีเดียว ไม่มี AI API ไม่มีส่วนเชื่อม Google Calendar
   แก้หรือลบด้วย `hidden_at` และ `audit_events` เก็บก่อนหลัง มี lot, รอบเสียบยอด และบันทึกการดูแล (`care_*`, migration 009)
 - praneet-office: อ่านผ่าน `READER_DATABASE_URL` เขียนโดย sign in เป็นเจ้าของแล้วเรียก API ของ `/ops` (`scripts/ops-session.ts`)
-- skill เดิมของ Gemini (orchard-doctor, calendar-knowledge-graph, retrospective, router) และตารางเทียบสาร
-  อยู่ในโฟลเดอร์ `.assets` เดียวกับ xlsx ใช้เป็นรายการตั้งต้น ไม่ใช่แหล่งอ้างอิง
+- skill เดิมของ Gemini และตารางเทียบสารอยู่ในโฟลเดอร์ `.assets` เดียวกับ xlsx ใช้เป็นรายการตั้งต้นเท่านั้น
 - `orchard-decision-lab-001` ยังพักอยู่และไม่ถูกแตะ ข้อห้ามแนะนำยาของ Lab ไม่ใช้กับงานนี้
 
 ## ขอบเขต

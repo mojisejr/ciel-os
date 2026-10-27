@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261027T080205_praneet_orchard_slice1_closed
+type: closeout
+recorded_at: "2026-10-27T08:02:05+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Close slice 1: the real Calendar and Sheet were read, the data model,
+    Calendar format and import rules were agreed, the owner picked a
+    rendered sample, and the chemical rules were checked against sources.
+  scope:
+    - "Read-only work and local samples; no code in praneet-web or praneet-office, no production access, no credential."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  completed:
+    - "Calendar export (the owner's main calendar, 796 events) read for [Garden] and [CIEL] events only (277, 2026-08-05 to 2026-10-26); the other 519 were counted, not read. 152 events are referenced from Work_Logs; 45 are AI Morning Briefs; 33 are [CIEL] reflections or handoffs; 48 are orchard events without a Work_Logs id, 37 of them with a row in another tab on the same date and 11 with no row in any tab."
+    - "Of those 11, six predate the Sheet (2026-08-05 to 08-07), two are 2026-09-07, one is 2026-10-26 (after the export), and two were missed silently with no Sync_Audit error: 2026-10-19 and 2026-10-22, the latter including a wage settlement, so the Sheet's wage balance may not match what was paid."
+    - "The Sheet also holds whole-row duplicates (for example 2026-10-24 and 2026-08-18 rows written twice), besides 13 repeated LOG ids."
+    - "Samples rendered on local /ops against praneet_test, 390 and 1280, light and dark: round 1 three ways to pick a task (A frequent buttons and typing, B category then task, C typing only); round 2 after the owner asked whether the form would swell: design 1 a separate add-work page, design 2 a bottom sheet. The owner chose round 2 design 1. The samples page is private and is not linked here."
+    - "A sub agent checked 16 chemical rules against FRAC Code List 2026, IRAC v11.5, product labels, extension guides and DOA: 3 supported, 8 partly, 4 unsupported, 1 contradicted (copper with oil is allowed by the Funguran-OH and Kocide labels). Validamycin is FRAC U 18, not 26; Trichoderma is BM 02; the 4 to 5 products per tank cap has no source; nutrients go last in the mixing order; rotation needs at least 60 days of history and the whole crop cycle. No catalogue active was found on a Thai ban list. The report is kept at .assets/orchard-decision/chemical-rules-report-20261027.md, outside Git."
+    - "Plan revision 0.2 records the decisions (evt_20261027T080150_praneet_orchard_rev02_design_decided)."
+  not_verified:
+    - "The 37 same-date matches were compared by date only, not content."
+    - "Rules marked as taken from a search summary in the report were not read at the source."
+    - "Leaf-stage durations for durian and mangosteen are not sourced yet."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  decision: memory/events/2026/10/27/20261027T080150_praneet_orchard_rev02_design_decided.yaml
+  repository:
+    head: c764a240f81401c3c408a8350891ba9c29a91389
+    branch: hq/20261025
+    working_tree: this-closeout-with-plan-0.2
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261025
+  child_state:
+    praneet-web: "clean on main d22d316; the local dev server was stopped and next-env.d.ts restored"
+    praneet-office: "untouched"
+
+unresolved:
+  - "Wage balances: the 2026-10-22 settlement never reached the Sheet; the opening balance in the new system must be the one the owner confirms."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake; it clears only with a record on that workstream."
+  - "Which Google credential method writes Calendar (a key file, or Vercel without a key file) is open until slice 4."
+  - "The HQ standing branch hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the owner returns, ask for his go on slice 2 (workers, daily work,
+    wages and advances) under plan 0.2 and record it as a decision; then
+    build it on topic branches in praneet-web and praneet-office.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-orchard-001/slices/2.md."
