@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261027T172117_praneet_orchard_slice2_built_awaiting_owner
+type: closeout
+recorded_at: "2026-10-27T17:21:17+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record slice 2 built as draft pull requests and what it waits for from the
+    owner: migration 016 on production and the two merges.
+  scope:
+    - "praneet-web PR 30; praneet-office PR 23."
+
+outcome:
+  status: built-awaiting-owner
+  completed:
+    - "praneet-web PR 30 (branch feat/orchard-work, head d55dea3695fb82cfa14029e1e0966590ea216ae7): migration 016 (additive), lib/orchard.ts rules, /ops/orchard pages (day page in work and money tabs, the round 5 add form with free-text work and a one-line pay summary, extra pay, all work with filters and search, workers and teams, pay and payment pages), the API for the form and the office, a today shortcut and a menu group. README and DESIGN.md updated."
+    - "bun run check: type check, build and 106 of 106 tests passed on the second full run. The first full run had one failure, quality.spec 'back office pages fit every width' timing out at 90 s with 18 orchard pages added at six widths and load average 13.7; that test now has 300 s."
+    - "tests/orchard.spec.ts (8 tests): half-hours only from the form and the API; a busy day on a phone where several tasks make one day's wage and the save button stays on screen; half a day plus piece work plus extra pay paid from the day's line; hourly work per person with a late arrival and for a whole team; wages and advances that cannot exceed what is owed or advanced and can be taken back; a new person by name only and hidden people; ten tasks in a day; list filters, search and the office reads."
+    - "praneet-office PR 23 (branch feat/orchard-desk, head e9e0480ad350887c603a20c5f16a8ba9ec182495): bun run orchard day | balances | words | categorize, all through /ops as the owner; run against a local praneet-web on synthetic data."
+    - "The real pages were shot at 390 and 1280, light and dark, on synthetic data with no sideways scroll; the list filters were moved into one row of pills after that check."
+  not_verified:
+    - "Migration 016 on production, the pages on production, and the owner's own phone."
+    - "During the office check a zsh variable carried all flags as one argument, so the office script used its defaults and signed in to www.ptplant.com as the owner; it made only GET requests to orchard endpoints that do not exist there yet (404) and wrote nothing. The rerun passed flags as an array against the local server."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "2"
+  decision: memory/events/2026/10/27/20261027T163004_praneet_orchard_rev06_opening_rate_fertiliser.yaml
+  repository:
+    head: 5c56f5a3b24231a9372214fb063c21b3e24a1e22
+    branch: hq/20261025
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/30"
+    - "https://github.com/mojisejr/praneet-office/pull/23"
+
+unresolved:
+  - "The owner runs migration 016 before merging PR 30: in checkouts/praneet-web on branch feat/orchard-work, env DATABASE_URL=\"$(cat .local/secrets/neon-direct.url)\" bun run migrate, which prints only 'Applied 016_orchard.sql'. Or he names that exact write for the agent to try."
+  - "Then the owner merges praneet-web PR 30 (Vercel deploys main) and praneet-office PR 23."
+  - "No office command records work for the owner yet: the plan asks that every script is agreed with him first, and slice 2 agreed only the read and categorize commands."
+  - "scripts/backup.ts does not include the orchard tables (it already lacked the slice 22 to 24 tables); deferred, Neon keeps its own history meanwhile."
+  - "Free-typed titles become frequent-word buttons until categorized, so a one-off long title can hold a slot for a week; deferred until real use shows whether it matters."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: run migration 016 (or name it for the agent), merge praneet-web PR
+    30 then praneet-office PR 23. Agent: read 016 back through the reader,
+    check /ops/orchard on production, and record slice 2 delivered.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-orchard-001/slices/2.md."
