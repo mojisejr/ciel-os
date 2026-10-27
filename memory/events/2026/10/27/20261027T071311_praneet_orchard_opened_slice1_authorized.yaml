@@ -1,0 +1,73 @@
+schema_version: ciel.event.v0.1
+id: evt_20261027T071311_praneet_orchard_opened_slice1_authorized
+type: decision
+recorded_at: "2026-10-27T07:13:11+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Open the workstream that moves orchard work (orchard only) from Gemini
+    Spark, Google Calendar and the Sheet into praneet's database, with the
+    owner recording in /ops, agents working through praneet-office code, and
+    the system writing Calendar one way; authorize slice 1, the data and
+    design talk before any code, and running beside the other praneet work.
+  scope:
+    - "Plan 0.1: slice 1 real data and the data model before code; 2 workers, daily work, wages and advances; 3 repeatable Sheet import and comparison report; 4 one-way Calendar writes; 5 chemical stock, sprays, crop cycles, group-based spray planning and the diary; 6 income, expenses, harvest and P&L; 7 cutover."
+  out_of_scope:
+    - "Photos (Drive or NAS, a later shared piece with praneet and clear-together); weather in the system; other users; orchard data on customer pages; an AI API; stopping Spark before the owner declares a part ready; orchard-decision-lab-001."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After three syncup rounds (guess hit rate 20 of 24) the owner confirmed
+    the shared understanding and running in parallel ('ยืนยันครับทำพร้อมกันได้เลย
+    เพราะอันอื่นก็กำลังรอ ข้อมูลจากผมอยู่เหมือนกัน'), then asked to open the
+    workstream ('คุนเปิด workstream อันใหม่นี่ก่อนแล้ว ยืนยันว่าทำขนานได้ครับ').
+    The confirmed understanding named slice 1 as the first work: read the real
+    Calendar when he connects it, and agree the data model, the Calendar
+    format, the import rules and rendered samples before any code. Spray
+    planning stays agent work by his choice: group-based (FRAC/IRAC), from
+    spray history, stock and what is found in the plot, with every enforced
+    rule source-checked; the agent never records a spray he has not done.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 27ea34abcd6695304db3e023ef0b4728b5b68923
+    branch: hq/20261025
+    working_tree: this-decision-and-plan
+  child_start:
+    praneet-web: "origin/main d22d316971c71d46e12feda46253c80dec4ae5c4"
+    praneet-office: "origin/main e8e5371c41cbc023a82f4415d32e331864129431"
+  checked:
+    - "The owner's xlsx export (21 tabs, work logs 2026-08-09 to 2026-10-25) and the four Gemini skill files in .assets/orchard-decision/from-gemini-spark, read locally; figures and names are not copied here because this repository is public."
+    - "praneet-web has no Google Calendar code and no AI API; office writes go through the /ops API signed in as the owner."
+    - "dac2-durian-smart-account has season cost kinds but no daily wage ledger."
+  not_checked:
+    - "The real Calendar events; the owner connects the calendar for a read-only look in slice 1."
+  related:
+    - workstreams/praneet-nursery-001/PLAN.md
+    - workstreams/orchard-decision-lab-001/PLAN.md
+
+unresolved:
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake because its own newest authorizing decision carries no parallelism approval; the owner's word here covers it, and it clears only with a record on that workstream."
+  - "praneet-nursery-001 PLAN.md says orchard work, wages and chemicals stay on Gemini Spark + Calendar + Sheet; that stays true until cutover and is revised in slice 7 on the owner's decision."
+  - "Which Calendar connection the owner gives for the read-only look, and later the Google service account key for writes, are his to create."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner connects his Google Calendar for a read-only look; then run
+    slice 1: compare Calendar events with the Sheet, propose the data model,
+    Calendar format and import rules, render 2 to 4 entry-screen samples on
+    the real page, and check each chemical rule against FRAC/IRAC, labels and
+    the Department of Agriculture.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/praneet-orchard-001/slices/1.md."
