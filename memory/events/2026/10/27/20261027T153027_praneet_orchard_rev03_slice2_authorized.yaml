@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261027T153027_praneet_orchard_rev03_slice2_authorized
+type: decision
+recorded_at: "2026-10-27T15:30:27+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Authorize slice 2 (workers, daily work, wages and advances) under plan
+    revision 0.3, which records how the owner actually pays: by the day, by
+    the piece or by the hour, to a whole team or to each person.
+  scope:
+    - "Plan 0.3: slices/2.md carries the pay rules and acceptance; PLAN.md changes its revision and the wage line only."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After three rounds on pay the owner said 'บันทึก และ go slice 2 ได้เลยครับ'.
+    One add-work form for every pay method; each task type carries a default
+    method (day, piece, hour) that can be changed per task. Piece and hourly
+    work may be paid to the whole team or to each person, because both happen
+    ('บางทีก็จ่ายทั้งทีม บางทีก็จ่ายรายคน'); a team is a named group with members
+    so per-person hours can be kept. Hours are whole half-hours only, never
+    minutes ('จะไม่มาคิดค่าแรง x นาทีเป็นอันขาด'). The day wage (one or half a
+    day per person) counts day-rate tasks only. Extra pay is an added line
+    with a reason, not an edited rate. Amounts are owed when the work is
+    recorded and paid when paid; most hourly work is settled the same day,
+    so each person's line on the day page has a 'paid' action. Slice 2
+    acceptance now checks balances from the opening figure the owner
+    confirms; the comparison with the Sheet stays in slice 3. Samples of the
+    add-work and day pages under these rules come before code. Parallel
+    running stays approved.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "2"
+  repository:
+    head: c92cb0719721d1b1b819bb27bd03a6d8ac93fddd
+    branch: hq/20261025
+    working_tree: this-decision-and-plan
+  related:
+    - memory/events/2026/10/27/20261027T080205_praneet_orchard_slice1_closed.yaml
+  source_facts:
+    - "Labor_Ledger in the owner's export holds day, half-day, piece, extra-pay and advance rows and no hourly row; one half-day was raised above the rate and one person earned a piece payment on a day with a day wage."
+
+unresolved:
+  - "Wage balances: the 2026-10-22 settlement never reached the Sheet; the opening balance must be the one the owner confirms."
+  - "The slice 1 closeout is on hq/20261025, not yet on origin/main; the round-closing push is the owner's."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Render samples of the add-work page (day, piece per person, team hourly
+    per person) and the day page on local /ops for the owner's check; then
+    build slice 2 on topic branches in praneet-web and praneet-office.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-orchard-001/slices/2.md."
