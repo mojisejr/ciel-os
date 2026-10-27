@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261028T063544_praneet_orchard_slice2_delivered
+type: closeout
+recorded_at: "2026-10-28T06:35:44+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Deliver slice 2: workers, daily work, wages and advances in praneet's
+    /ops, live on production.
+  scope:
+    - "praneet-web PR 30 and praneet-office PR 23, migration 016 on production."
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "The owner ran migration 016 on production himself ('run migration เรียบร้อยแล้ว') after the harness refused the agent's attempt."
+    - "Read back through the reader role: ten orchard_ tables exist, orchard_plots holds P-1 to P-4 with P-4 as the nursery, and orchard_work, orchard_workers and orchard_payments are empty. The reader is refused schema_migrations, so the migration row itself was not read."
+    - "On the owner's word ('คุนทำ 1,2ได้เลยครับ') the agent marked both PRs ready and merged them with merge commits pinned to the reviewed heads: praneet-web PR 30 as dafaedc, praneet-office PR 23 as 593c97d."
+    - "Production after the Vercel deploy: /api/ops/orchard/day answers 401 without a session (404 before the merge), /ops/orchard redirects to /ops/login, and praneet-office main 'bun run orchard day 2026-10-28' and 'orchard words' signed in as the owner returned an empty day and no words."
+    - "Both child checkouts are back on a clean main matching origin; the local topic branches are deleted."
+  acceptance:
+    - "Slice 2 acceptance is met by tests 106 of 106 at d55dea3 (recorded in 20261027T172117), the merges above and the production reads."
+  not_verified:
+    - "The owner has not yet recorded a real day on his phone on production; the 19 Aug 2569 day was proven on synthetic data at phone width."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "2"
+  decision: memory/events/2026/10/27/20261027T163004_praneet_orchard_rev06_opening_rate_fertiliser.yaml
+  repository:
+    head: "ba402c4ea04beb5b2a324168abe57f222e6ae3b1"
+    branch: hq/20261025
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261025
+  child_merges:
+    praneet-web: "PR 30, merge dafaedc"
+    praneet-office: "PR 23, merge 593c97d"
+  related:
+    - memory/events/2026/10/27/20261027T172117_praneet_orchard_slice2_built_awaiting_owner.yaml
+    - memory/events/2026/10/27/20261027T195028_praneet_orchard_handoff_standby.yaml
+
+unresolved:
+  - "The owner agreed to an office command that records work for him ('orchard add ผมเอาครับ'); it goes into slice 3 with the import, which shares its write path."
+  - "scripts/backup.ts lacks the orchard tables; deferred, Neon keeps its own history."
+  - "Free-typed titles become frequent-word buttons until categorized, so a one-off long title can hold a slot for a week; deferred until real use shows whether it matters."
+  - "The remote topic branches feat/orchard-work and feat/orchard-desk still exist on GitHub."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Record slice 3 authorized with orchard add in it, then build the
+    repeatable import and the add command; stop for the owner at the word
+    table review and before any production write.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-orchard-001/slices/3.md."
