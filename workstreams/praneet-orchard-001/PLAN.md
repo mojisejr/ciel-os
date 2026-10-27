@@ -3,7 +3,7 @@
 **Workstream:** `praneet-orchard-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.5
+**Plan revision:** 0.6
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
