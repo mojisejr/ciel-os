@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20261027T162441_praneet_orchard_rev05_form_calendar
+type: decision
+recorded_at: "2026-10-27T16:24:41+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Close the slice 2 design under plan revision 0.5: the round 5 add-work
+    form, free-text task entry, and the Calendar event shape for slice 4.
+  scope:
+    - "Plan 0.5: slices/2.md and slices/4.md change; PLAN.md changes its revision only."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner liked the round 4 pages and asked whether the form was the
+    fastest and least cluttered and whether a modal would work better. The
+    answer was inline expansion, with three rules: it opens only on his tap,
+    it opens below what he tapped, and a closed section still shows its value
+    on one line. Round 5 flattens the form into one card, orders it as plot,
+    task, people, pay, and shows pay as one summary line that opens on
+    'change'. It does not reduce taps; the speed comes from remembered plot
+    and people, frequent words and pay defaults. He then asked that 'what was
+    done' be free ('ทำอะไรต้องยืดหยุ่น'): the text box is primary and the
+    frequent words only insert text, as revision 0.2 already agreed; rounds 3
+    to 5 had dropped the box by the agent's mistake. Spraying has its own form
+    in slice 5; until then it is recorded as ordinary work. He chose 'เอารอบห้า'.
+    For the Calendar he chose one all-day event per day instead of one per
+    task, because this is his main calendar, and nothing about pay in it, not
+    even half days or hours ('ไม่ใส่ ตามคุนเลย'). The 8-task day quoted in
+    revision 0.4 was wrong: 24 Oct has 8 rows because 4 are whole-row
+    duplicates; after removing them the busiest day has 5 tasks, so the
+    acceptance now reads a 10-task day. Parallel running stays approved.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "2"
+  repository:
+    head: c71995e4be7426525b19f33577b6fb26b7ca845c
+    branch: hq/20261025
+    working_tree: this-decision-and-plan
+  related:
+    - memory/events/2026/10/27/20261027T155420_praneet_orchard_rev04_slice2_scope.yaml
+  corrects:
+    - "evt_20261027T155420_praneet_orchard_rev04_slice2_scope says the busiest day in the Sheet has 8 tasks; it has 5 after whole-row duplicates are removed."
+
+unresolved:
+  - "The per-person day rate was added by the agent beside the owner's three worker fields; he has not confirmed it separately."
+  - "Wage balances: the 2026-10-22 settlement never reached the Sheet; the opening balance must be the one the owner confirms."
+  - "Whether fertiliser and soil drenches share the slice 5 spray form is open until slice 5."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 2 on topic branches in praneet-web (migration, /ops pages,
+    office API, tests) and praneet-office (read and categorize commands),
+    following slices/2.md at revision 0.5.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-orchard-001/slices/2.md."
