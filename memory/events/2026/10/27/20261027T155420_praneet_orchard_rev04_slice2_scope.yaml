@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261027T155420_praneet_orchard_rev04_slice2_scope
+type: decision
+recorded_at: "2026-10-27T15:54:20+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Widen slice 2 under plan revision 0.4 so the owner can find past work and
+    keep his people: a day page in two tabs, an all-work list with filters,
+    and a worker list with a page per person; slice 4 gains a link back into
+    the app.
+  scope:
+    - "Plan 0.4: slices/2.md and slices/4.md change; PLAN.md changes its revision only."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner passed the round 3 samples ('ผมว่าโอเคเลย') and accepted all three
+    follow-ups ('โอเคทั้งหมดนะ'). The day page splits into work and money tabs,
+    because the busiest day in the Sheet has 8 tasks. Slice 2 adds an
+    all-work list, one row a day, filtered by month, plot, person, task type
+    and pay method, with a search of notes. He asked for a worker list with
+    three fields, name, phone and free details such as skills and what can
+    be bought from the person; a new person can be added from the add-work
+    form by name alone and completed later; every money record links to a
+    person on that list. Removing a person hides them, because their pay
+    history stays. A per-person day rate is kept beside the three fields so
+    day wages can be computed. Slice 4 events carry one line linking to the
+    task in /ops; household members who tap it reach the sign-in page, which
+    he accepted ('ไม่เป็นไร'), and the household keeps using the Calendar only.
+    Parallel running stays approved.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "2"
+  repository:
+    head: dcc4acbe52570d076151d72e34d608e4272efa60
+    branch: hq/20261025
+    working_tree: this-decision-and-plan
+  related:
+    - memory/events/2026/10/27/20261027T153027_praneet_orchard_rev03_slice2_authorized.yaml
+
+unresolved:
+  - "The per-person day rate was added by the agent beside the owner's three worker fields; he has not confirmed it separately."
+  - "Wage balances: the 2026-10-22 settlement never reached the Sheet; the opening balance must be the one the owner confirms."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Render samples of the two-tab day page (the 8 tasks of 24 Oct), the
+    all-work list with filters and the worker page on local /ops for the
+    owner's check; then build slice 2 on topic branches in praneet-web and
+    praneet-office.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-orchard-001/slices/2.md."
