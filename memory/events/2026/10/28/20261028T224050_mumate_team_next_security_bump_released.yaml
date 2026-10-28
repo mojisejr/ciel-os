@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261028T224050_mumate_team_next_security_bump_released
+type: closeout
+recorded_at: "2026-10-28T22:40:50+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-team-release-001
+  lane: single
+  objective: >-
+    Record a production release of two team dependency merges (mootech-fe PR
+    937 and bazi-sft-dataset PR 63, both by Jaroensak), which followed to
+    staging by themselves and were promoted on the owner's word.
+  scope:
+    - "Runbook 01 readiness, promote-production, post-release checks."
+  out_of_scope:
+    - Reviewing or changing the team's code.
+
+outcome:
+  status: recorded
+  owner_words:
+    - "\"ใน mumate เพื่อนผม push  ขึ้นมาใหม่ คุนเชคหน่อยว่าเรา release. ได้เลยหรือเปล่า เห็นบอกผมว่าต้อง updaate nextjs version อ่ะครับ\""
+    - "\"โอเค งั้นคุน  promote-production ให้ผมเลยครับ\""
+  state:
+    - "What went out: fe 859105b -> b21408f (PR 937, Next 14.2.15 -> 14.2.35 and eslint-config-next, the latest 14.2 patch). bazi 629619b -> f1fae65 (PR 63, Next 16.2.7 -> 16.4.3 and eslint-config-next 16.4.3; the run reported bazi+2, the commit and its merge). Both diffs touch only package.json and package-lock.json: no migration, no new env."
+    - "Lockfiles read: fe's SWC binaries resolve to 14.2.33, which is what next 14.2.35 itself declares. bazi gains a nested sharp 0.35.5 under next; the app's own sharp stays 0.34.5 (used by src/app/api/profile/avatar/route.ts and src/lib/bazi/divine-cards/image-gen.ts)."
+    - "Readiness at about 22:29 +07: staging fe b21408f / bazi f1fae65 healthy ✅ since 13:08:43Z (140 min, staging-pair --soak 10 passed); container-build success on both commits; public bazichart.mumate.co/api/health ok with sha 859105b. The direct prod-1 read (ops-status, 5xx, stall, health journal) was refused by the harness as Production Reads and not retried; the workflow's own gate checked production healthy instead. The owner was told it was the evening peak and chose to proceed."
+    - "promote-production pressed by the agent at 15:33:48Z, run 40717217461 success: every gate passed, deploy fe b21408f / bazi f1fae65, bazi ✅ with /health.sha f1fae65fc7d9; bazichart.mumate.co/api/health ok with sha b21408f."
+    - "Five-minute watch: 0 5xx of 15 requests in 300 s."
+
+evidence:
+  plan: workstreams/mumate-team-release-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "13cf459a0d53684deb4c18367a3c26c565b94b9c"
+    branch: hq/20261025
+  related:
+    - memory/events/2026/10/27/20261027T134514_mumate_team_features_menu_wanphra_released.yaml
+    - "mootech-fe PR 937 (main b21408f7ded685bf7c54bed92262b2ef4667c330)"
+    - "bazi-sft-dataset PR 63 (pdf-dev f1fae65fc7d9f46ecc62610964bd2b596e64c255)"
+    - "mumate-infra promote-production run 40717217461"
+
+unresolved:
+  - "No one has yet uploaded a profile picture or drawn a divine card on production since the release; health checks do not exercise sharp. If either breaks, rollback-production returns the previous pair in under a minute."
+  - "The PR descriptions say the remaining red vitest cases (fe 3, bazi 9) were red before the bump; this round did not verify that."
+  - "The HQ standing branch hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None for this release. The next team merge follows to staging by itself
+    and waits for the owner's word to promote.
+  acceptance_check:
+    - "A profile picture upload and a divine card both work on production."
