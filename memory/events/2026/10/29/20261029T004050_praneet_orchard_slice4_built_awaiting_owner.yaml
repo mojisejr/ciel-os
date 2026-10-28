@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261029T004050_praneet_orchard_slice4_built_awaiting_owner
+type: closeout
+recorded_at: "2026-10-29T00:40:50+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record slice 4 built as draft pull requests, and what it waits for from
+    the owner: migration 018, the merges, the Google Cloud setup, sharing his
+    calendar, and the env values.
+  scope:
+    - "praneet-web PR 32; praneet-office PR 25."
+
+outcome:
+  status: built-awaiting-owner
+  completed:
+    - "praneet-web PR 32 (branch feat/orchard-calendar, head 45c16316e5120b6de0b4aec982cfa05c2c49d653). Work recorded in /ops is written to the owner's main calendar as one all-day event a day: Sage, transparent, no reminders. The title is 'สวน · <n> งาน · <who>'. The body lists the work by plot in his words with notes under each line, then a link to the day. No money, half days, hours, counts or units are written, and imported Sheet days are not written. Migration 018 adds orchard_calendar, which holds the hash last written per day. A day waits while its text differs from that hash, so edits, moves, hides and renames are all caught. The event id comes from the date, so a retry never duplicates an event. The write runs after the answer (waitUntil), one run at a time on one connection, and the running one re-reads the days after releasing its lock. A failure keeps its reason on the day, and /ops/orchard shows the waiting days with a retry button. Access uses Vercel OIDC, then Google STS, then generateAccessToken for a service account with the calendar.events scope; no key is stored. The README holds the owner's Cloud Shell setup."
+    - "praneet-office PR 25 (branch feat/orchard-calendar, head 8f5196153c20a08b8dce4c848865c69d77b6e302) adds bun run orchard calendar [--write], which shows the waiting days and retries them through the same route."
+    - "bun run check passed on head 45c1631: type check, build and 109 of 109 tests. The new test runs against a local Google stand-in and checks: one event for two works and its exact text; no money words; the event fields; no event for an imported day; the token exchange path; one create per day across a move; a rename rewriting days; and a Google failure leaving the day waiting with its reason, shown on the page and cleared by the button."
+    - "Three earlier full runs failed 10 or 11 tests while the machine's load average was 10 to 12, including forms the slice does not touch. One orchard list test failed in every run: it tapped the word filter before the plot filter's page loaded, and the background write made that page slower. The test now waits for the URL."
+    - "The owner chose Vercel OIDC over a key file ('ผมว่าให้ vercel ขอสิทธิ์จบสุดถ้างั้น'). He also confirmed two points: the owner's own work shows his account name ('Q1 = ชื่อนั้นแหละ'), and notes go out as written, with money kept out of notes ('Q2 = ตามที่คุนว่า')."
+    - "The real 27 and 28 Oct days were rendered from the office's normal day read and shown to the owner; nothing was written. A direct production read with the reader role was refused by the harness, so the office route was used instead."
+    - "On the owner's words, the one 27 Oct note that mentioned pay was replaced on production by the real pay: hourly, 10 hours at 50. Its 500 was recorded as paid in cash on 28 Oct for that day. The person's balance reads 0. Earlier the same evening, the 1,050 wage owed to another person was recorded as a transfer on 28 Oct, and that balance reads 0 too."
+    - "The owner asked whether the Gemini calendar-knowledge-graph is lost. The agent's answer: META, tags, entities and status now live in database fields and the audit trail; old events stay in the calendar untouched; observations and diary belong to slice 5 and harvest to slice 6. Two things are not carried: photos with Drive links (the plan defers photos) and parent_event links between related pieces of work. No change was decided."
+  not_verified:
+    - "Migration 018 on production, the Google Cloud setup, the Vercel OIDC setting of the project, and a real event in the owner's calendar."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  decision: memory/events/2026/10/28/20261028T224909_praneet_orchard_slice4_authorized.yaml
+  repository:
+    head: "2d1097c6147aa6ed9ee8eb455a80e4f953dd9ae2"
+    branch: hq/20261025
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/32"
+    - "https://github.com/mojisejr/praneet-office/pull/25"
+
+unresolved:
+  - "Owner: run migration 018 on production before PR 32 merges. In checkouts/praneet-web on branch feat/orchard-calendar, run env DATABASE_URL=\"$(cat .local/secrets/neon-direct.url)\" bun run migrate, which prints nothing when every migration is applied. Then merge PR 32 and PR 25."
+  - "Owner: run the Cloud Shell setup in praneet-web README ('The owner's calendar') on his existing Google Cloud project. Then share his main calendar with the service account ('Make changes to events') and check that OIDC federation is on in the Vercel project (Settings, Security, issuer mode Team). Then give the project number and the calendar id."
+  - "Agent, on the owner's word: set the five env values on production (none is secret; the calendar id is personal and stays in Vercel only) and redeploy. Then press retry, or run bun run orchard calendar --write, and read the 27 and 28 Oct events back with the owner."
+  - "Parent_event links between related work, and photos, are not carried from the Gemini calendar skill; deferred, with no change decided."
+  - "bun run orchard words still counts imported Sheet titles; deferred."
+  - "The 2026-10-28 spray has no lot link; deferred by the owner to slice 5."
+  - "scripts/backup.ts lacks the orchard tables; deferred, Neon keeps its own history."
+  - "The remote topic branches of slices 2 and 3 still exist on GitHub."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - "hq/20261025 is not pushed; the owner holds the push while work continues."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: migration 018, the merges, the Google Cloud setup and calendar
+    share, and the Vercel OIDC check. Agent: read 018 back, set the env on his
+    word, redeploy, write the waiting days, read the events back with him,
+    then record slice 4 delivered.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/praneet-orchard-001/slices/4.md."
