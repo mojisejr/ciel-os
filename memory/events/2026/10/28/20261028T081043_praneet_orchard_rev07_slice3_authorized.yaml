@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261028T081043_praneet_orchard_rev07_slice3_authorized
+type: decision
+recorded_at: "2026-10-28T08:10:43+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Plan revision 0.7: how the Sheet history comes in, and slice 3 authorized
+    with an office command that records work for the owner.
+  scope:
+    - "workstreams/praneet-orchard-001/PLAN.md and slices/3.md."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner authorized carrying on to the next slice when nothing needs his
+    decision ('แล้วเดินต่อ slice ถัดไปได้เลยถ้าเกิดว่าไม่มี อะไรต้องเคาะ') and
+    agreed to an office command that records work for him ('orchard add ผมเอาครับ
+    ... เราทำงานด้วยกันครับ'). On the agent's four questions he answered 'Q1 =
+    OK, Q2 = OK, Q3 = ใช่ และที่คุนไม่แน่ใจก็ใช่, Q4 = ใช่ ให้ sync กันแต่ไม่ ทำให้ข้อมูล
+    ทั้งคู่ มีปัญหา ไปต่อไม่ได้ ให้บันทึกต่อได้ก็คือ จบ'. So: Work_Logs rows come in
+    as work records without pay, because they do not say how each person was
+    paid; Labor_Ledger shows read-only on each person's page as old Sheet
+    history and does not count toward balances, which still start at 0; the
+    Sheet wording is kept as written, untranslated, and categorized later;
+    the name table the agent proposed is confirmed, including every name it
+    was unsure of; imported P-4 work links to the graft rounds and lots
+    praneet already has, without making either side unable to carry on.
+    The name table holds people's names and stays in .assets, untracked.
+  why: >-
+    Work_Logs carries 38 spellings for about 12 people and no per-person pay,
+    and Labor_Ledger uses 37 pay wordings; importing money would mean guessing,
+    and the 2026-10-22 settlement never reached the Sheet.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "3"
+  repository:
+    head: "56dbcc6dc5fb627b7e9784ed82b5698e3ca8aaac"
+    branch: hq/20261025
+    working_tree: this-decision-and-plan
+  related:
+    - memory/events/2026/10/28/20261028T063544_praneet_orchard_slice2_delivered.yaml
+
+unresolved:
+  - "The production import needs a fresh Sheet export from the owner and his word to write."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 3 on topic branches in praneet-web (import source columns,
+    old ledger history, lot links, API) and praneet-office (import, report,
+    orchard add), following slices/3.md at revision 0.7.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-orchard-001/slices/3.md."
