@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261029T171114_praneet_orchard_slice5_built_awaiting_owner
+type: closeout
+recorded_at: "2026-10-29T17:11:14+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record slice 5 built as draft pull requests, and what it waits for from
+    the owner: migration 019, the merges, the shelf import on production, and
+    his word on what is on the shelf.
+  scope:
+    - "praneet-web PR 33; praneet-office PR 26."
+
+outcome:
+  status: built-awaiting-owner
+  completed:
+    - "praneet-web PR 33 (branch feat/orchard-shelf, head aaad786e8548fbf7f947e531da227a281b0096e4). Migration 019 adds chemicals, chemical_recipes and orchard_diary, and grants them to praneet_reader. A product is have, low or out, with the day it changed; nothing is counted down. Its label fields wait as 'รอยืนยัน' until the owner ticks 'ตรงกับฉลากแล้ว', and an agent change to one sends it back to waiting. The import never sets a status and leaves a product the owner changed. The diary keeps one note per plot per day plus one for the day, marked owner or agent; emptying a note hides it, and nothing goes to the calendar. Pages: /ops/orchard/shelf grouped by status, with 'หมด' and the Sheet's old recipes folded; the product page and the add form; a 'จด' tab on the day page; and two links on /ops/orchard."
+    - "praneet-office PR 26 (branch feat/orchard-shelf, head 040334eee42c2c4d2d2b5213aed507ebcfadc6c9) adds bun run orchard shelf [--all], shelf set|add, diary, diary write and context --plot. Every write is shown first and needs --write. The import brings in Chemical_Catalog and Chemical_Receipes. The FRAC/IRAC/HRAC group comes from the active ingredients, as the plan requires, and the Sheet's typed group is kept only in the text."
+    - "bun run check passed on praneet-web head 00a8214: type check, build and 113 of 113 tests. The first full run failed 2. One was the quality sweep's page count, out of date after 4 new pages, and is now fixed. The other was gmaps.spec timing out on a first page compile; that spec passed 5 of 5 alone."
+    - "The office commands were run against a local praneet-web on the test database. shelf, diary and context read back what the pages wrote. shelf set and diary write printed their before and after without --write, and wrote with it."
+    - "The real Sheet export gives 27 products and 22 recipes, and refuses none. The recipe tab has 24 rows, 2 of them exact duplicates; the plan's slice file says 28. 19 pesticides get, from their ingredients, the same group the Sheet typed. The 8 nutrients, biologicals and adjuvants get no group."
+    - "The owner picked the rendered samples on 2026-10-29: the shelf grouped by status, and the diary as a tab on the day page. He then asked whether a long list would get hard to use, and said the real shelf holds at most about 20 products. 'หมด' and the old recipes were therefore folded; at phone width the shelf is about 2½ screens for 20 products."
+  not_verified:
+    - "Migration 019 on production, the shelf import on production, and the pages on production."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.8"
+  slice: "5"
+  decision: memory/events/2026/10/29/20261029T144852_praneet_orchard_rev08_slice5_authorized.yaml
+  repository:
+    head: "27e7c2634e169a9fa73f1baf9a31110bf2892deb"
+    branch: hq/20261025
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/33"
+    - "https://github.com/mojisejr/praneet-office/pull/26"
+
+unresolved:
+  - "Owner: run migration 019 on production before PR 33 merges. In checkouts/praneet-web on branch feat/orchard-shelf, run env DATABASE_URL=\"$(cat .local/secrets/neon-direct.url)\" bun run migrate, which prints 'Applied 019_orchard_shelf_diary.sql'. Then merge PR 33 and PR 26."
+  - "Agent, on the owner's word: bun run orchard import --sheet <xlsx> --write on production. Then the owner says what is on the shelf and what he no longer uses."
+  - "Active ingredients and groups filled by the agent wait for the owner's label check."
+  - "Four rules in the 2026-10-27 report came from a search summary and need a direct read before slice 7 enforces them."
+  - "bun run orchard words still counts imported Sheet titles; deferred."
+  - "scripts/backup.ts lacks the orchard tables; deferred, Neon keeps its own history."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: migration 019, then merge PR 33 and PR 26. Agent: read 019 back,
+    import the shelf on his word, set the statuses he gives, then record
+    slice 5 delivered.
+  acceptance_check:
+    - "Slice 5 acceptance in workstreams/praneet-orchard-001/slices/5.md."
