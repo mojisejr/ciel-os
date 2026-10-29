@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261027T195028_praneet_orchard_handoff_standby
+type: closeout
+recorded_at: "2026-10-27T19:50:28+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Handoff for the night: slice 2 is built as two draft pull requests and
+    waits for the owner; the agent stands by until he returns.
+  scope:
+    - "State of praneet-orchard-001 at plan 0.6 and what the next session needs."
+  out_of_scope:
+    - Migration 016 on production, the merges, and slice 3.
+
+outcome:
+  status: standby-awaiting-owner
+  done:
+    - "Slice 2 is built and recorded in 20261027T172117 (praneet-web PR 30 head d55dea3, praneet-office PR 23 head e9e0480, both draft and pushed; bun run check 106 of 106)."
+    - "The owner was told in Thai what slice 2 contains, the migration 016 command, the merge order (PR 30, then PR 23), the open question on an office command that records work for him, and the production sign-in slip during the office check (GET only, 404, nothing written)."
+    - "The owner asked to close out the night and resume tomorrow: 'เดี๋ยวคุน closeout เก็บ สถานการณ์คืนนี้ไว้ก่อนแล้ว standby ครับพรุ่งนี้ผม มาทำต่อ'."
+    - "Standing instruction from the owner earlier today: carry on through slices that need no decision without stopping to ask, and stop only for something he must decide ('ถ้าเกิดว่า slice ไหนไม่ต้องเคาะและเดินต่อได้เลย ก็ไม่จำเป็นต้องหยุดถามครับทำไปยาวๆ ได้เลย จนจบ แต่ถ้าเจออะไรต้องเคาะหรือต้องตัดสินใจค่อยหยุดถาม')."
+    - "Both child checkouts are clean on their topic branches and match their remotes; praneet-office has only a pre-existing untracked posts/.DS_Store."
+  acceptance:
+    - "Nothing new is delivered; slice 2 acceptance stays open until migration 016 and both merges."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.6"
+  decision: memory/events/2026/10/27/20261027T163004_praneet_orchard_rev06_opening_rate_fertiliser.yaml
+  repository:
+    head: "a02c3df0ce074fefdb3de490e4d3c37e37c17497"
+    branch: hq/20261025
+    working_tree: this-record-only
+  related:
+    - memory/events/2026/10/27/20261027T172117_praneet_orchard_slice2_built_awaiting_owner.yaml
+    - "https://github.com/mojisejr/praneet-web/pull/30"
+    - "https://github.com/mojisejr/praneet-office/pull/23"
+
+unresolved:
+  - "Owner: run migration 016 on production before merging PR 30 (command in 20261027T172117), or name that exact write for the agent to try."
+  - "Owner: merge praneet-web PR 30, then praneet-office PR 23."
+  - "Owner's answer is open on an office command that records work for him; the agent leans yes, as a separate small change that refuses names not on the worker list."
+  - "The round 1 to 5 design samples page is still published (private); delete it after slice 2 merges."
+  - "Slice 3 (import from the Sheet) needs a decided event; it stops for the owner on the name and plot matching table and on any write to production."
+  - "scripts/backup.ts lacks the orchard tables; deferred, Neon keeps its own history."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Next session: Wake, read this handoff and 20261027T172117. When the owner
+    reports migration 016 and the merges, read 016 back through the reader,
+    check /ops/orchard on production, record slice 2 delivered, then prepare
+    slice 3.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-orchard-001/slices/2.md."

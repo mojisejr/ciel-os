@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261027T080150_praneet_orchard_rev02_design_decided
+type: decision
+recorded_at: "2026-10-27T08:01:50+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record the owner's slice 1 decisions as plan revision 0.2: wages follow
+    the work, the owner records in his own words, the day page is split from
+    adding work, leaf stage is recorded at spraying, and the Calendar and
+    import rules; slice 1 stays the authorized slice and slice 2 waits for
+    his go.
+  scope:
+    - "Plan 0.2: PLAN.md gains the slice 1 agreements; slices 2 to 5 carry the details; slices 1, 6 and 7 are unchanged."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After real Calendar and Sheet data and two rounds of rendered samples the
+    owner chose the round 2 design 1, a separate add-work page, and asked for
+    the decision to be recorded ('แบบ 1 โอเคเอาตามคุน บันทึก decision ได้เลยครับ').
+    His answers set the rest: no leave field, a day without work earns no wage
+    ('วันไหนหยุดก็คือไม่ได้ค่าแรง'); he could not settle task categories up
+    front, so he records in his own words with frequent-task buttons and typing
+    while the agent assigns categories for him to check; at most about 15
+    people a day; he records in the evening in batches or straight away; leaf
+    stage is recorded when spraying; Calendar gets one all-day event per task
+    without money, links or Morning Briefs; Calendar-only orchard events are
+    converted for his review. Parallel running stays approved as on opening.
+    This decision names slice 1 only, so it authorizes no new work: slice 2
+    needs his go.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: c764a240f81401c3c408a8350891ba9c29a91389
+    branch: hq/20261025
+    working_tree: this-decision-and-plan
+  related:
+    - memory/events/2026/10/27/20261027T071311_praneet_orchard_opened_slice1_authorized.yaml
+
+unresolved:
+  - "Slice 2 is not authorized; the owner left to see a doctor and will return to it."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Record the slice 1 closeout beside this decision; then, on the owner's
+    go, authorize slice 2 under plan 0.2.
+  acceptance_check:
+    - "Wake lists praneet-orchard-001 at plan revision 0.2 with slice 1 authorized and no validation error."

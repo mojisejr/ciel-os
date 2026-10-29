@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261026T070543_praneet_gmaps_slice4_delivered
+type: closeout
+recorded_at: "2026-10-26T07:05:43+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Deliver slice 4: a post's link may land on a feature page (/fit, /lots, a
+    stock row), and nothing else outside / and a lot.
+  scope:
+    - "praneet-web PR 28 with migration 015 on production; praneet-office PR 21."
+outcome:
+  status: ready-for-owner-merge
+  slice: "4"
+  completed:
+    - "Built and checked as recorded in evt_20261026T061940_praneet_gmaps_slices4_5_built_awaiting_owner."
+    - "The owner ran migration 015 on production; read back through praneet_reader: posts_target_path_check now allows /fit."
+    - "The owner merged praneet-web PR 28 (merge f30cc74, Vercel production deployment of f30cc74) and praneet-office PR 21 (merge e4943e8). Remote topic branches are deleted; the local office branch is deleted."
+  not_verified:
+    - "No post with a feature target has been made on production yet; F3 to F7 keep / as planned."
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "4"
+  decision: memory/events/2026/10/26/20261026T055623_praneet_gmaps_slice4_authorized.yaml
+  repository:
+    head: b7e12a20c137a6c160c34927571e9aa8b02bdef2
+    branch: hq/20261025
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261025
+  child_merges:
+    praneet-web: "PR 28, merge f30cc74"
+    praneet-office: "PR 21, merge e4943e8"
+unresolved:
+  - "praneet-web quality.spec 'back office pages fit every width' times out at 90 s when the load average is high (seen at 7.5 to 11 on 2026-10-26) and passes when idle; deferred, not a slice defect. Workaround: rerun bun run check with nothing else running."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Use --target /fit (or the feature's page) for the next post that shows a
+    feature; record slice 5 delivered after the owner presses the button.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/praneet-gmaps-001/slices/4.md."

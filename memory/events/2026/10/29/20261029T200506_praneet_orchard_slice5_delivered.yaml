@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20261029T200506_praneet_orchard_slice5_delivered
+type: closeout
+recorded_at: "2026-10-29T20:05:06+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Deliver slice 5: the chemical shelf the orchard and the nursery share, and
+    the diary of one note per plot per day, in /ops and through praneet-office.
+  scope:
+    - "praneet-web PR 33, praneet-office PR 26 and PR 27, migration 019, and the old recipes imported on production."
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "Migration 019 on production: the owner ran migrate. The harness refused the agent's read through the reader role. After the deploy, bun run orchard shelf --all and bun run orchard diary answered from the new API, which reads chemicals and orchard_diary, so 019 is applied."
+    - "Before the merge both topic branches contained current main. The owner merged praneet-web PR 33 as 3427425 and praneet-office PR 26 as 562c6e5."
+    - "The owner decided on 2026-10-29 not to import the Sheet's Chemical_Catalog: the Sheet is not up to date and he will check the bottles himself. He asked for the old recipes, checked for duplicates first. praneet-office PR 27 adds orchard import --no-chemicals, which sends no catalog; the owner merged it as 102dd47."
+    - "Duplicate check on the owner's 2026-10-26 export: 28 recipe rows. RCP-017 and RCP-018 each appear twice as identical rows and are dropped, leaving 26. RCP-015 holds two different recipes, a 5 L trunk spray and a 100 L foliar spray, and both are kept. Similar recipes (RCP-017 and 023, RCP-020 and 022, RCP-007, the second RCP-015 and RCP-027) differ in products or tank size and are kept as the mixes he sprayed."
+    - "On the owner's words ('นำเข้าสูตรได้') the agent ran orchard import --no-chemicals --write on production from praneet-office main: 26 recipes new; workers, 181 work rows and 91 ledger rows unchanged; no product sent. A second dry run read the 26 recipes unchanged, and the shelf still reads empty."
+    - "Correction to the built event 20261029T171114: praneet-office PR 26 merged at head 8828d7b, not 040334e. Of the products with a group, 18 get from their ingredients the group the Sheet typed, and 2 differ as the 2026-10-27 source check found: validamycin is FRAC U18 (Sheet FRAC 26) and Trichoderma is FRAC BM02. 7 get no group. The 22 recipes it counted came from the 2026-10-08 export; the 2026-10-26 export gives 26, matching the slice's 28 rows."
+    - "Local topic branches are deleted in both child checkouts, which sit on a clean main matching origin; no orchard branch is left on either remote."
+  acceptance:
+    - "Slice 5 acceptance is met on the test database: re-importing changes nothing, a status change by the owner or the agent reads the same in office and on the /ops page, a plot has one diary note a day with nothing sent to the calendar, and context --plot reads the shelf and the plot's notes in one command. On production the recipe re-import changed nothing."
+  not_verified:
+    - "No product is on the production shelf yet, so a status change and the label check have not run on production. No diary note has been written on production."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.8"
+  slice: "5"
+  decision: memory/events/2026/10/29/20261029T144852_praneet_orchard_rev08_slice5_authorized.yaml
+  repository:
+    head: "36d8a66e22af26808420763b5b3c956d4a2c14b9"
+    branch: hq/20261025
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261025
+  child_merges:
+    praneet-web: "PR 33, merge 3427425"
+    praneet-office: "PR 26, merge 562c6e5; PR 27, merge 102dd47"
+  related:
+    - memory/events/2026/10/29/20261029T171114_praneet_orchard_slice5_built_awaiting_owner.yaml
+
+unresolved:
+  - "The production shelf is empty by the owner's choice. He checks the bottles and adds products in /ops, or tells the agent, who adds them with orchard shelf add."
+  - "Old recipes show the group the Sheet typed, such as validamycin FRAC 26; slice 7 computes groups from the products, not from this text."
+  - "Active ingredients and groups the agent fills wait for the owner's label check."
+  - "Four rules in the 2026-10-27 report came from a search summary and need a direct read before slice 7 enforces them."
+  - "The 2026-10-28 spray has no lot link; it belongs to slice 6."
+  - "The slice 5 samples page waits for the owner's word to delete it."
+  - "bun run orchard words still counts imported Sheet titles; deferred."
+  - "scripts/backup.ts lacks the orchard tables; deferred, Neon keeps its own history."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decision on slice 6 (spraying and group history); meanwhile the
+    owner checks the bottles and fills the shelf, and records today's work.
+  acceptance_check:
+    - "Slice 6 acceptance in workstreams/praneet-orchard-001/slices/6.md."

@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261026T050945_praneet_gmaps_review_link_set
+type: closeout
+recorded_at: "2026-10-26T05:09:45+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Do try 1 from the owner's try list: set the shop's Google review link so
+    customers whose order is received are asked for a review.
+  scope:
+    - "praneet-web production shop_settings.review_url, one value."
+outcome:
+  status: recorded-review-link-set
+  completed:
+    - "The owner sent the profile's review link https://g.page/r/CaUv4xR1SIMcEBM/review and asked the agent to set it ('คุนตั้งค่าให้ผมเลย'). It answers 302 to search.google.com/local/writereview with the shop's place id."
+    - "The agent ran the same UPDATE the back office's review setting runs (shop_settings id 1), on the owner's word; one row. Read back through praneet_reader: review_url holds the link."
+  not_verified:
+    - "No customer page shows the button yet: production has no orders, so none is received."
+    - "Whether Google's review page asks for sign-in inside LINE's in-app browser."
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: a27a610d3cf3a04dd69cfa4852361ecefd7e6ecd
+    branch: hq/20261025
+  related:
+    - memory/events/2026/10/25/20261025T211652_praneet_gmaps_owner_try_list_deferred.yaml
+unresolved:
+  - "Try 2 (tap 'เว็บไซต์' on the Maps profile, then check F2 opens), try 3 (F3/F4 broadcast, agent's suggestion, not decided) and try 4 (Performance screenshots) stay open as listed in evt_20261025T211652_praneet_gmaps_owner_try_list_deferred."
+  - "The same review link can go 1:1 in chat to past buyers who received trees; free, no gifts."
+  - "Slice 3 waits for Google's Business Profile approval (7 to 10 business days from 2026-10-25, about 2026-11-03 to 2026-11-06)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Offer tries 2 to 4 when the owner wants them. When Google approves (gmaps
+    check says granted), finish slice 3 on branch gmaps-report and PR 19, and
+    compare newReviewUri with the link set here.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-gmaps-001/slices/3.md."

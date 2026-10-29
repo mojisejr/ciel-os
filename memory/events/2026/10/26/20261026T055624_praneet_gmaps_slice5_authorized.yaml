@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261026T055624_praneet_gmaps_slice5_authorized
+type: decision
+recorded_at: "2026-10-26T05:56:24+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Authorize slice 5: a rich menu button 'ออเดอร์ของฉัน' whose postback the
+    webhook answers with a free reply carrying the customer's own /me link.
+  scope:
+    - "Slice 5 of plan 0.2, on the same word as slice 4."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner asked that customers reach their own /me page from the rich
+    menu ('/me ที่สามารถเข้าได้ผ่าน rich menu เลย เพราะตอนนี้ user ยังไม่มีทางเข้าไปที่
+    profile page ของตัวเองเลยนิ') and said to start slices 4 and 5. The agent
+    chose a postback answered by a reply message over LIFF: no quota, no new
+    LINE channel, the link goes only into its owner's chat. The webhook
+    replies for the first time, to this postback only; it still stores no
+    chat text and never pushes. The owner picks the menu from rendered
+    samples, and the menu goes live only on his word.
+
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "5"
+  repository:
+    head: 79051bccf822643357ee81479947348c15a2c581
+    branch: hq/20261025
+  checked:
+    - "customers.page_token is one per customer, never expires, and is issued at order creation or edit and at referral code issue; no code path sends it, the owner copies it from the back office."
+    - "The webhook (app/api/line/webhook/route.ts) records every event, handles follow, unfollow and text codes, replies to nothing and pushes nothing."
+    - "The rich menu is defined in praneet-office scripts/line.ts: four uri/message areas, no postback; richmenu:apply sets it as default for all users."
+  related:
+    - memory/events/2026/10/26/20261026T055623_praneet_gmaps_slice4_authorized.yaml
+
+unresolved:
+  - "A phone-only customer has no LINE user id, so the button cannot find them until the owner merges them with their LINE customer."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build the webhook reply in praneet-web and the menu in praneet-office,
+    render 2 to 3 menu samples for the owner, apply the chosen menu on his
+    word, and have him press the button on his phone.
+  acceptance_check:
+    - "Slice 5 acceptance in workstreams/praneet-gmaps-001/slices/5.md."

@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261029T123700_praneet_orchard_slice4_delivered
+type: closeout
+recorded_at: "2026-10-29T12:37:00+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Deliver slice 4: work recorded in /ops is written one way to the owner's
+    main Google Calendar, one all-day event a day, without money, through
+    Vercel OIDC and no stored key.
+  scope:
+    - "praneet-web PR 32 and praneet-office PR 25, migration 018, the owner's Google Cloud setup, the production env and the first write."
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "Migration 018 on production: the owner ran migrate. The harness refused the agent's read through the reader role twice. After the deploy, bun run orchard calendar answered from /api/ops/orchard/calendar, which reads orchard_calendar, so 018 is applied."
+    - "The agent checked both PRs before the merge: open, mergeable, Vercel passing, heads 45c1631 and 8f51961 containing current main. The owner merged them: praneet-web PR 32 as 46ad88c and praneet-office PR 25 as 84fe6d7. Both child checkouts are on a clean main matching origin, and the local topic branches are deleted."
+    - "The owner ran the Cloud Shell setup from the praneet-web README on his existing Google Cloud project. Its output shows the workloadIdentityUser binding on the exact production subject of praneet-web. He shared his main calendar with the service account and set OIDC issuer mode Team. A pulled development token, decoded for its claims only and deleted, showed the team issuer and audience the provider trusts."
+    - "The owner asked whether OIDC issuer mode Team costs money. Vercel's documentation says OIDC federation is available on all plans; Team names the issuer URL, not a plan. Google's IAM pricing page says all use of the IAM API is free of charge."
+    - "On the owner's word the agent set the five calendar env values on production and read them back by key. The harness refused the agent's production redeploy, so the owner redeployed. The status then read configured, with 27 and 28 Oct waiting."
+    - "On the owner's words ('ลงปฏิทินได้เลย') the agent ran bun run orchard calendar --write. Google accepted both days and the status read every day written. The owner looked at the events in his calendar and accepted them ('แจ๋วเลยครับ')."
+    - "The harness refused the agent's deletion of the slice 2 and 3 remote topic branches, and the agent gave the owner the command. git ls-remote now lists no orchard branch on either remote."
+  acceptance:
+    - "Slice 4 acceptance is met. The new events share the main calendar with the old Gemini Spark events and are told apart by private properties and title. A day with several works has one event, and the tests show that edits rewrite it. The text carries no money, half days or hours. Each event links to its day in /ops. The tests use a local stand-in for Google."
+  not_verified:
+    - "No one has tapped the event's link on a phone, or edited work since the first write and watched the event change on production."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  decision: memory/events/2026/10/28/20261028T224909_praneet_orchard_slice4_authorized.yaml
+  repository:
+    head: "47114ac1d93c3f18cb8228cfa1ccc2b941c51a9a"
+    branch: hq/20261025
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261025
+  child_merges:
+    praneet-web: "PR 32, merge 46ad88c"
+    praneet-office: "PR 25, merge 84fe6d7"
+  related:
+    - memory/events/2026/10/29/20261029T004050_praneet_orchard_slice4_built_awaiting_owner.yaml
+
+unresolved:
+  - "Parent_event links between related work, and photos, are not carried from the Gemini calendar skill; deferred, with no change decided."
+  - "bun run orchard words still counts imported Sheet titles; deferred."
+  - "The 2026-10-28 spray has no lot link; deferred by the owner to slice 5."
+  - "scripts/backup.ts lacks the orchard tables; deferred, Neon keeps its own history."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decision on slice 5 (chemical stock, spraying, production rounds,
+    rules by group and diary); meanwhile the owner records orchard work in
+    /ops, and each day reaches his calendar by itself.
+  acceptance_check:
+    - "Slice 5 acceptance in workstreams/praneet-orchard-001/slices/5.md."

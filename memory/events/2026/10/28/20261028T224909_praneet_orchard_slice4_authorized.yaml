@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261028T224909_praneet_orchard_slice4_authorized
+type: decision
+recorded_at: "2026-10-28T22:49:09+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Slice 4 authorized at plan revision 0.7: praneet-web writes the owner's
+    orchard days to his main Google Calendar, one way.
+  scope:
+    - "workstreams/praneet-orchard-001/slices/4.md, unchanged."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner authorized slice 4 as planned ('slce 4 ผมคิดว่าคุนสามารถลุยต่อตามแผนได้เลยครับ').
+    He holds the push of hq/20261025 because the work carries on ('ยังไม่ต้อง
+    เพราะว่าเราจะทำานต่อเนื่องไปเลยครับ'). How praneet-web gets the right to write
+    the calendar stays open: slice 4 has the agent find and propose the way
+    first, and the owner asked which way is easier for daily use and for the
+    office.
+  why: >-
+    Since 2026-10-27 the owner records in /ops and through orchard add, and
+    Gemini Spark no longer writes those days to the calendar the household
+    reads.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  repository:
+    head: "2968c27672fb7e5748effd6ef4965deb59d81b46"
+    branch: hq/20261025
+    working_tree: this-decision
+  related:
+    - memory/events/2026/10/28/20261028T205328_praneet_orchard_first_day_by_chat.yaml
+
+unresolved:
+  - "The credential method (a service account key file, or Vercel OIDC federation without a key) waits for the owner's choice; the owner creates whatever Google Cloud needs."
+  - "hq/20261025 is not pushed; the owner holds the push while work continues."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 4 on a praneet-web topic branch: the day event (title, lines by
+    plot, no money, link back to the day page), rewrite on change, a visible
+    count of days not yet written, and a local fake of Google for tests; wire
+    the credential after the owner's choice.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/praneet-orchard-001/slices/4.md."

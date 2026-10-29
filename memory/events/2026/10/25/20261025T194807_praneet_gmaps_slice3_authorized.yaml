@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T194807_praneet_gmaps_slice3_authorized
+type: decision
+recorded_at: "2026-10-25T19:48:07+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Authorize building slice 3 (gmaps check and report in praneet-office) up
+    to the owner's one sign-in, on the same run-on word.
+  scope:
+    - "Slice 3 of plan 0.1: the sign-in script, gmaps check and gmaps report, read-only. The sign-in itself is the owner's; Business Profile figures need Google's approval."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner asked to run on until slice 3's sign-in
+    ('แล้วเจอกันที่ slice 3 ที่ต้อง login ครับถ้าไม่มีอะไรต้องเคาะแล้ว').
+    The code is built now so that his sign-in is the only step left; Search
+    Console figures work after the sign-in, Business Profile figures once
+    Google grants access to project tondurian2021.
+
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: bcb493088189bdbfab4780eeed827efe8f3ded14
+    branch: hq/20261025
+  related:
+    - memory/events/2026/10/25/20261025T194446_praneet_gmaps_slice2_authorized.yaml
+
+unresolved:
+  - "Google's answer to the access form is unknown; review takes up to about 14 days."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build gmaps login, check and report on a praneet-office topic branch;
+    the owner signs in once, then check against the live accounts.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-gmaps-001/slices/3.md."

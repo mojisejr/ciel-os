@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261030T051153_praneet_orchard_round_closed_handoff
+type: closeout
+recorded_at: "2026-10-30T05:11:53+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Close the 2026-10-25 HQ round on the owner's word before slice 6, and hand
+    the workstream to the next session.
+  scope:
+    - "ciel-os PR 103 (hq/20261025 into main) and the praneet artifacts the owner asked to clear."
+
+outcome:
+  status: handoff
+  completed:
+    - "On 2026-10-30 the owner asked to close the round: push, pull request, merge, a new standing branch, and a closeout. bun run check passed 57 of 57, and hq/20261025 was pushed at c4aad66 and opened as draft PR 103."
+    - "On the owner's word ('clear artifact ที่ไม่ได้ใช้แล้วให้หมด ทุกอันที่เกี่ยวกับ praneet project') the agent deleted the five private praneet pages: the slice 5 samples, the 19 Oct field checklist, the slice 22 samples, the 2.0 screen map and the 8 Oct storefront mockup. No praneet artifact is left."
+    - "Both child checkouts are on a clean main matching origin, with no orchard topic branch left locally or on either remote."
+  not_verified:
+    - "Slice 5 reads delivered in Wake only after PR 103 reaches main."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.8"
+  repository:
+    head: "c4aad664198eb1de6e929a34e07d56f50ed88773"
+    branch: hq/20261025
+  pull_request:
+    number: 103
+    url: "https://github.com/mojisejr/ciel-os/pull/103"
+    base: main
+    head_observed: "c4aad664198eb1de6e929a34e07d56f50ed88773"
+  related:
+    - memory/events/2026/10/29/20261029T200506_praneet_orchard_slice5_delivered.yaml
+    - memory/events/2026/10/29/20261029T202613_praneet_orchard_oct29_day_by_chat.yaml
+
+unresolved:
+  - "The production shelf is empty until the owner checks the bottles; slice 6 links the old spray logs to shelf products, so the shelf comes first."
+  - "praneet-office orchard add accepts a team with no people and the server then drops the team and its pay silently; deferred. Workaround: always list the team's people with the team."
+  - "Four rules in the 2026-10-27 report came from a search summary and need a direct read before slice 7 enforces them."
+  - "bun run orchard words still counts imported Sheet titles; deferred."
+  - "scripts/backup.ts lacks the orchard tables; deferred, Neon keeps its own history."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner fills the shelf from the bottles, then decides on slice 6
+    (spraying and group history); the next HQ session opens a new standing
+    branch from main.
+  acceptance_check:
+    - "Slice 6 acceptance in workstreams/praneet-orchard-001/slices/6.md."

@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261029T202613_praneet_orchard_oct29_day_by_chat
+type: closeout
+recorded_at: "2026-10-29T20:26:13+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record the owner's 2026-10-29 orchard day, told in chat, on production
+    through praneet-office, and the defect it exposed in orchard add.
+  scope:
+    - "Five pieces of work and one diary note for 2026-10-29 through bun run orchard add and diary write."
+
+outcome:
+  status: recorded
+  completed:
+    - "The owner sent the day as a numbered list. The agent asked four questions first (the team and pay of the nursery work, the tank count, the plot and people of three items, whether to write a diary note) and showed a dry run; the owner said 'บันทึกได้เลย'."
+    - "Written on production: the nursery team's pulling and grafting of about 800 plants, paid per plant to the team with no rate yet; and four pieces in P-3 by the worker with the owner (spraying at 3 tanks of 200 L with the recipe in the note, felling borer-infested trees and burning the stumps, pruning durian side branches, not finished, and scraping and spraying fungal trunks). The worker's four day-paid pieces count as one day wage. The P-3 diary note is marked as written by the agent."
+    - "The nursery work came back with no team and no pay: settleWork keeps a team and pay only when the work lists people, and the agent sent the team alone. The dry run of orchard add did not catch it. The owner corrected it in /ops; the read-back shows the team, its two people, piece pay and the team's unpriced count."
+  not_verified:
+    - "The owner has not yet looked at the day or its calendar event; he will tonight or tomorrow."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.8"
+  repository:
+    head: "445a318cf7679cba5011b5ceb8046041b8fb6b25"
+    branch: hq/20261025
+  related:
+    - memory/events/2026/10/29/20261029T200506_praneet_orchard_slice5_delivered.yaml
+
+unresolved:
+  - "praneet-office orchard add accepts a team with no people and the server then drops the team and its pay silently; deferred. Workaround: always list the team's people with the team."
+  - "praneet-office has no command to edit or hide recorded work; corrections go through the owner's /ops page."
+  - "The production shelf is empty until the owner checks the bottles."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decision on slice 6 (spraying and group history); meanwhile the
+    owner checks the bottles and fills the shelf, and records orchard work.
+  acceptance_check:
+    - "Slice 6 acceptance in workstreams/praneet-orchard-001/slices/6.md."

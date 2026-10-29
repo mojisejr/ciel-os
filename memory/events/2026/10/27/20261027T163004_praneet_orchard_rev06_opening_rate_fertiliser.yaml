@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261027T163004_praneet_orchard_rev06_opening_rate_fertiliser
+type: decision
+recorded_at: "2026-10-27T16:30:04+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Settle the three items left open after revision 0.5: the opening
+    balances, the default day rate, and whether fertiliser shares the spray
+    form.
+  scope:
+    - "Plan 0.6: slices/2.md and slices/5.md change; PLAN.md changes its revision only."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Opening balances start at 0 for everyone, including the 2026-10-22
+    settlement that never reached the Sheet ('ลงเป็น 0 ไปก่อนได้หรือเปล่าครับ').
+    The day rate defaults to 350 baht for everyone and can be changed per
+    person later; extra pay stays an added line. Fertiliser applied to the
+    soil gets its own form in slice 5, separate from spraying, because they
+    are different work ('ควรแยกนะ ... งานคนละอย่าง'); it draws on the same
+    stock, and the mixing and rotation rules apply to spraying only.
+    Parallel running stays approved.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "2"
+  repository:
+    head: c38bcf81dc7d09e471b55960390558dd5e548329
+    branch: hq/20261025
+    working_tree: this-decision-and-plan
+  related:
+    - memory/events/2026/10/27/20261027T162441_praneet_orchard_rev05_form_calendar.yaml
+
+unresolved:
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 2 on topic branches in praneet-web (migration, /ops pages,
+    office API, tests) and praneet-office (read and categorize commands),
+    following slices/2.md at revision 0.6.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-orchard-001/slices/2.md."

@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261028T155736_praneet_orchard_slice3_delivered
+type: closeout
+recorded_at: "2026-10-28T15:57:36+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Deliver slice 3: the Sheet history imported into /ops on production
+    without pay, the old ledger read-only, P-4 work linked to lots, and
+    orchard add for work the owner tells the agent about.
+  scope:
+    - "praneet-web PR 31 and praneet-office PR 24, migration 017 and the import on production."
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "The owner ruled on lots on 2026-10-28: compare with the lots recorded in the app, which were counted; the Sheet's lot names were confused by recording through Gemini, and for bagging the app is the record. The agent dropped the Nursery_Lots reading. Lot links now come from an explicit old-id table in the office names file, set from the bagging days of the lots in /ops plus later work on the first lot, which the Sheet names consistently. praneet-web refuses an imported link dated before the lot's bagged_on. Nine rows are linked, against sixteen before; the Sheet's own text stays on every row."
+    - "The other checks were accepted ('นอกนั้นผมโอเค'): the team names, the 11 converted Calendar events, and the two-row spelling mapped to the grafting team. The owner said the 2026-10-26 export is current, because the 27th never reached the Sheet, and that he would record the 27th through this desk."
+    - "bun run check passed again at praneet-web ad705ea: type check, build and 108 of 108 tests. A fresh local rehearsal made 192 work rows (181 Sheet, 11 Calendar) and 91 ledger rows, refused none, linked 9, and was unchanged on a second write."
+    - "Migration 017 on production: the owner ran migrate, which printed no Applied line and no failure. A read through the reader role found the three new orchard_work columns and orchard_sheet_ledger, so 017 was already applied."
+    - "On the owner's word ('merge แล้วเดินต่อได้เลย') the agent marked both PRs ready and merged them pinned to the reviewed heads: praneet-web PR 31 as fa423ea and praneet-office PR 24 as 4fd9bd4. After the deploy, /api/ops/orchard/import answered 401 without a session (404 before)."
+    - "The harness refused the agent's first production import write. On the owner's exact words ('เขียนนำเข้า Sheet ลง production และลงงานวันที่ 27 ทั้ง 3 งานได้') the agent ran the import from praneet-office main. It created 12 people and teams, 192 work rows and 91 ledger rows, matching the production dry run shown before. A second dry run then reported all 192 and 91 rows unchanged."
+    - "orchard add recorded the owner's three pieces of 2026-10-27 work on production from his Calendar entry, after a preview. The report then put the first /ops day at 2026-10-27, with nothing imported from that day, no row on one side only, and no day kept in both places. The balances show only the 27th's day wage owed."
+    - "Both child checkouts are on a clean main matching origin, and the local topic branches are deleted."
+  acceptance:
+    - "Slice 3 acceptance is met. Running the same file again changed nothing. Refused rows carry Thai reasons, and none were left. Imported work moved no balance. Lots stay editable (on delete set null, tested). orchard add went through the form's rules and refused an unknown name in the rehearsal. The production write ran on the owner's word, from the export he confirmed current."
+  not_verified:
+    - "The owner has not yet looked at the imported history on his phone in /ops."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "3"
+  decision: memory/events/2026/10/28/20261028T081043_praneet_orchard_rev07_slice3_authorized.yaml
+  repository:
+    head: "2bee00c5374023d6b56368feb1c49091f2689d86"
+    branch: hq/20261025
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261025
+  child_merges:
+    praneet-web: "PR 31, merge fa423ea"
+    praneet-office: "PR 24, merge 4fd9bd4"
+  related:
+    - memory/events/2026/10/28/20261028T085656_praneet_orchard_slice3_built_awaiting_owner.yaml
+
+unresolved:
+  - "One worker's Sheet wage for 2026-10-25 is owed but the work came in without pay, so /ops shows less owed than the Sheet. The owner can set that day's pay in /ops; the import leaves an edited row alone."
+  - "Renaming a person or team in /ops needs the same rename in the names table, or the next import makes the old name again; the dry run shows it first."
+  - "scripts/backup.ts lacks the orchard tables; deferred, Neon keeps its own history."
+  - "The remote topic branches of slices 2 and 3 still exist on GitHub."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decision on slice 4 (Calendar), including how the Calendar
+    credential is held; meanwhile the owner records new orchard work in
+    /ops or through orchard add.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/praneet-orchard-001/slices/4.md."

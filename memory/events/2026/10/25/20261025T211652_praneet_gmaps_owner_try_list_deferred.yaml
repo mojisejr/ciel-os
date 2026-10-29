@@ -1,0 +1,42 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T211652_praneet_gmaps_owner_try_list_deferred
+type: closeout
+recorded_at: "2026-10-25T21:16:52+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Keep the list of things the owner can try with slices 1 and 2, which he
+    deferred to do other work first, so a later session can offer them
+    without the owner retelling them.
+  scope:
+    - "No change to code or production; a record for the next session."
+outcome:
+  status: recorded-owner-deferred
+  completed:
+    - "The agent listed what slices 1 and 2 give and what to try; the owner chose to do other work first ('ผม อยากทำอย่างอื่นก่อน') and asked that it be remembered."
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 6b94813d47f213f8fedd2e0c8ddc93e03f36beb6
+    branch: hq/20261025
+  related:
+    - memory/events/2026/10/25/20261025T210758_praneet_gmaps_slice2_delivered.yaml
+unresolved:
+  - "Try 1, set the review link: from the profile's 'ขอรีวิว' button into หลังบ้าน > เมนู > ตั้งค่าร้าน > รีวิว Google; the same link can go 1:1 in chat to past buyers who received trees (free, no gifts)."
+  - "Try 2, check the Maps link counts: the owner taps 'เว็บไซต์' on the shop's Maps profile, then the agent runs bun run gmaps report (or posts list) and F2 opens should rise from 0."
+  - "Try 3, first real broadcast with channels told apart (agent's suggestion, not yet decided): upload the drafted system-features post twice, F3 for Facebook and F4 for the LINE broadcast, same text, so opens, taps and orders show which channel works. LINE quota on 2026-10-25: 31 of 300 used; one broadcast reaches about 30. Flow: draft, test to the owner, his 'ส่ง', send."
+  - "Try 4, the owner's Performance screenshots (6 months) answer the 'ป้าปราณี' question before the API."
+  - "After 1 to 2 weeks: Search Console terms appear; Google's Business Profile approval (7 to 10 business days from 2026-10-25) opens slice 3; then decide where the 500-baht boost goes from F2, F3, F4 and broadcast figures."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    When the owner returns to praneet, offer the try list above (lean: try 1
+    and try 3 first). Separately, when Google approves (gmaps check says
+    granted), finish slice 3 on branch gmaps-report and PR 19.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-gmaps-001/slices/3.md."

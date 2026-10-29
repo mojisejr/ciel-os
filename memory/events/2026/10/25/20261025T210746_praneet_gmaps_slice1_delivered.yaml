@@ -1,0 +1,48 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T210746_praneet_gmaps_slice1_delivered
+type: closeout
+recorded_at: "2026-10-25T21:07:46+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Deliver slice 1: orders can come from Google Maps, office shows figures
+    per origin, and a customer whose order is received is asked for a Google
+    review once the link is set.
+  scope:
+    - "praneet-web PR 27; praneet-office PR 20; migration 014 on production."
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  completed:
+    - "Built and checked as recorded in evt_20261025T200113_praneet_gmaps_slices_built_awaiting_owner; migration 014 on production as recorded in evt_20261025T210529_praneet_gmaps_signed_in_access_form_sent."
+    - "The owner merged praneet-web PR 27 (merge 2abee5e) and praneet-office PR 20 (merge 865f740). Local mains equal origin/main; merged branches deleted."
+    - "After deploy, https://www.ptplant.com/ops/settings/review answers 307 to sign-in (404 before the merge)."
+  not_verified:
+    - "The review button on a real customer page: no review link is set yet and no order is received yet."
+    - "Whether Google's review page asks for sign-in inside LINE's in-app browser."
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  decision: memory/events/2026/10/25/20261025T194216_praneet_gmaps_slice1_authorized.yaml
+  repository:
+    head: dff5666b92e210f781dd7a1d700f7da1268f4cb5
+    branch: hq/20261025
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261025
+  child_merges:
+    praneet-web: "PR 27, origin/main 2abee5e"
+    praneet-office: "PR 20, merge 865f740 (origin/main 77025bd)"
+unresolved:
+  - "The owner sets the review link in หลังบ้าน > เมนู > ตั้งค่าร้าน > รีวิว Google (from the profile's 'ขอรีวิว'), or the agent sets it from gmaps check after Google's approval."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Record slice 2's delivery.
+  acceptance_check:
+    - "Slice 2 closeout recorded."

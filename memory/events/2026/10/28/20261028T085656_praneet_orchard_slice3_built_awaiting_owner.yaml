@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261028T085656_praneet_orchard_slice3_built_awaiting_owner
+type: closeout
+recorded_at: "2026-10-28T08:56:56+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record slice 3 built as draft pull requests and what it waits for from
+    the owner: migration 017, the merges, his check of the import lists, a
+    fresh Sheet export and his word to write it.
+  scope:
+    - "praneet-web PR 31; praneet-office PR 24."
+
+outcome:
+  status: built-awaiting-owner
+  completed:
+    - "praneet-web PR 31 (branch feat/orchard-import, head 82bbab00379f60d3fc4917bb27c4bf26f443b9ac). It adds migration 017 (additive): source, key, Sheet text, hash, imported_at and lot_id on orchard_work, plus orchard_sheet_ledger. It adds lib/orchard-import.ts and /api/ops/orchard/import. The import is a dry run by default, which writes, checks and rolls back. Names match exactly. Imported work carries no pay. Rows the owner changed or hid are left alone. Nothing is imported from the first day recorded in /ops. On the pages, imported work reads 'มาจาก Sheet', the work page shows the Sheet text and its lot, a person's page has a 'Sheet เก่า' tab that is read-only and not counted, and the lot page lists its orchard work. The add form's frequent words ignore imported work."
+    - "bun run check passed: type check, build and 108 of 108 tests. An earlier full run had 2 failures. One was orchard.spec counting hidden people, which the new import test changes; it now reads the count from the database. The other was a gmaps form timing flake that passed before and after."
+    - "praneet-office PR 24 (branch feat/orchard-import, head a7ae57ae573d6daf8b9497ad25c29f455abc4c4a) adds three commands: bun run orchard import, report and add. It also adds scripts/xlsx.ts, which reads the export with macOS unzip and no package, and scripts/orchard-sheet.ts, which maps the Sheet through the owner's names table."
+    - "Rehearsal on a throwaway local database with the real 2026-10-26 export. The import made 12 people and teams, 190 work rows (179 Sheet rows plus 11 Calendar-only events) and 91 ledger rows. A second write left all of them unchanged. The database then held 190 distinct keys, 16 rows linked to lots and no day wages. orchard add refused a misspelled name and wrote two pieces of work. The report then found the first day recorded in /ops and compared two days."
+    - "The names table and the 11 converted Calendar events are in the untracked .assets/preneet folder (orchard-names.json, orchard-calendar-extra.json), because they hold people's names. One Calendar event marked [TEST/PoC] was left out."
+  not_verified:
+    - "Migration 017 on production and the import on production."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "3"
+  decision: memory/events/2026/10/28/20261028T081043_praneet_orchard_rev07_slice3_authorized.yaml
+  repository:
+    head: "cab62d3e6291b1c682502e9d6c89a2e5f13bd1d6"
+    branch: hq/20261025
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/31"
+    - "https://github.com/mojisejr/praneet-office/pull/24"
+
+unresolved:
+  - "Owner: run migration 017 on production before PR 31 merges (in checkouts/praneet-web on branch feat/orchard-import, env DATABASE_URL=\"$(cat .local/secrets/neon-direct.url)\" bun run migrate, which prints only 'Applied 017_orchard_import.sql'), then merge PR 31 and PR 24."
+  - "Owner checks before the production import: a written name the table lacks (two rows); the two team names the agent chose, because a team cannot share a person's name; seven rows whose lot Nursery_Lots leaves unclear; and the 11 converted Calendar events."
+  - "The production import needs a fresh export from the owner and his word to write. The first day he records in /ops stops the import from that day on."
+  - "Renaming a person or team in /ops needs the same rename in the names table, or the next import makes the old name again; the dry run shows it first."
+  - "scripts/backup.ts lacks the orchard tables; deferred, Neon keeps its own history."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: migration 017, the merges, his check of the import lists, and a
+    fresh export. Agent: read 017 back, dry-run the import on production,
+    show it, write it on his word, then record slice 3 delivered.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-orchard-001/slices/3.md."

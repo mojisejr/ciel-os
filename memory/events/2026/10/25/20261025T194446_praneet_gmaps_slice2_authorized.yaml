@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T194446_praneet_gmaps_slice2_authorized
+type: decision
+recorded_at: "2026-10-25T19:44:46+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Authorize slice 2 (a broadcast command in praneet-office) on the owner's
+    word that already covered slices 1 and 2, so it is built while slice 1's
+    praneet-web part is in progress.
+  scope:
+    - "Slice 2 of plan 0.1, praneet-office only. Building and a test send to the owner alone; a real broadcast still needs his 'ส่ง' for that draft."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Same word as slice 1's decision
+    ('ถ้าคุนเชคแล้ว ทุกอย่าง ที่ผมเตรียมครบถ้วน และคุนเดินต่อได้อย่างปลอดภัย คุนเดินยาวได้เลย
+    จะใช้ sub agents ช่วยให้งานเร็วขึ้นก็ได้ครับ แล้วเจอกันที่ slice 3 ที่ต้อง login ครับถ้าไม่มีอะไรต้องเคาะแล้ว').
+    Slice 2 touches praneet-office files apart from slice 1's runbook and
+    orders changes. No broadcast is sent to customers in this slice without
+    the owner's 'ส่ง' for a named draft.
+
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: 78baa68bea3838a16795817052102b359f38545a
+    branch: hq/20261025
+  related:
+    - memory/events/2026/10/25/20261025T194216_praneet_gmaps_slice1_authorized.yaml
+
+unresolved:
+  - "A test send needs the owner's own LINE user id for this provider (LINE Developers console, channel Basic settings, 'Your user ID') in .assets/preneet/.env; it is not there yet."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build the broadcast commands on a praneet-office topic branch and check
+    them read-only against the live OA (quota, followers, message
+    validation) without sending.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-gmaps-001/slices/2.md."

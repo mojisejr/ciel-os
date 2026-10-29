@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261026T061940_praneet_gmaps_slices4_5_built_awaiting_owner
+type: closeout
+recorded_at: "2026-10-26T06:19:40+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Record slices 4 and 5 built as draft pull requests and what each waits
+    for from the owner: migration 015, merges, and the menu going live.
+  scope:
+    - "praneet-web PRs 28 and 29; praneet-office PRs 21 and 22."
+outcome:
+  status: built-awaiting-owner
+  completed:
+    - "Slice 4, praneet-web PR 28 (branch post-feature-targets, head d61ec148ca8232dbf592f1222b0391bfbe791169): post targets /fit, /lots and a stock row; lib/posts.ts postTarget and migration 015 hold one pattern; missing lot or row refused. bun run check 97 passed 0 failed on a second run; the first run had one quality.spec timeout during navigation at load average about 7.5 while the agent rendered images, and passed unchanged when idle. Loosening postTarget to allow /ops made the new test fail (503, the database check still refusing), then pass after restoring."
+    - "Slice 4, praneet-office PR 21 (branch post-feature-targets, head 28a217012cd58e610c3a113f92374ec7a525a301): posts --target help and runbook 05."
+    - "Slice 5, praneet-web PR 29 (branch me-richmenu, head 0dd31768e40f52311313b3c4d383b0b6d75e0292): the webhook replies to postback 'me' with the customer's own /me link, or how to order; once per event, never a redelivery, never a push. bun run check 97 passed 0 failed; removing the redelivery guard made the new test fail (one extra reply), then pass after restoring."
+    - "Slice 5, praneet-office PR 22 (branch me-richmenu, head 6fdbafd8b2c1f4b120f2db50114fb9fb2c92f61f): the large two-row menu the owner picked from three rendered samples ('เอาแบบ B แจ่มกว่าครับ'), the postback area and runbook 01. Rendered 2500x1686, 143,919 bytes; not applied."
+  not_verified:
+    - "Migration 015 on production: the harness refused the agent's run ([Production Deploy]); PR 28 must not merge before it."
+    - "The menu button on a real phone, which needs PR 29 deployed and the menu applied."
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: 274e20af2e77289588be4223e58b32ff37cb98c3
+    branch: hq/20261025
+  related:
+    - memory/events/2026/10/26/20261026T055623_praneet_gmaps_slice4_authorized.yaml
+    - memory/events/2026/10/26/20261026T055624_praneet_gmaps_slice5_authorized.yaml
+    - "https://github.com/mojisejr/praneet-web/pull/28"
+    - "https://github.com/mojisejr/praneet-web/pull/29"
+    - "https://github.com/mojisejr/praneet-office/pull/21"
+    - "https://github.com/mojisejr/praneet-office/pull/22"
+unresolved:
+  - "The owner runs migration 015 before merging PR 28: in checkouts/praneet-web, already on branch post-feature-targets, env DATABASE_URL=\"$(cat .local/secrets/neon-direct.url)\" bun run migrate, which prints only 'Applied 015_post_feature_targets.sql'."
+  - "Order for slice 5: merge PR 29 and let Vercel deploy, merge PR 22, then richmenu:apply on the owner's word, then the owner presses 'ออเดอร์ของฉัน'. Applying the menu first leaves the button unanswered."
+  - "PLAN.md is 13,063 bytes, above Wake's 12,288 soft limit after revision 0.2; Wake warns and does not fail."
+  - "Pending owner items from evt_20261026T054540_praneet_gmaps_fit_posts_f3_f7_prepared stay open: post F3 to F7, schedule F4, try 4; slice 3 waits for Google."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Owner: run migration 015, merge PRs 28, 21, 29 and 22. Agent: read 015
+    back, apply the menu on the owner's word, have him press the button, and
+    record slice 4 and slice 5 delivered.
+  acceptance_check:
+    - "Slice 4 and slice 5 acceptance in workstreams/praneet-gmaps-001/slices/."

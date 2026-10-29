@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261029T144852_praneet_orchard_rev08_slice5_authorized
+type: decision
+recorded_at: "2026-10-29T14:48:52+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Plan revision 0.8 splits the old slice 5 into three slices and
+    authorizes the new slice 5: the shared chemical shelf and the diary.
+  scope:
+    - "workstreams/praneet-orchard-001/PLAN.md and slices/5.md to 9.md."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After two syncup rounds the owner confirmed the shared understanding
+    ('ยืนยัน') and approved the split ('อนุมัติ 0.8 เริ่ม slice 5'). The old
+    slice 5 becomes slice 5 (chemical shelf and diary), slice 6 (spray
+    details and group history) and slice 7 (tank-mix checker). The old
+    slices 6 and 7 become 8 and 9, and production rounds move to slice 8.
+    One shelf serves the orchard and the nursery, with have, low or out and
+    no counting down. The diary is one free-text note per plot per day,
+    with no finding buttons and no follow-up dates. A spray is recorded once,
+    as daily work with optional details. Rules are hard only when a primary
+    source states them. Photos wait until the owner has his own NAS, and
+    Gemini-style parent_event links are not built.
+  why: >-
+    The owner wants the agent to group and rotate chemicals correctly from
+    real orchard history and sources it can trust, because a wrong mix
+    settles out or breeds resistance and wastes money. The shelf and diary
+    are useful at once and need neither the rules nor the history.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.8"
+  slice: "5"
+  repository:
+    head: "526fd5c17ed6a572fcd5d1b6f7279c745d665c38"
+    branch: hq/20261025
+    working_tree: this-decision
+  related:
+    - memory/events/2026/10/29/20261029T123700_praneet_orchard_slice4_delivered.yaml
+
+unresolved:
+  - "Active ingredients and groups filled by the agent wait for the owner's label check."
+  - "Four rules in the 2026-10-27 report came from a search summary and need a direct read before slice 7 enforces them."
+  - "bun run orchard words still counts imported Sheet titles; deferred."
+  - "scripts/backup.ts lacks the orchard tables; deferred, Neon keeps its own history."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 5 on praneet-web and praneet-office topic branches: the
+    shared chemical shelf with its Sheet import marked unconfirmed, the
+    per-plot daily diary, and the office commands to read and update both.
+  acceptance_check:
+    - "Slice 5 acceptance in workstreams/praneet-orchard-001/slices/5.md."

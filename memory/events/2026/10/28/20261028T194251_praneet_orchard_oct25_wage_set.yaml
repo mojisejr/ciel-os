@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20261028T194251_praneet_orchard_oct25_wage_set
+type: closeout
+recorded_at: "2026-10-28T19:42:51+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record the owner's correction after the slice 3 import: one worker's
+    imported 2026-10-25 work is day-paid, because that day was not paid.
+  scope:
+    - "One work row on production, edited through the /ops API."
+
+outcome:
+  status: recorded
+  completed:
+    - "The owner said the worker is owed two unpaid days, 2026-10-25 and 2026-10-27. The harness refused the first edit. On his exact words ('แก้งาน 25 ต.ค. ของน้าชลเป็นรายวันได้') the agent changed only that row's pay method to day. The PATCH went through the work form's API as the owner and kept the title, plot, person and Sheet text."
+    - "Read back: the day page shows the day wage, the worker's balance equals the two days in the Sheet, and an import dry run still reports all 192 work rows unchanged, so the import does not overwrite the edit."
+  not_verified:
+    - "The owner has not looked at the corrected day on his phone."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.7"
+  repository:
+    head: "8f4167bdfe7cc021a67f23c8a73af837f49c4725"
+    branch: hq/20261025
+  related:
+    - memory/events/2026/10/28/20261028T155736_praneet_orchard_slice3_delivered.yaml
+
+unresolved:
+  - "Renaming a person or team in /ops needs the same rename in the names table, or the next import makes the old name again; the dry run shows it first."
+  - "scripts/backup.ts lacks the orchard tables; deferred, Neon keeps its own history."
+  - "The remote topic branches of slices 2 and 3 still exist on GitHub."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake."
+  - "hq/20261025 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decision on slice 4 (Calendar), including how the Calendar
+    credential is held; meanwhile the owner records new orchard work in
+    /ops or through orchard add.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/praneet-orchard-001/slices/4.md."

@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261025T194216_praneet_gmaps_slice1_authorized
+type: decision
+recorded_at: "2026-10-25T19:42:16+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Authorize slice 1 (order origin 'Google Maps' and a review button on /me)
+    and running this workstream beside the idle praneet-nursery-001.
+  scope:
+    - "Slice 1 of plan 0.1; slice 2 follows on the same word, recorded by its own decision; slice 3 waits for Google's approval and the owner's one sign-in."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner reported step 0 done (Cloud project tondurian2021, the API
+    access form, Search Console, the OAuth client) and said to run on without
+    waiting for him, with subagents if useful, until the slice 3 sign-in
+    ('ถ้าคุนเชคแล้ว ทุกอย่าง ที่ผมเตรียมครบถ้วน และคุนเดินต่อได้อย่างปลอดภัย คุนเดินยาวได้เลย
+    จะใช้ sub agents ช่วยให้งานเร็วขึ้นก็ได้ครับ แล้วเจอกันที่ slice 3 ที่ต้อง login ครับถ้าไม่มีอะไรต้องเคาะแล้ว').
+    That covers slices 1 and 2, the additive migration on production while
+    the PR is a draft, and running beside praneet-nursery-001, which has no
+    work in hand. Merges stay with the owner.
+
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 78baa68bea3838a16795817052102b359f38545a
+    branch: hq/20261025
+  checked:
+    - "The OAuth client file in .assets/preneet is a Desktop (installed) client of project tondurian2021 with a localhost redirect; only its key names were read."
+    - "ptplant.com carries a google-site-verification TXT record (value not printed)."
+  not_checked:
+    - "Whether the consent screen is published, the Search Console API is enabled and the access form was received; they show at the slice 3 sign-in."
+  related:
+    - memory/events/2026/10/25/20261025T192205_praneet_gmaps_opened_awaiting_go.yaml
+
+unresolved:
+  - "The Google review link for the /me button has not been given; the button reads it from configuration and stays hidden until it is set, from the owner or from the profile's newReviewUri after slice 3's sign-in."
+  - "The owner has not sent the Performance screenshots."
+  - "Merging pull requests may be refused to the agent by the harness; the owner merges then."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 1 on topic branches in praneet-web and praneet-office, run
+    the migration on production while the PR is a draft, then authorize and
+    build slice 2.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/praneet-gmaps-001/slices/1.md."
