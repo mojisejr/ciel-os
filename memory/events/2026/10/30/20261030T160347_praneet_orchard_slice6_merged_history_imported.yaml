@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261030T160347_praneet_orchard_slice6_merged_history_imported
+type: closeout
+recorded_at: "2026-10-30T16:03:47+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record slice 6 merged and the Sheet's spray history imported to
+    production, and why the slice stays open: its first acceptance check
+    needs the owner's shelf.
+  scope:
+    - "praneet-web PR 34 and praneet-office PR 28, merged; Treatment_Logs import on production."
+
+outcome:
+  status: merged-awaiting-shelf
+  completed:
+    - "The owner ran migration 020 on production and merged praneet-web PR 34 (main 52f031174bf4d0c4287f759329c5d357d6c1e53d) and praneet-office PR 28 (main 7bb71d22c0a1f4ce60e5857052b8d417e166df9c). Both checkouts were pulled to those heads."
+    - "Production read back through praneet-office: orchard spray --plot P-3 returned 7 sprays in 60 days, which reads the new tables, so 020 is live. orchard context shows the shelf empty (0 products)."
+    - "On the owner's word ('นำเข้าประวัติพ่นเลย'), orchard import --no-chemicals --write wrote the 36 Treatment_Logs from the 26 Oct export. Work (192), Labor_Ledger (91) and recipes (26) matched and nothing else changed. A second dry run reported the 36 as matched. Over 120 days the plots now show 24 (P-1), 16 (P-2), 26 (P-3), 21 (P-4) and 0 (P-5) sprays, with the Sheet logs linked to their RCP recipe."
+    - "On the owner's word, the slice 6 samples page was deleted. It was the only praneet artifact left."
+  not_verified:
+    - "Slice 6 acceptance 1, that the agent can say which group each plot was last sprayed with. Every product reads 'not on the shelf' and every group '-' until the owner fills the shelf."
+    - "The 28 and 29 Oct sprays recorded as notes are not converted yet."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.9"
+  slice: "6"
+  decision: memory/events/2026/10/30/20261030T052958_praneet_orchard_rev09_slice6_authorized.yaml
+  previous: memory/events/2026/10/30/20261030T073405_praneet_orchard_slice6_built_awaiting_owner.yaml
+  repository:
+    head: "bd45acfc8a0208f2d5089fce7c640aefdf98705b"
+    branch: hq/20261030
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/34"
+    - "https://github.com/mojisejr/praneet-office/pull/28"
+
+unresolved:
+  - "The owner fills the shelf from the real bottles. Slice 6 closes after that: the agent reads each plot's groups back and records the delivery."
+  - "After the shelf, and on his word, orchard spray set for the 28 and 29 Oct sprays. On 29 Oct P-3 has two sprays with different mixes, a spot spray at 30cc/10L and 3 tanks of 9 products. The agent confirms they are two sprays before converting."
+  - "A Sheet log's product line repeats its amount ('อิทริดิอาโซล 30cc 30 cc') because the recipe text carries it in the name; cosmetic, deferred."
+  - "praneet-office orchard add accepts a team with no people and the server then drops the team and its pay silently; deferred. Workaround: list the team's people."
+  - "Four rules in the 2026-10-27 report came from a search summary and need a direct read before slice 7 enforces them."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: fill the shelf. Agent: read each plot's groups back, convert the
+    28 and 29 Oct sprays on his word, then record slice 6 delivered.
+  acceptance_check:
+    - "Slice 6 acceptance in workstreams/praneet-orchard-001/slices/6.md."
