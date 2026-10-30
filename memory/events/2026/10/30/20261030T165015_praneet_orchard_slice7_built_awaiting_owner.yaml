@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261030T165015_praneet_orchard_slice7_built_awaiting_owner
+type: closeout
+recorded_at: "2026-10-30T16:50:15+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record slice 7, the tank-mix checker and the mixing runbook, built as a
+    draft pull request, and what it waits for.
+  scope:
+    - "praneet-office PR 29."
+
+outcome:
+  status: built-awaiting-owner
+  completed:
+    - "praneet-office PR 29 (branch feat/orchard-mix-check, head f69fad7567e602000fed4723a799c1260e60b784) adds orchard mix --file <json> and runbooks/06-orchard-mixing.md. The checker reads a proposed tank against the 2026-10-27 report's rules, the shelf and each plot's sprays over 120 days, and prints every rule's outcome with its sources and the fill order. Only a rule a label, FRAC or IRAC states blocks (exit code 2); a partly supported rule warns; an unsourced rule is absent. The runbook gives the agent's steps for any mixing question: read the plot through context, set the target, search label then FRAC/IRAC then DOA or extension, build from have or low products, run mix, propose with reasons, sources and unchecked matters, and add a new rule only on the owner's word."
+    - "Two of the four rules taken from a search summary were read directly on 2026-10-30: Haifa's MKP specification gives pH 4.2-4.7 at 1%, and the ICAR abstract reports carbendazim fully inhibiting Trichoderma viride. Copper with MKP blocks, and Trichoderma with fungicides warns because the source is a study, not a label. UKY PPFS-FR-T-29 refused the connection and UF/IFAS CG113 loops on redirects. Copper with fosetyl blocks on the Kocide label alone, and copper with oil only warns."
+    - "bun test scripts/orchard-mix.test.ts passed 8 of 8, and a strict tsc of the four scripts passed. One of the tests guards against the defect found during the build: Thai ingredient patterns with long vowels never matched folded names."
+    - "Read-only on production, a P-3 tank of emamectin, copper hydroxide, 0-52-34 and a sticker was blocked three ways: the shelf is empty, copper is with MKP, and IRAC 6 may not be used on P-3 until 2026-11-16 (Sheet sprays on 18 Sep, 4 Oct and 7 Oct). It listed 19 and 29 Oct as unreadable history."
+    - "Two cold sessions (claude -p, auto memory off, tools limited) were asked the real question 'P-3 young flush, psyllids, spray this week'. Both found runbook 06 unprompted and followed it: no mix before context is read, no guessing, the empty shelf and the unread sources named, and the missing facts asked for. Neither could run the read, because the test's permission patterns did not match the command forms they chose."
+  not_verified:
+    - "A cold session running context and mix through to a proposed mix. The commands were run by this agent instead."
+    - "Any outcome on real shelf data; the shelf is empty."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.0"
+  slice: "7"
+  decision: memory/events/2026/10/30/20261030T163420_praneet_orchard_rev10_slice7_authorized.yaml
+  repository:
+    head: "8298e2d0c3c374c310aeec1e555773a03da90014"
+    branch: hq/20261030
+  related:
+    - "https://github.com/mojisejr/praneet-office/pull/29"
+
+unresolved:
+  - "Owner: review and merge praneet-office PR 29. It has no migration and no praneet-web change."
+  - "Slice 6 waits for the owner's shelf; slice 7 gives results on real data only after it too."
+  - "The checker counts plot-wide, not per pest, and counts spot and trunk treatments toward a plot's IRAC windows; stricter than IRAC. Per-cycle caps count 120 days until slice 8 records crop cycles."
+  - "praneet-office orchard add accepts a team with no people and the server then drops the team and its pay silently; deferred. Workaround: list the team's people."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: merge PR 29 and fill the shelf. Agent: read the plots back with
+    groups, record slices 6 and 7 delivered.
+  acceptance_check:
+    - "Slice 7 acceptance in workstreams/praneet-orchard-001/slices/7.md."
