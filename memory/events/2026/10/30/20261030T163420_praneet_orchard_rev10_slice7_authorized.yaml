@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261030T163420_praneet_orchard_rev10_slice7_authorized
+type: decision
+recorded_at: "2026-10-30T16:34:20+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Plan revision 1.0 makes the mixing runbook main work of slice 7, beside
+    the checker, and authorizes slice 7.
+  scope:
+    - "workstreams/praneet-orchard-001/PLAN.md and slices/7.md."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner asked whether slice 7 tells the agent how to research a mixing
+    question thoroughly. The agent explained that the checker only guards a
+    mix against rules researched in advance, and recommended making the
+    runbook, which the plan listed as optional, main work: what the agent
+    reads, which sources it searches in which order, and how a new matter
+    becomes a rule. The owner agreed and approved ('ผมเห็นด้วยครับ และ
+    อนุมัติได้เริ่ม slice 7 ได้เลยครับ'). He also confirmed that no skill and
+    nothing new in CIEL is needed: the checker and the runbook live in
+    praneet-office.
+  why: >-
+    A checker catches a wrong mix only inside its rules. A question outside
+    them still depends on how well the agent searched, so the search itself
+    needs the same steps every time.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.0"
+  slice: "7"
+  repository:
+    head: "f997114b9d34e90ccae529465c9b97987e0e3229"
+    branch: hq/20261030
+    working_tree: this-decision
+  related:
+    - memory/events/2026/10/30/20261030T160347_praneet_orchard_slice6_merged_history_imported.yaml
+
+unresolved:
+  - "Slice 6 stays open until the owner fills the shelf; slice 7 is built and tested on the test database first."
+  - "Four rules in the 2026-10-27 report came from a search summary and need a direct read before slice 7 enforces them."
+  - "praneet-office orchard add accepts a team with no people and the server then drops the team and its pay silently; deferred. Workaround: list the team's people."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Read the four rules from their direct sources, then build the checker
+    and the runbook on a praneet-office topic branch.
+  acceptance_check:
+    - "Slice 7 acceptance in workstreams/praneet-orchard-001/slices/7.md."
