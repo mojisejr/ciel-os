@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T060909_praneet_orchard_slice10_delivered
+type: closeout
+recorded_at: "2026-11-01T06:09:09+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Deliver slice 10: work not paid out yet, and a half day on the add-work
+    form, with migration 021 on production and the two records it was made
+    for corrected.
+  scope:
+    - "praneet-web PR 35, merged; migration 021 and two work edits on production, on the owner's word ('run migration 021 แล้วแก้งานให้ผม')."
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "Migration 021 ran on production while PR 35 was a draft: 'Applied 021_orchard_uncounted_work.sql'. Read back: schema_migrations holds it with the file's hash, orchard_work_check1 is gone and orchard_work_team_named is present."
+    - "The owner merged PR 35 as 1360bf2ead94cbd1a8bfc608f3478fcb7bf22921. Production's add-work page carried the new form hints before any edit was sent."
+    - "Through the ops API, the agent cleared the hours and the rate of work bd08540a (30 Oct, hourly per person), typed only to save it, and the team quantity of 2 of work 4e8a046f (29 Oct, team piece work, note 'over 800 trees'). Every other field was sent back as stored, and the notes are unchanged. Read back: both works hold no count and no rate."
+  acceptance:
+    - "Hourly and piece work, per person and for a team, saves with no hours or quantity from the form and the API, owes nothing and reads as not paid out yet (tests/orchard.spec.ts, PR 35; and both production works above)."
+    - "Not-paid work with people named gives no day wage and no amount (tests/orchard.spec.ts)."
+    - "A half day set on the add-work form halves that day's wage, and another work that day saved untouched keeps it (tests/orchard.spec.ts)."
+  not_verified:
+    - "The form was not tried on the owner's phone."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.2"
+  slice: "10"
+  decision: memory/events/2026/10/31/20261031T193407_praneet_orchard_rev12_slice10_half_day.yaml
+  previous: memory/events/2026/10/31/20261031T200843_praneet_orchard_slice10_half_day_built.yaml
+  repository:
+    head: "cf493ad10f36c0da9876825d2bcb97cb54bb5e33"
+    branch: hq/20261030
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261030
+  child_merges:
+    praneet-web: "PR 35, merge 1360bf2ead94cbd1a8bfc608f3478fcb7bf22921"
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/35"
+
+unresolved:
+  - "Work 915d0fe9 (31 Oct, hourly per person, entered before the merge) carries 1 hour at 50 baht for each of the same three people, the same shape as the placeholder just cleared, and is the 50 baht each still shows as owed. No note says it is a placeholder; it waits for the owner's word."
+  - "praneet-office orchard add does not pass a half day; the agent sets one through PUT /api/ops/orchard/day-pay. Deferred."
+  - "Intermittent praneet-web test failures (orchard-shelf.spec.ts:153, gmaps.spec.ts:96, quality timeouts under load); not investigated. Workaround: rerun with nothing else running."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: say whether work 915d0fe9's hours and rate are real or a
+    placeholder; then decide on slice 8 after pushing hq/20261030.
+  acceptance_check:
+    - "Slice 8 in workstreams/praneet-orchard-001/slices/8.md."
