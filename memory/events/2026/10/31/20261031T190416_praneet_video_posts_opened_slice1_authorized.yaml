@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20261031T190416_praneet_video_posts_opened_slice1_authorized
+type: decision
+recorded_at: "2026-10-31T19:04:16+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: >-
+    Open Praneet's conversation-to-video-post workflow and authorize its first
+    vertical proof, with Gemini capped at 100 baht per month and scoped parallel work.
+  scope:
+    - "Plan 0.1 slice 1: office brief/runbook and local code-rendering proof; budget control; researched proposal and owner-approved storyboard; one real MP4, post draft and manual publication with initial feedback."
+  out_of_scope:
+    - "Slices 2 and 3 require later decisions. No Facebook API or auto-posting, business/tax verification, paid ads, paid subscriptions beyond Codex/Gemini, additional hosting charge, or platform for other shops."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On 2026-10-31 the owner accepted the consolidated scope and DoD, set Gemini
+    at no more than 100 baht per month, and said to open the workstream now.
+    He also explicitly allowed parallel work when needed. Prior clarifications
+    chose cumulative views, organic growth and a two-week review without a
+    deadline; the Page remains Praneet, selling durian seedlings while a grower
+    explains related interesting things. The agent researches effective current
+    treatments and codes Praneet's own content. A cartoon or lip-sync is optional.
+    The owner confirms a factual storyboard before full production and posts
+    himself; Insights and feedback come from him in chat. HyperFrames/local
+    rendering is the initial candidate within the two-service cost boundary.
+  authorization_boundary: >-
+    Authorizes first-slice preparation/proof under its story approval and spending
+    gates. This turn opens records only; it does not claim a renderer, credential,
+    episode or publication exists. Parallel permission covers independent tasks
+    and coexistence with nursery, Maps and orchard work, not conflicting edits or
+    unrelated changes. Remote merges remain owner-reviewed.
+
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "0606b1b7dd2044e323c6058a05c4f2015a11ab06"
+    branch: hq/20261030
+  related:
+    - workstreams/praneet-nursery-001/PLAN.md
+    - workstreams/praneet-gmaps-001/PLAN.md
+    - workstreams/praneet-orchard-001/PLAN.md
+  existing_tools:
+    - checkouts/praneet-office/scripts/posts.ts
+    - checkouts/praneet-office/runbooks/05-posts.md
+    - checkouts/praneet-web/lib/posts.ts
+
+unresolved:
+  - "Gemini key/billing readiness, other use in the same month and a conservative enforceable 100-THB control are unverified; no paid request until its cost and balance are bounded."
+  - "First topic/source, approved storyboard, voice/visual samples, real render time/quality and handoff to the posting device remain to be proved."
+  - "The exact Insights baseline and view definition remain to be established with the owner; public data is incomplete and a dated 613-follower observation is not a live counter."
+  - "Office posts-text-style at 6d84f2a is local/unmerged; inspect its owner text rule before changing the posts runbook or copy."
+  - "hq/20261030 is not pushed; round-closing push and merge timing belong to the owner."
+  - "Human approval, review and external rules remain unknown unless a repository record establishes them."
+
+next_action:
+  action: >-
+    In a fresh slice-1 session, Wake this workstream, read its first slice and the
+    office posts/style rules, coordinate child paths, and pass the child's start
+    gate. Prepare the minimum local toolchain and budget proof, then propose the
+    pilot topic/storyboard for owner review. Request the key location and material
+    only when needed; never request a key value in chat.
+  acceptance_check:
+    - "Wake recognizes plan revision 0.1 slice 1 and approved parallelism."
+    - "Slice 1 DoD in workstreams/praneet-video-posts-001/slices/1.md."
