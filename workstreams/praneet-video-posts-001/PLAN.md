@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -59,6 +59,14 @@ and a silent render of that proposal for review before final episode approval.
 It does not approve a voice, paid audio request, publication or external draft
 write. Preserve the factual scope and identify the silent file as a visual
 preview; its timing is provisional until narration is measured.
+
+On 2026-11-01 the owner requested one full silent cartoon trial after the
+original "หนวดพาดู" mascot direction was proposed. Keep episode 001's factual
+scope, use an original code-native character and situational storytelling,
+and inspect the actual encoded clip. The owner also authorized deleting the
+superseded episode's generated videos/render previews to save disk space;
+retain reconstructable source, runbooks and unrelated post assets. This is
+preview production permission, not final story, voice or publication approval.
 
 1. Read the page brief, relevant owner material, earlier episodes and feedback.
    Propose a small set of topics with a recommendation and references. Verify

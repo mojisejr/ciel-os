@@ -1,0 +1,36 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T064700_praneet_cartoon_trial_authorized
+type: decision
+recorded_at: "2026-11-01T06:47:00+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Produce one full silent original-mascot cartoon preview of episode 001.
+  scope:
+    - Local cartoon motion coding, rendering, inspection and replacement of superseded generated previews.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner asked to try a complete clip without voice after the original
+    หนวดพาดู direction was proposed, and explicitly allowed deleting the old
+    rendered clip to save disk space. Keep source and unrelated owner material.
+  authorization_boundary: >-
+    No paid API, final voice/story acceptance, external draft, publication,
+    push or merge is inferred. Existing scoped parallelism and the 100 THB
+    Bangkok-calendar-month Gemini ceiling remain.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "1"
+  repository:
+    head: "d1d3ae622ea2763eeb0a6ec190d9ce17c4bb434c"
+    branch: hq/20261030
+unresolved:
+  - Actual cartoon quality and owner acceptance remain unproved.
+  - Voice, budget enforcement, owner-device handoff and the rest of slice 1 remain pending.
+next_action:
+  action: Build and inspect a full silent mascot cartoon, retain the new artifact and retire only the superseded generated previews.
