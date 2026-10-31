@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261031T153945_praneet_orchard_slice7_delivered
+type: closeout
+recorded_at: "2026-10-31T15:39:45+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Deliver slice 7: the tank-mix checker and the mixing runbook, after the
+    owner's trial on P-3 and the four checker fixes it found.
+  scope:
+    - "praneet-office PR 29, merged; the owner's shelf on production, read-only for the checker."
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "The owner said the 8 Nov P-3 mix was a test of how the agent mixes, not a spray he will do. The tanks of 20261030T205424 and of today stay proposals and are not recorded as work."
+    - "The trial re-ran on the owner's shelf of 2026-10-31. It found four checker defects, which the owner asked to fix ('แก้ได้เลยครับให้ถูกต้อง'). praneet-office 3c3e8ac fixes them. Label rules no longer pass a product that is not on the shelf; they say it cannot be checked, and a shelf entry with no group says the group cannot be compared. Fosetyl with a foliar fertilizer or a sticker warns, citing the Aliette WDG label (EPA Reg. 264-516, Georgia SLN GA-230002), which the agent read again today: 'not recommended', on a citrus label, so the rule warns and does not block. Phosphite is now its own active. Fipronil (IRAC 2B) and the acaricides propargite (12C), amitraz (19) and hexythiazox (10A) are known. Paclobutrazol matches its Thai spellings."
+    - "On the owner's word, the agent corrected ทะวาย's active on the shelf to แพคโคลบิวทราโซล 25%. Correcting a label field sends the product back to waiting for the label check, by design."
+    - "The owner merged PR 29 as 9fa4d4a58abe44eaf0934860da4dcc694ad9e75c. The praneet-office checkout is on a clean main matching origin."
+  acceptance:
+    - "A passing tank shows every rule with its sources, and a tank that breaks a rule is refused by code with the rule and its sources. On the 31 Oct shelf, the trunk tank with เอ็ม-โมคาร์ป was refused under FRAC 4: the seventh use in 120 days, over the cap of 4."
+    - "Products that are out, waiting for the label check, or not on the shelf are said plainly. The last case was the defect fixed in 3c3e8ac."
+    - "Cold sessions read the runbook and kept to its steps (20261030T165015). The owner's trial added steps 2-4 (e65a815): research the stage's risks, ask before every mix, never conclude 'no target'."
+  not_verified:
+    - "No rate is checked by rule, and some rates in the trial came from a search summary. The runbook says so on every proposal."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.0"
+  slice: "7"
+  decision: memory/events/2026/10/30/20261030T163420_praneet_orchard_rev10_slice7_authorized.yaml
+  previous: memory/events/2026/10/30/20261030T205424_praneet_orchard_slice7_trial_on_p3.yaml
+  repository:
+    head: "f0a990bff82664b553901ebf3f0eaafa70fdf981"
+    branch: hq/20261030
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261030
+  child_merges:
+    praneet-office: "PR 29, merge 9fa4d4a58abe44eaf0934860da4dcc694ad9e75c"
+  related:
+    - "https://github.com/mojisejr/praneet-office/pull/29"
+    - memory/events/2026/10/31/20261031T153911_praneet_orchard_slice6_delivered.yaml
+
+unresolved:
+  - "frac-cap counts trunk and spot treatments plot-wide over 120 days until slice 8 records crop cycles."
+  - "The 2026-08-12 P-3 record still has no products, so the checker lists it as unreadable."
+  - "spray set restocks out products when recording past work; deferred, see 20261031T153911."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decision on slice 8 (income and costs, harvest, crop cycles and
+    P&L), after the owner pushes hq/20261030 and it reaches main.
+  acceptance_check:
+    - "Slice 8 in workstreams/praneet-orchard-001/slices/8.md."

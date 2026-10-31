@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261031T153911_praneet_orchard_slice6_delivered
+type: closeout
+recorded_at: "2026-10-31T15:39:11+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record slice 6 delivered: the owner filled the shelf, the agent read each
+    plot's groups back, and the sprays typed as notes before the form had
+    products were converted on his word.
+  scope:
+    - "Production data through praneet-office main (orchard spray set, orchard add, orchard shelf set); no code change."
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "The owner filled the production shelf on 2026-10-31: 14 products with status, actives, group and formulation, all confirmed by him."
+    - "On the owner's words ('บันทึก 19, 28, 29 ... ให้เรียบร้อย', then 'ตามนั้นเลย' to the plan shown), the agent wrote the tanks of the sprays typed as notes. 29 Oct P-3: the 3 x 200 L foliar tank of 9 products and the 10 L spot spray of 2, matched to shelf products by their actives. 19 Oct: the recorded work covers P-2, P-3 and P-4 with a pipe repair, so a tank on it would have put paclobutrazol on the nursery and on the lot pages; the agent left it unchanged and added two P-3 works with no people and no pay (the paclobutrazol tank, 200 L, from Sheet LOG-173, and the drench of 4 trees). 28 Oct P-4: the 10 L nursery tank, with the purpose the owner gave ('ป้องกันเชื้อรา และบำรุง'), which writes a care record on the lot pages."
+    - "Writing a tank sets a product marked out back to have and adds a product not on the shelf as have. That is right for today's work and wrong for past work. After the writes the agent set the two restocked products and the three new ones (sticker, zinc chelate, omethoate) to out, so the shelf reads as the owner entered it, plus three out entries the old tanks need."
+    - "Read back on production: P-3's last sprays carry groups (29 Oct: IRAC 6, FRAC 14, FRAC 1, IRAC 16; 19 Oct: FRAC 14, with omethoate read as IRAC 1B by orchard mix from its name, since its new shelf entry has no group); P-4's 28 Oct spray IRAC 6 and FRAC 1; P-1 and P-2 from their Sheet logs (P-1 25 Oct IRAC 6 and validamycin; P-2 4 Oct IRAC 6); P-5 has no spray. orchard mix on P-3 now lists only 2026-08-12 as unreadable. The calendar queue is empty."
+  acceptance:
+    - "Slice 6 acceptance 1 is met on production data: the agent says which group each plot was last sprayed with. The other checks were met on the test database at the merge (20261030T160347)."
+  not_verified:
+    - "The lot pages were not opened to see the 28 Oct care record; the API accepted the write and the purpose."
+    - "The owner did not say whether he had already recorded 28 Oct care in /ops; a duplicate is possible."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.9"
+  slice: "6"
+  decision: memory/events/2026/10/30/20261030T052958_praneet_orchard_rev09_slice6_authorized.yaml
+  previous: memory/events/2026/10/30/20261030T160347_praneet_orchard_slice6_merged_history_imported.yaml
+  repository:
+    head: "f0a990bff82664b553901ebf3f0eaafa70fdf981"
+    branch: hq/20261030
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261030
+  child_merges:
+    praneet-web: "PR 34, main 52f031174bf4d0c4287f759329c5d357d6c1e53d"
+    praneet-office: "PR 28, main 7bb71d22c0a1f4ce60e5857052b8d417e166df9c"
+
+unresolved:
+  - "The 19 Oct combined work still says it sprayed, so P-2 and P-4 list it as unreadable; the P-3 part is in the two added works."
+  - "P-1's 30 Oct work 'ขูดต้น พ่นยา' has no products; it waits for the owner's tank."
+  - "spray set restocks out products and adds new ones as have, which is wrong for past work; deferred, workaround: set them back after the write."
+  - "The shelf types ซีนอน (validamycin) as group 26; FRAC 2026 lists U 18, and orchard mix says so."
+  - "ทะวาย waits for the owner's label check after the agent corrected its active to แพคโคลบิวทราโซล 25% on his word; ลองจิ๊บ is typed 'กรดจิบ้บอเรลลิก' and was not changed."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Record slice 7 delivered beside this event; slice 8 then needs the
+    owner's decision.
+  acceptance_check:
+    - "Slice 7 acceptance in workstreams/praneet-orchard-001/slices/7.md."
