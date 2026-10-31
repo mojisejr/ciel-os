@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T022522_praneet_silent_preview_v01
+type: closeout
+recorded_at: "2026-11-01T02:25:22+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver the owner-requested full-length silent visual preview of episode 001.
+  scope:
+    - Local motion implementation, full MP4 render and actual-file inspection within slice 1.
+outcome:
+  status: silent-preview-prepared
+  completed:
+    - Built a 42-second seekable film based on storyboard 001-r01 with tree-to-root camera movement, magnified pore comparison, rising pore water, qualitative uptake flow, inspection points and a closing brand beat.
+    - Eleven timed reading cues explain the story without audio. The preview labels its schematic graphics and silent-preview revision.
+    - Corrected the lower caption background, a transient closing-title contrast problem and the footer type size before retaining the delivered file.
+    - Rendered and inspected the actual MP4, including nine story frames and twelve transition frames. Desktop Chrome played the full retained file to its end without media error or dropped video frames in this test.
+    - An independent read-only source review reported no additional material findings; it did not certify final encoded quality. Local commands expose no paid provider or publishing path.
+  boundary: >-
+    This fulfills the requested silent preview, not the complete slice or a
+    voiced/published episode. It does not infer the owner's acceptance of the
+    preview, factual story or voice. No Gemini or other paid API, ops/Facebook
+    write, push, PR or merge occurred. Timing is provisional until narration.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.3"
+  decision: memory/events/2026/11/01/20261101T021701_praneet_silent_preview_authorized.yaml
+  repository:
+    head: "c9b9d61902bef8f395fa3de1fda9a8f329fc993b"
+    branch: hq/20261030
+  office:
+    head: "3a968f15fd8848cd44ce313e6aa70bd904e6d969"
+    branch: feat/video-posts-tooling
+    contract: posts/video/episodes/001-wet-soil/VISUAL-v01.md
+    source: posts/video/episodes/001-wet-soil/animation/
+    command: bun run posts video episode-render
+  artifact:
+    path: checkouts/praneet-office/posts/out/001-wet-soil/visual-v01/praneet-001-visual-v01-silent.mp4
+    sha256: "fcf07de81ece7fd1c86867bdc813d65563c7f6c26e3643f79080d4816ce749a7"
+    bytes: 10083297
+    format: H.264 yuv420p, 1080x1920, 30 fps, 1260 frames, 42.000 seconds, no audio stream
+    render_time: HyperFrames reported 61.8 seconds; wrapper measured 63.0 seconds on this host.
+    ignored_evidence: posts/out/001-wet-soil/visual-v01 contains metadata, playback, check/render logs and actual encoded-frame contact sheets.
+  validation:
+    - episode-check passed with zero lint/runtime/layout/contrast/craft errors and 30 contrast checks. Three dense-track warnings remain for chapter/caption/label tracks.
+    - One connector warning identifies the offscreen hidden drain arrow during the zoom; its intended visible annotation was manually inspected. The silence warning matches the owner's explicit request. Automated motion-analysis mode was not enabled.
+    - FFprobe verified the declared stream and absence of audio; FFmpeg decoded the entire retained MP4 without error.
+    - Nine actual story frames and twelve actual transition frames were visually inspected, including the opening and encoded last frame.
+    - A temporary Playwright check in desktop Chrome at a 360x640 viewport played through ended=true, duration/currentTime 42, totalVideoFrames 1260, droppedVideoFrames 0, media error null.
+    - bun build scripts/posts.ts --target bun with existing external dependencies succeeded. git diff --check passed; only intended source/docs were committed, and the known office posts/.DS_Store remains untouched.
+unresolved:
+  - Owner feedback/acceptance of silent preview v01 and the final story/voice remain pending. On-screen cues are not synchronized to a real voice yet.
+  - Gemini credentials location, current Bangkok-month spending including other use, model/request cost bounds and atomic reservation/reconciliation remain unproved. Paid audio stays disabled and the 100 THB monthly ceiling remains.
+  - The full preview passed on this low-memory host with one worker; more complex or longer scenes remain unproved. Actual owner-phone playback and handling time are still unknown.
+  - Dense-track warnings and the hidden-symbol connector warning are recorded above; automated motion analysis was not enabled. Successful rendering is not proof of owner taste or viral performance.
+  - Final audio/caption alignment, post text/cover and F-link draft, manual publication URL, feedback/Insights baseline and a consistent view definition remain slice-1 proofs. HistoryInMaps' private workflow remains unverified.
+  - Office posts-text-style at 6d84f2a remains unmerged and must be preserved in later integration. Local child/HQ commits still require the eventual owner-reviewed PR/closeout procedure; HQ push/merge timing belongs to the owner.
+next_action:
+  action: >-
+    Show the actual silent v01 MP4 in chat and collect the owner's feedback on
+    the visuals/pacing/story. Revise identified moments locally. Before any
+    voiced version, establish voice approval and the real current-month Gemini
+    balance/request bound, generate within that budget, then measure the audio
+    and retime visuals/captions. Do not publish or infer approval from viewing.
+  acceptance_check:
+    - Owner can play the full silent preview and identify desired visual/story changes by timestamp.
+    - Complete the remaining slice-1 DoD only after final approval, budget proof, device handoff and owner publication.
