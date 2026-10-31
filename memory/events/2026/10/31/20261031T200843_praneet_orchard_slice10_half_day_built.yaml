@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261031T200843_praneet_orchard_slice10_half_day_built
+type: closeout
+recorded_at: "2026-10-31T20:08:43+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Add the half day on the add-work form to PR 35 under plan revision 1.2.
+  scope:
+    - "praneet-web PR 35, branch feat/orchard-unpaid-work; no production write."
+
+outcome:
+  status: built-awaiting-owner
+  completed:
+    - "praneet-web 44031c5 on PR 35 (draft, head verified). Day-rate work on the add-work form shows '1 วัน | ครึ่งวัน' per person without opening the pay choices; only a tapped day is sent, as people[].portion, and saving sets orchard_day_pay.portion for that person and day after the day pay is synced. formHints returns the date's portions so the form shows the day already set. No migration."
+    - "tests/orchard.spec.ts passed 10 of 10, including a new test: half a day set on the form gives 175 and 350 for two people, a second task that day shows it and keeps it untouched, and the money tab's toggle and the edit form show the same value."
+    - "bun run check on 44031c5 passed 121 of 121. An earlier full run of the same commit, under a load average of 6 to 8, failed two quality timeouts and gmaps.spec.ts:96 ('เลือกลูกค้าก่อน'); gmaps.spec.ts:96 then passed on main and on the branch, alone and with its file."
+  not_verified:
+    - "The form was not tried on the owner's phone."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.2"
+  slice: "10"
+  decision: memory/events/2026/10/31/20261031T193407_praneet_orchard_rev12_slice10_half_day.yaml
+  previous: memory/events/2026/10/31/20261031T192026_praneet_orchard_slice10_built_awaiting_owner.yaml
+  repository:
+    head: "77d4c9448942d3fcfa28aabfd7fe425d7771c1b9"
+    branch: hq/20261030
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/35"
+
+unresolved:
+  - "Migration 021 must run on production while PR 35 is a draft; it waits for the owner's word naming that run."
+  - "The 30 Oct grafting-team work still carries hours and a rate typed only to save it, and the 29 Oct team piece work has a quantity of 2 where its note says over 800 trees; the owner edits them after the merge, or the agent on his word."
+  - "praneet-office orchard add does not pass a half day; the agent sets one through PUT /api/ops/orchard/day-pay. Deferred."
+  - "Intermittent praneet-web test failures seen this round (orchard-shelf.spec.ts:153, gmaps.spec.ts:96, quality timeouts under load); not investigated. Workaround: rerun with nothing else running."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: give the word to run migration 021 on production, then merge PR
+    35. Agent: run and read back the migration, then record slice 10
+    delivered after the merge.
+  acceptance_check:
+    - "Slice 10 acceptance in workstreams/praneet-orchard-001/slices/10.md."
