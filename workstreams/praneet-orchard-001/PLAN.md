@@ -3,7 +3,7 @@
 **Workstream:** `praneet-orchard-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.0
+**Plan revision:** 1.1
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -95,6 +95,11 @@
 - **ไม่มี skill และไม่มีอะไรเพิ่มใน CIEL** ตัวตรวจกับ runbook อยู่ใน praneet-office ที่เดียว ("เราทำใน office เรียบร้อย")
 - **slice 6 ยังรอชั้นยาจริง** slice 7 สร้างและทดสอบกับฐานทดสอบได้ก่อน ผลบนข้อมูลจริงต้องรอชั้นยา
 
+## ข้อตกลงก่อน slice 10 (revision 1.1, 2026-10-31)
+
+เจ้าของบันทึกงานของทีมที่ยังไม่รู้ชั่วโมงไม่ได้ จึงสั่งให้เปิด slice เล็กก่อนแก้ ("เปิด เป็น slice เล้กให้ผม ก่อนแก้ไข")
+slice 10 ทำก่อน slice 8 ใช้เลข 10 เพื่อไม่ให้เลข 8 และ 9 ที่บันทึกอ้างไว้แล้วเปลี่ยนความหมาย
+
 ## Project links
 
 | Project ID | Role | Local binding |
@@ -126,5 +131,6 @@ AI API, การหยุด Spark ก่อนเจ้าของประ�
 - [5. ชั้นยาและ diary](slices/5.md)
 - [6. การพ่นและประวัติกลุ่มยา](slices/6.md)
 - [7. ตัวตรวจชุดยา](slices/7.md)
+- [10. งานที่ยังไม่คิดเงิน](slices/10.md)
 - [8. รายรับรายจ่าย การเก็บเกี่ยว รอบการผลิต และ P&L](slices/8.md)
 - [9. เปลี่ยนระบบ](slices/9.md)

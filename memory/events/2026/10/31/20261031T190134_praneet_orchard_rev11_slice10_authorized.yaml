@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261031T190134_praneet_orchard_rev11_slice10_authorized
+type: decision
+recorded_at: "2026-10-31T19:01:34+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Plan revision 1.1 adds slice 10, work not yet paid out, before slice 8,
+    and authorizes it.
+  scope:
+    - "workstreams/praneet-orchard-001/PLAN.md and slices/10.md."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner asked how to record work that is not paid yet. The agent read
+    praneet-web and the production days of 29 and 30 Oct, read-only. Unpaid
+    work is already owed until a payment is recorded, and a blank rate
+    already reads as not priced. Two gaps remain: piece and hourly work
+    cannot be saved without a quantity or hours, so the 30 Oct work of the
+    grafting team carries hours and a rate the owner typed only to save it;
+    and once people are chosen the form offers no 'not paid' choice, though
+    the database has one. The owner confirmed the first is the one he hit
+    and asked for a small slice before the fix ('เปิด เป็น slice เล้กให้ผม
+    ก่อนแก้ไข แล้วเปิด PR มาแล้วสรุป ให้ผมฟังครับ'). Slice 10 covers both
+    gaps and comes before slice 8 in the index. It is numbered 10 so that
+    slices 8 and 9, already named in committed events, keep their meaning.
+  why: >-
+    Wages are recorded every day, and a figure typed only to get past the
+    form makes the amount owed wrong. Slice 8 builds costs on these wages.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.1"
+  slice: "10"
+  repository:
+    head: "d3295a236386c9aead974831e2133d33a0baf293"
+    branch: hq/20261030
+    working_tree: this-decision
+  related:
+    - memory/events/2026/10/31/20261031T153945_praneet_orchard_slice7_delivered.yaml
+
+unresolved:
+  - "The 30 Oct grafting-team work is owed 50 baht to each of three people from hours and a rate typed only to save it; the 29 Oct team piece work has a quantity of 2 where its note says over 800 trees. Neither is changed by this slice; the owner edits them, or the agent on his word."
+  - "Migration 021 needs a production run while the PR is a draft, which waits for the owner's word."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 10 on a praneet-web topic branch with tests and open a draft
+    PR for the owner.
+  acceptance_check:
+    - "Slice 10 acceptance in workstreams/praneet-orchard-001/slices/10.md."
