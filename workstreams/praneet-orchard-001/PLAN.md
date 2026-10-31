@@ -3,7 +3,7 @@
 **Workstream:** `praneet-orchard-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.1
+**Plan revision:** 1.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -99,6 +99,7 @@
 
 เจ้าของบันทึกงานของทีมที่ยังไม่รู้ชั่วโมงไม่ได้ จึงสั่งให้เปิด slice เล็กก่อนแก้ ("เปิด เป็น slice เล้กให้ผม ก่อนแก้ไข")
 slice 10 ทำก่อน slice 8 ใช้เลข 10 เพื่อไม่ให้เลข 8 และ 9 ที่บันทึกอ้างไว้แล้วเปลี่ยนความหมาย
+revision 1.2 เพิ่มครึ่งวันในหน้าเพิ่มงานเข้า slice 10 และ PR เดียวกัน ("เพิ่มเลย แล้วทำใน PR นี้เลย")
 
 ## Project links
 
