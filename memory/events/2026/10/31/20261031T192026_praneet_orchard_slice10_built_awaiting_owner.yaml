@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261031T192026_praneet_orchard_slice10_built_awaiting_owner
+type: closeout
+recorded_at: "2026-10-31T19:20:26+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Build slice 10, work not yet paid out, as a draft praneet-web PR for the
+    owner.
+  scope:
+    - "praneet-web PR 35, branch feat/orchard-unpaid-work; no praneet-office change; no production write."
+
+outcome:
+  status: built-awaiting-owner
+  completed:
+    - "praneet-web PR 35 (draft, head 0797f63eb7302ed2b60d2f0b89e41974255ce1d0). Piece and hourly work, per person or for the team, may leave its hours or quantity blank as well as its price. Such work earns nothing and reads 'ยังไม่คิดเงิน' on the day and the worker's pages until the owner fills it in. 'ไม่คิดเงิน' is a fourth pay choice once people are named; it earns nothing and is not day-rate work. Migration 021 replaces orchard_work_check1 with orchard_work_team_named, a wider check: team pay still needs a team, not a count."
+    - "tests/orchard.spec.ts passed 9 of 9, including a new test: team hourly work saved from the form with no hours and no price owes 0 and waits as 1 work, not-paid work with the same people gives no day wage, and counting it later through the API gives 150 baht owed."
+    - "bun run check: typecheck and build passed; Playwright 119 passed and 1 failed in the full run (orchard-shelf.spec.ts:153, line 194, waiting for the diary save status, which this PR does not touch). Rerun alone, orchard-shelf.spec.ts passed 4 of 4."
+  not_verified:
+    - "The full Playwright run was not repeated green end to end."
+    - "The form was not tried on the owner's phone."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.1"
+  slice: "10"
+  decision: memory/events/2026/10/31/20261031T190134_praneet_orchard_rev11_slice10_authorized.yaml
+  repository:
+    head: "6ce781558df53bdb81424f50e22467dc08c490dc"
+    branch: hq/20261030
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/35"
+
+unresolved:
+  - "Migration 021 must run on production while PR 35 is a draft; it waits for the owner's word naming that run."
+  - "The 30 Oct grafting-team work still carries the hours and rate typed only to save it (50 baht owed to each of three people), and the 29 Oct team piece work has a quantity of 2 where its note says over 800 trees. The owner edits them after the merge, or the agent on his word."
+  - "orchard-shelf.spec.ts:153 failed once in the full run and passed alone; possibly flaky, not investigated."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: give the word to run migration 021 on production, then merge PR
+    35. Agent: run and read back the migration, then record slice 10
+    delivered after the merge.
+  acceptance_check:
+    - "Slice 10 acceptance in workstreams/praneet-orchard-001/slices/10.md."
