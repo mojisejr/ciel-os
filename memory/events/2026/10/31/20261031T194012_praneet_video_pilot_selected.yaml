@@ -1,0 +1,40 @@
+schema_version: ciel.event.v0.1
+id: evt_20261031T194012_praneet_video_pilot_selected
+type: decision
+recorded_at: "2026-10-31T19:40:12+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Prepare the first durian explainer through the existing office workflow.
+  scope:
+    - "Plan 0.2 slice 1: retain topic candidates, select the wet-soil/wilting pilot, prepare and prove local tools, and research current public commercial workflows."
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner selected topic 1, "ดินยังเปียก…ทำไมต้นทุเรียนกลับเหี่ยว?",
+    asked to retain the topics in the workstream, and authorized beginning
+    slice 1's tool preparation. He requested further research on workflows
+    currently sold by creators and emphasized demonstrable video quality.
+    The previously approved scoped parallel work and 100 THB monthly Gemini
+    ceiling continue. Technical test renders are within tool preparation.
+  authorization_boundary: >-
+    Topic approval does not approve final narration, storyboard, visual treatment,
+    external post writes or publication. Paid audio still requires known balance
+    and a defensible request-cost bound. No extra subscription or purchase.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: "92543de117fed930f333a7c9eb58282df38b2b8a"
+    branch: hq/20261030
+unresolved:
+  - Final factual storyboard, visual/voice approval, real episode and owner publication remain unproved.
+  - Gemini billing balance, other usage and actual request upper bound remain unknown; paid requests must wait.
+  - Insights baseline and consistent view definition are still pending.
+next_action:
+  action: Prove local rendering and budget refusals, retain topics and workflow research in office, then present pilot storyboard/keyframes for owner review.

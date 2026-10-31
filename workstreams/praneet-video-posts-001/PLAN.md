@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -43,6 +43,15 @@ writes motion code, and delivers a video and post copy. The owner publishes.
   additional AI provider or lip-sync service is authorized.
 
 ## Workflow and approvals
+
+On 2026-10-31 the owner selected the first proposed topic, **"ดินยังเปียก…ทำไมต้นทุเรียนกลับเหี่ยว?"**,
+and authorized starting slice 1's tool preparation. Retain the other researched
+topic candidates in office's `posts/video/EPISODES.md` backlog. Research current public
+creator/course workflows and use their demonstrated practices to improve
+quality; a vendor's marketing claim is not performance evidence. Prove an
+actual local visual/render sample and inspect it before calling the tools ready.
+The topic selection does not approve the narration, storyboard, visual direction
+or paid audio generation. Those gates and the existing monthly ceiling remain.
 
 1. Read the page brief, relevant owner material, earlier episodes and feedback.
    Propose a small set of topics with a recommendation and references. Verify
@@ -151,6 +160,6 @@ decision. Plans hold intent; closeouts and Git hold what actually happened.
 The owner reviews remote merges under README's normal procedure.
 
 Still to establish: Gemini key/billing readiness and a safe 100-THB control,
-the first topic and source material, voice and visual samples, real render
+the approved episode source material/storyboard, voice and visual samples, real render
 quality/time, device handoff, and the exact source/definition of views. Metrics
 from a public page may be incomplete; unavailable data stays unknown.
