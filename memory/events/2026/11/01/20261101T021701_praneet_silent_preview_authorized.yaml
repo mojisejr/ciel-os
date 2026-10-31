@@ -1,0 +1,39 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T021701_praneet_silent_preview_authorized
+type: decision
+recorded_at: "2026-11-01T02:17:01+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Produce a full-length silent visual preview of proposal 001-r01.
+  scope:
+    - Local motion coding, rendering and inspection of the proposed episode without sound.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After seeing the six-frame storyboard and full narration, the owner asked
+    to see the whole clip generated without audio first. This authorizes a
+    silent visual preview of 001-r01, without another storyboard-approval stop.
+    The previously scoped parallel permission and 100 THB monthly ceiling remain.
+  authorization_boundary: >-
+    Do not infer final factual/story/voice approval, permission for paid audio,
+    an external ops draft write, publication or a completed slice. Timing is
+    provisional; identify the delivered file as a silent visual preview.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "1"
+  repository:
+    head: "b2940f057a509197de108bb363891469ade6ae05"
+    branch: hq/20261030
+  proposal: checkouts/praneet-office/posts/video/episodes/001-wet-soil/STORYBOARD-r01.md
+unresolved:
+  - Actual motion/encoding quality and the owner's review of the full clip remain unproved.
+  - Voice, current Gemini spending and real cost bounds remain unknown; no paid request is authorized by this preview request.
+  - Owner-device handoff, final post package/publication and Insights baseline remain slice-1 proofs.
+next_action:
+  action: Build and inspect the full silent 001-r01 visual preview, deliver the actual MP4, and record its revision and remaining approval gates.

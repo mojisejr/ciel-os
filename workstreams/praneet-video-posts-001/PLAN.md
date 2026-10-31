@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -52,6 +52,13 @@ quality; a vendor's marketing claim is not performance evidence. Prove an
 actual local visual/render sample and inspect it before calling the tools ready.
 The topic selection does not approve the narration, storyboard, visual direction
 or paid audio generation. Those gates and the existing monthly ceiling remain.
+
+On 2026-11-01, after seeing proposal 001-r01, the owner explicitly requested a
+full-length video preview without sound. This authorizes local motion coding
+and a silent render of that proposal for review before final episode approval.
+It does not approve a voice, paid audio request, publication or external draft
+write. Preserve the factual scope and identify the silent file as a visual
+preview; its timing is provisional until narration is measured.
 
 1. Read the page brief, relevant owner material, earlier episodes and feedback.
    Propose a small set of topics with a recommendation and references. Verify
