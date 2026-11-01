@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T160352_praneet_slice1_review_prs_ready
+type: closeout
+recorded_at: "2026-11-01T16:03:52+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Keep the standing HQ informed of this workstream's isolated review delivery.
+  scope:
+    - Record the actual ready-for-review PRs without pushing or merging any other lane.
+outcome:
+  status: isolated-slice1-prs-ready-for-owner-review
+  completed:
+    - Office PR 30 and isolated HQ PR 104 are open and ready for owner review, each with the final-review description and reciprocal links.
+    - Final slice-1 YAML closeout is committed and pushed on HQ PR 104 at a12ec5b97bfb77c4eb03a144477ae94a5678922a; fetched branch head, actual PR head, closeout ancestry and remote file scope were checked before readiness.
+    - Office implementation head 825a63c95c524b39fee2f9f402e941b9ba786e0d is pushed and bound to the final closeout. Office tests pass 17 tests / 103 assertions; HQ typecheck and 57 tests / 298 assertions pass.
+    - HQ review diff has only four video plan files and 41 video events. Office diff has 74 video-related files; unrelated work and original branches are preserved.
+  boundary: This standing-branch record is a pointer checkpoint, not the canonical slice delivery or a merge approval. The actual delivery event lives on isolated HQ PR 104. Neither PR is merged and slice 2 has not started. No API spend, social edits, web changes, new agent or global CIEL tooling was introduced.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.4"
+  repository:
+    head: 8c87e7404c8eed688f93297de77de1d97ef38e27
+    branch: hq/20261030
+  review_delivery:
+    url: https://github.com/mojisejr/ciel-os/pull/104
+    branch: codex/praneet-video-slice1-closeout
+    head: a12ec5b97bfb77c4eb03a144477ae94a5678922a
+    closeout: memory/events/2026/11/01/20261101T160156_praneet_slice1_pr_delivery_closeout.yaml
+    ready: true
+  office:
+    url: https://github.com/mojisejr/praneet-office/pull/30
+    head: 825a63c95c524b39fee2f9f402e941b9ba786e0d
+    ready: true
+unresolved:
+  - Owner review and explicit merge approval remain; office PR 30 precedes HQ PR 104. Slice 2 requires a separate owner decision afterward.
+  - Actual provider billing, remote Drive checksum, complete Insights/dates/view definitions and verified clip attribution remain unknown as described in the delivery closeout.
+  - Wake's project-overlap attention persists; no parallel edits were made. The standing HQ branch carries unrelated lanes and must not be merged wholesale for this delivery.
+next_action:
+  action: Present both ready PR links and wait for owner review. Apply any requested changes to the respective PR; merge only on explicit owner approval, office first and then HQ. Do not start slice 2.
