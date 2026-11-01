@@ -1,0 +1,81 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T160156_praneet_slice1_pr_delivery_closeout
+type: closeout
+recorded_at: "2026-11-01T16:01:56+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Offer only the approved video workflow slice 1 for owner review and merge.
+  scope:
+    - Implementation in office PR 30 and isolated plan/evidence delivery in HQ PR 104.
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Prepared office PR 30 with code-rendered visuals, narration integration, 100-THB monthly budget guards, episode sources, approved syncup workflow, delivery/captions and owner feedback.
+    - Prepared isolated HQ PR 104 from origin/main with only this workstream's four plan files and unchanged historical video events; no other workstream or CIEL core changes are included.
+    - Applied owner-confirmed plan 1.4 rules for future cover options and conditional shop F-links; existing WALES publications stay unchanged.
+    - Preserved full approval, source, production, private Drive and public Facebook/TikTok evidence, including successful mobile transfer/manual posting and an owner-recalled few-minute handling duration.
+    - Verified local scope, credential-pattern absence, authored whitespace and final artifact identity; office budget tests pass 17 tests with 103 assertions and HQ typecheck plus 57 tests with 298 assertions pass.
+  boundary: This event offers slice 1 only, subject to remote head proof and owner review. Neither PR has been merged or authorized to merge by this event. Slice 2 remains unstarted and needs its own owner decision. No new API spend, social post edit or web change occurred.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "1"
+  decision: memory/events/2026/11/01/20261101T154244_praneet_slice1_delivery_rules_authorized.yaml
+  repository:
+    head: 91b6680ec37766447e7b6f919a3aa18a8ff3b7d8
+    branch: codex/praneet-video-slice1-closeout
+  pull_request:
+    number: 104
+    url: https://github.com/mojisejr/ciel-os/pull/104
+    base: main
+    head: codex/praneet-video-slice1-closeout
+    observed_head: 91b6680ec37766447e7b6f919a3aa18a8ff3b7d8
+    state_at_preparation: draft
+  delivery:
+    target_branch: main
+    topic_branch: codex/praneet-video-slice1-closeout
+    merge_order: Owner reviews and merges office PR 30 before HQ PR 104; neither is automatic.
+  office:
+    pull_request: https://github.com/mojisejr/praneet-office/pull/30
+    head: 825a63c95c524b39fee2f9f402e941b9ba786e0d
+    branch: feat/video-posts-tooling
+    delivery_record: posts/video/episodes/006-tank-mix/DELIVERY-v02.json
+    runbook: runbooks/07-video-posts.md
+    captions: posts/video/episodes/006-tank-mix/CAPTIONS-v02.json
+    storyboard: posts/video/episodes/006-tank-mix/STORYBOARD-final-r01.md
+  media:
+    revision: 006-production-v02
+    sha256: 456a2e10de76277aeb34ec642fcc9ebb02d38cf18ba36000da7079dcd1fdbbdc
+    bytes: 7140636
+    duration_seconds: 60.1
+    dimensions: 1080x1920
+    fps: 30
+    drive: https://drive.google.com/file/d/1II4spG2kBWQE2c0MfbG49pMdWndYW2PC/view
+    facebook: https://www.facebook.com/reel/1696850165378588
+    tiktok: https://www.tiktok.com/@kisikamspace/video/7703087722826714369
+    existing_validation: Full playback ended at 60.1 seconds with 1803 decoded frames, no dropped/corrupt frames or playback errors; 18 encoded frames inspected. Final render took 96 seconds. No rerender was necessary for this PR preparation.
+  acceptance:
+    reconstruction: Office runbook links page/style agreement, primary sources, separately confirmed shared understanding/storyboard, source code and exact delivery identity.
+    owner_device: Owner confirms all transfer and manual publication happened on mobile, with a few-minute estimate from memory rather than a numeric stopwatch result.
+    post_package: Platform-specific copy and both actual publication URLs recorded; educational WALES has no required sales F-link under the approved acceptance.
+    cost: Known pending reservations remain 2847 satang across three prior attempts; remaining allowance after reservations is 7153 satang. Paid calls are blocked when balance or cost bounds are unknown; local accounting is not a provider-wide hard cap.
+    checks: Office budget tests 17 pass / 103 assertions. HQ typecheck and 57 tests / 298 assertions pass. Local plan/events Wake succeeds.
+  isolation:
+    office_files: 74
+    hq_plan_files: 4
+    historical_video_events: 40
+    excluded: All orchard, mumate, web edits, posts-text-style and shared CIEL source/instruction changes.
+    provenance: Historical event files are copied byte-for-byte and keep their original checkpoint references. Those pre-isolation checkpoints are provenance of the standing branch, not claimed ancestors of this PR. This final closeout anchors the actual isolated PR head instead.
+    preserved: Original HQ hq/20261030 branch, office posts/.DS_Store and unrelated child work remain untouched.
+unresolved:
+  - Owner review and explicit merge approval remain required. Merge office PR 30 first, then HQ PR 104; review changes or failed checks return to this slice. Do not begin slice 2.
+  - Authenticated Insights, exact views/reach/watch-time/save counts and dated follower baselines remain unavailable. TikTok 5 to 15 followers and some saves, plus low Facebook visibility at about 600 followers, are owner reports, not verified clip attribution or grounds to change the Facebook Page goal.
+  - Cross-platform view aggregation remains undecided; keep each platform's sources and definitions separate.
+  - Actual provider invoice reconciliation and a remote Drive checksum remain unavailable; keep conservative pending reservations and do not claim remote byte equality.
+  - Wake still reports project-overlap attention against other active workstreams. Existing scoped parallel permission is recorded in the plan; this delivery used no parallel agents or edits to another lane.
+next_action:
+  action: Commit and push this closeout to HQ draft PR 104, fetch and prove it is on the actual PR head, update final-review descriptions and mark both PRs ready. Present both links for owner review with office-first merge order; do not merge or execute slice 2 without the respective owner decisions.
