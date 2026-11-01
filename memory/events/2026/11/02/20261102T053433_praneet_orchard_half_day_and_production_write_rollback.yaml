@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T053433_praneet_orchard_half_day_and_production_write_rollback
+type: closeout
+recorded_at: "2026-11-02T05:34:33+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Follow-up after slice 9 on the owner's word: a half day in praneet-office
+    orchard add; and a record of two test works the agent wrote to production
+    by mistake, their rollback, and the guard added so it cannot recur the
+    same way.
+  scope:
+    - "praneet-office PR 32; a production rollback on the owner's word ('rollback'); runbooks/08-new-commands.md."
+
+outcome:
+  status: follow-up-awaiting-owner-merge
+  completed:
+    - "While trying the half day against a local praneet-web, the agent passed --base and --credentials as one zsh variable. zsh does not split it, so the script used its defaults, www.ptplant.com and the owner's account. Two orchard add --write calls created works e0eb259c and 6487580d on 2026-09-20 for two real workers, 525 baht of day pay. The tell was on screen: links printed www.ptplant.com and the local database had no row. The agent stopped and told the owner."
+    - "The owner declined hiding and asked for a rollback. A read listed every touched row; then one transaction deleted the two works (their plots and people cascade) and the two day-pay rows of 2026-09-20, aborting if any count differed. Audit rows 165 and 166 are kept, as the owner did not ask to remove history. Read back: 2026-09-20 shows its two Sheet works and 0 baht."
+    - "praneet-office PR 32 (head aebaf45): orchard add takes a half day per person on day-rate work. Every orchard command prints where it reads or writes and whether that is production, and refuses an unknown option, including options run together in one argument, before signing in. Runbook 08 sets that for every new command or new write, with how to try it on the local server."
+  acceptance:
+    - "bun test scripts/ in praneet-office: 15 pass. The test of options run together cannot reach production even if the check broke: no --write, a missing file, OPS_BASE on a closed local port."
+    - "Against the local praneet-web on praneet_test, options typed out: the first line read 127.0.0.1 (not production) before --write. A half day and a second work the same day gave 175 and 350 in orchard_day_pay."
+  not_verified:
+    - "The 2026-09-20 calendar day still holds the mistaken works. The harness refused the agent's orchard calendar --write; the site rewrites the day on the next save, or the owner runs that command."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.4"
+  repository:
+    head: "17159565802380c17b5dbacdf000f7cb55dd654c"
+    branch: hq/20261102
+  related:
+    - "https://github.com/mojisejr/praneet-office/pull/32"
+    - memory/events/2026/11/02/20261102T045109_praneet_orchard_slice9_switched_delivered.yaml
+
+unresolved:
+  - "Other praneet-office scripts (posts, today, slips and others) still default to production without the option check; runbook 08 applies when each is next changed."
+  - "A production write still needs only --write; nothing asks for a second confirmation."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: merge praneet-office PR 32. Agent: remove the
+    praneet-office-halfday worktree after the merge, then start slice 1 of
+    praneet-orchard-money-001.
+  acceptance_check:
+    - "praneet-office main carries checkArgs and runbook 08."
