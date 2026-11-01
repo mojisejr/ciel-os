@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T045046_praneet_nursery_rev24_orchard_line
+type: decision
+recorded_at: "2026-11-02T04:50:46+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Plan revision 2.4 changes one line: orchard work, wages and chemicals are
+    in the shared database, no longer in Gemini Spark and the Sheet. It
+    authorizes no new nursery slice.
+  scope:
+    - "workstreams/praneet-nursery-001/PLAN.md, one line under 'ข้อมูลร้าน vs งานสวน'."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Closing praneet-orchard-001 slice 9, the owner said to hide the
+    duplicates and change this plan's line ('ปิด slice 9 ซ่อน + แก้ ครับ').
+    Slice 24 stays delivered as recorded on 2026-10-23. The next nursery
+    slice still needs its own owner decision.
+  why: >-
+    The line told a cold session that orchard work still lives in Spark and
+    the Sheet, which stopped being true when the owner switched.
+
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.4"
+  execution_phase: "2"
+  repository:
+    head: "f9bac35b6e08a0f0a56617d5aefde21c7d29b631"
+    branch: hq/20261030
+    working_tree: this-decision
+  related:
+    - memory/events/2026/11/02/20261102T043201_praneet_orchard_rev14_slice9_authorized.yaml
+
+unresolved:
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None for this workstream until the owner decides its next slice.
+  acceptance_check:
+    - "Wake reports praneet-nursery-001 at plan revision 2.4, authorized, with no new slice."
