@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T073323_praneet_drawn_2d_preview_v03
+type: closeout
+recorded_at: "2026-11-01T07:33:23+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver the owner's selected simple drawn 2D silent preview of episode 001.
+  scope:
+    - Original code-native drawn plant/root animation, actual-file inspection and retirement of superseded generated previews within slice 1.
+outcome:
+  status: drawn-2d-preview-prepared
+  completed:
+    - Built a complete 34-second original drawn 2D explanation on warm white, using outlined plant/soil shapes, flat fills and progressive path drawing without a presenter mascot.
+    - Connected the tree, root reveal and magnification through one camera/world; showed pore water replacing air, qualitative uptake reduction, two inspection points and a closing takeaway.
+    - Corrected the pore-annotation target, preserved the young leaf within the art clip, improved leaf droop and moved reveal initial states into authored styles/attributes to avoid entrance flashes before retaining the final file.
+    - Inspected sixteen actual encoded story/transition frames and the encoded last frame. The retained MP4 passed full decode and idle desktop Chrome playback to the end with no dropped frames or media error.
+    - Opened the retained file in QuickTime and observed its title, duration and active playback. The owner interacted with the app; no further playback control was sent after observing the selected video playing.
+    - Under the owner's existing instruction to retire superseded generated previews, removed the rejected cartoon-v02 output and the current trial's obsolete preflight snapshots. Retained all tracked source/runbooks, unrelated post assets, the new MP4 and actual encoded-frame/QA proof.
+  boundary: >-
+    This fulfills the requested silent visual trial, not final creative/story
+    acceptance, a voiced or published episode, full slice delivery or viral
+    performance. No provider request, external draft/post/upload, push, PR or
+    merge occurred. Narration timing remains provisional.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.5"
+  decision: memory/events/2026/11/01/20261101T072209_praneet_drawn_2d_trial_authorized.yaml
+  repository:
+    head: "424058df091758929e9efe3c918c6739b7c97216"
+    branch: hq/20261030
+  office:
+    head: "b1224dbb933a1da2fc684260fa2b22ab725fb982"
+    branch: feat/video-posts-tooling
+    contract: posts/video/episodes/001-wet-soil/DRAWN-v03.md
+    source: posts/video/episodes/001-wet-soil/drawn/
+    command: bun run posts video drawn-render
+  artifact:
+    path: checkouts/praneet-office/posts/out/001-wet-soil/drawn-v03/praneet-001-drawn-v03-silent.mp4
+    sha256: "c781653c8e8c32a2a6e8ad127ebe7b08cd17d4b6fae155a4ad66f47501038557"
+    bytes: 4732357
+    format: H.264 yuv420p, 1080x1920, 30 fps, 1020 frames, 34.000 seconds, no audio stream
+    render_time: HyperFrames reported 54.7 seconds; wrapper measured 56.3 seconds on this host.
+    ignored_evidence: posts/out/001-wet-soil/drawn-v03 contains metadata, verification, actual encoded-frame review, geometry measurements, playback, check/render logs and the retirement record.
+  retired_artifacts:
+    - path: checkouts/praneet-office/posts/out/001-wet-soil/cartoon-v02/
+      bytes_removed: 8848681
+    - path: checkouts/praneet-office/posts/out/001-wet-soil/drawn-v03/frames/
+      bytes_removed: 2347171
+  validation:
+    - Final drawn-check passed with zero lint/runtime/layout/contrast/craft errors. Only two dense-track lint warnings and the intentional-silence craft warning remain. Automated motion analysis was not enabled.
+    - FFprobe verified the stated video stream and absence of audio. FFmpeg decoded the entire retained MP4 without error; sixteen actual encoded frames were visually inspected, including transitions and the last frame.
+    - Desktop Chrome at a 360x640 viewport played the exact retained file to ended=true and currentTime=34, with 1020 total frames, zero dropped frames and no media error.
+    - Authored-timeline geometry at 6.5 seconds measured the O2 pore center at 295,1045 and annotation tip at 260,1030, within its approximately 39-pixel radius. The young leaf top is 516.2 against clip top 510. Camera samples measured continuous scaling from 1 to 1.35 between 8.1 and 9.35 seconds and back between 21.6 and 22.8 seconds.
+    - Read-only source review identified the annotation mismatch, corrected before the retained render, and found no further material camera/science or paid/publishing-path issue. Existing scientific scope and source references remain in the episode contract.
+    - bun build scripts/posts.ts --target bun with existing external dependencies passed. git diff --check passed. Only owned source/docs were committed; office retains only the pre-existing untracked posts/.DS_Store.
+unresolved:
+  - Owner feedback and acceptance of drawn v03, final factual story and voice remain pending. This is not audio-synchronized narration. Earlier v01 and mascot-v02 renders are intentionally retired; their tracked sources remain reproducible.
+  - Gemini readiness, current Bangkok-month usage including other use, request/model cost bounds and atomic reservation/reconciliation remain unproved. No send path exists, paid calls stay disabled and the 100 THB monthly ceiling stands.
+  - Actual owner-phone playback/handling, longer or more complex low-memory rendering, final audio alignment, post/cover/F-link, manual publication, Insights baseline and a consistent view definition remain slice-1 proofs.
+  - Two dense-track warnings and intentional silence remain; automated motion analysis was not enabled. References and successful rendering do not establish Thai Facebook/TikTok performance or the cause of virality; HistoryInMaps' private workflow remains unverified.
+  - Office posts-text-style at 6d84f2a remains unmerged and must be preserved. Local child/HQ commits still await eventual owner-reviewed PR/closeout integration; HQ push/merge timing belongs to the owner.
+next_action:
+  action: Deliver the retained drawn v03 MP4, collect timestamped feedback on visual clarity and pacing, then revise locally or establish voice/story approval and actual Gemini budget bounds before producing and timing narration. Do not infer publication approval.
