@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.9
+**Plan revision:** 1.0
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -114,6 +114,19 @@ preserve factual meaning and identify visual metaphors as illustrative. This
 authorizes the new trial and private upload, not social publication or replacing
 the accepted baseline style without owner review. Keep the current Drive file
 unless separately asked to remove it.
+
+On 2026-11-01 the owner accepted v06's richer drawn visual direction and the
+return to central Thai, then requested the normal storyboard-first workflow
+for another topic: pesticide tank-mixing order, precipitation and loss of
+efficacy. Preserve that visual/voice direction as the current starting style.
+This authorizes research, a complete proposed narration/storyboard and static
+code keyframes only; production, new paid narration and external draft writes
+wait for approval of the specific story revision. Use an available episode id
+without replacing the retained topic backlog. The owner confirmed that this
+proposal covers plant-protection pesticides first; use water as the carrier,
+not a fertilizer/micronutrient recipe. Product labels and exact tank-mix suitability
+remain authoritative; generic mixing order or a jar test cannot certify every
+combination's efficacy or crop safety. The first publication remains unselected.
 
 1. Read the page brief, relevant owner material, earlier episodes and feedback.
    Propose a small set of topics with a recommendation and references. Verify
