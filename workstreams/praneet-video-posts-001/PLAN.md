@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.7
+**Plan revision:** 0.8
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -93,6 +93,16 @@ not the first selected publication. Record the zero starting usage as an
 owner declaration, reserve cost atomically before each attempt, retain uncertain
 charges, reuse generated audio, and do not retry automatically. The existing
 100 THB Bangkok-calendar-month ceiling and external-publication gates remain.
+
+On 2026-11-01 the owner requested one full voiced trial using abundant informal
+Isan vocabulary and an Ubon Ratchathani speech direction, with a playful,
+less polished conversational delivery. This authorizes adapting the existing
+sample's narration without expanding its factual claims, one further bounded
+Gemini generation, local retiming and upload to the connected private Google
+Drive. Delete the previously uploaded v04 Drive copy before uploading its
+replacement; retain reconstructable local source and paid audio caches. Ubon
+dialect authenticity and final voice acceptance remain owner listening checks,
+not an inferred provider guarantee. This remains a trial, not the first publication.
 
 1. Read the page brief, relevant owner material, earlier episodes and feedback.
    Propose a small set of topics with a recommendation and references. Verify
