@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.8
+**Plan revision:** 0.9
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -103,6 +103,17 @@ Drive. Delete the previously uploaded v04 Drive copy before uploading its
 replacement; retain reconstructable local source and paid audio caches. Ubon
 dialect authenticity and final voice acceptance remain owner listening checks,
 not an inferred provider guarantee. This remains a trial, not the first publication.
+
+On 2026-11-01 the owner found Isan harder to understand and requested a return
+to the original central-Thai voice, upgraded visual quality inspired by the
+shared Daniel Mac8 animation prompt, a full render and Google Drive delivery.
+This authorizes original richer drawn scenes, paper/hatching texture, local
+scene acting and more deliberate transitions using the existing code-rendered
+stack. Reuse the cached v04 Thai narration without a new paid generation;
+preserve factual meaning and identify visual metaphors as illustrative. This
+authorizes the new trial and private upload, not social publication or replacing
+the accepted baseline style without owner review. Keep the current Drive file
+unless separately asked to remove it.
 
 1. Read the page brief, relevant owner material, earlier episodes and feedback.
    Propose a small set of topics with a recommendation and references. Verify

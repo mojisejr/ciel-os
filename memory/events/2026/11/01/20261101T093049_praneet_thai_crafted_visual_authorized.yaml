@@ -1,0 +1,29 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T093049_praneet_thai_crafted_visual_authorized
+type: decision
+recorded_at: "2026-11-01T09:30:49+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Return to central Thai and upgrade the drawn visual quality of the full trial.
+  scope:
+    - Original richer scene artwork and acting, cached Thai narration, local full render and private Drive handoff.
+outcome:
+  status: decided
+  decision: Owner found Isan harder to understand, requested the original Thai voice and a richer visual treatment based on the previously inspected Daniel Mac8 prompt, then full rendering and Google Drive delivery. No further paid speech request is needed or authorized by this implementation.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.9"
+  slice: "1"
+  repository:
+    head: "a3e641c128eaceb524a98bb5da6e8f4680f5ac2c"
+    branch: hq/20261030
+  reference: https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/daniel-mac8-306214.md
+unresolved:
+  - Owner review of the new visual execution remains required; an inspiration prompt is not proof of equivalent output or viral results.
+  - Previous budget reservations, publication proofs and integration review remain unresolved; this is still a trial.
+next_action:
+  action: Build eight original textured drawn shots against the exact cached v04 narration; inspect encoded motion and full playback, then upload and verify a new private Drive file.
