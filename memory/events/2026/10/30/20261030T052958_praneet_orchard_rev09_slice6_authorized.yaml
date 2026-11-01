@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261030T052958_praneet_orchard_rev09_slice6_authorized
+type: decision
+recorded_at: "2026-10-30T05:29:58+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Plan revision 0.9 settles four questions for slice 6, spray details and
+    group history, and authorizes it.
+  scope:
+    - "workstreams/praneet-orchard-001/PLAN.md and slices/6.md."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner answered four questions and approved the slice ('อนุมัติ
+    slice 6 ได้เลยครับ'). The spray form can copy its products from an old
+    recipe or from the plot's last spray ('มี'). The 38 old Treatment_Logs
+    link to the old recipes by their RCP id, and their groups come from the
+    recipe products that match products on the shelf; an unmatched product
+    has no group ('โอเค'). The sprays recorded as notes before the form
+    existed (28 and 29 Oct) are converted once by the agent ('แปลงก็ดี');
+    after that the owner fills the details himself, or tells the agent, who
+    records them with orchard add. The nursery care log may change in
+    parallel with praneet-nursery-001 ('จริงๆ ทำได้เลย').
+  why: >-
+    Rotating groups needs each plot's real history of what was sprayed. The
+    history reads groups from shelf products, so the shelf the owner fills
+    from his bottles comes before the history import and the conversion.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "0.9"
+  slice: "6"
+  repository:
+    head: "506b41570e5e2d4644ec611ebbd4e10d48931799"
+    branch: hq/20261030
+    working_tree: this-decision
+  related:
+    - memory/events/2026/10/30/20261030T051153_praneet_orchard_round_closed_handoff.yaml
+
+unresolved:
+  - "The production shelf is empty until the owner checks the bottles; the Treatment_Logs import and the 28 and 29 Oct conversion wait for it."
+  - "praneet-nursery-001 still reads owner-confirmation-required in Wake; it clears only with a decision on that workstream."
+  - "praneet-office orchard add accepts a team with no people and the server then drops the team and its pay silently; deferred. Workaround: always list the team's people with the team."
+  - "Four rules in the 2026-10-27 report came from a search summary and need a direct read before slice 7 enforces them."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Render two or three samples of the spray-detail form on the real add-work
+    page for the owner to pick, then build slice 6 on praneet-web and
+    praneet-office topic branches.
+  acceptance_check:
+    - "Slice 6 acceptance in workstreams/praneet-orchard-001/slices/6.md."

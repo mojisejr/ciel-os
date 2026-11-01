@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T165015_praneet_slice1_merged_synced_cleanup
+type: closeout
+recorded_at: "2026-11-01T16:50:15+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Confirm the owner's two merges, synchronize this work and remove disposable video temporary files.
+  scope:
+    - Post-merge local synchronization and bounded cleanup only; no slice-2 execution.
+outcome:
+  status: post-merge-sync-and-cleanup-recorded
+  completed:
+    - Verified office PR 30 and HQ PR 104 merged with the exact reviewed heads reachable from their fetched origin/main refs.
+    - Office is on clean main at b8f871cfe59223873b7a54ff6465b5a8893acdc7; HQ local main and its review checkout match fetched origin/main f03e0ff700ddcf6214cd8ba18012325647a1ae11.
+    - Deleted the two fully merged local video topic branches after proving zero exclusive commits and no open PR references. Their remote branches were already deleted and stale refs were pruned.
+    - Synced merged origin/main into the shared HQ standing branch without switching it. A merge-tree check and post-merge diff confirmed the sole incoming file was this workstream's actual final delivery event; unrelated orchard work was preserved.
+    - Removed 95 disposable files totaling 22500124 bytes, including fifteen explicitly named task temporary reports and four generated compiler/preview directories. Final media, paid narration WAVs, budget ledger and stored verification evidence were preserved.
+    - Rehashed five protected artifact/audio/ledger files after cleanup; all were unchanged, including the delivered final MP4 SHA256.
+    - Preserved the known posts/.DS_Store using a repo-local Git exclude; no tracked ignore rule or business source changed.
+  boundary: Owner merges are observed Git/GitHub facts, not a new merge authorization. No API spend, social edit, website change, new episode or slice-2 action occurred. This is a local housekeeping record on the existing standing branch, not a new slice delivery.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.4"
+  repository:
+    head: 366c206e76026b102e56a769a9d71d0d0975e2bd
+    branch: hq/20261030
+  merged_delivery:
+    pull_request: https://github.com/mojisejr/ciel-os/pull/104
+    merge: f03e0ff700ddcf6214cd8ba18012325647a1ae11
+    reviewed_head: a12ec5b97bfb77c4eb03a144477ae94a5678922a
+    closeout: memory/events/2026/11/01/20261101T160156_praneet_slice1_pr_delivery_closeout.yaml
+  office:
+    pull_request: https://github.com/mojisejr/praneet-office/pull/30
+    merge: b8f871cfe59223873b7a54ff6465b5a8893acdc7
+    reviewed_head: 825a63c95c524b39fee2f9f402e941b9ba786e0d
+    current_branch: main
+    preserved_final_sha256: 456a2e10de76277aeb34ec642fcc9ebb02d38cf18ba36000da7079dcd1fdbbdc
+  cleanup:
+    removed_build_directories:
+      - .local/video-crafted
+      - .local/video-mixing
+      - .local/video-preflight
+      - .local/video-voice
+    removed_files: 95
+    removed_bytes: 22500124
+    protected_files_rehashed: 5
+    review_worktree: Clean at current main; archive tool refused because this chat now treats it as the primary checkout. It was retained rather than forcibly removed.
+  checks:
+    - Verified main equality, exact reviewed-head ancestry, clean worktrees and fully merged branches. No code/media change required a repeat of the already-passing production tests.
+    - Git status stayed clean after each cleanup/sync operation; original standing branch and the separate orchard worktree remain intact.
+unresolved:
+  - The clean review worktree is retained because the managed archive tool reports it is the task's primary checkout; do not bypass that protection with filesystem removal.
+  - Wake still reports the existing project-overlap attention. Git proves slice-1 delivery is merged; this task does not change CIEL lifecycle logic or grant slice-2 execution.
+  - Actual provider invoice reconciliation, exact Insights/view/save counts, dated follower baselines, cross-platform view aggregation and remote Drive checksum remain as recorded. Conservative budget reservations and cached audio remain intact.
+next_action:
+  action: Report merged slice 1 and cleanup, then wait for a separate owner decision to start slice 2 in a fresh session. That slice repeats one approved episode through syncup/storyboard/production/manual posting and uses a two-week evidence review; no topic research, storyboard or production starts in this cleanup task.

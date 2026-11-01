@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T162046_praneet_orchard_slice11_built_awaiting_owner
+type: closeout
+recorded_at: "2026-11-01T16:20:46+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Build slice 11, jobs that group orchard work over days and pay it in
+    rounds, as draft PRs, with its migration on production.
+  scope:
+    - "praneet-web PR 37 and praneet-office PR 31, both draft; migration 022 on production on the owner's word; praneet-web PR 36 (test memory guard), merged."
+
+outcome:
+  status: built-awaiting-owner
+  completed:
+    - "The owner picked sample A (one card per unpaid day) and P1 (job buttons on the add-work form) from samples rendered on the real back office, and confirmed that ordinary recording stays as it is."
+    - "praneet-web PR 37 (draft, head 15203b8). Migration 022 adds orchard_jobs, orchard_job_rounds, orchard_work.job_id and paid_round, and orchard_payments.round_id. A work joins one job from the add-work or edit form, or 'new' named after it. The job's page takes each person's hours and the day's price. 'คิดเงินรอบนี้' records one wage payment per person or team for the ticked counted days and marks them paid. A paid day's money, people and job are refused until its round is taken back, and taking back one payment of a round takes back the round. 'จบงาน' takes a job out of the picker and can be undone."
+    - "praneet-office PR 31 (draft, head 7bf7ce0): orchard jobs, orchard job <name>, and a job by exact name or 'new' in orchard add, tried against a local praneet-web."
+    - "Migration 022 ran on production while PR 37 is a draft: 'Applied 022_orchard_jobs.sql'. Read back: the hash matches, the two tables and three columns exist, praneet_reader can select both tables, and no row has a job, round or round payment yet."
+    - "A full unguarded bun run check of this branch grew the test next-server to about 10 GiB on the 8 GiB laptop. The kernel panicked at 15:24 (watchdog timeout, low swap), as the panic report's process list shows. On the owner's request ('เราจำกัด การรัน test ให้มันมีขอบเขตได้หรือเปล่า … ก่อนเราเดินหน้าต่อ'), praneet-web PR 36 runs every test run inside a memory limit: it will not start below 2,560 MB free and stops above 3,072 MB. The limits are written in the README under Checks. It was proven to refuse, to stop at 436 MB under a 400 MB limit with nothing left running, and to pass a run through. The owner merged it as 53da533."
+  acceptance:
+    - "tests/orchard.spec.ts, new job test. A job over days not in a row, with hours per person per day, is paid in two rounds of 575 and 675. Paid days are not counted again: changing, hiding or paying them again is refused. The worker balance matches what was paid. A round taken back puts its day back to unpaid. The job is linked and unlinked from the edit form, and ended and reopened."
+    - "The whole suite under the guard on 15203b8: 122 passed, peak 1,966 MB."
+  not_verified:
+    - "The form and the job page were not tried on the owner's phone."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.3"
+  slice: "11"
+  decision: memory/events/2026/11/01/20261101T144520_praneet_orchard_rev13_slice11_authorized.yaml
+  repository:
+    head: "cec4db2971c3caf9f732480183699506c4d2f8f2"
+    branch: hq/20261030
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/37"
+    - "https://github.com/mojisejr/praneet-office/pull/31"
+    - "https://github.com/mojisejr/praneet-web/pull/36"
+
+unresolved:
+  - "The 30 and 31 Oct grafting works are to be linked as the first job after the merge."
+  - "Running the suite against a production build (next build + next start) would use far less memory than next dev. It changes how every test runs and is deferred until the guard stops runs often. Workaround: the guard."
+  - "Under load, the first call to a route compiles in next dev past a 15 s wait. The job test failed this way twice and supply.spec.ts three times in one run; all passed in the next whole run. Workaround: rerun the whole suite with the machine quieter."
+  - "The praneet-office worktree at checkouts/praneet-office-s11 holds branch feat/orchard-jobs while the main praneet-office checkout stays on another session's branch; remove the worktree after PR 31 merges."
+  - "praneet-office orchard add does not pass a half day; deferred since slice 10."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: merge praneet-web PR 37, then praneet-office PR 31. Agent: link
+    the 30 and 31 Oct grafting works as the first job, and record slice 11
+    delivered.
+  acceptance_check:
+    - "Slice 11 acceptance in workstreams/praneet-orchard-001/slices/11.md."

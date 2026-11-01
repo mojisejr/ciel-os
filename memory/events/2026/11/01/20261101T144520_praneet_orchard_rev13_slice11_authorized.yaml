@@ -1,0 +1,65 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T144520_praneet_orchard_rev13_slice11_authorized
+type: decision
+recorded_at: "2026-11-01T14:45:20+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Plan revision 1.3 adds slice 11, a job that groups orchard works done
+    over several days and pays them at the end or in rounds, before slice 8,
+    and authorizes it with its production migration.
+  scope:
+    - "workstreams/praneet-orchard-001/PLAN.md and slices/11.md."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner asked to link works that continue over days, such as grafting,
+    mowing and pruning, which are recorded day by day, unpaid, and paid when
+    the team comes to settle, citing the 30 and 31 Oct grafting works. Two
+    syncup rounds agreed (10 of 11 guesses matched): a job groups any works,
+    on days that need not be consecutive; a work belongs to one job at most;
+    hours stay per person per day; 'คิดเงินรอบนี้' on the job's page pays the
+    ticked unpaid days for each person or team and marks them paid, hourly and
+    piece work only; one 'จบงาน' button takes a job out of the picker and can
+    be undone; linking and unlinking work from both the add-work and the edit
+    forms; praneet-office reads and writes jobs; no calendar change; no other
+    kind of link. The page layout is chosen from samples on the real page
+    before it is built. The owner then said to start and to run the migration
+    ('ถ้าพร้อมแล้วผมคิดว่าคุนเริ่มได้เลยครับ ! แล้ว รัน migration ได้เลยครับ'),
+    which authorizes running slice 11's additive migration on production
+    while its PR is a draft.
+  why: >-
+    The owner's multi-day hourly work is paid at the end or in parts; today
+    the works and the payments carry no link, so neither he nor the agent can
+    tell which days a payment settled.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.3"
+  slice: "11"
+  repository:
+    head: "7f6c8cec77050287355d15650a703830677daf85"
+    branch: hq/20261030
+    working_tree: this-decision
+  related:
+    - memory/events/2026/11/01/20261101T060909_praneet_orchard_slice10_delivered.yaml
+
+unresolved:
+  - "The page layout waits for the owner's pick among rendered samples."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Render 2 to 3 samples of the job page and the add-work job picker on the
+    real praneet-web page at 390 and 1280, light and dark, for the owner's
+    pick; then build slice 11 on a praneet-web topic branch.
+  acceptance_check:
+    - "Slice 11 acceptance in workstreams/praneet-orchard-001/slices/11.md."

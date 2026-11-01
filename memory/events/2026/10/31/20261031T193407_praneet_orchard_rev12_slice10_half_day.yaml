@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261031T193407_praneet_orchard_rev12_slice10_half_day
+type: decision
+recorded_at: "2026-10-31T19:34:07+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Plan revision 1.2 adds a half day on the add-work form to slice 10, in
+    the same PR, and authorizes it.
+  scope:
+    - "workstreams/praneet-orchard-001/PLAN.md and slices/10.md."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner said he cannot set that a worker did half a day ('ผมไม่สามารถ
+    กำหนด งานว่า วันนี้น้าชล ทำงาน ครึ่งวันได้'). The agent read praneet-web:
+    the half day exists since slice 2, but only as a toggle on the day page's
+    money tab, shown once the day has day-rate work for that person; the
+    add-work form only mentions it under its collapsed pay choices. The agent
+    recommended the same choice on the add-work form, per person, for
+    day-rate work, setting the person's one value for that day, with an
+    untouched name keeping it. The owner approved and asked for it in PR 35
+    ('เพิ่มเลย แล้วทำใน PR นี้เลย').
+  why: >-
+    The owner records the day's work from the add-work form; a choice he
+    cannot find there is a choice he cannot make.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.2"
+  slice: "10"
+  repository:
+    head: "0121685ac5d9c888af9fd7b6c826274878f150f7"
+    branch: hq/20261030
+    working_tree: this-decision
+  related:
+    - memory/events/2026/10/31/20261031T190134_praneet_orchard_rev11_slice10_authorized.yaml
+    - "https://github.com/mojisejr/praneet-web/pull/35"
+
+unresolved:
+  - "Migration 021 must run on production while PR 35 is a draft; it waits for the owner's word naming that run."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Add the half day to the add-work form on praneet-web branch
+    feat/orchard-unpaid-work, with tests, and push it to PR 35.
+  acceptance_check:
+    - "Slice 10 acceptance in workstreams/praneet-orchard-001/slices/10.md."

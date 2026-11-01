@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T045109_praneet_orchard_slice9_switched_delivered
+type: closeout
+recorded_at: "2026-11-02T04:51:09+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Deliver slice 9, the final slice: confirm nothing from the Sheet is
+    missing, record the owner's switch, and stop saying elsewhere that the
+    orchard still uses Spark and the Sheet.
+  scope:
+    - "A read-only comparison on production; four duplicate works hidden on the owner's word ('ปิด slice 9 ซ่อน + แก้ ครับ'); praneet-nursery-001 plan revision 2.4."
+
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - "The owner switched in practice before this slice: he has not recorded with Spark for some time and uses only this system (decision 20261102T043201)."
+    - "bun run orchard report against the latest Sheet export (2026-10-26) and the calendar extras, with --no-chemicals as the catalog was never imported: work 175 rows match and 17 are after the first day entered in /ops (2026-10-19); old money history 86 match and 5 after; 26 recipes and 36 treatments match; nothing is only in /ops. The report's 'ต่างกัน' days of 20 to 26 Oct count only work typed in /ops: reading 20, 24 and 26 Oct on production showed the Sheet's rows there, imported on 2026-10-28 with no pay as agreed."
+    - "24 Oct held four pairs of works identical in every field except their id, all from the Sheet import, none with money. The agent hid the second of each pair (01f00e28, a245279d, b3201f6f, 6c72b671) through DELETE /api/ops/orchard/work, which hides and keeps the audit. Read back: 24 Oct shows 4 works."
+    - "bun run orchard calendar reports every day written to the calendar."
+    - "praneet-nursery-001 plan revision 2.4 (decision 20261102T045046) now says orchard work, wages and chemicals are in the shared database and the Sheet is read-only history."
+  acceptance:
+    - "Every work and money row of the Sheet is in the system, by the final comparison above, and no calendar day is waiting."
+    - "The owner announced the switch, and the shop's plan no longer says the orchard uses the old system."
+  not_verified:
+    - "Anything recorded with Spark after the 2026-10-26 export was not compared; the owner says he stopped recording there."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "9"
+  decision: memory/events/2026/11/02/20261102T043201_praneet_orchard_rev14_slice9_authorized.yaml
+  previous: memory/events/2026/11/01/20261101T204222_praneet_orchard_slice11_delivered.yaml
+  repository:
+    head: "254c10959be9476c03b90f36bd3558873bf2a6e6"
+    branch: hq/20261030
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261030
+  related:
+    - memory/events/2026/11/02/20261102T045046_praneet_nursery_rev24_orchard_line.yaml
+
+unresolved:
+  - "Income, spending and harvest (old slice 8) are recorded nowhere yet. The owner answered the first design round on 2026-11-02; it opens as its own workstream on his word."
+  - "The Calendar to Sheet Apps Script stays on as the owner chose; nothing reads the Sheet."
+  - "praneet-office orchard add does not pass a half day; deferred since slice 10."
+  - "Running the praneet-web suite against a production build would use far less memory than next dev. Deferred; workaround: the test memory guard."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: push hq/20261030 and merge it to main. Agent: finish the syncup
+    of the orchard money and harvest design, then open its workstream on the
+    owner's word.
+  acceptance_check:
+    - "Wake reports praneet-orchard-001 finished once hq/20261030 reaches main."

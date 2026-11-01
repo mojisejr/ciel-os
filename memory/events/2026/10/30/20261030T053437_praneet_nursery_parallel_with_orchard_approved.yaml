@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261030T053437_praneet_nursery_parallel_with_orchard_approved
+type: decision
+recorded_at: "2026-10-30T05:34:37+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Record the owner's approval that this workstream and praneet-orchard-001
+    may both change praneet-web and praneet-office, so Wake stops reporting
+    the overlap as a conflict. It authorizes no new nursery slice.
+  scope:
+    - "This record only; no plan change."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    On 2026-10-30 the owner approved praneet-orchard-001 slice 6 changing
+    the nursery care log to pick products from the shared chemical shelf,
+    in parallel with this workstream ('จริงๆ ทำได้เลย'), and asked for a
+    record here so a later nursery session continues without the conflict
+    ('คุนเพิ่ม decision ฝั่ง nersery-001 แล้ว closeout เพิ่มก็ได้ครับ').
+    Slice 24 stays delivered as recorded on 2026-10-23. The next nursery
+    slice still needs its own owner decision.
+  why: >-
+    Both workstreams use the same two child repositories. Nursery work is
+    idle, and the orchard's change to the care log is small and shared.
+
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.3"
+  execution_phase: "2"
+  repository:
+    head: "1feec1f2e1ac7d78a0b6a15fe6db8fe9a5367e1e"
+    branch: hq/20261030
+    working_tree: this-decision
+  related:
+    - memory/events/2026/10/30/20261030T052958_praneet_orchard_rev09_slice6_authorized.yaml
+    - memory/events/2026/10/23/20261023T075615_praneet_nursery_slice24_closed.yaml
+
+unresolved:
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None for nursery until the owner decides its next slice; the care log
+    change belongs to praneet-orchard-001 slice 6.
+  acceptance_check:
+    - "Wake reports praneet-nursery-001 without an overlap conflict."

@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20261031T055548_mumate_pay_signals_opened_slice1_authorized
+type: decision
+recorded_at: "2026-10-31T05:55:48+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-pay-signals-001
+  lane: single
+  objective: >-
+    Open the workstream that records the moments a member decides to pay or
+    not, so the team can answer "ทำยังไงให้ลูกค้าจ่ายเงิน" with evidence, and
+    authorize slice 1: walls and the checkout path recorded per member, shown
+    on bdash as totals.
+  scope:
+    - "Plan 0.1 slice 1: one additive signal table; walls recorded by the engine (free quota exhausted, QI insufficient, matching cap) and by fe (calendar lock, compatibility quota, reminders, advanced fields); checkout preview, charge and result linked; two bdash cards on เงินเข้า; staging rehearsal with response-time measurement; release with the owner's next promote."
+  out_of_scope:
+    - "Slices 2-5 (each needs its own decision); any front-end change; /ops; LINE push; price or rule changes; stored chat text; GA4."
+
+outcome:
+  status: decided
+  slice: "1"
+  decision: >-
+    The owner brought the business owner's question on 2026-10-30 and asked
+    for a syncup. Over three rounds he agreed: the yearly membership is the
+    main line ("คนที่จ่ายรายปีคือคนที่ชอบระบบจริงๆ"); database and engine
+    levers are ours to propose and apply once the team approves; collection
+    order walls+checkout, then membership state and renewals, then acquisition
+    source, then free-use history; collect per member and show totals, with
+    legal issues reported; no new cost for the team and no effect on current
+    members; granted Pro kept apart from bought Pro; an in-app card plus the
+    existing web push for expiry notices, no LINE push; a private report for
+    the owner first. He authorized opening the workstream: "เปิด workstream
+    ได้ครับ แล้วสรุปอีกครั้ง".
+  counts_read: >-
+    Production counts were read on 2026-10-31 through bin/prod-sql.sh on the
+    owner's word ("อนุญาติ คุนอ่านได้เลย"), as rolled-back aggregate queries
+    only; they are summarised in the plan's starting evidence. A second batch
+    of five query files was refused to the agent by the harness and waits for
+    the owner to run; the files are in .assets/mumate/mumate-pay-signals/q/.
+
+evidence:
+  plan: workstreams/mumate-pay-signals-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "7a1cb167a917cd5c759646b1b5fc657f0b144bd3"
+    branch: hq/20261030
+    working_tree: this-decision-and-plan-only
+  related:
+    - memory/events/2026/10/22/20261022T140839_mumate_bdash_v2_slice4_delivered.yaml
+    - memory/events/2026/10/15/20261015T172613_mumate_bdash_next_items_wait_for_team.yaml
+
+unresolved:
+  - "Five counts wait for the owner: approved payments by month, discount by code, active subscriptions expiring split paid/granted, free members who paid QI but never money, push-notification reach."
+  - "Whether the team is running acquisition marketing now; if so slice 3 moves up."
+  - "The average Pro yearly price of ฿303 is not yet attributed to specific codes."
+  - "The 2026-10-15 record says nothing on bdash is built until the team asks; this request is taken as that ask, through the owner."
+  - "The owner's private report (a claude.ai page) is a deliverable of this round, not a slice; it is written from today's counts and updated when the five counts arrive."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Write the owner's private report from today's counts; then build slice 1
+    on topic branches in bazi-sft-dataset and mootech-fe, rehearse on the
+    staging copy with response-time measurement, open the two PRs, and record
+    the closeout after the owner's promote.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/mumate-pay-signals-001/slices/1.md."

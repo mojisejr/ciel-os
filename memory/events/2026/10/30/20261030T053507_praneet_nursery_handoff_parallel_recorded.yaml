@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261030T053507_praneet_nursery_handoff_parallel_recorded
+type: closeout
+recorded_at: "2026-10-30T05:35:07+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-nursery-001
+  lane: single
+  objective: >-
+    Hand this workstream to its next session: the overlap with
+    praneet-orchard-001 is approved, and no nursery slice is authorized.
+  scope:
+    - "Records only; no child repository change."
+
+outcome:
+  status: handoff
+  completed:
+    - "The owner approved, on 2026-10-30, running in parallel with praneet-orchard-001, whose slice 6 changes the nursery care log to pick products from the shared shelf. memory/events/2026/10/30/20261030T053437_praneet_nursery_parallel_with_orchard_approved.yaml records it; Wake no longer reports the overlap as a conflict."
+    - "The question the 2026-10-25 record left open, moving the back office to www.ptplant.com, was settled by praneet-domain-move-001: both its slices were delivered on 2026-10-25."
+  not_verified:
+    - "Whether the Facebook page and LINE OA profile website fields still name the old address; the owner's side."
+
+evidence:
+  plan: workstreams/praneet-nursery-001/PLAN.md
+  plan_revision: "2.3"
+  repository:
+    head: "1feec1f2e1ac7d78a0b6a15fe6db8fe9a5367e1e"
+    branch: hq/20261030
+  related:
+    - memory/events/2026/10/23/20261023T075615_praneet_nursery_slice24_closed.yaml
+    - memory/events/2026/10/25/20261025T073340_praneet_domain_move_slice2_delivered.yaml
+
+unresolved:
+  - "Wake reads the 2026-10-30 parallelism decision as 'authorizes plan revision 2.3 phase 2'. It authorizes no new slice; the next nursery slice (the plan lists 7, 8 to 13, 15 and 18 to 23 still open, 22 kept not built) needs its own owner decision."
+  - "Slice 24 leftovers stay as recorded in its closeout: the loading settings are the agent's until the owner's bed measurement and a real load photo, bag 9 has no weight on production, and the side view draws a pickup for every vehicle."
+  - "praneet-office branch posts-text-style (post style rule, commit 6d84f2a) is local and not pushed."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decision on the next nursery slice; until then nursery work is idle
+    and praneet-orchard-001 slice 6 may change the care log.
+  acceptance_check:
+    - "The chosen slice's acceptance in workstreams/praneet-nursery-001/PLAN.md."

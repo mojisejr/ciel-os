@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261030T205424_praneet_orchard_slice7_trial_on_p3
+type: closeout
+recorded_at: "2026-10-30T20:54:24+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+  note: "The owner stood the session down for the night and asked for this record; the work resumes tomorrow."
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record the owner's trial of slice 7 before merging PR 29: a real mixing
+    question for P-3, what the trial found, the runbook change it caused, and
+    the decisions left with the owner.
+  scope:
+    - "praneet-office PR 29, runbook 06 and orchard mix, read-only on production."
+
+outcome:
+  status: trial-recorded-awaiting-owner
+  completed:
+    - "The owner asked for the next 200 L spray of P-3 (durian): the leaves of the about 30 trees given paclobutrazol on 19 Oct are mature but not yet deep green, he has started withholding water (kak-sok), and dew falls at night. The agent read orchard context, researched, built tanks, ran orchard mix and explained its flow."
+    - "First answer: 0-52-34 350 g, magnesium 200 cc, mancozeb 350 g and sticker per 200 L, no insecticide. The owner pointed out that he had not said there were no pests: the agent should have asked first and researched what the stage risks. Runbook 06 already said to ask; the agent skipped it and concluded 'no target' itself."
+    - "praneet-office e65a815 on PR 29 (pushed, PR description updated): runbook 06 now has nine steps. Before any mix the agent researches the pests and diseases of the crop's stage, month and weather, asks the owner in one round about stage, what he saw ('not checked yet' is an answer) and the weather, never concludes 'no target' on its own, and marks every product as treating something seen or preventive."
+    - "Research for the second round found the DOA alert to check durian for African red mite from October to January, whose pale, dull leaves look like 'leaves not yet dark'. The owner then answered: no red mite, no leaf spots; the heavy problems now are Phytophthora trunk rot and stem borers; psyllids are on leaves that are already mature, and the 29 Oct spray targeted their nymphs and eggs; the trees not yet treated have reached the half-mature (pesalad) stage; he wants to spray about 10 days after 29 Oct while water is already withheld."
+    - "Second proposal, all checked by orchard mix for 2026-11-08 (each refused only because the shelf is empty; warnings: 0-52-34 with magnesium jar test, the 19 and 29 Oct records unreadable, fipronil unknown to the checker). Tank A for the treated trees: mancozeb 350 g (preventive, dew), sticker 30 cc, 0-52-34 350 g and magnesium 200 cc (leaf maturity and colour). Tank B for the pesalad trees if the owner treats them now: tank A plus paclobutrazol 800 cc per his 19 Oct recipe, without its omethoate and etridiazole. Sick trees per the DOA alerts: scrape and paint fosetyl-Al 80% WP 70 g/L with fipronil about 6 cc/L (scaled from 30 cc/5 L), or inject phosphonic acid 40% SL 1:1 at 20 mL per tree; no soil drench while water is withheld. No insecticide in the canopy tanks, because psyllids breed on young flush and no mites were found."
+    - "Read directly: Aliette WDG label EPA Reg. 264-516 (Georgia SLN GA-230002, citrus) says mixing with surfactants or foliar fertilizers is not recommended, so fosetyl-Al was kept out of the fertilizer tanks; DOA alerts on root and stem rot (29 Jul 2025), stem borer (Sep 2024) and African red mite; Chandraparnik et al. 1992 (ISHS 321_28: treated trees need only 3-7 dry days); the RMUTTO 2025 study of fungicides on anthracnose in durian flowers."
+  not_verified:
+    - "No rate is checked against the owner's own bottles; the shelf is empty. Paclobutrazol strength is unknown, so 800 cc/200 L is 400, 600 or 1,000 ppm for 10, 15 or 25%; the DOA trial used 750-1,500 ppm."
+    - "Mancozeb in a tank made acidic by 0-52-34, and fosetyl-Al with fipronil in one paint, are not checked."
+    - "That a canopy spray does not break water withholding is the agent's reasoning, not a source."
+    - "doa.go.th pages fail certificate verification; the agent did not bypass it, so DOA documents were read through other hosts only."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.0"
+  slice: "7"
+  decision: memory/events/2026/10/30/20261030T163420_praneet_orchard_rev10_slice7_authorized.yaml
+  repository:
+    head: "2147fc1264ec57f0aabaee46cec0de58940be754"
+    branch: hq/20261030
+  related:
+    - "https://github.com/mojisejr/praneet-office/pull/29"
+    - "praneet-office feat/orchard-mix-check head e65a8157eca7b3ec6303ed3478f0e12a33beea8f"
+
+unresolved:
+  - "Owner: whether to give the pesalad trees of P-3 paclobutrazol in this round, and the strength on his paclobutrazol bottle."
+  - "Owner: whether PR 29 gets three changes before merge, all recommended by the agent: label rules show pass when a product is not on the shelf (should say not checkable); a warn rule for fosetyl-Al with foliar fertilizers or surfactants, citing the Aliette label; fipronil and the DOA acaricides propargite, amitraz and hexythiazox added to the actives table."
+  - "Owner: merge PR 29 and fill the shelf; slices 6 and 7 close after that."
+  - "The 19 and 29 Oct P-3 records hold their products in note text, so the checker cannot see them until orchard spray set records them."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner returns 2026-10-31 to adjust the proposal. Agent: take his answers
+    on the second tank and the three PR 29 changes, re-run orchard mix, and
+    give the final tanks for 8 Nov.
+  acceptance_check:
+    - "Slice 7 acceptance in workstreams/praneet-orchard-001/slices/7.md."
