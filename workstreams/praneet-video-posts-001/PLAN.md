@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.2
+**Plan revision:** 1.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -19,6 +19,10 @@ The agent and owner work through the existing chat and `praneet-office`.
 The owner supplies a topic or document, or asks what would be interesting.
 The agent researches references, develops the creative treatment, checks facts,
 writes motion code, and delivers a video and post copy. The owner publishes.
+He may also request captions for manually posting the same clip to TikTok.
+Preserve each platform's URL and metric source separately; do not silently
+reinterpret the Facebook Page-follower goal or combine cross-platform view
+definitions without an owner agreement. This adds no TikTok API or automation.
 
 - Page: <https://www.facebook.com/ptPlant/>.
 - Identity: a grower who explains interesting things, with durian seedlings
