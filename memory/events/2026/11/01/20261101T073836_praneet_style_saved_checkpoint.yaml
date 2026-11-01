@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T073836_praneet_style_saved_checkpoint
+type: closeout
+recorded_at: "2026-11-01T07:38:36+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Save the accepted visual style and clarify remaining slice-1 work.
+  scope:
+    - Documentation and owner-decision recording only.
+outcome:
+  status: accepted-style-saved
+  completed:
+    - Saved the reusable drawn 2D style contract in office, distinguishing the owner's acceptance from the sample's implementation defaults.
+    - Updated the runbook, backlog and episode brief/contract so a fresh agent finds the accepted style and does not treat the silent sample as the chosen first publication.
+    - Inspected actual source imports, SVG/timeline code and local renderer wrapper to establish that the sample uses HTML/CSS, SVG and GSAP with local HyperFrames/Chrome/FFmpeg output, not authored Three.js.
+    - Compared the slice-1 acceptance criteria with recorded proof; proposed voice/budget readiness before the first published production.
+  boundary: >-
+    Visual-style acceptance is now recorded. It does not approve the sample's
+    final factual script, voice or publication, select the opening topic or
+    complete slice 1. No video, dependency, secret, provider call, external
+    draft/publication, push, PR or merge was changed or performed.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.6"
+  decision: memory/events/2026/11/01/20261101T073617_praneet_drawn_style_accepted.yaml
+  previous_checkpoint: memory/events/2026/11/01/20261101T073323_praneet_drawn_2d_preview_v03.yaml
+  repository:
+    head: "968eccfb71721400ea9af4d3801fa3455fdda7d9"
+    branch: hq/20261030
+  office:
+    head: "01d40aea79e777b85af4f7a192c01365c585403c"
+    branch: feat/video-posts-tooling
+    style: posts/video/STYLE.md
+    workflow: runbooks/07-video-posts.md
+    backlog: posts/video/EPISODES.md
+  validation:
+    - Five affected office documents were checked; all 24 local Markdown link targets exist.
+    - git diff --check passed. Wake validated/reconciled the plan decision. Only owned documentation/event paths were committed; office posts/.DS_Store remains untouched.
+    - No runtime tests or new render were needed for these documentation-only changes. Prior encoded-file and playback proof remains the source for rendering claims.
+unresolved:
+  - The first published topic/file, factual storyboard and voice remain unselected or unapproved. The silent v03 remains a retained style demonstration.
+  - Gemini key readiness/current Bangkok-month usage, request bounds, real send path, atomic reservation/reconciliation and actual enforcement of the 100 THB ceiling remain unproved; existing budget checks are dry-run only and paid sends stay disabled.
+  - Actual narration/timing/caption alignment, final post/cover/F-link package, owner-phone playback/handling, owner publication URL and Insights/follower/view baseline remain slice-1 proofs.
+  - Prior dense-track warnings, disabled automated motion analysis and low-memory complexity limits remain. Actual distribution, retention and sales outcomes are unproved; the growth target is a later slice, not this documentation checkpoint.
+  - Office posts-text-style at 6d84f2a remains unmerged and must be preserved. Eventual owner-reviewed child/HQ PR integration is pending; HQ merge timing belongs to the owner. HistoryInMaps' private workflow remains unverified.
+next_action:
+  action: >-
+    Establish the owner's local Gemini setup and actual current-month allowance,
+    prepare a bounded voice send/reservation path, and obtain approval for a
+    short Thai voice sample before an API call. Then select the first published
+    topic, fact-check and approve its storyboard, produce and inspect the
+    voiced 2D package, prove phone handoff, and have the owner publish manually.
