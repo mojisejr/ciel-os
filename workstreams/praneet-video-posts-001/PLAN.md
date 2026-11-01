@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.4
+**Plan revision:** 1.5
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -174,6 +174,19 @@ No Facebook API, automated publishing, background collector or automatic
 reminder is in this plan. Reviews happen as part of owner-agent work, not a
 claim that something runs while the chat is closed. The owner cannot provide
 business-verification or tax documents now; do not make them a prerequisite.
+
+## Branded closing on new clips
+
+Owner decision 2026-11-02: close new clips with a concise invitation to learn
+about gardens together with Praneet, starting with episode 007. Keep the main
+educational takeaway and use the final orchard to bridge into the brand. The
+current delivery adds the existing public LINE OA QR plus readable ID so
+viewers can find the nursery, while staying within the episode's 60-second
+ceiling. QR/contact imagery must be legible and decode to the existing owner-
+confirmed OA; it is not proof of attributable leads or permission to message
+customers. Do not retrofit the already published first clip automatically.
+The owner also explicitly requests central-Thai narration for this delivery.
+No TikTok account rename or public-profile write is authorized by the clip work.
 
 ## Gemini budget boundary
 
