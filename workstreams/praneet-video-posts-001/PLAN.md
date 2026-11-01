@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.0
+**Plan revision:** 1.1
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -132,23 +132,31 @@ combination's efficacy or crop safety. The first publication remains unselected.
    Propose a small set of topics with a recommendation and references. Verify
    seasonal claims for the relevant place and tree stage rather than treating
    all durian orchards as synchronized.
-2. Prepare the full narration, scene-by-scene storyboard, rough timing, code
+2. Align shared context in a short episode brief before detailed storyboarding:
+   audience and prior knowledge, one takeaway, hook and narrative order, factual
+   scope/unknowns, visual/voice direction, target duration and invitation to act.
+   The agent gathers available evidence first and proposes a recommendation.
+   Reuse confirmed defaults; ask only about consequential gaps. The owner confirms
+   the brief, or an existing explicit chat agreement supplies that confirmation.
+   Save the agreed summary in the episode's existing brief/source, not a transcript.
+   This aligns intent; full-story/production approval remains the next gate.
+3. Prepare the full narration, scene-by-scene storyboard, rough timing, code
    keyframes, visual/voice direction, sources for material claims, and any
    unresolved factual questions. Distinguish illustration from observed evidence.
-3. The owner confirms the topic, factual story and visual treatment **before
+4. The owner confirms the topic, factual story and visual treatment **before
    full production**. Keep the approved revision and a concise approval record;
    never use a chat/session locator as authority or persist the chat transcript.
-4. On that approval, create the episode code, narration and timed animation,
+5. On that approval, create the episode code, narration and timed animation,
    inspect the actual rendered MP4, fix routine defects, and prepare post copy.
    A material change of meaning or new substantive claim returns for review.
-5. Deliver preview and MP4 locally/in chat, cover and post text, and prepare the
+6. Deliver preview and MP4 locally/in chat, cover and post text, and prepare the
    text/short link in the existing `/ops/posts` on the owner's authorization.
    Each delivery names its final revision; make transfer to the owner's posting
    device part of the proof. Existing images may be used when relevant and approved.
-6. The owner posts by hand and gives the published URL and available Insights
+7. The owner posts by hand and gives the published URL and available Insights
    in chat. The agent may inspect accessible public clips and reactions, records
    the owner's feedback, and associates it with the episode and F-code.
-7. Feed that evidence into the next proposal and the two-week review. Suggested
+8. Feed that evidence into the next proposal and the two-week review. Suggested
    changes remain hypotheses until tested; a single successful clip does not
    prove why it succeeded.
 
