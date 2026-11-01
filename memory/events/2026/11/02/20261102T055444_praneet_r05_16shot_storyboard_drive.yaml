@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T055444_praneet_r05_16shot_storyboard_drive
+type: closeout
+recorded_at: "2026-11-02T05:54:44+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Restore the WALES explanatory density and deliver the new storyboard to Drive for mobile review.
+  scope:
+    - Revised 16-shot story, full proposed narration, code keyframes, mobile PDF and explicitly requested Drive review upload.
+outcome:
+  status: revised-storyboard-uploaded-for-owner-review
+  owner_direction: >-
+    Owner says the latest seven-section clip lost WALES's shot density/style
+    and requests a new storyboard that is detailed, brisk and understandable,
+    keeping eastern focus and complete explanation. Owner explicitly names
+    WALES as the reference, then asks for Drive delivery because AFK/on phone.
+  summary: >-
+    Prepared r05 with 16 distinct teaching shots: hook, short land-sea cause,
+    monsoon paths/typical periods, windward mechanism, eastern transition
+    exception, multi-day and local forecast checks, orchard/soil, recap and
+    branded QR closing. Proposed target 59 seconds including 7.5s QR, not a
+    measured voice runtime. Narration is 565 characters versus WALES's 595;
+    this is a rough workload comparison, not timing proof. Exact WALES voice
+    configuration/original speed is the baseline. Generated all 16 static
+    code frames and a 17-page mobile PDF, plus two eight-shot sheets. Uploaded
+    the three review files using the Google Drive plugin after reading its
+    google-drive skill. No new TTS or full MP4 was generated.
+  verification: >-
+    All 16 frames passed text bounds, runtime and applicable map-load checks;
+    both eight-shot sheets inspected. PDF has 16 shot-image pages plus one
+    linked-source/review page, all 17 rendered; representative final pages
+    inspected after JPEG-92 optimization to 5080991 bytes. Three source links
+    and page/image counts verified locally. Three connector uploads succeeded;
+    metadata readback confirmed each name, MIME type, parent and byte size.
+    Existing Drive organization/sharing and earlier files were preserved.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.5"
+  slice: "2"
+  repository:
+    head: "c6c2d680c2e4e093d574b349547c005a72c6ab8e"
+    branch: feat/monsoon-maplibre-checkpoint
+  office:
+    head: 1122a06e1919a83987b0a6df0a81495b06e408fa
+    branch: feat/monsoon-maplibre-proof
+  storyboard: checkouts/praneet-office/posts/video/episodes/007-monsoon/STORYBOARD-r05.md
+  delivery: checkouts/praneet-office/posts/video/episodes/007-monsoon/DELIVERY-r05-storyboard.json
+  local_pdf: checkouts/praneet-office/posts/out/007-monsoon/storyboard-r05/output/pdf/praneet-monsoon-east-storyboard-r05.pdf
+  local_pdf_sha256: e18adcfc05984e417bfde0806964d2625de31838764e67014ae37bffdbb22486
+  local_pdf_bytes: 5080991
+  drive_pdf: https://drive.google.com/file/d/1dyPBmJRnyvIum7RFBPFzO3cwLm0rFl9V/view?usp=drivesdk
+  drive_shots_01_08: https://drive.google.com/file/d/172S7q_noYcrk1MNhiLD3Gy6YyL5broqW/view?usp=drivesdk
+  drive_shots_09_16: https://drive.google.com/file/d/1LbA_oDPHXfnb32m4Em1ty2m-XoCc_XDK/view?usp=drivesdk
+  frame_proof: checkouts/praneet-office/posts/out/007-monsoon/storyboard-r05/proof.json
+  pdf_proof: checkouts/praneet-office/posts/out/007-monsoon/storyboard-r05/pdf-proof.json
+unresolved:
+  - Owner approval of this materially revised story/frames is pending. Proposed timing, new narration and 16-shot full motion are unproved; do not treat review-upload authorization as production approval.
+  - Provider invoice remains unknown; four pending reservations remain unchanged and this revision made zero paid requests.
+  - Remote Drive checksum was not exposed by connector metadata. Sizes match but remote byte equality and owner phone-open success are not claimed; sharing permissions were not changed.
+  - Actual matched voice/prosody needs owner listening review after approved generation. Slice 2 publication, two-week review and follow-on experiment remain outstanding.
+  - Complete Insights, target/view definitions, direct-QR attribution and earlier Drive checksum remain unresolved as previously recorded. Source/checkpoints remain local topic-branch commits without push, PR or merge.
+next_action:
+  action: Present the observed Drive PDF and two image links for mobile review. After the owner approves/corrects r05, produce the new voiced 16-shot clip using the WALES baseline and existing budget guard, then verify real duration, audio and QR.
