@@ -1,0 +1,87 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T083928_praneet_ubon_voice_drive_v05
+type: closeout
+recorded_at: "2026-11-01T08:39:28+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver one informal Ubon-Isan voiced trial through private Google Drive.
+  scope:
+    - Adapt the existing eight-section narration, generate once within budget, retime the accepted drawn visual and replace the prior Drive upload.
+outcome:
+  status: ubon-voice-preview-delivered
+  completed:
+    - Wrote an Isan adaptation with abundant informal vocabulary and structured Ubon Ratchathani delivery instructions, preserving the existing agricultural claims and Charon voice.
+    - Reserved another 9.49 THB atomically before one Gemini request; received a 42.68-second mono WAV. A later explicit send-command invocation used the verified cache with zero additional paid calls.
+    - Retimed the original 2D animation and central-Thai summary captions, updated the synthetic-voice label and closing expression, and muxed a complete 43.4-second voiced MP4.
+    - Inspected sixteen actual encoded frames, full FFmpeg audio/video decoding, stream metadata and loudness. Desktop playback reached the end with decoded audio and no media error.
+    - Deleted the previously identified v04 Drive copy on the owner's instruction, then uploaded the new MP4 and read back its identity, exact byte size and sole user-owner permission. The old file subsequently returned NOT_FOUND.
+    - Removed 5843209 bytes of this run's intermediate silent video; retained paid voice caches, reconstructable source, final MP4 and QA evidence.
+  boundary: This is a requested regional-voice trial, not owner acceptance of an authentic Ubon accent, first-publication selection or full slice delivery. Agent semantic listening was unavailable; scene alignment uses ordered script and measured pauses. No social publication, other paid provider, push, PR or merge occurred.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.8"
+  decision: memory/events/2026/11/01/20261101T083507_praneet_ubon_voice_authorized.yaml
+  previous_checkpoint: memory/events/2026/11/01/20261101T081135_praneet_drive_handoff.yaml
+  repository:
+    head: "49a5de6b8f5ff1faeeb4c46a06aa54c1024bcaa8"
+    branch: hq/20261030
+  office:
+    head: "8984e31dfb08d523793dd4ae3b2542df8bd1833c"
+    branch: feat/video-posts-tooling
+    contract: posts/video/episodes/001-wet-soil/VOICE-v05.md
+    narration: posts/video/episodes/001-wet-soil/NARRATION-v05.json
+    timing: posts/video/episodes/001-wet-soil/VOICE-TIMING-v05.json
+    commands:
+      - bun run posts video ubon-send
+      - bun run posts video ubon-check
+      - bun run posts video ubon-render
+  artifact:
+    path: checkouts/praneet-office/posts/out/001-wet-soil/voice-v05/praneet-001-ubon-v05-voice.mp4
+    sha256: "73d35592a2453f2732776c06fc2f53e56d110707b1169b0d850c092c67fb8b91"
+    bytes: 6589030
+    format: H.264 yuv420p, 1080x1920, 30 fps, 1302 frames, 43.4 seconds; mono AAC at 48 kHz.
+    raw_voice_sha256: "0787b034b1d408c649069e4466edde79d9ad9afc67ff530b861c542b3e982702"
+    render_elapsed_seconds: 65.8
+    drive_file_id: 1gCTkVkGCWPNOnrh6LNlimKZgMG4hQUij
+    drive_url: https://drive.google.com/file/d/1gCTkVkGCWPNOnrh6LNlimKZgMG4hQUij/view?usp=drivesdk
+    drive_verified_size: 6589030
+    drive_permissions: Only one user permission, owner role, returned by connector readback; no public sharing added.
+    deleted_drive_file_id: 1W8Qmp8rmwQvFF0L648u_jjFgP6d509IU
+    ignored_proof: Office posts/out/001-wet-soil/voice-v05 contains verification.json, playback.json, actual-review.jpg, generation receipt, bound, budget summary, decode/check/render/loudness logs and cleanup receipt.
+  budget:
+    month: "2026-11 Asia/Bangkok"
+    starting_usage_basis: Earlier owner declaration of a new, unused exclusive project; not provider billing verification.
+    paid_requests_this_revision: 1
+    total_paid_generations: 2
+    model: gemini-3.8-flash-tts
+    input_tokens: 229
+    initial_input_tokens: 356
+    audio_output_tokens: 1067
+    estimated_this_attempt_thb: 0.6113125
+    estimate_basis: Larger reported input count, USD 0.50/M input and USD 9/M audio output, conservative 50 THB/USD and 1.25 fees; not settled billing.
+    pending_reservations_satang: 1898
+    remaining_after_reservations_satang: 8102
+    actual_thb_invoice: Unreconciled; both full reservations retained.
+    sources:
+      - https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash-tts
+      - https://ai.google.dev/gemini-api/docs/pricing#gemini-3.8-flash-tts
+      - https://ai.google.dev/gemini-api/docs/speech-generation
+  validation:
+    - Seventeen existing budget/reservation tests passed with 103 assertions. Build succeeded with existing browser/native dependencies externalized; staged diff and documentation links checked, no credential-like literal found.
+    - Generated visual-source check passed with zero lint/runtime/layout/contrast/craft errors, two dense-track warnings, disabled automated motion analysis and expected pre-mux silence warning. Final MP4 separately proved to contain AAC.
+    - Full FFmpeg decoding passed; retained MP4 loudness measured -16.86 LUFS and true peak -0.45 dBFS.
+    - Desktop 360x640 video playback ended at 43.4 seconds, muted false, volume 1, no media error and 713416 decoded audio bytes. No semantic listening or dropped-frame claim is made.
+    - Drive upload readback matched filename, video/mp4 MIME type and 6589030-byte size; checksum and download-capability fields were not exposed by the connector.
+unresolved:
+  - Owner must listen for Ubon-Isan pronunciation, natural local language, playfulness and precise scene/speech agreement. Provider directions and Isan vocabulary alone do not prove dialect authenticity; no real-person recording or clone was used.
+  - Phone download/playback and voice acceptance remain owner checks. Remote byte identity is not independently checksum-verified; the connector exposed identity/type/size/permissions only.
+  - Actual provider billing in THB remains unreconciled, with 18.98 THB reserved. Local accounting does not cap independent account use. Sender remains restricted to the reviewed day/model/voice/authorizations; new days, months or changed pricing require review.
+  - First published story/file, post/cover/F-link, manual publication URL and Insights/follower/view baseline remain open. This preview is not selected as the opening publication.
+  - Two dense-track warnings, disabled automated motion analysis, larger-scene performance and real distribution/retention/sales remain unproved; HistoryInMaps' private workflow is unknown.
+  - Office posts-text-style at 6d84f2a remains unmerged and preserved. Child/HQ commits await eventual owner-reviewed integration; HQ merge timing belongs to the owner. Unrelated office posts/.DS_Store remains untracked.
+next_action:
+  action: Deliver the new private Drive link and collect the owner's Ubon-Isan listening feedback. Reuse the cached audio for timing-only changes; any new generation requires a separately reviewed attempt and budget reservation. Then select the actual first publication and complete the remaining slice-1 proofs.
