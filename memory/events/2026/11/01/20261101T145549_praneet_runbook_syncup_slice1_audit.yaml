@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T145549_praneet_runbook_syncup_slice1_audit
+type: closeout
+recorded_at: "2026-11-01T14:55:49+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Complete the runbook's syncup instructions and audit whether slice 1 can close.
+  scope:
+    - Refine the already approved local video workflow documentation and compare recorded delivery/publication evidence with the existing DoD.
+outcome:
+  status: runbook-syncup-completed-slice1-audited
+  completed:
+    - Made runbook 07 self-contained for the owner-requested syncup method: facts-first investigation, independent frontier rounds, question/lean/reason format, branch reopening, match accounting, stopping conditions, complete Shared understanding template and confirmation-before-recording handoff.
+    - Added explicit question and summary templates, partial-hit treatment and guidance against premature closure, repeated resolved questions and premature A/B/C production plans. No skill, hook, launcher, global instruction or infrastructure was created or changed.
+    - Audited the actual slice-1 DoD against confirmed brief/storyboard, tested final MP4/cached voice, captions, private Drive delivery and two observed public publication URLs.
+    - Identified remaining gaps without relaxing the approved DoD: dedicated post-package/cover and office F-link draft evidence, intended-device/owner-handling-time evidence and final owner-reviewed integration/closeout. Requested the owner's device/handling information asynchronously while completing documentation work.
+  boundary: Functional production through real publication is proved in the stored evidence, but slice 1 is not marked complete or delivered. No new episode, API spend, post/F-link record, social write, push, PR or merge occurred. Existing unknown metrics remain unknown; a two-week review belongs to slice 2.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.3"
+  previous_checkpoint: memory/events/2026/11/01/20261101T144759_praneet_wales_publications_observed.yaml
+  repository:
+    head: 126de7efa91b0cb060e56dae416415d23e0f75f2
+    branch: hq/20261030
+  office:
+    head: 2499bf10e2df7837c447497dfbfb749b40a8bd7f
+    branch: feat/video-posts-tooling
+    runbook: runbooks/07-video-posts.md
+    existing_delivery: posts/video/episodes/006-tank-mix/DELIVERY-v02.json
+  comparison_boundary: The owner explicitly requested the existing syncup skill's method as the reference. Wake facts were established from repository/local Git before that host reference was read; the resulting procedure is now repository-local and does not require the host skill as CIEL authority or a runtime dependency.
+  validation:
+    - Local runbook links, all required question/Shared-understanding template fields and staged whitespace checks passed. Documentation-only edits required no render, budget or code test rerun.
+    - Working-tree comparison kept the known posts/.DS_Store. Wake also observed pre-existing modified praneet-web/next-env.d.ts; no web file or unrelated lane was edited or reverted.
+unresolved:
+  - Post text exists as captions, but the required existing-system office post/F-link draft and a dedicated delivered cover record remain absent. Public publication does not retroactively establish link attribution.
+  - Intended posting device and owner handling duration remain unrecorded; the owner was asked. Actual publication is already observed and need not be repeated to prove it again.
+  - A final slice-1 delivery closeout and owner-reviewed child/HQ integration are not established by the inspected local records. The slice DoD and plan remain unchanged.
+  - Actual invoice reconciliation, missing remote Drive checksum, views/follower baselines, authenticated Insights and cross-platform metric definitions remain open. These are not fabricated zeros or proof of growth; existing conservative budget reservations remain applicable.
+  - Wake's overlapping praneet-office/praneet-web workstream attention remains. Pre-existing web next-env.d.ts, office posts/.DS_Store and posts-text-style at 6d84f2a are preserved. No parallel agent work was used.
+next_action:
+  action: Explain that the runbook now contains the syncup procedure without a new skill, and that production/publication is proved while formal slice-1 closure still needs the remaining post-package/device/integration evidence. Incorporate the owner's handling answer when it arrives and complete those gaps before offering the slice closeout for review; seek a separate owner decision for slice 2 afterward.
