@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T112750_praneet_mixing_storyboard_r03
+type: closeout
+recorded_at: "2026-11-01T11:27:50+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Present the owner's WALES-first narrative before producing episode 006.
+  scope:
+    - Revise narration and sixteen static code keyframes within existing storyboard preparation.
+outcome:
+  status: mixing-storyboard-r03-prepared
+  completed:
+    - Prepared 006-r03 teaching conditional WALES first, then physical incompatibility and invisible efficacy loss, ending with a concise pre-tank check reminder.
+    - Distinguished continuous agitation from a later starting step, conditional surfactant use from an automatic additive, and narrative order from actual testing before a full tank.
+    - Retained r01/r02 and explicit reproduction commands; default mixing-storyboard now captures r03.
+    - Produced and inspected sixteen local stills and three contact sheets; measured reading-text bounds and overflow checks passed for all shots. Entry-point build and documentation links passed.
+  boundary: Storyboard preparation only under plan 1.0. The proposed 65 seconds has no measured narration. No paid API, audio, full video, upload, social draft, push, PR or merge occurred. Owner has not approved revision 006-r03 for production.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.0"
+  previous_checkpoint: memory/events/2026/11/01/20261101T104720_praneet_mixing_storyboard_r02.yaml
+  repository:
+    head: aee5602d189d4753eedc83c3ec2073aa8edc3176
+    branch: hq/20261030
+  office:
+    head: 7cafd8ad8f7b6eb379f68f0facafed5b1fc21f92
+    branch: feat/video-posts-tooling
+    storyboard: posts/video/episodes/006-tank-mix/STORYBOARD-r03.md
+    keyframes: posts/video/episodes/006-tank-mix/storyboard-r03
+    command: bun run posts video mixing-storyboard
+  artifact:
+    directory: checkouts/praneet-office/posts/out/006-tank-mix/storyboard-r03
+    ignored_proof: verification.json records SHA256 for all sixteen PNGs and three contact sheets; layout.json records measured HTML reading-text bounds. SVG labels were visually inspected separately.
+  sources_rechecked:
+    - https://www.corteva.com/us/products-and-solutions/land-management/articles/spray-solution-mixing-order.html
+    - https://extensionpubs.unl.edu/publication/g2350/2023/html/view
+  source_boundary: WALES is a general mnemonic subordinate to actual labels, not a compatibility guarantee. Runbook 07 supplies the production review workflow, not independent agronomy authority. Existing Purdue formulation and jar-test references remain applicable.
+  budget:
+    new_paid_requests: 0
+    pending_reservations_satang: 1898
+    remaining_after_reservations_satang: 8102
+    actual_thb_invoice: Prior charges remain unreconciled.
+unresolved:
+  - Owner approval of 006-r03 remains pending. Spoken duration, intelligibility, pronunciation, animated motion and encoded playback remain unproved; the 60–65-second target may require tighter wording after measurement.
+  - Actual products, labels, permitted tank-mix partners, water analysis and rates remain unspecified. No efficacy or crop-safety certification, universal pH target or additive recipe was established.
+  - First publication choice, final phone handoff, post/cover/F-link, publication URL and Insights/follower/view baseline remain open. Growth, retention, sales and private creator workflows remain unproved.
+  - Prior billing reconciliation, local budget-guard limits and earlier preview playback/remote-checksum limitations remain applicable; this static revision does not supersede them.
+  - Wake still flags overlapping projects requiring an owner decision for parallel execution; no parallel agent work was launched. Office posts-text-style at 6d84f2a and unrelated posts/.DS_Store remain preserved. Child/HQ integration and HQ merge timing require owner review.
+next_action:
+  action: Present 006-r03 for owner story review. After approval, check current pricing and budget, reserve a new voice request, measure narration and build the full preview to actual speech.
