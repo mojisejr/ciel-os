@@ -1,0 +1,42 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T073617_praneet_drawn_style_accepted
+type: decision
+recorded_at: "2026-11-01T07:36:17+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Preserve the accepted drawn 2D style while leaving the first publication unselected.
+  scope:
+    - Record the owner's visual-style acceptance and publication boundary; continue the existing slice-1 scope.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After viewing drawn v03, the owner confirmed that this is the style he
+    likes and asked to save it. Use the original simple drawn 2D explanation
+    as the starting visual direction for educational clips. The current silent
+    file is a style demonstration, not the first selected publication.
+  authorization_boundary: >-
+    Do not infer final factual-script, voice or publication approval. The owner
+    did not ban the wet-soil topic from later consideration or approve a
+    replacement opening topic. No new render, API send, purchase, external
+    draft, publication, push or merge is authorized by this documentation task.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "1"
+  repository:
+    head: "20bcd6cf36cba8572709aee6d61ac1e626b80545"
+    branch: hq/20261030
+  accepted_style_reference:
+    office_head: "b1224dbb933a1da2fc684260fa2b22ab725fb982"
+    contract: checkouts/praneet-office/posts/video/episodes/001-wet-soil/DRAWN-v03.md
+    file_sha256: "c781653c8e8c32a2a6e8ad127ebe7b08cd17d4b6fae155a4ad66f47501038557"
+unresolved:
+  - First published topic/file, factual storyboard and voice remain to be selected or approved.
+  - Actual Gemini readiness/cost enforcement, audio alignment, phone handoff, publication/Insights and owner-reviewed integration remain slice-1 proofs.
+next_action:
+  action: Save the reusable style contract and correct episode/runbook publication status, then report the remaining slice-1 gates and propose voice/budget readiness before the first published production.

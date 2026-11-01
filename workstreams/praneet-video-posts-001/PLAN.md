@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.5
+**Plan revision:** 0.6
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -74,6 +74,15 @@ authorizes another complete local silent preview of episode 001, using original
 drawn plant/soil graphics without a presenter mascot. Retain the existing
 factual boundaries and no-paid-call limit. This approves making the preview,
 not final story/voice acceptance or publication.
+
+On 2026-11-01, after viewing drawn v03, the owner confirmed that its simple
+drawn 2D explanation is the preferred style and asked to preserve it. Use this
+as the starting visual direction for educational clips, documented in office's
+`posts/video/STYLE.md`. The current silent v03 is a style demonstration, not
+the selected first publication. The first published story/file, final factual
+script and voice remain to be selected/approved. This does not prohibit
+revisiting the wet-soil topic in another approved production. Continue slice 1;
+style acceptance does not deliver audio, budget enforcement or publication.
 
 1. Read the page brief, relevant owner material, earlier episodes and feedback.
    Propose a small set of topics with a recommendation and references. Verify
