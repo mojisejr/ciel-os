@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T053826_praneet_orchard_money_parallel_approved
+type: decision
+recorded_at: "2026-11-02T05:38:26+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-money-001
+  lane: single
+  objective: >-
+    Record the owner's approval that this workstream may run beside the other
+    praneet workstreams on praneet-web and praneet-office, and start slice 1.
+  scope:
+    - "This record only; no plan change."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After praneet-office PR 32 merged, the owner said to clean up, that the
+    work may run in parallel, and to start slice 1 ('merged แล้ว เก็บกวาด
+    แล้วทำขนานได้ และเริ่ม slice 1 ได้เลย'). praneet-video-posts-001 is live in
+    another session and holds the main praneet-office checkout; this
+    workstream uses its own worktree there when it needs one.
+  why: >-
+    Slice 1 changes no child repository, and later slices touch the orchard
+    pages and commands, not the video tooling.
+
+evidence:
+  plan: workstreams/praneet-orchard-money-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "acad78052d3bacde32ab8aa5c16a205cde81d404"
+    branch: hq/20261102
+    working_tree: this-decision
+  related:
+    - memory/events/2026/11/02/20261102T051359_praneet_orchard_money_opened_slice1_authorized.yaml
+
+unresolved:
+  - "hq/20261102 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Draw the screen map and data proposal, then render samples of the spend,
+    sale and summary pages on the real praneet-web page for the owner's pick.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/praneet-orchard-money-001/slices/1.md."
