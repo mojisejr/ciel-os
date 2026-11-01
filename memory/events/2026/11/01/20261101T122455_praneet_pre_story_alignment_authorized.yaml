@@ -1,0 +1,33 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T122455_praneet_pre_story_alignment_authorized
+type: decision
+recorded_at: "2026-11-01T12:24:55+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Add shared context alignment before detailed storyboarding and review slice-1 readiness.
+  scope:
+    - Add a concise episode-brief alignment gate to plan and office runbook without new tooling or a new slice.
+outcome:
+  status: decided
+  decision: Owner requested shared context alignment before storyboard to reduce revisions. Plan 1.1 adds a short shared brief covering audience, takeaway, narrative order, factual boundaries and production direction. Reuse already confirmed defaults; existing chat confirmation may satisfy alignment without a repeated questionnaire. Storyboard/production approval remains a separate later gate.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.1"
+  slice: "1"
+  repository:
+    head: dd9fccde7c2cd651cb76b15fa68b2921cf068870
+    branch: hq/20261030
+  office:
+    head: 97e483d3ea3267ab9f23275b99e91474cbaf26db
+    runbook: runbooks/07-video-posts.md
+  latest_episode_feedback: Owner said the delivered episode seemed acceptable and requested a slice review; this does not establish a device test, first-publication selection or a publication URL.
+unresolved:
+  - Actual reduction in revisions is a hypothesis to observe in later use, not a measured result. No new episode brief has yet exercised the added gate.
+  - Episode 006 publication choice, mobile handling proof, cover/post/F-link package and real publication/metrics remain open.
+  - Current billing reconciliation, Git integration and recorded project-overlap attention remain applicable.
+next_action:
+  action: Update only the workflow agreement and runbook, report verified slice-1 results and remaining owner decisions, then prepare the publication package when the owner selects the first episode.

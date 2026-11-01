@@ -1,0 +1,32 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T113230_praneet_006_r03_production_authorized
+type: decision
+recorded_at: "2026-11-01T11:32:30+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Produce the approved WALES episode and deliver its MP4 through private Drive.
+  scope:
+    - Generate the approved 006-r03 central-Thai narration within the existing 100-THB monthly ceiling, animate the approved sixteen-shot story, inspect the full video and upload it to Drive.
+outcome:
+  status: decided
+  decision: Owner approved 006-r03 and explicitly requested generation and Drive delivery. Use the accepted original drawn 2D style and a modestly brisk clear central-Thai voice. No automatic publication, new paid service or deletion of earlier episodes is authorized or needed.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.0"
+  slice: "1"
+  repository:
+    head: 1dafe3ca2d13221223a57467c67f8b632daeb64e
+    branch: hq/20261030
+  office:
+    head: 7cafd8ad8f7b6eb379f68f0facafed5b1fc21f92
+    storyboard: posts/video/episodes/006-tank-mix/STORYBOARD-r03.md
+unresolved:
+  - Actual narration duration, pronunciation, motion execution and final playback are not yet proved; 60–65 seconds is a target.
+  - Prior charges remain conservatively reserved pending invoice reconciliation. Product-specific mixing permissions and rates remain outside this general educational episode.
+  - Publication selection, post/F-link package, real device review, publication URL and growth measurements remain open. Child/HQ integration still needs owner review.
+next_action:
+  action: Reserve the current bounded TTS request before sending, preserve its audio cache, align the sixteen scenes to measured speech, render and inspect the MP4, then upload and verify the private Drive file.

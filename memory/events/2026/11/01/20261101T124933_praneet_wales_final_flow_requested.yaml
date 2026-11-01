@@ -1,0 +1,33 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T124933_praneet_wales_final_flow_requested
+type: decision
+recorded_at: "2026-11-01T12:49:33+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Run the existing WALES episode through the newly agreed workflow toward one final video package before post/caption work.
+  scope:
+    - Prepare and review shared-context alignment, then detailed final storyboard and video delivery through the existing approval gates.
+outcome:
+  status: decided
+  decision: Owner likes the updated flow and requests applying it to WALES to obtain a final clip package before proceeding to post/caption. Begin with an actual proposed finalization brief, preserving the accepted v01 as reference. The proposed brief and any new storyboard revision still need their corresponding owner review; no new alignment confirmation is inferred from the request alone.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.1"
+  slice: "1"
+  repository:
+    head: 2b6131d7bc8c3b0a9be9d1785f361910a0b9a13c
+    branch: hq/20261030
+  office:
+    head: cd1a3203a4b9962ee4004060bc0a920757ea99fb
+    prior_production: posts/video/episodes/006-tank-mix/PRODUCTION-v01.md
+    runbook: runbooks/07-video-posts.md
+unresolved:
+  - Shared brief confirmation for this finalization attempt and subsequent final storyboard review remain pending. Prior v01 approvals remain valid for that existing production.
+  - New factual claims or changed narration are not established; prefer existing approved meaning and cached voice. Any necessary paid narration remains subject to reviewed bounds and the existing monthly ceiling.
+  - Post/caption/F-link work is deferred by the owner. First publication, phone handling proof, metrics, billing reconciliation and Git integration remain open.
+next_action:
+  action: Present the concrete six-part finalization brief for owner alignment, then prepare the final storyboard against it before production and final-file review.

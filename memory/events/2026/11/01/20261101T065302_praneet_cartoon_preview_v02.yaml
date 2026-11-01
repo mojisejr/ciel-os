@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T065302_praneet_cartoon_preview_v02
+type: closeout
+recorded_at: "2026-11-01T06:53:02+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver one full silent original-mascot cartoon and retire superseded generated previews.
+  scope:
+    - Local episode-001 cartoon production, actual-file inspection and owner-authorized render cleanup within slice 1.
+outcome:
+  status: cartoon-preview-prepared
+  completed:
+    - Built an original code-native SVG Nuat puppet using the existing Praneet mascot's brand cues, with separate head, arms, eyes, brows and mouth states.
+    - Produced a complete 34-second silent cartoon with a wet-soil question, soil hatch/shrinking journey, magnified water-air-root explanation, two inspection points and an assumption-sign turn.
+    - Inspected actual encoded story and transition frames, fixed label overlap and SVG positioning, and concealed the hero's scene-coordinate reset before retaining the final render.
+    - Deleted only the superseded ignored visual-v01, storyboard-r01 and video-tooling output directories, removing 23477953 bytes. Source, runbooks and the unrelated LINE QR post image remain.
+    - Opened the retained MP4 in QuickTime, observed playback and its ending, then returned the player to time zero for the owner.
+  boundary: >-
+    This is a silent preview checkpoint, not full slice delivery, owner story
+    or visual acceptance, a voiced episode or evidence of viral performance.
+    No provider/API call, ops/Facebook write, upload, push, PR or merge occurred.
+    Timing is provisional until a real approved narration is measured.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.4"
+  decision: memory/events/2026/11/01/20261101T064700_praneet_cartoon_trial_authorized.yaml
+  repository:
+    head: "a01e111397a9370d1a2fb6768526fdcb322a4fff"
+    branch: hq/20261030
+  office:
+    head: "10839e58b604e921cc0ea2cf6e8bb77ade19195b"
+    branch: feat/video-posts-tooling
+    contract: posts/video/episodes/001-wet-soil/CARTOON-v02.md
+    source: posts/video/episodes/001-wet-soil/cartoon/
+    command: bun run posts video cartoon-render
+  artifact:
+    path: checkouts/praneet-office/posts/out/001-wet-soil/cartoon-v02/praneet-001-cartoon-v02-silent.mp4
+    sha256: "9cdc199daec0e723e682eaf90fd8ef260122ff44bb5e23668d672007cf920833"
+    bytes: 5008671
+    format: H.264 yuv420p, 1080x1920, 30 fps, 1020 frames, 34.000 seconds, no audio stream
+    render_time: HyperFrames reported 55.0 seconds; wrapper measured 56.2 seconds on this host.
+    ignored_evidence: posts/out/001-wet-soil/cartoon-v02 contains metadata, verification, check/render logs, actual encoded-frame review, entry-motion measurements, playback and retirement records.
+  retired_artifacts:
+    - path: checkouts/praneet-office/posts/out/001-wet-soil/visual-v01/
+      bytes_removed: 13589296
+    - path: checkouts/praneet-office/posts/out/001-wet-soil/storyboard-r01/
+      bytes_removed: 2990167
+    - path: checkouts/praneet-office/posts/out/video-tooling/
+      bytes_removed: 6898490
+  validation:
+    - Final cartoon-check passed with zero lint/runtime/layout/contrast/craft errors. Two dense-track lint warnings and the intentional-silence craft warning remain; automated motion-analysis mode was not enabled.
+    - Sixteen actual encoded frames were inspected, including the concealed 4.9-second coordinate reset, the sign turn and the last frame. FFmpeg decoded the entire retained file without error; FFprobe verified the declared stream and absence of audio.
+    - Temporary authored-timeline measurements found hero opacity zero at 4.8, 4.89, 4.9 and 4.94 seconds around its coordinate/scale reset, then 0.6735 at 5.1 and 1 at 5.3 seconds.
+    - Desktop Chrome at a 360x640 viewport played the file to ended=true at 34 seconds, 1020 total frames, zero dropped frames and no media error on an idle repeat. The earlier simultaneous decode/UI test ended successfully but dropped 11 frames; its separate proof remains retained.
+    - Read-only review found the hero reset issue, which was corrected before the retained render. It found no additional material source/factual issue or paid/provider/publish path. The puppet's syntax, articulation and duplicate-ID behavior were separately inspected.
+    - bun build scripts/posts.ts --target bun with the existing external dependencies passed. git diff --check passed; only owned paths were committed. Office still has only the pre-existing untracked posts/.DS_Store.
+unresolved:
+  - Owner acceptance of cartoon v02, final factual story and voice remains pending. The prior v01 render and storyboard images are intentionally absent after authorized retirement; their tracked sources remain reproducible.
+  - Gemini credentials readiness, current Bangkok-month usage including other use, model/request bounds and atomic reservation/reconciliation remain unproved. No provider send path exists; paid calls stay disabled and the 100 THB monthly ceiling remains.
+  - The retained cartoon renders on this low-memory host with one worker; longer or more complex scenes remain unproved. Actual owner-phone playback and handling time are still unknown.
+  - Two dense-track warnings and the intentional-silence warning remain. Automated motion analysis was not enabled; rendering and playback checks do not establish owner taste or viral performance.
+  - Actual audio/caption alignment, post text/cover and F-link draft, manual publication URL, feedback/Insights baseline and a consistent view definition remain slice-1 proofs. HistoryInMaps' private workflow remains unverified.
+  - Office posts-text-style at 6d84f2a remains unmerged and must be preserved in later integration. Local child/HQ commits still await the eventual owner-reviewed PR/closeout procedure; HQ push/merge timing belongs to the owner.
+next_action:
+  action: >-
+    Deliver the retained silent cartoon and collect the owner's timestamped
+    feedback on Nuat's character, story clarity and pacing. Revise identified
+    moments locally. Before a voiced version, establish voice/story approval
+    and actual current-month Gemini balance/request bounds, then measure the
+    generated narration and retime visuals. Do not infer publication approval.

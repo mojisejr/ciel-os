@@ -1,0 +1,86 @@
+schema_version: ciel.event.v0.1
+id: evt_20261031T194806_praneet_video_tooling_checkpoint
+type: closeout
+recorded_at: "2026-10-31T19:48:06+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Prepare and prove the minimum local tools for the selected durian pilot.
+  scope:
+    - Local tooling checkpoint within slice 1, not delivery of the episode or slice.
+outcome:
+  status: tooling-checkpoint
+  completed:
+    - Office retains all five topic candidates, the selected wet-soil pilot brief, source boundaries, public workflow research and the production runbook.
+    - Exact local HyperFrames dependency, Thai font and time-driven SVG probe are committed; the existing posts command exposes local video checks, snapshots, render, preview and dry-run budget arithmetic.
+    - A real silent eight-second portrait MP4 was rendered and its exported frames inspected. An initial camera/text overlap was corrected before the retained render.
+    - Budget refusal tests pass; actual Gemini sending remains absent. No paid API, subscription, cloud renderer, Facebook or ops write occurred.
+    - Independent read-only review found no blocking issues for this tooling checkpoint; its stated limits are retained below.
+  boundary: >-
+    The owner selected the topic, not the full story/visual treatment. The probe
+    is a technical sample, not a publishable episode, realistic plant diagnosis,
+    proven viral format or final visual standard. This record deliberately
+    names no delivered slice. Both repositories retain local commits; no push,
+    PR or merge was performed at this local preparation checkpoint.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.2"
+  decision: memory/events/2026/10/31/20261031T194012_praneet_video_pilot_selected.yaml
+  repository:
+    head: "f283cd539569dbee8a86f6f4ce9d1bb0c939f20a"
+    branch: hq/20261030
+  office:
+    branch: feat/video-posts-tooling
+    head: "125d4c22839eb5813956d2b30037980807c167b4"
+    files:
+      - posts/video/EPISODES.md
+      - posts/video/episodes/001-wet-soil/BRIEF.md
+      - posts/video/RESEARCH.md
+      - posts/video/THIRD_PARTY.md
+      - runbooks/07-video-posts.md
+      - scripts/video.ts
+    start_gate: >-
+      Office main and fetched origin/main both equalled 9fa4d4a58abe44eaf0934860da4dcc694ad9e75c.
+      The pre-existing posts/.DS_Store was temporarily preserved in ignored
+      .local/video-preflight for the clean gate, then restored unchanged after
+      the local topic commit. It remains the sole untracked office entry.
+  render:
+    path: checkouts/praneet-office/posts/out/video-tooling/soil-root-tooling.mp4
+    sha256: "14e710e66dd86027c40e59fcaa130054efd39853ea9494c5bbed76cb4eb7ddd4"
+    format: H.264 yuv420p, 1080x1920, 30 fps, 240 frames, 8.000 seconds, no audio
+    bytes: 3683036
+    timing: HyperFrames reported 30.5 seconds rendering; full wrapper command measured 63.1 seconds on this host.
+    local_artifacts: posts/out/video-tooling contains render/check logs, source snapshots and a 24-frame contact sheet from the actual MP4; all ignored by Git.
+  validation:
+    - bun test posts/video/budget.test.ts passed 12 tests and 84 assertions, including Bangkok rollover, unknown usage, pending/retries and exact/over-ceiling refusal.
+    - bun build scripts/posts.ts --target bun with existing external dependencies succeeded; output stayed in ignored .local.
+    - Example budget-check exited 2 as intended, fits false and paidCallsEnabled false; no balance or cost bound was invented.
+    - HyperFrames check passed with zero runtime/layout/contrast/craft errors; 20 contrast checks passed. Six nested-scene organization warnings remain, automated motion verification is disabled, and no sound is expected in this probe.
+    - ffprobe confirmed the declared stream; FFmpeg decoded the entire retained MP4 without error. Twenty-four exported frames were visually inspected.
+    - A temporary Playwright check played the actual file through to ended in desktop Chrome at a 360x640 viewport, reported 240 video frames, zero dropped frames and no media error. This is not the owner's phone test.
+    - git diff --check passed; known web orchard edits were not changed, staged or committed.
+    - Focused Wake before closeout recognized plan 0.2 slice 1 as authorized with approved parallelism.
+unresolved:
+  - Full narration/storyboard with approved code keyframes and voice/look remain pending. The simple test still needs a convincing symptom and pore-scale explanation for the final story.
+  - Gemini key location, billing readiness, other same-account spending and a real audio request upper bound remain unknown. Atomic persisted reservations and reconciliation are prerequisites before any future send path; the dry-run arithmetic alone does not enforce account-wide spending.
+  - The selected HyperFrames version emitted six organization warnings for the flat probe. These do not block local capture; use proper scene separation for the full episode. Automatic motion analysis was not enabled.
+  - The host has 8 GB RAM and doctor reported low available memory. This one-worker sample succeeded; larger 3D or long episodes have not been proved.
+  - Full-page agricultural source access was intermittent; recheck primary guidance before expanding into treatment advice. Current viral view/share/retention performance and HistoryInMaps' private workflow remain unverified.
+  - Actual narration alignment, the final episode, owner-device handoff/handling time, F-link draft and manual publication URL remain slice-1 proofs.
+  - Insights baseline and a consistent cumulative-view definition remain pending; the old public follower observation is dated.
+  - Office posts-text-style at 6d84f2a is still unmerged; it was read and not merged or overwritten. Preserve its owner text rule in later integration.
+  - Web remains on another lane's dirty feat/orchard-unpaid-work checkout. Coordinate before any web edits; this checkpoint made none.
+  - HQ standing-branch push/merge timing belongs to the owner; office local topic changes still need the eventual owner-reviewed PR/closeout procedure. Human approval, review and external authority are unknown unless explicitly recorded.
+next_action:
+  action: >-
+    In a fresh session Wake praneet-video-posts-001, read the office video runbook,
+    research and 001 brief, then prepare the full sourced narration and 3–6 code
+    storyboard keyframes with a stronger causal visual explanation. Present the
+    exact story/visual revision for owner approval before full production. Keep
+    paid audio disabled until balance and real request bounds are established.
+  acceptance_check:
+    - Owner can understand and approve the whole proposed episode from its narration, scene timing, keyframes and factual sources.
+    - Remaining slice 1 DoD stays in workstreams/praneet-video-posts-001/slices/1.md; this local tool proof does not finish it.

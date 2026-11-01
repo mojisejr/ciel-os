@@ -1,0 +1,103 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T075829_praneet_voiced_2d_trial_v04
+type: closeout
+recorded_at: "2026-11-01T07:58:29+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Add bounded Gemini narration to the accepted 2D sample and deliver the voiced preview.
+  scope:
+    - One authorized TTS generation, live cost reservation/cache, local scene retiming, audio mux and actual-file inspection within slice 1.
+outcome:
+  status: voiced-preview-prepared
+  completed:
+    - Confirmed a nonempty Gemini key in the owner-specified ignored environment file with mode 0600, without printing its value; authenticated read-only model metadata returned the documented limits.
+    - Recorded the owner-declared new/exclusive project's zero starting November usage in an ignored private ledger. Added locked atomic reservation before HTTP, full reservation retention on uncertainty, cache validation and no automatic retries.
+    - Sent one authorized stateless Gemini 3.8 Flash TTS request using prebuilt Charon and eight public narration sections; received a 34.52-second mono PCM WAV. Subsequent explicit send-command runs used the verified cache and sent zero additional requests.
+    - Retimed the accepted 2D source using measured pauses between script sections, updated its synthetic-voice preview label, held the ending after speech and muxed normalized AAC into the retained MP4.
+    - Corrected a source-review finding about late concurrent cache misses by making future trial attempt identities deterministic from the reviewed payload, reusing the existing duplicate-attempt refusal.
+    - Inspected sixteen actual encoded story/transition frames, full audio/video decoding, audio loudness and complete desktop playback. Opened the voiced MP4 in QuickTime and started playback; its player volume was 1 and the visible control offered mute.
+    - Retired 7319611 bytes of temporary intermediate video/preflight snapshots/listen sample, keeping the raw narration and receipt for paid-generation reuse, the silent style reference and the retained voiced-file proof.
+  boundary: >-
+    This fulfills the requested voice trial, not owner acceptance of the voice,
+    final factual script, first publication or full slice delivery. Scene timing
+    uses measured pauses and ordered narration, not verified word timestamps.
+    Agent semantic listening was unavailable; do not claim Thai pronunciation
+    was audited. No ops/social draft, publication/upload, other provider, voice
+    replication, push, PR or merge occurred. Only the authorized Gemini request
+    sent narration externally; no credential value is in repository/evidence.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.7"
+  decision: memory/events/2026/11/01/20261101T074554_praneet_voice_trial_authorized.yaml
+  previous_checkpoint: memory/events/2026/11/01/20261101T073836_praneet_style_saved_checkpoint.yaml
+  repository:
+    head: "d1a5bdc0e1eebbc976a5f833c39dd8aadb1f01f1"
+    branch: hq/20261030
+  office:
+    head: "f4a6706c876ddc9be120364cf58c48ae7f8fa588"
+    branch: feat/video-posts-tooling
+    contract: posts/video/episodes/001-wet-soil/VOICE-v04.md
+    narration: posts/video/episodes/001-wet-soil/NARRATION-v04.json
+    timing: posts/video/episodes/001-wet-soil/VOICE-TIMING-v04.json
+    commands:
+      - bun run posts video voice-send
+      - bun run posts video voice-check
+      - bun run posts video voice-render
+  artifact:
+    path: checkouts/praneet-office/posts/out/001-wet-soil/voice-v04/praneet-001-drawn-v04-voice.mp4
+    sha256: "8e857c7225de060794a3c26ed5114b9b19a67555087570dac13887db05f856c5"
+    bytes: 5302892
+    format: H.264 yuv420p, 1080x1920, 30 fps, 1057 frames, 35.233333 seconds; mono AAC at 48 kHz
+    raw_voice_sha256: "2dbd59ae13e7686c548d8e87073730a2ce6f6a0b4cd2f768134de730182dcd69"
+    render_time: HyperFrames reported 51.4 seconds; wrapper including local audio mux measured 53.5 seconds.
+    ignored_evidence: posts/out/001-wet-soil/voice-v04 contains raw voice/cache receipt, bounds, metadata, playback, encoded-frame review, loudness/check/render logs and cost summary.
+  budget:
+    month: "2026-11 Asia/Bangkok"
+    starting_usage_basis: Owner declaration of unused exclusive project; not provider billing verification.
+    paid_generation_requests: 1
+    model: gemini-3.8-flash-tts
+    serving_bound_tokens:
+      input: 8192
+      output: 16384
+    price_usd_per_million:
+      input: 0.5
+      audio_output: 9
+    conservative_fx_thb_per_usd: 50
+    fee_multiplier: 1.25
+    reserved_satang: 949
+    pending_satang_after_trial: 949
+    remaining_after_reservations_satang: 9051
+    metered_tokens:
+      input: 161
+      initial_input: 168
+      audio_output: 864
+      cached: 0
+      thought: 0
+      tool_use: 0
+    estimated_thb_from_meter_with_conservative_fx_and_fees: 0.49125
+    actual_thb_invoice: Not reconciled; full reservation deliberately remains pending.
+    ledger_location: Owner-controlled ignored office .local/video-budget/2026-11.json
+    sources:
+      - https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash-tts
+      - https://ai.google.dev/gemini-api/docs/pricing#gemini-3.8-flash-tts
+      - https://ai.google.dev/gemini-api/docs/speech-generation
+  validation:
+    - Seventeen budget/reservation tests passed with 103 assertions, including durable reservation before mocked sends, concurrent near-ceiling refusal, failure retention, duplicate-attempt refusal, unknown usage/month and persistence-path failures.
+    - bun build scripts/posts.ts --target bun with existing external dependencies succeeded. git diff --check passed; 15 local documentation links exist and the staged diff contained no actual credential literal.
+    - voice-check on generated retimed visual source passed with zero lint/runtime/layout/contrast/craft errors, two dense-track warnings and the expected intermediate-silence warning. Automated motion analysis was not enabled; the final muxed file was separately verified to contain audio.
+    - FFprobe confirmed the declared video and AAC streams. FFmpeg decoded the complete retained audio/video without error. Final loudness measured -16.7 LUFS with true peak -1.3 dBFS.
+    - Desktop Chrome at a 360x640 viewport played the exact retained MP4 to ended=true/currentTime 35.233333, 1057 total video frames, zero dropped frames, no media error and 582005 decoded audio bytes.
+    - Sixteen actual encoded frames, including transitions and the ending, were visually inspected. No additional paid generation was needed for retiming, rendering or playback checks.
+unresolved:
+  - Owner listening review of Thai pronunciation, voice character, precise scene/speech agreement and final factual/voice acceptance remains pending. Agent semantic listening and word-level transcription were unavailable; measured pauses are the alignment basis.
+  - Actual provider billing in THB is not reconciled. The 0.49125 THB amount is an estimate from metered tokens and conservative assumptions, not settled billing; 9.49 THB remains reserved. This local guard does not cap independent account use or provider billing globally.
+  - The sender is deliberately limited to this reviewed trial/model/voice/pricing day. A new day/month or changed model/pricing/balance requires review/reconciliation. Interrupted processes may leave a lock that needs safe reconciliation; reservations are never auto-released.
+  - The first published topic/file, owner-phone playback/handling, post/cover/F-link, manual publication URL and Insights/follower/view baseline remain slice-1 proofs. The retained voice trial is not selected as the opening publication.
+  - Two dense-track warnings and disabled automated motion analysis remain. Longer/more complex low-memory scenes, real distribution/retention/sales and HistoryInMaps' private workflow remain unproved.
+  - Office posts-text-style at 6d84f2a remains unmerged and must be preserved. Local child/HQ commits still require eventual owner-reviewed PR integration; HQ merge timing belongs to the owner.
+next_action:
+  action: Deliver the voiced MP4 and collect the owner's listening feedback before further production. Reuse the cached voice for timing-only changes; any regeneration needs its own reviewed attempt and budget reservation. Then select and approve the actual first publication's story and complete the remaining slice-1 handoff/publication proofs.

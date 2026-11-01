@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T114326_praneet_006_wales_v01_drive
+type: closeout
+recorded_at: "2026-11-01T11:43:26+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver the approved sixteen-shot WALES episode with central-Thai narration through private Drive.
+  scope:
+    - Generate one bounded narration request, animate and inspect episode 006-r03, and upload its MP4.
+outcome:
+  status: episode-006-v01-drive-delivered
+  completed:
+    - Generated one 58.64-second Charon central-Thai narration from the sixteen approved sections; preserved its cache, hash and receipt. Repeating the identical send command returned a cache hit with no paid request.
+    - Authored sixteen original deterministic SVG/GSAP shots against measured pause boundaries. Kept conditional label-first WALES, continuous agitation, pre-tank jar testing, abnormal clumps/layers and invisible efficacy limits.
+    - Rendered a 60.1-second 1080x1920 H.264 MP4 at 30fps with normalized mono AAC and a final summary hold. Corrected entrance visibility in a second local render, using the same voice.
+    - Inspected actual encoded opening, scene and ending frames plus the caution-stop frame; full decoding and full-speed Chromium playback passed.
+    - Uploaded the final MP4 to the existing Drive parent and verified name, MIME type, matching byte count and owner-only permission metadata. Preserved earlier episodes and stopped the temporary local preview server.
+    - Saved narration, timing, source, production evidence, reproduction commands and Drive handoff in office. No new service or publishing automation was added.
+  boundary: This is an episode delivery checkpoint, not slice-1 closure, publication approval or proof of growth. No post/F-link write, Facebook publication, unrelated lane edit, push, PR or merge occurred. The agent did not perform a semantic listening review; pronunciation, tone and phone handling remain for the owner.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.0"
+  authorization: memory/events/2026/11/01/20261101T113230_praneet_006_r03_production_authorized.yaml
+  repository:
+    head: da48489510e319b4ff6473611d17cf958ab2faac
+    branch: hq/20261030
+  office:
+    head: 97e483d3ea3267ab9f23275b99e91474cbaf26db
+    branch: feat/video-posts-tooling
+    production: posts/video/episodes/006-tank-mix/PRODUCTION-v01.md
+    command: bun run posts video mixing-render
+  artifact:
+    path: checkouts/praneet-office/posts/out/006-tank-mix/production-v01/praneet-006-wales-thai-v01.mp4
+    sha256: 25811a8afa1d4b64f9ec94a2daa5c1ebf564a90642535a182b43e34660399fcf
+    bytes: 7141763
+    duration_seconds: 60.1
+    frames: 1803
+    narration_sha256: c25c688e8c24ee0520783c2e980f5f0016c229192c8fea8455e2c6ae499a0f1c
+    final_render_seconds: 95
+    render_passes: 2
+    ignored_proof: verification.json, generation receipt, ffprobe.json, empty decode-errors.log, playback.json, eighteen encoded frames, separate stop frame and contact sheets beside the final MP4.
+  drive:
+    id: 10HbBAMCaLVFl2MrLi9i3B3tAge_SwmSH
+    url: https://drive.google.com/file/d/10HbBAMCaLVFl2MrLi9i3B3tAge_SwmSH/view?usp=drivesdk
+    readback: Matching video/mp4 name, parent and 7141763 bytes; permission metadata lists only user owner. Remote checksum was not exposed by the connector.
+  validation:
+    - HyperFrames lint, runtime, layout, motion, contrast, craft and audio checks reported zero errors. Remaining warnings concern rotated packet-label boxes, a small background-tank label and the deliberately silent pre-mux intermediate; actual encoded images and final audio were checked separately.
+    - Final Chromium playback ended at 60.1 seconds, normal speed and unmuted, with 1803 decoded frames, zero dropped or corrupt frames, zero stalls/waits, decoded audio and no media/page errors. Native-Thai semantic listening remains unverified.
+    - Entry-point build, local documentation links, whitespace and owned-source Gemini-key-like literal checks passed; seventeen existing budget/reservation tests passed with 103 assertions. Working tree comparison retained only the known unrelated posts/.DS_Store after the office commit.
+  budget:
+    new_paid_requests: 1
+    new_reservation_satang: 949
+    monthly_pending_satang: 2847
+    remaining_after_reservations_satang: 7153
+    actual_thb_invoice: Unreconciled; all three full reservations remain pending. Official same-day pricing/model serving limits and existing exclusive-project ledger evidence were used. Local sender control is not an account-wide provider hard cap.
+unresolved:
+  - Owner Thai pronunciation/tone review and actual mobile download/playback/handling time remain unproved. Alignment uses measured section pauses, not verified word timestamps. Remote byte count matched but no remote checksum was exposed.
+  - Actual products, label-permitted partners, rates and water analysis remain unspecified; this general educational episode certifies no real mix, efficacy or crop safety.
+  - First publication selection, final cover/post/F-link package, manual publication URL and Insights/follower/view baseline remain open. Organic reach, retention, sales and the growth targets are unproved.
+  - Prior invoice reconciliation, local-budget-guard limits and earlier episode-specific unresolved evidence remain applicable; the new episode playback proof does not supersede them.
+  - Wake's project-overlap attention remains recorded; no parallel agents or unrelated project edits were used. Office posts-text-style at 6d84f2a and posts/.DS_Store remain preserved. Child/HQ integration and HQ merge timing remain owner-controlled.
+next_action:
+  action: Have the owner download/review the Drive MP4 on his phone and identify any narration or motion changes. Once the final episode is accepted for publication, prepare its cover/post/F-link package and let the owner publish manually, then record the URL and real feedback.

@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T101432_praneet_mixing_storyboard_r01
+type: closeout
+recorded_at: "2026-11-01T10:14:32+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Present a researched, reviewable pesticide tank-mixing storyboard before production.
+  scope:
+    - Preserve the accepted v06/central-Thai direction; new episode narration, source checks and six static code keyframes.
+outcome:
+  status: mixing-storyboard-prepared
+  completed:
+    - Recorded the owner's acceptance of v06's richer drawn direction and central Thai in office STYLE.md revision 2.
+    - Confirmed the owner wants plant-protection pesticides first, without fertilizer or micronutrient recipes. Kept existing backlog ids 002–005 and added episode 006.
+    - Prepared 006-r01 with complete proposed narration, eight timed shots, six original static keyframes, physical/chemical compatibility distinctions and source-linked limits.
+    - Limited the formulation example to WP then SC then EC, conditional on confirmed compatibility and actual label instructions; did not recommend real products, rates, fixed pH or automatic additives.
+    - Captured and inspected six 1080x1920 stills and a contact sheet. Corrected footer bounds and a narrow label; all six final measured text-bound/overflow checks passed.
+  boundary: This is a proposed storyboard, not owner story approval, a produced video or a product-specific pesticide recommendation. No speech generation, paid API request, production render, ops/social draft, external upload, push, PR or merge occurred.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.0"
+  decision: memory/events/2026/11/01/20261101T100814_praneet_mixing_storyboard_authorized.yaml
+  previous_checkpoint: memory/events/2026/11/01/20261101T093803_praneet_thai_crafted_v06_drive.yaml
+  repository:
+    head: "1af0cf7e2b2e35e6fc642773d50b53d4d1099deb"
+    branch: hq/20261030
+  office:
+    head: "573bc03cc4d438a5448b6c3471c9a1dbca2885ac"
+    branch: feat/video-posts-tooling
+    storyboard: posts/video/episodes/006-tank-mix/STORYBOARD-r01.md
+    style: posts/video/STYLE.md
+    keyframes: posts/video/episodes/006-tank-mix/storyboard
+    command: bun run posts video mixing-storyboard
+  artifact:
+    contact_sheet: checkouts/praneet-office/posts/out/006-tank-mix/storyboard-r01/storyboard-r01.jpg
+    contact_sheet_sha256: "f29d63cf259dcdca4244799b30eadd33908beffaca8e419d979378055c75aa62"
+    ignored_proof: Office posts/out/006-tank-mix/storyboard-r01 contains six PNGs, measured layout.json, contact sheet and verification.json with exact frame hashes.
+  sources:
+    - https://esc.doae.go.th/ลำดับการผสมสารเคมี/
+    - https://ag.purdue.edu/department/extension/ppp/resources/ppp-publications/mobile/ppp-1221.html
+    - https://extensionpubs.unl.edu/publication/g2350/2023/html/view
+    - https://www.corteva.com/us/products-and-solutions/land-management/articles/spray-solution-mixing-order.html
+  source_boundary: General guidance supports the illustrative subset, label priority, water/PPE/agitation and jar-test limits. Published full-order tables differ and some simplified guidance gives a single pH range; these were not turned into universal rules. Product labels were not supplied or verified.
+  validation:
+    - Six actual local browser captures passed measured safe-text bounds and overflow checks after corrections; remote HTTP dependencies were blocked during capture. Final contact sheet and corrected sixth frame visually inspected.
+    - Entry-point build passed with existing browser/native dependencies externalized. Local documentation links, staged whitespace and absence of Gemini-key-like literals checked. Default episode-001 storyboard route preserved.
+  budget:
+    new_paid_requests: 0
+    pending_reservations_satang: 1898
+    remaining_after_reservations_satang: 8102
+    actual_thb_invoice: Previous charges remain unreconciled; no new generation was attempted.
+unresolved:
+  - Owner approval of 006-r01 narration, six keyframes and roughly 60–65-second treatment remains pending. Actual spoken duration, pronunciation, motion, final encoded playback and post package are not yet produced or verified.
+  - No actual product labels, active ingredients, mix partners, water analysis or site-specific rates are supplied. This proposal cannot certify a real tank mix, crop safety or efficacy; a jar test does not resolve every invisible incompatibility.
+  - First published story/file, phone handoff for that production, post/cover/F-link, manual publication URL and Insights/follower/view baseline remain open; no publication is selected by style acceptance.
+  - Prior billing reconciliation and local-guard limitations remain. Prior preview's remote checksum, scene-level pause alignment, source-check heuristic, disabled automated motion analysis and one dropped desktop playback frame remain recorded limitations of that trial, not new production proof.
+  - Office posts-text-style at 6d84f2a remains unmerged and preserved. Child/HQ commits await owner-reviewed integration; HQ merge timing belongs to the owner. Unrelated posts/.DS_Store remains untracked. Larger-scene performance, real distribution/retention/sales and private creator workflows remain unproved.
+next_action:
+  action: Present 006-r01 with the keyframe sheet and full proposed narration for owner factual/creative review. Resolve requested changes first; only after that story approval review current budget/pricing, reserve any new speech attempt and produce the full preview/post package.

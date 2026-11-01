@@ -1,0 +1,36 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T072209_praneet_drawn_2d_trial_authorized
+type: decision
+recorded_at: "2026-11-01T07:22:09+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Produce a complete original drawn 2D cause-and-effect preview of episode 001.
+  scope:
+    - Local silent animation and encoded-file inspection, without a presenter mascot.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner selected reference direction two, simple drawn 2D explanation,
+    and explicitly asked to try it. Carry forward the silent-preview context
+    and the existing wet-soil episode rather than starting a different topic.
+  authorization_boundary: >-
+    No paid request, final story/voice acceptance, external draft, publication,
+    push or merge is inferred. Existing budget and scoped parallelism remain.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "1"
+  repository:
+    head: "6e6681b52809ca3e7288bb08d15fd9d96a63dd29"
+    branch: hq/20261030
+  reference_research: memory/events/2026/11/01/20261101T071703_praneet_style_reference_research.yaml
+unresolved:
+  - Final visual quality and owner acceptance of the new preview remain unproved.
+  - Voice, budget enforcement, phone handoff, publication and other slice-1 proofs remain pending.
+next_action:
+  action: Build and inspect the full silent drawn 2D preview, then deliver its actual MP4 for owner feedback.
