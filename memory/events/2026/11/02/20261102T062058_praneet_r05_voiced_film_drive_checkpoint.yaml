@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T062058_praneet_r05_voiced_film_drive_checkpoint
+type: closeout
+recorded_at: "2026-11-02T06:20:58+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver the approved sixteen-shot monsoon film with Thai voice to Drive.
+  scope:
+    - Episode 007 r05 animation, bounded narration, encoded AV/QR verification and owner-authorized Drive upload.
+outcome:
+  status: voiced-r05-delivered-checkpoint
+  summary: >-
+    Produced all sixteen approved teaching shots, including moving local
+    MapLibre cameras/wind, authored SVG rain/day/observation diagrams and
+    descent into the sixteen-tree raised-mound orchard. Used the exact WALES
+    model, Charon and style string, at original tempo 1. Generated one raw
+    52-second WAV; scene-level pause alignment and 7.5-second branded QR hold
+    produce a 56.125-second H.264/AAC movie. No paid retry. Uploaded the final
+    13088724-byte MP4 to the existing Drive root and read metadata back.
+    Updated local render commands and runbook; retained earlier media/sharing.
+  verification: >-
+    1347 frames at 1080x1920 / 24 fps; full encoded AV decode has no errors.
+    Inspected all sixteen encoded shots and six descent/closing frames.
+    Sixty-five layout/transition samples, map readiness and sixteen-tree garden
+    checks pass. Backwards seek has identical camera and screenshot pixels.
+    QR decodes from two encoded closing frames to the existing LINE OA URL.
+    Encoded AAC is mono 48 kHz, mean -18.8 dB, peak -2.3 dB and -18.3 LUFS.
+    Budget tests: 17 pass / 103 assertions with mocked paid effects. A subtle
+    SVG soil-label raster difference was removed using an HTML label before
+    successful rendering. No semantic listening or word-timestamp claim.
+  accounting: >-
+    One full 949-satang reservation added; all five remain pending, totaling
+    4745 satang and leaving 5255 satang under the monthly 10000-satang ceiling.
+    Today's owner exclusive-use confirmation applies. Provider usage estimates
+    have not been treated as settled cost. Render/verification made no paid calls.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.5"
+  slice: "2"
+  repository:
+    head: 650d976510e0c73fe7b1689da255e8c3d6bc271d
+    branch: feat/monsoon-maplibre-checkpoint
+  office:
+    head: c0f62eb633f71173548b88eb614622b4b096d6a5
+    branch: feat/monsoon-maplibre-proof
+  authorization: evt_20261102T061330_praneet_r05_production_authorized
+  delivery: checkouts/praneet-office/posts/video/episodes/007-monsoon/DELIVERY-r05-thai-v01.json
+  production: checkouts/praneet-office/posts/video/episodes/007-monsoon/PRODUCTION-r05.md
+  video: checkouts/praneet-office/posts/out/007-monsoon/r05-thai-v01/praneet-monsoon-east-r05-thai-v01.mp4
+  video_sha256: 76df6457654a83ab3baab8016cd8d6d97893aa2ef66ccae02e0deacb4b293a9d
+  video_bytes: 13088724
+  drive_video: https://drive.google.com/file/d/19CJgmibnJfIATXLKcod5GCCaaqarIpa8/view?usp=drivesdk
+  encoded_proof: checkouts/praneet-office/posts/out/007-monsoon/r05-thai-v01/encoded-verification.json
+  encoded_qr: checkouts/praneet-office/posts/out/007-monsoon/r05-thai-v01/encoded-qr.json
+unresolved:
+  - Owner listening, pronunciation/prosody suitability and phone-open success remain pending. Matching configuration does not prove identical voice performance.
+  - Provider invoice remains unknown; retain all five full reservations until actual reconciliation.
+  - Connector metadata confirms name, MIME, parent and byte size but exposes no remote checksum. Remote byte equality is not claimed; sharing permissions were not changed.
+  - This is a slice 2 episode checkpoint. Manual publication, two-week feedback review and follow-on experiment remain outstanding; full Insights, target/view definitions and direct-QR lead attribution remain unresolved as previously recorded.
+  - Source/checkpoints are local topic-branch commits only; no push, PR or merge was performed.
+next_action:
+  action: Present the verified Drive link for owner phone viewing/listening; incorporate any concrete correction before manual publication, then collect feedback under the slice 2 flow.
