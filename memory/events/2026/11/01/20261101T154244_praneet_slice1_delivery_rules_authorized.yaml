@@ -1,0 +1,36 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T154244_praneet_slice1_delivery_rules_authorized
+type: decision
+recorded_at: "2026-11-01T15:42:44+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Apply the owner's approved cover and conditional shop-link rules before closing slice 1.
+  scope:
+    - Revise the delivery acceptance and retain the already-published WALES clip without retrospective edits.
+outcome:
+  status: decided
+  completed:
+    - Owner approved offering a cover option with future deliveries and using an F-link only when the clip invites viewers to a specific shop destination.
+    - Owner accepted leaving the published educational WALES posts unchanged and requested slice-1 closeout before any slice-2 execution.
+  boundary: Authorizes plan 1.4 slice 1 and its closeout preparation, not slice 2, automatic social posting or an unreviewed merge. Preserve the standing HQ branch and unrelated lanes.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "1"
+  repository:
+    head: ddddad1248b9cb673db525b2f65dc3e1a1a6bc95
+    branch: hq/20261030
+  owner_report:
+    handling_time: A few minutes from memory, not a measured numeric duration.
+    tiktok: Followers increased from 5 to 15; some people saved the clip. Exact observation times and save count were not supplied.
+    facebook: About 600 followers, with low clip visibility in the owner's assessment; no reach count was supplied.
+unresolved:
+  - Final slice closeout and owner-reviewed remote integration still need concrete review evidence.
+  - Owner feedback is not authenticated Insights or proof that this clip caused all follower growth. Platform-specific metric definitions, provider invoice reconciliation and remote checksum limits persist.
+  - Wake flags project overlap despite the existing scoped parallel-work permission; no parallel edits or changes to unrelated work are needed here.
+next_action:
+  action: Update the local runbook and episode feedback, run focused checks, and prepare the slice-1 delivery for owner review before summarizing slice 2 without starting it.

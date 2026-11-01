@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.3
+**Plan revision:** 1.4
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -156,13 +156,16 @@ combination's efficacy or crop safety. The first publication remains unselected.
 5. On that approval, create the episode code, narration and timed animation,
    inspect the actual rendered MP4, fix routine defects, and prepare post copy.
    A material change of meaning or new substantive claim returns for review.
-6. Deliver preview and MP4 locally/in chat, cover and post text, and prepare the
-   text/short link in the existing `/ops/posts` on the owner's authorization.
+6. Deliver preview and MP4 locally/in chat and platform-specific post text in
+   office. For subsequent deliveries, include a cover option (a selected video
+   frame or a separate image). Use the existing `/ops/posts` and F-link when
+   the episode invites viewers to a specific shop destination; educational
+   episodes without that invitation do not require an F-link or ops draft.
    Each delivery names its final revision; make transfer to the owner's posting
    device part of the proof. Existing images may be used when relevant and approved.
 7. The owner posts by hand and gives the published URL and available Insights
    in chat. The agent may inspect accessible public clips and reactions, records
-   the owner's feedback, and associates it with the episode and F-code.
+   the owner's feedback, and associates it with the episode and F-code when used.
 8. Feed that evidence into the next proposal and the two-week review. Suggested
    changes remain hypotheses until tested; a single successful clip does not
    prove why it succeeded.
