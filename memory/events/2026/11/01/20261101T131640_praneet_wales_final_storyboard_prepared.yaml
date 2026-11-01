@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T131640_praneet_wales_final_storyboard_prepared
+type: closeout
+recorded_at: "2026-11-01T13:16:40+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Show the final WALES storyboard after owner-confirmed syncup.
+  scope:
+    - Record the confirmed understanding, update the agreed question/frontier workflow, and prepare final-storyboard stills and unchanged narration for review.
+outcome:
+  status: wales-final-storyboard-r01-prepared
+  completed:
+    - Recorded confirmed brief 006-final-brief-r02 with the corrected habitual-user audience and production-cleanup goal, settled Q3/Q4 decisions, scope, acceptance and strict guess-hit result.
+    - Revised workflow intent to plan 1.2 and the office runbook to use facts-first independent frontier rounds, leans/reasons, branch reopening and confirmed Shared understanding before documenting or storyboarding. No host skill, hook or infrastructure was created.
+    - Prepared 006-final-storyboard-r01 with all sixteen unchanged spoken sections, measured scene boundaries and existing visuals, proposing removal of visible 006-v01 while retaining simulation/synthetic-voice disclosures and instructional text.
+    - Added the local mixing-final-storyboard capture route using the exact cached narration hash in a separate ignored build/output. Captured and inspected all sixteen cleaned stills plus full and six-keyframe contact sheets.
+  boundary: Storyboard preparation and review only. The owner confirmed understanding, not yet this storyboard's new final-production output. No full MP4 render, paid API, upload, post/caption/F-link work, push, PR or merge occurred. Existing v01 film sources and outputs remain unchanged; slice 1 is not complete.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.2"
+  authorization: memory/events/2026/11/01/20261101T131325_praneet_wales_syncup_confirmed.yaml
+  repository:
+    head: 432cd679588d3395d38a9ac1c5b842f2fab1f9b5
+    branch: hq/20261030
+  office:
+    head: 156503803df8a0a1b41f2eabfda44426b992ffe5
+    branch: feat/video-posts-tooling
+    brief: posts/video/episodes/006-tank-mix/BRIEF.md
+    storyboard: posts/video/episodes/006-tank-mix/STORYBOARD-final-r01.md
+    command: bun run posts video mixing-final-storyboard
+  artifact:
+    directory: checkouts/praneet-office/posts/out/006-tank-mix/final-storyboard-r01
+    proof: verification.json records sixteen still hashes, unchanged narration, proposed footer, zero API requests and pending storyboard review.
+    existing_audio_sha256: c25c688e8c24ee0520783c2e980f5f0016c229192c8fea8455e2c6ae499a0f1c
+    unchanged_duration_seconds: 60.1
+  validation:
+    - Sixteen local SVG/GSAP midpoint snapshots completed in 5.9 seconds; all sixteen were visually inspected in the full sheet and selected six-keyframe sheet. Footer is exactly the retained simulation/synthetic-voice disclosure.
+    - Deterministic comparison confirmed all sixteen storyboard narration rows match the existing narration manifest exactly. Cache hash check, entry-point build, documentation links, whitespace checks and plan/decision Wake validation passed.
+    - Working-tree comparison preserved the known unrelated posts/.DS_Store. No change to v01 production film sources was present. Existing budget tests were not rerun because no budget or paid sender code changed.
+  sources_rechecked:
+    - https://www.corteva.com/us/products-and-solutions/land-management/articles/spray-solution-mixing-order.html
+    - https://extensionpubs.unl.edu/publication/g2350/2023/html/view
+unresolved:
+  - Owner review of 006-final-storyboard-r01 and inspection/delivery of a newly rendered production MP4 remain pending. Still-image evidence does not certify final encoded playback.
+  - Actual invoice reconciliation, phone handling/transfer proof, scene-level rather than word-level alignment and unavailable remote checksum remain applicable. No real product pair, rate, water analysis or universal pH advice was established.
+  - Post/caption/cover/F-link work remains deferred; first publication, URL, metric definitions/baseline and growth outcomes remain open.
+  - Child/HQ integration and review remain open; posts-text-style at 6d84f2a and posts/.DS_Store are preserved. Wake's project-overlap attention remains; no parallel agents or unrelated project changes were used.
+next_action:
+  action: Present the sixteen-shot storyboard and cleaned stills for owner review. On approval, render and inspect the production MP4 using the unchanged cached voice, verify removal of visible version/status text, and deliver the final file through private Drive before post/caption work.

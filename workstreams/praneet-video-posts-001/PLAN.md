@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.1
+**Plan revision:** 1.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -132,14 +132,17 @@ combination's efficacy or crop safety. The first publication remains unselected.
    Propose a small set of topics with a recommendation and references. Verify
    seasonal claims for the relevant place and tree stage rather than treating
    all durian orchards as synchronized.
-2. Align shared context in a short episode brief before detailed storyboarding:
-   audience and prior knowledge, one takeaway, hook and narrative order, factual
-   scope/unknowns, visual/voice direction, target duration and invitation to act.
-   The agent gathers available evidence first and proposes a recommendation.
-   Reuse confirmed defaults; ask only about consequential gaps. The owner confirms
-   the brief, or an existing explicit chat agreement supplies that confirmation.
-   Save the agreed summary in the episode's existing brief/source, not a transcript.
-   This aligns intent; full-story/production approval remains the next gate.
+2. Align shared context through a syncup-style conversation before detailed
+   storyboarding. The agent finds available facts, reuses settled answers, and
+   asks all currently independent frontier questions together, each with the
+   answer it leans toward and a reason. Dependent questions wait for their
+   parents; changed answers reopen the branches beneath them. Continue until
+   the frontier is empty and the corrected guesses match the owner's answers.
+   Present Shared understanding for confirmation before writing the result or
+   starting the storyboard. Then record the confirmed audience, takeaway,
+   narrative order, scope, visual/voice/duration, constraints and acceptance in
+   the existing episode brief/source, not a transcript or duplicate registry.
+   Full-story/production approval remains the next gate.
 3. Prepare the full narration, scene-by-scene storyboard, rough timing, code
    keyframes, visual/voice direction, sources for material claims, and any
    unresolved factual questions. Distinguish illustration from observed evidence.
