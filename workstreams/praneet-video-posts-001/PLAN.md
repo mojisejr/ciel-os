@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.6
+**Plan revision:** 0.7
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -83,6 +83,16 @@ the selected first publication. The first published story/file, final factual
 script and voice remain to be selected/approved. This does not prohibit
 revisiting the wet-soil topic in another approved production. Continue slice 1;
 style acceptance does not deliver audio, budget enforcement or publication.
+
+On 2026-11-01 the owner supplied a local Gemini key location, reported paid
+tier readiness and explicitly asked to add narration to the latest drawn
+preview before proceeding. He confirmed the project is newly configured,
+unused and exclusive to this work. This authorizes a bounded paid TTS trial
+and local audio/timeline integration of v03, still as a style/voice sample,
+not the first selected publication. Record the zero starting usage as an
+owner declaration, reserve cost atomically before each attempt, retain uncertain
+charges, reuse generated audio, and do not retry automatically. The existing
+100 THB Bangkok-calendar-month ceiling and external-publication gates remain.
 
 1. Read the page brief, relevant owner material, earlier episodes and feedback.
    Propose a small set of topics with a recommendation and references. Verify

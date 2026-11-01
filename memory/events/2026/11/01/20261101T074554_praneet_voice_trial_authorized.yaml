@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T074554_praneet_voice_trial_authorized
+type: decision
+recorded_at: "2026-11-01T07:45:54+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Add bounded Gemini narration to the latest accepted-style 2D sample.
+  scope:
+    - Local voice adapter and atomic reservation, paid TTS trial, timing/audio integration and actual-file review.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner reported a prepared key in his ignored local environment file,
+    paid tier setup, and asked to check it and add voice to the latest clip.
+    He confirmed this new project has no prior use and is exclusive to this
+    workflow. Record that declaration as the starting November allowance,
+    not as a provider billing verification.
+  authorization_boundary: >-
+    Keep total Gemini use within 100 THB per Bangkok calendar month. Require
+    current price/model bounds and a durable reservation before each paid
+    request; no automatic retries or release of uncertain cost. The generated
+    voice and clip remain trials for owner review, not approved publication.
+    No credential value, voice replication, other paid provider, external
+    draft/post/upload, push or merge is authorized by this request.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "1"
+  repository:
+    head: "eca2e81b8086b2471064b27180d5a462ac06e86a"
+    branch: hq/20261030
+  credential_location: Owner-controlled ignored .assets/preneet/.env; value is never recorded here.
+  starting_usage:
+    month: "2026-11"
+    other_usage_satang: 0
+    basis: Owner explicitly declared newly configured, unused and exclusive project.
+  model_preflight:
+    model: gemini-3.8-flash-tts
+    observed: Authenticated read-only model metadata returned HTTP 200, input limit 8192 and output limit 16384; no generation request yet.
+    sources:
+      - https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash-tts
+      - https://ai.google.dev/gemini-api/docs/pricing#gemini-3.8-flash-tts
+unresolved:
+  - Real voice quality, exact audio/caption timing and production cost accounting remain unproved.
+  - Starting account usage is owner-declared; the local guard cannot cap independent use outside this workflow.
+  - First publication, final factual/voice acceptance, phone handoff, publication/Insights and integration remain pending.
+next_action:
+  action: Prepare and test the bounded one-attempt TTS adapter, reserve conservatively, generate narration, retime the latest drawn sample and inspect the voiced MP4.
