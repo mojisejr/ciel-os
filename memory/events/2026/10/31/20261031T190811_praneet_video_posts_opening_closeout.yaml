@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261031T190811_praneet_video_posts_opening_closeout
+type: closeout
+recorded_at: "2026-10-31T19:08:11+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: >-
+    Record the completed opening of the workstream and its approved first slice;
+    leave execution ready to begin from repository evidence.
+  scope:
+    - "HQ plan, three slice agreements and opening decision only."
+
+outcome:
+  status: workstream-opened
+  completed:
+    - "Plan revision 0.1 and three indexed slice files record the owner-approved identity, trend-informed creative workflow, story approval, local rendering, manual publishing/Insights and separate technical/growth acceptance."
+    - "The opening decision authorizes slice 1 and scoped parallelism, including temporary independent agent work when useful; it does not authorize later slices or conflicting edits."
+    - "Gemini is capped at 100 THB per Bangkok calendar month, with conservative pre-request accounting and refusal when balance/cost is unknown. Codex and Gemini are the only authorized paid services."
+    - "Focused Wake exited successfully and reported plan 0.1 slice 1 authorized. An independent read-only agent reviewed the plan and decision and returned no actionable issues."
+    - "Only this workstream and its two new events were written. Other lanes' work and the existing office .DS_Store were preserved."
+  not_verified:
+    - "No renderer installation, paid API request, episode production, /ops write, Facebook publication or Insights integration was performed by this opening."
+    - "The growth targets have not been reached or measured as a result of this opening."
+
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.1"
+  decision: memory/events/2026/10/31/20261031T190416_praneet_video_posts_opened_slice1_authorized.yaml
+  repository:
+    head: "0606b1b7dd2044e323c6058a05c4f2015a11ab06"
+    branch: hq/20261030
+  validation:
+    - "bun run wake --workstream praneet-video-posts-001: exit 0; declared slices 1, 2, 3; lifecycle authorized for 0.1 slice 1."
+    - "PLAN.md and every slice are below the 12,288-byte soft limit."
+
+unresolved:
+  - "Owner-controlled Gemini key location, billing readiness, this month's other usage and the concrete cost-bound mechanism still need to be established before paid calls."
+  - "First topic/source, owner-approved storyboard/voice/look, real render quality/time and transfer to the posting device remain slice-1 proofs."
+  - "Owner-supplied Insights baseline and one consistent view definition are pending; the earlier public 613-follower observation is dated and incomplete."
+  - "Office's posts-text-style branch at 6d84f2a remains unmerged; read its owner text rule before touching posts."
+  - "The child web checkout is shared with orchard work. Coordinate paths or use a clean separate work area; do not switch or overwrite another lane's work."
+  - "hq/20261030 remains local; the owner controls the round-closing push and merge."
+  - "Human approval, review and external rules remain unknown unless a repository record establishes them."
+
+next_action:
+  action: >-
+    Start slice 1 in a fresh session with bun run wake --workstream
+    praneet-video-posts-001, then read PLAN.md, slices/1.md and the office posts
+    runbook/style rule. Prepare the local production and budget proof; propose
+    pilot topics and a storyboard for the owner. The owner supplies knowledge
+    material when available, a secure Gemini key location/balance before paid
+    use, story/preview feedback, manual publication and available Insights.
+  acceptance_check:
+    - "Slice 1 DoD in workstreams/praneet-video-posts-001/slices/1.md; this opening record deliberately names no delivered slice."

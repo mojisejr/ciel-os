@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T154505_praneet_slice1_local_closeout_prepared
+type: closeout
+recorded_at: "2026-11-01T15:45:05+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Prepare the complete local slice-1 delivery and preserve early owner feedback before any slice-2 execution.
+  scope:
+    - Apply the approved plan 1.4 acceptance, audit the final artifact and prepare the owner review checkpoint.
+outcome:
+  status: slice1-local-closeout-prepared-awaiting-integration-review
+  completed:
+    - Applied owner-approved conditional F-link and future cover-option rules to the plan, slice acceptance and office runbooks. WALES stays published without retrospective social edits or an unnecessary ops draft.
+    - Stored a few-minute mobile handling estimate as owner recollection with numeric minutes null. Retained the confirmed mobile download and manual Facebook/TikTok workflow.
+    - Stored owner-reported TikTok followers 5 to 15, some saves and low Facebook visibility despite about 600 followers, separate from earlier public counter snapshots and without inventing view counts or clip attribution.
+    - Confirmed the delivered 60.1-second 1080x1920 30-fps H264/AAC artifact still matches its recorded SHA256 and bytes. Existing playback/frame/render proof remains unchanged.
+    - Re-ran all 17 video budget tests with 103 assertions and zero failures; checked 33 local Markdown links, JSON evidence boundaries and staged whitespace. No API call or media regeneration was needed.
+    - Committed office delivery/runbook changes at cb5e0db49eab247e50e78106cec49fc4d35c1429 and plan 1.4 authorization at 593acd1125cdbbb84c1ca477b712eb8995052ccd.
+  boundary: Functional and content acceptance is evidenced. This is a local review checkpoint, not a merged slice delivery, ready remote PR or authorization for slice 2. No push, PR, merge, new social edit, API spend or unrelated lane edit occurred. Standing HQ includes other workstreams; owner merge timing has not been inferred from the request to close this slice.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "1"
+  decision: memory/events/2026/11/01/20261101T154244_praneet_slice1_delivery_rules_authorized.yaml
+  repository:
+    head: 593acd1125cdbbb84c1ca477b712eb8995052ccd
+    branch: hq/20261030
+  office:
+    head: cb5e0db49eab247e50e78106cec49fc4d35c1429
+    branch: feat/video-posts-tooling
+    runbook: runbooks/07-video-posts.md
+    delivery: posts/video/episodes/006-tank-mix/DELIVERY-v02.json
+    captions: posts/video/episodes/006-tank-mix/CAPTIONS-v02.json
+    final_sha256: 456a2e10de76277aeb34ec642fcc9ebb02d38cf18ba36000da7079dcd1fdbbdc
+    fetched_base_relation: Office origin/main has zero exclusive commits; this topic has 22 exclusive commits after the current delivery update.
+  acceptance:
+    reconstruction: Page agreement, sources, confirmed syncup, approved storyboard, code, file identity and feedback are discoverable through office runbook 07 and episode 006.
+    approval_and_accuracy: Confirmed brief and final storyboard have separate owner decisions; material agricultural sources and factual boundaries remain in STORYBOARD-r03.md.
+    media_and_handoff: Encoded frames and full playback previously checked; final render 96 seconds, owner-confirmed mobile use and a few-minute unmeasured handling estimate.
+    post_package: Platform-specific captions and both public publication URLs are recorded; the owner-approved educational F-link exemption applies. Future deliveries include a cover option.
+    cost: All three known paid attempts retain conservative pending reservations totaling 2847 satang; 7153 satang remains after reservations. Actual provider billing is not reconciled.
+    integration: Relevant local checks pass; owner-reviewed child/HQ PR integration and formal delivery remain pending.
+unresolved:
+  - Formal slice-1 closure requires the owner-reviewed remote PR/merge workflow. No ready-for-owner-merge delivery is claimed by this local checkpoint. Do not start slice 2 before that boundary and its separate owner decision.
+  - Exact views, reach, watch time, save counts, dated follower baselines and authenticated Insights are unavailable. Owner-reported TikTok growth does not change the Facebook Page goal or settle cross-platform view aggregation.
+  - Provider invoice reconciliation and remote Drive checksum remain unavailable. Local reservations are conservative accounting, not a provider-wide hard spending cap.
+  - Wake still flags overlapping office/web workstreams despite scoped parallel permission. Preserve office posts/.DS_Store, unmerged posts-text-style and all unrelated orchard edits; no parallel agents or shared-file edits were used.
+next_action:
+  action: Present the local slice-1 review checkpoint and explain the remaining owner-reviewed integration boundary. Summarize slice 2 as repeat production plus a two-week evidence review, without starting it. When the owner decides merge timing, prepare the draft PRs, put the final closeout on the actual draft head, verify it remotely and present the ready-for-review PR before any owner-authorized merge.

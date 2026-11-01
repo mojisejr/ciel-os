@@ -1,0 +1,40 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T081135_praneet_drive_handoff
+type: closeout
+recorded_at: "2026-11-01T08:11:35+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Make the retained voiced trial downloadable on the owner's phone.
+  scope:
+    - Owner-requested upload of the existing voiced MP4 to connected Google Drive.
+outcome:
+  status: drive-handoff-prepared
+  completed:
+    - Uploaded the retained voiced MP4 to the connected user's My Drive using the Google Drive plugin.
+    - Read back the created file's identity, video/mp4 MIME type, exact 5302892-byte size and sole user-owner permission.
+  boundary: File transfer only; no public sharing, social publication, new video generation, TTS request or voice acceptance. Connector readback did not expose the requested checksum or download-capability fields, so remote byte identity and owner-phone playback are not independently proved.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.7"
+  previous_checkpoint: memory/events/2026/11/01/20261101T075829_praneet_voiced_2d_trial_v04.yaml
+  repository:
+    head: "77bd57390d2b1c515522f3893e4273bde7939224"
+    branch: hq/20261030
+  artifact:
+    path: checkouts/praneet-office/posts/out/001-wet-soil/voice-v04/praneet-001-drawn-v04-voice.mp4
+    sha256: "8e857c7225de060794a3c26ed5114b9b19a67555087570dac13887db05f856c5"
+    bytes: 5302892
+    drive_file_id: 1W8Qmp8rmwQvFF0L648u_jjFgP6d509IU
+    drive_url: https://drive.google.com/file/d/1W8Qmp8rmwQvFF0L648u_jjFgP6d509IU/view?usp=drivesdk
+    drive_mime_type: video/mp4
+    drive_size: 5302892
+    drive_permissions: One user permission with owner role; no public or other sharing permission returned.
+unresolved:
+  - Owner-phone download/playback and listening review of Thai pronunciation, voice character and precise scene/speech agreement remain pending; agent semantic listening was unavailable.
+  - Prior checkpoint unresolved items remain applicable, including unreconciled provider billing with 9.49 THB reserved, the trial-only sender boundary, first publication/topic/post/cover/F-link and Insights baseline, two dense-track warnings, disabled automated motion analysis, unproved distribution/results and eventual owner-reviewed integration. This trial is not selected as the opening publication.
+next_action:
+  action: Deliver the private Drive link; owner opens it with the connected Google account on the phone, downloads and listens, then supplies feedback before further production.

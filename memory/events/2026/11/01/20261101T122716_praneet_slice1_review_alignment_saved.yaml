@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T122716_praneet_slice1_review_alignment_saved
+type: closeout
+recorded_at: "2026-11-01T12:27:16+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Review slice-1 readiness and save the requested pre-storyboard shared-context alignment step.
+  scope:
+    - Revise the workflow agreement and office runbook; report existing evidence and remaining owner decisions.
+outcome:
+  status: slice1-review-and-alignment-saved
+  completed:
+    - Revised plan to 1.1 and slice-1 intent to add a short owner-aligned episode brief before detailed storyboarding; kept the later story/production gate and existing paid/publication boundaries.
+    - Added a six-part runbook brief covering audience, takeaway, hook/order, factual scope, visual/voice/duration and invitation to act. Existing explicit agreement can satisfy alignment; confirmed defaults are reused and resolved questions are not repeated.
+    - Recorded the owner's positive provisional feedback for 006 without inventing a device test, publication selection or publication URL.
+    - Reviewed stored evidence for working code rendering, Thai TTS, timing, private Drive handoff and budget guard, and identified the unfinished publication/device/post-package/integration steps.
+  boundary: Documentation and status checkpoint only. No new episode, paid request, regeneration, remote write, post/F-link creation, publication, push, PR or merge occurred. Slice 1 remains incomplete; no slice-2 authorization is inferred. The new alignment step applies prospectively and has not yet been exercised on a new topic.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.1"
+  authorization: memory/events/2026/11/01/20261101T122455_praneet_pre_story_alignment_authorized.yaml
+  previous_checkpoint: memory/events/2026/11/01/20261101T114326_praneet_006_wales_v01_drive.yaml
+  repository:
+    head: dd9fccde7c2cd651cb76b15fa68b2921cf068870
+    branch: hq/20261030
+  office:
+    head: cd1a3203a4b9962ee4004060bc0a920757ea99fb
+    branch: feat/video-posts-tooling
+    runbook: runbooks/07-video-posts.md
+    latest_production: posts/video/episodes/006-tank-mix/PRODUCTION-v01.md
+  validation:
+    - Wake accepted plan 1.1 with its decision; plan/runbook whitespace and local runbook links passed. The eight-step runbook sequence was checked. These are documentation edits; video and budget tests were not rerun.
+    - Working tree comparisons retained only the known unrelated posts/.DS_Store in office; HQ edits are confined to this workstream and its two events. No shared HQ code or other workstream was edited.
+  budget_snapshot:
+    pending_satang: 2847
+    remaining_after_reservations_satang: 7153
+    new_paid_requests: 0
+    actual_invoice: Still unreconciled; this is the existing exclusive-project local ledger, not fresh provider billing verification or an account-wide hard cap.
+unresolved:
+  - Owner must select the first publication; 006 is available as a candidate. Download/playback on the actual posting device and owner handling time remain unverified despite positive qualitative feedback.
+  - Final cover/post copy and F-link draft have not been prepared for 006. Manual publication URL, Insights/metric definitions and follower/view baseline remain open. The 10000-follower and 2000000-cumulative-view outcomes remain unproved.
+  - Existing scene-level alignment is not word-level transcription; provider charges await reconciliation and the remote file checksum was not exposed. Product-specific label compatibility, rates and water analysis remain unspecified as recorded in the previous delivery.
+  - Child/HQ review and merge remain open; posts-text-style at 6d84f2a and unrelated posts/.DS_Store are preserved. Wake still flags overlapping praneet-office/praneet-web workstreams; no parallel execution was used here. Plan-length soft warnings were left alone.
+  - Whether pre-storyboard alignment reduces revisions remains an unmeasured hypothesis; observe it on the next approved episode without adding new infrastructure.
+next_action:
+  action: Present the readiness summary and recommend 006 as the first publication candidate. On the owner's selection, prepare the concrete cover/post/F-link package, confirm phone handling, let the owner post manually and record the real URL/baseline before closing slice 1 and seeking a slice-2 decision.

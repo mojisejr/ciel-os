@@ -1,0 +1,72 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T093803_praneet_thai_crafted_v06_drive
+type: closeout
+recorded_at: "2026-11-01T09:38:03+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver richer original drawn scenes with the previous central-Thai narration.
+  scope:
+    - Eight-shot local visual revision, cached v04 audio, encoded-file inspection and new private Drive upload.
+outcome:
+  status: rich-thai-preview-delivered
+  completed:
+    - Returned to the exact cached central-Thai v04 narration without reading credentials or sending a new paid speech request.
+    - Authored eight original SVG/GSAP shots with paper texture, hatching, leaf/soil details, garden props, separate root views, camera/reveal beats, oxygen displacement, magnifier/can acting and a follow ending.
+    - Rendered a complete 35.233333-second portrait MP4, inspected source keyframes and sixteen actual encoded frames, measured opening action changes and fully decoded audio/video.
+    - Desktop playback reached the end with sound decoded, no media error and one dropped frame out of 1057. No semantic listening audit is claimed.
+    - Uploaded the MP4 to connected My Drive and read back its filename, video/mp4 MIME type, exact byte size and sole user-owner permission. Preserved the previous Isan Drive trial.
+    - Removed 6449143 bytes of this run's temporary silent intermediate; retained final MP4, cached paid speech, source and ignored QA evidence.
+  boundary: This is a requested quality trial, not owner acceptance of the new style, equivalence to the inspiration clip, first-publication selection or full slice delivery. No new paid generation, social publication, push, PR or merge occurred. The accepted STYLE.md baseline was not changed.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.9"
+  decision: memory/events/2026/11/01/20261101T093049_praneet_thai_crafted_visual_authorized.yaml
+  previous_checkpoint: memory/events/2026/11/01/20261101T083928_praneet_ubon_voice_drive_v05.yaml
+  repository:
+    head: "f9b63642127cc1bdd56f396f091f70adf10dd47d"
+    branch: hq/20261030
+  office:
+    head: "d50280e046e41480398d7ec6050c96577b6f85d1"
+    branch: feat/video-posts-tooling
+    contract: posts/video/episodes/001-wet-soil/CRAFTED-v06.md
+    source: posts/video/episodes/001-wet-soil/crafted/compositions/film.html
+    commands:
+      - bun run posts video crafted-check
+      - bun run posts video crafted-frames
+      - bun run posts video crafted-render
+  artifact:
+    path: checkouts/praneet-office/posts/out/001-wet-soil/crafted-v06/praneet-001-thai-crafted-v06.mp4
+    sha256: "211aa245543874a1652d0ce243d6b833d08f56b6f42a63b07e438fc1f1a4a612"
+    bytes: 7058554
+    format: H.264 yuv420p, 1080x1920, 30 fps, 1057 frames, 35.233333 seconds; mono AAC at 48 kHz.
+    reused_thai_wav_sha256: "2dbd59ae13e7686c548d8e87073730a2ce6f6a0b4cd2f768134de730182dcd69"
+    render_elapsed_seconds: 58
+    drive_file_id: 1QtMxdXSuleuvrdE0skjA3_kHaDYXhUH1
+    drive_url: https://drive.google.com/file/d/1QtMxdXSuleuvrdE0skjA3_kHaDYXhUH1/view?usp=drivesdk
+    drive_verified_size: 7058554
+    drive_permissions: One user-owner permission returned; no public sharing added.
+    ignored_proof: Office posts/out/001-wet-soil/crafted-v06 contains source snapshots, actual-review.jpg, motion-review.json, verification.json, playback.json, metadata, check/render/decode/loudness logs, budget summary and cleanup receipt.
+  validation:
+    - Source check passed with zero lint/runtime/layout/contrast errors and zero warnings in those categories. One intentional clipping overflow remained informational; craft reported a dead-stretch heuristic and expected pre-mux silence. Automated motion analysis was disabled.
+    - Compared actual encoded opening frames at 0.1 and 1.8 seconds within action-only crop x50/y510 to x1030/y1470. 17.417 percent of pixels differed by at least ten luma levels, confirming picture change despite the source-check heuristic, not certifying every interval or aesthetic quality.
+    - FFmpeg decoded the entire MP4 without error. Measured loudness was -17.31 LUFS and true peak -2.02 dBFS. Desktop 360x640 playback ended at 35.233333 seconds, muted false, volume 1, no media error, 1057 video frames, one dropped frame and 583114 decoded audio bytes.
+    - Entry-point build succeeded with existing browser/native dependencies externalized; diff whitespace and local documentation links checked, staged source contained no Gemini-key-like literal. No budget code changed or new API path was added.
+    - Drive readback matched identity, MIME type and byte size; requested remote checksum and download-capability fields were not exposed by the connector.
+  budget:
+    new_paid_requests: 0
+    month: "2026-11 Asia/Bangkok"
+    pending_reservations_satang: 1898
+    remaining_after_reservations_satang: 8102
+    actual_thb_invoice: Still unreconciled; previous full reservations retained.
+unresolved:
+  - Owner review of new visual quality, central-Thai voice/scene agreement and phone download/playback remains pending. Scene boundaries reuse measured pauses, not verified word timestamps; agent semantic listening was unavailable.
+  - Remote byte identity is not independently checksum-verified. Provider THB billing remains unreconciled and local accounting does not cap independent account use; previous sender day/model/price restrictions remain applicable.
+  - First published story/file, post/cover/F-link, manual publication URL and Insights/follower/view baseline remain open. This is a trial, not the selected opening publication.
+  - Source-check dead-stretch heuristic, disabled automated motion analysis and one dropped desktop playback frame are recorded with the actual-file evidence above. Larger-scene performance, real distribution/retention/sales and HistoryInMaps' private workflow remain unproved.
+  - Office posts-text-style at 6d84f2a remains unmerged and preserved; child/HQ commits await eventual owner-reviewed integration, with HQ merge timing owned by the human. Unrelated office posts/.DS_Store remains untracked.
+next_action:
+  action: Deliver the new private Drive link for owner visual/listening feedback. Revise locally with cached Thai speech if needed; once the direction is accepted, select the actual first publication and finish the remaining slice-1 post/publication proofs.

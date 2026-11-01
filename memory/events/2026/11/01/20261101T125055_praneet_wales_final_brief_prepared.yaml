@@ -1,0 +1,42 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T125055_praneet_wales_final_brief_prepared
+type: closeout
+recorded_at: "2026-11-01T12:50:55+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Present the shared brief before final WALES storyboarding under the new flow.
+  scope:
+    - Prepare the actual prospective alignment brief and preserve the prior approved production as reference.
+outcome:
+  status: wales-finalization-brief-prepared
+  completed:
+    - Prepared 006-final-brief-r01 with the six alignment fields, the recommended WALES-first order, accepted 2D/central-Thai defaults, factual boundaries and a final-video-only delivery scope.
+    - Linked the proposed brief from episode 006's index and explicitly deferred post/caption/F-link work per the owner's instruction.
+    - Rechecked Corteva WALES and Nebraska compatibility sources; established no new product-specific mixing recommendation.
+  boundary: Proposed brief only, not owner alignment confirmation, a new storyboard, new final video, publication selection or slice completion. No API spend, render, upload, external draft write, push, PR or merge occurred. Existing v01 and its approvals remain intact.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.1"
+  authorization: memory/events/2026/11/01/20261101T124933_praneet_wales_final_flow_requested.yaml
+  repository:
+    head: 2b6131d7bc8c3b0a9be9d1785f361910a0b9a13c
+    branch: hq/20261030
+  office:
+    head: 55dd4bfb303d81145cff956f65a23eb3d46b497c
+    branch: feat/video-posts-tooling
+    brief: posts/video/episodes/006-tank-mix/BRIEF.md
+    revision: 006-final-brief-r01
+  validation:
+    - Local brief/index links and staged whitespace checks passed. This documentation-only change required no new video/budget test run.
+    - Office working tree retained only the known unrelated posts/.DS_Store after commit; HQ changes are confined to this workstream's events.
+unresolved:
+  - Owner confirmation of the proposed finalization brief is pending; detailed final storyboard and its review follow that confirmation. No new source/audio finalization has been produced.
+  - Prior invoice reconciliation, phone transfer/handling proof, scene-level rather than word-level alignment and missing remote checksum remain applicable. Actual product-specific labels, partners, rates and water analysis remain outside this episode's established scope.
+  - First publication, post/caption/cover/F-link package, actual URL and metrics baseline remain open and are outside this turn's clip-only scope. Growth outcomes remain unproved.
+  - Child/HQ review and merge, preserved posts-text-style at 6d84f2a and unrelated posts/.DS_Store remain as recorded. Wake's overlap attention persists; no parallel agent or unrelated project work was performed.
+next_action:
+  action: Have the owner confirm or correct 006-final-brief-r01, then prepare the complete final storyboard/narration for the next review gate. Reuse cached audio if its wording remains approved; render, inspect and deliver the final version only after its story review.

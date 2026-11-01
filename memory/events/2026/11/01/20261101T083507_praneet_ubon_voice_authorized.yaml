@@ -1,0 +1,29 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T083507_praneet_ubon_voice_authorized
+type: decision
+recorded_at: "2026-11-01T08:35:07+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Produce an informal Ubon-Isan voiced trial and replace its Drive handoff.
+  scope:
+    - Existing episode facts and accepted drawn 2D visuals; one new budget-reserved narration request, local timing and Drive replacement.
+outcome:
+  status: decided
+  decision: Owner selected Ubon Ratchathani language with abundant local vocabulary, informal playful delivery, requested a full voiced clip and authorized deleting the previous Drive upload before the replacement upload. Existing monthly budget and manual-publication boundary remain.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.8"
+  slice: "1"
+  previous_checkpoint: memory/events/2026/11/01/20261101T081135_praneet_drive_handoff.yaml
+  repository:
+    head: "7f364e87ec37010217f5027a9db89b437a1d4762"
+    branch: hq/20261030
+unresolved:
+  - Regional authenticity, natural pronunciation and voice acceptance require owner listening; no claim that the provider guarantees an Ubon accent.
+  - Existing unreconciled 9.49 THB reservation and prior slice-1 unresolved items remain applicable. No publication is authorized by this trial.
+next_action:
+  action: Prepare the eight-section Ubon-Isan adaptation, reserve one further bounded attempt, generate once, retime and inspect the video, then delete the identified old Drive file and upload/verify its replacement.

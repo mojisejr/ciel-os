@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T104720_praneet_mixing_storyboard_r02
+type: closeout
+recorded_at: "2026-11-01T10:47:20+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Show the requested denser tank-mixing storyboard before production.
+  scope:
+    - Revise the existing episode proposal into sixteen static shots with full proposed narration and a 65-second timing budget.
+outcome:
+  status: mixing-storyboard-r02-prepared
+  completed:
+    - Prepared 006-r02 with sixteen shot descriptions and sixteen original static code keyframes, following the owner's request for more frames, detail and a slightly brisker but intelligible delivery.
+    - Added spoken detail about water pH/hardness affecting some products, WP particle dispersion and why cloudiness alone does not establish incompatibility, within the prior researched scope.
+    - Proposed a 65-second timeline, a modestly brisker central-Thai delivery direction, persistent formulation/label conditions across cuts and a longer final summary hold.
+    - Extended the existing still-capture command for r02; kept r01's six-frame source and explicit reproduction route. Produced full and two half contact sheets.
+    - Inspected the storyboard images and verified all sixteen final reading-text safe bounds and overflow checks. Entry-point build and local documentation links passed.
+  boundary: This is a revised storyboard under existing plan 1.0 preparation, not owner approval of 006-r02, generated narration, a timed animatic or production video. Sixteen stills follow the owner's explicit request beyond the initial six-frame proposal. The 65 seconds and roughly ten-percent brisker voice direction are targets, not measured output. No paid API request, upload, ops/social draft, push, PR or merge occurred.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.0"
+  previous_checkpoint: memory/events/2026/11/01/20261101T101432_praneet_mixing_storyboard_r01.yaml
+  repository:
+    head: "3f126ae7df0b1db5fa6e823f5df1bd9a1f753746"
+    branch: hq/20261030
+  office:
+    head: "a298d7143ed5a82d775fc59ad8aeb9f0e5073d50"
+    branch: feat/video-posts-tooling
+    storyboard: posts/video/episodes/006-tank-mix/STORYBOARD-r02.md
+    keyframes: posts/video/episodes/006-tank-mix/storyboard-r02
+    command: bun run posts video mixing-storyboard
+    previous_revision_command: bun run posts video mixing-storyboard-r01
+  artifact:
+    directory: checkouts/praneet-office/posts/out/006-tank-mix/storyboard-r02
+    full_sheet_sha256: "0157a632a2d4e29a00f18de78d8fc6fe1303da6f75534d2aca43b07894a19a59"
+    shots_01_08_sha256: "9c2006a843e4c25a56d16918484d340db14a9aa3f5f63b874eee09b64ecf204f"
+    shots_09_16_sha256: "dabbade52aadb1b4be40b4c75090514ba6231754c311c51f76859bc8b3cb6548"
+    ignored_proof: Sixteen PNGs, measured layout.json, three contact sheets and verification.json with exact frame hashes.
+  sources_rechecked:
+    - https://extensionpubs.unl.edu/publication/g2350/2023/html/view
+    - https://ag.purdue.edu/department/extension/ppp/resources/ppp-publications/mobile/ppp-1221.html
+  source_boundary: Existing r01 DOAE/Corteva references still support only a conditional illustrative WP-SC-EC subset. No actual products, label-approved pair, rate or universal water-adjustment recipe was established. Jar tests do not certify efficacy or crop safety.
+  validation:
+    - Sixteen local 1080x1920 browser captures passed measured reading-text bounds and overflow checks with remote HTTP dependencies blocked. SVG art inspected in the contact sheets; the second sheet was also viewed at original resolution.
+    - Entry-point build passed with existing browser/native dependencies externalized; staged whitespace, local documentation links and absence of Gemini-key-like literals checked.
+  budget:
+    new_paid_requests: 0
+    pending_reservations_satang: 1898
+    remaining_after_reservations_satang: 8102
+    actual_thb_invoice: Prior charges remain unreconciled; no new generation attempted.
+unresolved:
+  - Owner approval of 006-r02 narration, sixteen frames and pacing remains pending. Actual spoken length, intelligibility, pronunciation, animated motion and final encoded playback are unproved. Re-edit wording before further speed increases if it exceeds the target.
+  - Product labels, actual tank-mix partners, water analysis and site-specific rates remain unspecified. The example cannot certify a real tank mix, efficacy or crop safety; pH targets and additives are not universal.
+  - First publication selection, phone handoff for the production, post/cover/F-link, publication URL and Insights/follower/view baseline remain open.
+  - Prior billing reconciliation, local-budget-guard limitations and previously recorded preview playback/remote-checksum limitations remain applicable. No new production proof supersedes them.
+  - Office posts-text-style at 6d84f2a remains unmerged and preserved. Child/HQ integration requires owner review, with HQ merge timing owned by the human; unrelated posts/.DS_Store remains untracked. Real distribution/retention/sales and private creator workflows remain unproved.
+next_action:
+  action: Present the two half-sheets and complete 006-r02 narration for owner review. On story approval, review current budget/pricing and reserve any new voice request, then measure actual speech and build the full preview against it.

@@ -1,0 +1,29 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T100814_praneet_mixing_storyboard_authorized
+type: decision
+recorded_at: "2026-11-01T10:08:14+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Preserve the accepted richer Thai style and propose a researched tank-mixing storyboard.
+  scope:
+    - Style acceptance, source research, proposed full narration and static code keyframes for a new episode within slice 1.
+outcome:
+  status: decided
+  decision: Owner accepted v06's visual direction, requested another topic on pesticide mixing order, precipitation and efficacy loss, and explicitly asked to follow the storyboard approval process. This is preparation authorization, not story/production approval.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.0"
+  slice: "1"
+  repository:
+    head: "df28a2609b53235d1f1861bd65b241e9b0de4dd0"
+    branch: hq/20261030
+  accepted_visual: checkouts/praneet-office/posts/video/episodes/001-wet-soil/CRAFTED-v06.md
+unresolved:
+  - No specific pesticide labels or tank-mix partners supplied. Initial general proposal cannot certify real product combinations or rates. The owner subsequently confirmed plant-protection pesticides first, without fertilizers/micronutrients.
+  - New storyboard and final factual/voice approval remain pending, along with earlier billing reconciliation, publication and integration proofs.
+next_action:
+  action: Prepare the new episode's source-linked narration, limited illustrative formulation order, physical/chemical compatibility distinction and six static keyframes; present its exact revision for owner review before production.

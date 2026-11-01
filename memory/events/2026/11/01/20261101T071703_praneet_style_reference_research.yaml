@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T071703_praneet_style_reference_research
+type: closeout
+recorded_at: "2026-11-01T07:17:03+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Compare educational video references suitable for Praneet after owner feedback on the cartoon trial.
+  scope:
+    - Read-only public clip research and a recommendation within slice 1; no new production.
+outcome:
+  status: style-research-prepared
+  owner_feedback: >-
+    The owner prefers the earlier non-mascot treatment to cartoon v02, finds
+    the mascot's arms anatomically awkward, and wants other educational clip
+    styles with real audience evidence beyond the history-map examples he sees.
+    He suggested potentially removing the mascot; no new visual treatment is
+    finally approved by this research request.
+  completed:
+    - Compared recent mechanism animation and scale explanation with older high-view 2D and plant-process references, keeping upload date distinct from the date of an article or a view observation.
+    - Inspected primary YouTube pages, relevant visual frames and some playback. Public web extraction was throttled for several pages; native browser inspection supplied the recent primary metadata.
+    - Recommended testing a non-mascot causal cutaway with concise 2D or 2.5D graphics, using the existing wet-soil question as an apparent contradiction and the hidden root mechanism as its reveal.
+  boundary: >-
+    These examples establish that particular clips attracted views, not a
+    causal proof of their style, a platform-wide Thai trend or a prediction
+    for Praneet. Research did not authorize another render, paid request,
+    publication, external write, push or merge. No child source was changed.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: "a216ee4c3f15f8976ac1fd52491058bb4f55e710"
+    branch: hq/20261030
+  previous_checkpoint: memory/events/2026/11/01/20261101T065302_praneet_cartoon_preview_v02.yaml
+  public_observation_date: "2026-11-01 Asia/Bangkok"
+  references:
+    - title: How Electrical Outlets Work — Zack D. Films
+      url: https://www.youtube.com/watch?v=0BZ1C83I2R4
+      published: "2026-10-18"
+      observed_views: 65180136
+      source: Expanded primary YouTube metadata in the native browser; opening frame and intermediate playback inspected.
+      reading: Recent high-view short using 3D explanation and visual analogy; transfer the causal storytelling, not its electrical advice or literal hamster analogy.
+    - title: The Flattest Surface in the World — Branch Education
+      url: https://www.youtube.com/watch?v=VUPxowV0fsk
+      published: "2026-10-17"
+      observed_views: 680616
+      source: Expanded primary YouTube metadata in the native browser; opening, intermediate machinery frames and some playback inspected.
+      reading: Recent detailed object and precision explanation; a reference for zoom/scale language, not equivalent viral performance to the Zack example.
+    - title: How worms wormed their way into American soil! — MinuteEarth
+      url: https://www.youtube.com/watch?v=MAwD5_54UKY
+      published: "2025-02-04"
+      observed_views_rounded: 2.4 million
+      source: Primary YouTube search metadata for date and native watch page for rounded views; simple drawn ecology frames inspected.
+      reading: Older successful 2D explanation reference, not a new November 2026 trend.
+    - title: Potato growing underground — Boxlapse
+      url: https://www.youtube.com/watch?v=GntTeigtVrY
+      published: "2023-10-15"
+      observed_views_rounded: 33 million
+      source: Primary YouTube search metadata for date and native watch page for rounded views; underground growth frame at ten seconds inspected.
+      reading: Older successful actual plant timelapse; code-generated time compression must be labelled illustration rather than presented as recorded evidence.
+unresolved:
+  - The owner has not selected or approved the next visual treatment. Cartoon v02 remains a technical preview with adverse character feedback, not an accepted creative direction.
+  - Public views do not establish retention, follower or sales conversion, paid distribution, the cause of performance or performance on Thai Facebook/TikTok. HistoryInMaps' private workflow and broad current-trend status remain unverified.
+  - The earlier v01 render was intentionally retired under the owner's prior deletion authorization; its tracked source remains reproducible. No re-render was requested or performed here.
+  - Prior checkpoint limits remain; voice/story approval, Gemini readiness and current-month cost enforcement, owner-phone handoff, post/cover/F-link, publication and Insights baseline are still pending. Paid sends remain disabled and the 100 THB monthly limit stands.
+  - The prior checkpoint's low-memory complexity limits, dense-track warnings, disabled automated motion analysis, unmerged office posts-text-style rule and eventual owner-reviewed child/HQ PR procedure remain unresolved.
+next_action:
+  action: Present the four direct clip references and proposed adaptation, collect the owner's visual preference, then prepare the next concise storyboard before another full render.

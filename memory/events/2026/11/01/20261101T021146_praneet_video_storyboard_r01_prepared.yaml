@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T021146_praneet_video_storyboard_r01_prepared
+type: closeout
+recorded_at: "2026-11-01T02:11:46+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Present the first complete sourced storyboard for the selected wet-soil durian explainer.
+  scope:
+    - Narration, approximate timing, six code stills, visual/voice proposal and owner review surface within slice 1.
+outcome:
+  status: storyboard-proposed
+  completed:
+    - Prepared proposal 001-r01 with six full Thai narration segments, approximately 42 seconds, planned camera/scene transitions and visual/voice direction.
+    - Retrieved full Thai Ministry and university HTML evidence for soil air displacement, root oxygen needs, impaired uptake and possible wilting; mapped the claims to their sources.
+    - Authored six distinct SVG/HTML keyframes and a repeatable local screenshot command through posts video storyboard; exported a contact sheet and inspected its actual images.
+    - An independent factual review reported no required narration corrections and recommended clarifying moist aerated soil; that clarification and water films were incorporated into the comparison frame.
+    - Corrected Thai heading line-box overflow before the retained capture. All six final frames passed the text bounds/overflow checks; a 360x640 reduction of frame 03 was visually inspected.
+  boundary: >-
+    Owner requested the proposed storyboard, not approval of its content or
+    production. Revision 001-r01 remains pending owner review. The six images
+    are stills, not a completed animation or a timing proof against real audio.
+    No paid API/audio, full-episode render, ops draft write, publication, push,
+    PR or merge was performed. This is not a delivery closeout for slice 1.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: "9493110ae60d2b0f4ba54f25919a6bfcb7c26bc0"
+    branch: hq/20261030
+  office:
+    head: "028d35b473eed57434a306ce79106e4aa83f4e19"
+    branch: feat/video-posts-tooling
+    proposal: posts/video/episodes/001-wet-soil/STORYBOARD-r01.md
+    art: posts/video/episodes/001-wet-soil/storyboard/
+    command: bun run posts video storyboard
+    ignored_artifact: posts/out/001-wet-soil/storyboard-r01/storyboard-r01.jpg
+    artifact_sha256: "6f85be922b8f1475e6f85ad2ccccb78e962d421612c9c013e464b01b179b8dea"
+  validation:
+    - Six 1080x1920 screenshots captured with the existing Playwright browser, local font and remote HTTP dependencies blocked; no page errors.
+    - layout.json reported no text outside x108..972/y192..1728 and no text-container overflow for all six final frames.
+    - bun build scripts/posts.ts --target bun with existing external dependencies succeeded; build output remained ignored.
+    - git diff --check passed. Office's known untracked posts/.DS_Store was preserved; no praneet-web or shared HQ source file changed.
+  primary_sources:
+    - https://www.opsmoac.go.th/chiangrai-warning-preview-461691792071
+    - https://ipm.ucanr.edu/home-and-landscape/aeration-deficit/
+    - https://extension.umd.edu/resource/common-soil-problems
+unresolved:
+  - Owner must approve or revise the full narration, six keyframes and proposed voice/art direction for 001-r01 before full production. Timing remains an estimate until actual narration is measured.
+  - Gemini credentials location, this Bangkok calendar month's reconciled spending including other use, actual request output/cost bounds and atomic reservations are still unproved. Existing budget arithmetic remains dry-run only; no paid call is enabled.
+  - The six stills do not prove motion, audio/caption synchronization, episode render speed or finished visual quality. The prior flat probe's six scene-organization warnings and disabled automated motion analysis remain; use proper scene separation when building the approved episode.
+  - The host's low available memory and larger/longer animation capacity remain constraints. Owner-phone playback and handling time have not been tested.
+  - Final MP4, cover/post text and F-link draft, manual publication URL, feedback/Insights baseline and consistent view definition remain slice-1 proofs. No viral reach or HistoryInMaps internal pipeline was verified.
+  - Office posts-text-style at 6d84f2a remains unmerged; preserve its owner rule during later integration. No treatment recipe or dose is approved by this educational proposal.
+  - Both repositories retain local commits; eventual PR/closeout and owner-reviewed merges are still required. HQ round push/merge timing belongs to the owner; external authority is not inferred.
+next_action:
+  action: >-
+    Present 001-r01's actual six-frame contact sheet and complete narration in
+    chat. Obtain the owner's specific story/visual/voice approval or requested
+    revisions. On approval, implement the approved episode with measured audio
+    only after proving the current Gemini budget and request bound; do not
+    interpret merely preparing or viewing the storyboard as approval.
+  acceptance_check:
+    - Owner can assess the entire story and expected look from 001-r01, then approve that exact revision or name changes.
+    - Slice 1 remains active until its full DoD, including real device handoff/publication, is met.

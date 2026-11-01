@@ -1,0 +1,33 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T131325_praneet_wales_syncup_confirmed
+type: decision
+recorded_at: "2026-11-01T13:13:25+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Record the confirmed syncup understanding and prepare the final WALES storyboard.
+  scope:
+    - Refine the pre-storyboard workflow to the owner-requested syncup method; record the settled finalization brief and show the unchanged story with production-label cleanup.
+outcome:
+  status: decided
+  decision: Owner confirmed the Shared understanding and requested the storyboard. Audience is habitual chemical users who ignore order/testing. Finalization keeps existing narration, visuals and timing; removes visible production/version status, retains small simulation/synthetic-voice disclosures and instructional cautions, and adds no pre-dissolution lesson. Post/caption/F-link/publication work remains deferred. The workflow uses rounds of independent frontier questions, each with a lean and reason, until branches close and the owner confirms Shared understanding; documentation follows confirmation.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.2"
+  slice: "1"
+  repository:
+    head: 432cd679588d3395d38a9ac1c5b842f2fab1f9b5
+    branch: hq/20261030
+  office:
+    head: 55dd4bfb303d81145cff956f65a23eb3d46b497c
+    brief: posts/video/episodes/006-tank-mix/BRIEF.md
+    confirmed_revision: 006-final-brief-r02
+  syncup_result: Two rounds, four questions; Q1 partial, Q2 miss, Q3/Q4 matches. Strict full hits 2/4 overall, latest round 2/2. The corrected understanding, not a transcript or a global skill's authority, is the owner-confirmed input.
+unresolved:
+  - New final storyboard review and the eventual cleaned MP4's inspection/handoff remain pending. Existing v01 proofs do not certify a new output.
+  - Phone handling, actual invoice reconciliation, remote checksum availability, first publication/metrics and child/HQ integration remain open as previously recorded.
+next_action:
+  action: Save the confirmed brief and syncup-style workflow locally, prepare sixteen final-storyboard stills against the unchanged cached narration/timing, and present that storyboard for owner review before a new final render.
