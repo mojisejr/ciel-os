@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T051359_praneet_orchard_money_opened_slice1_authorized
+type: decision
+recorded_at: "2026-11-02T05:13:59+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-money-001
+  lane: single
+  objective: >-
+    Open plan revision 0.1 for the orchard's money: spending, sales by size
+    or as one lump, harvest rounds, and a summary that compares rounds; and
+    authorize slice 1, the whole flow designed and sampled before any code.
+  scope:
+    - "workstreams/praneet-orchard-money-001/PLAN.md and slices/1.md to 4.md."
+
+outcome:
+  status: decided
+  parallelism: proposed
+  decision: >-
+    The owner asked for a design of income, spending and harvest that any
+    orchard owner can record without accounting words, optionally usable for
+    tax, with a summary per harvest round that compares rounds. Two syncup
+    rounds on 2026-11-02 matched 16 of 16 guesses; the agreement is in the
+    plan. The owner confirmed the four slices and said to close the old
+    workstream and open this one ('ปิด workstream. เก่าให้เรียบร้อยนะครับ
+    จะได้ไม่ค้าง แล้วเปิดใหม่ได้เลยครับผม'). Slice 1 writes no code in the
+    child repositories and touches no production data. DAC2 is no longer in
+    use; only its tax and depreciation rules are borrowed.
+  why: >-
+    Spending and harvest are recorded nowhere, so the owner cannot tell what
+    a round cost or earned, or whether the orchard did better than before.
+
+evidence:
+  plan: workstreams/praneet-orchard-money-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "305dc17298410c8664bdb44b9fd70c77488138c7"
+    branch: hq/20261030
+    working_tree: this-decision
+  related:
+    - memory/events/2026/11/02/20261102T045109_praneet_orchard_slice9_switched_delivered.yaml
+
+unresolved:
+  - "Parallel work with praneet-video-posts-001, praneet-nursery-001 and praneet-gmaps-001 on praneet-web and praneet-office needs the owner's word; slice 1 changes no child repository."
+  - "The praneet-office main checkout holds another session's video branch with uncommitted work; this workstream uses its own worktree there."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Draw the screen map and data proposal, then render 2 to 4 samples of the
+    spend, sale and summary pages on the real praneet-web page at 390 and
+    1280, light and dark, for the owner's pick.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/praneet-orchard-money-001/slices/1.md."
