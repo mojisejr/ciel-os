@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.4
+**Plan revision:** 0.5
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -67,6 +67,13 @@ and inspect the actual encoded clip. The owner also authorized deleting the
 superseded episode's generated videos/render previews to save disk space;
 retain reconstructable source, runbooks and unrelated post assets. This is
 preview production permission, not final story, voice or publication approval.
+
+On 2026-11-01, after comparing four educational references, the owner selected
+the simple drawn 2D cause-and-effect direction and requested a trial. This
+authorizes another complete local silent preview of episode 001, using original
+drawn plant/soil graphics without a presenter mascot. Retain the existing
+factual boundaries and no-paid-call limit. This approves making the preview,
+not final story/voice acceptance or publication.
 
 1. Read the page brief, relevant owner material, earlier episodes and feedback.
    Propose a small set of topics with a recommendation and references. Verify
