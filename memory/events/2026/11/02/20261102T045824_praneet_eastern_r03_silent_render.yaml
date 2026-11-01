@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T045824_praneet_eastern_r03_silent_render
+type: closeout
+recorded_at: "2026-11-02T04:58:24+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver the approved 50-second eastern monsoon visual clip locally.
+  scope:
+    - Geographic camera and wind motion, raised-mound orchard descent, moisture reveal, silent MP4 and verification.
+outcome:
+  status: eastern-r03-silent-render-produced
+  summary: >-
+    Generated the approved shorter story as a 50-second 1080x1920 silent MP4.
+    Camera follows monsoon paths, returns to eastern Thailand, descends into
+    the accepted 16-tree raised-mound orchard at 35.5-38.5 seconds, reveals
+    qualitative soil moisture at 39-41 seconds and holds the final sentence
+    through 50 seconds. Reused the exact approved orchard source; extracting
+    it to a shared module preserved all six original still hashes. Fixed an
+    initially blank SVG callout with an HTML label before final rendering.
+    No paid request, external tiles, upload, social write or other-lane edit.
+  verification: >-
+    Actual MP4 is H.264 full-range 4:2:0 (ffprobe yuvj420p), 24fps, 1200 frames,
+    50 seconds, 9911469 bytes, no audio. Complete decode returned no errors.
+    All 33 layout samples and every captured map frame were ready; repeated
+    camera/pixels matched after backwards seek. Inspected 14 decoded shots
+    including eight descent/moisture states. Measured 168 consecutive descent
+    samples: reveal/settle were monotonic and map-plus-orchard opacity had no
+    gap. Maximum descent zoom change per frame was 0.04370498971193193.
+    RGB spot checks of decoded background and soil differed by one code value
+    from source. This is a slice-2 checkpoint, not its publication/review DoD.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "2"
+  repository:
+    head: "abdb67fc2f17f026bb1f1845b3d3c3b37851566d"
+    branch: feat/monsoon-maplibre-checkpoint
+  office:
+    head: 692ca46a53de02de749b15aa7672b9b84b158480
+    branch: feat/monsoon-maplibre-proof
+  delivery: checkouts/praneet-office/posts/video/episodes/007-monsoon/DELIVERY-r03-silent-v01.json
+  output: checkouts/praneet-office/posts/out/007-monsoon/r03-silent-v01/praneet-monsoon-east-r03-silent-v01.mp4
+  sha256: cb71c73ef5bb67069b39faca89cb0a39a82a1517295a966f73719d5f381a3c98
+  encoding_proof: checkouts/praneet-office/posts/out/007-monsoon/r03-silent-v01/encoded-verification.json
+  render_proof: checkouts/praneet-office/posts/out/007-monsoon/r03-silent-v01/monsoon-r03-render.json
+  static_parity: checkouts/praneet-office/posts/out/007-monsoon/r03-silent-v01/approved-stills-parity.json
+  decoded_motion_sheet: checkouts/praneet-office/posts/out/007-monsoon/r03-silent-v01/encoded-qa/descent-moisture.jpg
+unresolved:
+  - Owner review of the actual shorter MP4 remains pending; narration/subtitle timing is not established by silent rendering.
+  - New paid voice is outside this checkpoint. Actual provider invoice reconciliation remains unknown; budget reservations were not touched.
+  - Geography, orchard and soil moisture are illustrative; no measured real parcel, live forecast or elevation DEM. HyperFrames embedding remains unproved.
+  - Source/checkpoints remain local topic-branch commits. No push, PR, merge or Drive/social publication was requested or performed for this checkpoint.
+  - Slice 2 publication, dated feedback review and further experiment remain outstanding. Complete Insights, target/view definitions and earlier Drive checksum remain unresolved.
+next_action:
+  action: Present the actual local 50-second silent MP4 for owner review, emphasizing the 36-43 second orchard transition. Adjust any visual issue; paid central-Thai narration remains a separate bounded step under the 100 THB monthly ceiling.
