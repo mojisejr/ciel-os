@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20261101T214440_praneet_monsoon_maplibre_proof_authorized
+type: decision
+recorded_at: "2026-11-01T21:44:40+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Prove the approved monsoon story with an actual local MapLibre clip.
+  scope:
+    - Episode 007 brief, approved storyboard, local geographic assets, camera and wind code, silent MP4 and proof.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After revising the audience to growers first and keeping monsoons as the
+    main subject, the owner accepted the 12-beat approximately 90-second story
+    and requested generation of a local MapLibre proof. No Drive delivery is
+    wanted for this proof. This authorizes the bounded repeat-use work in
+    slice 2 under the existing plan, not completion of its feedback/review DoD.
+    Existing scoped parallel and project-overlap permission remains; no
+    parallel agents are used for this proof and other lanes remain untouched.
+  authorization_boundary: >-
+    Local silent generation only. No paid voice request, new paid map service,
+    API credential, social publication, Drive upload, or target redefinition.
+    Keep the 100 THB monthly Gemini ceiling and the existing manual-post flow.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "2"
+  repository:
+    head: f03e0ff700ddcf6214cd8ba18012325647a1ae11
+    branch: feat/monsoon-maplibre-checkpoint
+  office_base: 81396a5acbcffa7d515e034254c5797b40e3523b
+  episode_brief: checkouts/praneet-office/posts/video/episodes/007-monsoon/BRIEF.md
+  approved_story: checkouts/praneet-office/posts/video/episodes/007-monsoon/STORYBOARD-r01.md
+unresolved:
+  - Actual camera/capture/encoded visual quality still needs local proof and owner review.
+  - Paid narration is not part of this proof; provider invoice reconciliation remains unavailable.
+  - Slice 2 publication, dated feedback, two-week review and follow-on experiment are not completed by a map demo.
+  - Growth-target platform mapping and cross-platform view definitions remain undecided; preserve the existing Facebook Page follower goal.
+  - Remote Drive checksum and complete authenticated Insights remain unavailable; this proof uses neither.
+next_action:
+  action: Finish and inspect the silent MapLibre MP4 and six geographic keyframes; deliver locally for owner visual feedback before paid narration or publication work.
