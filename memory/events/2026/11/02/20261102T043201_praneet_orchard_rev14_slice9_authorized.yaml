@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T043201_praneet_orchard_rev14_slice9_authorized
+type: decision
+recorded_at: "2026-11-02T04:32:01+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Plan revision 1.4 moves slice 8 out of this workstream and authorizes
+    slice 9, the switch from Gemini Spark and the Sheet, as the final slice.
+  scope:
+    - "workstreams/praneet-orchard-001/PLAN.md, slices/9.md, and slices/8.md removed."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner said he has not recorded with Spark for some time, uses only
+    this system, and no longer cares about the Sheet ('ผมไม่ได้บันทึกด้วย spark
+    มาสักระยะนึงแล้ว และใช้ แค่ ระบบที่เราใช้อยู่นี่ … focus ที่ database เลย'),
+    and asked to do slice 9 first. Asked whether to move slice 8 out and close
+    this workstream with slice 9, he said 'ถ้าคุนคิดว่าควรย้ายย้ายครับ'. The
+    Calendar to Sheet Apps Script stays on as he left it; no work reads the
+    Sheet again. Income, spending and harvest are recorded nowhere yet, and the
+    owner asked for a new design of them, so slice 8 leaves this plan for a
+    separate workstream opened on his word. A web app for sale is the owner's
+    separate matter and out of scope.
+  why: >-
+    The daily system already replaced the old one in practice; keeping slice 8
+    here would hold this workstream open for work that has not been designed.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "9"
+  repository:
+    head: "9ca80bc33a03799c57e07c1dd3f520b39e960fa0"
+    branch: hq/20261030
+    working_tree: this-decision
+  related:
+    - memory/events/2026/11/01/20261101T204222_praneet_orchard_slice11_delivered.yaml
+
+unresolved:
+  - "Changing the praneet-nursery-001 plan's line about the orchard still using Spark needs the owner's word."
+  - "hq/20261030 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Run the final read-only comparison against the latest Sheet export, show
+    the owner any difference, and close slice 9 on his word.
+  acceptance_check:
+    - "Slice 9 acceptance in workstreams/praneet-orchard-001/slices/9.md."

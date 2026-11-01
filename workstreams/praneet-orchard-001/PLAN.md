@@ -3,7 +3,7 @@
 **Workstream:** `praneet-orchard-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.3
+**Plan revision:** 1.4
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** none
@@ -107,6 +107,13 @@ revision 1.2 เพิ่มครึ่งวันในหน้าเพิ�
 แล้วสั่งเริ่ม ("ถ้าพร้อมแล้วผมคิดว่าคุนเริ่มได้เลยครับ ! แล้ว รัน migration ได้เลยครับ") slice 11 ทำก่อน slice 8
 ปฏิทินไม่เปลี่ยน เพราะไม่มีเงินและคนในบ้านอ่าน
 
+## ข้อตกลงก่อน slice 9 (revision 1.4, 2026-11-02)
+
+เจ้าของเลิกบันทึกด้วย Spark มาระยะหนึ่งแล้ว ใช้แต่ระบบนี้ และไม่สนใจ Sheet แล้ว ("focus ที่ database เลย")
+slice 9 จึงทำต่อจาก slice 11 เลย slice 8 (รายรับรายจ่าย การเก็บเกี่ยว และสรุปผล) ย้ายออกไปเป็นงานแยก
+เพราะยังไม่มีการบันทึกที่ไหนเลย และเจ้าของอยากให้ออกแบบใหม่ทั้งหมด ตัวแปลง Calendar → Sheet (Apps Script)
+เปิดอยู่ตามที่เจ้าของเลือก Sheet ไม่ใช่ที่อ้างอิงอีกแล้ว
+
 ## Project links
 
 | Project ID | Role | Local binding |
@@ -140,5 +147,4 @@ AI API, การหยุด Spark ก่อนเจ้าของประ�
 - [7. ตัวตรวจชุดยา](slices/7.md)
 - [10. งานที่ยังไม่คิดเงิน](slices/10.md)
 - [11. งานก้อน](slices/11.md)
-- [8. รายรับรายจ่าย การเก็บเกี่ยว รอบการผลิต และ P&L](slices/8.md)
 - [9. เปลี่ยนระบบ](slices/9.md)
