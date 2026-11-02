@@ -3,7 +3,7 @@
 **Workstream:** `praneet-cinematic-style-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.5
+**Plan revision:** 0.7
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -77,6 +77,21 @@ sixty-second movie fits this Mac.
 - [3. Prove one monsoon scene with Blender models anchored on map tiles](slices/3.md)
 - [4. Review the full monsoon storyboard and purposeful camera rhythm](slices/4.md)
 - [5. Produce the approved full monsoon map-board film with existing audio](slices/5.md)
+- [6. Improve visual detail and rerender the same monsoon film](slices/6.md)
+
+## Owner-authorized visual refinement
+
+The owner requests direct code/material/lighting improvements and another full
+render of the same film, without a further approval round. Slice 6 preserves
+the approved sixteen-shot story, existing audio and static QR. The owner's
+subsequent correction asks for calmer camera movement at the earlier style's
+explanatory pace: remove excessive pullbacks/rotation, soften travel and give
+the explanatory view time to settle, without lengthening the film.
+Refine original geometry, portable surface detail, lighting/shadows and
+antialiasing. Inspect stills before full capture. Deliver a portrait 1080x1920
+H.264/AAC MP4 suitable for the owner's manual short-video upload workflow;
+measure any higher-resolution capture/downsample and disclose resource limits.
+No paid generation, external upload, posting or change to the default style.
 
 ## Owner-approved full film
 
