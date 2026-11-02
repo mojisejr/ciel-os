@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T114553_praneet_water_stress_storyboard_r01
+type: closeout
+recorded_at: "2026-11-02T11:45:53+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Prepare the third published clip's water-management flowering story for owner review.
+  scope:
+    - Existing backlog topic 003 confirmed brief, factual sources, sixteen-shot narration and original static code keyframes.
+outcome:
+  status: water-stress-storyboard-prepared-for-owner-review
+  summary: >-
+    Owner selects the water-management episode first, separately from a possible
+    future paclobutrazol episode. Office now holds a confirmed practical-grower
+    brief, original-source boundaries and proposed sixteen-shot storyboard r01.
+    Its estimated 59 seconds includes the 7.5-second recurring LINE closing;
+    narration timing is not measured. The story covers bearing-tree readiness,
+    moderate versus damaging stress, root-zone soil, comparable leaf observations,
+    flower buds beneath mature branches and gradual water adjustment by tree/bud
+    conditions. No universal withholding days, liters, RH limits, chemical doses
+    or unsupported NotebookLM root/re-dosing claims are scripted.
+  verification: >-
+    The scoped local renderer produced all sixteen 1080x1920 PNGs and two
+    eight-frame plus one full contact sheet. Text bounds passed, page errors
+    and blocked remote requests are empty, and the still QR decodes to the
+    existing LINE OA. All sixteen frames were visually inspected in contact
+    sheets; soil, leaf-readiness, bud magnifier and branded ending were checked
+    at full resolution. FRAMES-r01.json records hashes and proof limits.
+    Office staged diff whitespace checks passed. No movie, paid API request,
+    budget-ledger change, upload, social write, push or merge occurred.
+  scope_boundary: >-
+    Storyboard is prepared, not owner-approved production. This checkpoint does
+    not finish slice 2, authorize slice 3, implement cost/Claude portability or
+    start a course system. Office media/build output remains ignored; source
+    and review metadata are committed on the existing local topic branch.
+    Unrelated praneet-web changes remain unchanged and outside this delivery.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: ad502200ffbacb049b7739ec806cee644adbdf27
+    branch: feat/monsoon-maplibre-checkpoint
+  office:
+    head: 5dc6f754fa8f21dfe85ff6630231599f53752d6a
+    branch: feat/monsoon-maplibre-proof
+  authorization: memory/events/2026/11/02/20261102T113036_praneet_water_stress_storyboard_authorized.yaml
+  brief: checkouts/praneet-office/posts/video/episodes/003-water-stress/BRIEF.md
+  sources: checkouts/praneet-office/posts/video/episodes/003-water-stress/SOURCES.md
+  storyboard: checkouts/praneet-office/posts/video/episodes/003-water-stress/STORYBOARD-r01.md
+  frames: checkouts/praneet-office/posts/video/episodes/003-water-stress/FRAMES-r01.json
+  renderer: checkouts/praneet-office/scripts/video-water-stress-storyboard.ts
+  local_output: checkouts/praneet-office/posts/out/003-water-stress/storyboard-r01/
+  previous_checkpoint: memory/events/2026/11/02/20261102T091148_praneet_video_session_handoff.yaml
+unresolved:
+  - Owner story/visual acceptance, real voice duration and encoded motion/audio QA remain pending. Still QR decoding is not an MP4 QR proof. Narration and images explain observations, not a complete irrigation prescription or field diagnostic standard.
+  - NotebookLM original references are unavailable. The DOA manual was read during research but later official retrieval is intermittent. Exact irrigation decisions remain site/tree/stage-specific.
+  - Slice 2's first two-week feedback review and final PR/merge closeout remain open; this new proposal does not invent dated Insights or a measured lesson. Slice 3 growth proof and cross-platform view definitions remain as previously recorded. TikTok full video/metrics remain CAPTCHA-limited.
+  - Existing November reservations remain 4745 satang with 5255 after reservations, not reconciled invoice charges. Subscription allocation and shared multi-machine budget/Claude operation are still unproved; recheck the actual ledger, outside usage, pricing and specific approval before any paid narration.
+  - Remote Drive checksum, direct-QR lead attribution, exact publication times and complete device/Insights evidence for 007 remain unavailable. HQ/office work is local-only and has not been pushed or merged. Preserve other HQ lanes and the unrelated praneet-web orchard-spend work.
+next_action:
+  action: Present the full narration/table and sixteen actual static frames for owner review. Apply requested story corrections; only after the owner authorizes production prepare the bounded WALES-style voice request and motion render under the existing budget guard. Keep paid calls and external delivery separate from this storyboard checkpoint.
