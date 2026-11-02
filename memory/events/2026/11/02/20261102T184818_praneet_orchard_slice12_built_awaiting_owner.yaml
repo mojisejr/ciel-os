@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T184818_praneet_orchard_slice12_built_awaiting_owner
+type: closeout
+recorded_at: "2026-11-02T18:48:18+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Build slice 12: the application method as one word chip, amounts counted
+    per tank, per tree or in total, and units picked from a list with
+    decimals, on the add-work form and in the agent's orchard commands.
+  scope:
+    - "praneet-web branch feat/orchard-apply-method (PR 40); praneet-office branch feat/orchard-apply-method (PR 34) in the worktree checkouts/praneet-office-apply."
+
+outcome:
+  status: built-awaiting-owner
+  slice: "12"
+  completed:
+    - "praneet-web PR 40 (draft): migration 024 (orchard_apply_methods with eight starting words, each with its basis and part; orchard_work.method, basis, trees; item amount numeric(12, 3); existing work counted per tank with its method read from the title). Method chips with + พิมพ์เอง, a คิดปริมาณ switch, the fields for that basis, a unit list with พิมพ์เอง…, each product's last unit, and a title that names a word picks it. Spray or fertiliser is read from the products. The plot history reads the Sheet's spellings as the same words and says where each landed."
+    - "praneet-office PR 34 (draft): spray files take method, basis and trees; orchard spray --plot prints the method, where it landed and the basis. Trying it on a local server found a crash (lookups declared as consts after the command runs); fixed in the PR's second commit."
+  acceptance:
+    - "On a phone, 'ราดโคนปุ๋ยเกล็ด ต้นละ 1 ขีด 40 ต้น' in a few taps and read back: tests/orchard-spray-method.spec.ts phone test."
+    - "0.5 cc and 0.125 cc kept as written; a word typed once is a button on the next work: the same spec."
+    - "Old work shows its method and the plot history says leaf, trunk or soil: the migration's title rule tried on 9 sample titles, and the spec's history checks."
+  not_verified:
+    - "Not tried on the owner's phone."
+    - "Migration 024 has not run on production; how many existing works get a method from their title there is not known."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.5"
+  slice: "12"
+  decision: memory/events/2026/11/02/20261102T182931_praneet_orchard_rev15_slice12_authorized.yaml
+  repository:
+    head: "48c69c195dbb044ba65a9f72f375b495a61c91ed"
+    branch: hq/20261102
+    working_tree: this-closeout-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261102
+  child_heads:
+    praneet-web feat/orchard-apply-method: "3f3d41d7b57d57c679523da4c55d95b8c54b76c2"
+    praneet-office feat/orchard-apply-method: "1110d71ad332fbf346f6dd24b0280dd3c7b7ca01"
+  checks:
+    - "praneet-web bun run check: typecheck, build, 130 passed in 3.2 min under the memory guard; peak 2,837 MB of 3,072 MB."
+    - "praneet-office bun test scripts/: 19 pass. orchard add (dry run, then --write) and orchard spray --plot against a local next start on praneet_test, options typed out, every first line reading 127.0.0.1 (ไม่ใช่ระบบจริง)."
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/40"
+    - "https://github.com/mojisejr/praneet-office/pull/34"
+
+unresolved:
+  - "Migration 024 waits for the owner's word naming it; it must run before PR 40 merges, as Vercel deploys main at once."
+  - "The full suite's memory peak rose to 2,837 MB of the guard's 3,072 MB (2,656 MB on 2026-11-02 earlier); the next slice that adds pages may reach the stop. Workaround: run the changed specs alone, or raise TEST_MEMORY_LIMIT_MB for one run while the machine reads over 30% free."
+  - "A new method word's basis and part are guessed from its text and cannot be changed from a page; the agent can correct one in the database on the owner's word."
+  - "The praneet-office worktree checkouts/praneet-office-apply holds feat/orchard-apply-method; remove it after PR 34 merges."
+  - "hq/20261102 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: say the word to run migration 024 on production, then merge
+    praneet-web PR 40, then praneet-office PR 34. Agent: run and read back
+    024 while PR 40 is a draft, and after the merges read the form on
+    production, remove the worktree, and record slice 12 delivered; then
+    praneet-orchard-money-001 slice 3 on the owner's word.
+  acceptance_check:
+    - "Slice 12 acceptance in workstreams/praneet-orchard-001/slices/12.md."
