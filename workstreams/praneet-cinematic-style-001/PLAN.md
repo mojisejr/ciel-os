@@ -3,7 +3,7 @@
 **Workstream:** `praneet-cinematic-style-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -74,6 +74,18 @@ sixty-second movie fits this Mac.
 
 - [1. Install and measure a small additive garden-style proof](slices/1.md)
 - [2. Storyboard the monsoon film in the additional visual style](slices/2.md)
+- [3. Prove one monsoon scene with Blender models anchored on map tiles](slices/3.md)
+
+## Owner-requested shared-map scene proof
+
+After the weather-map research, the owner explicitly requests one trial scene
+using monsoon as its base. Slice 3 is a roughly twelve-second silent local
+proof of the proposed shared map world: real basemap tiles, original Blender
+GLB components, Three.js in MapLibre's camera/depth context, explanatory wind
+and a camera move. This is not the complete sixteen-shot film or a new default.
+Use a small geographic area, bounded public tile fetching with attribution and
+an isolated ignored, pinned Three.js dependency; preserve existing manifests.
+No weather API subscription, new paid narration, Drive upload or publication.
 
 ## Owner-requested storyboard extension
 
