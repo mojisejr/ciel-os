@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T205348_praneet_orchard_money_slice4_built_awaiting_owner
+type: closeout
+recorded_at: "2026-11-02T20:53:48+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-money-001
+  lane: single
+  objective: >-
+    Build slice 4, the last: harvest rounds (close, take back, a past
+    round's own totals), tree counts, and the round's summary answering
+    questions with every figure from slice 4's table, on the site and in the
+    agent's money commands.
+  scope:
+    - "praneet-web branch feat/orchard-round (PR 42); praneet-office branch feat/money-round (PR 36) in the worktree checkouts/praneet-office-round."
+
+outcome:
+  status: built-awaiting-owner
+  slice: "4"
+  completed:
+    - "praneet-web PR 42 (draft): migration 026 (orchard_rounds, orchard_trees), lib/orchard-round.ts, the summary at /ops/orchard/money as sample A with ?round= for a closed round, the bill and sale list moved to /ops/orchard/money/list, and pages to close a round, see and take back past rounds or add one's own totals, and set tree counts; the tax estimate works DAC2's brackets in satang."
+    - "praneet-office PR 36 (draft): bun run money summary [--round] and money close --date [--write], each naming its target first and refusing an unknown option before sign-in (runbook 08)."
+    - "Choices within plan 0.2, as the decision said: a multi-year line's yearly share falls in the round that holds its anniversary; tree counts take effect from a round's start; a past round's own totals only before the first day recorded; the first day recorded ignores bills that hold only things bought earlier for years of use."
+  acceptance:
+    - "The summary answers as questions per sample A: screenshots of a closed and the open round at 390, light and dark, kept local in praneet-web .local/money-s4."
+    - "Every figure matches slice 4's table and the round's bills, sales and wages: tests/orchard-summary.spec.ts works two closed 2024 rounds by hand (spent 5,375 with P-4's half of a day left out and a sprayer's yearly share; sold 8,600; per tree 161.25; and the rest), and the office's summary printed round 2 the same."
+    - "A figure without enough data says what is missing, not zero: an empty round, no tree count, lump-only sales."
+    - "Closing starts the next round the day after; taking back makes one round again: the API test and the phone test."
+    - "Both tax methods match DAC2 in the same case: DAC2's 21 boundary cases and its workbook figures."
+  not_verified:
+    - "Not tried on the owner's phone; production has no round yet."
+    - "The office commands were tried against a local next start with the test database only, never production."
+
+evidence:
+  plan: workstreams/praneet-orchard-money-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "4"
+  decision: memory/events/2026/11/02/20261102T201232_praneet_orchard_money_slice4_authorized.yaml
+  repository:
+    head: "dd2333198b90fd8f4391fbf967a63616e9a24fa3"
+    branch: hq/20261102
+    working_tree: this-closeout-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261102
+  child_heads:
+    praneet-web feat/orchard-round: "671ec082b8ef91afe44a033a1d9ff020981565f1"
+    praneet-office feat/money-round: "88efc18a7e00b602433cf339915229e394cd8c7a"
+  checks:
+    - "praneet-web bun run test: 137 passed in 3.0 min under the memory guard, peak 2,915 MB of 3,072 MB; tsc --noEmit clean."
+    - "Two earlier full runs were stopped by the guard on swap growth (1,585 and 1,575 MB over 1,536 MB) while another session's video render and another project's next build ran; the agent waited for each to end and did not change the guard."
+    - "praneet-office bun test scripts/: 21 pass; money summary, close (dry run, then --write) against a local next start on praneet_test, options typed out, every first line reading 127.0.0.1 (ไม่ใช่ระบบจริง)."
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/42"
+    - "https://github.com/mojisejr/praneet-office/pull/36"
+
+unresolved:
+  - "Migration 026 waits for the owner's word naming it; it must run before PR 42 merges, as Vercel deploys main at once."
+  - "The full suite's memory peak is 2,915 MB of the guard's 3,072 MB stop, and the guard stops runs when other heavy work (a video render, another project's build) grows swap. Workaround: run the full suite when nothing heavy runs; the guard's limits are the owner's to change."
+  - "The praneet-office worktree checkouts/praneet-office-round holds feat/money-round; remove it after PR 36 merges."
+  - "The plan is 13.4 KB, over Wake's 12 KB soft limit; a warning only."
+  - "hq/20261102 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: say the word to run migration 026 on production, then merge
+    praneet-web PR 42, then praneet-office PR 36. Agent: run and read back
+    026 while PR 42 is a draft, and after the merges read the summary on
+    production, remove the worktree, and record slice 4 delivered with
+    ready-for-owner-merge, which finishes the workstream once it reaches
+    main.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/praneet-orchard-money-001/slices/4.md."
