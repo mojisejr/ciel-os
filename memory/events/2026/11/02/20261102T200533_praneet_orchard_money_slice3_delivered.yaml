@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T200533_praneet_orchard_money_slice3_delivered
+type: closeout
+recorded_at: "2026-11-02T20:05:33+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-orchard-money-001
+  lane: single
+  objective: >-
+    Deliver slice 3 (sale): sales by size or lump, live on production, with
+    the agent's money sale commands.
+  scope:
+    - "praneet-web PR 41, praneet-office PR 35, production migration 025."
+outcome:
+  status: ready-for-owner-merge
+  slice: "3"
+  completed:
+    - "Built and checked as recorded in evt_20261102T195042_praneet_orchard_money_slice3_built_awaiting_owner."
+    - "Migration 025 ran on production on the owner's word ('คุน run migration'). Only 025 was pending and nothing unknown was there; read back the recorded sha256 equal to the committed file's, the two starting crops with their sizes, no sales, and praneet_reader SELECT on all four tables. Both PR descriptions were updated with the read-back and this workstream's closeout path; the owner marked them ready and merged."
+    - "The owner merged praneet-web PR 41 (merge ccf727c) and praneet-office PR 35 (merge 28d1952); each PR head is an ancestor of its origin/main."
+    - "Production after the merge: the sale page redirects to /ops/login and the sale API answers 401 unsigned, an unknown path 404; signed in, money crops listed ทุเรียน and มังคุด with their sizes and money sale read 0 sales, each naming www.ptplant.com (ระบบจริง) first. Nothing was written."
+    - "Tidied: worktree checkouts/praneet-office-sale removed, both local slice branches deleted (GitHub deleted the remote ones), praneet-web main equals origin/main; praneet-web .next, .next-test and test-results and Bun's download cache cleared; 68 GiB free."
+  not_verified:
+    - "Not tried on the owner's phone; no sale recorded on production yet."
+evidence:
+  plan: workstreams/praneet-orchard-money-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  decision: memory/events/2026/11/02/20261102T193812_praneet_orchard_money_slice3_authorized.yaml
+  repository:
+    head: "c8d15bce77c79b6454d042ae7440b37d2ffb43da"
+    branch: hq/20261102
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261102
+  child_merges:
+    praneet-web: "PR 41, origin/main ccf727c"
+    praneet-office: "PR 35, origin/main 28d1952"
+unresolved:
+  - "The test guard can refuse to start when the owner's other apps leave under 2,560 MB free; retry or close apps, never lower the floor without the owner."
+  - "The plan is 13.4 KB, over Wake's 12 KB soft limit; a warning only."
+  - "The remote branch chore/test-build-mode is still on praneet-web's GitHub (merged)."
+  - "hq/20261102 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Slice 4 (rounds and the summary, the last slice) on the owner's word:
+    record its decision under plan revision 0.2 and start from
+    workstreams/praneet-orchard-money-001/slices/4.md; its summary page
+    follows sample A and its layout was chosen in slice 1.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/praneet-orchard-money-001/slices/4.md."
