@@ -1,0 +1,38 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T054659_praneet_video_standing_round_requested
+type: decision
+recorded_at: "2026-11-03T05:46:59+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Integrate the completed video continuity work into the shared standing round.
+  scope:
+    - Shared hq/20261102 integration and replacement of the separate CIEL PR route; no main merge or new round yet.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner says Claude is working on the standing branch and explicitly requests
+    that Codex return to the shared checkout and sync the video work into it.
+    The owner will ask Claude to prepare the standing-round PR, merge that
+    round and then open the next shared standing branch. This supersedes the
+    separate CIEL PR 106 delivery route, not the completed product scope or
+    historical evidence. Preserve Claude's work and do not merge main, open a
+    standing PR or start the next round on the owner's behalf.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.8"
+  slice: "7"
+  repository:
+    head: 770bd02cd6026f7502abfa265d9a80ed35048d16
+    branch: hq/20261102
+  superseded_delivery: memory/events/2026/11/03/20261103T053444_praneet_video_style_pr_delivery_closeout.yaml
+  prior_standing_head: 4a5f863293cfb1393dbcb0c67ec9b0888f7f0e76
+  integrated_video_head: 8c99c2eea0b25fc99daabc487f674019902f97af
+unresolved:
+  - Standing-round PR/merge and the following round are reserved for the owner's coordination with Claude. Product portability/cost/platform-performance limits remain as recorded.
+next_action:
+  action: Verify standing integration and repository checks, record the superseded PR route and leave the shared round ready for Claude's owner-requested PR preparation.
