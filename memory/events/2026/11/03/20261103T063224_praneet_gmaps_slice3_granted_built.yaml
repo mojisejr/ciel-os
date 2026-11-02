@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T063224_praneet_gmaps_slice3_granted_built
+type: closeout
+recorded_at: "2026-11-03T06:32:24+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Google granted the Business Profile APIs; run slice 3's gmaps check and
+    report against the shop, bring PR 19 up to main, and offer it for the
+    owner's merge.
+  scope:
+    - "praneet-office branch gmaps-report (PR 19) in the worktree checkouts/praneet-office-gmaps."
+
+outcome:
+  status: built-awaiting-owner
+  slice: "3"
+  completed:
+    - "The owner said Google approved access ('google อนุมัติแล้วครับ คุนลองเชคได้ป่ะ'). gmaps check: token ok, Business Profile APIs granted, profile 'ปราณีต (เจ๊ฟัก) พันธุ์ไม้' with website https://www.ptplant.com/p/F2, Search Console sc-domain:ptplant.com siteFullUser."
+    - "gmaps report --months 3 read real figures. Calls were 8 (Aug), 4 (Sep) and 6 (Oct); direction requests were 68, 53 and 44; views were split Maps and Search, mobile and desktop. Search terms are each under 15. Search Console showed 1 to 3 impressions per term and no clicks."
+    - "On the owner's word ('จัดมาครับถ้าทุกอย่างพร้อมแล้ว') main was merged into gmaps-report (README and package.json keep both sides), gmaps now refuses an unknown option before any Google call (runbook 08, checkArgs) with a harmless test, and the branch was pushed as 0ddfbe7."
+  acceptance:
+    - "gmaps check reports access granted and a working token: met."
+    - "gmaps report shows real figures from both sources: met for Business Profile and Search Console."
+    - "No write to Google and no token printed: the script only reads; outputs carried no secret."
+  not_verified:
+    - "Whether the call figures match the Performance page in the owner's app; the owner compares them."
+    - "The Maps-link section: READER_DATABASE_URL is not in .assets/preneet/.env and production was not read."
+    - "Website clicks read 0 in every month although the profile links /p/F2; why is unknown."
+
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  decision: memory/events/2026/10/25/20261025T194807_praneet_gmaps_slice3_authorized.yaml
+  repository:
+    head: "b9e8ae55b61167ba17b135411c856609238c9b85"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261103
+  child_heads:
+    praneet-office gmaps-report: "0ddfbe76aa7abb78fdd5ac7f199dd5a5fbae4d80"
+  checks:
+    - "praneet-office bun test scripts/: 22 pass; gmaps check --bogus stops with ไม่รู้จักตัวเลือก before any call."
+  related:
+    - "https://github.com/mojisejr/praneet-office/pull/19"
+
+unresolved:
+  - "Slice 5 still waits for the owner to press 'ออเดอร์ของฉัน' in the LINE OA chat; it is not recorded delivered."
+  - "The Maps-link section of gmaps report needs READER_DATABASE_URL (praneet_reader) and the owner's word to read production; deferred."
+  - "Website clicks read 0 for Aug to Oct; deferred until November's figures show whether /p/F2 counts."
+  - "The praneet-office worktree checkouts/praneet-office-gmaps holds gmaps-report; remove it after PR 19 merges."
+  - "The main praneet-office checkout sits on Codex's merged branch feat/monsoon-maplibre-proof; the owner told Codex to tidy it."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: compare the calls 8, 4, 6 with the Performance page in the app,
+    then merge praneet-office PR 19. Agent: after the merge remove the
+    worktree and record slice 3 delivered.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-gmaps-001/slices/3.md."
