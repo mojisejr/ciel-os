@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T090545_praneet_cost_portability_requirements_recorded
+type: closeout
+recorded_at: "2026-11-02T09:05:45+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Record future episode-cost and Codex/Claude requirements without diverting from Praneet content.
+  scope:
+    - Plan 1.6, slice 2 pointer and existing video runbook documentation only.
+outcome:
+  status: cost-portability-requirements-documented-checkpoint
+  summary: >-
+    Recorded the owner's requested per-clip cost visibility and alternative
+    Codex/Claude clients in plan 1.6 and the existing runbook. Distinguished
+    usage estimates, pending reservations, reconciled charges, allocated
+    subscription cost and unallocated experiments. Required one authoritative
+    shared budget boundary and a real Claude proof before claiming portability.
+    Preserved the 100 THB Gemini ceiling and current story/style/manual-post
+    flow. Course separation and new implementation remain deferred; the third
+    clip waits for the owner's return. No new slice or review acceptance was added.
+  verification: >-
+    Wake validates the revised split plan and recognizes the owner's plan 1.6
+    slice 2 authorization. All 28 local links in the runbook resolve and Git
+    whitespace checks pass. Office change is only its runbook; HQ changes are
+    the requested plan, slice pointer and semantic events. No runtime code,
+    billing ledger, secret, media, API call, external write or new clip changed.
+  slice_audit: >-
+    Slice 1 delivery reached owner-merged HQ PR 104 in local origin/main.
+    Slice 2's second episode has owner-supplied publication links and partial
+    public verification, but still needs its first two-week review, use of a
+    lesson in a subsequent proposal and the final PR/merge closeout. Slice 3
+    remains the separate unproved organic follower/cumulative-view outcome and
+    has no new execution decision. Clip number and slice number are different.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 5f0bf034c1b1756e67dbcc4db6b04ec82d882e87
+    branch: feat/monsoon-maplibre-checkpoint
+  office:
+    head: 8be04638c2ab3bd0df37aa26df23b5c64956c614
+    branch: feat/monsoon-maplibre-proof
+  authorization: evt_20261102T090434_praneet_cost_portability_requirements_authorized
+  runbook: checkouts/praneet-office/runbooks/07-video-posts.md
+  slice_1_merge: f03e0ff700ddcf6214cd8ba18012325647a1ae11
+  publication_record: checkouts/praneet-office/posts/video/episodes/007-monsoon/PUBLICATION-r05-v01.json
+unresolved:
+  - Subscription bill amount, accounting period, allocation method/workflow share and provider invoice remain unknown. Pending reservations are not confirmed cost; no new cost cap amount was agreed.
+  - Complete per-clip reporting, Claude end-to-end operation and cross-checkout/machine shared-ledger behavior remain unimplemented or unproved; the existing guard only controls requests through its sender.
+  - Slice 2 review/lesson/final PR and slice 3 growth proof remain open. Episode 007 full TikTok verification is CAPTCHA-blocked; complete dated Insights, exact publication times and cross-platform view/target definitions remain unresolved.
+  - Remote Drive checksum and direct-QR lead attribution remain unavailable; style defaults still need per-episode review. Latest topic-branch commits are local, without push, PR or merge.
+next_action:
+  action: Report the documented requirements and actual slice boundaries. When the owner returns to clip 3, syncup on its topic using the current style/runbook in slice 2 and keep the outstanding feedback review visible. No new production starts in this turn.
