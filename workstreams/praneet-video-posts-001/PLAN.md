@@ -3,7 +3,7 @@
 **Workstream:** `praneet-video-posts-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 1.5
+**Plan revision:** 1.6
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -207,6 +207,45 @@ No TikTok account rename or public-profile write is authorized by the clip work.
   Do not ask for keys in chat or put values into output, source or events.
 - Local rendering and files first. Extra storage/bandwidth on the existing web
   host is not assumed free or approved; check capacity before uploading video.
+
+## Recorded cost and client-portability requirements
+
+Owner decision 2026-11-02: preserve these requirements in this workstream and
+the existing video runbook before further implementation. Keep Praneet's own
+content and observed growth as the priority. No course product, separate system,
+new workstream, billing integration or new clip is started by this decision.
+The owner will return to begin the third published clip in a later conversation.
+
+- Report costs against an episode/revision, including charged retries and
+  experiments. Keep usage-based estimates, outstanding reservations and
+  reconciled charges distinct; unknown is not zero and a reservation is not
+  confirmed spending. Keep shared exploratory costs separate until allocated.
+- Record actual subscription charges and their billing period separately from
+  variable Gemini TTS/API charges. An allocated subscription share per clip
+  must name its method and share assigned to this workflow; do not present API
+  token-rate arithmetic as the subscription's actual per-clip bill. The actual
+  subscription amount and allocation method still require owner evidence.
+- Keep the existing Gemini 100 THB Bangkok-calendar-month ceiling. Every paid
+  attempt must pass the existing reservation and reconciliation boundary;
+  unchanged audio is reused. An episode-specific ceiling may be agreed later;
+  no new amount, credit purchase, subscription or paid API is approved here.
+- Codex and Claude are alternative clients of the same workflow, storyboard
+  approval, style, renderer and cost-control tools. Shared paid access must
+  resolve to one authoritative budget ledger and reservation boundary, even
+  when clients use different folders or machines. Independent copied ledgers
+  cannot establish a combined cap. Client name is provenance, not authority.
+- A future compatibility claim needs an actual end-to-end Claude trial and
+  evidence that both clients obey the shared budget boundary. Keep the present
+  local sender's scope explicit: it controls requests through that sender,
+  not unrelated use of the billing account/key. No Claude trial or portability
+  implementation is authorized by recording this requirement.
+
+The operating detail belongs in office's `runbooks/07-video-posts.md`, with
+episode cost evidence next to the episode's existing source/delivery records
+and secrets/billing documents kept in owner-controlled ignored storage. No
+dashboard, service, universal renderer or second cost registry is required by
+this agreement. Implementation remains deferred until a bounded owner decision;
+this recording does not add a new slice or change slice 2's review acceptance.
 
 ## Project links
 
