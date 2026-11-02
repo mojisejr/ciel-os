@@ -1,0 +1,75 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T143300_praneet_orchard_money_slice2_built_awaiting_owner
+type: closeout
+recorded_at: "2026-11-02T14:33:00+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-money-001
+  lane: single
+  objective: >-
+    Build slice 2 (spend): one bill per visit to the shop with lines in the
+    owner's words, a category from the word, things used over years, products
+    off the chemical shelf, the money page, and the agent's money commands;
+    run migration 023 on production before the merge, as the owner said.
+  scope:
+    - "praneet-web branch feat/orchard-spend (PR 39) and chore/test-build-mode (PR 38); praneet-office branch feat/money-spend (PR 33) in the worktree checkouts/praneet-office-money; production migration 023 only."
+
+outcome:
+  status: built-awaiting-owner
+  slice: "2"
+  completed:
+    - "praneet-web PR 39 (draft): migration 023 (orchard_spend_words with 14 starting words, orchard_bills, orchard_bill_lines), lib/orchard-money.ts, the spend API, /ops/orchard/money with the new and edit bill pages as sample B, and the เงินสวน link with this month's total on /ops/orchard. The six most-used words are offered so the form stays uncluttered."
+    - "praneet-office PR 33 (draft): bun run money spend, spend add (a dry run through the site unless --write), words and category, each naming its target first and refusing an unknown option before sign-in (runbook 08)."
+    - "Migration 023 ran on production on the owner's word ('คุน รัน migration 023 ได้'). Only 023 was pending; read back three tables, 14 words, no bills, praneet_reader SELECT on all three, and the recorded sha256 equal to the committed file's."
+    - "praneet-web PR 38 (draft): the suite now runs against next build + next start, and the memory guard reads each process's phys_footprint and the machine's free level and swap. Cause found on 2026-11-02: a full run under the old guard restarted the owner's laptop again (next-server at 13.2 GiB in the panic report) because ps RSS leaves out compressed memory, and the disk had 12 GiB free so swap could not grow. The owner approved the new test method and a package-cache clean-up (npm, Yarn v6, bun, pnpm prune, praneet-web test caches): 12 to 68 GiB free; ~/.yarn/berry, the pnpm binary and Playwright browsers were kept, and no node_modules link pointed into a removed cache."
+  acceptance:
+    - "One bill of several lines in a few taps on a phone, its total the sum of its lines, the category from the word without the owner choosing: tests/orchard-money.spec.ts phone and API tests."
+    - "A thing used over years is split per year to the satang, and one bought before the system counts only the years left: the yearShares and yearsLeft test."
+    - "No crowding from optional fields, as sample B: screenshots at 390 and 1280, light and dark, kept local in praneet-web .local/money-s2."
+  not_verified:
+    - "Not tried on the owner's phone."
+    - "The office commands were tried against a local next start with the test database only, never production."
+
+evidence:
+  plan: workstreams/praneet-orchard-money-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  decision: memory/events/2026/11/02/20261102T085512_praneet_orchard_money_slice2_authorized.yaml
+  repository:
+    head: "77b2a25c99dfb1cc220265459ab429836a57ea52"
+    branch: hq/20261102
+    working_tree: this-closeout-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261102
+  child_heads:
+    praneet-web feat/orchard-spend: "d15dbcc78f2463350e84890c73bfa21380c6113b"
+    praneet-web chore/test-build-mode: "0364e4274f79dcbf9e2a722059e3f32ad97600ed"
+    praneet-office feat/money-spend: "bd8d372226b9e505201f0dee426678907e43f423"
+  checks:
+    - "Full suite, PR 39 merged locally with PR 38: 127 passed in 2.7 min; guard peak 2,656 MB, machine never below 33% free, swap did not grow."
+    - "Full suite on PR 38 alone: 122 passed in 2.5 min, peak 2,536 MB."
+    - "praneet-office: bun test scripts/money.test.ts scripts/ops-session.test.ts, 10 pass."
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/38"
+    - "https://github.com/mojisejr/praneet-web/pull/39"
+    - "https://github.com/mojisejr/praneet-office/pull/33"
+
+unresolved:
+  - "The test guard refuses to start below 20 GB of free disk. Next candidates if space runs low again: the Docker build cache (not measured, Docker was off), Xcode simulators and DeviceSupport, Rust target folders."
+  - "The plan is 13.4 KB, over Wake's 12 KB soft limit; a warning only."
+  - "The praneet-office worktree checkouts/praneet-office-money holds feat/money-spend; remove it after PR 33 merges."
+  - "hq/20261102 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: merge praneet-web PR 38 and PR 39 (either order), then
+    praneet-office PR 33. Agent: read /ops/orchard/money on production,
+    remove the worktree, and record slice 2 delivered; slice 3 (sale) waits
+    for the owner's word.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-orchard-money-001/slices/2.md."
