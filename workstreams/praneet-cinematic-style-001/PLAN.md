@@ -3,7 +3,7 @@
 **Workstream:** `praneet-cinematic-style-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -73,6 +73,18 @@ sixty-second movie fits this Mac.
 ## Slices
 
 - [1. Install and measure a small additive garden-style proof](slices/1.md)
+- [2. Storyboard the monsoon film in the additional visual style](slices/2.md)
+
+## Owner-requested storyboard extension
+
+On 2026-11-02 the owner chooses the existing eastern-monsoon film instead of
+water stress for the style trial and requests its storyboard. Slice 2 covers
+the proposed sixteen shots and static visual frames only. Reuse the approved
+r05 words and measured 56.125-second timing, with the same 7.5-second QR hold.
+Show geographic maps, a clearly schematic windward-terrain view and an original
+3D orchard as one visual journey. Keep existing episodes and the default style
+untouched. No new narration, full movie, Drive upload or publication is part of
+this storyboard request; story/visual review precedes those actions.
 
 ## Out of scope and review
 

@@ -1,0 +1,35 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T163923_praneet_monsoon_cinematic_storyboard_requested
+type: decision
+recorded_at: "2026-11-02T16:39:23+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Prepare the existing eastern-monsoon film's additional-style storyboard for owner review.
+  scope:
+    - Sixteen-shot visual proposal and static frames, using existing narration and measured timing.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner redirects the proposed water-stress adaptation to the monsoon film,
+    then explicitly asks for the storyboard. This authorizes plan 0.2 slice 2:
+    static story/visual review, preserving the default style and existing clips.
+    It does not authorize a new full movie, paid voice or upload. The existing
+    geographically relevant monsoon scope resolves the earlier garden/map
+    opening question; no redundant scope confirmation is required.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: 37094ebc8781f63ee26194bd14c67de65344f718
+    branch: feat/monsoon-maplibre-checkpoint
+  voice_timing: checkouts/praneet-office/posts/video/episodes/007-monsoon/VOICE-TIMING-r05-v01.json
+unresolved:
+  - Full-motion map/Blender transitions and complete-film resource feasibility are unproved; static boards do not demonstrate motion quality.
+next_action:
+  action: Prepare the sixteen-shot visual storyboard and static proposal frames, inspect them, then present them for owner review.
