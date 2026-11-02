@@ -3,7 +3,7 @@
 **Workstream:** `praneet-cinematic-style-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.7
+**Plan revision:** 0.8
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -78,6 +78,18 @@ sixty-second movie fits this Mac.
 - [4. Review the full monsoon storyboard and purposeful camera rhythm](slices/4.md)
 - [5. Produce the approved full monsoon map-board film with existing audio](slices/5.md)
 - [6. Improve visual detail and rerender the same monsoon film](slices/6.md)
+- [7. Preserve the selected style as an Office runbook and verification script](slices/7.md)
+
+## Owner-requested reusable style instructions
+
+After reviewing the detailed/calmer v02 film, the owner says it is quite good
+and requests preserving this additional style as runbook plus scripts. Slice 7
+records it as a working reference, links it from the existing production
+runbook, and retains the demonstrated encoded checks as a callable script.
+Reuse shared brand, voice, syncup, storyboard and budget rules rather than
+copying them into a competing authority. Document how to adapt the current
+episode-specific sources; do not claim a universal any-topic video engine.
+No new movie, topic, paid request, default-style replacement, upload or merge.
 
 ## Owner-authorized visual refinement
 
