@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T075519_praneet_monsoon_captions_prepared
+type: closeout
+recorded_at: "2026-11-02T07:55:19+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Supply Facebook and TikTok captions for the accepted monsoon film and resend its Drive link.
+  scope:
+    - Local episode caption source and owner-facing copy; read-only verification of the existing Drive file.
+outcome:
+  status: episode-captions-prepared-checkpoint
+  owner_request: Prepare FB and TikTok captions and provide the Google Drive link again.
+  summary: >-
+    Prepared separate platform captions for 007 r05 using the approved evergreen
+    monsoon story and established conversational headline style. Facebook has
+    the observation checklist and existing LINE ID; TikTok is shorter and keeps
+    both channel and nursery hashtags. Saved both in the episode's existing
+    source area. Re-read Drive metadata: expected MP4 name, video/mp4 and
+    13088724 bytes match the delivery record. No new media upload, paid call,
+    ops draft, F-code or social publication occurred.
+  verification: >-
+    Caption JSON parses; source/story/delivery links exist; the Drive URL matches
+    the r05 delivery exactly. TikTok copy has five relevant hashtags. Copy was
+    checked against the narration for scope and qualifiers; no current weather,
+    irrigation, stock, price or performance claim was added. Whitespace check
+    passes and office contains only the intended committed caption file change.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.5"
+  slice: "2"
+  repository:
+    head: 3b5a586f4153ec0c35b0d1b3440961332bf934f7
+    branch: feat/monsoon-maplibre-checkpoint
+  office:
+    head: 8ed0e6c7343c4fe04f851f7a07dd9b0032706f42
+    branch: feat/monsoon-maplibre-proof
+  captions: checkouts/praneet-office/posts/video/episodes/007-monsoon/CAPTIONS-r05-v01.json
+  delivery: checkouts/praneet-office/posts/video/episodes/007-monsoon/DELIVERY-r05-thai-v01.json
+  owner_text_style_reference: office commit 6d84f2a, runbooks/05-posts.md
+  drive_video: https://drive.google.com/file/d/19CJgmibnJfIATXLKcod5GCCaaqarIpa8/view?usp=drivesdk
+unresolved:
+  - Episode 007 publication URLs, phone-open proof and complete dated Insights remain unavailable. Slice 2 publication, two-week review and subsequent experiment are still outstanding.
+  - Remote Drive checksum and provider invoice remain unknown; five full reservations totaling 4745 satang remain pending. Direct OA contact supplies no F-code attribution.
+  - Latest style/caption/source commits are local topic-branch work without push, PR or merge; style defaults still need per-episode review.
+next_action:
+  action: Present both copyable captions and the verified Drive link; the owner publishes manually and supplies platform URLs plus available dated feedback for the slice 2 loop.
