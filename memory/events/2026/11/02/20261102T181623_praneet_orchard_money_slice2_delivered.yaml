@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T181623_praneet_orchard_money_slice2_delivered
+type: closeout
+recorded_at: "2026-11-02T18:16:23+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-orchard-money-001
+  lane: single
+  objective: >-
+    Deliver slice 2 (spend): the owner's bill pages on production, the agent's
+    money commands, and the test method that let the full suite run safely.
+  scope:
+    - "praneet-web PRs 38 and 39, praneet-office PR 33."
+outcome:
+  status: ready-for-owner-merge
+  slice: "2"
+  completed:
+    - "Built and checked as recorded in evt_20261102T143300_praneet_orchard_money_slice2_built_awaiting_owner."
+    - "The owner merged praneet-web PR 38 (merge c28e870) and PR 39 (merge c7e20bb), then praneet-office PR 33 (merge 6fa1975); each PR head is an ancestor of its origin/main."
+    - "Production after the merge: /ops/orchard/money and /ops/orchard/money/spend/new redirect to /ops/login and /api/ops/orchard/spend answers 401, while an unknown /ops/orchard path answers 404. Signed in, bun run money spend read 0 bills and bun run money words listed the 14 starting words, each naming www.ptplant.com (ระบบจริง) first. Nothing was written."
+    - "Tidied: worktree checkouts/praneet-office-money removed; local branches feat/money-spend, feat/orchard-spend and chore/test-build-mode deleted; praneet-web main equals origin/main."
+    - "Safe caches cleared on the owner's word ('clear cache ที่ปลอดภัยเลย'): praneet-web .next and .next-test, Homebrew (brew cleanup -s), pip, node-gyp, TypeScript; pnpm store prune found nothing. Free disk 65 to 70 GiB. Playwright and Puppeteer browsers kept."
+  not_verified:
+    - "Not tried on the owner's phone; no bill recorded on production yet."
+evidence:
+  plan: workstreams/praneet-orchard-money-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  decision: memory/events/2026/11/02/20261102T085512_praneet_orchard_money_slice2_authorized.yaml
+  repository:
+    head: "2ef8e9614a49eae145d80d8023b39e9162906347"
+    branch: hq/20261102
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261102
+  child_merges:
+    praneet-web: "PR 38, origin/main c28e870; PR 39, origin/main c7e20bb"
+    praneet-office: "PR 33, origin/main 6fa1975"
+unresolved:
+  - "The remote branch chore/test-build-mode is still on praneet-web's GitHub (merged; GitHub deleted the other two)."
+  - "The test guard refuses to start below 20 GB of free disk; next candidates if space runs low: the Docker build cache, Xcode simulators and DeviceSupport, Rust target folders."
+  - "The plan is 13.4 KB, over Wake's 12 KB soft limit; a warning only."
+  - "hq/20261102 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    Slice 3 (sale) waits for the owner's word; on it, record its decision
+    under plan revision 0.2 and start from workstreams/praneet-orchard-money-001/slices/3.md.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-orchard-money-001/slices/3.md."

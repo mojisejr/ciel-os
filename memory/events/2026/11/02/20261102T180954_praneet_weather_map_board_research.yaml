@@ -1,0 +1,95 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T180954_praneet_weather_map_board_research
+type: closeout
+recorded_at: "2026-11-02T18:09:54+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Research a weather-style tiled map with original Blender components standing on it like game-board miniatures.
+  scope:
+    - Read-only reference inspection, tool/data/licensing research and a proposed next proof; no implementation or purchase.
+outcome:
+  status: weather-map-board-researched-for-discussion
+  owner_direction: >-
+    Owner supplies the faonam Facebook reel and asks for that treatment or a
+    Windy-like weather map, with original Blender components standing on map
+    tiles like Monopoly miniatures. This adds a concrete shared-map-world
+    direction to the pending monsoon storyboard. Preserve earlier styles and
+    proposals; do not interpret this research request as full-film approval.
+  reference_observations: >-
+    Resolved the share URL to reel 1862013194973985 from faonam.com. Initial
+    public playback was available; the owner then explicitly reported logging
+    in. Resumed normal reel navigation without changing trust/security settings.
+    Native player duration was 381.133333 seconds. Inspected opening and sampled
+    approximately 80, 191 and 310 seconds through its visible progress control.
+    Visible treatment includes a pale province map, day/time strip, cloud icons,
+    rain strokes/blue rain-area washes, geographic callouts, compact subtitles
+    and intercut flat village/weather illustrations. On-screen credits name
+    Natural Earth and province boundaries apisit/thailand.json. These sampled
+    views do not identify the author's toolchain, prove 3D geometry or prove
+    use of map tiles or Windy data. No whole-clip semantic/listening review.
+  recommended_route: >-
+    Use MapLibre for geography, camera and base-map tiles; add Three.js in its
+    custom 3D layer, sharing camera/depth, to place GLB components at anchored
+    coordinates/altitudes. Create original orchard/cloud/terrain components
+    in Blender, export web-ready meshes/materials, then animate weather and
+    state changes in the shared map scene. Browser frame capture and existing
+    FFmpeg/approved narration finish the video. This is a proposed integration,
+    not a tested implementation or performance result. Stylized miniature
+    sizes/heights are explanatory symbols rather than surveyed dimensions.
+  costs_and_data: >-
+    OpenFreeMap states public tiles are free without registration/API keys,
+    commercial use is allowed, and video needs OpenMapTiles/OpenStreetMap
+    attribution. Its offline download limits and lack of SLA still apply.
+    Mapterhorn offers public terrain tiles with a global 30m base and separate
+    source attribution; confirm relevant terrain-source terms before adoption.
+    A Windy-like look needs base geography, optional elevation, a scalar weather
+    color field, and wind-vector particles as distinct layers. Seasonal teaching
+    can use labelled illustrative flows without weather API calls. Real dated
+    forecasts need sourced/modelled data and valid times; NOAA/GFS is a candidate
+    requiring local extraction/conversion, not fake measurement values. NOAA
+    data generally has public-domain use subject to stated exceptions.
+    Windy's production Map Forecast API lists EUR990/year and trial is for
+    development only, so it is outside the existing two-service spending intent.
+    Open-Meteo's free endpoint is non-commercial; its paid commercial service
+    is not assumed to fit the owner's budget. Free rendered look and free data
+    hosting are separate from renderer source-code licences.
+  local_checks: >-
+    Current video workspace has MapLibre GL JS 6.16.0; Three.js and deck.gl are
+    not installed there. Installed Blender 5.2.3 LTS exposes EXPORT_SCENE_OT_gltf
+    in a factory/background read-only capability check. No model was exported,
+    no new package installed, no scene changed, no weather key/account created,
+    and no paid provider call, upload, social write or remote Git write occurred.
+evidence:
+  repository:
+    head: 8a000473c93bc77800cfa29f43dcee930018a74a
+    branch: feat/monsoon-maplibre-checkpoint
+  office_head: 8094a80cfd76e22b86072d5cefc642ba82202f30
+  parent_storyboard: memory/events/2026/11/02/20261102T164934_praneet_monsoon_cinematic_storyboard_review.yaml
+  reference_share: https://www.facebook.com/share/v/1EAVUUpoiV/
+  reference_reel: https://www.facebook.com/reel/1862013194973985
+  maplibre_models: https://maplibre.org/maplibre-gl-js/docs/examples/add-3d-tiles-3d-objects-and-models-using-threejs/
+  maplibre_custom_layer: https://maplibre.org/maplibre-gl-js/docs/API/interfaces/CustomLayerInterface/
+  openfreemap: https://openfreemap.org/
+  openfreemap_setup: https://openfreemap.org/quick_start/
+  terrain: https://mapterhorn.com/
+  terrain_access: https://mapterhorn.com/data-access/
+  terrain_sources: https://download.mapterhorn.com/attribution.json
+  wind_particle_candidate: https://github.com/danwild/maplibre-gl-particle
+  wind_particle_licence: https://github.com/danwild/maplibre-gl-particle/blob/main/LICENSE
+  windy_docs: https://api.windy.com/map-forecast/docs
+  windy_pricing: https://api.windy.com/map-forecast/pricing
+  windy_terms: https://account.windy.com/agreements/windy-forecast-api-terms-of-use
+  open_meteo_pricing: https://open-meteo.com/en/pricing
+  noaa_use: https://www.weather.gov/index.php/disclaimer
+  gfs: https://www.nco.ncep.noaa.gov/pmb/products/gfs/
+unresolved:
+  - Creator software and tile/data provenance remain unknown. User login enabled further visual inspection; no credentials, private account information or authentication locators are recorded.
+  - No local GLB-on-map proof, model/material portability test, terrain-height anchoring, shadow/depth/label coexistence, particle determinism or Mac memory/render benchmark exists yet. Blender procedural shader details may need conversion/baking for web export. Library compatibility and final quality require a bounded integration proof.
+  - A real forecast pipeline needs model/valid-time/attribution handling and data conversion; point APIs alone do not provide a full gridded field. Seasonal illustrative animation must be labelled and never presented as measured conditions.
+  - Prior monsoon storyboard is pending owner review and has flat geographic maps without DEM; this new shared-map-world treatment is not yet implemented. Previous art-direction, full-film resource, remote Drive checksum/mobile-playback and parent video budget/feedback/portability unknowns remain. Nursery overlap attention and unrelated work are untouched.
+next_action:
+  action: Explain the tiled-map plus anchored Blender-model route and costs to the owner. Propose a bounded roughly 12-second monsoon map-board proof with original miniatures and labelled seasonal flow, before revising or rendering the whole film; implement only after an explicit proof instruction.

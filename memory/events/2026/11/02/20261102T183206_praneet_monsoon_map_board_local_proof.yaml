@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T183206_praneet_monsoon_map_board_local_proof
+type: closeout
+recorded_at: "2026-11-02T18:32:06+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Prove one local monsoon map scene with original Blender miniatures in a shared geographic camera/depth context.
+  scope:
+    - Twelve-second silent local movie, source/run instructions and measured evidence; no full episode or external delivery.
+outcome:
+  status: local-map-board-scene-prepared-for-owner-review
+  result: >-
+    Original orchard, cloud and schematic ridge were exported from Blender
+    5.2.3 LTS to GLB. Three.js 0.187.0 loads them in MapLibre 6.16.0's custom
+    3D layer, sharing its WebGL canvas/camera/depth. OpenFreeMap vector tiles
+    remain visible beneath the miniatures through a frame-driven move from
+    the eastern coast into the orchard and a small orbit. Seasonal southwest
+    streaks and rain are original labelled illustrations, not forecast data.
+    The movie is silent H.264 yuv420p, 720x1280, 24fps, 288 frames, 12 seconds,
+    3661808 bytes. Capture took 63.777 seconds. Sampled parent/descendant RSS
+    sum during the capture was 661.73 MiB, with measurement limitations in proof.
+  checks: >-
+    Six preliminary timeline stills and encoded opening/middle/ending frames
+    inspected. Camera scale, label visibility and cloud self-shadow artifacts
+    refined before full capture. GLB headers/declared lengths and mesh/material
+    tables checked; all loaded in the browser. Map/model-origin matrix agreement
+    checked at every captured time, with representative values below one pixel;
+    visual inspection supplements this numerical check. All tiles loaded and
+    no page/map error or unapproved browser request remained. Stream, frame,
+    duration and absent-audio checks passed; strict FFmpeg decode with xerror
+    and explode returned zero with empty error output.
+  boundaries: >-
+    Prior STYLE.md, delivery manifests and three delivered MP4s retain their
+    before/after hashes. Three.js came from official npm with verified SHA512
+    integrity, in ignored local storage; no project manifest/lock/CI change.
+    The movie run used 72 provider assets, 3473479 unique bytes, and observed
+    at most three simultaneous provider fetches within its configured four.
+    All trial cache bodies together occupy 6874223 bytes across 104 objects,
+    below the provider's per-area offline limits; video includes attribution.
+    No provider key read, paid call, account, weather subscription, voice,
+    global setting, upload, social write, push, PR or merge occurred.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.3"
+  repository:
+    head: 28ccd4727c74cbeb703d2d940c315939f475959d
+    branch: feat/monsoon-maplibre-checkpoint
+  owner_decision: memory/events/2026/11/02/20261102T181612_praneet_monsoon_map_board_probe_authorized.yaml
+  office_head: ccf4cc40bd2b532380e10bc73f9e3cca55f3802b
+  proof: checkouts/praneet-office/posts/video/styles/garden-world/map-board-v01/PROOF.json
+  run_instructions: checkouts/praneet-office/posts/video/styles/garden-world/map-board-v01/README.md
+  local_movie: checkouts/praneet-office/posts/out/style-garden-world/map-board-v01/praneet-monsoon-map-board-v01-silent.mp4
+  movie_sha256: 16dbf55f7d203c53f5374d0bbcba1e9eb861284cb927215b028719fd860bfbb8
+unresolved:
+  - Owner visual review remains pending. This is one twelve-second silent proof; full sixteen-shot storytelling, final voice/QR and a more detailed 1080p film are not demonstrated. Established styles remain available and unchanged.
+  - Geographic tiles have no DEM elevation; ridge/orchard/clouds use exaggerated illustrative sizes and symbolic heights, not real site geometry. Weather is labelled seasonal illustration with no model/valid-time data or measurements. Reference creator toolchain remains unknown.
+  - Web materials omit Blender procedural bump detail. Further canopy/material/weather art direction is possible. Headless Chromium uses the existing SwiftShader launch option; no native-GPU speed claim. Owned-process RSS sums can double-count shared pages and omit GPU/system allocations; system swap was already present, 3990.31M before and 4094.19M after, including other apps.
+  - Earlier storyboard review, prior Drive checksum/mobile-playback unknowns, parent video feedback/growth/invoice/Claude-portability items and unrelated nursery overlap attention remain as recorded. Existing budget reservations were not changed. No remote integration occurred.
+next_action:
+  action: Present the local silent movie for owner visual feedback. Use the reviewed shared-map treatment to revise the monsoon film's storyboard and production scope only after the owner's next instruction; do not automatically replace the default style or upload.

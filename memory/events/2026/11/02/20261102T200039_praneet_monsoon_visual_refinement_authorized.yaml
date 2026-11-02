@@ -1,0 +1,33 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T200039_praneet_monsoon_visual_refinement_authorized
+type: decision
+recorded_at: "2026-11-02T20:00:39+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Improve actual image detail and rerender the existing monsoon film.
+  scope:
+    - Original geometry, materials, lighting, shadows and capture/encode refinement; local delivery only.
+outcome:
+  status: decided
+  decision: >-
+    Owner explicitly authorizes implementation and another full detailed render
+    without another approval round. Preserve short-video upload usability and
+    the existing film's story/audio. This authorizes plan 0.6 slice 6, retaining
+    the original style and all earlier deliveries. No new paid generation,
+    external upload, social posting or default-style adoption is requested.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "6"
+  repository:
+    head: 91933cb99c10f8c1d31120eacebd78c7e44e88d8
+    branch: feat/monsoon-maplibre-checkpoint
+  office_base: 3b5d382a25d2ef56ece3d2288d588ba6d0ecb68a
+unresolved:
+  - New detail quality and higher-resolution capture resource costs require rendered proof; existing final owner taste review and parent unresolved items remain.
+next_action:
+  action: Refine portable orchard assets and rendering, inspect stills, render the same complete voiced film and verify the encoded local delivery.

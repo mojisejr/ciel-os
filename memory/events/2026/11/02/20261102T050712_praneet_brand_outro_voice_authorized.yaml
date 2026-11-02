@@ -1,0 +1,47 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T050712_praneet_brand_outro_voice_authorized
+type: decision
+recorded_at: "2026-11-02T05:07:12+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Add the recurring Praneet learning invitation, LINE QR and central-Thai voice.
+  scope:
+    - Episode 007 branded closing, bounded one-attempt Gemini narration, local AV render, QR/audio verification and owner-reported first-post feedback.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner accepts the current visual direction, requests a recurring invitation
+    to learn gardening with Praneet, proposes QR access to the existing LINE OA
+    and asks to generate again with voice. Prepare that local deliverable within
+    60 seconds and the 100 THB monthly ceiling. Owner separately confirms today
+    that the key/project still has no use outside this workflow. Preserve all
+    three existing 949-satang reservations; no prior charge is released.
+  authorization_boundary: >-
+    A single reviewed Gemini 3.8 Flash TTS attempt may reserve at most 949
+    satang after current pricing/serving-limit verification and today's ledger
+    reconciliation. No automatic retry, other paid service, Drive/social write,
+    account rename, outgoing LINE message or growth-target redefinition.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.5"
+  slice: "2"
+  repository:
+    head: "b89810959fa5a38a1072558b00e34e17c74c924f"
+    branch: feat/monsoon-maplibre-checkpoint
+  office_base: 692ca46a53de02de749b15aa7672b9b84b158480
+  public_line_source: checkouts/praneet-web/lib/shop.ts
+  line_id: "@xpm7982c"
+  current_pricing: https://ai.google.dev/gemini-api/docs/pricing#gemini-3.8-flash-tts
+  current_serving_limits: https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash-tts
+unresolved:
+  - Actual voice timing, pronunciation, final QR readability and encoded AV quality remain to be proved.
+  - Provider invoice reconciliation remains unavailable. Keep full pending reservations even when a cheaper usage estimate is possible.
+  - TikTok 354 views and about 10 additional follows are owner reports, not verified per-clip follower attribution. Exact reporting interval and metrics remain unknown.
+  - TikTok naming is advice only; existing platform growth-target mapping and view definitions remain unchanged.
+next_action:
+  action: Reconcile the local ledger from today's exclusive-use confirmation, prepare and send one bounded Thai narration request, then render and inspect the QR/brand ending with audible audio before local delivery.

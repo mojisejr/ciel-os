@@ -1,0 +1,69 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T182931_praneet_orchard_rev15_slice12_authorized
+type: decision
+recorded_at: "2026-11-02T18:29:31+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Plan revision 1.5 adds slice 12, the application method and units of
+    products on orchard work, and authorizes it before slice 3 of
+    praneet-orchard-money-001.
+  scope:
+    - "workstreams/praneet-orchard-001/PLAN.md and slices/12.md."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner drenched durian trees with a flake fertiliser at one ขีด a tree
+    and found no place for it: the add-work form offers only พ่น or ใส่ปุ๋ย
+    and an amount per tank. He asked for research and a better way that also
+    takes methods such as ราด ทา โรย หว่าน ฝังเข็ม, spraying in place of
+    painting or drenching, and new ones like cutting and dripping. The agent
+    found the Sheet had recorded application_method (18 spellings, about 6
+    meanings) and that rates come per tank, per tree or as a total. One
+    round agreed: the method is one word chip (Q1 'โอเค'); no stock deduction,
+    the point is units, which must be many and take decimals such as 0.x cc
+    (Q2); do it first and insert it before going on, and start if nothing
+    needs his decision (Q3 'แก้ไขตรงนี้ก่อนแล้วค่อยเดินต่อ แทรกเข้าไป ...
+    ถ้าผมไม่ต้องเคาะอะไรแล้วก็เริ่มได้เลย'). The layout follows the word chips
+    of the spend page he already chose, so no sample round is held. Running
+    slice 12's migration on production is not authorized by this record.
+    Parallelism is the owner's approval of 2026-11-02
+    (evt_20261102T053826_praneet_orchard_money_parallel_approved):
+    praneet-video-posts-001 is live in another session on the main
+    praneet-office checkout, and this slice uses its own worktree there;
+    praneet-orchard-money-001 waits until slice 12 is done, as he asked.
+  why: >-
+    The owner records fertiliser and sprays most days; a drench at a rate per
+    tree cannot be written today, and the agent cannot tell a foliar spray
+    from a soil drench in the history it reads to plan the next tank.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.5"
+  slice: "12"
+  repository:
+    head: "2457a044718e9757d26a1f4b776b3e25a6b57161"
+    branch: hq/20261102
+    working_tree: this-decision
+  related:
+    - memory/events/2026/11/02/20261102T181623_praneet_orchard_money_slice2_delivered.yaml
+
+unresolved:
+  - "The production migration waits for the owner's word naming it."
+  - "hq/20261102 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 12 on a praneet-web topic branch and a praneet-office
+    worktree, with the full suite under the memory guard; then ask the owner
+    to run the migration on production and to merge.
+  acceptance_check:
+    - "Slice 12 acceptance in workstreams/praneet-orchard-001/slices/12.md."

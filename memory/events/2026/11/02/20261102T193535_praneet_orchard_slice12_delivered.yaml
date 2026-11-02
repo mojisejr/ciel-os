@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T193535_praneet_orchard_slice12_delivered
+type: closeout
+recorded_at: "2026-11-02T19:35:35+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Deliver slice 12: method words counted per tank, per tree or in total,
+    and units from a list with decimals, live on production.
+  scope:
+    - "praneet-web PR 40, praneet-office PR 34, production migration 024."
+outcome:
+  status: ready-for-owner-merge
+  slice: "12"
+  completed:
+    - "Built and checked as recorded in evt_20261102T184818_praneet_orchard_slice12_built_awaiting_owner."
+    - "Migration 024 ran on production on the owner's word ('รัน migration ได้เลย'). Only 024 was pending and nothing unknown was there; read back the recorded sha256 equal to the committed file's, the eight starting words with basis and part, amount numeric(12,3), praneet_reader SELECT, and the 6 existing works with products as 5 พ่นทางใบ and 1 ราดโคน, all per tank."
+    - "On the owner's word the agent marked PR 40 and PR 34 ready and added the read-back and this workstream's closeout path to their descriptions; the owner merged praneet-web PR 40 (merge 65c56b9) and praneet-office PR 34 (merge 9fc7c00). Each PR head is an ancestor of its origin/main."
+    - "Production after the merge: the add-work route redirects to /ops/login and the spray API answers 401 unsigned; signed in, orchard spray --plot P-1 --days 120 read 24 records, naming www.ptplant.com (ระบบจริง) first, with the Sheet's records read as พ่นทางใบ ลงใบ. Nothing was written."
+    - "Tidied on the owner's word: worktree checkouts/praneet-office-apply removed, both local slice branches deleted (GitHub deleted the remote ones), praneet-web main equals origin/main; praneet-web .next, .next-test and test-results and Bun's download cache cleared; 68 GiB free."
+  not_verified:
+    - "Not tried on the owner's phone; no work recorded with a method on production yet."
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.5"
+  slice: "12"
+  decision: memory/events/2026/11/02/20261102T182931_praneet_orchard_rev15_slice12_authorized.yaml
+  repository:
+    head: "c9f21b18d1f79b09ac6a78def12b17d8f8cdc3f2"
+    branch: hq/20261102
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261102
+  child_merges:
+    praneet-web: "PR 40, origin/main 65c56b9"
+    praneet-office: "PR 34, origin/main 9fc7c00"
+unresolved:
+  - "The full suite's memory peak is 2,837 MB of the guard's 3,072 MB; the next slice that adds pages may reach the stop. Workaround: run the changed specs alone, or raise TEST_MEMORY_LIMIT_MB for one run while the machine reads over 30% free."
+  - "A new method word's basis and part are guessed from its text and cannot be changed from a page; the agent can correct one in the database on the owner's word."
+  - "The remote branch chore/test-build-mode is still on praneet-web's GitHub (merged)."
+  - "hq/20261102 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    praneet-orchard-money-001 slice 3 (sale) on the owner's word: record its
+    decision under plan revision 0.2 and start from
+    workstreams/praneet-orchard-money-001/slices/3.md.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-orchard-money-001/slices/3.md."

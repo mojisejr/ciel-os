@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T054700_praneet_video_integrated_into_standing_round
+type: closeout
+recorded_at: "2026-11-03T05:47:00+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Preserve both work lines in the owner's shared standing branch.
+  scope:
+    - Local standing merge, validation and closure of the superseded separate CIEL PR.
+outcome:
+  status: integrated-into-standing-round-awaiting-owner-round-pr
+  result: >-
+    Merged the complete video head into hq/20261102 in the primary shared
+    checkout using a normal two-parent merge, with no conflict or reset.
+    Both the prior standing head and the video delivery head are ancestors.
+    No shared instruction/core source file was edited. CIEL typecheck and
+    all 57 tests / 298 assertions passed after integration. Closed CIEL PR 106
+    without merging and updated its description to identify the owner's new
+    standing-round route. Office PR 37 was already merged independently;
+    fetched Office main confirms ancestry of its implementation head.
+  boundary: >-
+    No standing PR, standing push, main merge, new round, feature-branch deletion,
+    worktree removal, new paid request or media change was performed. Historical
+    closeouts remain append-only; the following standing-round PR must carry
+    its actual final delivery closeout rather than reusing PR 106's route.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.8"
+  repository:
+    head: 770bd02cd6026f7502abfa265d9a80ed35048d16
+    branch: hq/20261102
+  owner_decision: memory/events/2026/11/03/20261103T054659_praneet_video_standing_round_requested.yaml
+  superseded_pr:
+    url: https://github.com/mojisejr/ciel-os/pull/106
+    state: closed
+    merged: false
+  office:
+    pull_request: https://github.com/mojisejr/praneet-office/pull/37
+    state: merged
+    fetched_main: 4445a1b
+    implementation_head: e65743a38283d9f9616d05d300e99aa4a37108b4
+unresolved:
+  - Owner will coordinate Claude's standing-round PR and merge, then the next standing round. This local integration is not a main delivery or final workstream completion.
+  - The existing video portability, independent listening/platform results, provider invoice/cost allocation and parent feedback/growth unknowns remain. Unrelated workstream states are not closed by this integration.
+next_action:
+  action: Continue CIEL work from the primary shared checkout on hq/20261102. Leave round PR/merge and new-round creation to the owner's coordination with Claude; no more commits on the separate video branch.

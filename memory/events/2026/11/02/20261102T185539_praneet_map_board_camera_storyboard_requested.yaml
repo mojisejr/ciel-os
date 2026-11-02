@@ -1,0 +1,35 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T185539_praneet_map_board_camera_storyboard_requested
+type: decision
+recorded_at: "2026-11-02T18:55:39+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Review the full monsoon film's written storyboard and purposeful camera motion on the tested map-board base.
+  scope:
+    - Sixteen-shot written proposal; no new rendering, voice, upload or default-style adoption.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner gives positive feedback on the local twelve-second scene and asks
+    for a storyboard with smooth rapid approaches, zooms and rotations that
+    make the explanation enjoyable and easy to understand. Authorizes plan
+    0.4 slice 4, the written camera/storyboard proposal using existing voice.
+    Positive prototype feedback is not approval of full-film production or a
+    change to the default style. Do not ask again to authorize this storyboard.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "4"
+  repository:
+    head: 32c70057f7a79957d0f530288845d573d7210da5
+    branch: feat/monsoon-maplibre-checkpoint
+  scene_proof: memory/events/2026/11/02/20261102T183206_praneet_monsoon_map_board_local_proof.yaml
+unresolved:
+  - Whether the proposed rapid camera rhythm remains readable and comfortable requires an actual motion/voice review after storyboard approval.
+next_action:
+  action: Draft the complete sixteen-shot narration/camera proposal, check the existing timing, and present it for owner review without generating a new movie.

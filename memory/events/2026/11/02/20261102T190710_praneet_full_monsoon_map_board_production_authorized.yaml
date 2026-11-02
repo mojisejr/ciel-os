@@ -1,0 +1,35 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T190710_praneet_full_monsoon_map_board_production_authorized
+type: decision
+recorded_at: "2026-11-02T19:07:10+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Produce the approved full monsoon map-board film with existing narration.
+  scope:
+    - Sixteen shots, proposed camera rhythm, native portrait target and local encoded review; preserve previous films and budget.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner explicitly says he wants to see it and to proceed after the full v02
+    storyboard/camera proposal. This approves that story and authorizes plan
+    0.5 slice 5: complete local narrated production using r05 audio, no new
+    TTS/provider spend. Do not ask again to authorize rendering. No new external
+    upload, social publication, default-style adoption or remote merge.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "5"
+  repository:
+    head: d57e51d031dc152eca51233a6c65a222aab6f411
+    branch: feat/monsoon-maplibre-checkpoint
+  storyboard: checkouts/praneet-office/posts/video/styles/garden-world/monsoon-storyboard-v02/STORYBOARD.json
+  office_base: 8dc150d04ce5e183180089c2da521d486899b903
+unresolved:
+  - Complete-film camera readability, new detail props, resource footprint and encoded audiovisual output remain to be tested.
+next_action:
+  action: Implement the approved sixteen-shot world/camera/annotation sequence, inspect key frames, render with existing audio, verify the encoded output and present it locally.

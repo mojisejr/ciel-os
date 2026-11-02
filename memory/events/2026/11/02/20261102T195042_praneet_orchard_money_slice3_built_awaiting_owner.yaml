@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T195042_praneet_orchard_money_slice3_built_awaiting_owner
+type: closeout
+recorded_at: "2026-11-02T19:50:42+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-money-001
+  lane: single
+  objective: >-
+    Build slice 3 (sale): one crop a sale, each size a price per kilo and
+    kilos or one lump, the crop remembering its sizes, on the money page and
+    in the agent's money commands.
+  scope:
+    - "praneet-web branch feat/orchard-sale (PR 41); praneet-office branch feat/money-sale (PR 35) in the worktree checkouts/praneet-office-sale."
+
+outcome:
+  status: built-awaiting-owner
+  slice: "3"
+  completed:
+    - "praneet-web PR 41 (draft): migration 025 (orchard_crops and orchard_crop_sizes with durian AB, C, D and four mangosteen sizes; orchard_sales; orchard_sale_rows), lib/orchard-sale.ts, the sale API, /ops/orchard/money/sale/new and /sale/[id] as sample A, bills and sales together on /ops/orchard/money with ขาย beside จ่าย, and this month's sales on the เงินสวน link."
+    - "praneet-office PR 35 (draft): bun run money sale, sale add (a dry run through the site unless --write; an unknown crop or size refused unless named new) and crops, each naming its target first and refusing an unknown option before sign-in (runbook 08)."
+  acceptance:
+    - "A sale's total equals the sum of price per kilo × kilos of its sizes, or its lump: tests/orchard-sale.spec.ts arithmetic, API and phone tests (77,650 for sample A's sizes; rows rounded to the satang as the database rounds)."
+    - "Sizes added or dropped mid-season, earlier sales unchanged: the API test drops one size and adds another, and the first sale keeps both of its sizes."
+    - "A size left blank makes no row: the API and phone tests."
+  not_verified:
+    - "Not tried on the owner's phone."
+    - "The office commands were tried against a local next start with the test database only, never production."
+
+evidence:
+  plan: workstreams/praneet-orchard-money-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  decision: memory/events/2026/11/02/20261102T193812_praneet_orchard_money_slice3_authorized.yaml
+  repository:
+    head: "f0d29c053e80708e0b0b31361d93336607097b90"
+    branch: hq/20261102
+    working_tree: this-closeout-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261102
+  child_heads:
+    praneet-web feat/orchard-sale: "d0cf161d2f1c79bfda64a7fea163d048e224c154"
+    praneet-office feat/money-sale: "86ba3f1ceceab9f4489a72a122608f4a6f70de9c"
+  checks:
+    - "praneet-web bun run check: typecheck, build, 134 passed in 3.3 min under the memory guard; peak 2,620 MB of 3,072 MB."
+    - "praneet-office bun test scripts/: 20 pass. money crops, a refused file, a dry run, --write and sale --from against a local next start on praneet_test, options typed out, every first line reading 127.0.0.1 (ไม่ใช่ระบบจริง)."
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/41"
+    - "https://github.com/mojisejr/praneet-office/pull/35"
+
+unresolved:
+  - "Migration 025 waits for the owner's word naming it; it must run before PR 41 merges, as Vercel deploys main at once."
+  - "The test guard once refused to start with 2,458 MB free (floor 2,560 MB) while the owner's other apps were open; a second try started with 3,359 MB. Workaround: retry, or close apps; never lower the floor without the owner."
+  - "The praneet-office worktree checkouts/praneet-office-sale holds feat/money-sale; remove it after PR 35 merges."
+  - "hq/20261102 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: say the word to run migration 025 on production, then merge
+    praneet-web PR 41, then praneet-office PR 35. Agent: run and read back
+    025 while PR 41 is a draft, mark the PRs ready on the owner's word, and
+    after the merges read the sale page on production, remove the worktree,
+    and record slice 3 delivered; slice 4 (rounds and the summary) waits for
+    the owner's word.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-orchard-money-001/slices/3.md."

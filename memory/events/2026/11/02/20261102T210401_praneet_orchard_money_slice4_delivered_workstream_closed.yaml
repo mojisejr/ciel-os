@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T210401_praneet_orchard_money_slice4_delivered_workstream_closed
+type: closeout
+recorded_at: "2026-11-02T21:04:01+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: praneet-orchard-money-001
+  lane: single
+  objective: >-
+    Deliver slice 4, the plan's last: harvest rounds and the round's summary
+    live on production, and close the workstream as the owner asked.
+  scope:
+    - "praneet-web PR 42, praneet-office PR 36, production migration 026."
+outcome:
+  status: ready-for-owner-merge
+  slice: "4"
+  completed:
+    - "Built and checked as recorded in evt_20261102T205348_praneet_orchard_money_slice4_built_awaiting_owner."
+    - "Migration 026 ran on production on the owner's word ('คุน run migration แล้ว พลิก PR ให้ผม'). Only 026 was pending and nothing unknown was there; read back the recorded sha256 equal to the committed file's, no rounds and no tree counts, praneet_reader SELECT on both tables. On the same word the agent marked PR 42 and PR 36 ready and added the read-back and the closeout path to their descriptions."
+    - "The owner merged praneet-web PR 42 (merge 7c47b1a) and praneet-office PR 36 (merge 2df1f7c); each PR head is an ancestor of its origin/main."
+    - "Production after the merge: the summary, list and rounds pages redirect to /ops/login and the summary API answers 401 unsigned; signed in, money summary read the open round from 2026-08-05 to 2026-11-02 marked not a full round, spent 2,567.5 (equipment 580, wages 1,987.5 over 4.25 person-days), and every sales figure saying no sale yet. Nothing was written."
+    - "Tidied on the owner's word: worktree checkouts/praneet-office-round removed, both local slice branches deleted (GitHub deleted the remote ones), praneet-web main equals origin/main; praneet-web .next, .next-test and test-results, Bun's download cache and Homebrew's cache cleared; 65 GiB free."
+    - "The owner closed the workstream for the day ('ปิด work'): slices 1 to 4 of plan revision 0.2 are delivered; this is the final slice's delivery."
+  not_verified:
+    - "Not tried on the owner's phone; production has no sale and no closed round yet."
+    - "Production's wages in the round count work recorded in /ops; the Sheet's old ledger is shown but never counted (praneet-orchard-001 slice 3), so wages from before the switch are likely missing from spent. Not checked against the production rows."
+evidence:
+  plan: workstreams/praneet-orchard-money-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "4"
+  decision: memory/events/2026/11/02/20261102T201232_praneet_orchard_money_slice4_authorized.yaml
+  repository:
+    head: "cd6d1cc43d93fa497ebe6463f1e3c36384c464b4"
+    branch: hq/20261102
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261102
+  child_merges:
+    praneet-web: "PR 42, origin/main 7c47b1a"
+    praneet-office: "PR 36, origin/main 2df1f7c"
+unresolved:
+  - "The full suite's memory peak is 2,915 MB of the guard's 3,072 MB stop, and the guard stops runs when other heavy work grows swap. Workaround: run the full suite when nothing heavy runs; the guard's limits are the owner's to change."
+  - "The open round on production starts 2026-08-05 and is not a full round; the owner may add last season's totals on the past rounds page to compare."
+  - "The plan is 13.4 KB, over Wake's 12 KB soft limit; a warning only."
+  - "The remote branch chore/test-build-mode is still on praneet-web's GitHub (merged)."
+  - "hq/20261102 is not pushed; the owner pushes it with his other work, and Wake reports this workstream finished only once this event reaches main."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+next_action:
+  action: >-
+    None for this workstream after the owner pushes and merges
+    hq/20261102. Fixes the owner finds in use are new work on his word.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/praneet-orchard-money-001/slices/4.md."

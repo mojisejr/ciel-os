@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T084531_praneet_orchard_money_rev02_design_decided
+type: decision
+recorded_at: "2026-11-02T08:45:31+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-money-001
+  lane: single
+  objective: >-
+    Record the owner's slice 1 picks as plan revision 0.2: one bill with many
+    lines for spending, size rows for sales, a summary that answers questions,
+    the data structure, the number rules, the starting words and sizes, and
+    keep it simple for one user; slice 1 stays the authorized slice and slice
+    2 waits for his go.
+  scope:
+    - "Plan 0.2: PLAN.md gains the slice 1 agreements; slices 2 to 4 carry the details; slice 1 is unchanged."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After the rendered samples on local /ops the owner took every lean
+    ('เอนตามคุนทั้งหมดครับ'): spend B, one bill with many lines; sale A, a row
+    per size with baht per kg and kg; summary A, answers as questions. A job
+    across several plots that includes P-4 splits its wages equally by plot
+    and the P-4 share is not counted; a multi-year item bought before the
+    system can be entered with its purchase year and counts only the years
+    left; the starting categories, frequent words and sizes are used as drawn
+    and edited on the real page. He asked for it to stay simple and
+    uncluttered because he uses it alone for now ('ขอใช้ง่ายไม่รก ตอนนี้ใช้คนเดียว'),
+    so nothing is built ahead for several users or orchards. He may later
+    open it to everyone and plan to earn from it; that is not part of this
+    plan. This decision names slice 1 only, so it authorizes no new work.
+
+evidence:
+  plan: workstreams/praneet-orchard-money-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: "e6d7b9cf1294b8f7d09cde86a1c46343c6d5cf6b"
+    branch: hq/20261102
+    working_tree: this-decision-and-plan
+  related:
+    - memory/events/2026/11/02/20261102T051359_praneet_orchard_money_opened_slice1_authorized.yaml
+    - memory/events/2026/11/02/20261102T053826_praneet_orchard_money_parallel_approved.yaml
+
+unresolved:
+  - "Slice 2 is not authorized; it needs the owner's go."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Record the slice 1 closeout beside this decision; then, on the owner's
+    go, authorize slice 2 under plan 0.2.
+  acceptance_check:
+    - "Wake lists praneet-orchard-money-001 at plan revision 0.2 with no validation error."

@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T085512_praneet_orchard_money_slice2_authorized
+type: decision
+recorded_at: "2026-11-02T08:55:12+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-money-001
+  lane: single
+  objective: >-
+    Record the owner's go on slice 2 (spend) under plan 0.2, and that the
+    slice 1 samples page was deleted on his word.
+  scope:
+    - "This record only; no plan change."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner said to start slice 2 and to delete the samples page
+    ('เริ่ม slice 2 ได้เลย และ 2 ลยตัวอย่างได้เลย'). The private samples page
+    was deleted; the shots stay git-ignored on this machine as the build
+    reference. A production migration in this slice still runs only on his
+    word naming it, before the merge.
+  why: >-
+    Spend comes first because sale and the summary read from it, and the
+    owner already records the work that wages come from.
+
+evidence:
+  plan: workstreams/praneet-orchard-money-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "db5541d55a5bb8f8df3ac87c620dd6b28dc356d0"
+    branch: hq/20261102
+    working_tree: this-decision
+  related:
+    - memory/events/2026/11/02/20261102T084531_praneet_orchard_money_rev02_design_decided.yaml
+    - memory/events/2026/11/02/20261102T084543_praneet_orchard_money_slice1_closed.yaml
+
+unresolved:
+  - "hq/20261102 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 2 on a topic branch in praneet-web and in a praneet-office
+    worktree, test it locally, and open draft PRs for the owner.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-orchard-money-001/slices/2.md."

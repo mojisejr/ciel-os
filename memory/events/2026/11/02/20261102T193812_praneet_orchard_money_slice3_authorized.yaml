@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T193812_praneet_orchard_money_slice3_authorized
+type: decision
+recorded_at: "2026-11-02T19:38:12+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-money-001
+  lane: single
+  objective: >-
+    Authorize slice 3 (sale) under plan revision 0.2, after
+    praneet-orchard-001 slice 12 was delivered.
+  scope:
+    - "workstreams/praneet-orchard-money-001/slices/3.md."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner tried the new add-work form and the spend page on his phone
+    ('ผมลองฟอร์มใหม่เรียบร้อยแล้ว และลองหน้าจ่ายเสร็จแล้ว'), which settles
+    the not-verified item of both slices, and said to go on to slice 3
+    without waiting unless something needs his decision ('ถ้าพร้อมเราเริ่ม
+    ต่อได้เลยนะครับไม่ต้องรอ'). Nothing does: the sale page layout (sample
+    A, sizes as rows) and the data structure were chosen in slice 1 under
+    plan revision 0.2. Running slice 3's migration on production is not
+    authorized by this record and will be asked for by name. Parallelism is
+    the owner's approval of 2026-11-02
+    (evt_20261102T053826_praneet_orchard_money_parallel_approved), as for
+    slice 2.
+  why: >-
+    Spending is recorded; the summary of slice 4 needs the sales side.
+
+evidence:
+  plan: workstreams/praneet-orchard-money-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: "ca08d72278a145531971b6b703758a2667328d55"
+    branch: hq/20261102
+    working_tree: this-decision
+  related:
+    - memory/events/2026/11/02/20261102T193535_praneet_orchard_slice12_delivered.yaml
+
+unresolved:
+  - "The production migration waits for the owner's word naming it."
+  - "hq/20261102 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 3 on a praneet-web topic branch and a praneet-office
+    worktree, with the changed specs and the full suite under the memory
+    guard; then ask the owner to run the migration on production and to
+    merge.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-orchard-money-001/slices/3.md."

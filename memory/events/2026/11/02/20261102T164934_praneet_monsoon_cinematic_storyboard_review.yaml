@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T164934_praneet_monsoon_cinematic_storyboard_review
+type: closeout
+recorded_at: "2026-11-02T16:49:34+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Present sixteen static proposal frames for the additional-style eastern-monsoon film.
+  scope:
+    - Storyboard review checkpoint only; no full movie, new voice, upload or default-style change.
+outcome:
+  status: storyboard-static-frames-prepared-for-owner-review
+  result: >-
+    Prepared the full sixteen-shot monsoon visual proposal with unchanged r05
+    narration and measured 56.125-second boundaries, including a 7.5-second QR
+    ending. Sixteen 720x1280 frames and two eight-frame contact sheets cover
+    geographic wind paths, a new Blender windward-slope illustration, schematic
+    multi-day observation/forecast views and the previously tested Blender
+    orchard. Added geographic pin leaders, a bearing-aware compass on map
+    views, Thai caption line-break correction and tree-stage illustrations.
+    These are static art-direction frames; intended camera/state changes are
+    described in the storyboard, not demonstrated as rendered motion.
+  checks: >-
+    All sixteen frames captured locally with no page/map errors or remote
+    browser requests. Font, image, map-load, viewport/horizontal-overflow
+    checks passed; contact sheets and selected full-size frames inspected.
+    Exact original narration and measured shot timing comparison passed.
+    Prior STYLE.md, delivery manifests and three delivered MP4 hashes remain
+    unchanged. No provider call, new dependency, package/CI/global preference
+    change, full movie, social write, Drive upload, push, PR or merge occurred.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: 37094ebc8781f63ee26194bd14c67de65344f718
+    branch: feat/monsoon-maplibre-checkpoint
+  owner_decision: memory/events/2026/11/02/20261102T163923_praneet_monsoon_cinematic_storyboard_requested.yaml
+  office_head: 8094a80cfd76e22b86072d5cefc642ba82202f30
+  storyboard: checkouts/praneet-office/posts/video/styles/garden-world/monsoon-storyboard-v01/STORYBOARD.md
+  storyboard_data: checkouts/praneet-office/posts/video/styles/garden-world/monsoon-storyboard-v01/STORYBOARD.json
+  proof: checkouts/praneet-office/posts/video/styles/garden-world/monsoon-storyboard-v01/PROOF.json
+  local_contact_sheets:
+    - checkouts/praneet-office/posts/out/007-monsoon/cinematic-storyboard-v01/storyboard-a.jpg
+    - checkouts/praneet-office/posts/out/007-monsoon/cinematic-storyboard-v01/storyboard-b.jpg
+unresolved:
+  - Owner approval of the storyboard/art direction is pending. Static frames do not prove camera pace, wind/cloud state changes, map-to-Blender continuity, audio synchronization or full-movie resource feasibility.
+  - Country maps use original Natural Earth geography without elevation data or DEM relief. The separate windward terrain is explicitly schematic, not a provincial elevation model. More complete reference-style relief needs concrete terrain work; do not claim it exists in these frames.
+  - Terrain/cloud materials, procedural orchard canopy and schematic roots still need final art direction. No measured weather, forecast values or sensor data are represented. The selected existing QA environment lacks cv2, so new static QR decode was not verified and no dependency was installed; final encoded QR verification remains required.
+  - Prior Drive delivery remote checksum and owner mobile playback/download remain unconfirmed. Earlier creator-toolchain/competitive-market unknowns, full-production memory limits, parent video feedback/growth/invoice/Claude-portability items and unrelated nursery-overlap attention remain as recorded; no new budget reservation or settlement.
+next_action:
+  action: Present the sixteen-shot storyboard and actual static frames. Collect owner visual/story feedback, then take the explicit full-movie production instruction before rendering motion or delivering a new film.
