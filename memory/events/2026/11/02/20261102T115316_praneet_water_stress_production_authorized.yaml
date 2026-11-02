@@ -1,0 +1,42 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T115316_praneet_water_stress_production_authorized
+type: decision
+recorded_at: "2026-11-02T11:53:16+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Produce and deliver the approved water-management flowering clip with Thai narration.
+  scope:
+    - Approved storyboard 003 r01, bounded WALES-style voice, code motion, encoded QA and Google Drive handoff.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner accepts the sixteen-shot water-management storyboard r01 and explicitly
+    requests the complete narrated clip and Drive upload. Fit imagery to measured
+    original-speed WALES narration within sixty seconds including a 7.5-second
+    branded LINE ending. Reuse the unchanged closing audio where its source hash
+    matches. Authorize one new bounded core-narration attempt; no automatic retry.
+    Existing 100 THB monthly allowance and retained reservations still apply.
+    Today's recorded exclusive-use confirmation remains applicable; do not ask
+    it again or claim provider invoice reconciliation. Preserve existing Drive
+    clips and sharing settings. Owner remains responsible for social publication.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 71c6cd02a9110092b49d53a2d93f96d85ac12816
+    branch: feat/monsoon-maplibre-checkpoint
+  office_base: 5dc6f754fa8f21dfe85ff6630231599f53752d6a
+  storyboard: checkouts/praneet-office/posts/video/episodes/003-water-stress/STORYBOARD-r01.md
+  reviewed_frames: checkouts/praneet-office/posts/video/episodes/003-water-stress/FRAMES-r01.json
+  budget_confirmation: memory/events/2026/11/02/20261102T050712_praneet_brand_outro_voice_authorized.yaml
+unresolved:
+  - Measured narration duration, scene timing, encoded movie QA and Drive readback remain to be produced.
+  - Reservations are conservative pending amounts; provider invoice and subscription allocation remain unknown. Earlier slice 2 feedback, slice 3 growth and portability unknowns remain open.
+next_action:
+  action: Verify current official TTS price/serving limits and same-day ledger, prepare the pinned voice manifest and one reserved request, then align/render/check the movie and upload only the verified final file to the existing Drive destination.
