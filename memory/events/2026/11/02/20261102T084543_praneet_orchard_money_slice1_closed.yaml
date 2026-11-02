@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T084543_praneet_orchard_money_slice1_closed
+type: closeout
+recorded_at: "2026-11-02T08:45:43+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-money-001
+  lane: single
+  objective: >-
+    Close slice 1: the whole money flow was drawn, the data structure and
+    number rules proposed, starting words and sizes set, and the owner picked
+    from rendered samples of the spend, sale and summary pages.
+  scope:
+    - "Local samples only; no code in praneet-web or praneet-office, no migration, no production access, no credential."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  completed:
+    - "Screen map: an orchard money link from the orchard page to this round's summary, with spend and sale on top; spend, sale, the round's list, compare with the last round and its drill-down to real work, tree counts, the tax estimate, close the round (undo for the latest round only), and earlier rounds; each write page paired with an office command."
+    - "Data structure of eight new tables beside the untouched work and wage tables, and a rule for every summary number with the condition that makes it not computable and the words that say what is missing; both are now in plan 0.2."
+    - "Three pairs of samples (spend A one item and B one bill; sale A size rows and B price once then weigh baskets; summary A questions and B category bar with a table) were injected into the real /ops/orchard/jobs page on a local dev server against praneet_test and shot at 390 and 1280, light and dark, 24 images. The figures were checked against each other and five mismatches were corrected before the shots. The samples page is private and is not linked here."
+    - "Size names and price ranges came from three Thai news reports on durian and mangosteen grades; the durian figures are from July 2026 and the mangosteen report gives no date, so they are not today's prices."
+    - "The owner took every lean; plan revision 0.2 records it (evt_20261102T084531_praneet_orchard_money_rev02_design_decided)."
+  not_verified:
+    - "The tax figures in the samples were worked by hand with the DAC2 method; no test compares them with crates/calc/src/tax.rs yet. Slice 4 adds that test."
+
+evidence:
+  plan: workstreams/praneet-orchard-money-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  decision: memory/events/2026/11/02/20261102T084531_praneet_orchard_money_rev02_design_decided.yaml
+  repository:
+    head: "e6d7b9cf1294b8f7d09cde86a1c46343c6d5cf6b"
+    branch: hq/20261102
+    working_tree: this-closeout-with-plan-0.2
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261102
+  child_state:
+    praneet-web: "clean on main 2ec0db9; the samples stay git-ignored under .local, the dev server was stopped and next-env.d.ts restored"
+    praneet-office: "untouched"
+
+unresolved:
+  - "The private samples page stays until the owner says to delete it."
+  - "hq/20261102 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Ask for the owner's go on slice 2 (spend) under plan 0.2 and record it as
+    a decision; then build it on topic branches in praneet-web and a
+    praneet-office worktree.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-orchard-money-001/slices/2.md."
