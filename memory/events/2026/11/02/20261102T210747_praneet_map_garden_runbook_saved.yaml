@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T210747_praneet_map_garden_runbook_saved
+type: closeout
+recorded_at: "2026-11-02T21:07:47+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Preserve the selected additional style as a reusable Office procedure and script reference.
+  scope:
+    - Focused style runbook, production-runbook pointer and callable local encoded verification.
+outcome:
+  status: additional-style-runbook-and-verification-recorded
+  result: >-
+    Saved runbooks/08-map-garden-video.md and linked it from runbook 07 and the
+    selected monsoon v02 README. It covers choosing between the original drawn
+    treatment and the additional map/garden world, unchanged shared syncup /
+    storyboard / voice / budget gates, materials/detail, calmer camera pacing,
+    source adaptation, commands, final checks and measured resource limits.
+    Existing generation/render scripts remain the implementation. Retained the
+    exercised encoded checks as verify.ts, now deriving the repository path
+    locally. The current scripts reproduce this monsoon example and require
+    authored per-episode adaptation; no universal engine or Claude proof claimed.
+  verification: >-
+    Callable verify.ts passed on the delivered MP4: strict full decode, exact
+    stream/frame/duration checks, identical decoded original narration, sixteen
+    scene frames, eighteen travel-phase frames, three successful encoded LINE
+    QR checks and the stationary 180-frame endcard. MP4 SHA256 remains unchanged.
+    All 43 relative links in the affected docs resolve, and staged whitespace
+    checks passed. Only the intended four Office files changed; no new render,
+    paid API, dependency, upload, publication, push, PR or merge.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.8"
+  repository:
+    head: 148e9ea61566c70750b9327ec002130f08cfb687
+    branch: feat/monsoon-maplibre-checkpoint
+  owner_decision: memory/events/2026/11/02/20261102T210141_praneet_map_garden_runbook_requested.yaml
+  office_head: 725e1389523ae48aae0f359e459fc267fdc8efe6
+  runbook: checkouts/praneet-office/runbooks/08-map-garden-video.md
+  verification_script: checkouts/praneet-office/posts/video/styles/garden-world/monsoon-film-v02/verify.ts
+  local_verification_result: checkouts/praneet-office/posts/out/007-monsoon/map-board-film-v02/encoded-qa.json
+  movie_sha256: f5483c14fc89f8765506a78d49c928834bf0d48ed193b6e0c7e257563c027964
+unresolved:
+  - Owner selected v02 as a working additional-style reference; independent listening, actual platform transcoding, retention/viral impact and a second topic in this style remain unverified. No default-style replacement or new film is authorized by saving the runbook.
+  - Existing raw-asset portability, heavier-scene/device measurements, subscription/hardware allocation, full Claude-flow proof, parent feedback/growth and prior Drive/mobile verification remain as recorded. Map/model/weather accuracy boundaries are unchanged.
+  - Changes remain local on the existing topic branches; owner-reviewed PR and merge have not been requested. Earlier same-project overlap is addressed by the recorded isolated parallel-work permission; unrelated nursery attention is not resolved by this documentation task.
+next_action:
+  action: Summarize the saved runbook/script workflow. Offer owner-reviewed PR packaging as the next integration step, then research/syncup/storyboard the next selected episode under the parent workflow before any new production.

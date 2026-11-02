@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T051842_praneet_r04_thai_line_outro_delivered
+type: closeout
+recorded_at: "2026-11-02T05:18:42+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver the revised monsoon clip with audible Thai narration and branded LINE closing.
+  scope:
+    - One bounded TTS request, scene-level voice timing, learning invitation, verified QR/ID, reusable runbook rule and owner-reported first-post feedback.
+outcome:
+  status: branded-voiced-local-delivery-produced
+  summary: >-
+    Generated episode 007 r04 with conversational central-Thai Charon narration,
+    the approved geographic/orchard treatment and the requested recurring Praneet
+    learning invitation. Actual duration is 46 seconds with a 7.5-second LINE
+    card hold. QR and readable ID target the owner-confirmed existing OA. New
+    clips use the closing rule; no old publication was retrofitted. Recommend
+    retaining the current TikTok name and connecting Praneet through bio/outro;
+    no account/profile change was performed. Recorded the owner's 354-view
+    snapshot and approximate ten additional follows for episode 006 without
+    treating them as independently verified clip attribution or additive totals.
+  verification: >-
+    Actual MP4: 1080x1920 H.264, 24fps, 1104 frames, 46 seconds, mono 48kHz AAC,
+    9789241 bytes. Complete AV decode passed. Audio mean -17.8dB, peak -1.8dB,
+    integrated -17.2 LUFS, so the track is present, non-silent and not clipped.
+    All 38 layout/map samples and repeated-time pixel proof passed. Inspected
+    ten decoded images. QR decoded to the expected OA from both 41s and 45.5s
+    MP4 frames after compression. Fixed initial SVG MIME handling before final
+    capture and added image-load/QR-decode gates. Seventeen existing budget and
+    reservation tests passed with mocked effects only. No semantic listening
+    review or verified word timestamps are claimed.
+  budget: >-
+    Owner confirmed exclusive usage today; all three old receipt/audio hashes
+    reconciled and all reservations retained. Official current pricing and full
+    serving limits were checked, plus authenticated read-only model metadata.
+    Exactly one TTS attempt reserved 949 satang atomically before HTTP, bringing
+    pending reservations to 3796 satang and remaining allowance to 6204 satang.
+    No retries or releases based on usage estimates. Provider invoice unknown.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.5"
+  slice: "2"
+  repository:
+    head: "d460ed719a4520812ecf69b204ef5b2373b6e0e3"
+    branch: feat/monsoon-maplibre-checkpoint
+  office:
+    head: 8d1e06d4cbcdbf3125149050539264183392dc22
+    branch: feat/monsoon-maplibre-proof
+  delivery: checkouts/praneet-office/posts/video/episodes/007-monsoon/DELIVERY-r04-thai-v01.json
+  output: checkouts/praneet-office/posts/out/007-monsoon/r04-thai-v01/praneet-monsoon-east-r04-thai-v01.mp4
+  sha256: 1c8d3ec59da43840a0574276f71158c52fe96fbacf40d62e6961d575602f7f57
+  encoded_verification: checkouts/praneet-office/posts/out/007-monsoon/r04-thai-v01/encoded-verification.json
+  encoded_qr: checkouts/praneet-office/posts/out/007-monsoon/r04-thai-v01/encoded-qr.json
+  narration: checkouts/praneet-office/posts/video/episodes/007-monsoon/NARRATION-r04-v01.json
+  timing: checkouts/praneet-office/posts/video/episodes/007-monsoon/VOICE-TIMING-r04-v01.json
+  brand_outro: checkouts/praneet-office/posts/video/brand-outro/README.md
+  feedback: checkouts/praneet-office/posts/video/episodes/006-tank-mix/FEEDBACK-2026-11-02.json
+unresolved:
+  - Owner listening/output review remains pending, including pronunciation and scene-level timing; silence-derived section alignment is not a semantic or word-timestamp verification.
+  - Actual provider invoice remains unknown. The full four pending reservations remain charged against the local cap; the guard is not a provider-wide cap if exclusive usage changes.
+  - QR points straight to OA without F-code attribution; encoded-image decode is not evidence of a customer adding the account or of attributed sales.
+  - TikTok naming remains a recommendation, not an owner decision or implemented change. Exact follower interval/attribution, complete Insights, cross-platform definitions and growth-target mapping remain unknown.
+  - This is a local slice-2 checkpoint. No push, PR, merge, Drive upload, social publication or outgoing LINE message was performed. Publication, two-week review and follow-on experiment remain outstanding.
+  - Prior remote Drive checksum and HyperFrames embedding/elevation-model limitations remain as recorded; this clip uses the existing local MapLibre/SVG workflow.
+next_action:
+  action: Display the actual local voiced MP4 and concise recommendations on naming/QR/feedback; obtain owner listening feedback, then proceed with any requested post package/manual-publication handoff without claiming slice 2 complete.

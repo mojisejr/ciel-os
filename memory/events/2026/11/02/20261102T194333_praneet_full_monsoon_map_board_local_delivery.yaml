@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T194333_praneet_full_monsoon_map_board_local_delivery
+type: closeout
+recorded_at: "2026-11-02T19:43:33+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Deliver the approved full narrated monsoon map-board film locally for owner output review.
+  scope:
+    - Sixteen-shot full movie, original audio reuse, native portrait rendering and encoded verification; no upload or publication.
+outcome:
+  status: full-narrated-local-film-prepared-for-owner-output-review
+  result: >-
+    Completed the sixteen-shot map-board film using the approved v02 story and
+    original r05 words/timing. Native WebGL canvas and captures are 1080x1920;
+    final H.264 yuv420p is 24fps, 1347 frames, exactly 56.125 seconds, with one
+    original AAC 48kHz mono stream. Size 11405252 bytes. Four major camera beats
+    are the opening pullback, ocean-to-east flight, return to the east and
+    entry into the same orchard. Observation props, seasonal upper-region cloud
+    changes and a connected front-tree soil window support the calmer shots.
+    Endcard camera/QR remain stationary from 48.625 to 56.125 seconds.
+  verification: >-
+    Twenty-four native still/transition views checked before full capture.
+    Capture checked loaded map/tiles, native buffer, text bounds, render time
+    and numerical model-origin alignment. All sixteen encoded settled views
+    and four six-frame fast-camera sequences inspected. Strict full decode
+    succeeded; video and audio both start at zero and last 56.125 seconds.
+    Original AAC was stream-copied, and decoded PCM SHA256 equals r05 exactly.
+    Encoded QR decoded to the expected LINE URL at 49.5, 52.5 and 55.9 seconds.
+    Audio mean/max sample volume measured -18.8/-2.3 dB, not a LUFS or semantic
+    listening claim. Owner listening/taste review is still the next gate.
+  resources_and_boundaries: >-
+    Full native capture took 320.371 seconds. Capture-period sampled owned
+    process RSS sum was 956.83 MiB; later console observation including encoding
+    reached 1143.63 MiB. These sums can double-count shared pages and omit
+    GPU/system allocations. No hard unified-memory or native-GPU speed claim.
+    Movie-run unique public map assets total 22666891 bytes with at most four
+    simultaneous provider fetches; the video retains required attribution.
+    No new TTS or paid API request, key, subscription, project dependency/lock,
+    CI/global setting, upload, social action, push, PR or merge. Older style,
+    three prior narrated films and the twelve-second proof retain their hashes.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.5"
+  repository:
+    head: d57e51d031dc152eca51233a6c65a222aab6f411
+    branch: feat/monsoon-maplibre-checkpoint
+  owner_decision: memory/events/2026/11/02/20261102T190710_praneet_full_monsoon_map_board_production_authorized.yaml
+  office_head: 3b5d382a25d2ef56ece3d2288d588ba6d0ecb68a
+  source_and_run_instructions: checkouts/praneet-office/posts/video/styles/garden-world/monsoon-film-v01/README.md
+  proof: checkouts/praneet-office/posts/video/styles/garden-world/monsoon-film-v01/PROOF.json
+  local_movie: checkouts/praneet-office/posts/out/007-monsoon/map-board-film-v01/praneet-monsoon-map-board-film-v01.mp4
+  movie_sha256: ff70754bc0d02d4ca592ea215a092bc6405858d9c1365c5f86db843d6989cf26
+  decoded_audio_sha256: 67ba9a1d957363f2fd0a4cb9778ed584662243ae59513a2c71d57f7d16ed5954
+  encoded_contact_sheets:
+    - checkouts/praneet-office/posts/out/007-monsoon/map-board-film-v01/film-contact-a.jpg
+    - checkouts/praneet-office/posts/out/007-monsoon/map-board-film-v01/film-contact-b.jpg
+unresolved:
+  - Owner final listening/taste/output review is pending. Decoded audio identity proves reuse, not a new independent semantic listening review. Object emphasis is aligned to existing scene-level boundaries, not verified word timestamps. No retention/viral-performance result is inferred from the camera treatment.
+  - Native 1080x1920 complete-film feasibility is now proved for this exact scene on this Mac. Heavier future scenes and other devices remain unmeasured. Headless Chromium uses the existing SwiftShader option; RSS does not measure total unified memory or establish causal system-swap effects.
+  - Geography uses real vector tiles with source detail capped at zoom 10 and no DEM. Weather/day/forecast visuals are labelled illustrations; model scales/heights and the soil window are schematic. No live-weather, site-survey, sensor or new irrigation/chemical guidance claim. Reference creator toolchain remains unknown.
+  - Established default style is unchanged. Existing provider invoice/subscription/hardware allocation, prior remote Drive checksum/mobile-playback, parent video feedback/growth/Claude-portability items and unrelated nursery-overlap attention remain as recorded. Incremental paid API spend for this film is zero; total production cost is not declared zero.
+next_action:
+  action: Show the complete local voiced movie to the owner and collect output/camera feedback. Wait for an explicit upload/publication/default-style instruction; preserve all earlier clips and do not begin another film automatically.

@@ -1,0 +1,33 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T200951_praneet_monsoon_calmer_camera_requested
+type: decision
+recorded_at: "2026-11-02T20:09:51+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Combine visual refinement with the owner's calmer camera correction.
+  scope:
+    - Same full monsoon film and audio; reduce excessive zoom/rotation before the new local render.
+outcome:
+  status: decided
+  decision: >-
+    During the authorized detail refinement, the owner says the camera is too
+    flashy and requests a return to an appropriate earlier level of motion.
+    This authorizes plan 0.7 slice 6 with calmer purposeful travel and holds,
+    preserving narration, content, duration and the stationary QR. No further
+    approval round or external delivery action is requested.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "6"
+  repository:
+    head: 91933cb99c10f8c1d31120eacebd78c7e44e88d8
+    branch: feat/monsoon-maplibre-checkpoint
+  earlier_style_camera: checkouts/praneet-office/posts/video/episodes/007-monsoon/motion-r05/film.js
+unresolved:
+  - Calmer motion and revised detail require a complete encoded review; prior review/platform/performance unknowns remain.
+next_action:
+  action: Inspect revised camera phases, then rerender the complete detailed movie with unchanged audio and verify the local output.

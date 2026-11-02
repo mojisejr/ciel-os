@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T090434_praneet_cost_portability_requirements_authorized
+type: decision
+recorded_at: "2026-11-02T09:04:34+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Preserve episode-cost and Codex/Claude portability requirements while keeping Praneet clips as the priority.
+  scope:
+    - Plan revision 1.6 and existing video runbook documentation; no new implementation or episode production.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner explicitly requests recording per-clip cost accounting and support
+    for Codex and Claude in the workstream and runbook first. Keep the focus
+    on Praneet's own content and growth; do not split off a course system.
+    Owner will return to begin the third published clip later. Record the
+    distinction between usage estimates, reservations, reconciled API charges
+    and allocated subscription cost, and the shared-budget requirement across
+    clients. Implementation remains deferred to a bounded owner decision.
+  authorization_boundary: >-
+    This authorizes documentation only in plan 1.6 slice 2. It does not close
+    slice 2, authorize slice 3, change the growth targets or 100 THB Gemini cap,
+    buy any subscription/credits, add a provider, create a course product,
+    implement an accounting service or start the third clip/Claude trial.
+    Existing scoped overlap permission is carried forward; no subagents used.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: bf48d9c333c43fad132a236911b897117391ea76
+    branch: feat/monsoon-maplibre-checkpoint
+  office_base: 46eacbd63cb4a8a758b87804df79b12781205282
+  current_guard: checkouts/praneet-office/posts/video/voice-budget.ts
+  runbook: checkouts/praneet-office/runbooks/07-video-posts.md
+unresolved:
+  - Actual subscription amounts, billing periods, allocation method and workflow share need owner evidence; provider invoice is not reconciled.
+  - Per-clip aggregate reporting and cross-client/shared-ledger end-to-end operation have not been implemented or proved by this recording.
+  - Slice 2 retains its publication/review/lesson/PR acceptance and slice 3 retains the separate organic growth proof; number of clips is not number of slices.
+next_action:
+  action: Validate and commit the documentation, explain the remaining slices, then await the owner's return to syncup on the third clip within the existing content workflow.

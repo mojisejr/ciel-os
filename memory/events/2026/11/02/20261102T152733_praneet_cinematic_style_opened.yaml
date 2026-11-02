@@ -1,0 +1,42 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T152733_praneet_cinematic_style_opened
+type: decision
+recorded_at: "2026-11-02T15:27:33+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Install and test a bounded additional cinematic garden style on the current Mac.
+  scope:
+    - Official user-scoped Blender installation, small original garden proof and local resource evidence; preserve the prior style.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner explicitly asks for installation on the current Mac, a small test,
+    research/syncup where needed and a new workstream. Owner stresses adding
+    a style while retaining the existing one. This authorizes plan 0.1 slice 1:
+    signed official installation and a small local scene/resource proof, not
+    replacement of the latest clip or automatic adoption of a new baseline.
+    Same-project overlap with the parent Praneet video work is necessary to
+    the requested companion experiment and uses the owner's standing scoped
+    parallel permission; execute shared paths sequentially, with one integrator.
+    Current concrete install/test intent is already confirmed by this request;
+    further full-story/frontier syncup follows after inspectable evidence.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 9823c610368dc6dd19d86c7e0793e04cae715fb0
+    branch: feat/monsoon-maplibre-checkpoint
+  parent_plan: workstreams/praneet-video-posts-001/PLAN.md
+  parent_research: memory/events/2026/11/02/20261102T140912_praneet_full_scene_reference_research.yaml
+  office_base: 60fc7e7297cf88f9b23833e7d3e4db3e43a07f1a
+unresolved:
+  - Actual Blender trust/launch/render behavior and measured scene resource limits remain unproved; original creator software and market originality remain unknown.
+  - Full cinematic treatment and any further voiced/story revision require concrete owner review. Existing style, paid budget and unrelated work must remain preserved.
+next_action:
+  action: Verify and install the official stable ARM64 app for the current user, prove headless Python execution, then render and inspect a bounded original garden scene with measured resources.

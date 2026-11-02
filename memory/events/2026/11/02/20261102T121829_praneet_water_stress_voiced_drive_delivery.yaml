@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T121829_praneet_water_stress_voiced_drive_delivery
+type: closeout
+recorded_at: "2026-11-02T12:18:29+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver the approved third-publication water-management clip with Thai voice through Drive.
+  scope:
+    - Approved 003 r01 story, original code motion, one bounded core voice take, unchanged closing cache, actual MP4 QA and Drive handoff.
+outcome:
+  status: voiced-clip-delivered-for-owner-output-review
+  summary: >-
+    Owner accepted storyboard r01 and requested the narrated clip plus Drive.
+    All sixteen shots and approved words are retained. Original-speed WALES
+    model/voice/style generated fifteen core sections in one new request; the
+    identical accepted 007 closing is reused by hash. The measured movie is
+    53.125 seconds, including a stationary 7.5-second LINE card. Original SVG
+    artwork is reused by source hash with root/flow reveals, observation cards,
+    bud close view and tree-scale camera motion. No chemical instructions,
+    universal water quantities, mascot, remote tile or social post was added.
+  verification: >-
+    Full encoded-file decode succeeded. H.264 limited-range BT.709 yuv420p,
+    1080x1920 at 24 fps, 1275 frames, AAC mono 48 kHz; measured -17.4 LUFS and
+    peak -2.1 dB. Every shot has non-silent audio signal. Sixty-five encoded
+    samples were captured; all sixteen mid-shots and twelve selected root,
+    checklist, bud and ending transition samples were visually inspected.
+    QR decoded to the existing OA at two encoded ending times. Browser text
+    bounds and scene-state/layout repeat checks passed with no external requests.
+    Repeated raster is explicitly not bit-identical: gradient dithering varied
+    by at most two color levels on 0.17 percent of pixels, within the recorded
+    small raster allowance. Independent local small-model ASR was too inaccurate
+    for verbatim verification and is retained only as limited clause-alignment
+    evidence; no semantic listening claim. Cache replays sent zero paid calls.
+  delivery: >-
+    New MP4 uploaded to the existing My Drive destination, then metadata read
+    back for id, name, MIME type, parent and matching 7678741-byte size. Existing
+    Drive clips and sharing settings were preserved. Two local cover options
+    and the delivery manifest are recorded. No caption, web draft or publication
+    was requested or performed. Office source/evidence and CLI/runbook references
+    are committed locally; no push, PR or merge occurred.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 71c6cd02a9110092b49d53a2d93f96d85ac12816
+    branch: feat/monsoon-maplibre-checkpoint
+  office:
+    head: 60fc7e7297cf88f9b23833e7d3e4db3e43a07f1a
+    branch: feat/monsoon-maplibre-proof
+  authorization: memory/events/2026/11/02/20261102T115316_praneet_water_stress_production_authorized.yaml
+  delivery: checkouts/praneet-office/posts/video/episodes/003-water-stress/DELIVERY-v01.json
+  production: checkouts/praneet-office/posts/video/episodes/003-water-stress/PRODUCTION-v01.md
+  narration: checkouts/praneet-office/posts/video/episodes/003-water-stress/NARRATION-v01.json
+  timing: checkouts/praneet-office/posts/video/episodes/003-water-stress/VOICE-TIMING-v01.json
+  runbook: checkouts/praneet-office/runbooks/07-video-posts.md
+  local_mp4: checkouts/praneet-office/posts/out/003-water-stress/r01-thai-v01/praneet-water-stress-r01-thai-v01.mp4
+  video_sha256: 1611263429e2b974475814065ee7d97d759e53c0af48e1fed1772546e59f4e52
+  drive_video: https://drive.google.com/file/d/1ibcv2m10HS2KIOZ09fBVaPGpDf6bVLmy/view?usp=drivesdk
+  budget_month: "2026-11"
+  new_paid_attempts: 1
+  new_reserved_satang: 949
+  total_pending_satang: 5694
+  remaining_after_reservations_satang: 4306
+unresolved:
+  - Owner movie/listening review and intended-device download/posting proof for 003 remain pending. Local ASR is not reliable verbatim evidence; no human semantic listening is claimed. The clip illustrates observations rather than a complete irrigation prescription or field diagnostic standard.
+  - NotebookLM original references remain unavailable; field water decisions are site/tree/stage-specific. This production does not validate the excluded chemical/root-timetable claims.
+  - Six full 949-satang November reservations remain pending, totaling 5694, with 4306 after reservations. Usage-based estimate for this core is 0.010378 USD, not a settled charge. Provider invoice and subscription allocation are unknown; recheck reconciliation/pricing on the next Bangkok day before paid work.
+  - Slice 2 still needs its first two-week feedback review and final PR/merge closeout. Slice 3 growth proof, cross-platform view definitions, complete dated Insights and earlier exact publication/device evidence remain open; TikTok full video/metrics were CAPTCHA-limited. Preparing a third clip does not complete those slices or redefine the Page goal.
+  - Complete per-clip cost reporting, Claude end-to-end use and one shared budget across separate machines/checkouts remain unproved requirements. This delivery record is not that new system. Course work stays outside current execution.
+  - Drive remote checksum and direct-QR lead attribution are unavailable; metadata matching is not remote byte equality or evidence of public sharing. HQ/office commits remain local topic-branch work. Preserve the unrelated praneet-web orchard-spend changes and other HQ lanes.
+next_action:
+  action: Present the verified Drive link and narrated clip for owner output review. Apply concrete feedback, then prepare platform captions when requested and retain owner-controlled posting. Collect dated publication/Insights evidence without claiming the outstanding two-week review or growth goal complete.

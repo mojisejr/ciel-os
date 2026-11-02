@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T160449_praneet_garden_probe_drive_delivery
+type: closeout
+recorded_at: "2026-11-02T16:04:49+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Deliver the existing silent garden proof to the owner's Google Drive for mobile review.
+  scope:
+    - Upload the existing five-second local movie only; no rerender, voice, deletion or sharing change.
+outcome:
+  status: proof-shared-for-mobile-review
+  authorization: >-
+    Owner says the garden looks good and unusual, and explicitly requests a
+    Drive upload. This authorizes this external delivery after the local proof;
+    the earlier installation/test scope had excluded uploads. Positive first
+    feedback does not adopt a new default or authorize a broader pilot.
+  delivery: >-
+    Uploaded a new MP4 to the same verified My Drive destination used for the
+    previous Praneet delivery. Connector metadata readback confirms file ID,
+    name, video/mp4 type, parent and 1949972-byte size. No existing file deleted,
+    no sharing permissions changed, no paid request and no rerender.
+evidence:
+  repository:
+    head: e5d74c907905f71cf1f273ed6cd4fb8eb5e8fe25
+    branch: feat/monsoon-maplibre-checkpoint
+  prior_proof: memory/events/2026/11/02/20261102T154439_praneet_blender_local_garden_proof.yaml
+  office_head: 970af5f27dd344472c8f191cf4b486e6bd99e220
+  drive_id: 1yNr98oIL3oXGhOLlih41QcARck_-MF5R
+  drive_url: https://drive.google.com/file/d/1yNr98oIL3oXGhOLlih41QcARck_-MF5R/view?usp=drivesdk
+  drive_name: praneet-garden-world-blender-probe-v01-silent.mp4
+  drive_parent: 0AFoHlHzOlj2QUk9PVA
+  local_movie: checkouts/praneet-office/posts/out/style-garden-world/blender-v01/garden-world-blender-probe-v01.mp4
+  local_sha256: 10e2af39d5a42cb860a3a82e13959f6cf68785d401cdd57d67c71ab7379d09f9
+  local_md5: 6cf6df91b5fb885a9923368cbcd4dd4c
+  remote_bytes: 1949972
+unresolved:
+  - Connector did not expose a remote checksum or video processing state despite the requested fields; only metadata/size readback is verified. Owner mobile playback/download is not yet confirmed.
+  - The prior proof's art-direction, full-production resource and original-reference toolchain unknowns remain. Established style stays intact; this is a silent experimental five-second movie.
+  - No new PR, push or merge. The previous technical checkpoint and unrelated nursery overlap attention remain unchanged.
+next_action:
+  action: Give the observed Drive link to the owner for mobile playback/download, then align a concrete next visual/story pilot from feedback before further production.

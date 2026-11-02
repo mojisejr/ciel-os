@@ -1,0 +1,89 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T140912_praneet_full_scene_reference_research
+type: closeout
+recorded_at: "2026-11-02T14:09:12+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Research a whole visual-storytelling treatment for garden clips from the owner's TikTok reference.
+  scope:
+    - Public reference inspection, official tool/licensing research and a proposed next visual proof; no new implementation.
+outcome:
+  status: full-scene-style-reference-researched-for-discussion
+  owner_intent: >-
+    Owner supplies the maphappenth Burma-history clip and asks which tools can
+    produce that treatment from code. When asked which element matters most,
+    owner explicitly wants the whole combination that makes the style, and
+    hypothesizes that garden content has a gap for this treatment. Preserve
+    that full-style direction rather than reducing it to a map feature alone.
+    Market absence is an owner hypothesis, not a verified research result.
+  observed_reference: >-
+    Public browser playback and sampled frames show a 162-second history clip
+    with full-frame relief-like textured maps, colored territories, city icons,
+    paths/army markers, purposeful pan/zoom, compact subtitles and intercut
+    historical painted illustrations. The page carries a creator AI-generated
+    label. A CAPTCHA modal was closed through its normal Close control without
+    solving it; public playback remained available. The inspected video and
+    profile biography did not identify the production software. Relief shading
+    alone does not prove actual 3D geometry, parallax, a DEM source, a particular
+    generative model, or that every frame was built from code.
+  research_and_proposal: >-
+    MapLibre provides real-data terrain/hillshade and programmable geographic
+    camera/layers; its official example integrates Three.js 3D models. Three.js
+    supports authored browser scenes, glTF assets, cameras/lights/shadows.
+    Blender's Python API and background rendering support scripted original
+    models, materials, cameras and movie frames. Its artwork can be used
+    commercially and the software needs no paid subscription. Recommend a
+    video-first Blender/Python garden proof, retaining MapLibre for geographic
+    stories, with Three.js optional for browser previews/shared model assets.
+    This is a recommendation, not a measured renderer-quality comparison.
+    Reuse the current HTML Thai overlays, FFmpeg and accepted audio where useful.
+    Google Earth imagery has explicit promotional-video restrictions; educational
+    monetization is separately allowed under attribution requirements. Therefore
+    Earth Studio is not the default for a nursery-promotional/LINE-CTA pipeline.
+  next_proof_proposal: >-
+    Propose about twenty seconds of coherent visual storytelling using existing
+    gak-sok narration: a detailed orchard world, camera approach, state changes
+    and a root/soil view with restrained captions. Geographic maps should appear
+    where they explain the topic. Assess tree anatomy/detail, material/lighting,
+    camera continuity, legibility, narration alignment and actual render time.
+    Build reusable original tree/branch/root/soil assets for the intended look.
+    Whole-style development includes composition and rhythm, not only installing
+    a renderer. No prototype or durable STYLE.md revision is approved by this
+    research checkpoint; request a concrete proof scope before installing/building.
+  local_boundary: >-
+    Existing office package uses MapLibre GL JS 6.16.0; no Blender CLI or standard
+    Blender.app was found on this arm64 machine. No new software, assets, code,
+    API call, movie, upload, social action or office change occurred. Existing
+    003 narrated Drive delivery remains the latest produced clip. Only this
+    research checkpoint is recorded in HQ; the workstream stays active.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 0e42805f47542dd13fde658ff6c463a90708554b
+    branch: feat/monsoon-maplibre-checkpoint
+  office_head: 60fc7e7297cf88f9b23833e7d3e4db3e43a07f1a
+  reference_short: https://vt.tiktok.com/ZSgo2Cr47/
+  reference_video: https://www.tiktok.com/@maphappenth/video/7702674742716763398
+  creator_profile: https://www.tiktok.com/@maphappenth
+  maplibre_terrain: https://maplibre.org/maplibre-gl-js/docs/examples/3d-terrain/
+  maplibre_threejs: https://maplibre.org/maplibre-gl-js/docs/examples/add-3d-tiles-3d-objects-and-models-using-threejs/
+  threejs_assets: https://threejs.org/manual/pages/load-gltf.html
+  threejs_shadows: https://threejs.org/manual/pages/shadows.html
+  blender_python: https://docs.blender.org/api/main/info_quickstart.html
+  blender_cli: https://docs.blender.org/manual/en/5.1/advanced/command_line/arguments.html
+  blender_license: https://www.blender.org/about/license/
+  google_geo_rules: https://about.google/brand-resource-center/products-and-services/geo-guidelines/
+unresolved:
+  - Creator software, map/illustration provenance and original production files remain unknown. The AI label does not identify the rendering or generation tool. No exhaustive competitive-market or causal virality proof was performed.
+  - Blender is not installed and no garden-3D quality/performance proof has been run. Asset detail, render engine, data/texture rights and measured runtime must be resolved for a specific proof; free libraries do not make third-party imagery/data services free. Some full Blender docs returned HTTP 402 in the web tool; current official indexed API/manual excerpts and the license text supplied the cited capability basis.
+  - The whole-reference style direction is confirmed; the proposed tool stack, twenty-second pilot and replacement of the durable visual baseline remain proposals. Preserve the confirmed knowledge/voice and budget constraints while aligning an actual proof.
+  - Existing 003 owner listening/output review and publication remain pending. Slice 2 two-week feedback review/final PR closeout, slice 3 growth and metric definitions, provider invoice/subscription allocation, remote Drive checksum and Claude/shared-budget portability unknowns remain as in the previous delivery checkpoint. No budget reservation changed; November pending is still 5694 satang, with 4306 after reservations.
+  - HQ/office work remains on local topic branches without new push/PR/merge; unrelated praneet-web orchard-spend work is outside this research and must remain preserved.
+next_action:
+  action: Explain the full visual treatment, tool roles, cost/imagery limits and proposed twenty-second garden proof to the owner. Reuse the confirmed whole-style intent; do not ask again whether only maps matter. Start no new renderer install, full clip replacement or STYLE.md rewrite without an explicit proof/implementation request.

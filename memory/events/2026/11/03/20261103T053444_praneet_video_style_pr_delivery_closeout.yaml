@@ -1,0 +1,81 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T053444_praneet_video_style_pr_delivery_closeout
+type: closeout
+recorded_at: "2026-11-03T05:34:44+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Offer the completed additional video style and its related production sources for owner PR review.
+  scope:
+    - Office PR 37 implementation/runbooks and CIEL PR 106 video plans/evidence; no automatic merge.
+outcome:
+  status: ready-for-owner-merge
+  completed:
+    - Owner explicitly requested PR preparation after reviewing the detailed/calmer film and saving its runbook.
+    - Opened Office draft PR 37 with only video sources, episodes, dependencies, runbooks and recorded delivery evidence accumulated since the previous video merge.
+    - Opened CIEL draft PR 106 with only related video plans and append-only events; no CIEL core or other workstream changes.
+    - Preserved the existing drawn style alongside the selected map/garden style, shared syncup/storyboard gates, original voice and 100-THB Gemini budget boundary.
+    - Reviewed the complete scoped diff and corrected one trailing space in an earlier monsoon storyboard. No media rerender or paid API call was required.
+  verification: >-
+    CIEL typecheck and 57 tests / 298 assertions passed. Office budget suite
+    passed 12 tests / 84 assertions; video CLI bundled successfully. Parsed
+    33 JSON/GeoJSON and seven Python files; syntax-checked twelve JavaScript
+    files. Latest encoded film passed strict full decode, stream/frame/duration
+    checks, original decoded audio identity, sixteen scene captures, eighteen
+    travel captures, three LINE QR checks and the stationary 7.5-second endcard.
+    Movie SHA256 remains unchanged. Both scoped diffs passed whitespace checks
+    and local merge-tree checks against fetched main, with clean worktrees.
+  boundary: >-
+    This delivery closes the cinematic-style plan through its final slice 7
+    only after the owner-reviewed merge boundary. Related parent video records
+    are included without claiming that its ongoing feedback/growth slice is
+    complete. No merge, new episode, upload, publication, subscription, global
+    setting, web/orchard product change or new API spend is authorized here.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.8"
+  slice: "7"
+  decision: memory/events/2026/11/02/20261102T210141_praneet_map_garden_runbook_requested.yaml
+  repository:
+    head: f325a6ffaec0a7ef961ee41ed031e63e0710fee8
+    branch: feat/monsoon-maplibre-checkpoint
+  pull_request:
+    number: 106
+    url: https://github.com/mojisejr/ciel-os/pull/106
+    base: main
+    head: feat/monsoon-maplibre-checkpoint
+    observed_head: f325a6ffaec0a7ef961ee41ed031e63e0710fee8
+    state_at_preparation: draft
+  delivery:
+    target_branch: main
+    topic_branch: feat/monsoon-maplibre-checkpoint
+    merge_order: Owner reviews and merges Office PR 37 first, then CIEL PR 106; neither is automatic.
+  office:
+    pull_request: https://github.com/mojisejr/praneet-office/pull/37
+    head: e65743a38283d9f9616d05d300e99aa4a37108b4
+    branch: feat/monsoon-maplibre-proof
+    runbook: runbooks/08-map-garden-video.md
+    proof: posts/video/styles/garden-world/monsoon-film-v02/PROOF.json
+    verification: posts/video/styles/garden-world/monsoon-film-v02/verify.ts
+    changed_files: 104
+  fetched_bases:
+    ciel_os: 17159565802380c17b5dbacdf000f7cb55dd654c
+    praneet_office: 2df1f7c082079a782a64c719b1494a61180a26fe
+  media:
+    file: checkouts/praneet-office/posts/out/007-monsoon/map-board-film-v02/praneet-monsoon-map-board-film-v02.mp4
+    sha256: f5483c14fc89f8765506a78d49c928834bf0d48ed193b6e0c7e257563c027964
+    bytes: 16565099
+    duration_seconds: 56.125
+    dimensions: 1080x1920
+    capture_dimensions: 1620x2880
+    fps: 24
+unresolved:
+  - Owner review and merge remain required. Final descriptions must link this closeout, then its commit must be pushed and proved on CIEL draft PR 106 before marking either PR ready.
+  - Generated media, local tool installation and raw assets remain ignored; clean-machine portability and heavier-scene/device performance are unproved. The current scene scripts require authored adaptation for other topics, and full Claude-flow portability remains untested.
+  - Weather, terrain/model scale and root graphics are schematic with no DEM/live sensor claim. Actual platform transcoding, independent listening, retention/viral results, parent feedback/growth, provider invoices, hardware/subscription allocation and prior Drive/mobile verification remain as recorded.
+  - Unrelated nursery/Maps/orchard work and their merge/attention states remain outside this PR pair. Existing scoped parallel-work permission is not a resolution of those workstreams.
+next_action:
+  action: Commit and push this closeout to draft CIEL PR 106, prove the remote PR heads and closeout ancestry, finalize both review descriptions, mark ready and present Office-first merge order. Await the owner's merge decision; do not merge automatically.

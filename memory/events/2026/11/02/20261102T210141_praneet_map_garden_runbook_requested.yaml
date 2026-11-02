@@ -1,0 +1,38 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T210141_praneet_map_garden_runbook_requested
+type: decision
+recorded_at: "2026-11-02T21:01:41+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Preserve the selected detailed, calmer map/garden style as runbook plus scripts.
+  scope:
+    - Additional style runbook, existing video-runbook pointer and retained local encoded verification.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner says the revised movie is quite good, explicitly asks to save the
+    approach in an Office runbook with scripts, and requests the next steps.
+    This authorizes plan 0.8 slice 7 on the current isolated video branches.
+    Earlier owner permission for isolated parallel video work continues; no
+    worker delegation or unrelated project change is needed. Preserve the
+    existing drawn style, shared production gates and delivered movie. This
+    is qualitative reference acceptance, not publication or viral proof.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.8"
+  slice: "7"
+  repository:
+    head: e60d4fbab7946e9fc35926c80dc755d10bd5e170
+    branch: feat/monsoon-maplibre-checkpoint
+  office_base: 792978d300e47c2e8c342c10eaecb25628f45ec3
+  earlier_parallel_work_decision: memory/events/2026/11/02/20261102T190710_praneet_full_monsoon_map_board_production_authorized.yaml
+  selected_reference: checkouts/praneet-office/posts/video/styles/garden-world/monsoon-film-v02/PROOF.json
+unresolved:
+  - A new episode still needs researched content, syncup, approved storyboard and authored scene adaptation; cross-client execution and actual platform performance remain unproved.
+next_action:
+  action: Write the focused additional-style runbook, retain and exercise encoded verification on the existing movie, then summarize the reusable workflow and next owner choice.

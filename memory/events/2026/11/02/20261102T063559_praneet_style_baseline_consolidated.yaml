@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T063559_praneet_style_baseline_consolidated
+type: closeout
+recorded_at: "2026-11-02T06:35:59+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Preserve the accepted Praneet video identity across future episodes.
+  scope:
+    - Consolidate existing style document and add reusable brief/review structure to the existing video runbook.
+outcome:
+  status: style-baseline-documented-checkpoint
+  summary: >-
+    Consolidated STYLE.md revision 3, using WALES for explanatory density and
+    exact voice configuration, and accepted monsoon r05 for geographic motion
+    under the same visual language. Specified story grammar, sixteen-shot
+    starting density, original-speed Thai narration, sourced color/type defaults,
+    purposeful motion, substantive qualifiers, branded QR closing and delivery
+    checks. Separated topic-specific treatments and exceptions from recurring
+    identity. Added an in-brief style block, full-shot storyboard review and
+    pre-send style check to the existing runbook. Kept style facts in STYLE.md
+    and execution steps in the runbook; no extra registry, skill or preset engine.
+  verification: >-
+    All 36 relative links in the two edited files resolve. Palette values were
+    checked against actual r05 and WALES source; model/voice against the WALES
+    manifest; the recurring closing phrase matches approved r05 narration.
+    Git whitespace checks pass. Only the two intended office documents changed;
+    no production code, media, ledger, key or external system was written.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.5"
+  slice: "2"
+  repository:
+    head: 08ed83fea0684eb8c49085d8ee14a454c5bf2861
+    branch: feat/monsoon-maplibre-checkpoint
+  office:
+    head: ad38d41e53cdc2a9b849e7c5cad6fc1ca5473dbe
+    branch: feat/monsoon-maplibre-proof
+  authorization: evt_20261102T063525_praneet_style_consolidation_authorized
+  style: checkouts/praneet-office/posts/video/STYLE.md
+  runbook: checkouts/praneet-office/runbooks/07-video-posts.md
+unresolved:
+  - Creative defaults are documented production guidance, not automatically enforced by a universal shared renderer. Per-episode factual/story approval and actual encoded-media review still apply.
+  - Owner's r05 acceptance is qualitative. Phone-open success, publication, full Insights, target/view definitions and style-to-growth causality remain unverified; direct-QR attribution is unavailable.
+  - Provider invoice and remote Drive checksum remain unknown. Five full reservations totaling 4745 satang remain pending, leaving 5255 satang; this task made zero paid requests or uploads.
+  - Slice 2 publication, first two-week review and resulting next experiment remain outstanding. Local topic-branch commits have not been pushed, offered in a PR or merged.
+next_action:
+  action: Use STYLE.md revision 3 and the runbook style block in the next episode's confirmed brief/storyboard, keeping topic experiments visible and recording publication/feedback under the existing slice 2 flow.

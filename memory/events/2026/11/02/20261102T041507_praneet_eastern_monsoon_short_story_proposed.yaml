@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T041507_praneet_eastern_monsoon_short_story_proposed
+type: closeout
+recorded_at: "2026-11-02T04:15:07+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Apply owner feedback to a concise eastern-region monsoon proposal.
+  scope:
+    - Episode 007 brief and proposed storyboard r02 only; retain existing map proof.
+outcome:
+  status: regional-story-proposal-prepared
+  owner_feedback: >-
+    Owner accepts the map treatment but finds the 90-second nationwide story
+    too long. Keep essential content within 60 seconds, start with the east,
+    and consider separate evergreen episodes for other regions.
+  summary: >-
+    Updated the episode brief and prepared a five-beat approximately 50-second
+    eastern-orchard story proposal. Retain the accepted map treatment and r01
+    proof. Remove the seasonal-reversal mechanism and southern Gulf detour;
+    briefly contrast southwest moisture and the northeast transition, then
+    explain local observation. Exact r02 narration awaits owner approval.
+    No renderer changes, new MP4, paid voice, upload or publication occurred.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "2"
+  repository:
+    head: "1e42e804dc3d65724316cf31e67cd784b12d8271"
+    branch: feat/monsoon-maplibre-checkpoint
+  office:
+    head: ed01aa0a126fe10861f91c5398945dc6dffbba34
+    branch: feat/monsoon-maplibre-proof
+  brief: checkouts/praneet-office/posts/video/episodes/007-monsoon/BRIEF.md
+  proposal: checkouts/praneet-office/posts/video/episodes/007-monsoon/STORYBOARD-r02.md
+  source: https://www5.tmd.go.th/info/%E0%B8%A0%E0%B8%A1%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%97%E0%B8%A8%E0%B9%84%E0%B8%97%E0%B8%A2
+  checks:
+    - Verified TMD's regional transition description; eastern rain cessation/cooling can lag north and northeast.
+    - Git diff whitespace check passed; changed only the episode brief and new r02 proposal in office.
+unresolved:
+  - Proposed r02 narration and scene timing need owner approval before a materially changed full render; measured audio timing is not yet known.
+  - Regional-series repeat-view and performance benefits are creative hypotheses, not measured results.
+  - Paid central-Thai narration is outside this revision request; actual invoice reconciliation and existing conservative reservations remain unresolved.
+  - Existing map proof has no elevation DEM and does not prove HyperFrames integration. No push, PR or merge was performed for this checkpoint.
+  - Slice 2 publication, feedback review and subsequent experiment are outstanding. Full authenticated Insights, cross-platform view definitions, growth-target mapping and earlier remote Drive checksum remain unavailable or undecided.
+next_action:
+  action: Present the concise eastern-region r02 storyboard in chat for owner story approval, then adapt the accepted MapLibre treatment to the shorter clip within the authorized production boundary.

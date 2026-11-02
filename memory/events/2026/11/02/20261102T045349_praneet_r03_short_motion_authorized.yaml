@@ -1,0 +1,42 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T045349_praneet_r03_short_motion_authorized
+type: decision
+recorded_at: "2026-11-02T04:53:49+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Generate the approved eastern monsoon clip from the six r03 frames.
+  scope:
+    - Local 50-second silent motion, camera descent, orchard moisture reveal, encoding and inspection.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After viewing the six actual r03 frames and enlarged orchard image, owner
+    accepted the treatment and requested generation. This approves the r03
+    eastern-region story and visual order for local motion generation. Keep
+    the 50-second target and no-more-than-60-second ceiling. Preserve scoped
+    overlap permission; no subagents or other-lane edits are used.
+  authorization_boundary: >-
+    Deliver locally as a silent visual render under the existing workflow.
+    No new paid narration request, paid map provider, Drive/social upload,
+    publication or target redefinition follows from this render checkpoint.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.4"
+  slice: "2"
+  repository:
+    head: "3150c71b023aae45fddd4005d4d7fe9f03bbbb6b"
+    branch: feat/monsoon-maplibre-checkpoint
+  office_base: 2ed0f5caa204045303e694b6237c01fe23cf7606
+  approved_story: checkouts/praneet-office/posts/video/episodes/007-monsoon/STORYBOARD-r03.md
+  approved_frames: checkouts/praneet-office/posts/video/episodes/007-monsoon/FRAMES-r03.json
+unresolved:
+  - Actual shorter encoded motion quality, descent continuity and narrated timing remain to be proved.
+  - Paid voice and invoice reconciliation are outside this request; conservative budget reservations remain unchanged.
+  - Publication, feedback review, complete Insights, target/view definitions and prior Drive checksum remain unresolved as previously recorded.
+next_action:
+  action: Render and inspect the approved 50-second silent clip locally, then present the actual MP4 to the owner.

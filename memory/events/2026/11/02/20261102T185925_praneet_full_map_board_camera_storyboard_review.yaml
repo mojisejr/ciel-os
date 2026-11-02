@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T185925_praneet_full_map_board_camera_storyboard_review
+type: closeout
+recorded_at: "2026-11-02T18:59:25+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Present a complete written monsoon map-board storyboard with purposeful rapid camera travel and readable holds.
+  scope:
+    - Written sixteen-shot proposal and six key-view descriptions only; no new still/motion render or paid/external action.
+outcome:
+  status: written-map-board-camera-storyboard-prepared-for-owner-review
+  result: >-
+    Prepared storyboard v02 for the full sixteen-shot monsoon film on the
+    positively reviewed map-board visual base. Original words and measured
+    56.125-second voice boundaries are retained. Four major travel beats:
+    close orchard out to eastern coast (01), follow southwest flow from ocean
+    to coast (04), return from upper Thailand to the east (09), and enter the
+    same orchard miniature until it fills the view (13). Proposed main travel
+    spans 0.65-0.85 seconds with settled reading time; observation/data shots
+    are calmer. Geographic wind explanations keep north consistent; modest
+    model orbits reveal spatial relationships. QR/camera remain stationary
+    for 7.5 seconds. These are proposed timings and views, not rendered motion.
+  checks: >-
+    Structured storyboard contains sixteen ordered sections with exact existing
+    narration and contiguous measured time boundaries; total and QR hold
+    checked. Each shot records view transition, attention, move duration and
+    remaining settle/read duration. Prior STYLE.md, delivery manifests and
+    delivered movie hashes match the latest proof. Only the new structured
+    proposal and CIEL plan/slice/records changed. No new renderer, image, movie,
+    voice, dependency, budget change, upload, push, PR or merge.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: 32c70057f7a79957d0f530288845d573d7210da5
+    branch: feat/monsoon-maplibre-checkpoint
+  owner_decision: memory/events/2026/11/02/20261102T185539_praneet_map_board_camera_storyboard_requested.yaml
+  office_head: 8dc150d04ce5e183180089c2da521d486899b903
+  storyboard: checkouts/praneet-office/posts/video/styles/garden-world/monsoon-storyboard-v02/STORYBOARD.json
+  visual_base: memory/events/2026/11/02/20261102T183206_praneet_monsoon_map_board_local_proof.yaml
+unresolved:
+  - Owner storyboard approval is pending. New rapid-travel timing, whole-film coherence, geographic/model transitions, observation props, connected soil/tree detail and word-specific object emphasis require implementation and actual motion/audio review. Six key views are written descriptions, not newly rendered frames.
+  - Predicted enjoyment/readability is an art-direction judgment, not measured retention or viral performance. Full-film resources and 1080p quality remain unproved. Existing flat geographic tile/illustrative weather and model-scale limitations remain; no live forecast or survey accuracy claim.
+  - Existing default styles and previous proposals remain available. Earlier Drive checksum/mobile-playback unknowns, parent video feedback/growth/invoice/Claude-portability items and unrelated nursery overlap attention remain as recorded. No remote integration or spending occurred.
+next_action:
+  action: Present the complete written storyboard and camera rhythm for owner review. Incorporate feedback, then take the full-motion production instruction before implementing/rendering the new choreography or uploading a film.
