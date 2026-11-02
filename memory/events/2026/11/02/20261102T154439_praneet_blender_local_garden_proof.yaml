@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T154439_praneet_blender_local_garden_proof
+type: closeout
+recorded_at: "2026-11-02T15:44:39+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Prove installation and a bounded original garden render on the current Mac, preserving the accepted style.
+  scope:
+    - Official user-scoped installation, original scene code, silent five-second test and local evidence; no new educational episode or external delivery.
+outcome:
+  status: local-tool-proof-prepared-for-owner-review
+  installation: >-
+    Blender 5.2.3 LTS ARM64 installed under /Users/non/Applications/Blender.app.
+    Official SHA256 matched; hdiutil verification, deep signature verification,
+    notarized Gatekeeper assessment and headless Python succeeded. No admin,
+    security override, unexpected license acceptance or global settings change.
+    The installer volume was detached. Installer and receipt remain ignored.
+  result: >-
+    Original procedural orchard has nine raised-mound trees, mesh-instanced
+    branches/leaves, irrigation, layered soil, qualitative exposed roots,
+    authored lighting and an absolute-frame camera approach. Final still at
+    720x1280 took 3.150 seconds after an initial 8.715-second cold trial.
+    Silent 540x960 movie has 120 frames at 24fps, five seconds, H.264 yuv420p,
+    1949972 bytes. Blender run took 142.322 seconds; sampled process RSS peak
+    283.16 MiB, kernel maximum child RSS 359.44 MiB. Full decode and independent
+    stream/duration/frame checks passed. Actual still and encoded timeline
+    samples were inspected. This proves the small local scene, not a complete
+    reference-style film or 1080p sixty-second production capacity.
+  boundaries: >-
+    Existing STYLE.md, three delivery manifests and delivered movies have equal
+    before/after SHA256 values. Original style and commands remain unchanged.
+    New candidate is experimental and additional. Zero paid requests, uploads
+    or social writes; no provider keys were read. Only isolated office style
+    source/proof and this HQ workstream/records changed. Existing topic branches
+    were reused without switching; no push, PR or merge occurred.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 9823c610368dc6dd19d86c7e0793e04cae715fb0
+    branch: feat/monsoon-maplibre-checkpoint
+  owner_decision: memory/events/2026/11/02/20261102T152733_praneet_cinematic_style_opened.yaml
+  office_head: 970af5f27dd344472c8f191cf4b486e6bd99e220
+  proof: checkouts/praneet-office/posts/video/styles/garden-world/PROOF-v01.json
+  runbook: checkouts/praneet-office/posts/video/styles/garden-world/README.md
+  local_movie: checkouts/praneet-office/posts/out/style-garden-world/blender-v01/garden-world-blender-probe-v01.mp4
+  movie_sha256: 10e2af39d5a42cb860a3a82e13959f6cf68785d401cdd57d67c71ab7379d09f9
+  official_release: https://download.blender.org/release/Blender5.2/
+  official_checksum: https://download.blender.org/release/Blender5.2/blender-5.2.3.sha256
+  installer_sha256: acc05374485a272342d4b323c15ac01953e7f697da2f1bad8af9c3bf087267a4
+unresolved:
+  - Owner visual review remains pending. Procedural canopy/materials, schematic roots offset from the trunk, portrait corner cropping and one simple camera push need further art direction; no adoption of a new default or whole-reference-quality claim.
+  - Process RSS excludes some shared GPU/system memory. Other applications were active; animation swap snapshots were 4498.31M before and 4483.94M after. About 66.44 GiB disk remained. No full-production performance guarantee or causal attribution of system swap to Blender.
+  - Original creator software, reference asset provenance and absence of competitors remain unknown. A broader cinematic story/voice pilot needs its own concrete scope and owner review.
+  - Parent video work remains active. Existing 003 output/listening review and publication, two-week feedback review/final PR closeout, growth/metric definitions, provider invoice/subscription allocation, remote Drive checksum and Claude/shared-budget portability remain unresolved as recorded in the parent research checkpoint. November reservations stay 5694 satang, leaving 4306; no new paid call or settlement.
+  - Unrelated praneet-web orchard-spend work remains outside scope. Wake's praneet-nursery-001 overlap/owner-confirmation attention and existing plan-length warnings are deferred; this companion experiment has its explicit scoped decision. No remote integration occurred.
+next_action:
+  action: Present the local still and five-second silent movie for owner feedback. Align the concrete visual/story scope of a further cinematic garden pilot before expanding scenes, paid narration or delivery; preserve the established production style.
