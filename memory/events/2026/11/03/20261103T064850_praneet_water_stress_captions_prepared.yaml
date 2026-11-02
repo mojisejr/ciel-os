@@ -1,0 +1,44 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T064850_praneet_water_stress_captions_prepared
+type: closeout
+recorded_at: "2026-11-03T06:48:50+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Prepare platform captions for the existing third-publication water-management clip.
+  scope:
+    - Facebook and TikTok copy saved in the episode source; owner-controlled publication.
+outcome:
+  status: water-stress-captions-prepared-for-owner-posting
+  result: >-
+    Prepared Facebook and shorter TikTok captions from the approved 003 story,
+    emphasizing root-zone soil, leaves and flower buds together, moderate water
+    stress and healthy bearing-tree readiness. Facebook explicitly excludes
+    nursery seedlings and retains optional direct LINE contact. No fixed days,
+    PBZ recipe, universal irrigation quantity or flowering guarantee was added.
+    Captions and their story/narration/source/delivery references are saved in
+    Office. JSON parsing, relative source links and whitespace checks passed.
+  boundary: >-
+    No new render, TTS, paid API, Drive upload, web draft or social publication.
+    Office started from clean main equal to fetched origin/main on its own
+    caption topic branch. CIEL work stayed on hq/20261103; pre-existing Claude
+    work was preserved and only this event was staged.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  repository:
+    head: ab6d431333f11c4c269a2c50926ea392b7c02a4b
+    branch: hq/20261103
+  office:
+    head: 435e5f79bbfa244c698bfded9947923b3119767e
+    branch: docs/water-stress-captions-20261103
+    captions: posts/video/episodes/003-water-stress/CAPTIONS-v01.json
+    delivery: posts/video/episodes/003-water-stress/DELIVERY-v01.json
+unresolved:
+  - Owner publication URLs, posting time, intended-device/listening confirmation and new Insights remain unrecorded. Caption preparation is not publication evidence or a timing/style-performance result.
+  - Existing invoice/reservation, Drive checksum, full client-portability/cost reporting and two-week feedback-review unknowns remain. No new API spend occurred here.
+next_action:
+  action: Give the owner copyable Facebook/TikTok captions. Record actual dated publication links and available Insights when supplied; keep manual posting and the existing monthly budget boundary.
