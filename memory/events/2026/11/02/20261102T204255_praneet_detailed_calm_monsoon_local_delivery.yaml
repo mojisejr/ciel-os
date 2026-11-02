@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261102T204255_praneet_detailed_calm_monsoon_local_delivery
+type: closeout
+recorded_at: "2026-11-02T20:42:55+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-cinematic-style-001
+  lane: single
+  objective: Deliver the same monsoon film with authored visual detail and calmer camera movement.
+  scope:
+    - Isolated v02 original assets, rendering and encoded verification; preserve story, audio, older variants and default style.
+outcome:
+  status: detailed-calm-local-film-prepared-for-owner-output-review
+  result: >-
+    Produced the full revised film: 56.125 seconds, sixteen unchanged narration
+    sections, 1347 frames at 24fps, portrait 1080x1920 H.264 High level 4.1,
+    yuv420p, square pixels, BT.709 and original AAC. Size 16565099 bytes.
+    Actual capture was 1620x2880, downsampled with Lanczos. The original
+    procedural orchard now has 1440 leaves per tree instead of 648, six
+    original portable color/normal texture pairs across soil/bark/ridge,
+    a finer schematic ridge, smoother clouds and revised light/4096 shadow
+    rendering. This is code-authored detail, with no generative/paid API call.
+  camera_and_verification: >-
+    Applied the owner's later correction before the final capture: remove the
+    opening pullback, replace the seven-level seasonal zoom-out with a deliberate
+    cut, limit regional bearing to 12 degrees, lengthen major travels to
+    1.4-1.75 seconds and retain the summary camera for the endcard. Actual
+    per-frame MapLibre getter trace records 1347 samples; maximum continuous
+    zoom rate is 3.85423 levels/second, excluding the explicit seasonal cut.
+    Inspected all sixteen encoded scene frames, eighteen travel-phase frames
+    and native close/travel views. Full strict decode passed. Decoded audio
+    SHA256 is identical to r05; encoded QR resolves to the LINE URL at 49.5,
+    52.5 and 55.9 seconds. Endcard camera remains fixed for 180 frames/7.5 seconds.
+    SPS independently confirms High profile, level 4.1 and four reference frames.
+  resources_and_boundaries: >-
+    Full capture took 1418.510 seconds. Capture-report peak sampled owned RSS
+    was 1049.984 MiB; renderer console peak including its initial encode was
+    1184.797 MiB. The final compatibility encode took 65.204 seconds with two
+    threads. These are partial process measurements, not a hard GPU/unified
+    memory cap or a total system-cost claim. Public map assets total 20600956
+    unique bytes in the full run; attribution and fetch bounds remain.
+    Preserved older style/source/delivery hashes, including the previous full
+    map-board film. No new TTS, paid provider, dependency/lock/global setting,
+    Drive upload, social publication, push, PR or merge.
+evidence:
+  plan: workstreams/praneet-cinematic-style-001/PLAN.md
+  plan_revision: "0.7"
+  repository:
+    head: d01aee67f536324b1a406072963a59a88fe0c4df
+    branch: feat/monsoon-maplibre-checkpoint
+  owner_decision: memory/events/2026/11/02/20261102T200951_praneet_monsoon_calmer_camera_requested.yaml
+  office_head: 792978d300e47c2e8c342c10eaecb25628f45ec3
+  source_and_run_instructions: checkouts/praneet-office/posts/video/styles/garden-world/monsoon-film-v02/README.md
+  proof: checkouts/praneet-office/posts/video/styles/garden-world/monsoon-film-v02/PROOF.json
+  local_movie: checkouts/praneet-office/posts/out/007-monsoon/map-board-film-v02/praneet-monsoon-map-board-film-v02.mp4
+  movie_sha256: f5483c14fc89f8765506a78d49c928834bf0d48ed193b6e0c7e257563c027964
+  decoded_audio_sha256: 67ba9a1d957363f2fd0a4cb9778ed584662243ae59513a2c71d57f7d16ed5954
+unresolved:
+  - Owner final visual/motion/listening acceptance remains pending. Audio identity is not an independent listening review; object emphasis retains section timing rather than verified word timestamps. No actual upload/transcoding or retention/viral-performance result is claimed.
+  - Geometry, weather, enlarged models and the root window remain schematic. Basemap detail is capped at source zoom 10 with no DEM or live/sensor values. Reference creator toolchain remains unknown.
+  - This exact refined scene fits the measured local trial; heavier future scenes and other devices remain unmeasured. Process RSS can double-count shared pages and omit GPU/system allocations; SwiftShader is not a native GPU speed claim.
+  - Existing parent feedback/growth, provider invoice/subscription/hardware allocation, Claude portability, prior remote Drive checksum/mobile verification and unrelated nursery-overlap attention remain as previously recorded. Incremental paid API spend here is zero, not total production cost.
+next_action:
+  action: Show the refined local movie to the owner for output review. Await explicit upload, publication, adoption or merge instructions; do not begin another film automatically.
