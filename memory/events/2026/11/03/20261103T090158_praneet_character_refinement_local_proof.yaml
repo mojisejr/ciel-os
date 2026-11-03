@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T090158_praneet_character_refinement_local_proof
+type: closeout
+recorded_at: "2026-11-03T09:01:58+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-map-lab-001
+  lane: single
+  objective: Present the refined character surfaces and matte finish for visual review.
+  scope:
+    - Local v02 model, neutral turnaround sheet, same temple-map orbit and comparison.
+outcome:
+  status: local-character-refinement-prepared-for-owner-review
+  result: >-
+    Replaced stacked face/hood forms with a rounded closed child head and an
+    open fitted hood whose front, feather contour and back share vertices.
+    Shallow owl-eye patches follow the actual curved hood; face details follow
+    the cheek surface. Selectively united coat and sleeves and used a diffuse
+    matte viewer finish. Neutral front/45/90/back views and six final encoded
+    map views were inspected, with an encoded v01/v02 side comparison.
+    In-memory and independent exported-GLB audits report one connected closed
+    manifold surface for each core head, hood and coat/sleeve mesh. This is
+    surface proof, not a verdict on likeness or animation readiness.
+  verification: >-
+    Final movie has 336 frames at 24 fps, fourteen seconds, native 1080x1920,
+    silent H.264/yuv420p. Strict decode, loaded tiles, text bounds, stable scene
+    input hashes and every-frame map/model origin checks passed. Capture took
+    100.96 seconds, sampled owned-process RSS sum peaked at 932.80 MiB including
+    encoding, and provider unique bytes were 75677. RSS excludes some system/
+    GPU memory. Nine preserved delivery hashes, including v01, still match.
+    Paid requests were zero. No production-style source or runbook changed.
+  boundary: >-
+    Saved locally on the existing independent Office lab branch. CIEL remains
+    on primary hq/20261103. No voice, rig, install, external upload, publication,
+    push or PR. Owner review of this revised appearance remains pending.
+evidence:
+  plan: workstreams/praneet-character-map-lab-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: 08a0292806956ac618c6d9bfe2992e81eb4801ac
+    branch: hq/20261103
+  office:
+    head: 11b1ef823f58fbdfcf52fb236d51a1cdc7cde1b3
+    branch: feat/xiao-mu-map-lab
+    instructions: posts/video/labs/xiao-mu-map/README.md
+    proof: posts/video/labs/xiao-mu-map/PROOF-v02.json
+    neutral_review: posts/out/labs/xiao-mu-map/v02/model-review-v02.png
+    comparison: posts/out/labs/xiao-mu-map/v02/side-comparison-v01-v02.jpg
+    movie: posts/out/labs/xiao-mu-map/v02/xiao-mu-temple-map-lab-v02.mp4
+    movie_sha256: 0aa839b1049775307b69ff0427bfffd4ce85deb667878ff73bf2ff97c6a76672
+    movie_bytes: 4704843
+unresolved:
+  - Owner acceptance of revised likeness, face profile and matte finish is pending. Procedural interpretation remains approximate; small hands/shoes/accessories are simplified and the reference closure-count discrepancy remains.
+  - Static surface audits do not prove deformation topology, expressions or a rig. Approximate POI, schematic scale and no temple-endorsement boundary remain.
+  - Parent invoice/reservation, full client-portability and audience-feedback unknowns remain unchanged. No new publication or viral-performance evidence exists.
+next_action:
+  action: Show the owner the encoded v01/v02 side comparison, neutral four-view sheet and refined map movie, then incorporate any art feedback before further scope or adoption.
