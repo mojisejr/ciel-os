@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T060725_praneet_weather_agronomy_revised
+type: closeout
+recorded_at: "2026-11-04T06:07:25+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Research useful weather effects on durian physiology and revise episode 009 accordingly.
+  scope:
+    - Primary-source agronomy research, refreshed November 5 forecast evidence and proposed narration/visual directions.
+outcome:
+  status: episode009-agronomy-research-and-story-revised
+  summary: >-
+    Owner corrected the emphasis from generic orchard tasks to physical and
+    biological tree responses with stage-specific preparation. Read official
+    crop alerts, primary paper abstracts and the original field report on
+    flowering, including its methods and rain/readiness table. Prepared an
+    evidence/limits matrix and r02 narrative concentrating on young leaves,
+    receptive flowers, concurrent flush with young fruit and mechanical fruit
+    loading. Refreshed seven representative point forecasts for November 5
+    and TMD warning 6. Retained r01 unchanged. No new frames, voice, full movie,
+    paid call, ledger change, external upload or permanent style/runbook change.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: b379217e3f0d09d9714536610c219e8349215b4c
+    branch: hq/20261103
+  office:
+    head: d901daeca81719b618df09476e4912f792e4624f
+    branch: feat/character-workflow
+  research: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/AGRONOMY-RESEARCH-r02.md
+  storyboard: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/STORYBOARD-r02.md
+  weather_snapshot: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/WEATHER-SNAPSHOT-r02.json
+  checks:
+    - JSON parses; sixteen contiguous proposed shots total 60 seconds with a 7.5-second closing. Actual narration timing remains unmeasured.
+    - Target date matches November 5 in both JSON files; seven representative points and research paths are present.
+    - Original report table 3.4 visually checked; field observations are distinguished from controlled causal trials and proposed care inferences.
+    - RH is not measured leaf wetness; model cloud fraction is not measured light; single-day exposure does not imply immediate disease or fruit-quality outcomes.
+    - Experimental 15 C pollen effects are not mapped to forecast minima around 24 C. November 7-9 southern heavy-rain warning is kept separate from November 5.
+    - Git whitespace check passed and Office working tree was clean after the four-file commit.
+unresolved:
+  - Owner review of revised factual story and geographic selection remains; old r01 static frames are not proof of r02 visuals. Exact voice timing is not measured.
+  - Actual cultivar, phenological stage, crop load, prior weather, leaf wetness and inoculum are unknown. No universal fertilizer or chemical protocol is established.
+  - Refresh forecasts and official warnings before production/posting; city model points are not province-wide or orchard-specific observations.
+  - TMD dataset-specific commercial reuse remains uncertified; no official infographic copied. Preserve MET attribution and official source links.
+  - Parent two-week feedback/growth proof, billing reconciliation, subscription/hardware allocation, actual Claude cross-client proof, repository merges and full media backup remain open.
+next_action:
+  action: Present the agronomic evidence and revised story for review; on a later production request refresh dated sources and retain stage-specific conditions before rendering or paid narration.
