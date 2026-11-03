@@ -3,7 +3,7 @@
 **Workstream:** `praneet-character-map-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.2
+**Plan revision:** 0.3
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -23,6 +23,15 @@ Use the original sheet's identity and a smooth matte cartoon finish. Develop
 the head volume and a fitted open hood, shallow curved owl-eye details and
 continuous hood feathers; inspect neutral-light front/oblique/side/back views
 before the revised map preview. Preserve the first lab movie for comparison.
+
+Owner additionally selects a padded soft hood that retains its rounded form,
+with a symmetric main dome, eyes and gold tips and only a small independently
+leaning tuft. Refine the internal cranial support and the hood's curved profile,
+with slight authored settling around the lower sides/nape. Retain the approved
+face, matte finish and chibi proportions. This iteration delivers neutral
+front/oblique/side/back stills first, preserving v01/v02 media and the current
+v02 map scene; defer another map movie until the revised shape is reviewed.
+This is authored static drape, not a claim of gravity/cloth simulation.
 
 The agreed outcome is a character/location lab, not adoption of a page mascot,
 a narrated episode or a universal image-to-3D converter. Agent's declared
