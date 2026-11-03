@@ -1,0 +1,38 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T143830_praneet_character_workflow_slice2_serial_overlap
+type: decision
+recorded_at: "2026-11-03T14:38:30+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-workflow-001
+  lane: single
+  objective: Carry the existing serial Office overlap authorization into the slice 2 decision.
+  scope:
+    - Record existing owner authority without starting another lane or changing scope.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner's explicit request to do slice 2 continues the same serial workflow
+    on Office, preserving the lab dependency under the existing overlap
+    authorization. The initial slice 2 decision omitted the structured
+    parallelism field, so Wake still reported the overlap gate. Record that
+    existing permission explicitly for slice 2; this is not new permission for
+    parallel agents, competing edits, merges or modelling. The reference
+    candidate remains awaiting the owner's art approval.
+evidence:
+  plan: workstreams/praneet-character-workflow-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: 5e5bc66fabab4be414ac3f0db747e8a9ffdec28b
+    branch: hq/20261103
+  prior_overlap_authority: memory/events/2026/11/03/20261103T120849_praneet_character_workflow_slice1_authorized.yaml
+  explicit_slice_start: memory/events/2026/11/03/20261103T143102_praneet_character_workflow_slice2_authorized.yaml
+  candidate_checkpoint: memory/events/2026/11/03/20261103T143723_praneet_character_workflow_slice2_reference_candidate.yaml
+unresolved:
+  - Exact reference approval and the candidate checkpoint's billing, portability, backup and Git dependency unknowns remain unchanged.
+next_action:
+  action: Present the reference candidate and obtain owner selection or a specific correction before finishing slice 2.
