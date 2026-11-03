@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T144900_praneet_character_workflow_slice3_authorized
+type: decision
+recorded_at: "2026-11-03T14:49:00+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-workflow-001
+  lane: single
+  objective: Build the approved gardener as the second character through the shared workflow.
+  scope:
+    - Slice 3 static model, internal shape review, Blender/GLB package and ten-second turntable.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner explicitly starts slice 3 after accepting the gardener reference and
+    closing slice 2. Use approved ref-v001 as the selected second figure,
+    preserving its identity and plump collectible family. Continue serially
+    on the existing Office branch under the same lab-overlap permission; no
+    competing lane or subagent is started. Character-specific shape code and
+    minimum shared-tool corrections required for the second asset are in scope.
+    No new image generation, paid API, map scene, rig, printing preparation,
+    upload, publication, PR or merge is authorized here.
+evidence:
+  plan: workstreams/praneet-character-workflow-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: 3810f1b26504666ff267db8acd14a36164ce9f6c
+    branch: hq/20261103
+  office:
+    head: 919ddbd6d371f49bab21bfc52fa98593e5eb27d4
+    branch: feat/character-workflow
+  reference_approval: memory/events/2026/11/03/20261103T144119_praneet_character_workflow_slice2_accepted.yaml
+  prior_serial_overlap: memory/events/2026/11/03/20261103T143830_praneet_character_workflow_slice2_serial_overlap.yaml
+unresolved:
+  - Shape quality, actual second-asset exports, retained baseline operation and owner final model approval require observed proof.
+  - Actual Claude execution remains unproved unless an intended second-client run is available; do not infer it from shared scripts.
+  - Existing native billing/quota, subscription/hardware allocation, ignored-media backup and Git dependency unknowns remain.
+next_action:
+  action: Build and internally review coherent gardener masses and identity details with the common tools, verify the actual Blender/GLB/media package, then present the final ten-second turntable for owner art review.
