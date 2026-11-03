@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T204147_praneet_weather_map_visual_proof
+type: closeout
+recorded_at: "2026-11-03T20:41:47+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Show the owner a short sky-to-garden animated-map treatment before a full weather storyboard.
+  scope:
+    - One local 15-second visual proof, original code, encoded-file checks and retained evidence.
+outcome:
+  status: weather-map-local-visual-proof
+  summary: >-
+    Delivered a silent 1080x1920, 24 fps, 15-second H.264 proof. Actual
+    MapLibre/OpenFreeMap eastern-coast geography moves toward Chanthaburi;
+    illustrative weather gives way to a drawn WALES soil/root section and
+    an observation prompt. Owner requested this bounded demonstration before
+    storyboarding. Existing accepted styles and episodes remain unchanged.
+    No new paid request, reservation, voice, Blender asset, external upload
+    or publication. This is a checkpoint within the still-open parent slice.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 8c78f76a2a4f58f822a751c305a3e0abf6e9a7bc
+    branch: hq/20261103
+  office:
+    head: c09bc47e64c5d18c52adf2b2a61e5ecf80393300
+    branch: feat/character-workflow
+  proof: checkouts/praneet-office/posts/video/styles/weather-map-lab-v01/PROOF.json
+  movie:
+    local_file: checkouts/praneet-office/posts/out/weather-map-lab/faa-to-garden-v01/praneet-faa-to-garden-map-proof-v01.mp4
+    sha256: be4dab8c4aa9277b46525d84bebe7a4bc30690c60447dfe70918d5d9d75a82f1
+    bytes: 3835674
+    seconds: 15
+    frames: 360
+  checks:
+    - Captured all frames with map/tile readiness, 1080x1920 native canvas and text-bound checks; no page, scene or HTTP errors.
+    - Absolute-time backward seeking produced pixel-identical settled output.
+    - Inspected eight source samples, native opening/approach/portal/final frames and six encoded samples; place labels moved above rain for legibility.
+    - Full MP4 decode and ffprobe passed; JavaScript syntax, renderer compilation and Git whitespace checks passed.
+    - Capture took 62.35 seconds; sampled owned-process RSS sum peaked at 885.44 MiB, which is not a hard unified-memory measurement.
+    - Reused cached map data with 45468 newly downloaded bytes; zero paid requests and reservations.
+unresolved:
+  - Owner review of this visual treatment remains; it is not an approved daily-series style or full episode.
+  - Weather and soil-water graphics are labelled illustrations, not actual forecasts or measurements; a real report still needs dated source data and its approved storyboard.
+  - Parent two-week feedback/growth proof, billing reconciliation, subscription/hardware allocation, cross-client proof, repository merges and full media backup remain open.
+next_action:
+  action: Present the actual local movie; use owner feedback to align the first real regional weather story before preparing its full storyboard.
