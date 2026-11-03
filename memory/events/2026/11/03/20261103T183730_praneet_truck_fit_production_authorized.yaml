@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T183730_praneet_truck_fit_production_authorized
+type: decision
+recorded_at: "2026-11-03T18:37:30+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Produce the approved episode 008 truck-fit story with central-Thai narration.
+  scope:
+    - Local continuous motion, bounded new core narration, cached closing, encoded video and delivery checks.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner accepts storyboard r01 and explicitly requests a generated clip with
+    sound. Authorize production of its sixteen shots using the accepted gardener,
+    the WALES voice configuration and original tempo, a readable calculator URL
+    and primary tool QR with a seven-and-a-half-second hold. Keep the sixty-second
+    total ceiling. New paid narration remains subject to today's account evidence,
+    current pricing and the existing locked monthly budget guard; preserve all
+    pending reservations and reuse the unchanged cached brand closing. Continue
+    serially on the existing branches. No social publication, external ops draft,
+    F-code creation or Drive upload is requested by this production instruction.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 7f7e232f558735b7fb3d1754777c5e037d4e8f13
+    branch: hq/20261103
+  office:
+    head: 47d93dc74806326f3b2f877d7ef21a55b1f6d3c9
+    branch: feat/character-workflow
+  approved_story: checkouts/praneet-office/posts/video/episodes/008-truck-fit/STORYBOARD-r01.json
+  approved_story_sha256: 14da27c7377109458ef016aa782327aadcfe68d145827d384f50a385bdac49cf
+unresolved:
+  - Fresh daily owner evidence of outside Gemini usage is requested; dependent paid request waits for the answer.
+  - Actual voice timing, continuous motion and encoded AV/QR quality require measurement.
+  - Bag weight is unavailable; the example remains an estimate and no payload certification.
+  - Parent audience feedback, two-week review, invoice reconciliation, client portability, repository merges and full media backup remain unresolved.
+next_action:
+  action: Build continuous motion and voice assets, pass the existing budget gate before the one authorized paid request, then inspect and deliver the narrated local MP4.
