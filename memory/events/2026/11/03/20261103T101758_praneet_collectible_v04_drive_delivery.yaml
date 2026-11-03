@@ -1,0 +1,40 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T101758_praneet_collectible_v04_drive_delivery
+type: closeout
+recorded_at: "2026-11-03T10:17:58+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-map-lab-001
+  lane: single
+  objective: Deliver the existing v04 turntable through the owner's connected Drive.
+  scope:
+    - Owner explicitly requests upload of the latest completed clip.
+outcome:
+  status: collectible-v04-uploaded-for-owner-review
+  result: >-
+    Uploaded the existing v04 silent turntable as a new video/mp4 file using
+    the connected Google Drive plugin. No matching Praneet folder was found;
+    used the default My Drive destination. Read back the returned file ID,
+    name, MIME type, size and URL; size matches the local 1297345-byte movie.
+    Kept prior files and sharing settings. No rerender, voice, paid generation,
+    publication or design acceptance is implied by this delivery request.
+evidence:
+  plan: workstreams/praneet-character-map-lab-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: 17620f96accb614a3fd8b10c7b69d01de106a6f1
+    branch: hq/20261103
+  local_movie: checkouts/praneet-office/posts/out/labs/xiao-mu-map/v04/xiao-mu-collectible-design-v04.mp4
+  local_sha256: 11d46c25d03567659e96f360a7c4a01e2df4086da7edef5dbbcb890e614392b3
+  drive_file_id: 1z3WdZQObhTf3x7GqQko4vFgS1iLhw2R0
+  drive_url: https://drive.google.com/file/d/1z3WdZQObhTf3x7GqQko4vFgS1iLhw2R0/view?usp=drivesdk
+  drive_name: xiao-mu-collectible-design-v04.mp4
+  drive_mime_type: video/mp4
+  drive_size_bytes: 1297345
+unresolved:
+  - Remote checksums were not returned by metadata readback, so identity verification here is file ID/name/MIME/size, not remote byte-hash equivalence. Owner device playback/download remains unobserved.
+  - Whole-figure art acceptance, small-detail polish, reference discrepancy and prior map/print/rig/invoice/portability/audience-feedback unknowns remain as recorded in the v04 design closeout.
+next_action:
+  action: Give the owner the verified Drive URL for mobile viewing/downloading and await art feedback before adopting v04 on the map.
