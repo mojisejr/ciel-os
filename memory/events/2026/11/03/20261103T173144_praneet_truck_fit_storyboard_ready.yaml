@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T173144_praneet_truck_fit_storyboard_ready
+type: closeout
+recorded_at: "2026-11-03T17:31:44+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver episode 008 narration/storyboard and static code frames for owner story review.
+  scope:
+    - Confirmed brief, sixteen-shot proposal and static visual evidence only.
+outcome:
+  status: episode008-storyboard-ready-for-owner-review
+  result: >-
+    Saved the owner-confirmed two-round syncup in episode 008 and prepared
+    full narration and a sixteen-shot storyboard proposing 55 seconds with
+    a 7.5-second branded tool-QR end. Opening is a hypothetical collection
+    trip where trees do not all fit. Verified one public live example:
+    หมอนทอง bag 9, 70–80 cm, 1500 trees and a single-cab high-cage pickup;
+    tool estimates approximately 1000 per trip and two trips of approximately
+    750. Built original Three.js toy truck/seedling props around the unchanged
+    approved gardener GLB and reconstructed tool panels from those verified
+    fields/results. Captured sixteen 1080x1920 code frames and four review
+    pages. Static QR decoded back to the direct tool URL. Packed the review
+    images/docs with indexed hashes. This record is an episode checkpoint,
+    not closure of the parent feedback/growth slice.
+  boundary: >-
+    Full storyboard/production acceptance is pending. Static keyframes do
+    not prove continuous motion, actual narration timing or encoded-video
+    quality. Numerical context and unavailable bag weight remain visible;
+    the toy scene is not a loading diagram or payload certification. No
+    voice, native image generation, paid API, full movie, external post/F-code,
+    upload, publication, push, PR, merge or praneet-web change was performed.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 36c394e28e5c650b90dfa879c29d800f7ee12651
+    branch: hq/20261103
+  office:
+    head: 47d93dc74806326f3b2f877d7ef21a55b1f6d3c9
+    branch: feat/character-workflow
+    episode: checkouts/praneet-office/posts/video/episodes/008-truck-fit/
+    brief: checkouts/praneet-office/posts/video/episodes/008-truck-fit/BRIEF.md
+    storyboard: checkouts/praneet-office/posts/video/episodes/008-truck-fit/STORYBOARD-r01.md
+    proof: checkouts/praneet-office/posts/video/episodes/008-truck-fit/PROOF-storyboard-r01.json
+  public_source: https://www.ptplant.com/fit?v=%E0%B8%AB%E0%B8%A1%E0%B8%AD%E0%B8%99%E0%B8%97%E0%B8%AD%E0%B8%87&b=9&h=70&n=1500
+  local_review:
+    frames: checkouts/praneet-office/posts/out/008-truck-fit/storyboard-r01/
+    overview: checkouts/praneet-office/posts/out/008-truck-fit/storyboard-r01/selected.jpg
+    archive: checkouts/praneet-office/posts/out/008-truck-fit/008-truck-fit-storyboard-r01.zip
+    archive_sha256: d7c8bbdb8eb3d0cb31d4726dbf8b9eb32b1e501cfe3578c83bbbabc4f1e4147f
+  observed_checks:
+    - Actual Bun/Chromium frame render passed; sixteen PNGs decoded and layout bounds/overflow checks passed with no browser errors or external requests.
+    - Final static render took approximately 6.11 seconds; no total-memory or video-performance claim follows.
+    - CoreImage decoded shot 16 QR to https://www.ptplant.com/fit; production MP4 must be checked again later.
+    - Accepted gardener GLB hash matched; no accepted character/older episode source was overwritten.
+    - Timeline is contiguous 0–55 seconds; sample arithmetic matches the live result. Timing is proposed rather than measured from speech.
+    - Review ZIP CRC and 32 indexed entry hashes passed; Bun source bundle, Python parsing and staged whitespace checks passed.
+  usage:
+    new_voice_requests: 0
+    native_image_requests: 0
+    explicit_paid_api_requests: 0
+    direct_api_cost_thb: 0
+    subscription_allocation_thb: null
+    hardware_allocation_thb: null
+unresolved:
+  - Owner review of the specific r01 narration/storyboard/visual treatment remains before full production or a paid voice call.
+  - Actual audio/timing, continuous cameras and encoded movie quality remain unproved at the static stage.
+  - Bag weight is unavailable in the example. Source settings must be rechecked if they change before production; no load/safety certification is implied.
+  - F-code/ops draft, publication and upload remain later authorized actions. Preview assets are local/ignored, not a remote backup.
+  - Existing parent publication/Insights, two-week feedback, invoice/reservation, remote checksum, client-portability, Git-merge and full cost/backup unknowns remain.
+next_action:
+  action: Present the complete r01 narration/storyboard and code frames; on owner story/production approval, perform the existing voice/budget checks before building the timed narrated clip.
