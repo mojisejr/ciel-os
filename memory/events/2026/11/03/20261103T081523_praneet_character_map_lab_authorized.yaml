@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T081523_praneet_character_map_lab_authorized
+type: decision
+recorded_at: "2026-11-03T08:15:23+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-map-lab-001
+  lane: single
+  objective: Prove the reference character standing at the selected temple with a cute location bubble.
+  scope:
+    - Isolated static-character/location lab, original code geometry, local silent visual proof.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner selects Xiao Mu from the supplied sheet, a static model on the map
+    before expressions/gestures, then explicitly asks to begin at Wat Mangkon
+    Buppharam in Chanthaburi with a cute temple-name bubble. This authorizes
+    plan 0.1 slice 1 as an isolated Office lab alongside the two retained styles.
+    Agent declares the large front image/three closures as its modelling default,
+    not an owner-confirmed correction to the sheet's two-closure detail label.
+    No new paid service, voice, public delivery or page-mascot adoption.
+evidence:
+  plan: workstreams/praneet-character-map-lab-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 8276a6b6fbbdf357d65e0c35dfc08e71b6b9b796
+    branch: hq/20261103
+  existing_map_model_source: checkouts/praneet-office/posts/video/styles/garden-world/monsoon-film-v02/scene.js
+  official_place_source: https://www.thailandtourismdirectory.go.th/th/attraction/3224
+  primary_poi_source: https://www.openstreetmap.org/api/0.6/node/4425021494
+  observed_poi:
+    name: วัดมังกรบุปผาราม
+    latitude: 12.5209633
+    longitude: 102.1646680
+unresolved:
+  - Character resemblance, hand geometry, bubble readability and resource use require rendered proof. Reference inconsistencies and unshown surfaces require authored interpretation.
+  - POI coordinates identify the place approximately, not a surveyed ground/entrance or official endorsement. Both production styles and existing workstream unknowns remain unchanged.
+next_action:
+  action: Build the isolated original character GLB, inspect its map stills, render a short silent orbit/bubble preview and present local output for owner review.
