@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T185520_praneet_truck_fit_wales_storyboard_requested
+type: decision
+recorded_at: "2026-11-03T18:55:20+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Propose episode 008 in the established WALES drawn explainer treatment.
+  scope:
+    - Local revised storyboard and all sixteen code-rendered stills; no new movie or paid voice.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After seeing the voiced 3D truck-fit clip, owner says it looks good but
+    does not feel suitable and explicitly requests a WALES-style storyboard
+    comparison. Keep the confirmed tool-promotion goal, factual example,
+    central-Thai narration and tool QR destination. Propose original drawn
+    2D explanatory objects, paper/ink/hatching and visual cause-to-action
+    storytelling using the existing narration timing. Preserve prior 3D
+    sources/output. Storyboard review precedes revised full production;
+    no new paid voice or external action is authorized or needed here.
+    Continue serially on the existing branches.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 0056d4858b2604ec0fc3046a4ca7bfc11c0ad7f9
+    branch: hq/20261103
+  office:
+    head: 3b43527d204f3515c9a4a72555b35c4fd7619fe0
+    branch: feat/character-workflow
+  previous_delivery: checkouts/praneet-office/posts/video/episodes/008-truck-fit/DELIVERY-v01.json
+  style: checkouts/praneet-office/posts/video/STYLE.md
+unresolved:
+  - Revised visual treatment and its complete storyboard need owner review before a new movie render.
+  - Existing voice pronunciation/listening, calculator weight limitations, metrics/review, invoices, portability, merges and full media backup remain unresolved.
+next_action:
+  action: Render sixteen drawn storyboard r02 keyframes with the existing full narration and measured timing, then present the visual comparison for owner review.
