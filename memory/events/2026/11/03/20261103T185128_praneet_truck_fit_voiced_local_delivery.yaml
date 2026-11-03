@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T185128_praneet_truck_fit_voiced_local_delivery
+type: closeout
+recorded_at: "2026-11-03T18:51:28+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver the approved truck-fit episode locally with Thai narration.
+  scope:
+    - Episode 008 r01 continuous motion, measured original-speed voice, encoded MP4 and cost evidence.
+outcome:
+  status: episode008-voiced-local-delivery
+  summary: >-
+    Produced the approved sixteen-shot story with the accepted gardener and
+    original Three.js truck/plants, calculator field/result motion and a
+    direct tool QR. One bounded Gemini core take plus the unchanged cached
+    brand closing produces a 51.875-second 1080x1920 H.264/AAC movie at 24 fps.
+    Owner reconfirmed exclusive Gemini usage today; current pricing and
+    authenticated serving limits were checked before atomic reservation.
+    The full 9.49-THB reservation remains; seven reservations total 66.43 THB.
+    The conservative usage estimate is approximately 0.632 THB, not an invoice
+    or full production cost. No external upload, ops post, F-code or publication.
+    This episode checkpoint does not deliver the parent two-week review slice.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: e17dbfd04888202eb700bb4db0df57d192d9a283
+    branch: hq/20261103
+  office:
+    head: 3b43527d204f3515c9a4a72555b35c4fd7619fe0
+    branch: feat/character-workflow
+  authorization: memory/events/2026/11/03/20261103T183730_praneet_truck_fit_production_authorized.yaml
+  delivery: checkouts/praneet-office/posts/video/episodes/008-truck-fit/DELIVERY-v01.json
+  production: checkouts/praneet-office/posts/video/episodes/008-truck-fit/PRODUCTION-v01.md
+  movie:
+    local_file: checkouts/praneet-office/posts/out/008-truck-fit/r01-thai-v01/praneet-truck-fit-r01-thai-v01.mp4
+    sha256: 6edcac48492a98ec0e135fdce06b99911d6aa46c152c870df72c7c3caa61c619
+    bytes: 8953246
+    seconds: 51.875
+    frames: 1245
+  checks:
+    - Native 1080x1040 WebGL canvas plus portrait typesetting; accepted gardener byte identity and approved narration/style checks passed.
+    - All sixteen encoded shot midpoints and the opening motion strip inspected; layout bounds measured around every transition and absolute-time scene state repeated.
+    - Full AV decode passed; all sixteen shots have audio signal; -17.4 LUFS integrated and -2.2 dB peak from encoded AAC.
+    - Tool QR decoded from final MP4 at 45.375 and 50.875 seconds; hold is 7.5 seconds.
+    - Voice replay returned cache hit with zero new paid requests; seven full reservations retained under the 100-THB month ceiling.
+    - Renderer/voice/audio builds, helper syntax and Git diff whitespace checks passed; both scoped working trees were clean after their commits.
+unresolved:
+  - Owner review of the actual movie voice, numeral pronunciation and pacing remains. Offline ASR has Thai/numeral and mixed-language errors and is limited alignment evidence, not verbatim or human listening validation.
+  - Calculator numbers are an example for bag 9 and a high-cage pickup. Bag weight remains unavailable; no payload certification or loading instruction is implied.
+  - No Drive backup, external post/caption/F-code or social publication was requested or performed for this delivery.
+  - Office remains stacked on unmerged character/lab work; repository merge decisions and full ignored-media backup remain open.
+  - Parent publication/Insights definitions, two-week feedback/growth proof, provider invoice reconciliation, subscription/hardware allocation and actual Claude/cross-machine portability remain unresolved.
+next_action:
+  action: Present the local voiced MP4 for owner viewing/listening, then revise from feedback or prepare the requested publication handoff; keep the parent feedback review open.
