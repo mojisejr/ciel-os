@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T214458_praneet_national_weather_storyboard_prepared
+type: closeout
+recorded_at: "2026-11-03T21:44:58+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Prepare the November 4 weather storyboard with national context and durian-region detail.
+  scope:
+    - Current-source research, full proposed narration, sixteen-shot storyboard and static concept frames.
+outcome:
+  status: episode009-weather-storyboard-prepared
+  summary: >-
+    Owner broadened the requested next-day weather story from the east to a
+    national overview followed by representative durian-growing areas. Prepared
+    episode 009 r01 with complete proposed narration and sixteen static
+    code-rendered keyframes using actual satellite/DEM maps and rectangular
+    WALES scenes. The proposed 60-second edit includes the existing 7.5-second
+    LINE QR ending. Cross-checked TMD regional forecasts/warnings with seven
+    MET Norway point forecasts for November 4, retaining dated source evidence.
+    The next warning period starting November 5 is clearly separate. No TTS,
+    full movie, paid request/reservation, upload, post or permanent style change.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: ca0462baf5e8b9b7e76770033a6223e399006d7d
+    branch: hq/20261103
+  office:
+    head: 74c4d6a7291e8a56a8ce1e0cf85e5f74e72b57da
+    branch: feat/character-workflow
+  brief: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/BRIEF.md
+  storyboard: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/STORYBOARD-r01.md
+  sources: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/SOURCES.md
+  weather_snapshot: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/WEATHER-SNAPSHOT-r01.json
+  proof: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/PROOF-storyboard-r01.json
+  contact_sheet: checkouts/praneet-office/posts/out/009-weather-20261104/storyboard-r01/contact-sheet.jpg
+  checks:
+    - Seven MET points each contain all 24 one-hour intervals for the Bangkok target date. Sums do not mix overlapping one/six/twelve-hour periods.
+    - TMD daily period ends November 4 at 18:00; seven-day regional guidance and MET points provide their separately named periods. Point windows are not provincial averages or rain probabilities.
+    - Sixteen contiguous proposed shots total 60 seconds, including 7.5-second ending. This is not measured voice timing.
+    - Rendered all sixteen native 1080x1920 keyframes; reviewed the contact sheet and native country/timing frames. Terrain, tile and text checks passed; backward seeking matched pixels.
+    - Static ending QR decodes to the existing public LINE contact. JavaScript syntax, renderer compilation and Git whitespace checks passed.
+    - Final static capture took 24.74 seconds with no new map downloads; peak sampled owned-process RSS sum was 953.14 MiB, not a hard unified-memory measurement. Existing sources/styles unchanged.
+unresolved:
+  - Owner factual-story and geographic-selection review remains. Static concept frames are not a full movie; timings need approved original-speed narration.
+  - Forecasts must be refreshed before later production and posting, especially if the target date changes. A model city point does not characterize every orchard; the northern zero-rain point does not negate TMD regional storm guidance.
+  - TMD dataset-specific commercial reuse is not certified; no infographic copied. Proposed point graphics use licensed MET data with attribution and official warnings linked at source.
+  - Parent two-week feedback/growth proof, billing reconciliation, subscription/hardware allocation, cross-client proof, repository merges and full media backup remain open.
+next_action:
+  action: Present the complete storyboard and static frames for owner review; on a later production request refresh dated forecasts and resolve any changed factual story before voice/movie generation.
