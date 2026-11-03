@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T093937_praneet_padded_hood_neutral_proof
+type: closeout
+recorded_at: "2026-11-03T09:39:37+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-map-lab-001
+  lane: single
+  objective: Show the rounded symmetric padded-hood revision in neutral views.
+  scope:
+    - Local v03 GLB, full-figure and closer head-only still sheets.
+outcome:
+  status: local-padded-hood-stills-prepared-for-owner-review
+  result: >-
+    Rounded the main hood using a mirrored ellipsoidal dome and independent
+    small leaning tuft, with shallow lower-side/nape settling. United full
+    cranial support behind the selected face. Retained expression, outfit and
+    matte cartoon finish. Inspected front/45/90/back full-figure and closer
+    head-only sheets, both 1440x1280. Browser/local-request assertions and
+    source whitespace checks passed. Ten earlier movie hashes and the v02 GLB
+    still match. Current map scene/renderer remain selected to v02.
+  verification_boundary: >-
+    In-memory core surfaces are closed and connected. Reimported GLB positional
+    audits pass after welding coincident seam vertices within 0.00001 units;
+    the head's raw export has 744 boundary edges from split vertices, retained
+    in the report rather than hidden. Actual main-hood mirrored-vertex distance
+    is at most 0.000001431 model units. These checks do not prove rig topology,
+    likeness or physically valid cloth. Drape is authored geometry, not a
+    gravity/cloth simulation. No new map render, movie, paid request, voice,
+    upload, publication, push or PR.
+evidence:
+  plan: workstreams/praneet-character-map-lab-001/PLAN.md
+  plan_revision: "0.3"
+  repository:
+    head: da80de75a64523be3b8ff9a7c7f16b45afaafa0a
+    branch: hq/20261103
+  office:
+    head: 0e47ff1999a8727c48ba39830e1fe7b58f46d374
+    branch: feat/xiao-mu-map-lab
+    proof: posts/video/labs/xiao-mu-map/PROOF-v03.json
+    instructions: posts/video/labs/xiao-mu-map/README.md
+    head_still: posts/out/labs/xiao-mu-map/v03/head-review-v03.png
+    full_figure_still: posts/out/labs/xiao-mu-map/v03/model-review-v03.png
+    glb_sha256: 75ee027ada19ea5891a49ceefa1c4d72d6da90339b39e3596c69e8fa6e86ac22
+unresolved:
+  - Owner review of roundedness, padding/naturalness, face rim and likeness remains pending. Small hands/shoes/accessories and the reference closure-count discrepancy remain.
+  - No physically validated cloth result, expressions, rig or v03 map proof. Approximate POI and schematic scale remain relevant to the preserved map scene.
+  - Parent invoice/reservation, full portability and audience-feedback unknowns remain unchanged. No publication or viral-performance claim.
+next_action:
+  action: Present the head-only and full-figure sheets for owner shape review before adopting v03 in another map movie.
