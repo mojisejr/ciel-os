@@ -1,0 +1,66 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T060024_praneet_orchard_rev17_slice14_authorized
+type: decision
+recorded_at: "2026-11-04T06:00:24+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Plan revision 1.7 adds slice 14, routine cards on the back office's
+    Today page showing when each plot was last sprayed, fertilised and
+    watered, and slice 15, watering by zone. The record authorizes slice 14.
+  scope:
+    - "workstreams/praneet-orchard-001/PLAN.md, slices/14.md and slices/15.md."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner asked for a phone view of the days since each plot was last
+    sprayed, fertilised and watered. A four-round syncup followed. It used a
+    read-only production read of the work words (granted: 'เอาเลย') and a
+    web research agent on how farm software groups this work. The owner
+    confirmed the summary ('พร้อมแล้วครับ'). The view is per plot and covers
+    every plot including P-4. It sits at the top of the Today page, with no
+    alerts yet. Every sprayer job counts as spraying, whatever the tank holds.
+    Fertilising means soil fertiliser only. Watering with fertiliser counts
+    as both. Fungicide drench, trunk injection, trunk painting, herbicide and
+    lime count as none. Labels sit on the work word, the owner confirms them,
+    and every card links to the work it counts. He answered the zone rule as
+    'Q18 โอเคเลย'; the open question was Q16, so it is read as Q16. Zones
+    are optional and named 1, 2, 3; they are slice 15. Slice 14 starts with
+    two card samples on the real page for him to pick from.
+  why: >-
+    The 183 work words mix Thai and English and many name several jobs,
+    and none has a category yet. Matching text alone would count pipe repair
+    as watering and herbicide as spraying, and the owner said a wrong count
+    would mislead him at once.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.7"
+  slice: "14"
+  repository:
+    head: "fb2f154ba2514b93dea1570c567400c3102bfebb"
+    branch: hq/20261103
+    working_tree: this-decision
+  related:
+    - memory/events/2026/11/03/20261103T195341_praneet_orchard_slice13_delivered.yaml
+
+unresolved:
+  - "Which plots have zones and how many is told by the owner at slice 15."
+  - "The research found no official spray interval and could not open the Department of Agriculture's manual; it only informs why there are no alerts."
+  - "hq/20261103 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Render card samples A (by routine) and B (by plot) on the real Today
+    page at 390 and 1280, light and dark, against the local test database,
+    and ask the owner to pick before building slice 14.
+  acceptance_check:
+    - "Slice 14 acceptance in workstreams/praneet-orchard-001/slices/14.md."
