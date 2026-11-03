@@ -3,7 +3,7 @@
 **Workstream:** `praneet-character-map-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.3
+**Plan revision:** 0.4
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -17,21 +17,24 @@ and asks for a cute bubble containing the temple name in the experimental set.
 Prove original code-authored 3D geometry anchored at that place with a short
 silent camera preview. Keep both existing production styles intact.
 
-Owner's refinement agreement: retain the selected map composition, but make
-Xiao Mu read as a child wearing an owl hood from the side as well as the front.
-Use the original sheet's identity and a smooth matte cartoon finish. Develop
-the head volume and a fitted open hood, shallow curved owl-eye details and
-continuous hood feathers; inspect neutral-light front/oblique/side/back views
-before the revised map preview. Preserve the first lab movie for comparison.
+Owner's whole-figure art direction: a collectible-style static figure faithful
+to the sheet, with balanced volumes from every viewing angle. Treat head,
+visible face and water-bird hood as one visual composition. A good front view,
+mathematical symmetry or closed topology does not establish proportion or
+likeness from the side/back. Restore the characteristic blue side-wing feathers.
+Body is plump and cuddly, with a little belly, rounded shoulders, barely visible
+neck and short limbs under the Chinese outfit, rather than a flat box torso.
+Preserve reference identity, colors and expression; allow relative proportions
+and placement to change together to make one coherent three-dimensional figure.
+Maintain balanced left/right masses with intentional small asymmetric details.
 
-Owner additionally selects a padded soft hood that retains its rounded form,
-with a symmetric main dome, eyes and gold tips and only a small independently
-leaning tuft. Refine the internal cranial support and the hood's curved profile,
-with slight authored settling around the lower sides/nape. Retain the approved
-face, matte finish and chibi proportions. This iteration delivers neutral
-front/oblique/side/back stills first, preserving v01/v02 media and the current
-v02 map scene; defer another map movie until the revised shape is reviewed.
-This is authored static drape, not a claim of gravity/cloth simulation.
+Develop primary head/hood/body/clothing volumes together, then inspect equally
+scaled front, both obliques, both sides and back plus a neutral 360-degree
+turntable. Use an unlit silhouette view as an additional mass check. Detail
+cannot substitute for shape approval. Natural clothing support and settling
+are authored within the cartoon design; physical cloth simulation is not
+required or claimed. Deliver this local design proof first, preserving all
+earlier media and the v02 map selection. Defer another map movie until review.
 
 The agreed outcome is a character/location lab, not adoption of a page mascot,
 a narrated episode or a universal image-to-3D converter. Agent's declared
