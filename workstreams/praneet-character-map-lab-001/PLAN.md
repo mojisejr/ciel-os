@@ -3,7 +3,7 @@
 **Workstream:** `praneet-character-map-lab-001`
 **State:** active
 **Execution lane:** single
-**Plan revision:** 0.1
+**Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
 **Parallelism:** proposed
@@ -16,6 +16,13 @@ animation. Owner then explicitly selects Wat Mangkon Buppharam in Chanthaburi
 and asks for a cute bubble containing the temple name in the experimental set.
 Prove original code-authored 3D geometry anchored at that place with a short
 silent camera preview. Keep both existing production styles intact.
+
+Owner's refinement agreement: retain the selected map composition, but make
+Xiao Mu read as a child wearing an owl hood from the side as well as the front.
+Use the original sheet's identity and a smooth matte cartoon finish. Develop
+the head volume and a fitted open hood, shallow curved owl-eye details and
+continuous hood feathers; inspect neutral-light front/oblique/side/back views
+before the revised map preview. Preserve the first lab movie for comparison.
 
 The agreed outcome is a character/location lab, not adoption of a page mascot,
 a narrated episode or a universal image-to-3D converter. Agent's declared
