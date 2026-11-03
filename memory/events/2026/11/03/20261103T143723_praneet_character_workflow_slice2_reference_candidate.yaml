@@ -1,0 +1,76 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T143723_praneet_character_workflow_slice2_reference_candidate
+type: closeout
+recorded_at: "2026-11-03T14:37:23+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-workflow-001
+  lane: single
+  objective: Present an actual native-generated multi-view reference from the supplied portrait.
+  scope:
+    - Slice 2 dogfood candidate, shared instructions, provenance and local reference package.
+outcome:
+  status: slice2-reference-candidate-awaiting-owner-approval
+  result: >-
+    Generated one actual reference sheet through the built-in image tool using
+    the supplied gardener bust as identity input and retained Xiao Mu v04 views
+    as a style-only input. Output is a decoded 1774x887 RGB PNG showing front,
+    left profile, back and three-quarter full-body views. Preserved the exact
+    native output, source and style bytes in Office with prompt, SHA hashes,
+    reference proposal and an allowlisted local ZIP. Updated the shared
+    runbook, prompt scaffold and reference-record contract from the observed
+    route. Agent inspected identity, hat/glasses/beard, two-button polo, side
+    and rear mass and ground alignment. Navy trousers, brown shoes and rear
+    surfaces are explicit proposals completing areas absent from the input.
+  review_boundary: >-
+    Candidate is marked awaiting-owner-approval with approval null. This
+    checkpoint is not final slice 2 delivery, a reference approval or a new
+    3D model. Generated views guide design rather than proving calibrated
+    geometric consistency. No retry, new paid API service, Gemini call,
+    upload, push, PR or merge was performed.
+evidence:
+  plan: workstreams/praneet-character-workflow-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: 09121e1695c3fdecdafe150cd2f774a9471fb5ba
+    branch: hq/20261103
+  office:
+    head: e53e35de604154fc5ea59b2b3225504c2c5720f9
+    branch: feat/character-workflow
+    dependency_head: 6a3201a4f2a5c3c593714dbc737f5d895d037e84
+    proof: checkouts/praneet-office/posts/video/character-workflow/PROOF-slice2.json
+    reference_record: checkouts/praneet-office/posts/video/characters/straw-hat-gardener/reference/reference-v001.json
+    prompt: checkouts/praneet-office/posts/video/characters/straw-hat-gardener/reference/prompt-v001.txt
+    review_notes: checkouts/praneet-office/posts/video/characters/straw-hat-gardener/reference/brief.md
+  local_outputs:
+    image: checkouts/praneet-office/posts/out/characters/straw-hat-gardener/ref-v001/reference.png
+    image_sha256: 60a127a7e044ded064b2f1e2cc0ac0abbcbc11ed85704e3d3d8d9defd0741074
+    archive: checkouts/praneet-office/posts/out/characters/straw-hat-gardener/ref-v001.zip
+    archive_sha256: ffba3b6c3e4eee06fff6b3883a5c052ebb2bb092eb026596d14e6d9c9ed9fbe5
+  observed_checks:
+    - Full PNG decoded; measured dimensions and hashes saved, not inferred from requested size.
+    - ZIP CRC and six indexed entry SHA hashes passed; source/style/prompt/image/metadata are preserved locally.
+    - Fourteen protected old lab artifact hashes still match; no old geometry or production renderer was changed.
+    - Staged whitespace check passed and both repositories were clean before this event.
+  usage:
+    native_image_requests: 1
+    retries: 0
+    explicit_paid_provider_api_requests: 0
+    gemini_api_requests: 0
+    explicit_api_cost_thb: 0
+    native_tool_reported_cost_thb: null
+    native_quota_remaining: null
+    subscription_allocation_thb: null
+    hardware_allocation_thb: null
+    limits: Native tool response reports no bill or quota balance; explicit API zero is not total cost zero.
+unresolved:
+  - Exact owner approval of this image/version/hash is required to finish slice 2; clothing completions and the rounded hat interpretation remain subject to that review.
+  - Native billing/quotas, membership/hardware allocation, actual Claude and cross-machine execution remain unknown or unproved.
+  - Ignored-media backup/transfer and Git merge dependencies remain outstanding. Parent Gemini cap stays 100 THB/month.
+  - Parent audience feedback, private billing and the retained Xiao Mu reference discrepancy were not investigated in this slice.
+  - Slice 3 modelling, rigs, maps, printing, publishing and course work have not started.
+next_action:
+  action: Show the preserved reference image and proposed lower-body details; obtain owner selection or a specific correction, then record the exact approved reference and finish slice 2 before an owner-authorized modelling slice.
