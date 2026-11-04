@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T211529_praneet_ayutthaya_voiced_lab_movie_prepared
+type: closeout
+recorded_at: "2026-11-04T21:15:29+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver one complete voiced Ayutthaya counterfactual lab movie for owner review.
+  scope:
+    - Owner-authorized r01 local motion, one reserved narration request and encoded-file checks.
+outcome:
+  status: voiced-lab-movie-prepared-for-owner-review
+  summary: >-
+    Complete sixteen-shot59.75-second native1080x1920movie is prepared with
+    WALES central-Thai Charon narration, white schematic map, living cities,
+    river boats, people and three animated event popups. It retains the full
+    original59.24-second voice take at tempo1with loudness normalization and
+    end padding only. Ending is the agreed thought question without sales QR.
+    Local checks pass; actual owner moving-picture and listening review remains.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 5b5639c40c4d76bfc0028810d01cdf1ce1f0a4e4
+    branch: hq/20261103
+  office:
+    head: 34c611dfaa17f12eb230a39dfc92d8fe29c0fcce
+    branch: feat/character-workflow
+  authorization: evt_20261104T210445_praneet_ayutthaya_lab_production_authorized
+  delivery: checkouts/praneet-office/posts/video/labs/ayutthaya-what-if/DELIVERY-v01.json
+  reproduction: checkouts/praneet-office/posts/video/labs/ayutthaya-what-if/production-v01/README.md
+  movie: checkouts/praneet-office/posts/out/labs/ayutthaya-what-if/production-v01/praneet-ayutthaya-what-if-r01-thai-v01.mp4
+  movie_sha256: d27eaefc481ae532546f0fac782d11f3a06829c0ef2d07240bd1b60de0114df0
+  bytes: 9356929
+  frames: 1434
+  checks:
+    - Seventeen budget/reservation tests pass with mocked effects. Paid sender verified current official price and authenticated model limits, reserved949satang atomically and sent exactly one request; no retries or reservation release.
+    - Sixty-four motion still/transition states inspected before full capture. All1434frame states checked for text bounds and people presence; backwards seek is raster-identical. Restrained zoom, preserved city/boat painter order and separated speech bubbles avoid observed layout defects.
+    - Encoded H264/yuv420p/BT709,24fps,1080x1920with AACmono48kHz has correct duration/frame count and full decode. All16shots have audio signal; integrated loudness minus17.3LUFS, peak minus2.3dB. Three actual popup regions change pixels between paired encoded samples.
+    - Inspected the encoded sixteen-shot contact sheet and popup detail. The full-take small ASR pass truncated/hallucinated; chunked offline ASR recognized all16sentence topics with spelling errors. Neither is reported as verbatim or human listening certification.
+    - Original approved storyboard/source hashes remain unchanged. Only eleven new lab-production files were committed in Office. No business/style/runbook edits, install, Drive upload, public post, push or PR.
+  cost:
+    new_paid_attempts: 1
+    usage_input_tokens: 287
+    usage_audio_output_tokens: 1481
+    estimate_usd: 0.0134725
+    estimate_thb_fx50_fee1_25: 0.84203125
+    estimate_is_invoice: false
+    new_pending_satang: 949
+    monthly_pending_attempts: 10
+    monthly_used_and_reserved_satang: 9490
+    monthly_ceiling_satang: 10000
+    accounting: Full reservations remain pending. Actual billed spending, membership allocation and hardware cost are not established.
+unresolved:
+  - Owner review of the complete motion, voice tone and Thai pronunciation is pending. Technical audio/ASR checks do not certify semantic listening or art acceptance.
+  - Counterfactual city roles, future buildings and outcomes are illustrative possibilities; geographic anchors orient the viewer but authored river/city/focus shapes are not a historical survey. No viral outcome or publication decision is proved.
+  - Provider reconciliation, subscription/hardware allocation, shared-budget migration, actual Claude proof, full media backup and outstanding Git merges remain open.
+  - Parent growth review and earlier003publication metadata,008publication confirmation and009full-weather feedback remain as recorded; Wake overlap attention is unchanged. This lab delivery does not finish the parent slice/workstream.
+next_action:
+  action: Present the local voiced MP4 to the owner for playback and motion/voice feedback. Reuse this exact cached audio for visual revisions; do not automatically spend again or publish.
