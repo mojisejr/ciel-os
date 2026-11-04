@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261105T062200_praneet_orchard_trees_slice3_delivered
+type: closeout
+recorded_at: "2026-11-05T06:22:00+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Deliver slice 3: a tree's boxes, counting only work that names the tree,
+    started from the tree's page or the form, on the Today page with the plot
+    boxes.
+  scope:
+    - "praneet-web PR 48 and production migration 030."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "3"
+  completed:
+    - "The owner merged praneet-web PR 48 ('merged แล้ว ไปทำต่อได้เลย'). After a fetch, origin/main holds merge 246538e with the slice head a5b3fe9 as its ancestor. Migration 030 ran on production before the merge (memory/events/2026/11/05/20261105T061224_praneet_orchard_trees_migration030_production.yaml)."
+    - "praneet-web is back on a clean main at 246538e; the merged local branch was deleted."
+  not_verified:
+    - "Slice 3's acceptance asks the owner to set a real tree's box and see it on the Today page. He has not yet; he has no tree numbers to enter until he checks the orchard."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  decision: memory/events/2026/11/04/20261104T201450_praneet_orchard_trees_slice3_authorized.yaml
+  repository:
+    head: "d909f59ee8a54d2d79a6e9a0530882c6c323dcb9"
+    branch: hq/20261103
+    working_tree: this-closeout-with-slice4-decision
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261103
+  related:
+    - memory/events/2026/11/04/20261104T202312_praneet_orchard_trees_slice3_built_awaiting_owner.yaml
+    - memory/events/2026/11/05/20261105T061224_praneet_orchard_trees_migration030_production.yaml
+
+unresolved:
+  - "The owner's first real tree work (slice 2) and first tree's box (slice 3) on his phone are still to come. Anything wrong is fixed in the next slice. Workaround: name trees in a work's title as before."
+  - "The merged remote branches feat/tree-boxes and feat/orchard-trees are still on GitHub, with the earlier ones."
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 4 (a tree's life and age) under plan 0.2 on a topic branch in
+    praneet-web.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/praneet-orchard-trees-001/slices/4.md."
