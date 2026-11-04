@@ -1,0 +1,80 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T094353_praneet_orchard_slice14_built_awaiting_owner
+type: closeout
+recorded_at: "2026-11-04T09:43:53+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Build slice 14: four routine cards on the Today page (พ่นยา, ใส่ปุ๋ย,
+    ให้น้ำ, ทำสาร) that count from owner-confirmed word labels and from each
+    work's own method and products, with flower induction per plot and fruit.
+  scope:
+    - "praneet-web branch feat/routine-cards (PR 44): migration 027, lib/orchard-routine.ts, lib/orchard-text.ts, lib/orchard.ts, lib/orchard-spray.ts, lib/orchard-shelf.ts, the Today page, the work page and form, the tank editor, tests/routine-cards.spec.ts."
+    - "praneet-office branch feat/orchard-routines (PR 38): orchard routines and routines set, crop on spray set."
+
+outcome:
+  status: built-awaiting-owner
+  slice: "14"
+  completed:
+    - "praneet-web PR 44 (head a6a039130a0698b941322ed15b08ab19e522d59d) and praneet-office PR 38 (head 327b539f85ae528d8e26d756a4f1082b25d75b1b), both drafts, each described in its body."
+    - "Migration 027 adds orchard_words.routines and routines_confirmed, the product kind inducer (สารบังคับออกดอก) apart from regulator, and orchard_work.crop. It is additive."
+    - "Cards in layout A, the owner's pick. A row with no record sits on top, then the most days. Each row shows its date and the work it counted, and links to that work. A row counted from an unconfirmed label says ยังไม่ยืนยัน. The induction card has one row per plot and fruit that has been induced."
+    - "A work with products and a method decides spraying and fertilising from them. Watering comes from the word. Without products, the word's labels decide. An inducer always counts as induction."
+    - "In the form, a new word shows its guessed labels, and a tap makes them the owner's, confirmed. A tank holding an inducer cannot be saved without a fruit. The work page shows what the work counts as, and the owner can change or confirm the word's labels there."
+    - "The first render on the real page showed the fruit on the spray card too ('สวนมะขาม · มังคุด'). The fruit now belongs to induction rows only, and a test asserts it."
+  acceptance:
+    - "Owner picked sample A: met."
+    - "Owner reviewed the old words' labels: the list was shown and he answered Q17 to Q24. The final file is the proposal as he corrected it: spot and trunk spraying and induction words carry no spray label, and the bio drench and the irrigation-commissioning word carry none. It is kept at .assets/preneet/orchard-routines.json, git-ignored because some words hold workers' names. It has not been set on production."
+    - "Tests: met by tests/routine-cards.spec.ts. Pipe repair, herbicide, buying fertiliser, lime and a fungicide drench do not count. Fertiliser in a spray tank counts as a spray only. Watering with fertiliser counts as both. A trunk spray does not count. An induction-only tank counts as induction only, and one mixed with insecticide counts as both. Induction rows split by fruit, and a tank with an inducer and no fruit is refused. At 360 px nothing scrolls sideways."
+    - "Production matches each plot's latest work after the merge: pending."
+  not_verified:
+    - "No real phone. The pages were rendered in Chromium at 360, 390 and 1280, in light and dark."
+    - "The cards against production data: production does not have migration 027 yet."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.8"
+  slice: "14"
+  decision: memory/events/2026/11/04/20261104T090834_praneet_orchard_rev18_slice14_authorized.yaml
+  repository:
+    head: "df6eb1a74cfc40f90a1c2554520d74751f89be56"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261103
+  child_heads:
+    praneet-web feat/routine-cards: "a6a039130a0698b941322ed15b08ab19e522d59d"
+    praneet-office feat/orchard-routines: "327b539f85ae528d8e26d756a4f1082b25d75b1b"
+  checks:
+    - "praneet-web bun run test (full suite, memory guard): 142 passed, 1 failed, peak 2,743 MB of 3,072 MB. The failure is the known supply.spec date drift, the same on main."
+    - "An earlier full run failed orchard.spec 'ten tasks in a day...'. The card tests' new words pushed its word out of the list page's 40 most used. The card file was renamed to run after the orchard files, and it then passed."
+    - "A run before that was stopped by the guard on swap growth while another session's video render ran. The guard worked as designed; the run was repeated after the render ended."
+    - "bun run typecheck clean. praneet-office bun test scripts/: 23 pass. routines set and spray set were tried on a local test build, dry run first, and read back from praneet_test."
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/44"
+    - "https://github.com/mojisejr/praneet-office/pull/38"
+
+unresolved:
+  - "Migration 027 must run on production before PR 44 merges, because the Today page and the work page read its columns and Vercel deploys main at once. It is a production write, on the owner's word."
+  - "After the merge, on the owner's word: set the word labels from the reviewed file, confirming every other word as none; set ทะวาย and สารมังคุดป้า to the new kind; and set the fruit on the three past induction works with spray set, restating their tanks exactly."
+  - "supply.spec 'the old supply page...' still fails on main because of date drift. It is deferred. Workaround: read it as a known failure."
+  - "The praneet-office branch lives in a scratch clone, because Codex's praneet-office checkout is on feat/character-workflow with staged work. After the merge it is deleted."
+  - "Local leftovers: the samples artifact, .local/routine-s14 (samples, shots, scripts, logs) and the scratch dumps. They are deleted on the owner's word."
+  - "hq/20261103 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: review PRs 44 and 38, and say whether the agent may run migration
+    027 on production. Agent: run it, confirm the columns, then the owner
+    merges both. After that, on his word, dry-run and write the labels, the
+    two products' kind and the three fruits, and check that the cards on
+    www.ptplant.com match each plot's latest work.
+  acceptance_check:
+    - "Slice 14 acceptance in workstreams/praneet-orchard-001/slices/14.md."
