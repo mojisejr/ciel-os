@@ -1,0 +1,49 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T210445_praneet_ayutthaya_lab_production_authorized
+type: decision
+recorded_at: "2026-11-04T21:04:45+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Produce one voiced movie from the reviewed Ayutthaya lab storyboard.
+  scope:
+    - Isolated original motion and one guarded Thai narration attempt using existing tools and budget.
+outcome:
+  status: decided
+  summary: >-
+    After receiving the full sixteen-shot r01 storyboard and actual keyframes,
+    owner requests one complete clip with voice. This authorizes local motion,
+    standard WALES central-Thai narration and encoded movie delivery for review.
+    Keep the agreed counterfactual boundaries, white map, small event popups
+    and question ending without sales QR. No upload, publication, business code
+    change, additional paid service or automatic voice retry is authorized.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 24e8faaeecfd3c972781192756f14d35f939ba8d
+    branch: hq/20261103
+  storyboard: checkouts/praneet-office/posts/video/labs/ayutthaya-what-if/STORYBOARD-r01.json
+  office_head: a5c8b12903313c2a9c88b10078a8c20895f27a62
+  voice_baseline: checkouts/praneet-office/posts/video/episodes/006-tank-mix/NARRATION-v01.json
+  budget:
+    month: "2026-11"
+    current_pending_satang: 8541
+    proposed_full_attempt_bound_satang: 949
+    maximum_after_satang: 9490
+    ceiling_satang: 10000
+    accounting: Reservations, not confirmed billed spending. Daily owner-exclusive-use evidence from today's existing record remains; no new outside-use claim inferred.
+  pricing_source: https://aistudio.google.com/docs/pricing#gemini-3.8-flash-tts
+  limits_source: https://aistudio.google.com/docs/models/gemini-3.8-flash-tts
+  checks:
+    - Official current price is0.50USDper million text input and9USDper million audio output through2026. Serving documentation specifies8192input/16384output and no thinking; authenticated metadata must agree before sending.
+    - Existing budget and locked-reservation tests pass17of17with mocked effects only. Cache and daily reconciliation gates remain; full reservation is retained after success or timeout.
+unresolved:
+  - Speech duration, pronunciation, actual animation, output quality and owner playback review are not yet proved.
+  - Provider invoice reconciliation, shared-budget migration, subscription/hardware allocation, actual Claude proof, full backup and parent feedback/growth/merges remain open.
+next_action:
+  action: Prepare the reviewed manifest, verify model metadata and reserve before one paid request, then align motion to measured cached audio and inspect the complete encoded movie.
