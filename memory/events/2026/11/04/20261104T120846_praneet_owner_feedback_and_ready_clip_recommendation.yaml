@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T120846_praneet_owner_feedback_and_ready_clip_recommendation
+type: closeout
+recorded_at: "2026-11-04T12:08:46+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Select the strongest existing ready clip for today's posting deadline.
+  scope:
+    - Read-only media/record review and capture of new owner publication/output feedback.
+outcome:
+  status: existing-clip-recommended-owner-choice-pending
+  summary: >-
+    Owner says the complete009r03-v02weather sample is not yet to his liking
+    and asks which existing work is strongest to post today. No specific visual
+    or narrative cause was supplied; do not infer rejection of all map/card
+    prototypes. Owner explicitly confirms the003water-management clip has
+    already been posted. Exact publication date/platform/URLs remain unknown.
+    Agent recommends008drawn WALES-style truck-fit clip as today's existing
+    candidate: clear collection problem, useful shop-tool destination and
+    already rendered51.875second Thai movie. This is an editorial recommendation,
+    not viral-performance evidence or new publication authority.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 185a271a8dd68d0a672e5e9d0c5074a584561b3e
+    branch: hq/20261103
+  water_clip: checkouts/praneet-office/posts/video/episodes/003-water-stress/DELIVERY-v01.json
+  weather_sample: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/DELIVERY-r03-v02.json
+  recommended_clip: checkouts/praneet-office/posts/video/episodes/008-truck-fit/DELIVERY-r02-v01.json
+  checks:
+    - Both003and008local movie hashes still match their delivery records.008is51.875seconds,1080x1920,Thai audio and direct tool QR per its verified delivery.
+    - Reviewed opening cover frames and the stored storyboard/voice scope. Public fit-example URL returns HTTP200 and contains the tool title today; interactive calculation was not rerun.
+    - No new rendering, paid call, media edit, upload, ops draft or publication. Only this semantic feedback checkpoint is recorded.
+unresolved:
+  - Need003public links and actual publication timing/platforms for the feedback review; owner statement establishes posted status only.
+  - No recorded008publication link. The recommendation assumes that candidate is still available for a new post; owner may correct it.
+  - Weather full-sample dissatisfaction has no confirmed cause. Further redesign or a daily-weather workflow is not started by this recommendation.
+  - Parent growth/feedback review, invoices, cost allocation, Claude proof, merges and full media backup remain open; Wake overlap attention remains.
+next_action:
+  action: Show the existing008drawn movie and recommendation. If owner chooses it for posting, prepare the requested caption/device handoff and verify the live calculator example before publication.
