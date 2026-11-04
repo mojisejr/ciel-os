@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T095456_praneet_hybrid_style_sample_delivered
+type: closeout
+recorded_at: "2026-11-04T09:54:56+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Show the owner a short raised-map3D and detailed animated2D durian style sample.
+  scope:
+    - Local15-second silent hybrid visual proof for episode009; preserve prior movie and accepted styles.
+outcome:
+  status: hybrid-style-sample-delivered
+  summary: >-
+    Owner clarified raised3D pins/signs and small structures on the map,
+    with WALES-style2D explanations containing more detailed recognizable
+    durian forms, no cultivar choice, and engaging understandable motion.
+    After the syncup owner requested a sample. Built actual extruded
+    Three.js props sharing the MapLibre terrain camera, continuous geographic
+    travel, pin-linked unfolding paper, original botanical branch/leaf/flower/
+    fruit illustration and animated detail insets. Rendered one15-second
+    silent FullHD clip for local review, with no new voice, paid call,
+    Drive upload, post or permanent style/runbook change.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: eb756129a7a8d24f4971b45c8b43ef52f0c6eeb7
+    branch: hq/20261103
+  office:
+    head: 170a33d8dd088b7dd79953a9cee1ec332c2a594f
+    branch: feat/character-workflow
+  proof: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/hybrid-proof-v01/PROOF.json
+  reproduction: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/hybrid-proof-v01/README.md
+  movie: checkouts/praneet-office/posts/out/009-weather-20261104/hybrid-proof-v01/praneet-map-3d-botanical-2d-proof-v01.mp4
+  checks:
+    - Native1080x1920 capture and delivery, H264/yuv420p/BT709,24fps,360frames,15seconds, no audio; full decode has no errors. File5916464bytes; hash is in the proof.
+    - Sixteen actual3D meshes, eight still phases, six encoded samples and an additional encoded unfolding frame inspected. Botanical drawing is original code, grounded in NParks and PROSEA facts without copying photos or source prose.
+    - All360 frame states checked for map/terrain/model readiness, panel projection and text bounds. Maximum observed versus commanded camera difference7.2e-14; maximum per-frame zoom change0.00842 and bearing change0.14422degrees.
+    - Selected backward-seek geometry identical.81of2073600pixels differ by more than10channel levels, maximum difference29, inside fine blossom detail; bounded0.01percent tolerance passed. Strict pixel identity is not claimed.
+    - Existing style baseline hashes and prior voiced movie hash unchanged. Browser errors, blocked/failed requests empty; final warm-cache run downloaded zero new bytes.
+    - Final capture379.90seconds; peak sampled owned-process RSS sum1032MiB, not hard unified/GPU memory. Initial higher-resolution drafts were cancelled for visual/performance refinements; unchanged3D background held after6.5seconds while foreground continues at24fps.
+    - Source builds and scoped Git whitespace check passed; Office clean after source/proof commit. Gemini ledger not mutated; existing7592satang reserved remains unchanged.
+unresolved:
+  - Owner review of species likeness, frame readability and perceived motion remains. This sample does not approve a full weather revision or permanently adopt a style.
+  - Exact cause of the small blossom raster difference is unverified; selected geometry repeats and the raster difference is bounded, not bit identical.
+  - Native FullHD preview does not prove the earlier1620x2880 supersampling quality. The whole15seconds is not a continuing3D camera flight; background hold starts6.5seconds.
+  - Historical map and generalized2017 province boundaries are explanatory geography, not a site survey or current forecast. Refresh dated weather evidence before later full episode production.
+  - Parent growth/feedback review, provider invoice reconciliation, subscription/hardware allocation, actual Claude cross-client proof, repository merges and full media backup remain open.
+next_action:
+  action: Present the local15-second movie inline; use owner feedback on the hybrid appearance and movement before revising the complete weather clip.
