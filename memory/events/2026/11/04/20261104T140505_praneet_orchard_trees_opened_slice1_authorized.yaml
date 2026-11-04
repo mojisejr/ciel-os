@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T140505_praneet_orchard_trees_opened_slice1_authorized
+type: decision
+recorded_at: "2026-11-04T14:05:05+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Open per-tree care for the orchard without counting every tree on day
+    one: trees enter from the work that names them, get boxes, a life
+    (death, replanting, age) and printed name labels. This record
+    authorizes slice 1, the data proposal and rendered samples.
+  scope:
+    - "workstreams/praneet-orchard-trees-001/PLAN.md and slices/1.md to 6.md."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner said plot-level care is complete and asked to build on it
+    per tree ('คุนลอง syncup กับผมดูหน่อยมั๊ย เราต่อยอดอันนี้กัน'). A syncup
+    of three rounds followed (Q49 to Q70). He dropped QR codes for plots
+    and trees ('เดี๋ยวเราไปทำใน app') and the plot page, and kept the rest
+    as PLAN.md states: trees typed freely in the work form and created on
+    first use, searchable by part of the name, a new tree section going
+    plot to tree to work, boxes per tree, death and two ways to replant
+    chosen by the user, an optional planting date or year, A4 name labels
+    3 by 8 without the system remembering what was printed, tree names in
+    calendar events, and the chat agent asking before it creates a tree.
+    He answered the last two questions yes: old works can get trees (Q69),
+    and this work runs in parallel with praneet-video-posts-001, with
+    praneet-office work in a separate worktree (Q70).
+  why: >-
+    Counting a whole orchard before use is the barrier he wants removed;
+    trees accumulate from real work instead. Only the owner knows which
+    work touched which tree, so nothing is guessed from a title.
+  agent_calls:
+    - "The work is a new workstream because praneet-orchard-001 closed earlier today."
+    - "Slice 1 renders samples on the real pages and proposes the data layout before any code, by the owner's standing rule."
+    - "The owner's answers to the summary and to Q69 and Q70 are taken as confirmation of the shared understanding and the go for slice 1."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: "142a4442e66ed90dec9fc1dc56def1249eb4a819"
+    branch: hq/20261103
+    working_tree: this-decision
+  related:
+    - memory/events/2026/11/04/20261104T121426_praneet_orchard_slice15_dropped_workstream_closed.yaml
+    - memory/events/2026/11/04/20261104T114356_praneet_orchard_slice14_lessons.yaml
+
+unresolved:
+  - "Fruit type per tree, a calendar button, QR codes and a plot page are deferred by the owner."
+  - "praneet-office's checkout is on another lane's branch with uncommitted files; slice 6 works in a separate worktree."
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Propose the data layout and render 2 to 4 samples of the form's tree
+    section, the tree pages and the label sheet on the real pages locally
+    (390 and 1280, light and dark) for the owner's pick.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/praneet-orchard-trees-001/slices/1.md."
