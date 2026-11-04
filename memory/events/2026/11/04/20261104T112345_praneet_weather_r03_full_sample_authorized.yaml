@@ -1,0 +1,45 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T112345_praneet_weather_r03_full_sample_authorized
+type: decision
+recorded_at: "2026-11-04T11:23:45+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Render one full voiced r03 map/card weather sample for owner review before any daily-weather workflow.
+  scope:
+    - Local full movie following storyboard r03, measured Thai voice and accepted selective-border map/card composition.
+outcome:
+  status: decided
+  summary: >-
+    Owner requested one complete render after reviewing r03 and posting-time
+    advice, before creating a Praneet weather-checking workflow. Authorizes
+    the bounded full local sample with16 scenes, no more than60seconds,
+    central-Thai baseline voice, existing cached outro/QR, current daily weather
+    evidence and the accepted map/card and geographic wind direction.
+    One new TTS core attempt may use the existing shared locked budget;
+    retain full949satang reservation, with current7592satang pending becoming
+    at most8541satang. Nov4exclusive-project owner declaration and today's
+    ledger remain the reconciliation basis, not invoice verification.
+    No automatic retry, permanent daily workflow, external upload or publication.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: c482c5d8725f440d32e842b8174b6bc7c4bf4d69
+    branch: hq/20261103
+  storyboard: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/STORYBOARD-r03.json
+  weather_snapshot: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/WEATHER-SNAPSHOT-r03.json
+  prior_exclusive_use_confirmation: memory/events/2026/11/04/20261104T071410_praneet_weather_production_authorized.yaml
+  pricing: https://aistudio.google.com/docs/pricing#gemini-3.8-flash-tts
+  serving_limits: https://aistudio.google.com/docs/models/gemini-3.8-flash-tts
+unresolved:
+  - Final owner review of full motion, voice and factual presentation remains.
+  - Refresh dated weather before real publication, especially after the17:00official bulletin. This is a local sample, not a live advisory.
+  - Forecast point interpolation is approximate; no native wind-grid, orchard gust or site-diagnosis claim.
+  - Parent review/metrics, invoice reconciliation, subscription allocation, Claude proof, merges and full backup remain open. Wake overlap attention remains; no parallel agent work requested here.
+next_action:
+  action: Produce bounded new core narration using today's checked limits and budget, reuse closing, build the full local r03 map/card sample and verify actual encoded AV and QR.
