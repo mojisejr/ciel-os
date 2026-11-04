@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T121426_praneet_orchard_slice15_dropped_workstream_closed
+type: closeout
+recorded_at: "2026-11-04T12:14:26+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record the owner's decision to drop slice 15 (watering by zone) in favour
+    of the tracking boxes, and close the workstream. This is its final
+    delivery at plan revision 2.0.
+  scope:
+    - "Plan revision 2.0 and this record only. No product code changed in this round."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "9"
+  completed:
+    - "The owner dropped slice 15. Zones felt too fiddly; a gardener only wants to note how many zones he watered today and, on the day the round is done, say it is finished ('ใช้กล่องอ่ะ ง่าย และสบายสุดละ'). The boxes already do this: one 'ให้น้ำ' box a plot, partial days recorded as ordinary work outside the box, the day that finishes the round put in the box."
+    - "The owner asked to close the workstream ('ถ้าไม่มีอะไรแล้ว workstream ให้ปิดได้ปิดเลยครับ'). Plan revision 2.0 removes slice 15, so slice 9 is again the last declared slice."
+    - "Every declared slice is delivered: slice 9 by memory/events/2026/11/02/20261102T045109_praneet_orchard_slice9_switched_delivered.yaml, and the last built slice, 14, by memory/events/2026/11/04/20261104T113943_praneet_orchard_slice14_delivered.yaml. Slice 9's work is unchanged by this revision."
+    - "A filter on the Today page was raised and set aside by the owner before any design ('ยังไม่ต้อง filter อะไรก็ได้ครับ พักไว้ก่อน')."
+    - "Local scratch from this workstream was removed by file name: three slice 14 test logs in the session temp folder, and two slice 12 sample screenshots in praneet-web .local/s12."
+  not_verified:
+    - "Whether the box-per-plot way of recording watering fits in practice; the owner has not tried it yet this dry season."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "2.0"
+  slice: "9"
+  decision: memory/events/2026/11/02/20261102T043201_praneet_orchard_rev14_slice9_authorized.yaml
+  repository:
+    head: "709321687ddc38e5ca3990c1230192bc02058f8f"
+    branch: hq/20261103
+    working_tree: this-closeout-and-plan-revision-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261103
+  related:
+    - memory/events/2026/11/02/20261102T045109_praneet_orchard_slice9_switched_delivered.yaml
+    - memory/events/2026/11/04/20261104T113943_praneet_orchard_slice14_delivered.yaml
+    - memory/events/2026/11/04/20261104T114356_praneet_orchard_slice14_lessons.yaml
+
+unresolved:
+  - "A filter on the Today page is deferred by the owner, undesigned. If taken up it is new work; the slice 14 lesson applies (ask whether he picks or the system decides). Workaround: the boxes list is short and sorted by days."
+  - "Which page's pill buttons felt cluttered (Q29) is still unanswered; reorganising them would be new work."
+  - "Merged remote branches are still on GitHub: praneet-web feat/routine-cards, chore/test-build-mode and feat/orchard-jobs, and ciel-os hq/20261102."
+  - "supply.spec still fails on praneet-web main because of date drift. It is deferred. Workaround: read it as a known failure."
+  - "hq/20261103 is not pushed; the owner pushes it with his other work. Wake reports this workstream finished only once this event reaches main."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None for this workstream after hq/20261103 merges. The Today page filter,
+    the pill buttons, or zones are new work on the owner's word.
+  acceptance_check:
+    - "bun run wake --workstream praneet-orchard-001 reports the final closeout awaiting owner merge, then completed after main."
