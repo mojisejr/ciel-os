@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T103317_praneet_map_action_card_sample_delivered
+type: closeout
+recorded_at: "2026-11-04T10:33:17+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Show a revised map-first sample with an occasional small animated explanation card.
+  scope:
+    - Local15-second episode009 visual and cached-voice proof; preserve prior deliveries and global styles.
+outcome:
+  status: map-action-card-sample-delivered
+  summary: >-
+    Owner supplied a layout reference and requested another sample with the
+    map dominant, geographic3D weather where useful, occasional small white
+    photo-card explanations, playful coloured line characters and fewer
+    words repeating the voice. Built actual MapLibre/Three terrain, extruded
+    pin/plaque, moving cloud/rain/wind and a brief lightning beat. A tilted
+    small card explains wet durian flowers with an expressive original2D
+    farmer and detailed branch/leaves/flower clusters. Reused complete cached
+    Thai voice sentences. Delivered a native FullHD15-second local movie;
+    no new paid call, budget-ledger change, publication, Drive upload,
+    dependency, permanent style change or new workstream.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 6291d8a73c4905b6b601340fc48e0e5fe97218b1
+    branch: hq/20261103
+  office:
+    head: 4cc9db669b9fd4be1e18be1318303f8fedf1252b
+    branch: feat/character-workflow
+  proof: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/hybrid-proof-v02/PROOF.json
+  reproduction: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/hybrid-proof-v02/README.md
+  movie: checkouts/praneet-office/posts/out/009-weather-20261104/hybrid-proof-v02/praneet-map-card-action-v02.mp4
+  checks:
+    - Native1080x1920 capture and encoding,24fps,360frames,15seconds,H264/yuv420p/BT709 with AAC48kHz mono; full decode passed. File6568761bytes; hash in proof.
+    - All360 scene states checked. Actual versus commanded camera error at most6.93e-14; moving rain and wind verified during the camera hold. Card bounding box at most21.253percent of frame.
+    - Eight native still phases and six encoded samples inspected. Backward seek geometry and pixels identical in this run. Three complete cached voice excerpts have mean levels about minus17.3to17.6dB and peaks below minus2.4dB.
+    - Zero failed/blocked browser requests and scene errors in final run; zero new provider bytes. Initial native still check found an irrelevant invisible Landsat request failing; constraining that layer to zoom9 removed the request.
+    - Capture272.29seconds; sampled owned-process RSS sum873.41MiB, not a hard GPU/unified-memory measurement. No software soft-shadow receiver covering the map; authored contact shadows instead.
+    - Prior voiced movie, hybrid-v01 movie, existing style baselines and budget ledger hashes unchanged. Cost of new Gemini calls zero. Office scoped whitespace check passed and tree clean after commit.
+    - Renderer blank-line whitespace cleanup after capture is explicitly recorded with captured/current source hashes; scene/art/html unchanged.
+unresolved:
+  - Owner review of the smaller card, expressive2D treatment and perceived motion remains; no full revised episode or permanent style adoption is claimed.
+  - Historical imagery, generalized2017 boundaries and symbolic weather are not a current forecast, model wind field or site survey. Refresh forecast evidence before publishing a daily episode.
+  - Generic durian pollen/rain mechanism is conditional, not guaranteed fruit-set failure or a cultivar-specific diagnosis or treatment protocol.
+  - Native FullHD is not a supersampling-quality or virality proof. Media outputs are local ignored artifacts; full backup remains open.
+  - Parent growth/feedback review, provider invoice reconciliation, subscription/hardware allocation, actual Claude cross-client proof and repository merges remain open.
+  - Wake continues to report the parent overlapping-project lifecycle attention item; this checkpoint changes only the episode009 sample and its HQ event, with no parallel agent work or web change.
+next_action:
+  action: Show the15-second voiced movie locally for owner feedback before applying this composition to the complete weather episode.
