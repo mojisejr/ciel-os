@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T072510_praneet_weather_voiced_clip_delivered
+type: closeout
+recorded_at: "2026-11-04T07:25:10+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver the approved province-map weather and durian-stage explainer with voice to the owner's Drive.
+  scope:
+    - Episode 009 production, fresh dated weather semantics, guarded narration, encoded verification and requested private upload.
+outcome:
+  status: episode009-voiced-clip-delivered-to-drive
+  summary: >-
+    Produced one 57.166667-second, sixteen-shot 1080x1920 24-fps H264/AAC
+    clip for November 5, with geographic province overlays, gentle map
+    approaches, rectangular WALES mechanisms and existing LINE QR ending.
+    Replaced fictional rain classes with explicit Northeast regional
+    November 5-7 disturbance geography versus blue story-focus provinces;
+    refreshed seven MET city forecasts. Used one guarded Charon core take,
+    retained speech speed, shortened only reviewed sentence silences and
+    reused accepted closing audio. Uploaded the verified MP4 to the existing
+    My Drive root without deleting earlier files or changing sharing.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 0695c13b42bab3fa1919d417fd1266b9d2c964bb
+    branch: hq/20261103
+  office:
+    head: 27a1fada49011b0a7603c8ede81420cd6f9a4545
+    branch: feat/character-workflow
+  authorization: memory/events/2026/11/04/20261104T071410_praneet_weather_production_authorized.yaml
+  delivery: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/DELIVERY-v01.json
+  reproduction: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/PRODUCTION-v01.md
+  drive:
+    id: 1nqX6hp8f7VyFXcbWd7OYhN-U12kXqXEy
+    url: https://drive.google.com/file/d/1nqX6hp8f7VyFXcbWd7OYhN-U12kXqXEy/view?usp=drivesdk
+    bytes: 16702803
+    metadata_readback: Matching title, MIME, byte count and existing parent; shared false and owner-only permission observed.
+  checks:
+    - Encoded video is 1372 frames, H264 YUV420P BT709 at1080x1920/24fps, with48-kHz mono AAC. Full decode clean; audio signal present in all sixteen shot windows; integrated loudness -17.5LUFS, peak -2.3dB.
+    - Sixty-five encoded samples captured; reviewed all sixteen midpoint frames and a native eastern province frame. QR decodes to existing LINE target at50.66667 and56.16667 seconds; ending holds7.5 seconds.
+    - Browser errors and failed/blocked requests empty; tiles/elevation/text checks and deterministic backward seeking passed; previous style/delivery hashes unchanged.
+    - Original source audio hashes rechecked after rendering. Local offline ASR is only an alignment aid and contains Thai spelling and foreign-word hallucinations.
+    - Final render241.34seconds; sampled owned-process RSS sum1199.09MiB, not a hard GPU/system memory measurement. No new dependency or paid visual service.
+    - One949-satang reservation retained; eight pending attempts total7592satang, leaving2408satang under the10000-satang monthly ceiling. Usage estimate0.7738THB is not invoice verification.
+    - Source builds and Git whitespace checks passed; Office tree clean after the scoped production/delivery commit.
+unresolved:
+  - Owner output/listening review remains; machine ASR and AV checks do not certify pronunciation or story reception.
+  - Forecast is dated November5. Refresh before later reuse; regional warning membership and city points do not establish province rain severity or actual orchard conditions.
+  - Actual cultivar, tree stage, prior weather, wetness, inoculum and crop load remain unknown; no universal chemical/fertilizer protocol established.
+  - Preserve historical map/boundary credits and ODbL obligations. TMD dataset-specific commercial reuse remains uncertified; no official infographic copied.
+  - No social post or caption requested in this delivery. Parent two-week growth/feedback proof, provider invoices, subscription/hardware allocation, actual Claude cross-client proof, repository merges and full media backup remain open.
+next_action:
+  action: Owner watches or downloads the delivered Drive clip and gives feedback; prepare caption or posting handoff only when requested, with the explicit dated forecast retained.
