@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T110033_praneet_directional_wind_sample_delivered
+type: closeout
+recorded_at: "2026-11-04T11:00:33+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Demonstrate geographic forecast-direction wind crossing the focused province without unrelated borders.
+  scope:
+    - Local12-second silent wind-layer proof for episode009; preserve the accepted small-card prototype and prior deliveries.
+outcome:
+  status: directional-wind-sample-delivered
+  summary: >-
+    Owner accepted hybrid-proof-v02 composition and requested another10to15second
+    sample with correct wind direction, flow across provinces/areas and only
+    relevant province boundaries. Read25 public MET Norway point forecasts for
+    Nov5at13:00Bangkok; converted meteorological FROM directions into east/north
+    TO vectors and interpolated those vectors. Built geographic streamlines,
+    animated3D arrowheads/ribbon tails and a restrained shared-camera move.
+    Only Chanthaburi geometry enters the province source; wind is not masked
+    at that polygon. Delivered a native FullHD12-second silent local movie.
+    No paid call, key access, new dependency, Drive upload, social publication,
+    full-episode revision or global style/runbook change.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 1ea9b1fe326151bf0cd4e8970598f0a6a44648b3
+    branch: hq/20261103
+  office:
+    head: a57726c65e13f229ce4bea82f6d2ca7141c9c6f7
+    branch: feat/character-workflow
+  proof: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/wind-proof-v01/PROOF.json
+  reproduction: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/wind-proof-v01/README.md
+  snapshot: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/wind-proof-v01/WIND-DATA.json
+  movie: checkouts/praneet-office/posts/out/009-weather-20261104/wind-proof-v01/praneet-wind-field-jan-v01.mp4
+  checks:
+    - Native1080x1920,24fps,288frames,12seconds,H264/yuv420p/BT709,silent; complete decode passed. File6307988bytes, hash in proof. Eight native stills and six encoded samples inspected.
+    - All288 scene states contain only TH-22 for province rendering. Twenty flow paths have13 actual boundary crossings; eight paths have points inside and outside Jan, without polygon clipping.
+    - Four cardinal FROM-to-TO checks,359and1degree wrap check and all25 source-node checks passed.6629 geographic segments checked, maximum angle0.01956degrees to interpolated flow.
+    - One actual rendered arrow matrix checked across all288frames, maximum angle0.47169degrees to the interpolated geographic field. This is not a check of every rendered arrow matrix.
+    - Camera observed-versus-commanded error at most7.02e-14, per-frame continuity bounds passed. Flow moves during camera hold. Backward geometry and raster identical in this run.
+    - Zero final browser/scene errors or failed/blocked requests, zero new map-provider bytes. Render306.28seconds, peak sampled owned-process RSS sum833.77MiB, not a hard unified/GPU memory bound.
+    - Twenty-five public MET reads total, including one reused probe. Explicit sequential bounded fetch, raw cache and committed cropped vectors/hashes; no retries, key or paid request. Forecast instant fixed at2026-11-05T06:00Z.
+    - First low-resolution draft stopped after near-calm directional check failed. Smaller500m RK2 steps and a0.5m/s calm cutoff corrected the check before final capture.
+    - Prior production movie, accepted hybrid-v02 movie, style baselines and budget ledger hashes unchanged. Scoped whitespace check passed; Office tree clean after commit. Incremental Gemini cost zero.
+unresolved:
+  - Owner review of wind readability, density and perceived motion remains. Acceptance of hybrid-v02 composition does not approve this complete weather episode or social publication.
+  - This is bilinear vector interpolation between25 point forecasts on0.6degree spacing, not the native9km grid, measured wind at every location, orchard gusts or local valley flow. More precise production fields would need a separately bounded native-grid proof.
+  - Forecast instant is fixed; particles are directional illustrations, not parcel trajectories or real-time wind speed. Visual lift and arrow size are exaggerated; historical map and generalized2017 boundary are not a current survey.
+  - Parent growth/feedback review, invoice reconciliation, subscription/hardware allocation, actual Claude cross-client proof, repository merges and full media backup remain open.
+  - Wake parent overlapping-project attention remains; this work changed only episode009 wind-proof files and this HQ event, with no parallel agent work or web edit.
+next_action:
+  action: Present the local12-second wind-only movie for owner review before integrating accepted directional flow and selective boundaries into the complete map/card weather revision.
