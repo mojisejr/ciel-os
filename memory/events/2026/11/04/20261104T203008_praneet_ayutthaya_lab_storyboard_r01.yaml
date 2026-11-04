@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T203008_praneet_ayutthaya_lab_storyboard_r01
+type: closeout
+recorded_at: "2026-11-04T20:30:08+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver the requested isolated Ayutthaya counterfactual lab storyboard in the confirmed white-map and WALES-popup treatment.
+  scope:
+    - Researched brief, original narration and sixteen code keyframes in the Office video lab; no full movie or paid voice.
+outcome:
+  status: lab-storyboard-r01-prepared-for-owner-review
+  summary: >-
+    Owner selected survival of the1767campaign without guaranteed continuous
+    capital or dynasty, researched history with playful cartoons, and a thought
+    question without sales QR. Three independent syncup answers matched the
+    proposed leans. Owner then refined the white-map treatment to living cities,
+    people and translucent focus areas, with small linked event popups, and
+    explicitly requested storyboard after agreeing syncup was complete.
+    New lab source now proposes16shots on a57-second provisional timeline,
+    with three popup situations and actual1080x1920static keyframes plus four
+    review pages. The counterfactual branches are marked as possibilities.
+    This is an owner-review proposal, not approved narration/art or a finished
+    video, historical reconstruction, posting decision or growth proof.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 1858ec424f38e3ef24868137d0f6a7f8ddd82f8a
+    branch: hq/20261103
+  office:
+    head: a5c8b12903313c2a9c88b10078a8c20895f27a62
+    branch: feat/character-workflow
+  brief: checkouts/praneet-office/posts/video/labs/ayutthaya-what-if/BRIEF.md
+  storyboard: checkouts/praneet-office/posts/video/labs/ayutthaya-what-if/STORYBOARD-r01.md
+  sources: checkouts/praneet-office/posts/video/labs/ayutthaya-what-if/SOURCES.md
+  proof: checkouts/praneet-office/posts/video/labs/ayutthaya-what-if/PROOF-storyboard-r01.json
+  local_output: checkouts/praneet-office/posts/out/labs/ayutthaya-what-if/storyboard-r01/
+  checks:
+    - Sixteen PNGs and four review pages captured locally; Thai text bounds, exact frame dimensions, local-only browser routing and source hashes checked. All final review pages visually inspected.
+    - Fixed an illustration clipped by the map mask and placed small event cards over the map before final capture. Card area is approximately14.5percent of the portrait frame; keyframes do not prove continuous animation.
+    - Parsed story/proof, checked all frame and sheet hashes, and verified16contiguousshot timings sum to57seconds. Speech has not been generated or measured.
+    - UNESCO supplies the1767and urban/craft context; SAC supplies prior Bangkok existence; the Paik and Vechbanyongratana publisher abstract supplies later reform/colonial-pressure context. None validates the alternate future. Generalized geography is orientation only; authored rivers, cities and focus areas are explicitly schematic.
+    - Office commit contains only the eight new lab files; scoped whitespace check passes. Existing episode/style/runbook/business source, private budget and media are untouched. No paid API, full movie, external upload, public post, push or PR.
+unresolved:
+  - Owner review of this exact story/art revision remains. The requested animation, voice, final timing and full encoded-video QA are not yet produced or approved.
+  - Future urban roles, capital continuity, preservation and prosperity are conditional fictional scenarios, not historical facts, forecasts or assigned probabilities. No military rescue mechanism or historical sovereignty boundary is established.
+  - This is a standalone lab story, not adoption of history content into the nursery's public identity. Any posting destination remains undecided.
+  - Mini CIEL migration, shared-budget cutover, full asset backup, provider billing, subscription/hardware allocation and actual Claude proof remain as in the handoff checkpoint. No separate paid ledger or new services are introduced.
+  - Parent feedback review and growth targets remain open;003publication metadata,008publication confirmation and009full-weather dissatisfaction remain as previously recorded. Existing merges and Wake overlap attention are unchanged.
+next_action:
+  action: Show the complete narration/storyboard and four review pages for owner story/art feedback. Produce animation or paid narration only after the selected revision and production scope are approved, retaining the existing daily budget boundary.
