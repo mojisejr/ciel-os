@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T195021_praneet_orchard_trees_slice2_built_awaiting_owner
+type: closeout
+recorded_at: "2026-11-04T19:50:21+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Build slice 2: trees named in work from the add-work form, the tree
+    section going plot to tree to work, and tree names in calendar events.
+  scope:
+    - "praneet-web branch feat/orchard-trees (PR 47): migration 029, lib/orchard-tree.ts, lib/orchard.ts, lib/orchard-calendar.ts, lib/orchard-text.ts, the form, the work page, the orchard page, three new pages, tests/trees.spec.ts and tests/quality.spec.ts."
+
+outcome:
+  status: built-awaiting-owner
+  slice: "2"
+  completed:
+    - "praneet-web PR 47 (head 9694158d1adef60604f8b74b64cfd477450b48fb), a draft described in its body."
+    - "Migration 029 adds orchard_plot_trees and orchard_work_trees. The database refuses a tree in the nursery plot and a tree on work of another plot. The name orchard_trees was already taken by migration 026's tree counts per crop, which are untouched."
+    - "The form's tree section is sample A and the plot's list is rows A, as the owner picked; a work saved without its trees keeps them, and a plot taken off while its trees stay is refused."
+    - "Full suite under the memory guard: 145 passed, 1 failed (the known supply.spec date drift), peak 3,018 MB of 3,072 MB. tests/trees.spec.ts and orchard-calendar.spec.ts passed again after the last change."
+  not_verified:
+    - "The owner has not used it on his phone, and no plot has hundreds of trees yet."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  decision: memory/events/2026/11/04/20261104T192600_praneet_orchard_trees_rev02_slice2_authorized.yaml
+  repository:
+    head: "1bc4894006500913f50dd5f2b668fbe1678d7f36"
+    branch: hq/20261103
+    working_tree: this-record-only
+  child_state:
+    praneet-web: "feat/orchard-trees at 9694158, pushed, draft PR 47; next-env.d.ts restored and the dev server used for screenshots stopped"
+    praneet-office: "untouched"
+
+unresolved:
+  - "Migration 029 is not on production. It runs only on the owner's word naming it, before the merge, or the work form and work pages break."
+  - "The full suite's peak (3,018 MB) is close to the guard's 3,072 MB limit; a future slice may need it split or the limit reviewed by the owner."
+  - "Screenshots of the built pages are in praneet-web .local/trees-s2 (git-ignored); delete them by name with the slice 1 samples when slice 5 is delivered."
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    On the owner's word, run migration 029 on production and read it back,
+    then ask him to merge PR 47 and record a real tree work on his phone.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-orchard-trees-001/slices/2.md."
