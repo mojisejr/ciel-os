@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261107T194023_praneet_orchard_trees_slice5_delivered
+type: closeout
+recorded_at: "2026-11-07T19:40:23+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Deliver slice 5: a plot's tree labels printed on A4 sheets of 3 × 8.
+  scope:
+    - "praneet-web PR 50; no migration."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "5"
+  completed:
+    - "The owner merged praneet-web PR 50 ('merged เรียบร้อยครับเดินต่อได้เลย'). After a fetch, origin/main holds merge eed6c63 with the slice head 4334653 as its ancestor."
+    - "praneet-web is back on a clean main at eed6c63; the merged local branch was deleted."
+  not_verified:
+    - "Slice 5's acceptance asks for one real sheet printed and found the right size. The owner chose to merge without the trial print ('ไม่ต้องก็ได้ ครับ เดี๋ยวผม merge'); it is owed once real trees exist."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "5"
+  decision: memory/events/2026/11/07/20261107T070050_praneet_orchard_trees_slice5_authorized.yaml
+  repository:
+    head: "9f7359cadf9cff431c931edd4864246858c3063e"
+    branch: hq/20261103
+    working_tree: this-closeout-with-slice6-decision
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261103
+  related:
+    - memory/events/2026/11/07/20261107T071154_praneet_orchard_trees_slice5_built_awaiting_owner.yaml
+
+unresolved:
+  - "The trial print of one real sheet is owed; print at actual size (100%), not fit to page. Anything off is fixed in a later change."
+  - "The owner's first real tree work (slice 2), tree's box (slice 3), and death or replanting (slice 4) on his phone are still to come."
+  - "A replacement tree made by mistake cannot be undone; workaround: rename the new tree."
+  - "The merged remote branches feat/tree-labels, feat/tree-life, feat/tree-boxes and feat/orchard-trees are still on GitHub, with the earlier ones."
+  - "The git-ignored scratch .local/trees-s1 and .local/trees-s2 in praneet-web are deleted by name once slice 6 no longer needs them."
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 6 (praneet-office: work with trees from chat) under plan 0.2
+    in a separate praneet-office worktree.
+  acceptance_check:
+    - "Slice 6 acceptance in workstreams/praneet-orchard-trees-001/slices/6.md."
