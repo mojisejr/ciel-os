@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261107T071154_praneet_orchard_trees_slice5_built_awaiting_owner
+type: closeout
+recorded_at: "2026-11-07T07:11:54+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Build slice 5: a plot's tree labels, ticked by hand with the newest trees
+    on top, found by name or "เพิ่มตั้งแต่", printed on A4 sheets of 3 × 8.
+  scope:
+    - "praneet-web branch feat/tree-labels (PR 50): the labels page, components/orchard-labels.tsx, labelTrees in lib/orchard-tree.ts, the plot list's button, print styles, tests/trees.spec.ts."
+
+outcome:
+  status: built-awaiting-owner
+  slice: "5"
+  completed:
+    - "praneet-web PR 50 (head 433465331e4a867cabed27d896f1e103577ea7cc), a draft described in its body. No migration."
+    - "Only living trees are offered. Printing shows only the sheets, one A4 page each; the test reads Chrome's PDF as exactly 2 pages for 25 labels and finds no label whose name spills out, a 40-character name included."
+    - "bun run check: 151 passed, 1 failed (the known supply.spec date drift), peak 2,718 MB of 3,072 MB."
+    - "A first screenshot showed the subtitle printing a function's source instead of 24: a server page had imported a value from a client file. The value moved to lib/orchard-text.ts and the test now checks the subtitle."
+  not_verified:
+    - "Slice 5's acceptance asks the owner to print one real sheet and find the size right. He has not; production has no trees yet, so a PDF made locally is offered for the trial print."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "5"
+  decision: memory/events/2026/11/07/20261107T070050_praneet_orchard_trees_slice5_authorized.yaml
+  repository:
+    head: "bece55af9d32f1883a2f6a45a570529b433cf798"
+    branch: hq/20261103
+    working_tree: this-record-only
+  child_state:
+    praneet-web: "feat/tree-labels at 4334653, pushed, draft PR 50; the screenshot dev server stopped and next-env.d.ts restored"
+    praneet-office: "untouched"
+
+unresolved:
+  - "The owner's trial print of one real sheet is owed (slice 5 acceptance)."
+  - "The owner's first real tree work (slice 2), tree's box (slice 3), and death or replanting (slice 4) on his phone are still to come."
+  - "A replacement tree made by mistake cannot be undone; workaround: rename the new tree."
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner looks at the slice 5 screens and trial-prints the local PDF;
+    then he merges PR 50 (no migration).
+  acceptance_check:
+    - "Slice 5 acceptance in workstreams/praneet-orchard-trees-001/slices/5.md."
