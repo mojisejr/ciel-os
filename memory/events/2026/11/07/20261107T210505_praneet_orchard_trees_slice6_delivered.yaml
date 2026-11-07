@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261107T210505_praneet_orchard_trees_slice6_delivered
+type: closeout
+recorded_at: "2026-11-07T21:05:05+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Deliver slice 6, the last slice: the office agent reads a plot's trees and
+    records the owner's chat work with trees and trees' boxes.
+  scope:
+    - "praneet-office PR 41; no praneet-web change and no migration."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "6"
+  completed:
+    - "On the owner's word ('merge ได้เลยครับ แล้วเก็บกวาด') the agent marked praneet-office PR 41 ready and merged it. After a fetch, origin/main holds merge 2e1810c with the slice head 594f634 as its ancestor."
+    - "Cleanup: the worktree checkouts/praneet-office-trees and its local branch are removed; the main praneet-office checkout (the other lane's feat/character-workflow) was not touched. praneet-web's git-ignored .local/trees-s1 and .local/trees-s2 are deleted by name. The slice 1 samples page was already gone."
+    - "All six slices are merged: praneet-web PRs 47, 48, 49 and 50 with migrations 029, 030 and 031 on production, and praneet-office PR 41."
+  not_verified:
+    - "No real use yet. Production has no trees, so the owner's first real tree work through the office (slice 6), the trial label print (slice 5), and the phone checks of slices 2 to 4 are all still to come."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "6"
+  decision: memory/events/2026/11/07/20261107T194030_praneet_orchard_trees_slice6_authorized.yaml
+  repository:
+    head: "76158b94db4ceb0298a4b314c5f8ad6e45186c2a"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261103
+  related:
+    - memory/events/2026/11/07/20261107T204612_praneet_orchard_trees_slice6_built_awaiting_owner.yaml
+
+unresolved:
+  - "First real use is owed: when the owner tells the agent a work with trees, dry-run it with orchard add and write it on his word; print one label sheet at actual size (100%); check slices 2 to 4 on his phone. Anything wrong is fixed as a new change."
+  - "A replacement tree made by mistake cannot be undone; workaround: rename the new tree."
+  - "The merged remote branches feat/orchard-tree-work (praneet-office) and feat/tree-labels, feat/tree-life, feat/tree-boxes, feat/orchard-trees (praneet-web) are still on GitHub."
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None scheduled for this workstream; first real use comes when the owner
+    names a work with trees.
+  acceptance_check:
+    - "Slice 6 acceptance in workstreams/praneet-orchard-trees-001/slices/6.md."
