@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261109T000840_mumate_manychat_ebook_prep_checkpoint
+type: closeout
+recorded_at: "2026-11-09T00:08:40+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Record what is ready before slice 1 of plan 0.2 and what is still owed,
+    so a fresh session can pick up without the owner retelling it.
+  scope:
+    - "Read-only look at ManyChat settings in the owner's signed-in in-app browser; no setting, flow or key was changed by the agent."
+
+outcome:
+  status: recorded
+  completed:
+    - "ManyChat (page store read 2026-11-09): pro_status flex_trial on plan_2_annual at $348 a year, billing date 2026-11-17, not set to cancel, 293 contacts. The owner's role is administrator; has_subscription_permission is false, so billing is the team's."
+    - "Before the owner acted, Settings > API showed only 'Generate Your API Key', so no existing integration used a key. The owner then generated one himself and saved it in .assets/mumate/manychat/.env (git-ignored). The agent did not read it and set the file to mode 600."
+    - "Slip2Go signup is the team's, expected 2026-11-09. Owed to us: the account's API URL, the API secret (placed by the owner in an env file, never in chat), the receiver account name in Thai and English and the number without dashes, the full error-code list, and an IP whitelist entry for mumate-2 and mumate-prod-1 (IPs fetched at slice 1)."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: "9cadcc1b7f9485bb3c9a7ef0ef248f41dbbff8a4"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  related:
+    - memory/events/2026/11/08/20261108T234030_mumate_manychat_ebook_rev02.yaml
+
+unresolved:
+  - "ManyChat Pro is a trial; the team must pay before 2026-11-17 or the API and External Request stop."
+  - "Slice 1 does not need Slip2Go. It needs the owner's repository name (proposed mumate-ebook-bot), the staging and production host names, his permission to create the private repository and the private Supabase bucket, and the testers' Facebook accounts."
+  - "Start the Slip2Go 7-day trial close to slice 2 so it does not run out unused."
+  - "Slice 2 needs from the team: the PDF and where it is kept, how the one-month app code is issued, the price after the promotion, customer-facing messages, and PDPA wording for keeping slips 30 days."
+  - "The ManyChat key moves from .assets to /opt/mumate/env on mumate-2 at slice 1; it is never committed."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the owner returns, take his answers for slice 1 (repository name,
+    hosts, permissions, testers) and his decision authorizing slice 1 of
+    plan 0.2; Slip2Go details join at slice 2.
+  acceptance_check:
+    - "A decision event with outcome.status decided, plan_revision 0.2 and slice 1."
