@@ -6,7 +6,7 @@
 **Plan revision:** 0.2
 **Execution phase:** none
 **Execution state:** idle
-**Parallelism:** proposed
+**Parallelism:** none
 
 ## เป้าหมาย
 
