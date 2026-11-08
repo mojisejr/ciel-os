@@ -67,9 +67,8 @@
 | Project ID | Role | Local binding |
 |---|---|---|
 | `mumate-infra` | service ตัวที่สาม, Caddy, env, release และ promote, เครื่องมือดูแลใน `bin/` | `/Users/non/ghq/github.com/mojisejr/mumate-infra` |
+| `mumate-ebook-bot` | ตัวแอป (repo สาธารณะ, เจ้าของเลือก 2026-11-09) | `/Users/non/ghq/github.com/mojisejr/mumate-ebook-bot` |
 | `ciel-os` | แผนนี้และ event | . |
-
-repo ของแอปจะลงทะเบียนเป็น project ใน slice 1 หลังเจ้าของอนุมัติชื่อ
 
 ## หลักฐานตอนเปิด (2026-11-08)
 
