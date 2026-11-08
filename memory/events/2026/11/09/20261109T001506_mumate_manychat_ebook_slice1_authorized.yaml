@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261109T001506_mumate_manychat_ebook_slice1_authorized
+type: decision
+recorded_at: "2026-11-09T00:15:06+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Authorize slice 1 of plan 0.2: the app skeleton, its staging path in
+    mumate-infra, and a [TEST] copy of the ManyChat flow, with the live flow
+    left untouched.
+  scope:
+    - "Plan 0.2 slice 1 as written in workstreams/mumate-manychat-ebook-001/slices/1.md."
+  out_of_scope:
+    - "Slices 2-4; any edit to the live 'Bazi E-Book 95' flow or its tags, fields and triggers; anything on production."
+
+outcome:
+  status: decided
+  slice: "1"
+  decision: >-
+    After reading the slice 1 plan the owner wrote: "ถ้าพร้อมแล้วและไม่มีอะไรที่
+    ผมต้องเคาะ ก็เริ่มได้เลยครับ slice 1 อนุมัติ". He left the remaining
+    implementation choices to the agent, which takes: the repository name
+    mojisejr/mumate-ebook-bot; no new hostname, the app served under the path
+    /ebook-api/ on the existing hosts (app.staging.mumate.co now,
+    bazichart.mumate.co in slice 4), so no DNS change; its own compose
+    profile, ebook, so production's --profile full never pulls it.
+  needs_owner:
+    - "Repository visibility. Staging follows main through GitHub's public API and pulls images from GHCR without login, so a private repository needs a read-only token on the hosts, which only the owner can create. A public repository works with no new credential, as fe and bazi do. Infra wiring waits for his answer; the app itself is built meanwhile."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: "2bd7b87570e30903a0cebda1867a3deea9687787"
+    branch: hq/20261103
+    working_tree: this-decision-only
+  source:
+    - "mumate-infra main 05c86b6: bin/staging-follow.sh reads commits through the unauthenticated GitHub API and checks images with docker manifest inspect; bin/deploy.sh takes any <SVC>_TAG with env/<svc>.env."
+  related:
+    - memory/events/2026/11/09/20261109T000840_mumate_manychat_ebook_prep_checkpoint.yaml
+
+unresolved:
+  - "Repository visibility (public, or private with a read-only token on the hosts) is the owner's."
+  - "The ManyChat key moves from .assets to /opt/mumate/env/ebook.env on mumate-2 during this slice."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build the app locally with its tests, then wire mumate-infra once the
+    owner answers the visibility question.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/mumate-manychat-ebook-001/slices/1.md."
