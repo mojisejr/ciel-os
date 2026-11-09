@@ -1,0 +1,74 @@
+schema_version: ciel.event.v0.1
+id: evt_20261109T222818_mumate_manychat_ebook_slice2_delivered
+type: closeout
+recorded_at: "2026-11-09T22:28:18+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Deliver slice 2: check a customer's slip with Slip2Go and, when it passes,
+    send the same message the team sends by hand, on staging, with the live
+    "Bazi E-Book 95" flow left untouched.
+  scope:
+    - "mumate-ebook-bot PRs 2 and 3 and mumate-infra PR 64, all merged by the owner; staging only."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "2"
+  completed:
+    - "mumate-ebook-bot origin/main 43c688d merges PR 2 and PR 3. PR 2 adds POST /ebook-api/manychat/slip, which answers at once and checks the slip with Slip2Go afterwards; migration 0002 (ebook_order, ebook_order_log); the Slip2Go code table where only 200200 pays; retries at 1, 2, 4 and 8 minutes before the admin; delivery claimed by one conditional UPDATE; and the orders, pending, resend and mark-paid CLI."
+    - "PR 3 fixes a slice 2 acceptance failure found on staging. A slip the customer sent again was matched to its first order and got no reply. Now a repeat within 60 seconds, or while the first check runs, stays quiet (a ManyChat retry). A later repeat hears the order's own reason through the notice flow, which also tells the admin. Nothing is delivered again and Slip2Go is not called again."
+    - "mumate-infra origin/main a92d303 merges PR 64: bin/ebook.sh orders, pending, resend and mark-paid. The write commands need --by and --reason and accept --dry-run."
+    - "Staging (mumate-2): migration 0002 applied by hand; seven slip env keys set through bin/env-set.sh without displaying them; staging price 1 baht. The follower deployed 490d880 and then 43c688d by itself, and the app logs slip: {price: 1} at start."
+    - "ManyChat, created through the API with the bot_ prefix only: tags bot_paid, bot_rejected and bot_admin, and fields bot_slip and bot_reason. Flows '[TEST] E-Book delivery' (the team's manual text, Drive link, coupon EBOOKPULS95 and the how-to image the owner uploaded) and '[TEST] E-Book notice' (bot_reason, mark the conversation open, notify assignees by email) are live with no trigger. '[TEST] E-Book 95' asks for the slip, shows the account 200-8-20487-2 copied from the live flow, and calls /slip."
+    - "Acceptance on staging, real 1-baht and 2-baht transfers by the owner. A 1-baht slip passed (200200): order 1 paid and delivered, tag bot_paid, the delivery message with link, coupon and image reached the owner's chat. The same slip again: reply 'สลิปนี้เคยใช้สั่งซื้อไปแล้ว', notice_sent, order 1 still paid, one delivery. A GIF: order 4 rejected (400004 not_a_slip) with the plain-Thai reason. A 2-baht slip: order 5 rejected (200402 amount) with the reason. mark-paid 4 --dry-run and resend 1 --dry-run answered and wrote no log row; mark-paid without --reason was refused."
+    - "Live flow unchanged. A fresh cleaned export of 'Bazi E-Book 95' matches the 2026-11-08 baseline node by node (21 nodes), in triggers and in layout. Only the flow header differs: has_unpublished_changes is now true. The draft content equals the published flow."
+    - "Checks on merged main: app tests 49 pass, 1 skip (the Postgres test, which passed earlier against a throwaway local postgres:16), 0 fail; tsc clean. mumate-infra scripts/test-all.sh: 21 files, 0 failed, real checkout unchanged."
+  deviations:
+    - "The repeated-slip case was sent by replaying order 1's exact ManyChat request (same contact, same image) into the app from inside the staging container, because the Messenger web window would not scroll to the earlier slip. The reply reached the owner's real chat."
+    - "The wrong-receiver case was not run on staging. No slip to another account was at hand. Unit tests cover 200401 with the receiver reason."
+    - "Messenger's own 'ยืนยันการชำระเงิน' card appeared when the owner sent a slip through Messenger's payment feature. It is Meta's, not ours, and our check ignores it."
+  not_verified:
+    - "Why ManyChat answered the owner's first slip with its default English 'Please upload an image using Messenger…' and recorded 'Skip'. The second try, a photo from the album, worked."
+    - "Who set has_unpublished_changes on the live flow. mumate-manychat-copy-001, opened on this branch the same evening, plans to edit that flow's draft."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "2"
+  decision: memory/events/2026/11/09/20261109T112517_mumate_manychat_ebook_slice2_authorized.yaml
+  repository:
+    head: "dbc88afb10b88c6172a8d0b8901190e78af1d00e"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261103
+  source:
+    - "mumate-ebook-bot origin/main 43c688d670979c568b0cad6492b96742dbe18dc0"
+    - "mumate-infra origin/main a92d3038a61fe90db5ce2bb48471cf62ab8c5b1a"
+  related:
+    - memory/events/2026/11/09/20261109T101428_mumate_manychat_ebook_slice1_delivered.yaml
+    - memory/events/2026/11/09/20261109T111847_mumate_manychat_ebook_rev04.yaml
+
+unresolved:
+  - "A deploy recreates ebook and leaves /ebook-api down for about 6 seconds (seen 12:24:13 to 12:24:19Z). A slip sent in that gap may be lost. Before production: start the new container before stopping the old, or make ManyChat retry. Safe workaround until then: deploy only when no customer is mid-order."
+  - "Change ManyChat's default English retry text on the slip question to Thai, as the live flow already does, before customers use the bot."
+  - "Rotate the staging EBOOK_HOOK_SECRET after testing: it appeared in an agent screenshot of the External Request headers. Half of the Slip2Go key also appeared in a screenshot; rotate it with the IP whitelist in slice 4."
+  - "The slice 4 baseline check must account for mumate-manychat-copy-001, which will change the live flow's first message on purpose. Compare against the flow as that workstream publishes it, not the 2026-11-08 export."
+  - "release, promote-production and rollback must learn ebook, and the Slip2Go IP whitelist must be set, before slice 4."
+  - "Slip2Go trial ends 2026-11-16 23:59 and ManyChat Pro trial ends 2026-11-17; the owner pays when it is time."
+  - "Production fe returned 17 503s between 19:22 and 19:25 +07:00 and recovered when it restarted at 19:24:20. It began before the ebook staging deploy and is not this workstream's; the cause is unconfirmed."
+  - "Merged remote branches feat/slice2-slip-check and fix/slice2-repeat-slip-reply (mumate-ebook-bot) and feat/ebook-slice2 (mumate-infra) are still on GitHub."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decision on slice 3 of plan 0.4.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/mumate-manychat-ebook-001/slices/3.md."
