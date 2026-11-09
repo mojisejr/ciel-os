@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20261109T224616_mumate_manychat_copy_slice1_delivered
+type: closeout
+recorded_at: "2026-11-09T22:46:16+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-copy-001
+  lane: single
+  objective: >-
+    Deliver slice 1: the live flow "Bazi E-Book 95" sends draft A as its first
+    message and four book pages as image messages in place of the sample
+    carousel, behind one backup duplicate.
+  scope:
+    - "ManyChat only, edited by the agent in the built-in browser; the owner said to publish ('Publish เลย')."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  completed:
+    - "Backup: the live flow was duplicated and renamed '[BACKUP 2026-11-09] Bazi E-Book 95 — ห้ามเปิด'. It is STOPPED and both its triggers show Off. Read from the page store, it holds all 21 steps with the live captions, and its step 2a still has the three cards with their images, reviews and 🛒 buttons."
+    - "Live flow, published on the owner's word: step '1 ข้อความแรก' (content 1306130520) carries draft A word for word; its three buttons still lead to 1306130521, 1306130532 and 1306130525."
+    - "Step '2a ตัวอย่าง+รีวิว' is the same step (content 1306130532). It now sends the intro 'ตัวอย่างหน้าในเล่ม 4 หน้าครับ 👇 / แตะที่ภาพเพื่อดูเต็มจอ ซูมอ่านได้เลย 🔍', four image messages in plan order (1_toc1, 2_toc2, 3_ch09_p57, 4_ch11_p67), and the '✍️ เขียนโดย' text, which now lists all four reader reviews (ป., น., ก., ม.); its 🛒 and ❓ buttons still lead to 1306130521 and 1306130525. The carousel is gone."
+    - "After publishing, the flow is LIVE with both triggers on, and the other 19 steps match the 2026-11-08 export in id, text, buttons and next step."
+    - "Checks: ManyChat's in-editor Preview ('In Manychat') plays the draft. The 'In Facebook' preview reached the owner's Messenger through its m.me ref link. The owner then typed 'Bazi' against the published flow, tapped 📖 and reported both as passing, including the images."
+    - "Test tags: the tested path adds no tag, and the owner's contact gained none. It carries only bot_rejected and bot_paid from mumate-manychat-ebook-001's [TEST] flow, left untouched."
+  deviations:
+    - "The built-in browser cannot attach a local file, so a temporary local HTTP server (127.0.0.1, stopped afterwards) fed the four JPEGs to the page, which uploaded them through ManyChat's own file input."
+    - "ManyChat's block drag is native drag-and-drop, which the browser tool's mouse drag does not drive; the images were moved above the writer text by dispatching drag events in the page."
+    - "Slips during the edit, each corrected before publish. A stale-screenshot click opened '[TEST] E-Book delivery' and typed 14 characters; it stayed in published view with no draft. A card's Edit Button popup opened by mistake and was closed unchanged. Two text replacements landed mid-text and were retyped."
+    - "ManyChat deletes a gallery card by card; the last card went with its whole message."
+  not_verified:
+    - "Which resolution Messenger serves the images at: ManyChat stores the original and a 600x851 'big' copy. The owner judged the phone result readable."
+
+evidence:
+  plan: workstreams/mumate-manychat-copy-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  decision: memory/events/2026/11/09/20261109T195024_mumate_manychat_copy_slice1_authorized.yaml
+  repository:
+    head: "78bb37a5defb3e0c2fa62ab6792481c061684158"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261103
+  source:
+    - "ManyChat flow content20261103141217_754169 (live), backup content20261109125157_473586"
+    - ".assets/mumate/manychat/bazi-ebook-95_flow_20261108.json (git-ignored baseline)"
+  related:
+    - memory/events/2026/11/09/20261109T191858_mumate_manychat_copy_opened.yaml
+    - memory/events/2026/11/09/20261109T222818_mumate_manychat_ebook_slice2_delivered.yaml
+
+unresolved:
+  - "mumate-manychat-ebook-001 slice 4 compares the live flow with the 2026-11-08 export. Since this slice's publish on the evening of 2026-11-09, the first message and step 2a differ on purpose; compare against the flow as published here. The ebook-001 closeout of 22:28 recorded has_unpublished_changes as unexplained: it was this slice's draft, now published."
+  - "Draft A and the follow-ups say the price holds until 11 Nov. The team owns the promotion date; if it moves, the last line of the first message, FU2, FU3 and 2b need editing."
+  - "Rollback: copy the cards and texts back from the backup into the same steps (1306130520, 1306130532); never delete a step. Keep the backup STOPPED with triggers off until the team no longer needs it."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None for this workstream; slice 1 is its only slice. Owner pushes
+    hq/20261103 and merges it.
+  acceptance_check:
+    - "bun run wake --workstream mumate-manychat-copy-001 reports the workstream finished."
