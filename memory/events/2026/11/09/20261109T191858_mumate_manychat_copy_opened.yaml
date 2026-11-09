@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261109T191858_mumate_manychat_copy_opened
+type: decision
+recorded_at: "2026-11-09T19:18:58+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-copy-001
+  lane: single
+  objective: >-
+    Replace the first message of the live ManyChat flow "Bazi E-Book 95"
+    with draft A, and replace its three-card sample carousel with the four
+    book pages the team chose, shown so a customer can open each one full
+    screen.
+  scope:
+    - "Plan 0.1 with one slice. Opening only; no slice is authorized by this event."
+
+outcome:
+  status: opened
+  decision: >-
+    The owner relayed the team's answer on 2026-11-09: draft A for the first
+    message and four pages (both contents pages, chapter 9 page 57, chapter
+    11 page 67) in place of the carousel, which customers cannot tap to
+    enlarge. He asked for a parallel workstream beside the ManyChat e-book
+    work ("เปิด workstream ขนานขึ้นมากับ manychat อีกตัวได้เลย ตัวนี้น่าจะจบเร็วกว่า").
+    The agent recommends image messages over gallery cards because Messenger
+    crops card images to 1.91:1 or 1:1 and a card tap opens a link, not the
+    image. That choice, the exception to the live-flow rule of
+    mumate-manychat-ebook-001 plan 0.4, and who publishes wait for the
+    slice 1 decision.
+
+evidence:
+  plan: workstreams/mumate-manychat-copy-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "c84eead3fcdf645da9bbaf4ac4144d178f17fc6d"
+    branch: hq/20261103
+    working_tree: this-decision-only
+  related:
+    - workstreams/mumate-manychat-ebook-001/PLAN.md
+
+unresolved:
+  - "The team's check mark sits under the current-message column of the samples image; draft A is the reading the owner's message gives, to be confirmed in the slice 1 decision."
+  - "That a Messenger image message opens full screen on tap is the agent's understanding, not yet observed; the slice 1 Preview checks it."
+  - "mumate-manychat-ebook-001 slice 4 compares the live flow with the 2026-11-08 export; after this work the first message and step 2a will differ."
+  - "The promotion date in draft A is 11 Nov; the team owns it."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Get the owner's decision on slice 1: draft A confirmed, image messages,
+    the live-flow exception limited to text and images, and whether the
+    agent or the team publishes.
+  acceptance_check:
+    - "A decision event with outcome.status decided, plan_revision 0.1 and slice 1."
