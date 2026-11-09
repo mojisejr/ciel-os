@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20261109T234512_mumate_manychat_ebook_slice3_gate1_checkpoint
+type: closeout
+recorded_at: "2026-11-09T23:45:12+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Checkpoint inside slice 3 (release to production): the app's way back,
+    a deploy without 502s, the ebook production buttons, and gate 1 (the
+    staging rehearsal) done; gates 2 to 5 left. The owner stopped for the
+    night ("หยุดก่อน พรุ่งนี้มาต่อ ครับ closeout ไว้").
+  scope:
+    - "mumate-infra PRs 65 and 66 (merged by the owner) and 67 (open); ManyChat [TEST] flows; staging only. Production is untouched."
+
+outcome:
+  status: in-progress
+  slice: "3"
+  completed:
+    - "Found and fixed while building the way back: deploy.sh kept one .env.last-good for every profile, so each ebook deploy overwrote fe/bazi's way back and a later rollback --profile full reported ok and changed nothing. It had already happened on staging. mumate-infra PR 65 gives each profile its own file (.env.last-good, .env.last-good.ebook), and rollback.sh puts back only its own profile's tags. scripts/ebook-rollback.test.sh has 17 checks, and 10 of them fail against the old main."
+    - "PR 65 also adds promote-ebook-production and rollback-ebook-production, through scripts/ebook-release.sh. Gates: staging runs a full-SHA build that is healthy and reports the same SHA in health; the commit is on mumate-ebook-bot main; it ran ok on staging for at least 10 minutes; production has env/ebook.env; production is all ✅. Neither button ever names fe or bazi. scripts/ebook-release.test.sh has 21 checks."
+    - "/ebook-api retries for 8 s while ebook is recreated (lb_try_duration). PR 66 moved the route to caddy/ebook-route.caddy, so the Caddyfile is byte-identical to a92d303. Locally, a 5 s outage of a stand-in upstream gave 20 of 40 requests a 502 on the old route and 0 of 40 on the new one. On staging after a Caddy recreate, a real ebook recreate gave 40 of 40 a 200, the slowest in 0.7 s."
+    - "Staging Caddy runs the new config (docker compose up -d --force-recreate caddy). The site was unreachable for about 1 s: 4 of 60 probes failed, all within 23:39:33-34 +07:00."
+    - "Gate 1, the rehearsal on staging. '[TEST] E-Book 95' now handles a received slip as the live flow does: External Request, tag bot_slip_sent (created through the API in place of eb_slip_sent), mark the conversation open, and notify by email to the owner only. App down (ebook stopped, /ebook-api 503): after mmbot test and a GIF, the reply still arrived at 23:29, bot_slip_sent and bot_slip were set, ebook recorded nothing, and the owner confirmed the email. App up: the owner sent a real 1-baht slip; order 6 came back 200200, paid and delivered within 5 s, and the owner confirmed the delivery and the email."
+    - "Learned for the live edit: when ManyChat's External Request fails, the actions after it in the same step still run. Drag-to-reorder of actions did not register in the builder, so in the rehearsal flow External Request stayed first."
+    - "Checks: mumate-infra scripts/test-all.sh 23 files, 0 failed; bin/caddy-validate.sh staging and production both valid."
+  deviations:
+    - "PRs 65 and 66 said a `caddy reload` applies the route without a blip. The Caddyfile sets `admin off`, so reload is refused (connection refused on :2019), as runbook 01 already said further down. PR 67 corrects the runbook: a change applies only by recreating Caddy, about 1 s of downtime."
+    - "bot_beta for now is the owner alone (his choice, 2026-11-09); teammates are added later by having them message 'beta test' first."
+  not_verified:
+    - "ManyChat's External Request timeout (about 10 s from research) is not measured; the 8 s retry assumes it."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "3"
+  decision: memory/events/2026/11/09/20261109T230410_mumate_manychat_ebook_rev05_slice3_authorized.yaml
+  repository:
+    head: "719c8adb831fe272213d0494167fb993230aefe0"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  source:
+    - "mumate-infra origin/main df2baafc30b0b93fd51064ae49e837c86c46cd6d (PRs 65 and 66); PR 67 open on fix/runbook-caddy-admin-off"
+    - "mumate-ebook-bot origin/main 43c688d670979c568b0cad6492b96742dbe18dc0 (unchanged in slice 3 so far)"
+  related:
+    - memory/events/2026/11/09/20261109T222818_mumate_manychat_ebook_slice2_delivered.yaml
+
+unresolved:
+  - "Gate 2 needs the owner's word at each production write: a Supabase role limited to the ebook_* tables (recommended over fe's key), migrations 0001 and 0002 through bin/prod-sql.sh, env/ebook.env on mumate-prod-1 through bin/env-set.sh (price 95, a new hook secret, EBOOK_ALLOWLIST the owner only, EBOOK_OPEN unset), the Slip2Go IP whitelist (165.22.50.201, 178.128.107.239, then remove *), pressing promote-ebook-production, and one Caddy recreate on production at a time he picks (about 1 s of downtime)."
+  - "Gates 3 to 5 remain: rollback drill on production, bot_beta with a real 95-baht purchase, open to all after the Slip2Go and ManyChat Pro packages are paid."
+  - "The live-flow edit must also tell the admin whether the bot delivered: plan to add a notify action to the delivery and notice flows. The ManyChat retry text on the slip question should be Thai."
+  - "Rotate the staging EBOOK_HOOK_SECRET and the Slip2Go key (both appeared in agent screenshots) before production."
+  - "Staging .env.last-good still holds the tags an ebook deploy wrote over it; the next fe deploy writes a correct one. Workaround until then: name the older pair in the release workflow instead of rolling back on staging."
+  - "staging-pair.sh counts an ebook deploy as 'staging changed', so an ebook merge restarts the fe/bazi 10-minute promote soak; it only delays a promote."
+  - "Slip2Go trial ends 2026-11-16 23:59 and ManyChat Pro trial 2026-11-17."
+  - "Merged remote branches feat/ebook-production and fix/ebook-route-in-caddy-dir (mumate-infra) are still on GitHub."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In a fresh session, after the owner merges mumate-infra PR 67: gate 2 of
+    slice 3 — prepare the ebook database role and migration SQL for the
+    owner's word, then env/ebook.env on production, the Slip2Go whitelist,
+    promote-ebook-production and the one Caddy recreate.
+  acceptance_check:
+    - "Slice 3 acceptance gate 2 in workstreams/mumate-manychat-ebook-001/slices/3.md."
