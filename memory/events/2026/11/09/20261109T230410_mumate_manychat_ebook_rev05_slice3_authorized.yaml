@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20261109T230410_mumate_manychat_ebook_rev05_slice3_authorized
+type: decision
+recorded_at: "2026-11-09T23:04:10+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Raise the plan to revision 0.5 so the production release comes before the
+    paid/unpaid metrics, and authorize the release as slice 3.
+  scope:
+    - "PLAN.md gains a revision 0.5 section and a swapped slice index; slices/3.md is now the production release (was slices/4.md) with app rollback first and five test gates; slices/4.md is now the metrics slice (was slices/3.md) plus one read-only coupon-use number."
+    - "Plan 0.5 slice 3 as written in workstreams/mumate-manychat-ebook-001/slices/3.md."
+  out_of_scope:
+    - "Slice 4 (metrics); opening the bot to every customer before the owner says so and the packages are paid; personal links, PDF stamping, slip-image retention and PDPA wording."
+
+outcome:
+  status: decided
+  slice: "3"
+  decision: >-
+    The agent proposed releasing before metrics: the goal is that the team stops
+    checking slips by hand, both trials end on 2026-11-16 and 2026-11-17, the
+    metrics page needs real customers to show anything, and order data is kept
+    since slice 2. The owner asked what the release is and confirmed that admins
+    can still deliver by hand ("admin ยังสามารถส่งของให้แบบ manual ได้อยุ่").
+    He then wrote "โอเค งั้นเอาตามคุน ทำ slice 4 ก่อน", asked the agent to check
+    backups and rollback and how the release is tested, and answered the
+    proposal "plan 0.5 with you and the team as bot_beta" with "Yes, record 0.5".
+    The slices are renumbered, not reordered, because the last indexed slice
+    is the final one.
+  conditions:
+    - "Every production write (migration, env, promote, publishing the live flow, opening to all) still waits for the owner's word at that step."
+    - "Gates in slices/3.md run in order, and a failed gate stops the release with customers on the current flow."
+  readiness_checked:
+    - "Production database (Supabase) backup: mumate-backup.timer on mumate-2 is active; bin/backup-age.sh reports the last dump mumate-2-20261109T020246Z.sql.gz, 13 h old, OK."
+    - "The migration only adds this workstream's tables; undoing it drops them."
+    - "A stopped backup of the live flow exists: '[BACKUP 2026-11-09] Bazi E-Book 95 — ห้ามเปิด' (content20261109125157_473586), recorded by mumate-manychat-copy-001."
+    - "Not ready: release.yml, promote-production.yml and rollback-production.yml handle FE_TAG and BAZI_TAG only; mumate-prod-1 has no EBOOK_TAG. Slice 3 builds this first."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "3"
+  repository:
+    head: "abcc1f99a59363597cdee60f43a81dafa4a2cbdb"
+    branch: hq/20261103
+    working_tree: this-decision-and-plan-revision
+  related:
+    - memory/events/2026/11/09/20261109T222818_mumate_manychat_ebook_slice2_delivered.yaml
+    - memory/events/2026/11/09/20261109T224616_mumate_manychat_copy_slice1_delivered.yaml
+
+unresolved:
+  - "Slip2Go trial ends 2026-11-16 23:59 and ManyChat Pro trial 2026-11-17; the owner pays before opening to all."
+  - "The bot_beta team members beyond the owner are not named yet."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    In a fresh session, start slice 3 with app rollback: teach release,
+    promote-production and rollback-production about ebook, and close the
+    6-second deploy gap, on a mumate-infra topic branch with tests.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/mumate-manychat-ebook-001/slices/3.md."
