@@ -1,0 +1,70 @@
+schema_version: ciel.event.v0.1
+id: evt_20261109T101428_mumate_manychat_ebook_slice1_delivered
+type: closeout
+recorded_at: "2026-11-09T10:14:28+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Deliver slice 1: the mumate-ebook-bot skeleton, its staging path in
+    mumate-infra, and a [TEST] ManyChat automation, with the live
+    "Bazi E-Book 95" flow left untouched.
+  scope:
+    - "mumate-ebook-bot PR 1 and mumate-infra PR 63, both merged by the owner; staging only."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  completed:
+    - "mumate-ebook-bot is public on the owner's word ('Public'). origin/main adc341c merges PR 1: the ManyChat hook that answers at once and works afterwards, a hook-secret check, an allowlist outside production, the ebook_bot_event table, and an image tagged by commit."
+    - "mumate-infra origin/main f5b04fc merges PR 63: service ebook in its own compose profile, the /ebook-api/ route on app.staging.mumate.co, its own staging follower and timer, a deploy.sh guard for EBOOK_TAG, a read-only bin/ebook.sh status, and env/ebook.env.example."
+    - "Staging followed main by itself: on 2026-11-08 17:42Z the follower deployed adc341c, reported fe, bazi and backup healthy, and posted 'ebook staging พร้อมทดสอบ' to Discord."
+    - "The owner built '[TEST] E-Book 95' with the agent in the ManyChat builder. It fires on the exact message 'mmbot test' and sends an External Request to the staging hook. The owner pasted the hook secret himself, and the agent never displayed it."
+    - "Round trip on 2026-11-09: the owner's first 'mmbot test' was recorded as blocked (03:06Z) and he got no reply. The agent then set EBOOK_ALLOWLIST to his subscriber id through bin/env-set.sh, without displaying it, and recreated ebook. His second message was recorded as received and then replied (03:08Z), and he saw the staging reply in Messenger. bin/ebook.sh status shows blocked 2, received 3, replied 1 over 24 h."
+    - "The live flow is unchanged. A fresh cleaned export of 'Bazi E-Book 95' on 2026-11-09 has the same stats-stripped hash (cb35c71c0a33b98d) as the 2026-11-08 baseline, overall and node by node. The flow is active with no unpublished changes. Only counts moved: eb_slip_sent went from 134 to 135."
+    - "On merged main, the app's tests pass (13 pass, 0 fail) and mumate-infra scripts/test-all.sh passes (20 files, 0 failed, real checkout unchanged). A scan of both repos for 64-hex values or filled MANYCHAT_API_KEY / EBOOK_HOOK_SECRET lines finds none."
+  deviations:
+    - "Health is at /ebook-api/health, not /api/health; this follows the path decision in the slice 1 authorization."
+    - "[TEST] E-Book 95 is a new, minimal automation, not a Duplicate of the live flow. It uses no tag or field yet, so no bot_ items exist."
+    - "release, promote-production and rollback do not know ebook yet. Only the staging follower and the deploy.sh guard do. Production wiring is left to slice 4."
+  not_verified:
+    - "Whether ebook survives an fe or bazi staging deploy. fe was last created 2026-11-07, before ebook first ran, so no such deploy has happened yet."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  decision: memory/events/2026/11/09/20261109T001506_mumate_manychat_ebook_slice1_authorized.yaml
+  repository:
+    head: "3d66490c8acd2c9e94bb8847f0ae45eb83514505"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261103
+  source:
+    - "mumate-ebook-bot origin/main adc341cb7509d04ed35475ee083d3363392208c3"
+    - "mumate-infra origin/main f5b04fca27b4d7ba7246b65b1233c21be758c853"
+  related:
+    - memory/events/2026/11/09/20261109T000840_mumate_manychat_ebook_prep_checkpoint.yaml
+
+unresolved:
+  - "Observe that ebook stays running after the next fe or bazi staging deploy. If it does not, the safe workaround is `docker compose --profile ebook up -d ebook` on mumate-2."
+  - "release, promote-production and rollback must learn ebook before slice 4 puts it on production."
+  - "'[TEST] E-Book 95' stays live on the Mumate.co page. It fires only on the exact text 'mmbot test', and only the owner is on the allowlist. Pause it in ManyChat if it is not wanted."
+  - "ManyChat Pro is a trial that ends 2026-11-17. External Request needs Pro, so the team must pay before then for slices 2 to 4."
+  - "Slice 2 needs owner inputs: Slip2Go account details, the PDF's location, prices and message wording, testers, and PDPA wording."
+  - "The merged remote branches feat/slice1-skeleton (mumate-ebook-bot) and feat/ebook-staging (mumate-infra) are still on GitHub."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decision on slice 2 of plan 0.2, together with its inputs (Slip2Go,
+    PDF location, prices and messages, testers, PDPA wording).
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/mumate-manychat-ebook-001/slices/2.md."
