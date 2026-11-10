@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261110T135254_mumate_manychat_ebook_slice4_parallel_and_prod_steps
+type: decision
+recorded_at: "2026-11-10T13:52:54+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Record the owner's approval to work on bazi-sft-dataset (bdash) in
+    parallel with mumate-pay-signals-001, and his word for two production
+    steps of slice 4: migration 0004 and one Caddy recreate on mumate-prod-1.
+  scope:
+    - "Slice 4 of plan 0.6 as authorized; only the new 'ขาย E-Book' bdash menu in bazi-sft-dataset, no change to the existing เงินเข้า page or the pay-signals work."
+    - "Production: 0004_ebook_funnel_event.sql through bin/prod-sql.sh (dry run, then commit); `docker compose up -d --force-recreate caddy` on mumate-prod-1 (about 1 s down)."
+  out_of_scope:
+    - "Publishing the live flow, and EBOOK_OPEN=1; each waits for the owner's word."
+
+outcome:
+  status: decided
+  slice: "4"
+  parallelism: approved
+  decision: >-
+    The agent asked for three approvals at once: parallel work with
+    mumate-pay-signals-001 on bazi-sft-dataset (that workstream's last record
+    is 2026-10-31, and this slice adds only a new menu), migration 0004 on
+    production, and the production Caddy recreate. The owner answered
+    "Approve all three".
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "4"
+  repository:
+    head: "760421f7b0a8453ddf1f9f75061309f60c3034e2"
+    branch: hq/20261103
+    working_tree: this-decision-only
+  related:
+    - memory/events/2026/11/10/20261110T131728_mumate_manychat_ebook_slice4_authorized.yaml
+    - memory/events/2026/11/10/20261110T135125_mumate_manychat_ebook_slice4_staging_rehearsal.yaml
+
+unresolved:
+  - "Slip2Go and ManyChat Pro trials end 2026-11-16 23:59 and 2026-11-17."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Apply 0004 on production and recreate its Caddy, then prepare the
+    live-flow draft and the bdash samples for the owner.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-manychat-ebook-001/slices/4.md."
