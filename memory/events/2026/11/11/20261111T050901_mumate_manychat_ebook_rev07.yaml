@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261111T050901_mumate_manychat_ebook_rev07
+type: decision
+recorded_at: "2026-11-11T05:09:01+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Revise the plan to 0.7: slice 4's bdash page follows the team's own
+    layout with the data the app already has, and a new slice 5 for Meta ads
+    data waits for the team's token. Slice 4 continues under 0.7.
+  scope:
+    - "PLAN.md revision 0.7, slices/4.md bdash section, new slices/5.md."
+  out_of_scope:
+    - "Starting slice 5; it needs the token and the owner's word. Pausing ads by itself needs a further word from the owner."
+
+outcome:
+  status: decided
+  slice: "4"
+  parallelism: approved
+  decision: >-
+    The owner showed the team's own funnel page for the E-Book ads and the
+    partner app pettagu's dashboard (date range, running ads with a pass or
+    fail status), asked for automatic pausing when cost passes a threshold and
+    for paid status sent back through an API, and decided: "เราทำส่วนที่เราทำได้และมีข้อมูลขึ้นไปก่อน
+    ใน slice 4 เพื่อให้ bdash ทำงานได้ก่อน จากนั้นเราค่อยมาต่อยอดส่วนที่ต้องใช้ token อีก slice นึง",
+    then "เริ่มทำตัวอย่างชุดใหม่เลยครับ แล้วเปิด slice ที่ต้องใช้ key เอาไว้รอเลยก็ได้ครับ". The agent
+    listed what to ask the team for once: a System User token with ads_read,
+    ads_management and page_events (business_management if needed), and the
+    ad account, page, dataset and app ids. Parallel work on bazi-sft-dataset
+    carries over from the slice 4 decision the owner approved ("Approve all
+    three"), since slice 4 still adds only a new bdash menu.
+  conditions:
+    - "New bdash samples in the team's layout are shown to the owner before the page is built."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  repository:
+    head: "20bd508c87ee07624600ed556ef3954de9c096d0"
+    branch: hq/20261103
+    working_tree: plan-revision-and-this-decision
+  related:
+    - memory/events/2026/11/10/20261110T135254_mumate_manychat_ebook_slice4_parallel_and_prod_steps.yaml
+    - memory/events/2026/11/10/20261110T211851_mumate_manychat_ebook_slice4_opened_to_all.yaml
+
+unresolved:
+  - "Team supplies the token and ids, confirms the threshold (45 baht or 50% of the price), the minimum spend before judging, the pause level, and where the VDO course income comes from."
+  - "page_events needs Advanced Access for the app; Meta review may take time."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build the new bdash 'ขาย E-Book' samples in the team's layout and show
+    them to the owner.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-manychat-ebook-001/slices/4.md."
