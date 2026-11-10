@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261110T145839_mumate_manychat_ebook_slice4_live_draft_ready
+type: closeout
+recorded_at: "2026-11-10T14:58:39+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Checkpoint: the slice 4 live-flow draft is fully built and compared with
+    the published flow. It waits for the owner before publishing; customers
+    still get the published flow.
+  scope:
+    - "ManyChat 'Bazi E-Book 95' (content20261103141217_754169), draft only, edited in the Basic Builder."
+
+outcome:
+  status: in-progress
+  slice: "4"
+  completed:
+    - "FU1 is two messages: the approved text with 💳 ยังไม่สะดวกโอน / 🤔 ขอคิดดูก่อน / 💰 ราคายังไม่โดน, then 'หรือ' with 📱 อยากจ่ายด้วย QR / 🏦 ดูวิธีโอนอีกครั้ง (to 2b) / ❓ มีคำถาม (to the FAQ menu). FU1's slip question moved into a new step 'FU1 รอสลิป' (image into ebook_slip, success to Actions #12, 2 retries, the team's retry text, skip 'มีคำถาม', no reply 4 h to FU2, then Condition as the team's other slip steps do). Actions #12 holds the same three actions as Actions #3."
+    - "Each reason sets bot_funnel_step = reason and bot_funnel_value (not_now, think, price, want_qr), sends its approved short reply (🤔 adds a 📖 button to 2a), then 'ส่ง event เหตุผล' (the External Request) and back to 'FU1 รอสลิป', so FU2 and FU3 still follow."
+    - "Events: 'ส่ง event ทักเข้า' after step 1 (entry); 'ส่ง event กดซื้อ' (buy) in front of 2b on the 9 🛒 buttons (step 1, 2a, FAQ1-4, FU2, FU3); 'ส่ง event ดูตัวอย่าง' (sample) in front of 2a on step 1's and the 🤔 reply's 📖; the FAQ menu's 5 choices set faq with beginner, file, app, delivery or admin, and FAQ1-4 and Actions #1 (after FAQ5) continue to 'ส่ง event ทั่วไป'. FU1's 🏦 is not counted as a buy. The FAQ menu itself sends no event."
+    - "Every External Request is a copy of Actions #7: POST https://bazichart.mumate.co/ebook-api/manychat/event, header X-Ebook-Hook-Secret = {bot_hook_secret_prod}, body subscriber_id, step and value from the two user fields."
+    - "Draft against published, from the builder's own getFlowData response: every difference is one listed here. Message texts, FU2/FU3, the FAQ answers, 2a/2b content, the question settings and the team's Actions steps are unchanged."
+  not_verified:
+    - "No contact has walked this draft. Nothing is published."
+    - "entry events answer 400 on production until mumate-ebook-bot PR 6 (entry without a value) is merged and promoted; the customer flow does not wait on that answer."
+    - "Whether a pending slip wait is replaced when a contact presses a reason button and FU1 รอสลิป starts again; expected from ManyChat's one-question-at-a-time rule, not observed."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "4"
+  decision: memory/events/2026/11/10/20261110T141150_mumate_manychat_ebook_slice4_followups_unlinked.yaml
+  repository:
+    head: "1c161f4558a0101202b715559124c79f7b73075d"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+
+unresolved:
+  - "Owner reviews the draft (ManyChat Preview sends the draft to his own Messenger) and says whether to publish it."
+  - "mumate-ebook-bot PR 6 waits for the owner's merge, then promote on his word."
+  - "FU2 and FU3 still say 'ถึง 11 พ.ย.'; the team will reword them and the owner will say."
+  - "bdash 'ขาย E-Book' samples are not started."
+  - "Before opening to everyone: Slip2Go IP whitelist and key rotation, staging hook secret rotation, team email from the delivery flow, both packages (Slip2Go 2026-11-16 23:59, ManyChat Pro 2026-11-17)."
+  - "If this draft must be abandoned: discard the draft in ManyChat (the published flow is unchanged), or restore from '[BACKUP 2026-11-10] Bazi E-Book 95 — ห้ามเปิด'."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner previews the draft and decides on publishing; meanwhile prepare the
+    bdash samples.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-manychat-ebook-001/slices/4.md."
