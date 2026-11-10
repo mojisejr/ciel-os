@@ -137,6 +137,7 @@
 |---|---|---|
 | `mumate-infra` | service ตัวที่สาม, Caddy, env, release และ promote, เครื่องมือดูแลใน `bin/` | `/Users/non/ghq/github.com/mojisejr/mumate-infra` |
 | `mumate-ebook-bot` | ตัวแอป (repo สาธารณะ, เจ้าของเลือก 2026-11-09) | `/Users/non/ghq/github.com/mojisejr/mumate-ebook-bot` |
+| `bazi-sft-dataset` | bdash เมนู "ขาย E-Book" (slice 4, เจ้าของเลือก 2026-11-10) แตก branch จาก `origin/pdf-dev` | `/Users/non/ghq/github.com/mojisejr/bazi-sft-dataset` |
 | `ciel-os` | แผนนี้และ event | . |
 
 ## หลักฐานตอนเปิด (2026-11-08)
