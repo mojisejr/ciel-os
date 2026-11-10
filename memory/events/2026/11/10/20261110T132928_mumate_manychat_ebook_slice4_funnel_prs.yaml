@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261110T132928_mumate_manychat_ebook_slice4_funnel_prs
+type: closeout
+recorded_at: "2026-11-10T13:29:28+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Checkpoint in slice 4: the funnel event endpoint and its no-wait Caddy
+    route are ready for the owner's merge. Nothing ran on staging or
+    production.
+  scope:
+    - "mumate-ebook-bot PR 5 (feat/funnel-events) and mumate-infra PR 71 (feat/ebook-event-no-wait), both open."
+
+outcome:
+  status: in-progress
+  slice: "4"
+  completed:
+    - "mumate-ebook-bot PR 5:"
+    - "- POST /ebook-api/manychat/event {subscriber_id, step, value?} accepts only the fixed list in src/funnel.ts: entry (comment, keyword); sample; faq (menu, beginner, file, app, delivery, admin); buy; reason_asked; reason (not_now, want_qr, think, price, question, howto)."
+    - "- Same secret as the other routes; no allowlist, since it only stores data. It answers at once, and a database error is logged as funnel_error."
+    - "- Migration 0004_ebook_funnel_event.sql: additive, CHECK on step and value, two indexes, SELECT and INSERT for ebook_app."
+    - "- Checks: bun test 62 pass, 2 skip, 0 fail; tsc clean. Against a throwaway Postgres 16 as ebook_app: insert works, an unknown step fails the CHECK, DELETE is refused."
+    - "mumate-infra PR 71: caddy/ebook-route.caddy gets `handle /ebook-api/manychat/event` with no retry, dial 1 s and answer limit 3 s. Locally with ebook removed, the event path answered 502 in 0.04 s and the slip path still waited 8.2 s; with ebook up, everything answered 200. Both hosts validate; test-all 25 files, 0 failed."
+  not_verified:
+    - "Neither change is deployed. 0004 is not applied anywhere, and no flow calls the event route yet."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "4"
+  decision: memory/events/2026/11/10/20261110T131728_mumate_manychat_ebook_slice4_authorized.yaml
+  repository:
+    head: "a1f2cca82ecfa91a1ad8c58d541c379f0e08c83b"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+
+unresolved:
+  - "After both merges: apply 0004 on pgstaging; recreate staging Caddy (about 1 s down); wire and rehearse the events and the FU1 reason buttons in a [TEST] flow on staging; then 0004 on production and the live-flow edit, each on the owner's word."
+  - "Next independent step: register bazi-sft-dataset as a project and make 2-4 rendered samples of the 'ขาย E-Book' bdash menu (390/1280, light/dark) for the owner to pick."
+  - "Slip2Go and ManyChat Pro trials end 2026-11-16 23:59 and 2026-11-17."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner merges mumate-ebook-bot PR 5 and mumate-infra PR 71; meanwhile the
+    agent registers bazi-sft-dataset and prepares the bdash samples.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-manychat-ebook-001/slices/4.md."
