@@ -1,0 +1,64 @@
+schema_version: ciel.event.v0.1
+id: evt_20261110T103101_mumate_manychat_ebook_slice3_gate2_prod_db_env
+type: closeout
+recorded_at: "2026-11-10T10:31:01+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Record the production writes of slice 3 gate 2, steps 1 to 4: ebook's
+    tables, its own database role and grants, and its env file on
+    mumate-prod-1. The bot does not run on production yet.
+  scope:
+    - "Owner's word, 2026-11-10: 'ตอนนี้คุนลุย 1 - 4 บน prod ได้เลย' (steps 1-4 as listed in the chat: migrations 0001 and 0002, role ebook_app, grants 0003, env)."
+    - "Merged before the writes: mumate-infra PR 68 (db-role.sh, the ebook alert) and mumate-ebook-bot PR 4 (0003 grants)."
+
+outcome:
+  status: in-progress
+  slice: "3"
+  completed:
+    - "mumate-prod-1: git pull of mumate-infra main from 05c86b6 to ca04c5a. Files only; fe, bazi, caddy and alloy kept running (fe up 15 h, bazi 2 days, caddy 3 weeks)."
+    - "Step 1: migrations 0001_ebook_bot_event.sql and 0002_ebook_order.sql on production Supabase through bin/prod-sql.sh, dry run then --commit, both result|committed. Before: 0 ebook_* tables. After: ebook_bot_event (7 columns), ebook_order (18), ebook_order_log (7)."
+    - "Step 2: env/ebook.env created empty with mode 600, then `bash bin/db-role.sh ebook_app env/ebook.env EBOOK_DATABASE_URL`: the dry run rolled back, then --commit gave result|committed, env_set|added (backup ebook.env.bak-20261110T032900Z), whoami|ebook_app and result|role_ready. The role logs in through the Supabase pooler; its password exists only in that env file."
+    - "Step 3: 0003_ebook_app_grants.sql, dry run then committed. Checked as the postgres role: ebook_app holds INSERT+SELECT on ebook_bot_event and ebook_order_log and INSERT+SELECT+UPDATE on ebook_order. Across all schemas it can SELECT exactly 5 relations: those 3 plus extensions.pg_stat_statements and pg_stat_statements_info, which Supabase grants to every role. has_table_privilege(ebook_app, public.\"user\", SELECT) = false. Logged in as ebook_app: ebook_order 0 rows, ebook_bot_event 0 rows; selecting from \"user\" failed."
+    - "Step 4: ten keys set one at a time with bin/env-set.sh from stdin, values never displayed. Seven come from .assets/mumate/manychat/.env: MANYCHAT_API_KEY, EBOOK_HOOK_SECRET (from EBOOK_HOOK_SECRET_PRODUCTION, new for production), SLIP2GO_API_URL, SLIP2GO_SECRET_KEY, EBOOK_RECEIVER_ACCOUNT_TYPE, EBOOK_RECEIVER_ACCOUNT_NUMBER and EBOOK_PRICE. EBOOK_FLOW_DELIVER and EBOOK_FLOW_NOTICE are the ids staging uses. EBOOK_ALLOWLIST was piped from staging. Short-hash comparison with staging: every key equal except EBOOK_HOOK_SECRET (new) and EBOOK_PRICE (95 against 1); both files mode 600. EBOOK_OPEN is not set."
+    - "Config check: `docker compose --profile ebook run --rm --no-deps` with the app image 2600201 ran loadConfig() only and printed config|ok, env|production, open|false, allowlist_size|1, slip|on, price|95. No container remained. The image is now pulled on mumate-prod-1."
+  deviations:
+    - "bin/db-role.sh was added in PR 68 without the executable bit, so it ran as `bash bin/db-role.sh`. mumate-infra PR 69 marks it executable."
+  not_verified:
+    - "The app has not run on production; EBOOK_TAG is unset there and promote-ebook-production has not been pressed."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "3"
+  decision: memory/events/2026/11/09/20261109T230410_mumate_manychat_ebook_rev05_slice3_authorized.yaml
+  repository:
+    head: "8b486c334430680911d03ce810cf8f7a14c82c82"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  source:
+    - "mumate-infra origin/main ca04c5a (PR 68); PR 69 open on fix/db-role-executable"
+    - "mumate-ebook-bot origin/main 2600201079875ed127e0a6cc9bb29685d3f06dd0 (PR 4)"
+  related:
+    - memory/events/2026/11/09/20261109T234512_mumate_manychat_ebook_slice3_gate1_checkpoint.yaml
+
+unresolved:
+  - "Gate 2 steps 5 to 7 wait for the owner: the Slip2Go IP whitelist (165.22.50.201, 178.128.107.239, then remove *), pressing promote-ebook-production, and one Caddy recreate on mumate-prod-1 at a time he picks (about 1 s of downtime). Then the gate 2 checks: bazichart.mumate.co/ebook-api/health reports production with db ok, and ops-status shows ebook ✅."
+  - "Undoing steps 1 to 4, if ever needed: drop the three ebook_* tables (all empty), `DROP ROLE ebook_app`, and remove env/ebook.env. Nothing else on production was changed."
+  - "Rotate the staging EBOOK_HOOK_SECRET and the Slip2Go key before gate 4 (both appeared in agent screenshots)."
+  - "Slip2Go trial ends 2026-11-16 23:59 and ManyChat Pro trial 2026-11-17."
+  - "hq/20261103 is not pushed; the owner said to push it only when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner sets the Slip2Go IP whitelist and merges mumate-infra PR 69; then,
+    on his word, press promote-ebook-production and recreate Caddy on
+    mumate-prod-1 at his chosen time, and check gate 2.
+  acceptance_check:
+    - "Slice 3 acceptance gate 2 in workstreams/mumate-manychat-ebook-001/slices/3.md."
