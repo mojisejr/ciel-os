@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261110T111340_mumate_manychat_ebook_prod_db_session_pooler
+type: closeout
+recorded_at: "2026-11-10T11:13:40+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Record a blocking defect found before the owner's gate 4 purchase, and
+    its minimum fix on production: the bot could not use its database.
+  scope:
+    - "Correction inside step 4, which the owner authorized ('ลุย 1 - 4 บน prod'): one env key on mumate-prod-1 and a recreate of the ebook container only."
+
+outcome:
+  status: in-progress
+  slice: "3"
+  completed:
+    - "Found when the owner asked whether everything was ready: production /ebook-api/health said db down, and the ebook log repeated `prepared statement ... does not exist` on every 60 s retry tick. prod-sql.sh as ebook_app still worked (psql uses unnamed statements)."
+    - "Cause: db-role.sh copied bazi's URL, which is on Supabase's pooler port 6543 (transaction mode, as are fe's and bazi's). Bun SQL prepares statements by default, and in that mode they can land on another server connection. Staging talks to Postgres directly, so it never showed. Reproduced locally with pgbouncer 1.26.1 (max_prepared_statements=0) in front of Postgres 16, using two Bun SQL pools and 60 parallel prepared queries: transaction mode failed 22 of 60; with prepare:false, 1 of 60 still failed; session mode failed 0 of 180 and test/pg.test.ts passed."
+    - "Fix on mumate-prod-1: EBOOK_DATABASE_URL switched from the pooler's :6543 to :5432 (session mode), same role and password, rewritten on the host and written by bin/env-set.sh (env_set|replaced, length 163, no value displayed). whoami|ebook_app through prod-sql.sh. Then `docker compose --profile ebook up -d --force-recreate --no-deps ebook`; fe (16 h), bazi (2 days) and caddy kept running. Health went back to env production, db ok, and over the next ~3 minutes the log shows only `listening`, with no retry_error."
+    - "mumate-infra PR 70 makes db-role.sh write 5432 for a Supabase pooler URL on 6543, with a test; scripts/test-all.sh 25 files, 0 failed."
+  not_verified:
+    - "No production slip has reached the bot since the fix (events 0); the owner's gate 4 purchase is the first end-to-end proof."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "3"
+  decision: memory/events/2026/11/09/20261109T230410_mumate_manychat_ebook_rev05_slice3_authorized.yaml
+  repository:
+    head: "9a80588d9ad1bae9f82c57d40f30b4b9d3ecf7cc"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  source:
+    - "mumate-infra PR 70 open on fix/db-role-session-pooler"
+  related:
+    - memory/events/2026/11/10/20261110T104920_mumate_manychat_ebook_slice3_gates2_3_live_flow.yaml
+
+unresolved:
+  - "Between the live-flow publish (about 10:47 +07:00) and this fix (about 11:05), a slip reaching the bot would have failed its database write. Production recorded 0 events, so no customer was affected, and the live flow's own steps ran regardless."
+  - "Gate 4 still waits for the owner's own 95-baht purchase through the live flow; the team should know it is a test."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner merges mumate-infra PR 70 and buys once for real through the live
+    flow; the agent checks the order and delivery on production and records
+    gate 4.
+  acceptance_check:
+    - "Slice 3 acceptance gate 4 in workstreams/mumate-manychat-ebook-001/slices/3.md."
