@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261111T061232_mumate_manychat_ebook_slice4_bdash_production
+type: closeout
+recorded_at: "2026-11-11T06:12:32+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Record that the bdash 'ขาย E-Book' menu is on production. The owner merged
+    PR 71 and said to skip his staging check and put it on production
+    ("คุนเอาขึ้น prod ให้ผมเลย").
+  scope:
+    - "bazi-sft-dataset PR 71 merged as 366b943 on pdf-dev; mumate-infra promote-production runs 42918879447 and 42920420398."
+
+outcome:
+  status: in-progress
+  slice: "4"
+  completed:
+    - "Read-only access check with the owner's word: bazi connects as postgres on production and mumate on staging; each owns ebook_order, ebook_funnel_event, activity_coupon and activity_coupon_redemption and can SELECT them; EBOOKPULS95 exists on production. No grant needed. Only the role name was printed."
+    - "Staging followed pdf-dev by itself at 22:54:40Z: bazi 366b943-staging healthy, fe unchanged."
+    - "promote-production run 42918879447 stopped at its gate (staging changed 0 min ago; it waits 10 min) and touched nothing. Run 42920420398 at 23:06Z passed: production bazi 366b943 healthy, fe 9c456e23 and ebook 3e34c49 unchanged and not restarted (fe up 41,500 s), no error lines in bazi's log in the first 5 min."
+  not_verified:
+    - "The page itself on production: bdash sits behind the owner's login, and the agent did not bypass it."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  decision: memory/events/2026/11/11/20261111T050901_mumate_manychat_ebook_rev07.yaml
+  repository:
+    head: "c5777d765d4733c275868c705ad1c3cef243f2c3"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  projects:
+    bazi-sft-dataset:
+      merge: "366b9437e66511de09eccb49274c5877fff6513b"
+      pull_request: "mojisejr/bazi-sft-dataset#71 (merged, base pdf-dev)"
+
+unresolved:
+  - "Owner opens bdash.staging.mumate.co/bdash/ebook (production) and says whether the page and numbers look right; then slice 4 closes."
+  - "Delete the samples page and scratch files after the slice closes (owner confirms the artifact delete); remove the bazi-bdash-ebook worktree."
+  - "Messages still say 'ถึง 11 พ.ย.' (step 1, 2b, FU2, FU3)."
+  - "Owner pays Slip2Go (2026-11-16 23:59) and ManyChat Pro (2026-11-17)."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner checks the ขาย E-Book page on production; then record the slice 4
+    delivery closeout.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-manychat-ebook-001/slices/4.md."
