@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261110T211851_mumate_manychat_ebook_slice4_opened_to_all
+type: closeout
+recorded_at: "2026-11-10T21:18:51+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Record the owner's go ("publish เลยครับถ้าทุกอย่างพร้อม ... เปิดได้เลย"):
+    the team email, the live-flow publish and EBOOK_OPEN=1 on production.
+    The bot now checks slips and delivers for every customer.
+  scope:
+    - "ManyChat '[TEST] E-Book delivery' (content20261109043514_286105) and 'Bazi E-Book 95' (content20261103141217_754169); env/ebook.env on mumate-prod-1; the Slip2Go IP whitelist."
+
+outcome:
+  status: in-progress
+  slice: "4"
+  completed:
+    - "Slip2Go IP whitelist: 165.22.50.201 (mumate-2) and 178.128.107.239 (mumate-prod-1) added at 21:04; '*' kept on the owner's word ('ยังไม่ต้องลบ เดี๋ยวระบบนิ่งแล้วมาลบอีกที'), so the key still works from any IP."
+    - "Delivery flow published with one new Actions step after the customer message: Notify Assignees by email to the whole team (2 people), text '✅ บอทตรวจสลิปและส่ง E-Book + โค้ดให้ {{full_name}} แล้ว ไม่ต้องส่งซ้ำ', with the View in Inbox button, as the team's existing slip email is set."
+    - "Live flow published. The first publish was refused: 'Message reply to comment can't be linked to Next step', because step 1 is sent as a private reply to a comment. Step 1's link to 'ส่ง event ทักเข้า' was removed and the publish went through; ManyChat dropped the unattached step. Read back after publish: 9 🛒 buttons lead to 'ส่ง event กดซื้อ' then 2b; 2b → Condition; Actions #7 → FU1 30 นาที → FU1 รอสลิป → Condition; 'ส่ง event เหตุผล' → FU1 รอสลิป."
+    - "env/ebook.env on mumate-prod-1: EBOOK_OPEN added through bin/env-set.sh (backup ebook.env.bak-20261110T141824Z, length 1), then `docker compose --profile ebook up -d --no-deps ebook`. The new container logged env production, allowlist 1, open true; health ok, db ok, sha 3e34c49. ops-status: fe, bazi and ebook ✅; fe and bazi were not restarted."
+  deviations:
+    - "No entry event: the private-reply first message cannot lead to a step, so 'ทักมา' is not counted by the flow. mumate-ebook-bot PR 6 (entry without a value) is not needed for this flow while that holds."
+  not_verified:
+    - "No customer other than the owner has been delivered by the bot yet, and the team has not yet received the 'bot delivered' email from a real order."
+    - "No contact has walked the published FU1 reasons; the funnel rows on production have not been read (needs the owner's word)."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "4"
+  decision: memory/events/2026/11/10/20261110T141150_mumate_manychat_ebook_slice4_followups_unlinked.yaml
+  repository:
+    head: "c99b56a456c6633f07c9ee0ed3a28a818ccee4b6"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+
+unresolved:
+  - "Rollback: `bin/env-set.sh env/ebook.env EBOOK_OPEN --unset` then recreate ebook; the flow rolls back from '[BACKUP 2026-11-10] Bazi E-Book 95 — ห้ามเปิด'."
+  - "Messages still say 'ถึง 11 พ.ย.' (step 1, 2b, FU2, FU3); from 12 Nov customers see a passed date until the team rewords them."
+  - "Remove '*' from the Slip2Go whitelist and rotate the Slip2Go key once the system is steady; rotate the staging hook secret."
+  - "Owner pays Slip2Go (trial ends 2026-11-16 23:59, 96 slips left) and ManyChat Pro (2026-11-17)."
+  - "Counting 'ทักมา' needs another source than the flow (owner decision); PR 6 stays open until then."
+  - "bdash 'ขาย E-Book' samples, then the page, to close slice 4."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Show the owner the bdash 'ขาย E-Book' samples on the real page, then build
+    the chosen one and close slice 4.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-manychat-ebook-001/slices/4.md."
