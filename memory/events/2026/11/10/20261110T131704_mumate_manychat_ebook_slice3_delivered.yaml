@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261110T131704_mumate_manychat_ebook_slice3_delivered
+type: closeout
+recorded_at: "2026-11-10T13:17:04+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Deliver slice 3 as revision 0.6 defines it: mumate-ebook-bot on
+    production with its own way back, its own database role and alerts, and
+    the live 'Bazi E-Book 95' flow sending slips to it, proven by the owner's
+    real purchase. Opening it to every customer moved to slice 4.
+  scope:
+    - "mumate-infra PRs 65, 66, 67, 68, 69 and 70 and mumate-ebook-bot PR 4, all merged by the owner; production writes on the owner's word, recorded in the checkpoints listed under related."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "3"
+  completed:
+    - "Gate 1, staging rehearsal: the flow still answered and the owner got the admin email with the app stopped. With the app up, a real 1-baht slip was delivered within 5 s. Detail: memory/events/2026/11/09/20261109T234512_mumate_manychat_ebook_slice3_gate1_checkpoint.yaml."
+    - "Gate 2, production: tables, the ebook_app role (grants on its 3 tables only) and env/ebook.env. promote-ebook-production put 2600201 on mumate-prod-1. Caddy was recreated once (about 1 s down). Health reports env production, db ok, and ops-status shows ebook. The role's URL moved to the session pooler after a transaction-mode defect (mumate-infra PR 70)."
+    - "Gate 3, rollback drill: rollback-ebook-production went back to 43c688d and promote returned to 2600201; fe and bazi did not move."
+    - "Gate 4, the live flow: a fresh stopped backup was taken; then one step after '3 ได้รับสลิป' sends the slip to production, with the header secret taken from bot field bot_hook_secret_prod. The owner bought for real: production order 1 was paid at 95 baht (Slip2Go 200200) and delivered 4 s after the slip. The owner confirmed in words: 'ลิงค์มาเรียบร้อยแล้ว ครับ เงินในแอพ เข้าบัญชีบริษัทแล้วครับ'. A real customer's slip also reached the bot and was logged as blocked, staying on the manual path."
+    - "Defects found and fixed on the way: ebook deploys overwrote fe's .env.last-good (per-profile files, PR 65); /ebook-api answered 502 during a recreate (8 s retry, PRs 65-66); the runbook claimed `caddy reload` works with admin off (PR 67); db-role.sh was not executable (PR 69); transaction-mode pooler broke prepared statements (PR 70)."
+  deviations:
+    - "Revision 0.6: the bot_beta tag became the app's EBOOK_ALLOWLIST, and gate 5 (open to all) moved to slice 4 at the owner's choice."
+    - "The Slip2Go IP whitelist is still '*'; the owner will set it later, before opening to all."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "3"
+  decision: memory/events/2026/11/09/20261109T230410_mumate_manychat_ebook_rev05_slice3_authorized.yaml
+  repository:
+    head: "ac421bcd58075863f8ff6587870ede6139bf24de"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261103
+  source:
+    - "mumate-infra origin/main includes PRs 65-70; mumate-ebook-bot origin/main 2600201079875ed127e0a6cc9bb29685d3f06dd0 runs on mumate-prod-1"
+  related:
+    - memory/events/2026/11/09/20261109T234512_mumate_manychat_ebook_slice3_gate1_checkpoint.yaml
+    - memory/events/2026/11/10/20261110T103101_mumate_manychat_ebook_slice3_gate2_prod_db_env.yaml
+    - memory/events/2026/11/10/20261110T104920_mumate_manychat_ebook_slice3_gates2_3_live_flow.yaml
+    - memory/events/2026/11/10/20261110T111340_mumate_manychat_ebook_prod_db_session_pooler.yaml
+    - memory/events/2026/11/10/20261110T130415_mumate_manychat_ebook_slice3_gate4_owner_purchase.yaml
+    - memory/events/2026/11/10/20261110T131646_mumate_manychat_ebook_rev06.yaml
+
+unresolved:
+  - "Slice 4 carries the pre-launch items: the team email when the bot delivers, the Slip2Go IP whitelist with key rotation, the staging hook secret rotation, and paying for the packages before the trials end (2026-11-16 23:59 and 2026-11-17)."
+  - "Undo of the live edit: remove step 'Actions #6' from '3 ได้รับสลิป' and Update; the backup '[BACKUP 2026-11-10] Bazi E-Book 95 — ห้ามเปิด' is the flow before it."
+  - "Merged remote branches in mumate-infra (feat/ebook-production, fix/ebook-route-in-caddy-dir, fix/runbook-caddy-admin-off, feat/db-role, fix/db-role-executable, fix/db-role-session-pooler) and mumate-ebook-bot (feat/ebook-app-role) are still on GitHub."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Authorize slice 4 of revision 0.6 (approved in the owner's words) and
+    start it by surveying bdash.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-manychat-ebook-001/slices/4.md."
