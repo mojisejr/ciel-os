@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261110T131728_mumate_manychat_ebook_slice4_authorized
+type: decision
+recorded_at: "2026-11-10T13:17:28+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Authorize slice 4 of plan 0.6: funnel data, the FU1 reason question, the
+    bdash summary page, the pre-launch items, and opening the bot to every
+    customer as the last step.
+  scope:
+    - "Plan 0.6 slice 4 as written in workstreams/mumate-manychat-ebook-001/slices/4.md."
+  out_of_scope:
+    - "EBOOK_OPEN=1 before the owner says so; per-customer coupon codes; personal links and PDF stamping; any change to existing bdash pages."
+
+outcome:
+  status: decided
+  slice: "4"
+  decision: >-
+    The owner approved the slice 4 summary, "แผน ok ข้อความ FU1 ok", and told
+    the agent to find bdash itself ("bdash คุนเชคเองเลย") and add the page so
+    that nothing breaks and it fits the theme, is easy to use, sits in the
+    right category and is easy to extend.
+  conditions:
+    - "Every publish of the live flow and every production write waits for the owner's word at that step."
+    - "UI work shows the owner rendered samples on the real bdash before building (owner's standing preference)."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "4"
+  repository:
+    head: "cb213c426450274435e688fad8e1dcf78becfdef"
+    branch: hq/20261103
+    working_tree: this-decision-only
+  related:
+    - memory/events/2026/11/10/20261110T131646_mumate_manychat_ebook_rev06.yaml
+    - memory/events/2026/11/10/20261110T131704_mumate_manychat_ebook_slice3_delivered.yaml
+
+unresolved:
+  - "The repository that holds bdash is not yet registered as a project of this workstream; the survey decides which, and it is added before any change there."
+  - "Slip2Go and ManyChat Pro trials end 2026-11-16 23:59 and 2026-11-17."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Survey bdash (repository, structure, theme, categories, data access,
+    tests), register its repository as a project, then build the funnel
+    endpoint in mumate-ebook-bot on a topic branch with tests.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-manychat-ebook-001/slices/4.md."
