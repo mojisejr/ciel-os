@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261111T101256_mumate_manychat_ebook_red_card_first_failure_production
+type: closeout
+recorded_at: "2026-11-11T10:12:56+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Record the red card at the first refused delivery (the owner: "เด้งทันที") and
+    bin/ebook.sh mark-delivered, both on production.
+  scope:
+    - "mumate-ebook-bot PR 8 (merge 73f39ce); mumate-infra PR 72 (merge b45fd75); promote-ebook-production run 42951083768."
+
+outcome:
+  status: in-progress
+  slice: "4"
+  completed:
+    - "PR 8: the bot's first refused delivery posts the red card at once with the chat link and a note that the bot keeps trying for 36 min (the customer may get the link twice); one red card per order; retries 1/5/30 min unchanged; a later success posts the green card. 69 tests pass, tsc clean."
+    - "PR 72: bin/ebook.sh passes mark-delivered (id, --by, --reason, --dry-run); scripts/ebook.test.sh all ok; env/ebook.env.example lists EBOOK_DISCORD_WEBHOOK; runbook 01 names the command."
+    - "promote-ebook-production run 42951083768 deployed 73f39ce healthy at 03:12Z after staging ran it 10 min; production logs open true, discord true; mumate-prod-1 is on mumate-infra b45fd75; pending shows 0 orders in 48 h."
+  not_verified:
+    - "A real green or red card in the team's Discord room."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  decision: memory/events/2026/11/11/20261111T050901_mumate_manychat_ebook_rev07.yaml
+  repository:
+    head: "ac87ac61e628e85125425059676b487316297b29"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+
+unresolved:
+  - "Ask ManyChat support why sendFlow says 'Subscriber does not exist' for active subscribers (4 of 7 paying contacts)."
+  - "Messages still say 'ถึง 11 พ.ย.' (step 1, 2b, FU2, FU3)."
+  - "Owner pays Slip2Go (2026-11-16 23:59) and ManyChat Pro (2026-11-17)."
+  - "Slice 5 waits for the team's Meta token."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Watch for the first real card in the Discord room; slice 5 when the Meta
+    token arrives.
+  acceptance_check:
+    - "Slice 5 acceptance in workstreams/mumate-manychat-ebook-001/slices/5.md."
