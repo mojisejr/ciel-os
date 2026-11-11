@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T190059_praneet_truck_fit_wales_storyboard_ready
+type: closeout
+recorded_at: "2026-11-03T19:00:59+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Present the revised WALES drawn truck-fit storyboard for owner comparison.
+  scope:
+    - Sixteen original SVG stills, full unchanged narration, measured-time shot plan and local review pack.
+outcome:
+  status: episode008-wales-storyboard-ready-for-owner-review
+  summary: >-
+    Prepared r02 in the established drawn explanatory treatment: warm paper,
+    ink, hatching, original pickup/tree-bag objects, measurements and split
+    trips, with minimal tool UI and no 3D presenter. All sixteen keyframes
+    are rendered at 1080x1920 with full narration and proposed motion.
+    Existing 51.875-second audio timing and seven-and-a-half-second tool QR
+    hold are reused as the timing basis. No voice or full movie generated,
+    no paid request, upload, ops write or publication. Prior movie unchanged.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: b54b370753d01fdaca43b85fa3b6cd39e790a562
+    branch: hq/20261103
+  office:
+    head: 1093a9a512aedc24ce7c5a7e20cb3979a30566dc
+    branch: feat/character-workflow
+  brief: checkouts/praneet-office/posts/video/episodes/008-truck-fit/BRIEF-r02.md
+  storyboard: checkouts/praneet-office/posts/video/episodes/008-truck-fit/STORYBOARD-r02.md
+  proof: checkouts/praneet-office/posts/video/episodes/008-truck-fit/PROOF-storyboard-r02.json
+  review_package:
+    local_file: checkouts/praneet-office/posts/out/008-truck-fit/008-truck-fit-storyboard-r02-wales.zip
+    sha256: 8f9431c47460c5a602325391668b4be83de667ac6c3471f3db101aa18a0ba249
+    bytes: 3984555
+    indexed_files: 29
+  checks:
+    - Sixteen PNGs decoded, text bounds checked, all four review pages visually inspected, first revised shot inspected full-size.
+    - QR decoded from shot sixteen to the approved direct calculator URL; unchanged narration/master hash checked.
+    - Prior 3D movie SHA256 unchanged; review ZIP CRC and every indexed file hash verified.
+    - Actual local frame rendering, renderer bundle, Python syntax and Git whitespace checks passed.
+unresolved:
+  - Owner acceptance of the revised visual treatment/storyboard remains before r02 full movie production. Static stills do not prove its proposed movement or pacing.
+  - Existing voice listening/numeral pronunciation review remains; no fresh synthesis performed.
+  - Figures remain a bag-9/high-cage-pickup calculator example. Bag weight is unavailable; no payload certification.
+  - Parent feedback/review and growth, invoice reconciliation, client portability, repository merges and full media backup remain open.
+next_action:
+  action: Show all sixteen drawn frames and full storyboard to the owner; on approval, build the continuous r02 film with the unchanged cached voice rather than a new paid TTS request.

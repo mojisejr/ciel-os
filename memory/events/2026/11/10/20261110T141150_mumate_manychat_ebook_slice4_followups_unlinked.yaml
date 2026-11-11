@@ -1,0 +1,59 @@
+schema_version: ciel.event.v0.1
+id: evt_20261110T141150_mumate_manychat_ebook_slice4_followups_unlinked
+type: decision
+recorded_at: "2026-11-10T14:11:50+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Record that the live flow's follow-ups (FU1, FU2, FU3) were never
+    connected, and the owner's decision to connect them in the slice 4
+    live-flow draft, with the approved FU1 layout.
+  scope:
+    - "Live 'Bazi E-Book 95' draft: 2b → FU1 at 30 minutes without a slip → FU2 → 'เช็กก่อน FU3' → FU3, as the team built them; FU1 in two messages of 3 buttons (reasons, then 📱/🏦/❓), each reason replying briefly and returning to waiting for the slip so FU2 and FU3 still follow."
+  out_of_scope:
+    - "Publishing; it waits for the owner after he sees the draft. Rewording FU2/FU3 (the team will change it and the owner will say)."
+
+outcome:
+  status: decided
+  slice: "4"
+  parallelism: approved
+  decision: >-
+    Preparing the FU1 draft, the agent found that nothing in the published
+    flow links to FU1 or FU2 (2b's no-response exit is empty), and no
+    Sequence exists. ManyChat send counts: 2b reached 136 people, FU1 4,
+    FU2 2, FU3 0, so almost nobody who saw the account number got a
+    follow-up. The steps date from 2026-11-04. The owner chose to connect
+    them ("ผมว่าคุนต่อเลย เดี๋ยวทีมเปลี่ยน แล้วผมมาบอก"), after the agent noted that
+    FU2 and FU3 say the price holds until 11 Nov. Earlier he approved the
+    two-message FU1 with reasons returning to the wait ("Yes, as proposed").
+  conditions:
+    - "Everything is built as a draft and shown to the owner before publishing."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "4"
+  repository:
+    head: "73ffbb0b2512cb16f03b103b8b65b69183780025"
+    branch: hq/20261103
+    working_tree: this-decision-only
+  related:
+    - memory/events/2026/11/10/20261110T135749_mumate_manychat_ebook_slice4_prod_promote_3e34c49.yaml
+
+unresolved:
+  - "FU2 and FU3 carry 'ถึง 11 พ.ย.'; once connected they may go out after that date with a stale line until the team rewords them."
+  - "Slip2Go and ManyChat Pro trials end 2026-11-16 23:59 and 2026-11-17."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build the live-flow draft (follow-up chain, FU1 layout, funnel events
+    through shared senders) and show it to the owner before publishing.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-manychat-ebook-001/slices/4.md."

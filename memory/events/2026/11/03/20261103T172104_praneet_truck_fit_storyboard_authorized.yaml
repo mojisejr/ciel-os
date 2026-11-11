@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T172104_praneet_truck_fit_storyboard_authorized
+type: decision
+recorded_at: "2026-11-03T17:21:04+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Prepare the confirmed truck-fit episode brief, narration/storyboard and static code keyframes.
+  scope:
+    - New episode 008 proposal within the existing repeat-use video workflow; no full production.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner selects the truck-capacity topic, answers both syncup rounds and
+    explicitly requests the storyboard after Shared understanding. Confirm
+    customer pre-trip estimation and awareness of the existing tool, a
+    playful hypothetical shop-arrival problem, one real calculation example
+    and a primary invitation to try the website. For this episode the main
+    QR links to the tool rather than LINE; URL is readable and LINE remains
+    available after using the tool. Use the accepted gardener, central-Thai
+    voice/style baseline and portrait format with a sixty-second ceiling.
+    Authorize local brief, full proposed narration/storyboard and static
+    code-rendered keyframes only. Storyboard review precedes full production,
+    any paid voice, external post draft/F-code or upload. Continue serially
+    on existing branches preserving other work; no competing lane is started.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 1dca68ab336ed972524e19eddbb6c2d5e893af30
+    branch: hq/20261103
+  office:
+    head: 5fb7d5b84ffaaab36bc1fb61e3cc3770f0ca0b90
+    branch: feat/character-workflow
+  model_acceptance: memory/events/2026/11/03/20261103T154616_praneet_character_workflow_final_accepted.yaml
+  public_example:
+    url: https://www.ptplant.com/fit?v=%E0%B8%AB%E0%B8%A1%E0%B8%AD%E0%B8%99%E0%B8%97%E0%B8%AD%E0%B8%87&b=9&h=70&n=1500
+    observed: Public page shows high-cage single-cab pickup, 1500 trees, approximately 1000 per trip and two trips of approximately 750; bag weight remains unavailable.
+unresolved:
+  - Full story/static-frame review and approval are pending; no production or paid API call follows merely from requesting the storyboard.
+  - The calculator is an estimate, not a vehicle-load or weight certification. Final example must be rechecked before production if source data change.
+  - Actual narration duration, paid-voice budget reservation, F-code/post draft and publication remain later steps.
+  - Prior invoices/portability, audience feedback, repository merge dependencies and full media backup unknowns remain.
+next_action:
+  action: Save the confirmed episode brief and a bounded sixteen-shot narrated storyboard with static code keyframes, then present it for owner story approval.

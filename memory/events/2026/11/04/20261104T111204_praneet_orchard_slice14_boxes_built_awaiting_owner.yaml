@@ -1,0 +1,79 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T111204_praneet_orchard_slice14_boxes_built_awaiting_owner
+type: closeout
+recorded_at: "2026-11-04T11:12:04+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Roll back the first slice 14 and build the tracking boxes the owner
+    chose: one thing on one plot, counted only from the work he puts in it.
+  scope:
+    - "praneet-web PR 45 (revert) and PR 46 (boxes); praneet-office PR 39 (revert) and PR 40 (boxes)."
+
+outcome:
+  status: built-awaiting-owner
+  slice: "14"
+  completed:
+    - "Rollback PRs: praneet-web PR 45 (revert/routine-cards, 34287e1a1b15ffda1d6f234f5f12a9dd6e8b5613) returns the code to 12b93dd and keeps migration 027 byte for byte. praneet-office PR 39 (revert/orchard-routines, 1fc05d842d40234e43044dc82fe3f76f8af63ddd) returns the scripts to c601450."
+    - "praneet-web PR 46 (feat/track-boxes, e576780206b380bc335f3b5a282598d0f7cb87e3), a draft: migration 028 (boxes and their work; it drops 027's columns only if they are empty), lib/orchard-track.ts, the API, the Today page in sample A (rows), a box's page, a list of boxes, the form's closed-by-default box section, and the work page's boxes with '+ ติดตามงานนี้'."
+    - "praneet-office PR 40 (feat/orchard-tracks, 10701f9a4e9a0ef36a655f0b9d574770b2f0b6ce), a draft: 'orchard tracks', 'track add --box --work [--write]', and \"boxes\" in 'orchard add'."
+    - "Samples of rows (A) and tiles (B) for the Today page, with the box page and the form section, were rendered on the real pages and published privately for the owner's pick. The build uses A, the agent's lean; if he picks B, only the Today list changes."
+    - "One bug was caught in review before tests: the form would have sent its old box list after the owner started a box on the work page. The form now sends boxes only after a tap. A test run caught a second: the work page counted days to the work's date. Days now count to today."
+  acceptance:
+    - "Owner picked a sample: pending."
+    - "Tests: met by tests/track-boxes.spec.ts. A work not in a box does not count. An older forgotten work does not move the count back. Hiding the newest round falls back to the one before. A closed box leaves the Today page. A box takes only its own plot's work. At 360 px nothing scrolls sideways."
+    - "Production boxes match real work after the merge: pending."
+  not_verified:
+    - "No real phone; Chromium at 360, 390 and 1280, in light and dark."
+    - "Migration 028 has not run on production."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.9"
+  slice: "14"
+  decision: memory/events/2026/11/04/20261104T105213_praneet_orchard_rev19_slice14_boxes_authorized.yaml
+  repository:
+    head: "dd69325595388988d64bfad62e99b6c49a9b9c56"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261103
+  child_heads:
+    praneet-web revert/routine-cards: "34287e1a1b15ffda1d6f234f5f12a9dd6e8b5613"
+    praneet-web feat/track-boxes: "e576780206b380bc335f3b5a282598d0f7cb87e3"
+    praneet-office revert/orchard-routines: "1fc05d842d40234e43044dc82fe3f76f8af63ddd"
+    praneet-office feat/orchard-tracks: "10701f9a4e9a0ef36a655f0b9d574770b2f0b6ce"
+  checks:
+    - "praneet-web full suite (memory guard): 142 passed, 1 failed, peak 2,470 MB of 3,072 MB. The failure is the known supply.spec date drift."
+    - "On the revert alone: typecheck clean, and 24 passed across the orchard, spray, spray-method and shelf specs."
+    - "praneet-office bun test scripts/: 22 pass on the revert, 23 on the boxes branch. add with boxes and track add were tried on a local test build, dry run first, and read back from praneet_test."
+  related:
+    - "https://github.com/mojisejr/praneet-web/pull/45"
+    - "https://github.com/mojisejr/praneet-web/pull/46"
+    - "https://github.com/mojisejr/praneet-office/pull/39"
+    - "https://github.com/mojisejr/praneet-office/pull/40"
+
+unresolved:
+  - "The order matters on production. First merge the revert PRs 45 and 39. Then run migration 028, on the owner's word, which drops columns the code of PR 44 reads. Then merge PRs 46 and 40, whose code reads 028's tables."
+  - "Production starts with no boxes. The owner starts them from a work's page, or the agent proposes old works to start from, on his word."
+  - "Which page's pill buttons felt cluttered (Q29) is open. The form section starts closed so as not to add to it."
+  - "Slice 15 (watering by zone) is discussed again before it starts."
+  - "supply.spec still fails on main because of date drift. It is deferred. Workaround: read it as a known failure."
+  - "The labels files .assets/preneet/orchard-routines.json and orchard-routines-all.json are no longer needed. They are deleted on the owner's word."
+  - "hq/20261103 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner: pick sample A or B, and merge revert PRs 45 and 39. Agent, on
+    his word: run migration 028 on production and read it back. Then the
+    owner merges PRs 46 and 40, and the agent checks the Today page on
+    production and helps start the first boxes.
+  acceptance_check:
+    - "Slice 14 acceptance in workstreams/praneet-orchard-001/slices/14.md."

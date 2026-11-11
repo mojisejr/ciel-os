@@ -1,0 +1,38 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T093519_praneet_padded_hood_refinement_authorized
+type: decision
+recorded_at: "2026-11-03T09:35:19+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-map-lab-001
+  lane: single
+  objective: Refine the hood's symmetric rounded form and sense of padded weight.
+  scope:
+    - Local revised model and neutral still review before another map movie.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner selects padded soft cloth retaining a rounded shape and a symmetric
+    main dome with an independently leaning small tuft. After the shared
+    understanding summary, owner explicitly asks to make the adjustment and
+    show it. This authorizes plan 0.3 slice 1: improve cranial support, dome
+    curvature and slight lower-side/nape settling, retaining the selected face,
+    matte look and chibi proportions. Present neutral four-view stills first;
+    keep existing media and the v02 map selection. No cloth-physics claim,
+    voice, paid request, upload or publication.
+evidence:
+  plan: workstreams/praneet-character-map-lab-001/PLAN.md
+  plan_revision: "0.3"
+  slice: "1"
+  repository:
+    head: 0644ce206b1d2615b7f72862b4787ab167c0b0d4
+    branch: hq/20261103
+  prior_office_head: 11b1ef823f58fbdfcf52fb236d51a1cdc7cde1b3
+unresolved:
+  - Shape improvement requires actual front/oblique/side/back inspection and owner art review; manifold topology alone is not visual acceptance.
+  - Existing reference closure-count discrepancy, approximate POI, schematic scale and parent invoice/portability/audience-feedback unknowns remain.
+next_action:
+  action: Build and audit the rounded padded-hood revision, capture full-figure and head-only neutral views and present them for owner review.

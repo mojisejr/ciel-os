@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T142725_praneet_character_workflow_slice1_accepted
+type: closeout
+recorded_at: "2026-11-03T14:27:25+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-workflow-001
+  lane: single
+  objective: Record owner acceptance of the reusable asset-workflow extraction.
+  scope:
+    - Accept slice 1 replay and package; explain slice 2 without starting generation.
+outcome:
+  status: ready-for-owner-merge
+  result: >-
+    Owner reviewed the supplied replay and explicitly accepted closing slice 1.
+    Its implementation and observed checks are recorded in the prior local
+    proof checkpoint and Office proof. Rechecked both local ZIP hashes against
+    the committed proof; both match. No implementation or generation changed
+    during this acceptance checkpoint. This delivers slice 1, not the final
+    slice of the workstream. Owner asks what slice 2 contains, which does not
+    authorize starting it or choosing a new character on the owner's behalf.
+  git_boundary: >-
+    Acceptance closes the owner's review of slice 1; it does not assert that
+    either repository has merged. CIEL remains hq/20261103 and Office remains
+    feat/character-workflow with the unmerged lab dependency. No push, PR,
+    merge, upload or paid/native image request was made here.
+evidence:
+  plan: workstreams/praneet-character-workflow-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: c29308ab7d6b69265efcee2a4d50a1de2fb14052
+    branch: hq/20261103
+  office:
+    head: 2d07abc8d9679acd468ae49480d3c61f2dccfd97
+    branch: feat/character-workflow
+    dependency_head: 6a3201a4f2a5c3c593714dbc737f5d895d037e84
+    proof: checkouts/praneet-office/posts/video/character-workflow/PROOF-slice1.json
+  prior_checkpoint: memory/events/2026/11/03/20261103T122244_praneet_character_workflow_slice1_local_proof.yaml
+  next_slice: workstreams/praneet-character-workflow-001/slices/2.md
+unresolved:
+  - Slice 2 requires an owner-selected idea/example and an explicit start decision; native generation quality, quotas and billing remain unproved.
+  - A second distinct character, actual Claude execution and cross-machine operation remain unproved; local source replay alone establishes none of these.
+  - Ignored media transfer/backup, Office lab dependency and repository merges remain outstanding.
+  - Existing invoice/subscription/hardware allocation, source-reference closure-count discrepancy and parent audience-feedback unknowns remain. The parent Gemini ceiling remains 100 THB/month.
+  - Map adoption, rigs, expressions, printing, publishing and a course product remain separate scope.
+next_action:
+  action: Explain slice 2's idea-to-approved-reference proof and its acceptance criteria; owner then selects the character idea/example and decides when to start, with modelling reserved for slice 3.

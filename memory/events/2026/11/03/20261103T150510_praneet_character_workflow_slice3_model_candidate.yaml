@@ -1,0 +1,85 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T150510_praneet_character_workflow_slice3_model_candidate
+type: closeout
+recorded_at: "2026-11-03T15:05:10+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-workflow-001
+  lane: single
+  objective: Present the second collectible model and common-workflow proof for owner art review.
+  scope:
+    - Approved gardener ref to static Blender/GLB, review views, ten-second turntable and local package.
+outcome:
+  status: slice3-model-candidate-awaiting-owner-review
+  result: >-
+    Built a bespoke gardener geometry module from the owner-approved ref-v001
+    through shared modelling helpers, builder, verifier, reviewer and packager.
+    Coherent head/ears/nose, fitted volumetric hair, closed curved straw hat,
+    olive band, rectangular glasses/lenses/ear hooks, facial detail, rounded
+    polo/shoulders, two-button placket, hands, trousers and shoes are actual
+    geometry. Internally reviewed primary masses and three detailed candidates;
+    selected model-v003 for owner review. Delivered editable Blender, GLB,
+    colored/silhouette views, ten-second silent movie, source/reference and
+    checked ZIP. Rebuilt retained Xiao Mu with current tools and verified
+    normalized shape equivalence; both character IDs ran in the same reviewer.
+    Rebuilt the gardener from its bundled source in a separate local root.
+  boundary: >-
+    This is deliberately a non-delivery checkpoint pending final owner model
+    approval, not completion of the final slice or workstream. Reference
+    approval is not model approval. Actual Claude execution was not performed
+    and remains open; no native image request, paid API, rig, map, printing,
+    upload, publication, push, PR or merge was performed in this slice.
+evidence:
+  plan: workstreams/praneet-character-workflow-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: 19085bc2790b8188b5aa13057c36a853b4d79a72
+    branch: hq/20261103
+  office:
+    head: 0773eee22c02a0d175c78675a916cfd8d25ab4a0
+    branch: feat/character-workflow
+    dependency_head: 6a3201a4f2a5c3c593714dbc737f5d895d037e84
+    proof: checkouts/praneet-office/posts/video/character-workflow/PROOF-slice3.json
+    model_source: checkouts/praneet-office/posts/video/characters/straw-hat-gardener/model.py
+    runbook: checkouts/praneet-office/runbooks/09-character-assets.md
+  reference_approval: memory/events/2026/11/03/20261103T144119_praneet_character_workflow_slice2_accepted.yaml
+  entry_paths:
+    supplied_ref_baseline: checkouts/praneet-office/posts/video/character-workflow/PROOF-slice1.json
+    generated_then_approved_ref: checkouts/praneet-office/posts/video/character-workflow/PROOF-slice2-accepted.json
+  packages:
+    baseline: checkouts/praneet-office/posts/out/characters/xiao-mu/v04-replay-001.zip
+    baseline_sha256: 9dff61668001a964fdb8d412965fbd73399d03982ceee12e66128a0a934813fb
+    gardener: checkouts/praneet-office/posts/out/characters/straw-hat-gardener/model-v003.zip
+    gardener_sha256: 4637d90e56a41c72ac5453ff648c938465f55b32268a272c1229d6886a6fe4f0
+    movie: checkouts/praneet-office/posts/out/characters/straw-hat-gardener/model-v003/preview/turntable.mp4
+    movie_sha256: 9bf2cb19faa3cb93a65e784a4d960f8aa6fb64ca0603f46d77be6735f37bd175
+  observed_checks:
+    - Saved Blender reopened; measured GLB height is approximately 0.12 m and maximum Blender/GLB vertex error is 1.67e-8 m.
+    - Four audited core surfaces passed welded-manifold checks; this is not a print-ready-solid claim.
+    - Movie is H264, 1080x1080, 24 fps, 240 frames, ten seconds, silent; strict decode passed and browser requests stayed local.
+    - Current-tool Xiao Mu replay differs from normalized v04 by at most 1.56e-8 m; both IDs have six-view/silhouette browser proof.
+    - Bundled-source gardener replay on this Mac differs by at most 1.08e-8 m; not a second-client or cross-machine proof.
+    - Fourteen old lab hashes and four earlier package hashes retained; new ZIP CRC and indexed entry SHA checks passed.
+    - Five gardener shape-build attempts included one early stopped BVH-origin error and four completed builds; internal iterations are recorded in Office proof.
+    - Python source parsing, actual Blender/browser runs and staged whitespace checks passed.
+  selected_run_usage:
+    native_image_requests: 0
+    gemini_api_requests: 0
+    explicit_paid_api_requests: 0
+    direct_api_cost_thb: 0
+    subscription_allocation_thb: null
+    hardware_allocation_thb: null
+    movie_render_seconds: 66.53
+    peak_sampled_owned_rss_sum_mib: 822.45
+    limits: Selected final movie run only; not all development time or a hard total RAM/GPU cap.
+unresolved:
+  - Owner final model/turntable art approval is still required; mechanical checks and the agent's visual observations are not a verdict on likeness.
+  - Actual Claude and cross-machine execution remain unproved. Shared scripts and same-Mac source replay establish neither.
+  - Ignored-media backup/transfer, Office lab dependency and repository merges remain outstanding.
+  - Native image quota/billing, private invoices and membership/hardware allocation remain unknown; parent Gemini cap remains 100 THB/month.
+  - Parent audience feedback and retained Xiao Mu source-reference discrepancy were not investigated. Rig/map/printing/publishing/course scope is separate.
+next_action:
+  action: Present the gardener turntable and six-view sheet for owner model approval or specific corrections; record that decision before offering final slice/workstream delivery.

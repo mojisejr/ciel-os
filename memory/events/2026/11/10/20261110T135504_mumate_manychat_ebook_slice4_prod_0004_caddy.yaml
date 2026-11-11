@@ -1,0 +1,51 @@
+schema_version: ciel.event.v0.1
+id: evt_20261110T135504_mumate_manychat_ebook_slice4_prod_0004_caddy
+type: closeout
+recorded_at: "2026-11-10T13:55:04+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Record the two production writes the owner approved ("Approve all
+    three"): migration 0004 and one Caddy recreate on mumate-prod-1.
+  scope:
+    - "Decision memory/events/2026/11/10/20261110T135254_mumate_manychat_ebook_slice4_parallel_and_prod_steps.yaml."
+
+outcome:
+  status: in-progress
+  slice: "4"
+  completed:
+    - "Migration 0004_ebook_funnel_event.sql on production Supabase through bin/prod-sql.sh: dry run rolled back, then committed. As ebook_app: ebook_funnel_event has 0 rows and has_table_privilege INSERT is true."
+    - "mumate-prod-1 pulled mumate-infra 6b93995 (PR 71); bin/caddy-validate.sh production passed; `docker compose up -d --force-recreate caddy` at 13:53 +07:00."
+    - "Probes of bazichart.mumate.co/api/health every 0.25 s: 3 failed within 13:53:38-39 (the recreate) and 1 failed at 13:54:07; the other 56 answered 200. A follow-up 30 probes all answered 200. Caddy logged only startup notes (admin off, OCSP stapling). fe (19 h), bazi (2 days) and ebook (3 h) did not restart; ebook health is production, db ok."
+  not_verified:
+    - "The cause of the single failed probe at 13:54:07, about 28 s after the recreate."
+    - "The event route on production: POST /ebook-api/manychat/event answers 404 there, because production still runs ebook 2600201, which predates the route. Staging has run 3e34c49 healthy since 06:41Z."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.6"
+  slice: "4"
+  decision: memory/events/2026/11/10/20261110T135254_mumate_manychat_ebook_slice4_parallel_and_prod_steps.yaml
+  repository:
+    head: "687c5935d003ebeed1407a698821ead090e6e8b5"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+
+unresolved:
+  - "Promote ebook 3e34c49 to production (promote-ebook-production) on the owner's word, before the live flow sends events. It adds the event route and nothing customer-facing."
+  - "Then the live-flow draft (FU1 text and buttons, events at entry, sample, FAQ, buy and FU1) for the owner's approval, and the bdash samples."
+  - "Slip2Go and ManyChat Pro trials end 2026-11-16 23:59 and 2026-11-17."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    On the owner's word, press promote-ebook-production for 3e34c49 and
+    check the event route on production; meanwhile prepare the bdash samples.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-manychat-ebook-001/slices/4.md."

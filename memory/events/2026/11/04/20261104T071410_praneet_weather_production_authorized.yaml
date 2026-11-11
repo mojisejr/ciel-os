@@ -1,0 +1,38 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T071410_praneet_weather_production_authorized
+type: decision
+recorded_at: "2026-11-04T07:14:10+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Produce episode 009 with narration and send the completed clip to the owner's existing Drive.
+  scope:
+    - Episode-specific motion, current weather semantics, approved narration baseline, encoded verification and one private Drive upload.
+outcome:
+  status: decided
+  decision: >-
+    After reviewing all sixteen province-map and agronomy frames, owner said
+    to make one clip and send it to Drive. Existing WALES voice/style, monthly
+    100-THB Gemini ceiling and manual posting remain. Owner reconfirmed today
+    that the Gemini project is exclusive to this workflow with no outside
+    usage. Replace fictional rain classes with supported geographic/time
+    meanings, refresh dated forecasts, preserve existing clips and sharing,
+    and use cached closing audio where unchanged.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: bdf5050a474234f03118421fbdd28eee146b4c0a
+    branch: hq/20261103
+  approved_visual_proof: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/province-preview/PROOF.json
+  approved_story: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/STORYBOARD-r02.json
+unresolved:
+  - Province rain severity is not established by the available city points or regional warning; the final legend must preserve resolution and time windows.
+  - Voice timing and actual rendered output remain unverified until production checks and owner listening.
+  - Billing invoice reconciliation, cost allocation, feedback/growth review, actual Claude client proof, repository merges and full media backup remain open.
+next_action:
+  action: Generate one guarded voice take if budget checks pass, render the actual motion clip, verify encoded AV and QR, then upload to the existing private Drive destination and verify metadata.

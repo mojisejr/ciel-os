@@ -1,0 +1,84 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T154616_praneet_character_workflow_final_accepted
+type: closeout
+recorded_at: "2026-11-03T15:46:16+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-workflow-001
+  lane: single
+  objective: Deliver the owner-accepted reusable reference-to-collectible workflow.
+  scope:
+    - Final slice 3 art acceptance and whole-workstream closeout; no new episode implementation.
+outcome:
+  status: ready-for-owner-merge
+  result: >-
+    Owner reports viewing the delivered gardener movie, accepts model-v003
+    for this version, explicitly requests closing the work and defers further
+    visual improvements. Recorded exact model/reference/export/movie/package
+    hashes in a separate approval without rewriting the candidate proof or
+    archive. Created an approved sibling archive preserving all original
+    entries and verified its CRC and acceptance index. All three slices have
+    owner acceptance: common style/asset workflow and baseline replay,
+    native reference generation with selected approval, and a meaningfully
+    different gardener using the shared local build/review/package path.
+    Final proof identifies both character packages and both entry paths.
+  delivery_boundary: >-
+    This offers the final declared slice and workstream for repository
+    delivery. It does not assert a merge: CIEL stays hq/20261103 and Office
+    retains its stacked topic branch and lab dependency. No push, PR, merge,
+    rerender, extra image/API call or upload was performed on acceptance.
+    Further polish is deferred at the owner's request. Owner also expresses
+    interest in trying a clip next; its topic and intended outcome are being
+    clarified in conversation, with no new clip plan or implementation yet.
+evidence:
+  plan: workstreams/praneet-character-workflow-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  repository:
+    head: e058d5809761917c1fd162c6e346622172f5f6e9
+    branch: hq/20261103
+  office:
+    head: 5fb7d5b84ffaaab36bc1fb61e3cc3770f0ca0b90
+    branch: feat/character-workflow
+    dependency_head: 6a3201a4f2a5c3c593714dbc737f5d895d037e84
+    final_proof: checkouts/praneet-office/posts/video/character-workflow/PROOF-final.json
+    model_approval: checkouts/praneet-office/posts/video/characters/straw-hat-gardener/model-approval-v003.json
+    runbook: checkouts/praneet-office/runbooks/09-character-assets.md
+  owner_decisions:
+    baseline: memory/events/2026/11/03/20261103T142725_praneet_character_workflow_slice1_accepted.yaml
+    generated_reference: memory/events/2026/11/03/20261103T144119_praneet_character_workflow_slice2_accepted.yaml
+    second_model: This owner acceptance closes the final model review.
+  packages:
+    baseline: checkouts/praneet-office/posts/out/characters/xiao-mu/v04-replay-001.zip
+    baseline_sha256: 9dff61668001a964fdb8d412965fbd73399d03982ceee12e66128a0a934813fb
+    gardener_approved: checkouts/praneet-office/posts/out/characters/straw-hat-gardener/model-v003-approved.zip
+    gardener_approved_sha256: a7d7eca7f077d225c5517e0d70f20c0c62fdedae2e023783f2f8b32de5a294f8
+    gardener_candidate_preserved_sha256: 4637d90e56a41c72ac5453ff648c938465f55b32268a272c1229d6886a6fe4f0
+  owner_review_delivery:
+    drive_url: https://drive.google.com/file/d/1o8gkstn364SOw6IVHjWcYEBWNZdHlrXj/view?usp=drivesdk
+    owner_reported_viewing: true
+    independent_device_telemetry: false
+    remote_checksum_returned: false
+  checks:
+    - Candidate export/movie/package and four prior archive SHAs rechecked; accepted entries remain byte-identical.
+    - Approved ZIP CRC and 34 indexed entry SHAs passed; staged whitespace checks passed.
+    - Earlier Blender/browser/strict decode/isolated-source replay results are in the slice 1 and slice 3 proof files; no unnecessary rerender on acceptance.
+  usage:
+    native_image_requests_in_workstream: 1
+    gemini_api_requests_in_workstream: 0
+    explicit_paid_model_provider_api_requests: 0
+    additional_generation_or_render_on_acceptance: 0
+    native_tool_billing_quota: null
+    subscription_allocation_thb: null
+    hardware_allocation_thb: null
+unresolved:
+  - Actual Claude and cross-machine execution remain unproved; the plan permits recording this gap rather than claiming parity from shared commands.
+  - Only the gardener MP4 is confirmed on Drive. Full model/source/reference package backup or transfer is not proved; large packages remain ignored local files.
+  - CIEL/Office PR and merge, including the unmerged Office lab dependency, remain outstanding. Acceptance is not a claim that origin/main contains the work.
+  - Native tool quota/billing, private invoices and membership/hardware allocation remain unknown. Parent Gemini ceiling remains 100 THB/month.
+  - Further gardener art polish is deferred. Parent audience feedback, the Xiao Mu source-reference discrepancy and map-lab adoption remain separate open matters.
+  - Rigging, expressions, lip sync, printing, narrated episode production, publishing and a course product were not implemented by this workstream.
+next_action:
+  action: Report owner acceptance and repository merge boundary, then continue the new clip syncup in conversation; confirm its intended outcome/topic before storyboard or implementation.

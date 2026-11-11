@@ -1,0 +1,63 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T190113_praneet_orchard_rev16_slice13_authorized
+type: decision
+recorded_at: "2026-11-03T19:01:13+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Plan revision 1.6 adds slice 13. It fixes the back office on phone
+    screens: wrapped text in product and size rows, cramped chips and
+    save-bar buttons, and a keyboard that jumps and covers the field. The
+    record authorizes the slice.
+  scope:
+    - "workstreams/praneet-orchard-001/PLAN.md and slices/13.md."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner tried the back office on his phone. Adding products wrapped
+    the text, the buttons looked cramped, and the keyboard jumped and
+    covered the input. He asked for agents to research the whole UI and
+    report causes and fixes. Two read-only agents ran: a code audit and a
+    measurement at 320, 360 and 390 px against the local test database.
+    They found six causes: the tank-row grid, the chip style, save-bar
+    wrapping, two pinned bottom bars, Enter saving the form, and code that
+    moves the focus. The owner took the agent's recommendation and asked to
+    build it and send the PR ('เอาตามคุนครับทำมาเลยครับ ... ส่ง PR มาเลยครับ'),
+    minding memory during build and test. Because he said to build directly,
+    no sample round is held. Before and after shots go in the PR.
+  why: >-
+    The owner records work on his phone daily. At 360 px a product row's
+    group line is 33 px wide and breaks into five lines, and the keyboard
+    hides what he types.
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "13"
+  repository:
+    head: "a2fd913a3dc2ecb78761841eb391e696b0e84545"
+    branch: hq/20261103
+    working_tree: this-decision
+  related:
+    - memory/events/2026/11/02/20261102T193535_praneet_orchard_slice12_delivered.yaml
+
+unresolved:
+  - "The shared CSS also reaches the nursery's order forms; the change keeps their layout except the chips and the save bar."
+  - "WebKit is not installed at the version the repo's Playwright wants, so iPhone Safari is checked on the owner's phone only."
+  - "hq/20261103 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 13 on a praneet-web topic branch, run the changed specs
+    under the memory guard, open the PR with before and after shots, and
+    ask the owner to try it on his phone and merge.
+  acceptance_check:
+    - "Slice 13 acceptance in workstreams/praneet-orchard-001/slices/13.md."

@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261107T194030_praneet_orchard_trees_slice6_authorized
+type: decision
+recorded_at: "2026-11-07T19:40:30+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Record the owner's go on slice 6 (praneet-office: work with trees from
+    chat) under plan 0.2.
+  scope:
+    - "This record only; no plan change."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After merging PR 50 the owner said to go on ('merged
+    เรียบร้อยครับเดินต่อได้เลย'), answering the agent's question whether to
+    start slice 6. A real work is written to production only when the owner
+    says so; a dry run comes first.
+  why: >-
+    The office agent reads a plot's trees and records work naming trees,
+    asking whether an unknown name is a new tree or an existing one.
+  agent_calls:
+    - "Built in a separate praneet-office worktree; the checkout another lane uses is not touched."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "6"
+  repository:
+    head: "9f7359cadf9cff431c931edd4864246858c3063e"
+    branch: hq/20261103
+    working_tree: this-decision-with-slice5-closeout
+  related:
+    - memory/events/2026/11/07/20261107T194023_praneet_orchard_trees_slice5_delivered.yaml
+
+unresolved:
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 6 in a separate praneet-office worktree, dry-run it against
+    the owner's ask, and open a draft PR for the owner.
+  acceptance_check:
+    - "Slice 6 acceptance in workstreams/praneet-orchard-trees-001/slices/6.md."

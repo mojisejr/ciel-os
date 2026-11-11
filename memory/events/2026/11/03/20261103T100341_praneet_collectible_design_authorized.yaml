@@ -1,0 +1,41 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T100341_praneet_collectible_design_authorized
+type: decision
+recorded_at: "2026-11-03T10:03:41+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-map-lab-001
+  lane: single
+  objective: Develop coherent reference-faithful collectible proportions around the whole figure.
+  scope:
+    - New whole-figure design trial, neutral multi-view stills, silhouette review and turntable.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner clarifies the issue is the combined head/hood and whole-figure
+    proportions across all views, not merely skull depth or a symmetric dome.
+    Select plump little-boss body proportions, faithful identity from the
+    reference, restored blue water-bird side-wing feathers and plausible fixed
+    cartoon clothing. Permit proportions/placement to change together. Owner
+    then explicitly asks to try the design. This authorizes plan 0.4 slice 1.
+    Develop primary masses together and review around the whole figure before
+    more surface detail or map adoption. Preserve all previous media and v02
+    map selection. No paid call, voice, cloud tool, upload or publication.
+evidence:
+  plan: workstreams/praneet-character-map-lab-001/PLAN.md
+  plan_revision: "0.4"
+  slice: "1"
+  repository:
+    head: 0856b96fa15b7cfa099e02fb67115f718df70b10
+    branch: hq/20261103
+  reference_workflow_sources:
+    - https://studio.blender.org/training/stylized-character-workflow/chapter/5d384eb4a5b8f5c2c32c8505/
+    - https://studio.blender.org/training/stylized-character-workflow/5d40395d12b9a38ea1cb7938/
+unresolved:
+  - Coherent volume and likeness require rendered visual review; symmetry/manifold checks do not establish art acceptance.
+  - Reference inconsistencies, previous media, map/POI boundaries and parent invoice/portability/audience-feedback unknowns remain.
+next_action:
+  action: Build the whole-figure design trial from reference masses and show equal-scale neutral views, silhouette views and a short turntable for owner review.

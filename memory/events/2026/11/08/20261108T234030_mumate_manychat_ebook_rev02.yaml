@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261108T234030_mumate_manychat_ebook_rev02
+type: decision
+recorded_at: "2026-11-08T23:40:30+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Raise the plan to revision 0.2 with the owner's answers on the
+    repository, the slip service, protecting the live flow, slip retention
+    and PDF links. No slice is authorized.
+  scope:
+    - "workstreams/mumate-manychat-ebook-001/PLAN.md and slices 1, 2 and 4 rewritten for revision 0.2; slice 3 unchanged."
+
+outcome:
+  status: revised
+  decision: >-
+    The owner answered on 2026-11-08. The app goes in its own private
+    repository and mumate-infra gains the run wiring plus bin/ tools the
+    agent can use from chat (agent's recommendation, which he asked about).
+    Slip2Go replaces SlipOK because the team chose it. The team's steps 1-4
+    are dropped ("ไม่จำเป็นแล้ว"). Build on what the team has without
+    touching it, and the live flow must not break ("อย่าให้ flow แตก อันนี้
+    สำคัญมาก"). Slip images may be kept one month in the same Supabase
+    storage as fe, kept apart. The PDF may be on Google Drive today; the team
+    is to confirm. He asked to talk and update the workstream before any
+    start ("อย่าเพิ่งเริ่มนะ").
+  agent_proposals_awaiting_confirmation:
+    - "Personal per-order link that expires and limits downloads, handing out a minutes-long signed storage URL, and a per-buyer stamp on every PDF page; confirmed at the slice 2 decision."
+    - "Repository and host names, confirmed at the slice 1 decision."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.2"
+  repository:
+    head: "ae33ad34e0ea42ece263bc18411a4b7ea501fa23"
+    branch: hq/20261103
+    working_tree: this-decision-only
+  source:
+    - "slip2go.com/pricing and slip2go.com/guide/rest-api/image-url, read 2026-11-08."
+  related:
+    - memory/events/2026/11/08/20261108T232357_mumate_manychat_ebook_opened.yaml
+
+unresolved:
+  - "Slip2Go documents only code 200000; its failure codes are unknown until a real account's response guide or support says, so unknown codes go to the admin."
+  - "Whether a ManyChat API key already exists and is in use; if so it must be reused, not regenerated."
+  - "Where the PDF is kept and how the one-month app code is issued are the team's to answer."
+  - "A file once downloaded can be forwarded; the per-buyer stamp makes a leak traceable, not impossible."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Collect the items the plan lists before the slice 1 decision, then ask
+    the owner to authorize slice 1 of revision 0.2.
+  acceptance_check:
+    - "A decision event with outcome.status decided, plan_revision 0.2 and slice 1."

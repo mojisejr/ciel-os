@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T111148_praneet_weather_storyboard_r03_proposed
+type: closeout
+recorded_at: "2026-11-04T11:11:48+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Propose the weather episode to post Nov4 for public and grower preparation for Nov5.
+  scope:
+    - Updated daily evidence and sixteen-shot storyboard only, preserving existing media and accepted map/card direction.
+outcome:
+  status: weather-storyboard-r03-proposed-awaiting-owner
+  summary: >-
+    Owner requested the full storyboard after accepting map/card and wind
+    prototypes. Refreshed seven MET representative point forecasts for all
+    Nov5hours, read official TMD warning6 and the current available seven-day
+    outlook, and reused the locally audited agronomy evidence. Proposed a
+    public-friendly hook, national/NE context and thunderstorm safety, focused
+    eastern and southern point outlooks, then conditional young-leaf, bloom,
+    young-fruit and fruit-load mechanisms/preparation. Sixteen shots allocate
+    sixty seconds including the established7.5second brand/LINE QR ending.
+    This is a proposed story and editorial timing, not rendered or measured
+    new narration. No paid request, media regeneration, external upload or post.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: dd69325595388988d64bfad62e99b6c49a9b9c56
+    branch: hq/20261103
+  office:
+    head: 30bed02ff86d4968fabf347df33fdae9d233f797
+    branch: feat/character-workflow
+  storyboard: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/STORYBOARD-r03.md
+  machine_storyboard: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/STORYBOARD-r03.json
+  weather_snapshot: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/WEATHER-SNAPSHOT-r03.json
+  agronomy: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/AGRONOMY-RESEARCH-r02.md
+  checks:
+    - Sixteen positive contiguous shot intervals from0through60seconds; closing52.5through60. Timing remains editorial until voice measured.
+    - Seven point responses include all24 hourly intervals for Nov5Bangkok; raw hashes/URLs/update times retained. Snapshot checked Nov4at11:04:45Bangkok.
+    - TMD warning6 issued Nov4at05:00, next bulletin scheduled17:00. Exact source URL extracted from official listing rather than reconstructing a guessed slug.
+    - Eastern afternoon highlight uses12to16next-hour point intervals; Jan also has morning rain05to07. Nakhon-Si point has20to24rain. These are model points, not province-wide certainty.
+    - Provincial borders denote selected geography, not rain severity. Proven eastern13:00interpolated wind field stays in its domain; not reused as a national or southern wind map.
+    - Official fruit/flush support and pollen biology sources rechecked; earlier leaf guidance and locally audited flowering/rain report remain the factual basis. No chemical or fertilizer dose proposed.
+    - Scoped whitespace check passed; Office tree clean after commit. No new TTS, audio edit, renderer run, budget mutation or external write.
+unresolved:
+  - Owner approval of storyboard/narration and production timing remains; no revised full movie or new paid voice authorized by this proposal.
+  - Refresh weather before production/publication; if posting after17:00 check the next official warning. Regional multi-day warning timing is distinct from hourly point-model rain.
+  - Mechanisms are conditional and may unfold over days. Forecast RH is not measured leaf wetness; point wind is not gusts; province does not determine tree stage or diagnosis.
+  - Actual narration timing and any necessary later budget reservation remain open. Existing100THB monthly ceiling and exclusive-use check apply to later paid use.
+  - Parent growth/feedback review, invoice reconciliation, subscription/hardware allocation, actual Claude cross-client proof, merges and full media backup remain open.
+  - Wake overlapping-project attention remains; no parallel agents or web changes used in this task.
+next_action:
+  action: Present r03 full narration and scene sequence for owner review; after story approval refresh dated weather and prepare the corresponding map/card production within existing gates.

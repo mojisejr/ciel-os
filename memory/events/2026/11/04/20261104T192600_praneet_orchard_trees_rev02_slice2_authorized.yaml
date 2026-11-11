@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T192600_praneet_orchard_trees_rev02_slice2_authorized
+type: decision
+recorded_at: "2026-11-04T19:26:00+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Record the owner's picks as plan revision 0.2 and his go on slice 2:
+    trees in work, and the tree section going plot to tree to work.
+  scope:
+    - "Plan 0.2: PLAN.md gains the picks and the accepted data layout; slices/2.md names form A and rows A."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner answered the samples with '1A 2A 3ตรง ลุยครับ': the form's
+    tree section types and taps (A), the tree list is rows (A), the
+    single-design screens match, and the data layout is accepted. 'ลุยครับ'
+    is his go for slice 2. A production migration in this slice runs only
+    on his word naming it, before the merge.
+  why: >-
+    Trees must exist in work before boxes, life events or labels can hang
+    on them, so slice 2 comes first.
+  agent_calls:
+    - "'ลุยครับ' right after the picks is taken as the go for slice 2, as the samples message asked for the go after the pick."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "2"
+  repository:
+    head: "fcb5a41f92d459a2defd71ead6f68a608a9d0f19"
+    branch: hq/20261103
+    working_tree: this-decision-with-plan-0.2
+  related:
+    - memory/events/2026/11/04/20261104T140505_praneet_orchard_trees_opened_slice1_authorized.yaml
+    - memory/events/2026/11/04/20261104T192534_praneet_orchard_trees_slice1_closed.yaml
+
+unresolved:
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 2 on a topic branch in praneet-web, test it under the memory
+    guard, and open a draft PR for the owner.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-orchard-trees-001/slices/2.md."

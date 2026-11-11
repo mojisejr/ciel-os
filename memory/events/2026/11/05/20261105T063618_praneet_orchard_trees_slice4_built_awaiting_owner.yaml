@@ -1,0 +1,56 @@
+schema_version: ciel.event.v0.1
+id: evt_20261105T063618_praneet_orchard_trees_slice4_built_awaiting_owner
+type: closeout
+recorded_at: "2026-11-05T06:36:18+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Build slice 4: a tree's death as a line in its history, planting again as
+    itself or by a new tree linked both ways, and its optional planting day or
+    year with its rough age.
+  scope:
+    - "praneet-web branch feat/tree-life (PR 49): migration 031, lib/orchard-tree.ts, lib/orchard-text.ts, the life and replace API, the tree page, the plot pages, the form's tree section, tests/trees.spec.ts."
+
+outcome:
+  status: built-awaiting-owner
+  slice: "4"
+  completed:
+    - "praneet-web PR 49 (head 719816318eb4be546c7b8ef2fc7c6deb5cd2c511), a draft described in its body."
+    - "Migration 031 adds orchard_tree_life (planted on a day or in a year, died, felled, in the order recorded) and orchard_plot_trees.replaces (same plot, at most once). Its sha256 starts 32dcc5ccac48c507."
+    - "A dead tree leaves the form's suggestions; a work may name it only up to the day it died. Only the newest event is undone, and a replaced tree's death stays."
+    - "bun run check: 150 passed, 1 failed (the known supply.spec date drift), peak 2,672 MB of 3,072 MB."
+    - "The planting form, the death form and the replacement link tiles were not in the slice 1 samples; their screenshots are on the agent's machine and listed in the PR."
+  not_verified:
+    - "The owner has not seen the slice 4 screens or recorded a real death or replanting on his phone."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "4"
+  decision: memory/events/2026/11/05/20261105T062230_praneet_orchard_trees_slice4_authorized.yaml
+  repository:
+    head: "adaf2a236f14ebb4ee3c22dc01bc0b1eee1262e8"
+    branch: hq/20261103
+    working_tree: this-record-only
+  child_state:
+    praneet-web: "feat/tree-life at 7198163, pushed, draft PR 49; the screenshot dev server stopped and next-env.d.ts restored"
+    praneet-office: "untouched"
+
+unresolved:
+  - "Migration 031 is not on production. It runs only on the owner's word naming it, before the merge."
+  - "A replacement tree made by mistake cannot be undone in this slice; workaround: rename the new tree."
+  - "The owner's first real tree work (slice 2) and tree's box (slice 3) on his phone are still to come."
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Show the owner the slice 4 screens; on his word run migration 031 on
+    production and read it back; then he merges PR 49.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/praneet-orchard-trees-001/slices/4.md."

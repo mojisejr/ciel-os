@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T191152_praneet_truck_fit_drawn_voiced_delivery
+type: closeout
+recorded_at: "2026-11-03T19:11:52+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver the approved drawn WALES-style truck-fit film with unchanged voice.
+  scope:
+    - Episode 008 r02 continuous drawn motion, original voice reuse and verified local MP4.
+outcome:
+  status: episode008-drawn-voiced-local-delivery
+  summary: >-
+    Rendered the accepted sixteen-shot r02 drawn explanatory story with
+    truck/plant entries, dimension and cage strokes, trip sequence, checklists
+    and CTA motion. The movie is 51.875 seconds, 1080x1920 H.264/AAC at 24 fps.
+    The complete voice is reused; decoded PCM matches the prior voiced movie.
+    No new Gemini request, charge or reservation. Original 3D movie and static
+    art remain unchanged. Delivered locally for owner output review, without
+    external upload, ops write, F-code or publication. Parent feedback slice
+    remains open.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 1b0fd1ce94e77a2a447ba3f7f46b14dd353c3670
+    branch: hq/20261103
+  office:
+    head: b936491a8e59b69e1b64a23f8f89eef219bca5f8
+    branch: feat/character-workflow
+  authorization: memory/events/2026/11/03/20261103T190318_praneet_truck_fit_drawn_production_authorized.yaml
+  delivery: checkouts/praneet-office/posts/video/episodes/008-truck-fit/DELIVERY-r02-v01.json
+  production: checkouts/praneet-office/posts/video/episodes/008-truck-fit/PRODUCTION-r02-v01.md
+  movie:
+    local_file: checkouts/praneet-office/posts/out/008-truck-fit/r02-wales-thai-v01/praneet-truck-fit-r02-wales-thai-v01.mp4
+    sha256: ce7df65d99cb3edb75e391428d236c94042c394e47fc8ab3fcf781a34f8209b0
+    bytes: 4194688
+    seconds: 51.875
+    frames: 1245
+  checks:
+    - Initial candidate had paper occlusions in shots5/13; fixed original painter order, inspected those scenes full-size and rerendered before delivery.
+    - Fifteen settled motion frames compared to accepted art; maximum pixel fraction with channel delta over10 is 0.000009163. Shot2 intentional small zoom inspected separately.
+    - All sixteen corrected encoded midpoints and opening motion strip inspected; layout around every cut and absolute-time state repeat passed.
+    - Full AV decode passed; every shot has audio signal; -17.4 LUFS integrated and -2.2 dB peak. Decoded PCM equals r01.
+    - QR ending source samples pixel-identical; QR decodes twice from final encoded movie with a 7.5-second hold.
+    - Browser remote requests blocked with none observed; renderer bundle and Git whitespace checks passed.
+    - Existing seven monthly reservations remain 66.43 THB; this revision adds zero paid requests or reservations and does not count original voice cost twice.
+unresolved:
+  - Owner review of the actual drawn movie remains; existing original voice pronunciation/listening limitations are not independently resolved by PCM identity.
+  - Calculator figures remain a bag9/high-cage-pickup example; bag weight unavailable, no payload certification.
+  - No external backup/upload, captions, post/F-code or publication requested for this delivery.
+  - Parent two-week feedback and growth proof, invoice reconciliation, subscription/hardware allocation, cross-client portability, repository merges and full media backup remain open.
+next_action:
+  action: Present the local drawn voiced movie for owner viewing; revise from feedback or prepare the requested caption/external handoff without another paid voice generation when narration is unchanged.

@@ -1,0 +1,61 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T120159_praneet_r03_full_map_card_sample_delivered
+type: closeout
+recorded_at: "2026-11-04T12:01:59+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver one complete voiced r03 weather sample before a daily Praneet weather workflow.
+  scope:
+    - Full local sixteen-scene MapLibre/Three and small2Dcard sample, bounded Thai voice, encoded-media verification and cover options.
+outcome:
+  status: r03-full-voiced-map-card-sample-delivered
+  summary: >-
+    Owner requested the complete render after storyboard r03. Built the
+    country-to-NE-to-east-to-south camera sequence, relevant province borders,
+    extruded pins/labels, symbolic3D weather, the proven eastern13:00directional
+    wind field, small tilted cards for leaves/flowers/fruit/load, original
+    coloured line farmer and recognizable detailed durian artwork. Generated
+    one authorized bounded Charon core and reused the cached branded closing.
+    Delivered a57.458333second native FullHD movie with audio and LINE QR,
+    plus two cover options, for local owner review. No daily workflow,
+    global style/runbook edit, Drive upload, social publication or PR/push.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 1fe6e1c31696dcf9cbbc3a70a2136c804cdf0c51
+    branch: hq/20261103
+  office:
+    head: 3007b8838cf9f4dfa39339679288fe56f585ec0d
+    branch: feat/character-workflow
+  authorization: memory/events/2026/11/04/20261104T112345_praneet_weather_r03_full_sample_authorized.yaml
+  delivery: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/DELIVERY-r03-v02.json
+  reproduction: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/production-v02/README.md
+  movie: checkouts/praneet-office/posts/out/009-weather-20261104/production-v02/praneet-weather-20261105-r03-v02.mp4
+  movie_sha256: 6b0e4fcbbc169d50f2b8438cbd707f1fd7ef25042eafa37ca822fd6140b32413
+  checks:
+    - Native1080x1920,24fps,1379frames,57.458333seconds,H264/yuv420p/BT709 plus48kHz mono AAC; complete decode passed. File28229416bytes.
+    - Sixteen native still phases and sixteen actual encoded shot frames inspected. All1379 states checked for readiness, text/card bounds, province IDs, wind domain and camera. Card bounding box at most21.253percent.
+    - No province borders in national/NE context; only Jan/Trat for eastern scene, only Nakhon-Si for southern/card scenes. Gold is geographic focus, not rain severity. Eastern field not transferred to the South.
+    - Observed versus commanded camera error at most7.13e-14. Maximum per-frame zoom0.06370,bearing0.17337degrees,pitch0.32883degrees,centre0.13946degrees. Backward selected geometry and raster identical in this run.
+    - All16 encoded scene audio windows have signal; quietest RMS minus22.26dB. Integrated minus17.8LUFS, peak minus2.3dB. Original speech speed, only sentence-silence trims and two regional reading holds.
+    - QR decoded to the existing confirmed LINE OA at50.958and56.458seconds;7.5second closing with fixed QR position and brief opacity entrance.
+    - One successful new TTS attempt,949satang reserved, current nine full reservations8541satang. Usage estimate about0.7246THB using conservative FX/fee assumptions, not provider invoice. No reservation released.
+    - Official current pricing/limits and authenticated models.get checked before the paid call. Today's existing exclusive-project declaration reused; no redundant owner question or secret output. No automatic retry.
+    - Local offline ASR anchors cover the narration with Thai spelling errors; not human listening approval. Incompatible PyAV decode bypassed with FFmpeg-decoded NumPy samples, no dependency/vendor change.
+    - Final render1459.85seconds, sampled owned-process RSS sum919.93MiB, not hard GPU/unified memory.332351 new map-provider bytes, zero browser/scene errors or failed/blocked requests.
+    - Prior production/prototype movie hashes and style baselines unchanged. Scoped whitespace check passed; Office tree clean after the source/delivery commit.
+unresolved:
+  - Owner full-motion, voice/pronunciation and factual-presentation review remains. Encoded checks and ASR do not certify human listening or publication approval.
+  - Forecast target Nov5 uses evidence checked Nov4at11:04:45. Refresh before real publication, particularly after the17:00official bulletin; this sample is a frozen dated snapshot.
+  - Point-interpolated wind, symbolic weather and visual lift/speed are approximate, not native model-grid wind, observed strikes, orchard wetness or measured gusts. Historical imagery/generalized2017 boundaries are not a current survey.
+  - Cards are conditional on real tree stage. Mechanisms may develop later; no instant disease/flush, province-wide phenology or universal treatment claim. Safety scene uses a shelter symbol without a separate moving person icon.
+  - Parent growth/feedback review, provider invoices, subscription/hardware allocation, actual Claude cross-client proof, repository merges and full media backup remain open.
+  - Wake overlapping-project attention remains. This task changed only episode009 sources/scripts and its HQ events; no parallel agent work or web changes.
+next_action:
+  action: Present the full local voiced movie and cover option for owner review; use that feedback before defining or implementing any daily-weather workflow or refreshing a version for publication.

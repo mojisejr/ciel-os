@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T120046_praneet_character_workflow_opened
+type: closeout
+recorded_at: "2026-11-03T12:00:46+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-workflow-001
+  lane: single
+  objective: Open the agreed reusable reference-to-collectible workflow workstream.
+  scope:
+    - Owner-requested syncup and split plan; no product implementation or generation.
+outcome:
+  status: workstream-opened-after-syncup
+  result: >-
+    Recorded the agreed two entry paths: conversational ref creation from an
+    idea/example, or supplied approved ref directly into modelling. Both end
+    in a reusable character package and ten-second neutral turntable. Owner
+    selects the head-large plump human family first, accepts v04 as the style
+    baseline and approves ref/final-art gates with agent-internal intermediate
+    review. Owner corrects the ref-generation proposal to built-in generation
+    in this chat, not Gemini image API or owner-run prompt-only generation.
+    Clarified that supported scale/palette/proportion changes can be data;
+    novel shapes may need source changes and do not automatically require
+    questions for every detail. Created plan 0.1 with three separate slices
+    and explicit native-tool, cost and client-portability proof boundaries.
+  authorization_boundary: >-
+    Owner asked to sync and open the workstream. This records the opening and
+    intended scope, not an outcome.status decided authorization of an
+    implementation slice. No .blend export, shared generator, native ref or
+    Claude execution was performed here. Existing lab and production sources
+    remain unchanged. No image call, paid request, push, PR or external write.
+evidence:
+  plan: workstreams/praneet-character-workflow-001/PLAN.md
+  plan_revision: "0.1"
+  slices:
+    - workstreams/praneet-character-workflow-001/slices/1.md
+    - workstreams/praneet-character-workflow-001/slices/2.md
+    - workstreams/praneet-character-workflow-001/slices/3.md
+  repository:
+    head: 0c95bc2f5138e7a59d84d069b9710cd19d9c2708
+    branch: hq/20261103
+  office_baseline:
+    head: 6a3201a4f2a5c3c593714dbc737f5d895d037e84
+    proof: posts/video/labs/xiao-mu-map/PROOF-v04.json
+    parent_plan: workstreams/praneet-character-map-lab-001/PLAN.md
+  prior_budget_and_client_contract: checkouts/praneet-office/runbooks/07-video-posts.md
+unresolved:
+  - Wake validates the new records but reports same-project overlap with the active character lab on praneet-office. No parallel implementation was started; execution/overlap authorization must be resolved in the slice-start decision, not inferred from this opening record.
+  - Implementation slice authorization and second character selection remain future owner decisions. The native ref route, reusable generator/package and saved .blend export are not proved by opening the plan.
+  - Native image-tool billing/quotas and Claude's host capabilities are unverified. Share approved ref/assets and commands; do not claim unlimited/free generation, automatic paid fallback or tested full client parity.
+  - Existing private invoice/subscription allocation, source-reference discrepancy, cross-machine asset retention and audience-feedback unknowns remain. Lab merge/map adoption and course/animation/printing scope are separate.
+next_action:
+  action: Present the opened plan and its DoD; when the owner starts slice 1, preserve the selected style and extract the common asset workflow without making paid or native image-generation calls in that slice.

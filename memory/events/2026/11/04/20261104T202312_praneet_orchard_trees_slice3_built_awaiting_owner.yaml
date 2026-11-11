@@ -1,0 +1,54 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T202312_praneet_orchard_trees_slice3_built_awaiting_owner
+type: closeout
+recorded_at: "2026-11-04T20:23:12+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Build slice 3: a tree's boxes, counting only work that names the tree,
+    started from the tree's page or the form, on the Today page with the plot
+    boxes.
+  scope:
+    - "praneet-web branch feat/tree-boxes (PR 48): migration 030, lib/orchard-track.ts, lib/orchard.ts, lib/orchard-text.ts, the form, the tree page, the box page, tests/trees.spec.ts."
+
+outcome:
+  status: built-awaiting-owner
+  slice: "3"
+  completed:
+    - "praneet-web PR 48 (head a5b3fe927d37334702b1ab3036ac80a7b5813674), a draft described in its body."
+    - "Migration 030 adds orchard_tracks.tree_id with a key to the tree on the box's plot, and widens the box name rule to plot, tree and name. Its sha256 starts d98f50281344cd12."
+    - "The form's tree section moved above the boxes so a tree's box shows once its tree is picked; a new box can be the plots' or a picked tree's. That choice was not in the slice 1 samples; the PR lists its screenshots for the owner."
+    - "Full suite under the memory guard: 147 passed, 1 failed (the known supply.spec date drift), peak 2,976 MB of 3,072 MB. track-boxes.spec is unchanged and passes."
+  not_verified:
+    - "The owner has not seen the form's new-box choice or used a tree's box."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  decision: memory/events/2026/11/04/20261104T201450_praneet_orchard_trees_slice3_authorized.yaml
+  repository:
+    head: "fd1073c82f7a98eee30048ba3dd90133c2846524"
+    branch: hq/20261103
+    working_tree: this-record-only
+  child_state:
+    praneet-web: "feat/tree-boxes at a5b3fe9, pushed, draft PR 48; the dev server used for screenshots stopped and next-env.d.ts restored"
+    praneet-office: "untouched"
+
+unresolved:
+  - "Migration 030 is not on production. It runs only on the owner's word naming it, before the merge."
+  - "The owner's first real tree work on his phone (slice 2) is still to come."
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Show the owner the form's new-box choice; on his word run migration 030
+    on production and read it back; then he merges PR 48.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-orchard-trees-001/slices/3.md."

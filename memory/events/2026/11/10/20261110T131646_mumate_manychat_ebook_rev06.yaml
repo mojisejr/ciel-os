@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261110T131646_mumate_manychat_ebook_rev06
+type: decision
+recorded_at: "2026-11-10T13:16:46+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Raise the plan to revision 0.6: slice 3 ends at gate 4 (the bot on
+    production, selling for the owner), and slice 4 becomes the paid/unpaid
+    metrics followed by opening the bot to every customer.
+  scope:
+    - "PLAN.md gains a revision 0.6 section and the slice 4 title; slices/3.md ends at gate 4 and names the allowlist; slices/4.md holds the funnel endpoint, the FU1 reason question as approved, the bdash page, the pre-launch items and EBOOK_OPEN=1 as its last step."
+  out_of_scope:
+    - "Opening the bot to every customer before the owner says so."
+
+outcome:
+  status: revised
+  decision: >-
+    With gate 4 done, the owner proposed "จะทำ slice 4 ให้เสร็จก่อนแล้วปล่อยทีเดียว".
+    The agent agreed. Funnel data comes from every customer now, whether or
+    not the bot serves them. It warned that both trials end before slice 4
+    can finish, so the packages must be paid by 2026-11-16. The owner chose
+    bdash for the page ("หน้าสรุปอยู่ใน bdash"). He asked the agent to write
+    the reason question and research its timing. The agent proposed FU1 at
+    30 minutes with four reason buttons and no new message. The owner
+    answered "แผน ok ข้อความ FU1 ok", and asked that the bdash page follow
+    bdash's structure, theme and categories, be easy to use and easy to
+    extend ("ดูโครงสร้าง ระบบก่อนนะ ... ไม่แตก ... เข้า theme และ ใช้งานง่าย อยู่ใน
+    หมวดหมู่ที่ถูกต้อง ต่อยอดง่าย").
+  research:
+    - "Abandoned-cart timing: first reminder within about 30-60 minutes converts best (Klaviyo study via MediaPost; Barilliance; Markt-kom; Recapture; Firepush). Vendor data, not Messenger-specific. Messenger's standard window is 24 hours after the user's last message (Meta policy overview)."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.6"
+  repository:
+    head: "5015b0069068eff98e8c469447bbf364ff21e7d9"
+    branch: hq/20261103
+    working_tree: this-decision-and-plan-revision
+  related:
+    - memory/events/2026/11/10/20261110T130415_mumate_manychat_ebook_slice3_gate4_owner_purchase.yaml
+
+unresolved:
+  - "Slip2Go and ManyChat Pro trials end 2026-11-16 23:59 and 2026-11-17; slice 4 needs both, so the owner pays before then."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Close slice 3 with its closeout, then authorize slice 4 of revision 0.6.
+  acceptance_check:
+    - "A slice 3 closeout and a decision with outcome.status decided, plan_revision 0.6 and slice 4."

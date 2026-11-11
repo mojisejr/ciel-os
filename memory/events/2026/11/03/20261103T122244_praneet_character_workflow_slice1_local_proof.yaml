@@ -1,0 +1,77 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T122244_praneet_character_workflow_slice1_local_proof
+type: closeout
+recorded_at: "2026-11-03T12:22:44+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-workflow-001
+  lane: single
+  objective: Extract the selected collectible style into a reusable local asset workflow.
+  scope:
+    - Slice 1 source, runbook, baseline replay, data-controlled scale and package proof only.
+outcome:
+  status: slice1-local-proof-awaiting-owner-review
+  result: >-
+    Implemented common modelling helpers, approved-reference brief checks,
+    measured meter/foot-origin normalization, editable Blender save, GLB
+    export, geometry verification, six-view colored/silhouette review,
+    ten-second silent turntable and allowlisted checksum-indexed ZIP packaging.
+    Character-specific v04 geometry and palette are separate from export and
+    review tools. Replayed the selected Xiao Mu at 0.12 m and a data-only
+    0.18 m variant with the same shape-module hash. Opened the saved Blender
+    file and compared evaluated geometry against GLB and normalized old v04.
+    Rebuilt from the bundled flat source in a separate local project root.
+    No native image call, paid API call, upload, push or PR was performed.
+  review_boundary: >-
+    This is a local implementation/proof checkpoint, not final owner art
+    approval, an owner-merge delivery or completion of the three-slice
+    workstream. Slice 2 has not started. CIEL remains on the shared standing
+    branch; Office uses an independent stacked topic branch preserving the
+    unmerged lab dependency. Plans were not used as progress records.
+evidence:
+  plan: workstreams/praneet-character-workflow-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 1ccd581585abf4d244f15168ace632d5169153ca
+    branch: hq/20261103
+  office:
+    head: 2d07abc8d9679acd468ae49480d3c61f2dccfd97
+    branch: feat/character-workflow
+    dependency_head: 6a3201a4f2a5c3c593714dbc737f5d895d037e84
+    proof: checkouts/praneet-office/posts/video/character-workflow/PROOF-slice1.json
+    runbook: checkouts/praneet-office/runbooks/09-character-assets.md
+    style: checkouts/praneet-office/posts/video/character-workflow/STYLE.md
+  local_outputs:
+    package: checkouts/praneet-office/posts/out/characters/xiao-mu/v04-replay-001.zip
+    package_sha256: 9dff61668001a964fdb8d412965fbd73399d03982ceee12e66128a0a934813fb
+    movie: checkouts/praneet-office/posts/out/characters/xiao-mu/v04-replay-001/preview/turntable.mp4
+    movie_sha256: 7179aba764df40797bc0a1e5fc0daaf7eae3cc877ec7790b7b730cf5b72ef332
+  observed_checks:
+    - Blender build and reopening/export checks passed for baseline and height variant.
+    - Maximum normalized baseline vertex error from v04 was approximately 1.56e-8 meters; shape checks do not establish owner art acceptance.
+    - Movie is H264, 1080x1080, 24 fps, 240 frames, ten seconds, silent; strict decode and local-only browser checks passed.
+    - Fourteen earlier local movie/GLB hashes were retained; tracked old lab and production sources were unchanged.
+    - Unapproved reference failed with exit code 1 before output; stale preview report was rejected before ZIP creation.
+    - Both ZIPs passed CRC and indexed-entry SHA checks; generated media remain ignored local assets.
+    - Python AST parsing, Bun source bundling with installed Playwright external, and staged whitespace checks passed.
+  selected_run_cost:
+    paid_api_requests: 0
+    native_image_requests: 0
+    direct_api_cost_thb: 0
+    subscription_allocation_thb: null
+    hardware_allocation_thb: null
+    turntable_render_seconds: 44.97
+    peak_sampled_owned_rss_sum_mib: 730.92
+    limits: Selected final run only, not total development time or all attempts; sampled RSS excludes some GPU/system memory.
+unresolved:
+  - Owner review of the replay output and the next slice decision remain; no new final-art approval was inferred.
+  - Native ref generation, actual image-tool billing/quotas, a second distinct character and actual Claude execution remain unproved.
+  - Source-only rebuild passed on this Mac; cross-machine transfer and backup of ignored media are not proved by Git or the local ZIP.
+  - Office branch depends on the unmerged character lab. No PR or merge was requested for this checkpoint.
+  - Existing private invoice/subscription allocation, source-reference closure-count discrepancy and parent audience-feedback unknowns remain; the parent Gemini ceiling stays 100 THB/month.
+  - Map adoption, rigs, expressions, printing readiness, publishing and the course product remain separate scope.
+next_action:
+  action: Present the replay turntable and local package for owner review; after that review and an explicit slice 2 start decision, select an idea/example and prove native conversational reference generation without a new paid service.

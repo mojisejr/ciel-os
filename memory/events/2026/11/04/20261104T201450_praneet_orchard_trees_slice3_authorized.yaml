@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T201450_praneet_orchard_trees_slice3_authorized
+type: decision
+recorded_at: "2026-11-04T20:14:50+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Record the owner's go on slice 3 (a tree's boxes) under plan 0.2.
+  scope:
+    - "This record only; no plan change."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    The owner closed slice 2 and said to go on to slice 3 ('ตอนนี้ปิดไปก่อน
+    แล้วไป slice3 ได้เลยถ้าพร้อม'). A production migration in this slice runs
+    only on his word naming it, before the merge.
+  why: >-
+    A tree that needs watching, such as one being treated for a fungus, gets
+    its own box that counts only that tree's work.
+  agent_calls:
+    - "The tree page's box section was in the slice 1 samples he approved ('3ตรง'). Choosing a tree for a new box in the add-work form was not drawn; it reuses the form's existing buttons, and its screenshots go in the draft PR for his check before the merge."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "3"
+  repository:
+    head: "5e8c427b671ef4a40c6ab6d56815bf740a7e5420"
+    branch: hq/20261103
+    working_tree: this-decision-with-slice2-closeout
+  related:
+    - memory/events/2026/11/04/20261104T201419_praneet_orchard_trees_slice2_delivered.yaml
+
+unresolved:
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 3 on a topic branch in praneet-web, test it under the memory
+    guard, and open a draft PR for the owner.
+  acceptance_check:
+    - "Slice 3 acceptance in workstreams/praneet-orchard-trees-001/slices/3.md."

@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T101539_praneet_orchard_slice14_merged_migrated
+type: closeout
+recorded_at: "2026-11-04T10:15:39+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record slice 14 merged and migrated, and the local cleanup. Its data
+    steps on production still wait for the owner's word, so this is a
+    record, not the slice's delivery.
+  scope:
+    - "Production migration 027, praneet-web PR 44 and praneet-office PR 38 merges, local cleanup."
+
+outcome:
+  status: merged-awaiting-production-data
+  slice: "14"
+  completed:
+    - "Migration 027 ran on production on the owner's word ('run migration ได้เลย'), before the merge. A read-only check beforehand found 026 applied, none of the new columns, and chemicals_kind_check holding eight kinds. migrate printed only 'Applied 027_orchard_routines.sql'. Read back: the recorded sha256 starts 12301c84a19ad162, equal to the committed file's. orchard_words.routines (text[], default '{}'), routines_confirmed (default false) and orchard_work.crop exist, and the kind check holds inducer. 183 words have no labels and no work has a fruit."
+    - "The owner merged both PRs ('merged แล้วครับ'). After a fetch, praneet-web origin/main holds merge 298efb4 with PR head a6a0391 as its ancestor, and praneet-office origin/main holds merge ccdade7 with PR head 327b539 as its ancestor."
+    - "Production serves the change. The new office command 'orchard routines', a read-only call to www.ptplant.com, listed all 183 words with routines, all unlabelled."
+    - "Dry run on production, nothing written: 'routines set' with the reviewed file widened to all 183 words (every other word confirmed as none). It would label 44 words, 22 spray, 1 spray and water, 10 fertilize and 11 water, and confirm 139 as none. The two words added since the review, ตัดหญ้า and ถางหญ้าขอบแปลง, are none. The files are .assets/preneet/orchard-routines.json and orchard-routines-all.json, git-ignored because some words hold workers' names."
+    - "Tidied on the owner's word ('เก็บกวาด'). praneet-web is on main, equal to origin/main. The local branch feat/routine-cards was deleted after rev-list counted 0 unmerged commits. .next-test, test-results and .local/routine-s14 were removed, along with the scratch dumps and the praneet-office scratch clone, and the samples artifact was deleted."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.8"
+  slice: "14"
+  decision: memory/events/2026/11/04/20261104T090834_praneet_orchard_rev18_slice14_authorized.yaml
+  repository:
+    head: "cd82d5c40feba38d5e8df22b994b6cac072aef67"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  child_merges:
+    praneet-web: "PR 44, origin/main 298efb4"
+    praneet-office: "PR 38, origin/main ccdade7"
+  related:
+    - memory/events/2026/11/04/20261104T094353_praneet_orchard_slice14_built_awaiting_owner.yaml
+
+unresolved:
+  - "Remaining production steps, each on the owner's word: write the labels; set ทะวาย and สารมังคุดป้า to the inducer kind; set the fruit on the three past induction works; then check the cards on www.ptplant.com against each plot's latest work."
+  - "The form's guess misses spray for 'Foliar Spray (พ่นสารกำจัด…)' words, because the rule excludes พ่นสาร not followed by เคมี. It is deferred. Workaround: the reviewed file labels those words, and for a new word the owner taps the chip."
+  - "The remote branch feat/routine-cards is still on praneet-web's GitHub (praneet-office's was deleted on merge), as are the older merged branches chore/test-build-mode and feat/orchard-jobs, and ciel-os hq/20261102."
+  - "supply.spec 'the old supply page...' still fails on main because of date drift. It is deferred. Workaround: read it as a known failure."
+  - "hq/20261103 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    On the owner's word, write the reviewed labels (orchard routines set
+    --file .assets/preneet/orchard-routines-all.json --confirmed --write).
+    Then dry-run and write the two products' kind, and the three works'
+    fruit with spray set restating their tanks. Then check the production
+    cards and record slice 14 delivered.
+  acceptance_check:
+    - "Slice 14 acceptance in workstreams/praneet-orchard-001/slices/14.md."

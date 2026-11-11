@@ -1,0 +1,53 @@
+schema_version: ciel.event.v0.1
+id: evt_20261105T063124_praneet_ayutthaya_camera_storyboard_r02
+type: closeout
+recorded_at: "2026-11-05T06:31:24+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Revise the Ayutthaya lab storyboard after owner feedback that the movie stays in one place without meaningful camera travel.
+  scope:
+    - r02 camera/scene proposal and sixteen static target compositions; preserve existing voice and movie.
+outcome:
+  status: revised-lab-storyboard-r02-prepared-for-owner-review
+  summary: >-
+    Owner reports watching the delivered movie and finding it unsatisfactory:
+    everything focuses in one place and the camera lacks monsoon-like travel
+    and zoom. Local code/movie review confirms fixed framing with3.5percent
+    opening scale and at most1.2percentdrift thereafter. Owner requests another
+    storyboard. New r02source expands the schematic world into palace, temple,
+    craft quarter, market and harbour detail, with16distinct camera centres,
+    wide-to-detail scale0.43to1.75and subject-linked popup placement. All16
+    narration sentences and measured59.75secondtimeline remain unchanged.
+    These are revised keyframes for review, not approved continuous motion.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 6b3ae684b7ec9b8cad49457d826381be8a4b09d7
+    branch: hq/20261103
+  office:
+    head: 71043ae3a3bf600652290326fcb7d260767ddb61
+    branch: feat/character-workflow
+  brief: checkouts/praneet-office/posts/video/labs/ayutthaya-what-if/BRIEF-r02.md
+  storyboard: checkouts/praneet-office/posts/video/labs/ayutthaya-what-if/STORYBOARD-r02.md
+  structured_story: checkouts/praneet-office/posts/video/labs/ayutthaya-what-if/STORYBOARD-r02.json
+  proof: checkouts/praneet-office/posts/video/labs/ayutthaya-what-if/PROOF-storyboard-r02.json
+  output: checkouts/praneet-office/posts/out/labs/ayutthaya-what-if/storyboard-r02/
+  checks:
+    - Sixteen1080x1920PNGs and four review pages rendered locally. Screen-layer text bounds, source/frame/sheet hashes and browser errors checked; all four final pages visually inspected.
+    - Rendered frame states contain16different camera centres and roughly4.07xrelative scale from wide to closest view. This demonstrates framing differences, not travel continuity or smoothness.
+    - All narration strings match r01exactly and the sixteen contiguous scene times match existing measured audioTimes. Existing movie and cached master hashes remain unchanged.
+    - Revised popup compositions separate speech bubbles from headings; the adaptation beat resolves its document visually. Close-ups omit distracting half-cut district labels. No claim to surveyed historic district layouts.
+    - Seven new lab-only files committed; scoped whitespace check passes. No new voice/API/budget change, full movie, install, map-provider request, upload, public post, business/runbook edit, push or PR.
+unresolved:
+  - Owner review of r02story/art and any short-motion/full-movie production authority remains. Proposed travel takes0.55to1.45seconds then holds; actual smoothness is unproved.
+  - r01visual acceptance is explicitly negative from the owner's playback report. Owner voice/pronunciation acceptance is still unspecified; device telemetry was not independently collected.
+  - Counterfactual outcomes and authored river/city/district layouts remain illustrative. This revision does not establish historic reconstruction, sovereignty boundaries or future prosperity.
+  - Prior provider reconciliation, cost allocation, shared-budget migration, actual Claude proof, full backup, Git merges, earlier publication metadata and parent feedback/growth review remain open; Wake overlap attention remains unchanged.
+next_action:
+  action: Present r02full storyboard and four review pages. After owner approval, prove roughly12to15seconds of withdrawal from Ayutthaya, river travel and arrival at the Bangkok port using cached audio before another complete movie.

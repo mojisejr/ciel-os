@@ -1,0 +1,71 @@
+schema_version: ciel.event.v0.1
+id: evt_20261110T104920_mumate_manychat_ebook_slice3_gates2_3_live_flow
+type: closeout
+recorded_at: "2026-11-10T10:49:20+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Record gates 2 and 3 of slice 3 (ebook running on production; rollback
+    drilled) and the live-flow edit of gate 4, which leaves only the owner's
+    own purchase to prove it.
+  scope:
+    - "Owner's words, 2026-11-10: 'ลุยได้เลยตอนนี้ครับ 6 - 7' and 'ถ้าด่าน 1 2 3 4 คุนทำได้ คุนทำให้ผมจบเลยครับ แล้วด่าน 5 รอผมบอกคุน'; 'เว็บดับตอนนี้ 1 วินาที ก็ไม่เป็นไรครับ'."
+    - "He moved the Slip2Go IP whitelist to later ('whitelist ทำหลังสุดได้หรือเปล่า'); the agent advised doing it before gate 4's purchase, together with the key rotation."
+
+outcome:
+  status: in-progress
+  slice: "3"
+  completed:
+    - "mumate-prod-1 pulled mumate-infra 9a90bf3 (PR 69 merged)."
+    - "Rollback drill setup: bin/deploy.sh EBOOK_TAG=43c688d670979c568b0cad6492b96742dbe18dc0 --profile ebook by hand (by=agent-drill). A compose dry run showed only ebook created; caddy, fe, bazi and alloy untouched. The container was healthy in about 10 s, and ops-status showed `ebook: … ✅` next to fe ✅ and bazi ✅. Health from inside the container: env production, db ok as ebook_app."
+    - "Step 7: `docker compose up -d --force-recreate caddy` on mumate-prod-1 at 10:36 +07:00. 3 of 60 probes of bazichart.mumate.co/api/health failed, all within 10:36:09-10, and the rest answered 200. bazichart.mumate.co/ebook-api/health then answered 200 from production."
+    - "Step 6: promote-ebook-production run 42750879584. All gates passed; it deployed 2600201 healthy and posted the Discord note (by mojisejr); fe and bazi did not move. Gate 2 is done."
+    - "Gate 3: rollback-ebook-production dry run (run 42751003662) named EBOOK_TAG=43c688d only. The real run (42751055708) put back 43c688d, healthy, about 10 s; fe (up 15 h) and bazi (up 2 days) kept their tags and did not restart. promote-ebook-production (run 42751140929) then returned production to 2600201; public health reports env production, db ok."
+    - "Backup before the live edit: the live flow duplicated as '[BACKUP 2026-11-10] Bazi E-Book 95 — ห้ามเปิด' (content20261110033733_661821), STOPPED, both triggers off."
+    - "ManyChat bot field bot_hook_secret_prod (id 5136991) created through the API from EBOOK_HOOK_SECRET_PRODUCTION. Its 64-character value hash-matches the local value and production's EBOOK_HOOK_SECRET. No secret was typed into a web field."
+    - "Live flow 'Bazi E-Book 95', in the Basic Builder: step '3 ได้รับสลิป' (1306130524), which every slip path reaches through the eb_slip_sent condition, gets one Next Step, 'Actions #6' (1309383688). It holds one External Request: POST https://bazichart.mumate.co/ebook-api/manychat/slip, header X-Ebook-Hook-Secret = {bot_hook_secret_prod}, body {\"subscriber_id\": \"{Contact Id}\", \"image_url\": \"{ebook_slip}\"}. The preview was valid JSON. Before Update, the draft held the 21 published steps with identical text (checked in the builder state) plus Actions #6 and the builder's own starting-step node. After Update: live, 22 steps, both triggers active, no unpublished changes."
+    - "Who the bot acts for: the production app's EBOOK_ALLOWLIST (the owner only) gates it, in place of a bot_beta tag in the flow. Every other customer's slip is logged as blocked and gets nothing from the bot. The existing steps (eb_slip_sent, open conversation, the admin email, the 'ได้รับสลิปแล้ว' message) run before it, unchanged. Opening to all is EBOOK_OPEN=1 in env, with no flow publish."
+  deviations:
+    - "Plan 0.5 slice 3 says to gate the bot with a bot_beta tag in the live flow; the app's allowlist does it instead, so the live edit stays one step and gate 5 needs no flow change."
+    - "The Slip2Go IP whitelist, planned before promote, is deferred by the owner; still '*'."
+    - "The rollback drill needed a previous production version, so 43c688d was deployed by hand first; the promote and rollback themselves used the phone buttons."
+  not_verified:
+    - "No production call has arrived yet (0 events, 0 orders at 10:48). The bot field header and the allowlist path are proven only once a customer's or the owner's slip reaches the new step."
+    - "Gate 4's acceptance: the owner's real 95-baht purchase through the live flow, delivered by the bot, with the admin confirming the money."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.5"
+  slice: "3"
+  decision: memory/events/2026/11/09/20261109T230410_mumate_manychat_ebook_rev05_slice3_authorized.yaml
+  repository:
+    head: "2bbedad550b408ad007ffa5345510105e3f9bf96"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  source:
+    - "mumate-infra origin/main 9a90bf3 (PR 69)"
+    - "mumate-ebook-bot origin/main 2600201079875ed127e0a6cc9bb29685d3f06dd0, running on mumate-prod-1"
+    - "GitHub Actions runs 42750879584, 42751003662, 42751055708, 42751140929 (mumate-infra)"
+  related:
+    - memory/events/2026/11/10/20261110T103101_mumate_manychat_ebook_slice3_gate2_prod_db_env.yaml
+
+unresolved:
+  - "Gate 4: the owner buys for real (95 baht) through the live flow ('Bazi' → สั่งซื้อ → transfer → slip). The team still gets the usual 'check payment then send file' email for his purchase, so tell them it is a test, or they may also send by hand."
+  - "Before gate 5: tell the admin in that email whether the bot already delivered (a notify action in the delivery and notice flows); set the Slip2Go IP whitelist and rotate the Slip2Go key and the staging hook secret; pay for the Slip2Go and ManyChat Pro packages (trials end 2026-11-16 23:59 and 2026-11-17)."
+  - "Edge for gate 5: a customer who already sent a slip and later reaches the eb_slip_sent condition again (for example through the มีคำถาม skip) resends the old ebook_slip; after 60 s the app answers it as a duplicate. Today only the owner is allowlisted."
+  - "Undo of the live edit: remove step Actions #6 (or its Next Step link) from '3 ได้รับสลิป' and Update; the flow is then the 2026-11-10 backup."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner buys once for real through the live flow; the agent checks the
+    order on production (bin/ebook.sh orders) and the delivery, then records
+    gate 4. Gate 5 waits for the owner's word.
+  acceptance_check:
+    - "Slice 3 acceptance gate 4 in workstreams/mumate-manychat-ebook-001/slices/3.md."

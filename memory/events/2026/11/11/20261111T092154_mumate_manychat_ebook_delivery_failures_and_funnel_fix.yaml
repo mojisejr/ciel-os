@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261111T092154_mumate_manychat_ebook_delivery_failures_and_funnel_fix
+type: closeout
+recorded_at: "2026-11-11T09:21:54+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Record the owner's report that some customers sent a slip and got no link,
+    what the agent found, and the live-flow fix for missing funnel events that
+    the owner said to make and publish ("ถ้ายังไม่ได้ส่ง ส่งเลย ... แก้ได้เลย ... update flow ขึ้นไปเลย").
+  scope:
+    - "Production orders, ebook logs, Caddy access logs (read only); ManyChat 'Bazi E-Book 95' live flow."
+
+outcome:
+  status: in-progress
+  slice: "4"
+  completed:
+    - "Production has 5 orders since the bot opened, all paid with Slip2Go 200200. Orders 1, 3 and 4 were delivered. Orders 2 (2026-11-10 23:21) and 5 (2026-11-11 09:00) were not: ManyChat answered /fb/sending/sendFlow and /fb/subscriber/addTagByName with HTTP 400 'Subscriber does not exist'. getInfo finds both contacts as active Facebook subscribers with the same id the flow sent; both have no gender in ManyChat, unlike every delivered one."
+    - "Order 2 was sent by hand by an admin at 00:29 (seen in Live Chat); nothing resent. Order 5 had nothing and the customer asked for the link; `bin/ebook.sh resend 5` (dry run ok) failed again with the same 400. This agent's ManyChat seat cannot chat with contacts, so the link for order 5 needs an admin."
+    - "No one learned of the failures: the team's 'bot delivered' email lives in the delivery flow that failed, and the bot raises no alert on a failed delivery."
+    - "Funnel: Caddy logged 21 event requests since the publish of 2026-11-10; 17 answered 400. The failing steps (buy, sample, reason_asked) set bot_funnel_step in the same Actions step as the External Request, and ManyChat renders the field as empty there, so the step arrived as \"\". The FAQ path sets the field in an earlier step and its 3 events were recorded."
+    - "Fix published 2026-11-11 09:21 +07:00: the External Request bodies of 'ส่ง event กดซื้อ', 'ส่ง event ดูตัวอย่าง' and 'Actions #7' now carry the step literally ({subscriber_id: {{user_id}}, step: buy | sample | reason_asked}); header, URL and next steps unchanged, read back from the builder. The first publish was refused with 'Tag is missing' because the page had not loaded the tag list; opening the Condition's tag picker without a change loaded it, the Condition still read tag 100717982 (eb_slip_sent), and the publish went through."
+  not_verified:
+    - "Why ManyChat refuses to write to those two contacts; that the fixed events now answer 200 (waiting for traffic)."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  decision: memory/events/2026/11/11/20261111T050901_mumate_manychat_ebook_rev07.yaml
+  repository:
+    head: "030c81ed168dae00c265d86c3d2fd7508ef9195a"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+
+unresolved:
+  - "An admin sends the E-Book link and app code to order 5 by hand, then the order is marked delivered (no tool for that yet; it stays 'paid, NOT delivered' in `bin/ebook.sh pending`)."
+  - "A failed delivery should retry and alert Discord ('paid but not delivered'), since the team email cannot reach them; mumate-ebook-bot change, owner to decide."
+  - "Ask ManyChat support why /fb/sending/sendFlow says 'Subscriber does not exist' for an active subscriber."
+  - "Messages still say 'ถึง 11 พ.ย.' (step 1, 2b, FU2, FU3)."
+  - "Owner pays Slip2Go (2026-11-16 23:59) and ManyChat Pro (2026-11-17)."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Confirm events answer 200 after the fix; owner has an admin send order 5
+    and decides on the delivery-failure alert.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-manychat-ebook-001/slices/4.md."

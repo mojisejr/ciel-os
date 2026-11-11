@@ -1,0 +1,46 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T114356_praneet_orchard_slice14_lessons
+type: closeout
+recorded_at: "2026-11-04T11:43:56+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Keep what slice 14 taught, for the next session: the first design was
+    built, merged and rolled back, and the second came from the owner's own
+    words.
+  scope:
+    - "Slice 14, plan revisions 1.7 to 1.9."
+
+outcome:
+  status: recorded
+  completed:
+    - "What happened: the first design counted spraying, fertilising, watering and flower induction from labels on the work words, plus the work's method and products. It was built, tested and merged, with migration 027. When the owner saw it, he said the counts did not fit. 'ขูดต้นแล้วพ่นยา' is not a spray round, and the pill buttons felt cluttered. It was rolled back the same day."
+    - "Why it missed: the rules tried to decide which works are the same routine, and only the owner knows that. The syncup asked how to classify work; it never asked whether he wanted the system to classify it at all. Two leans at the core missed (Q27, Q28)."
+    - "What he chose instead: tracking boxes he pins and fills himself, with nothing guessed. The work is still recorded as before. A forgotten work is added from the box, and the newest round counts."
+    - "Why the rollback was clean: nothing had been written to the new columns. A read-only production check proved that before the agent recommended rolling back. The columns were kept until the next migration dropped them, and only after checking they were empty."
+  lessons:
+    - "Before designing rules that interpret the owner's free-text records, ask first whether he wants the system to interpret them, or to let him mark things himself."
+    - "Show the real data through the proposed rules before building. The Q19 table of real counts was the step that surfaced the doubt; it came after the build was authorized."
+    - "When a merged change is doubted, read production before answering 'is a rollback safe'. The answer rested on counts, not on an expectation."
+    - "Migration order across a revert matters: revert live, then the migration that drops the old columns, then the new code."
+
+evidence:
+  repository:
+    head: "791e9389f08bb15baa74d64ba056eaabaad0f2a9"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  related:
+    - memory/events/2026/11/04/20261104T105213_praneet_orchard_rev19_slice14_boxes_authorized.yaml
+
+unresolved:
+  - "Slice 15 and the cluttered pill buttons (Q29) wait for the owner's decision (Q39 asked: keep slice 15 for later, or drop it and close the workstream)."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    None. Read these lessons before the next design in this workstream.

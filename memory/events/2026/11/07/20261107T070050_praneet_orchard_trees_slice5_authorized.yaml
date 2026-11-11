@@ -1,0 +1,50 @@
+schema_version: ciel.event.v0.1
+id: evt_20261107T070050_praneet_orchard_trees_slice5_authorized
+type: decision
+recorded_at: "2026-11-07T07:00:50+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Record the owner's go on slice 5 (A4 tree labels) under plan 0.2.
+  scope:
+    - "This record only; no plan change."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After merging PR 49 the owner said to go on ('merged แล้ว
+    ลุยต่อได้เยครับ'), answering the agent's question whether to start
+    slice 5.
+  why: >-
+    A plot's trees get printed name labels, 3 × 8 on an A4 sheet, so a
+    worker can find a tree by its name in the orchard.
+  agent_calls:
+    - "The pick page and the A4 sheet follow the slice 1 samples he approved. Screenshots of both go in the draft PR for his check before the merge; the slice needs no migration."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "5"
+  repository:
+    head: "79f5552005cd395bad64f7f337921beef12df5c3"
+    branch: hq/20261103
+    working_tree: this-decision-with-slice4-closeout
+  related:
+    - memory/events/2026/11/07/20261107T070048_praneet_orchard_trees_slice4_delivered.yaml
+
+unresolved:
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 5 on a topic branch in praneet-web, test it under the memory
+    guard, and open a draft PR for the owner.
+  acceptance_check:
+    - "Slice 5 acceptance in workstreams/praneet-orchard-trees-001/slices/5.md."

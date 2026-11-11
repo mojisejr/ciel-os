@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T212341_praneet_satellite_terrain_rectangular_scene_proof
+type: closeout
+recorded_at: "2026-11-03T21:23:41+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Show a 15-second actual Earth terrain approach into a pinned rectangular WALES explanatory scene.
+  scope:
+    - Revise the local visual proof, preserve existing work and verify the encoded movie.
+outcome:
+  status: satellite-terrain-rectangular-scene-local-proof
+  summary: >-
+    Rendered the owner-requested 15-second revision with historical NASA/USGS
+    satellite surface imagery draped over an actual Mapterhorn DEM mesh in
+    MapLibre, with 1.5x vertical exaggeration disclosed in the movie. A pin
+    identifies an illustrative Chanthaburi location; a north-up camera approach
+    opens a rectangular drawn WALES scene from projected geographic corners.
+    The scene explains the existing observation-only sky/soil/tree mechanism.
+    Delivered as a silent local 1080x1920 H.264 picture test, not a real weather
+    report. No new paid request, reservation, Blender asset, upload or posting.
+    Earlier proof and accepted episodes/styles remain unchanged.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 9450d9df5327dc0c543e9622a873bd189643dd78
+    branch: hq/20261103
+  office:
+    head: a4e74985f947c3b4064e0a87f3e153412f1e2b46
+    branch: feat/character-workflow
+  proof: checkouts/praneet-office/posts/video/styles/weather-map-lab-v02/PROOF.json
+  sources: checkouts/praneet-office/posts/video/styles/weather-map-lab-v02/SOURCES.json
+  movie:
+    local_file: checkouts/praneet-office/posts/out/weather-map-lab/faa-to-garden-v02/praneet-faa-to-garden-map-proof-v02.mp4
+    sha256: 0a770d469cbf0e87300029cb0d7436363742d42cbcba6542dbf55575a063eac1
+    bytes: 9908055
+    seconds: 15
+    fps: 24
+    frames: 360
+  checks:
+    - All 360 frames checked for map/tile readiness, active DEM, nonzero renderer elevation, native canvas dimensions, text bounds and scene projection/bounds.
+    - Maximum panel projection error was below 0.000000000001 CSS pixel; backward seeking produced pixel-identical settled output. Thirty motion samples retained.
+    - Inspected eight source keyframes, native terrain approach/unfold/final views, seven encoded samples and native final encoded frame.
+    - Delayed Landsat blending to the inland approach to reduce offshore historical-composite seams; final full MP4 decode and format checks passed.
+    - Capture took 256.33 seconds and sampled owned-process RSS sum peaked at 947.94 MiB; this measurement is not a hard unified-memory cap.
+    - Full run used 255 cached/provider resources and 1656996 newly downloaded bytes. No paid requests or Gemini reservations.
+    - Original v01 MP4 SHA256 and accepted baseline source hashes unchanged; JavaScript syntax, renderer compilation and Git whitespace checks passed.
+unresolved:
+  - Owner review of the actual revised movie remains; this is not an approved permanent style, daily series or full storyboard.
+  - Satellite imagery is historical; weather, garden and soil water are labelled illustrations. A real forecast still needs dated sources, agronomic context and storyboard approval.
+  - Parent two-week feedback/growth proof, billing reconciliation, subscription/hardware allocation, cross-client proof, repository merges and full media backup remain open.
+next_action:
+  action: Present the actual local movie for owner feedback on the 3D approach and pinned rectangular scene before preparing a full regional-weather storyboard.

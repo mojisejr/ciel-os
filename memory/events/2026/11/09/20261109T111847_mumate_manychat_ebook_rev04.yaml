@@ -1,0 +1,67 @@
+schema_version: ciel.event.v0.1
+id: evt_20261109T111847_mumate_manychat_ebook_rev04
+type: decision
+recorded_at: "2026-11-09T11:18:47+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Raise the plan to revision 0.4. Slice 2 now delivers exactly what the
+    team sends by hand, and the refinements move to after launch. No slice is
+    authorized.
+  scope:
+    - "PLAN.md gains a revision 0.4 section; slices/2.md is rewritten; slices/4.md adds the Slip2Go IP whitelist before promote and drops the bucket env."
+  out_of_scope:
+    - "Starting slice 2."
+
+outcome:
+  status: revised
+  decision: >-
+    The team reported its manual delivery. Every buyer gets the same message:
+    the E-Book Drive folder link, the shared Mumate Plus coupon EBOOKPULS95
+    with bazichart.mumate.co/v2/account, and a how-to image. The owner wants
+    the system usable and ready to release first, with details after ("ทำให้
+    ระบบใช้จริงได้ ก่อน และพร้อมปล่อย แล้วค่อยทำ เรื่องยิบย่อยที่จำเป็นทีหลัง").
+    He wants the IP whitelist after the system is ready, himself as the only
+    tester, the PDPA text drafted but not wired in, and the pasted image used
+    as is. He said to update the plan ("ถ้าต้อง update plan ก็ ทำเลยครับ").
+    Revision 0.4 changes four things:
+    - Slice 2 sends the manual message through a ManyChat delivery flow.
+    - The receiver check uses bank and account number only, because the slip
+      prints the short name "บจก. มูเทค เดสตินี่".
+    - Personal links, PDF stamping, private PDF storage, slip-image retention
+      and PDPA wording move to after launch.
+    - The whitelist is set before promote in slice 4.
+  agent_proposals_awaiting_confirmation:
+    - "Deferring slip-image retention (approved in 0.2) is the agent's call in the owner's spirit of shipping first; the owner confirms or reverses it at the slice 2 decision."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: "3cd34272c6654842de6cac3c7904a0993902d34a"
+    branch: hq/20261103
+    working_tree: this-decision-and-plan-revision
+  source:
+    - "Team's manual delivery message and a buyer's chat screenshot, pasted by the owner 2026-11-09. The slip in it shows receiver 'บจก. มูเทค เดสตินี่', KBank, a masked account matching the configured one."
+    - "Slip2Go account/info answered 200001 with the key stored in .assets/mumate/manychat/.env (key hash matches the dashboard's)."
+  related:
+    - memory/events/2026/11/09/20261109T103844_mumate_manychat_ebook_rev03.yaml
+
+unresolved:
+  - "The Drive folder link can be forwarded, as it can today; personal links come after launch."
+  - "Slip images are not copied; ManyChat image links expire within weeks, so a later dispute relies on the Slip2Go result in our table."
+  - "Test transfers of 1 baht land in the company account; the team should know they are tests."
+  - "Slip2Go trial ends 2026-11-16 23:59 and ManyChat Pro trial 2026-11-17; the owner pays when it is time."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Ask the owner to authorize slice 2 of revision 0.4.
+  acceptance_check:
+    - "A decision event with outcome.status decided, plan_revision 0.4 and slice 2."

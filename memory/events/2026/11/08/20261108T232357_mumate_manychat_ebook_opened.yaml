@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261108T232357_mumate_manychat_ebook_opened
+type: decision
+recorded_at: "2026-11-08T23:23:57+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Open the workstream that automates the admin's part of the ManyChat
+    e-book sale: verify the slip, send the PDF and app code, mark the contact
+    paid, and record who paid and who did not, tested on staging before
+    production the way fe and bazi are.
+  scope:
+    - "Plan 0.1 with four slices. Opening only; no slice is authorized by this event."
+
+outcome:
+  status: opened
+  decision: >-
+    After reading the flow and the research the owner chose path A on
+    2026-11-08: keep bank transfer plus slip, verify it automatically, no
+    payment gateway, because the team does not want to merge this with the
+    app's payment system or pay Beam's fees ("เราใช้ beam ไม่ได้ใช้ omise
+    มานานแล้ว"). He wants a staging-then-production path like fe and bazi,
+    the same database as MuMate, and asked to open the workstream ("เปิด
+    workstream เลยก็ได้ครับ"). The app's own repository, its name, the slip
+    service and the open questions in the plan wait for the slice 1 decision.
+  correction: >-
+    The research answer earlier the same evening named Omise as the app's
+    live gateway; production uses Beam. Path B in that answer rested on that
+    error and is not part of this plan.
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: "c178149d5493f25adb9177d21ec55566c6319fc1"
+    branch: hq/20261103
+    working_tree: this-decision-only
+  related:
+    - memory/events/2026/11/08/20261108T225510_mumate_manychat_ebook95_flow_reviewed.yaml
+
+unresolved:
+  - "Slice 1 needs an owner decision naming plan revision 0.1 and slice 1, with the app repository's name and the slip service."
+  - "Unknown: the ManyChat plan (Pro or higher is required), where the PDF is kept and how app codes are issued today, the team's steps 1-4 and how far anyone got, and how long slip images may be kept."
+  - "The promotion ends 2026-11-11; this work cannot reach that campaign, and the live flow's hardcoded date is the team's to change."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Get the owner's answers to the plan's open questions and his decision on
+    slice 1, then build slice 1.
+  acceptance_check:
+    - "A decision event with outcome.status decided, plan_revision 0.1 and slice 1."

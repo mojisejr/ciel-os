@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261105T062230_praneet_orchard_trees_slice4_authorized
+type: decision
+recorded_at: "2026-11-05T06:22:30+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Record the owner's go on slice 4 (a tree's life and age) under plan 0.2.
+  scope:
+    - "This record only; no plan change."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After merging PR 48 the owner said to go on ('merged แล้ว
+    ไปทำต่อได้เลย'), answering the agent's question whether to start slice 4.
+    A production migration in this slice runs only on his word naming it,
+    before the merge.
+  why: >-
+    A dead tree leaves the form but keeps its history, a replanted spot is
+    either the same tree again or a new tree linked to the old one, and a
+    tree's page tells its rough age.
+  agent_calls:
+    - "The tree page with a dead tree and the two ways to replant was in the slice 1 samples he approved ('3ตรง'). Anything the samples did not draw reuses the page's existing parts, and its screenshots go in the draft PR for his check before the merge."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "4"
+  repository:
+    head: "d909f59ee8a54d2d79a6e9a0530882c6c323dcb9"
+    branch: hq/20261103
+    working_tree: this-decision-with-slice3-closeout
+  related:
+    - memory/events/2026/11/05/20261105T062200_praneet_orchard_trees_slice3_delivered.yaml
+
+unresolved:
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 4 on a topic branch in praneet-web, test it under the memory
+    guard, and open a draft PR for the owner.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/praneet-orchard-trees-001/slices/4.md."

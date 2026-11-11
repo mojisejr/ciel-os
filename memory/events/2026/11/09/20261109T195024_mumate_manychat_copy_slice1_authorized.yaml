@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261109T195024_mumate_manychat_copy_slice1_authorized
+type: decision
+recorded_at: "2026-11-09T19:50:24+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-copy-001
+  lane: single
+  objective: >-
+    Replace the first message of the live flow "Bazi E-Book 95" with draft A
+    and its sample carousel with four image messages, edited in the live
+    flow's draft behind one backup duplicate.
+  scope:
+    - "Plan 0.2, slice 1."
+
+outcome:
+  status: decided
+  decision: >-
+    The owner confirmed the team's choice of draft A and four image messages
+    ("ทีมอยากได้ แชท 4 รูปแทน carousel ตามแนวทางของคุนครับ"), chose one backup
+    duplicate and no separate test copy ("เอาแบบนี้ แหละ update workstream
+    แล้ว"), and told the agent to make the backup in the browser and report
+    before editing the live flow. This decision is the exception the plan of
+    mumate-manychat-ebook-001 (0.4) needs: in this slice the live flow may
+    change in its first message and step 2a, text and images only.
+    Publishing waits for the owner's word.
+
+evidence:
+  plan: workstreams/mumate-manychat-copy-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: "85e459da2ac9972947c3aa05abadc2d3db453f71"
+    branch: hq/20261103
+    working_tree: this-decision-and-plan-0.2
+  related:
+    - memory/events/2026/11/09/20261109T191858_mumate_manychat_copy_opened.yaml
+
+unresolved:
+  - "Whether ManyChat Preview sends the draft or the published flow is not yet observed; if it sends the published one the agent stops and asks."
+  - "Whether a duplicate keeps live triggers is not yet observed; the backup is checked before any edit."
+  - "That a Messenger image message opens full screen on tap is not yet observed."
+  - "mumate-manychat-ebook-001 slice 4 compares the live flow with the 2026-11-08 export; after this slice the first message and step 2a differ."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Duplicate the live flow as a backup, confirm its triggers are off, and
+    report to the owner before editing the live flow.
+  acceptance_check:
+    - "Slice 1 acceptance in workstreams/mumate-manychat-copy-001/slices/1.md."

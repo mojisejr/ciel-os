@@ -1,0 +1,80 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T105213_praneet_orchard_rev19_slice14_boxes_authorized
+type: decision
+recorded_at: "2026-11-04T10:52:13+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Plan revision 1.9 rolls back the first slice 14 (word labels and four
+    routine cards) and replaces it with tracking boxes the owner pins and
+    fills himself. The record authorizes slice 14 at the new revision.
+  scope:
+    - "workstreams/praneet-orchard-001/PLAN.md and slices/14.md."
+
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Seeing the merged cards, the owner said the counts did not fit his work.
+    His example was 'ขูดต้นแล้วพ่นยา' at สวนมะขาม, which is not a spray round,
+    and he found the pill buttons cluttered. He asked whether to roll back.
+    A read-only production check found nothing written to the new columns:
+    0 labelled words, 0 works with a fruit, 0 inducer products, and no work
+    recorded since the deploy. The agent recommended rolling back the code
+    and keeping migration 027 and its empty columns, and the owner agreed
+    ('rollback เลย'). A syncup of three rounds followed, and the owner
+    confirmed the summary ('ตรงแล้ว'). There are no categories, no word
+    labels and no guessing. A box is one thing on one plot. Its short name
+    is typed by the owner and the plot name is added, as in 'พ่นยา ·
+    สวนมะขาม'. It counts only the work he puts in. The form's 'ติดตามในกล่อง'
+    section starts closed. A box can be started from an old work, and a
+    forgotten work can be added from the box. The newest non-hidden work
+    decides the days. Boxes with the most days sit on top, with no colour,
+    and a box can be closed. In chat the agent asks which box before
+    putting work in one he did not name. He said to finish the work
+    without stopping, unless something needs his decision.
+  why: >-
+    Only the owner knows which pieces of work are the same routine. Any
+    rule over words or products will mistake some, and he said a wrong
+    count misleads him at once.
+  agent_calls:
+    - "Slice number 14 is reused for the new design, so the slice index stays as Wake reads it. Git keeps the first design."
+    - "Migration 027 stays in the repository unchanged, because production recorded its checksum. The new slice's migration drops the empty columns only after checking that they are empty."
+    - "The samples step stays in the slice, because the owner's standing rule is rendered samples before a page is built. Building the data layer does not wait for his pick."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.9"
+  slice: "14"
+  repository:
+    head: "aecb19814b975036fe5fc1c3e5dcaf63731e5c9f"
+    branch: hq/20261103
+    working_tree: this-decision
+  rollback:
+    praneet-web: "PR 45 (revert/routine-cards, 34287e1): the code back to 12b93dd, migration 027 kept"
+    praneet-office: "PR 39 (revert/orchard-routines): the scripts back to c601450"
+  related:
+    - memory/events/2026/11/04/20261104T094353_praneet_orchard_slice14_built_awaiting_owner.yaml
+    - "https://github.com/mojisejr/praneet-web/pull/45"
+    - "https://github.com/mojisejr/praneet-office/pull/39"
+
+unresolved:
+  - "The rollback PRs 45 and 39 wait for the owner's merge. Until then production shows the first design's cards, all reading 'ยังไม่มีบันทึก'."
+  - "Slice 15 (watering by zone) was written over the first design's cards and is discussed again before it starts."
+  - "Which page's pill buttons felt cluttered (Q29) is open. Reorganising the whole form is not in this slice."
+  - "hq/20261103 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner merges the rollback PRs. Agent renders samples of the boxes on the
+    real Today page, the box page and the form section for his pick, and
+    builds the data layer (migration 028, the boxes, the count) with tests
+    meanwhile.
+  acceptance_check:
+    - "Slice 14 acceptance in workstreams/praneet-orchard-001/slices/14.md."

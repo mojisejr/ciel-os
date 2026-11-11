@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T143102_praneet_character_workflow_slice2_authorized
+type: decision
+recorded_at: "2026-11-03T14:31:02+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-workflow-001
+  lane: single
+  objective: Dogfood native conversational reference generation from the supplied gardener portrait.
+  scope:
+    - Slice 2 reference generation and review package; no 3D model or animation.
+outcome:
+  status: decided
+  decision: >-
+    Following explicit acceptance of slice 1, owner starts slice 2 and supplies
+    an illustrated gardener portrait as the dogfood input, requesting the
+    resulting reference image at the end. Authorize the built-in image tool,
+    local source preservation and prompt/provenance/review records under plan
+    0.1 slice 2. Preserve visible straw hat, glasses, hair, facial hair and green
+    polo identity while adapting to the agreed plump collectible family.
+    Unseen lower-body and rear details are proposed design completions for
+    owner review, not observations about the supplied image. Generated output
+    remains unapproved until the owner explicitly selects it. Continuing the
+    accepted local slice does not assert or perform a repository merge.
+evidence:
+  plan: workstreams/praneet-character-workflow-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "2"
+  repository:
+    head: 0dd8dd7700186e0c97b615ded702918ffec8ce52
+    branch: hq/20261103
+  office:
+    head: 2d07abc8d9679acd468ae49480d3c61f2dccfd97
+    branch: feat/character-workflow
+  prior_acceptance: memory/events/2026/11/03/20261103T142725_praneet_character_workflow_slice1_accepted.yaml
+unresolved:
+  - Native output quality, consistency across views, file preservation and exact owner reference approval require observed proof.
+  - Native tool billing/quotas, actual Claude or second-machine use and later 3D modelling remain unproved.
+  - Existing unmerged branch dependency, ignored-media backup, cost allocation and parent feedback unknowns remain.
+next_action:
+  action: Preserve the supplied portrait, record reference roles and proposed completions, generate and inspect a full-body multi-view reference through the built-in tool, then present the exact image for owner approval.

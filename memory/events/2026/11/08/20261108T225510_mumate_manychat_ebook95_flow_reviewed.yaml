@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261108T225510_mumate_manychat_ebook95_flow_reviewed
+type: closeout
+recorded_at: "2026-11-08T22:55:10+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Read and record how MuMate's ManyChat automation "Bazi E-Book 95" sells
+    the e-book from Facebook ads, as the base for planning its next version.
+  scope:
+    - "Read-only look at the ManyChat builder page in the in-app browser, on the owner's request. Nothing in ManyChat was edited."
+    - "No plan exists for this id yet; the owner opens planning next. This event is a record, not a delivery."
+
+outcome:
+  status: recorded
+  completed:
+    - "ManyChat offers no file export for this flow (its menu has Duplicate, Convert channels, Copy to another page, Share, Delete). The page state holds the full flow, and a cleaned copy (every message, button target, action, condition, trigger and per-step count) is saved as .assets/mumate/manychat/bazi-ebook-95_flow_20261108.json, git-ignored. Its sorted compact JSON matched the page's SHA-256 (595007496e65…). Download, localhost post and clipboard were all blocked by the browser pane."
+    - "How it works: two triggers start the same first message. (1) Any comment on the ad post 310987835433562_122229208280328558 (created 2026-11-03): like the comment, reply publicly with one of three 'sent in chat' lines, send a private reply. (2) A DM containing Bazi, ebook, e-book, อีบุ๊ก, อีบุ๊ค, สนใจ or ราคา (228 runs)."
+    - "Path: first message (buy / preview / question) → 2a preview with three review cards and an author note → 2b order step with the company Kasikorn account and the number as its own message, then waits 30 minutes for a slip image saved to field ebook_slip. A slip tags eb_slip_sent, opens the conversation and emails the admin. The admin checks the payment and sends the PDF link and app code by hand; ManyChat records neither the payment check nor the delivery. A tag check then sends 'slip received' or, without a slip, the FAQ menu (five answers and talk-to-admin, which tags eb_ask_admin)."
+    - "Counts as read 2026-11-08 (unique people): first message delivered 242, read 224; preview clicked 150; buy clicked 41 from the first message and 51 from the author note; order step sent 106, delivered 79; slips 54 at the order step plus 2 from FU1; 56 reached 'slip received', 14 went to the FAQ menu."
+
+evidence:
+  repository:
+    head: "5202a8cb0e22e0294641f5844e986d0b00b7f552"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  source:
+    - "ManyChat builder page for automation 'Bazi E-Book 95' (status active, no unpublished changes), read in the owner's signed-in in-app browser on 2026-11-08."
+    - ".assets/mumate/manychat/bazi-ebook-95_flow_20261108.json (git-ignored, local only)."
+
+unresolved:
+  - "The follow-ups FU1 (30 min), FU2 (4 h, วัยจร) and FU3 (last call, behind a 'no eb_slip_sent' check) have no incoming link in the export, yet FU1 sent 4 and FU2 sent 2. Whether they are disconnected in the live version or reached from outside this flow is unverified; the canvas was not checked, on the owner's word."
+  - "Tag eb_lead is set by a node nothing links to and has 0 people, so leads who did not buy cannot be told apart for a retarget or a later message."
+  - "Tag eb_slip_sent holds 134 people while this flow counts 56; the other 78 are unexplained (another flow, an older version, or manual tagging)."
+  - "The order step reached 79 of the 106 people it was sent to; the cause is unknown (possibly Messenger's 24-hour window)."
+  - "The promotion date 11 พ.ย. is written into several messages; after 2026-11-11 the copy is wrong unless the flow is changed or turned off."
+  - "The flow is publicly shared (cloning off), so anyone with the share link can view it."
+  - "No paid count exists: 56 slips at ฿95 is ฿5,320 only if every slip was valid; the admin's checks are not recorded anywhere CIEL can read."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Syncup with the owner on extending this flow, then open a plan for
+    mumate-manychat-ebook-001 if he decides to build it.
+  acceptance_check:
+    - "An owner decision names the plan revision and slice before any ManyChat edit."

@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261107T204612_praneet_orchard_trees_slice6_built_awaiting_owner
+type: closeout
+recorded_at: "2026-11-07T20:46:12+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Build slice 6: the office agent reads a plot's trees and records the
+    owner's chat work with trees and trees' boxes, asking before it treats an
+    unknown name as a new tree.
+  scope:
+    - "praneet-office branch feat/orchard-tree-work (PR 41) in the separate worktree checkouts/praneet-office-trees: scripts/orchard-trees.ts, scripts/orchard.ts, tests, README.md."
+
+outcome:
+  status: built-awaiting-owner
+  slice: "6"
+  completed:
+    - "praneet-office PR 41 (head 594f63463e8608912cae39811ea7ca2d42b5c4e5), a draft described in its body. No praneet-web change and no migration."
+    - "orchard add takes trees, new_trees and tree_boxes; a name the plot lacks or a dead tree after its death stops the whole run before any write, saying what to ask the owner. orchard trees lists a plot's trees."
+    - "bun test scripts/: 33 passed; tsc --strict on the changed scripts: no errors."
+    - "Trial run against the local praneet_test site, never production: new trees made, two unknown names refused with nothing written, an existing and a confirmed-new tree each put in a tree's box; read back from praneet_test directly."
+    - "The checkout the other lane uses (checkouts/praneet-office on feat/character-workflow) was not touched; the local test site was stopped, next-env.d.ts restored, and the scratch test credentials file deleted."
+  not_verified:
+    - "Slice 6's acceptance asks for one real work with trees written when the owner says so. Production has no trees yet."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "6"
+  decision: memory/events/2026/11/07/20261107T194030_praneet_orchard_trees_slice6_authorized.yaml
+  repository:
+    head: "10dfba9f79731d666660fab6186a821537c5a729"
+    branch: hq/20261103
+    working_tree: this-record-only
+  child_state:
+    praneet-office: "worktree checkouts/praneet-office-trees on feat/orchard-tree-work at 594f634, pushed, draft PR 41; main checkout untouched"
+    praneet-web: "main at eed6c63, clean"
+
+unresolved:
+  - "The first real work with trees through the office is owed (slice 6 acceptance); it is written only on the owner's word."
+  - "The trial print of one real label sheet is owed (slice 5)."
+  - "The owner's first real tree work (slice 2), tree's box (slice 3), and death or replanting (slice 4) on his phone are still to come."
+  - "A replacement tree made by mistake cannot be undone; workaround: rename the new tree."
+  - "The worktree checkouts/praneet-office-trees is removed after PR 41 merges."
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    The owner reviews and merges praneet-office PR 41; then, when he tells
+    the agent a real work with trees, dry-run it, and write it on his word.
+  acceptance_check:
+    - "Slice 6 acceptance in workstreams/praneet-orchard-trees-001/slices/6.md."

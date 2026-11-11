@@ -1,0 +1,52 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T112820_praneet_orchard_slice14_boxes_merged
+type: closeout
+recorded_at: "2026-11-04T11:28:20+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-001
+  lane: single
+  objective: >-
+    Record the tracking boxes merged and live, and the cleanup. Delivery waits
+    for the owner's own try on production.
+  scope:
+    - "praneet-web PR 46 and praneet-office PR 40 merges, production read-back, cleanup."
+
+outcome:
+  status: merged-awaiting-owner-test
+  slice: "14"
+  completed:
+    - "The owner merged both ('merged แล้วนะครับ'). After a fetch, praneet-web origin/main holds merge 1beb6a1 with e576780 as its ancestor, and praneet-office origin/main holds merge 3b950b2 with the boxes head as its ancestor."
+    - "Production serves the change. GET /api/ops/orchard/tracks, read as the owner, answers an empty list. /ops/orchard/tracks without signing in sends to /ops/login."
+    - "Tidied on the owner's word ('เก็บกวาด'). praneet-web is on main, equal to origin/main. The local branches feat/track-boxes and revert/routine-cards were deleted after rev-list counted 0 unmerged commits. The test build and results, the praneet-office scratch clone and the PR drafts were removed, as were the unused labels files .assets/preneet/orchard-routines.json and orchard-routines-all.json, deleted by name."
+
+evidence:
+  plan: workstreams/praneet-orchard-001/PLAN.md
+  plan_revision: "1.9"
+  slice: "14"
+  decision: memory/events/2026/11/04/20261104T105213_praneet_orchard_rev19_slice14_boxes_authorized.yaml
+  repository:
+    head: "266ecd76e72b4ae339f3908ac390152d6703e386"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  child_merges:
+    praneet-web: "PR 46, origin/main 1beb6a1"
+    praneet-office: "PR 40, origin/main 3b950b2"
+
+unresolved:
+  - "The owner's try on his phone is the remaining acceptance: start a box from an old work, put the next round in from the form, add a forgotten one from the box, and check the days against the real work."
+  - "Merged remote branches are still on GitHub: praneet-web feat/routine-cards (GitHub deleted the others on merge), chore/test-build-mode and feat/orchard-jobs, and ciel-os hq/20261102."
+  - "Which page's pill buttons felt cluttered (Q29) is open. Slice 15 is discussed again before it starts."
+  - "supply.spec still fails on main because of date drift. It is deferred. Workaround: read it as a known failure."
+  - "hq/20261103 is not pushed; the owner pushes it with his other work."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner tries the boxes on his phone. Agent records slice 14 delivered
+    when he accepts it, or takes his findings.
+  acceptance_check:
+    - "Slice 14 acceptance in workstreams/praneet-orchard-001/slices/14.md."

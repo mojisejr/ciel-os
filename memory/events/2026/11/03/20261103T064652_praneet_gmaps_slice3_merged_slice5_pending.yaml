@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T064652_praneet_gmaps_slice3_merged_slice5_pending
+type: closeout
+recorded_at: "2026-11-03T06:46:52+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-gmaps-001
+  lane: single
+  objective: >-
+    Record slice 3 merged and tidied. The workstream stays open because
+    slice 5 still waits for the owner's press.
+  scope:
+    - "praneet-office PR 19 merge, the gmaps worktree and branch."
+
+outcome:
+  status: slice3-merged-slice5-awaiting-owner-press
+  slice: "3"
+  completed:
+    - "The owner merged praneet-office PR 19 ('merged เรียบร้อยแล้วครับ'). After a fetch, origin/main holds the merge c601450, and the PR head 0ddfbe76aa7abb78fdd5ac7f199dd5a5fbae4d80 is an ancestor of it."
+    - "Tidied: the worktree checkouts/praneet-office-gmaps was removed. The local branch gmaps-report was deleted after git rev-list origin/main..gmaps-report counted 0. GitHub had already deleted the remote branch."
+    - "This status is deliberately a record, not a delivery. Slice 3 is the plan's last heading, so a delivery status would finish the workstream while slice 5 is still open."
+  not_verified:
+    - "The owner did not say whether the calls (8, 4, 6 for Aug to Oct) match the Performance page in his app."
+    - "The Maps-link section of gmaps report, which needs READER_DATABASE_URL and the owner's word to read production."
+
+evidence:
+  plan: workstreams/praneet-gmaps-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "3"
+  decision: memory/events/2026/10/25/20261025T194807_praneet_gmaps_slice3_authorized.yaml
+  repository:
+    head: "843b2d19fabcaa1976b83940ce421aec56e908ca"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  child_merges:
+    praneet-office: "PR 19, origin/main c601450"
+  related:
+    - memory/events/2026/11/03/20261103T063224_praneet_gmaps_slice3_granted_built.yaml
+
+unresolved:
+  - "Slice 5: the owner presses 'ออเดอร์ของฉัน' in the LINE OA chat. The expected reply is 'ยังไม่มีออเดอร์ในชื่อคุณครับ'. After that the workstream's final delivery can be recorded."
+  - "The owner compares the calls 8, 4 and 6 with the Performance page in his app."
+  - "Website clicks read 0 for Aug to Oct although the profile links /p/F2. This is deferred until November's figures show whether /p/F2 counts."
+  - "The Maps-link section of gmaps report needs READER_DATABASE_URL (praneet_reader) and the owner's word; deferred."
+  - "The main praneet-office checkout sits on Codex's merged branch feat/monsoon-maplibre-proof. The owner told Codex to tidy it."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    When the owner says he pressed 'ออเดอร์ของฉัน' and the reply came,
+    record slice 5 delivered and the workstream's final delivery with
+    ready-for-owner-merge.
+  acceptance_check:
+    - "Slice 5 acceptance in workstreams/praneet-gmaps-001/slices/5.md."

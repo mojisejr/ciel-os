@@ -1,0 +1,37 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T085246_praneet_character_refinement_authorized
+type: decision
+recorded_at: "2026-11-03T08:52:46+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-map-lab-001
+  lane: single
+  objective: Refine the character's connected forms and matte finish while retaining the map composition.
+  scope:
+    - Revised character geometry and neutral multi-view review before a local map preview.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    Owner accepts both syncup recommendations: retain the reference identity
+    and make the side view read as a child wearing a fitted owl hood, with
+    shallow owl eyes and a continuous feather silhouette; use a smooth matte
+    cartoon finish. Owner explicitly asks to try the refinement. This
+    authorizes plan 0.2 slice 1. Preserve v01 comparison and both production
+    styles. Local visual proof only; no rig, paid call, upload or publication.
+evidence:
+  plan: workstreams/praneet-character-map-lab-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  repository:
+    head: 5e935ecf1459ebfbfcaf6db41df2f41232345028
+    branch: hq/20261103
+  prior_office_head: 12fcd02d6cada25cfe03065c23caa25f77441849
+  source: checkouts/praneet-office/posts/video/labs/xiao-mu-map/model.py
+unresolved:
+  - Improved likeness and smooth side-view transitions require actual multi-view proof and owner review. Costume closure-count discrepancy remains.
+  - POI accuracy, schematic scale and parent budget/portability/audience-feedback unknowns remain unchanged.
+next_action:
+  action: Develop a rounded head and open fitted hood with shallow curved details, inspect neutral views, then render the same local map scene for comparison.

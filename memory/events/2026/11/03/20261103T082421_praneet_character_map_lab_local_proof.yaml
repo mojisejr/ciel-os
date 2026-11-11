@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T082421_praneet_character_map_lab_local_proof
+type: closeout
+recorded_at: "2026-11-03T08:24:21+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-map-lab-001
+  lane: single
+  objective: Show static Xiao Mu at the selected temple with a cute name bubble.
+  scope:
+    - Isolated original character geometry, georeferenced map scene and local silent proof.
+outcome:
+  status: local-character-map-proof-prepared-for-owner-review
+  result: >-
+    Authored the reference interpretation in Blender and exported an 87-mesh
+    GLB. Three.js places its foot origin at the temple POI in MapLibre, with
+    a rounded Thai name bubble and an eased camera orbit. Inspected six stills,
+    removed character self-shadow acne and moved the forehead emblem onto the
+    curved hood, then rendered and inspected six actual encoded views. The
+    silent fourteen-second movie is native 1080x1920, H.264/yuv420p at 24 fps,
+    336 frames. Stream assertions, strict decode, tile readiness, text bounds
+    and every-frame map/model origin checks passed. Eight preserved delivery
+    movie hashes still match. No production source or runbook was changed.
+  resources: >-
+    Capture took 97.50 seconds; its report sampled an owned-process RSS sum
+    peak of 763.42 MiB. Terminal output after encoding reported 849.75 MiB.
+    These sums exclude some system/GPU allocations and are not a hard total
+    RAM cap. Provider unique bytes were 75677; paid requests were zero.
+  boundary: >-
+    Local prototype for owner visual review, not accepted production mascot
+    or final workstream delivery. No voice, paid service, new installation,
+    upload, publication, push or PR. CIEL stayed on primary hq/20261103;
+    Office source and compact proof are on its independent lab topic branch.
+evidence:
+  plan: workstreams/praneet-character-map-lab-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 9411f8b483761291c42fbf6c627d114b8a3c8f30
+    branch: hq/20261103
+  office:
+    head: 12fcd02d6cada25cfe03065c23caa25f77441849
+    branch: feat/xiao-mu-map-lab
+    instructions: posts/video/labs/xiao-mu-map/README.md
+    proof: posts/video/labs/xiao-mu-map/PROOF.json
+    detailed_local_report: posts/out/labs/xiao-mu-map/render-proof.json
+    movie: posts/out/labs/xiao-mu-map/xiao-mu-temple-map-lab-v01.mp4
+    movie_sha256: 4197803913596306c1cfbb12e43cec8c985067d4e272fc2b8ca25dccb3a2bb7a
+    movie_bytes: 5146125
+    still: posts/out/labs/xiao-mu-map/encoded-2.png
+    inspected_encoded_contact_sheet: posts/out/labs/xiao-mu-map/encoded-contact-sheet.jpg
+unresolved:
+  - Owner visual acceptance remains pending. The character is original code-authored approximation; projecting face/eye volumes and unshown surfaces are interpreted, not automatic sheet reconstruction. Large front reference has three closures while the detail panel says two.
+  - POI coordinates identify the place approximately, not a surveyed entrance. Figure is enlarged schematically; temple geometry, endorsement, rig, expressions and voice are not proved.
+  - Existing parent invoice/reservation, full client-portability, audience feedback and two-week review unknowns remain unchanged. This lab has no publication or viral-performance evidence.
+next_action:
+  action: Present the local silent movie and representative still for owner review of the character, map placement and name bubble before extending or adopting the experiment.

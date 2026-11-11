@@ -1,0 +1,43 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T211901_praneet_ayutthaya_drive_delivered
+type: closeout
+recorded_at: "2026-11-04T21:19:01+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Deliver the owner-requested voiced Ayutthaya lab clip through private Google Drive.
+  scope:
+    - Upload the existing verified MP4 and record independent metadata readback.
+outcome:
+  status: lab-drive-delivery-verified-owner-playback-pending
+  summary: >-
+    Owner explicitly requests Drive upload for viewing. Uploaded the existing
+    voiced59.75-second movie without changing its bytes. Independent Drive
+    metadata readback matches file ID, name, video/mp4 MIME and9356929bytes.
+    Returned permission metadata lists user owner only; no sharing change,
+    deletion, new rendering, voice request or social publication was performed.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: ed31c2454328c3b34cefc6325a745abe7dfe3de8
+    branch: hq/20261103
+  office:
+    head: 6b5d65d8d3d5ec6f11b0626ad5d5b41ecb8c3da0
+    branch: feat/character-workflow
+  receipt: checkouts/praneet-office/posts/video/labs/ayutthaya-what-if/DRIVE-v01.json
+  local_movie_sha256: d27eaefc481ae532546f0fac782d11f3a06829c0ef2d07240bd1b60de0114df0
+  drive_file_id: 1n3M48akTDIDcUAhXREISPZFcdm5Oz3yW
+  drive_url: https://drive.google.com/file/d/1n3M48akTDIDcUAhXREISPZFcdm5Oz3yW/view?usp=drivesdk
+  checks:
+    - Local file hash and size match the recorded production delivery before upload; exact-name Drive discovery found no existing copy.
+    - Connector upload completed successfully; separate file metadata read confirmed ID/name/MIME/size. No remote checksum was returned, so byte-hash equivalence is not claimed.
+unresolved:
+  - Owner device playback, Drive video processing and full motion/voice/Thai-pronunciation acceptance are not independently observed.
+  - Prior production and parent unknowns remain in the preceding closeout, including provider reconciliation, cost allocation, migration/Claude proof, full backup, Git merges and growth/feedback review. Wake overlap attention is unchanged.
+next_action:
+  action: Return the verified Drive URL and await owner playback feedback; reuse the existing cached voice for visual revisions.

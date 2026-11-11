@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261111T052909_mumate_manychat_ebook_slice4_bdash_draft_pr
+type: closeout
+recorded_at: "2026-11-11T05:29:09+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Checkpoint: the bdash 'ขาย E-Book' menu (option 1, the owner's pick: "แบบ 1")
+    is built and open as a draft pull request against pdf-dev.
+  scope:
+    - "bazi-sft-dataset branch feat/bdash-ebook-sales (worktree bazi-bdash-ebook), pull request 71."
+
+outcome:
+  status: in-progress
+  slice: "4"
+  completed:
+    - "New menu /bdash/ebook in the team's layout with the data the bot has: summary sentence, four cards, funnel buy → slip → bank confirmed → delivered with the worst drop in red, FU1 reasons, sales per day, FAQ taps, EBOOKPULS95 coupon, a dashed card naming what comes with Meta, buys and transfers by hour with 22:00-07:00 shaded. Range buttons for this menu only: today, 7, 14, 28 days and custom; other menus keep 7 / 30 / 90."
+    - "Read-only queries in src/lib/bdash/ebook.ts on ebook_order, ebook_funnel_event and activity_coupon(_redemption); counts only, development rows excluded. No migration and no new env."
+    - "Checks: tsc and eslint clean; 67 bdash unit tests passed; test:bdash-db on a throwaway SSL Postgres 17 passed 8, including the new ebook test (people counted once, Bangkok days and hours, slip time as paid time, no subscriber id in page data). Local next dev render at 1280 light and 375 dark: no sideways scroll, six menus fit the phone bar."
+  deviations:
+    - "A first throwaway run hit port 55441, where another session's Postgres listens without SSL; the tests require SSL, so they stopped at the TLS handshake before logging in and ran no SQL there. The rerun used its own container on 55450, now stopped."
+  not_verified:
+    - "Whether the database role bazi uses can SELECT the ebook_* tables on staging and production; production needs the owner's word to read."
+    - "The page on staging and production; real numbers."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  decision: memory/events/2026/11/11/20261111T050901_mumate_manychat_ebook_rev07.yaml
+  repository:
+    head: "46bfadda7e70bd2fa404782f9a3ec81ed244d6b0"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  projects:
+    bazi-sft-dataset:
+      branch: feat/bdash-ebook-sales
+      head: "8a2cfb925baa99e70b8f3abee79114d086ef7137"
+      pull_request: "mojisejr/bazi-sft-dataset#71 (draft, base pdf-dev)"
+
+unresolved:
+  - "Before merge: confirm bazi's database role can SELECT ebook_order, ebook_funnel_event and activity_coupon(_redemption) on staging and production (owner's word for the production read); grant if not."
+  - "Then the owner merges PR 71 (staging deploys itself), checks the page, and presses production."
+  - "Delete the samples page and scratch files after the slice closes (owner confirms the artifact delete)."
+  - "Messages still say 'ถึง 11 พ.ย.' (step 1, 2b, FU2, FU3)."
+  - "Owner pays Slip2Go (2026-11-16 23:59) and ManyChat Pro (2026-11-17)."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    With the owner's word, read on production which roles can SELECT the
+    ebook tables; then the owner reviews and merges PR 71.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-manychat-ebook-001/slices/4.md."

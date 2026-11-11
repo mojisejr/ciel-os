@@ -1,0 +1,62 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T101129_praneet_collectible_design_local_proof
+type: closeout
+recorded_at: "2026-11-03T10:11:29+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-map-lab-001
+  lane: single
+  objective: Present whole-figure collectible proportions for owner art review.
+  scope:
+    - Independent v04 source, colored/silhouette six-view sheets and neutral turntable.
+outcome:
+  status: local-collectible-design-prepared-for-owner-review
+  result: >-
+    Built head/face/hood and body volumes together in an independent design
+    trial: full rounded head under a volumetric water-bird hood, plump curved
+    Chinese jacket around belly/chest/shoulders, short neck/limbs and restored
+    blue side wings. Reviewed a first six-view trial, corrected wings reading
+    as rounded ears into tapered three-feather forms, then inspected final
+    colored and silhouette sheets at equal-scale 0/45/90/180/270/315 degrees.
+    Inspected six actual encoded views of the neutral 360-degree turntable.
+    Appearance remains a proposed design, not accepted collectible likeness.
+  verification: >-
+    Both still sheets are 1800x1320. Silent turntable is native 1080x1080,
+    H.264/yuv420p, ten seconds, 240 frames at 24 fps. Real stream assertions,
+    strict decode, per-frame canvas/text bounds, blocked-remote-request and
+    stable GLB/viewer hashes passed. Exported positional audits passed for
+    head, hood, torso and both wings after 0.00001-unit seam welding, retaining
+    raw counts. These are mechanical guards, not art or rig acceptance.
+    Capture/encoding took 45.15 seconds; sampled owned-process RSS sum peaked
+    at 652.53 MiB, excluding some system/GPU allocations. Stills peaked at
+    716.69 MiB. Paid/external requests were zero. Ten prior movie hashes and
+    the retained v02/v03 GLBs match; selected map scene stays v02.
+  boundary: >-
+    Local design review only. No new map film, voice, physical simulation,
+    dependency installation, upload, publication, push or PR. Production styles
+    and older review scripts are retained. CIEL stays on hq/20261103 and Office
+    uses its existing independent lab branch.
+evidence:
+  plan: workstreams/praneet-character-map-lab-001/PLAN.md
+  plan_revision: "0.4"
+  repository:
+    head: 1f4a1746c1866da94b70cabc702d25da5be36207
+    branch: hq/20261103
+  office:
+    head: 6a3201a4f2a5c3c593714dbc737f5d895d037e84
+    branch: feat/xiao-mu-map-lab
+    proof: posts/video/labs/xiao-mu-map/PROOF-v04.json
+    source: posts/video/labs/xiao-mu-map/design.py
+    instructions: posts/video/labs/xiao-mu-map/README.md
+    colored_sheet: posts/out/labs/xiao-mu-map/v04/sheet-v04.png
+    silhouette_sheet: posts/out/labs/xiao-mu-map/v04/silhouette-v04.png
+    movie: posts/out/labs/xiao-mu-map/v04/xiao-mu-collectible-design-v04.mp4
+    movie_sha256: 11d46c25d03567659e96f360a7c4a01e2df4086da7edef5dbbcb890e614392b3
+    movie_bytes: 1297345
+unresolved:
+  - Owner art review of whole-figure proportions and reference likeness is pending. Small accessory/intersection polish and the reference closure-count discrepancy remain. No print-ready solid, rig or animation topology proof.
+  - Shape review precedes adopting v04 in a map scene. The previous approximate POI, schematic scale and parent invoice/portability/audience-feedback unknowns remain unchanged.
+next_action:
+  action: Show the colored six-view sheet and turntable for owner review of combined head/hood volume, plump body and wing feathers before further detail or map adoption.

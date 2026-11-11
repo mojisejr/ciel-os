@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T063832_praneet_province_weather_frames_prepared
+type: closeout
+recorded_at: "2026-11-04T06:38:32+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Show labelled province boundaries, translucent weather-style fills and pins through the proposed weather story.
+  scope:
+    - Episode 009 local static province-map design proof and sixteen agronomy-story frames.
+outcome:
+  status: province-weather-design-frames-prepared
+  summary: >-
+    Added a separate reproducible static preview using actual historical
+    satellite/elevation terrain and 77 generalized Thai ADM1 polygons.
+    Ground-registered translucent fills, province outlines, selected Thai
+    names and public city pins lead into rectangular WALES agronomy scenes.
+    Captured sixteen native 1080x1920 frames and four review sheets. Rain
+    class assignments are explicitly fictional styling examples, labelled
+    in every frame and map legend; no city forecast was promoted into a
+    province-wide heavy-rain class. Existing styles, r01 frames, r02 story,
+    paid ledger and production deliveries remain unchanged. No voice, movie,
+    paid call, external upload, public post or permanent style adoption.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: 052b36a90cb064857957f0b91f51e56a2d5b40fd
+    branch: hq/20261103
+  office:
+    head: 9ae2000c9a1b6797ef0f0e997d4b45bfb86ab4bc
+    branch: feat/character-workflow
+  renderer: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/province-preview/render.ts
+  source_and_limits: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/province-preview/README.md
+  boundary_provenance: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/province-preview/BOUNDARIES.json
+  proof: checkouts/praneet-office/posts/video/episodes/009-weather-20261104/province-preview/PROOF.json
+  first_review_sheet: checkouts/praneet-office/posts/out/009-weather-20261104/province-preview/frames-01-04.jpg
+  checks:
+    - All 77 ADM1 ISO identifiers unique; referenced province identifiers present. Original geoBoundaries geometry retained with pinned URL, hash and ODbL attribution.
+    - Sixteen native static frames captured; all tiles and terrain loaded, text-box checks passed, browser errors and blocked/failed requests empty.
+    - Backward seeking pixel identical; existing style and delivery baseline hashes unchanged.
+    - Maximum fictional fill opacity 0.33. Reviewed full contact sheet, native country/east/leaf/fruit frames and four-shot sheets; corrected cloud/label and legend overlap in the country view.
+    - Final capture 20.95 seconds, zero new network bytes from the warm map cache, peak sampled owned-process RSS sum 992.59 MiB, not a hard GPU/system memory bound.
+    - Final formatting-only source change recaptured; all sixteen image hashes match reviewed sheets. Source build and Git whitespace checks passed; Office tree clean after scoped commit.
+unresolved:
+  - Owner review of frame design and r02 factual story remains. Static stills do not prove camera motion, transitions, narration timing or a final movie.
+  - Fictional rain colours must be replaced with evidence at the correct province/area resolution and time window before factual production; absence of a class does not mean no rain.
+  - Boundary dataset represents 2017 and is generalized display geometry. Preserve ODbL attribution/obligations and map-provider credits on distribution.
+  - Actual cultivar, tree stage, prior weather, crop load, wetness and inoculum remain unknown; no universal chemical or fertilizer protocol established.
+  - Refresh forecasts before production/posting; TMD dataset-specific commercial reuse remains uncertified and no official infographic is copied.
+  - Parent two-week feedback/growth proof, billing reconciliation, subscription/hardware allocation, actual Claude cross-client proof, repository merges and full media backup remain open.
+next_action:
+  action: Present all sixteen frames for visual review. For a later factual movie request, resolve province colour semantics against fresh supporting weather evidence and the approved agronomic story before animation or paid voice.

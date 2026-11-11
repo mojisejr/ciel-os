@@ -1,0 +1,58 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T123851_praneet_video_mini_handoff_documented
+type: closeout
+recorded_at: "2026-11-04T12:38:51+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-video-posts-001
+  lane: single
+  objective: Document the existing code-video workflow for owner-led continuation in mini CIEL, isolated from Office orchard and business work.
+  scope:
+    - Documentation and source/selected-asset inventories under the existing Office video lab, plus this semantic checkpoint.
+outcome:
+  status: mini-handoff-documentation-delivered
+  summary: >-
+    Owner asks for a detailed lab document covering the video work so a separate
+    mini CIEL template can continue without disturbing Office orchard operations.
+    Seven files now provide the system overview, owner-approved workflow and
+    style, production and experimental tracks, technical commands and dependency
+    boundaries, cost controls, migration proposal and DoD, a receiving-chat prompt,
+    and the selected008worked example with the captions previously delivered in
+    conversation. This delivers documentation only, not a system migration or
+    final delivery of the growth workstream. No source renderer, runbook, plan,
+    business script, secret, budget ledger or existing media was modified.
+evidence:
+  plan: workstreams/praneet-video-posts-001/PLAN.md
+  plan_revision: "1.6"
+  slice: "2"
+  repository:
+    head: d587bfff245f30933dfba31603a9d581bf9ed71e
+    branch: hq/20261103
+  office:
+    head: d86ed9fafd7fab339ed06fae86dc788096ca33a6
+    branch: feat/character-workflow
+    source_snapshot_head: 3007b8838cf9f4dfa39339679288fe56f585ec0d
+  entry: checkouts/praneet-office/posts/video/labs/viral-clip-handoff/README.md
+  workflow: checkouts/praneet-office/posts/video/labs/viral-clip-handoff/WORKFLOW.md
+  technical: checkouts/praneet-office/posts/video/labs/viral-clip-handoff/TECHNICAL.md
+  migration: checkouts/praneet-office/posts/video/labs/viral-clip-handoff/MIGRATION.md
+  worked_example: checkouts/praneet-office/posts/video/labs/viral-clip-handoff/EXAMPLE-008.md
+  source_manifest: checkouts/praneet-office/posts/video/labs/viral-clip-handoff/SOURCE-MANIFEST.json
+  selected_asset_manifest: checkouts/praneet-office/posts/video/labs/viral-clip-handoff/ASSET-MANIFEST.json
+  checks:
+    - Parsed both manifests; rechecked path, size and SHA-256 for all326source files and95selected local asset/vendor files. No missing selected file or recorded-hash mismatch. Selected files total371329662bytes; this is not the complete media backup or dependency closure.
+    - Checked Markdown document links, excluded-file boundaries and staged whitespace; Office committed only the seven new lab documents/manifests and is clean after the commit.
+    - Read existing source/runbooks/proofs and budget accounting fields only. November ledger has nine pending reservations totaling8541satang, not confirmed provider charges. No key was read or copied and no ledger was changed.
+    - No rendering, installation, paid API, forecast refresh, Drive transfer, publication, push or PR. No complete migration, fresh-machine replay or Claude execution is claimed.
+unresolved:
+  - Receiving mini CIEL path/repository and its own operating contract have not been inspected; actual copy, dependency setup and isolated replay remain future work on the owner's instruction.
+  - Shared-budget authority must be resolved before a paid call in the new system. Copied ledgers or independent cross-machine locks cannot establish the combined100THBmonthly cap; all existing pending reservations must survive any cutover.
+  - Full media/reference/source backup, private invoices, subscription and hardware allocation, clean-machine portability and actual Claude proof remain open.
+  - Three owner-reported published2Dclips have roughly300-plus views each, without complete comparable-age Insights. Viral performance and growth goals remain unproved; the parent feedback review is still open.
+  - Need003publication URLs/timing/platform details and008publication confirmation. Owner selected008and requested captions; selection/copy are not proof of publication.
+  - Full009weather sample remains unsatisfactory for an unspecified reason. Accepted short map/card/wind direction does not establish acceptance of the complete daily-weather product.
+  - Existing PR/merge and Wake same-project overlap attention remain. Documentation neither closes the parent workstream nor authorizes new parallel execution or edits to other lanes.
+next_action:
+  action: Give the owner the lab entry document and receiving-chat prompt. In the separate mini CIEL context, inspect the receiving contract and imported files, then align the smallest cached-audio replay before implementation or paid-budget cutover.

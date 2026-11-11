@@ -1,0 +1,60 @@
+schema_version: ciel.event.v0.1
+id: evt_20261111T095310_mumate_manychat_ebook_delivery_retry_discord_production
+type: closeout
+recorded_at: "2026-11-11T09:53:10+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Record the delivery retry and the team's Discord cards on production (the
+    owner: "ทำทั้ง 1 - 2 ผมสร้างห้องเอาไว้แล้วครับ ลุยได้เลย", and a sale card too, as
+    separate cards that open the case at once), and the orders closed by hand.
+  scope:
+    - "mumate-ebook-bot PR 7 (merge 20304dd); promote-ebook-production runs 42947556774 and the one at 02:50Z; env/ebook.env on mumate-prod-1."
+
+outcome:
+  status: in-progress
+  slice: "4"
+  completed:
+    - "EBOOK_DISCORD_WEBHOOK set on production through bin/env-set.sh (env_set|added, length 121, backup ebook.env.bak-20261111T023117Z); staging has none."
+    - "PR 7: a refused delivery is tried again 1, 5 and 30 min after each failure; after the 4th failure the order stops and the room gets a red card (amount, order, tries, ManyChat's reason, chat link, the mark-delivered line); every delivered sale gets a green card with the chat link; mark-delivered closes a hand-sent order. 71 tests pass on a throwaway Postgres; no migration."
+    - "promote-ebook-production: the first run stopped at its gate (staging took the commit 0 min ago) and touched nothing; the run at 02:50Z deployed 20304dd healthy. Production logged open true, discord true; fe and bazi unchanged."
+    - "Funnel fix confirmed: the first 2 event requests after the 09:21 publish answered 200."
+    - "Orders 6 (09:16) and 7 (09:20) also failed with 'Subscriber does not exist' before the new version; in Live Chat an admin had already sent the E-Book to them, as to orders 2 and 5. Orders 2, 5, 6 and 7 marked delivered by hand (`bun run src/cli.ts mark-delivered` in the ebook container, since bin/ebook.sh does not pass the new command yet). `pending` shows 0 of 7 orders."
+  not_verified:
+    - "A real green or red card in the Discord room (none since the deploy)."
+    - "Why ManyChat refuses delivery to 4 of 7 paying contacts; each refused contact shows no gender and 'Contact Time: Unknown' in ManyChat."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  decision: memory/events/2026/11/11/20261111T050901_mumate_manychat_ebook_rev07.yaml
+  repository:
+    head: "1a06a8031e41a8de347e1196c1efb704297e8176"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  projects:
+    mumate-ebook-bot:
+      merge: "20304dda40d3dd9b139d1591a391cb5a42e8a740"
+      pull_request: "mojisejr/mumate-ebook-bot#7 (merged, base main)"
+
+unresolved:
+  - "4 of 7 deliveries were refused, and a resend never succeeded, so the refusal looks lasting: with retries the red card arrives about 36 min after the slip. Owner decides whether to post the red card at the first failure."
+  - "bin/ebook.sh (mumate-infra) does not pass mark-delivered yet; small infra change."
+  - "Ask ManyChat support why sendFlow says 'Subscriber does not exist' for active subscribers."
+  - "Messages still say 'ถึง 11 พ.ย.' (step 1, 2b, FU2, FU3)."
+  - "Owner pays Slip2Go (2026-11-16 23:59) and ManyChat Pro (2026-11-17)."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Owner decides on the red card at the first failure; then the bin/ebook.sh
+    change, and slice 5 when the Meta token arrives.
+  acceptance_check:
+    - "Slice 4 acceptance in workstreams/mumate-manychat-ebook-001/slices/4.md."

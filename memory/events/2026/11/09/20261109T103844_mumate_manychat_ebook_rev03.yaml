@@ -1,0 +1,68 @@
+schema_version: ciel.event.v0.1
+id: evt_20261109T103844_mumate_manychat_ebook_rev03
+type: decision
+recorded_at: "2026-11-09T10:38:44+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Raise the plan to revision 0.3 with what the Slip2Go account dashboard
+    shows. No slice is authorized.
+  scope:
+    - "workstreams/mumate-manychat-ebook-001/PLAN.md gains a revision 0.3 section; slices/2.md takes the code groups and the Slip2Go env keys."
+  out_of_scope:
+    - "Starting slice 2; the team's promotion wording and its end date; paying for a Slip2Go package."
+
+outcome:
+  status: revised
+  decision: >-
+    The owner chose Slip2Go's API mode, and the agent clicked it on his
+    word ("Yes, click API"). He set up the shop himself. He then asked the
+    agent to revise the plan first ("คุนปรับ แผนก่อน"), to keep what it needs
+    in .assets/mumate/manychat/.env, and not to start slice 2. The promotion
+    end date is the team's matter, not this work's ("เรื่องโปรหมดไม่เกี่ยวกับ
+    เรา"), and he will pay for a Slip2Go package when it is time.
+    Revision 0.3 records these facts:
+    - API mode only.
+    - A single API URL, https://connect.slip2go.com, with the qr-image-link
+      endpoint.
+    - Success is 200200, not 200000.
+    - The other codes fall into reject, retry, our-side alert and unknown.
+    - The IP whitelist holds both hosts' addresses, without "*".
+    - The receiver is KBank 01004 for the company name in the live flow.
+    - The price lives in each host's env.
+  agent_proposals_awaiting_confirmation:
+    - "The receiver account number, and the per-order link, expiry and per-page stamp, are confirmed at the slice 2 decision."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.3"
+  repository:
+    head: "aa9f1158a8999d08bbc5d03df55026b1f48c7b13"
+    branch: hq/20261103
+    working_tree: this-decision-and-plan-revision
+  source:
+    - "app.slip2go.com dashboard, shop mumate, read 2026-11-09: API Connect Authentication (no key created yet; IP whitelist '*'), REST API (qr-image-link endpoint), Response (success and error code tables), package (trial, 100 slips, ends 2026-11-16 23:59)."
+    - "Outbound IPv4 read on each host with curl to ifconfig.me: mumate-2 165.22.50.201 (also from a container on its compose network), mumate-prod-1 178.128.107.239."
+    - "Receiver name and bank from node 1306130521 of .assets/mumate/manychat/bazi-ebook-95_flow_20261108.json."
+  related:
+    - memory/events/2026/11/09/20261109T101428_mumate_manychat_ebook_slice1_delivered.yaml
+
+unresolved:
+  - "The Slip2Go secret key is not created yet. The owner creates it and keeps it in .assets/mumate/manychat/.env, never in chat."
+  - "The IP whitelist is still '*' until the two addresses are added."
+  - "The PDF location, the one-month app code process, the receiver account number, the price and test amount, reply wording, testers and PDPA wording are still owed before the slice 2 decision."
+  - "Slip2Go trial ends 2026-11-16 23:59 and ManyChat Pro trial 2026-11-17; the owner pays when it is time."
+  - "hq/20261103 is not pushed; the round-closing push is the owner's."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Collect the slice 2 inputs, then ask the owner to authorize slice 2 of
+    revision 0.3.
+  acceptance_check:
+    - "A decision event with outcome.status decided, plan_revision 0.3 and slice 2."

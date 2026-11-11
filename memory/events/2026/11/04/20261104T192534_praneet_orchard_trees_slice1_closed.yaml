@@ -1,0 +1,55 @@
+schema_version: ciel.event.v0.1
+id: evt_20261104T192534_praneet_orchard_trees_slice1_closed
+type: closeout
+recorded_at: "2026-11-04T19:25:34+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: praneet-orchard-trees-001
+  lane: single
+  objective: >-
+    Close slice 1: the data layout was proposed and the owner picked from
+    samples rendered on the real pages; plan revision 0.2 records both.
+  scope:
+    - "Plan 0.2 (PLAN.md and slices/2.md) and local samples only; no code in praneet-web or praneet-office, no migration, no production access."
+
+outcome:
+  status: ready-for-owner-merge
+  slice: "1"
+  completed:
+    - "Nine sample screens were injected into the local /ops pages against praneet_test and shot at 390 and 1280, light and dark: the form's tree section in two ways (A type and tap, B tile grid), plot choice, the tree list in two ways (A rows, B tiles), the tree page, a dead tree with both ways to replant, label choice and the A4 sheet of 3 by 8. Data in the shots was invented."
+    - "A data layout of three new tables (trees, tree life events, work and tree) and an optional tree column on the existing boxes, with the rules the database enforces, was proposed on the private samples page."
+    - "The owner took every lean ('1A 2A 3ตรง ลุยครับ'): form A, rows A, the single-design screens as drawn, and the data layout. Plan revision 0.2 records them."
+    - "The private samples page was deleted after the pick. The two unpicked samples, the page dumps, the one-off scripts and the stored login were deleted from praneet-web .local/trees-s1."
+  not_verified:
+    - "How the type-and-tap section feels once a plot holds hundreds of trees; the samples showed a dozen."
+
+evidence:
+  plan: workstreams/praneet-orchard-trees-001/PLAN.md
+  plan_revision: "0.2"
+  slice: "1"
+  decision: memory/events/2026/11/04/20261104T140505_praneet_orchard_trees_opened_slice1_authorized.yaml
+  repository:
+    head: "fcb5a41f92d459a2defd71ead6f68a608a9d0f19"
+    branch: hq/20261103
+    working_tree: this-closeout-with-plan-0.2
+  delivery:
+    target_branch: main
+    topic_branch: hq/20261103
+  child_state:
+    praneet-web: "clean on main 1beb6a1; the picked samples and their shots stay git-ignored in .local/trees-s1 as the build reference"
+    praneet-office: "untouched"
+
+unresolved:
+  - "The picked samples and shots in praneet-web .local/trees-s1 (about 3 MB, git-ignored) are kept as the build reference for slices 2 to 5, as in praneet-orchard-money-001; delete them by name when slice 5 is delivered."
+  - "hq/20261103 is not pushed; the owner pushes it when the other lane's round ends."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Build slice 2 under plan 0.2 on a topic branch in praneet-web, test it
+    under the memory guard, and open a draft PR for the owner.
+  acceptance_check:
+    - "Slice 2 acceptance in workstreams/praneet-orchard-trees-001/slices/2.md."

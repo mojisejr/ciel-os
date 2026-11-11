@@ -1,0 +1,39 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T120849_praneet_character_workflow_slice1_authorized
+type: decision
+recorded_at: "2026-11-03T12:08:49+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-workflow-001
+  lane: single
+  objective: Execute the reusable style and asset-workflow extraction slice.
+  scope:
+    - Preserve v04 art, extract common build/review tools and prove a data-controlled scale variant.
+outcome:
+  status: decided
+  parallelism: approved
+  decision: >-
+    After the opened plan and same-project overlap were reported, owner
+    confirms standing-branch operation and explicitly asks to start. Authorize
+    plan 0.1 slice 1 and its overlap with the retained lab on praneet-office.
+    This is a serial continuation preserving lab source/assets, not a request
+    to spawn agents or execute competing edits. CIEL stays hq/20261103; child
+    Office Git is independent and retains its unmerged lab branch as the
+    extraction dependency. No paid/native image generation, new character,
+    upload or publication in this slice.
+evidence:
+  plan: workstreams/praneet-character-workflow-001/PLAN.md
+  plan_revision: "0.1"
+  slice: "1"
+  repository:
+    head: 055f8f10a15e4fd8b7efa705d3ff4957c017ee7d
+    branch: hq/20261103
+  office_lab_base: 6a3201a4f2a5c3c593714dbc737f5d895d037e84
+  prior_opening: memory/events/2026/11/03/20261103T120046_praneet_character_workflow_opened.yaml
+unresolved:
+  - Reusable source extraction, saved .blend/GLB package, scale-data proof and replay quality require implementation and observed checks.
+  - Native ref generation, the second character, actual Claude execution and existing billing/asset-transfer/audience-feedback unknowns remain outside this slice's proof.
+next_action:
+  action: Preserve the lab dependency, extract the common local build/review path, reproduce the selected v04 style with standardized assets and verify a data-only scale change.

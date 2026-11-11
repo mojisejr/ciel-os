@@ -1,0 +1,42 @@
+schema_version: ciel.event.v0.1
+id: evt_20261103T150713_praneet_gardener_turntable_drive_delivery
+type: closeout
+recorded_at: "2026-11-03T15:07:13+07:00"
+recorded_by:
+  human: owner
+  agent: codex
+workstream:
+  id: praneet-character-workflow-001
+  lane: single
+  objective: Deliver the completed gardener turntable for mobile review.
+  scope:
+    - Owner-requested upload of the existing ten-second model-v003 movie only.
+outcome:
+  status: gardener-turntable-uploaded-for-owner-review
+  result: >-
+    Owner explicitly requested the completed ten-second movie in Drive for
+    mobile viewing. Rechecked its SHA against Office proof, then uploaded it
+    as a new video/mp4 through the connected Google Drive plugin. No matching
+    Praneet folder was found, so used default My Drive, consistent with the
+    prior character delivery. Read back the observed file ID, name, MIME,
+    1903126-byte size and URL. Preserved prior files and sharing settings.
+    No rerender, image/voice generation, model acceptance or merge is implied.
+evidence:
+  plan: workstreams/praneet-character-workflow-001/PLAN.md
+  plan_revision: "0.1"
+  repository:
+    head: 911ff30468285aa6b8e7e6963dcdaf3bd4677db3
+    branch: hq/20261103
+  office_head: 0773eee22c02a0d175c78675a916cfd8d25ab4a0
+  local_movie: checkouts/praneet-office/posts/out/characters/straw-hat-gardener/model-v003/preview/turntable.mp4
+  local_sha256: 9bf2cb19faa3cb93a65e784a4d960f8aa6fb64ca0603f46d77be6735f37bd175
+  drive_file_id: 1o8gkstn364SOw6IVHjWcYEBWNZdHlrXj
+  drive_url: https://drive.google.com/file/d/1o8gkstn364SOw6IVHjWcYEBWNZdHlrXj/view?usp=drivesdk
+  drive_name: praneet-gardener-model-v003-turntable-10s.mp4
+  drive_mime_type: video/mp4
+  drive_size_bytes: 1903126
+unresolved:
+  - Connector readback returned no remote byte checksum; identity verification here is observed ID/name/MIME/size. Owner mobile playback remains unobserved.
+  - Final model art approval and slice 3 delivery remain pending; prior Claude/cross-machine, billing/quota, dependency and model-package backup unknowns remain. Only the MP4 was uploaded.
+next_action:
+  action: Give the verified Drive URL to the owner for mobile viewing and await model approval or specific corrections.
