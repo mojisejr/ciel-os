@@ -1,0 +1,57 @@
+schema_version: ciel.event.v0.1
+id: evt_20261111T105534_mumate_manychat_ebook_retry_3_5_min_production
+type: closeout
+recorded_at: "2026-11-11T10:55:34+07:00"
+recorded_by:
+  human: owner
+  agent: claude
+
+workstream:
+  id: mumate-manychat-ebook-001
+  lane: single
+  objective: >-
+    Record the shorter delivery retries on production (the owner: "3 นาที 5 นาที
+    พอแล้วคับเกินนี้ก็ให้ admin ส่งเองได้เลย", then "merged แล้วเก็บกวาดแล้ว deploy prod
+    ให้ผมเลย") and the cleanup; the owner saw the cards arrive in Discord.
+  scope:
+    - "mumate-ebook-bot PR 9 (merge 9131be1); promote-ebook-production run 42955659099."
+
+outcome:
+  status: in-progress
+  slice: "4"
+  completed:
+    - "PR 9: a refused delivery is tried again 3 and then 5 min later, then the bot stops (delivery_gave_up) and the admin sends it; the red card's note reads 2 tries in 8 min. 69 tests pass, tsc clean."
+    - "promote-ebook-production run 42955659099 deployed 9131be1 healthy at 03:54Z after staging ran it 10 min; production logs open true, discord true; fe 9c456e23 and bazi 366b943 unchanged."
+    - "Order 9 (10:14) was refused under the previous version (4 tries, gave up 10:53); the admin had sent the E-Book in chat after the red card; closed with bin/ebook.sh mark-delivered (dry run, then ok). All 9 production orders are delivered; pending 0."
+    - "Cleanup: merged local branches deleted in mumate-ebook-bot and mumate-infra (fix/entry-without-source, PR 6, kept); this round's scratch files deleted."
+  not_verified:
+    - "The 3 and 5 min retries on a real refused order."
+
+evidence:
+  plan: workstreams/mumate-manychat-ebook-001/PLAN.md
+  plan_revision: "0.7"
+  slice: "4"
+  decision: memory/events/2026/11/11/20261111T050901_mumate_manychat_ebook_rev07.yaml
+  repository:
+    head: "a43f02c986962a50d747c27e4072d08a034fc938"
+    branch: hq/20261103
+    working_tree: this-closeout-only
+  projects:
+    mumate-ebook-bot:
+      merge: "9131be1415fc39a8f4e980ba5da981e72d0410c6"
+      pull_request: "mojisejr/mumate-ebook-bot#9 (merged, base main)"
+
+unresolved:
+  - "ManyChat refuses delivery to 5 of 9 paying contacts ('Subscriber does not exist'); ask ManyChat support."
+  - "Messages still say 'ถึง 11 พ.ย.' (step 1, 2b, FU2, FU3)."
+  - "Owner pays Slip2Go (2026-11-16 23:59) and ManyChat Pro (2026-11-17)."
+  - "Slice 5 waits for the team's Meta token."
+  - "hq/20261103 is not pushed; the owner said to push it when the work is done."
+  - Human approval, review, and external rules remain unknown unless a repository record establishes them.
+
+next_action:
+  action: >-
+    Ask ManyChat support about the refused contacts; slice 5 when the Meta
+    token arrives.
+  acceptance_check:
+    - "Slice 5 acceptance in workstreams/mumate-manychat-ebook-001/slices/5.md."
